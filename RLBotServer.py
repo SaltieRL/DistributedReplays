@@ -33,8 +33,6 @@ def upload_file():
             return jsonify({'status': 'No selected file'})
         if request.remote_addr not in last_upload:
             last_upload[request.remote_addr] = datetime.datetime.now() - datetime.timedelta(minutes=15)
-        if request.remote_addr not in last_upload:
-            last_upload[request.remote_addr] = datetime.datetime.now() - datetime.timedelta(minutes=15)
         time_difference = datetime.datetime.now() - last_upload[request.remote_addr]
         min_last_upload = (time_difference.total_seconds() / 60.0)
         if file and allowed_file(file.filename) and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
