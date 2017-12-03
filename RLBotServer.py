@@ -1,9 +1,8 @@
-import os
-import uuid
-
 import datetime
-from flask import Flask, request, redirect, url_for, flash, jsonify
-from werkzeug.utils import secure_filename
+import hashlib
+import os
+
+from flask import Flask, request, jsonify, send_file
 
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
@@ -14,7 +13,11 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 
+if not os.path.isdir('replays/'):
+    os.mkdir('replays/')
 last_upload = {}
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -35,8 +38,11 @@ def upload_file():
             last_upload[request.remote_addr] = datetime.datetime.now() - datetime.timedelta(minutes=15)
         time_difference = datetime.datetime.now() - last_upload[request.remote_addr]
         min_last_upload = (time_difference.total_seconds() / 60.0)
-        if file and allowed_file(file.filename) and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
-            filename = str(request.remote_addr) + '_' + str(uuid.uuid4()) + '.gz'
+        if file and allowed_file(file.filename):  # and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
+            h = hashlib.sha1()
+            for b in iter(lambda: file.read(128 * 1024), b''):
+                h.update(b)
+            filename = str(request.remote_addr) + '_' + h.hexdigest() + '.gz'
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             last_upload[request.remote_addr] = datetime.datetime.now()
             return jsonify({'status': 'Success'})
@@ -53,6 +59,22 @@ def upload_file():
          <input type=submit value=Upload>
     </form>
     '''
+
+
+@app.route('/replays/list')
+def list_replays():
+    if request.method == 'GET':
+        fs = os.listdir('replays/')
+        return jsonify([f.split('_')[-1] for f in fs])
+    return ''
+
+
+@app.route('/replays/<name>')
+def get_replay(name):
+    if request.method == 'GET':
+        fs = os.listdir('replays/')
+        filename = [f for f in fs if name in f][0]
+        return send_file('replays/' + filename, as_attachment=True, attachment_filename=filename.split('_')[-1])
 
 
 if __name__ == '__main__':
