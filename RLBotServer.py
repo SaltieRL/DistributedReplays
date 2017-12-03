@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
-ALLOWED_EXTENSIONS = {'bin'}
+ALLOWED_EXTENSIONS = {'bin', 'gz'}
 UPLOAD_RATE_LIMIT_MINUTES = 4.5
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -36,7 +36,7 @@ def upload_file():
         time_difference = datetime.datetime.now() - last_upload[request.remote_addr]
         min_last_upload = (time_difference.total_seconds() / 60.0)
         if file and allowed_file(file.filename) and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
-            filename = str(request.remote_addr) + '_' + str(uuid.uuid4()) + '.bin'
+            filename = str(request.remote_addr) + '_' + str(uuid.uuid4()) + '.gz'
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             last_upload[request.remote_addr] = datetime.datetime.now()
             return jsonify({'status': 'Success'})
@@ -56,4 +56,4 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=80)
