@@ -34,6 +34,7 @@
         <h2>Statistics</h2>
         <table class="table">
             <thead>
+            <th>Rank</th>
             <th>IP Block</th>
             <th>Count</th>
             </thead>
@@ -41,6 +42,7 @@
 
             {% for block in stats %}
                 <tr>
+                    <td>{{ loop.index }}</td>
                     <td>{{ block[0] }}.X.X</td>
                     <td>{{ block[1] }}</td>
                 </tr>
