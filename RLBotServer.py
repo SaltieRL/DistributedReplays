@@ -5,7 +5,6 @@ import os
 import uuid
 import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template
-print (os.getcwd())
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
@@ -55,7 +54,6 @@ def upload_file():
             return jsonify({'status': 'Not an allowed file'})
 
     fs = glob.glob(os.path.join('replays', '*'))
-    print (fs)
     df = pd.DataFrame(fs, columns=['FILENAME'])
     df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
 
