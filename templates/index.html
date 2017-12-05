@@ -49,6 +49,10 @@
             {% endfor %}
             </tbody>
         </table>
+        <p><b>Total replays:</b> {{ total }}</p>
+        {% set hours = (total * 5/60.0) %}
+        <p><b>Hours of replays:</b> {{ hours|round(2, 'floor') }}</p>
+        <p><b>Hour goal:</b> {{ hours|round }}/{{ hours - (hours % 1000) + 1000 }}</p>
         {#    <h2>Upload new File</h2>#}
         {#    <form method=post enctype=multipart/form-data>#}
         {#        <p><input type=file name=file>#}
