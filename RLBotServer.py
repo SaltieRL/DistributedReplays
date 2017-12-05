@@ -59,7 +59,7 @@ def upload_file():
     df = pd.DataFrame(fs, columns=['FILENAME'])
     df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
 
-    return render_template('index.html', stats=df.groupby(by='IP_PREFIX').count().reset_index().as_matrix())
+    return render_template('index.html', stats=df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix())
 
 
 @app.route('/replays/list')
