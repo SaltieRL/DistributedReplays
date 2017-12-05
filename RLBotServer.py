@@ -1,9 +1,11 @@
 import datetime
+import glob
 import hashlib
 import os
-
-from flask import Flask, request, jsonify, send_file
-
+import uuid
+import pandas as pd
+from flask import Flask, request, jsonify, send_file, render_template
+print (os.getcwd())
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
@@ -39,10 +41,11 @@ def upload_file():
         time_difference = datetime.datetime.now() - last_upload[request.remote_addr]
         min_last_upload = (time_difference.total_seconds() / 60.0)
         if file and allowed_file(file.filename):  # and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
-            h = hashlib.sha1()
-            for b in iter(lambda: file.read(128 * 1024), b''):
-                h.update(b)
-            filename = str(request.remote_addr) + '_' + h.hexdigest() + '.gz'
+            # h = hashlib.sha1()
+            # for b in iter(lambda: file.stream.read(128 * 1024), b''):
+            #     h.update(b)
+            # h.hexdigest()
+            filename = str(request.remote_addr) + '_' + str(uuid.uuid4()) + '.gz'
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             last_upload[request.remote_addr] = datetime.datetime.now()
             return jsonify({'status': 'Success'})
@@ -50,15 +53,13 @@ def upload_file():
             return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
         elif not allowed_file(file.filename):
             return jsonify({'status': 'Not an allowed file'})
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+
+    fs = glob.glob(os.path.join('replays', '*'))
+    print (fs)
+    df = pd.DataFrame(fs, columns=['FILENAME'])
+    df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('.')[0:2]))
+
+    return render_template('index.html', stats=df.groupby(by='IP_PREFIX').count().reset_index().as_matrix())
 
 
 @app.route('/replays/list')
