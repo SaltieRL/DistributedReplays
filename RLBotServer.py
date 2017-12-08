@@ -8,8 +8,11 @@ import flask
 import flask_login
 import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template, redirect
+from sqlalchemy import create_engine, exists
+from sqlalchemy.orm import sessionmaker
 
 import config
+from objects import Base, User, Replay
 
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
@@ -20,6 +23,13 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.secret_key = config.SECRET_KEY
+
+# Sql Stuff
+connection_string = 'mysql://{}:{}@localhost/saltie'.format(config.db_user, config.db_password)
+print(connection_string)
+engine = create_engine(connection_string, echo=True)
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
 
 # Login stuff
 login_manager = flask_login.LoginManager()
@@ -41,7 +51,7 @@ def allowed_file(filename):
 
 
 # Admin stuff
-class User(flask_login.UserMixin):
+class LoginUser(flask_login.UserMixin):
     pass
 
 
@@ -50,7 +60,7 @@ def user_loader(email):
     if email not in users:
         return
 
-    user = User()
+    user = LoginUser()
     user.id = email
     return user
 
@@ -61,7 +71,7 @@ def request_loader(request):
     if email not in users:
         return
 
-    user = User()
+    user = LoginUser()
     user.id = email
 
     # DO NOT ever store passwords in plaintext and always compare password
@@ -84,7 +94,7 @@ def login():
 
     email = flask.request.form['email']
     if flask.request.form['password'] == users[email]['password']:
-        user = User()
+        user = LoginUser()
         user.id = email
         flask_login.login_user(user)
         return flask.redirect(flask.url_for('admin'))
@@ -106,7 +116,14 @@ def unauthorized_handler():
 # Main stuff
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+    session = Session()
     if request.method == 'POST':
+        user = request.form['username']
+        ex = session.query(exists().where(User.name == user)).scalar()
+        if not ex:
+            new_user = User(name='user', password='')
+            session.add(new_user)
+            session.commit()
         # check if the post request has the file part
         if 'file' not in request.files:
             return jsonify({'status': 'No file uploaded'})
@@ -120,13 +137,26 @@ def upload_file():
         time_difference = datetime.datetime.now() - last_upload[request.remote_addr]
         min_last_upload = (time_difference.total_seconds() / 60.0)
         if file and allowed_file(file.filename):  # and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
-            # h = hashlib.sha1()
-            # for b in iter(lambda: file.stream.read(128 * 1024), b''):
-            #     h.update(b)
-            # h.hexdigest()
-            filename = str(request.remote_addr) + '_' + str(uuid.uuid4()) + '.gz'
+            u = uuid.uuid4()
+            filename = str(u) + '.gz'
+            if 'model_hash' in request.form:
+                model_hash = request.form['model_hash']
+            else:
+                model_hash = ''
+            if 'num_players' in request.form:
+                num_players = request.form['num_players']
+            else:
+                num_players = 0
+            if 'num_my_team' in request.form:
+                num_my_team = request.form['num_my_team']
+            else:
+                num_my_team = 0
+            f = Replay(uuid=u, user=session.query(User).filter(User.name == user), ip=str(request.remote_addr),
+                       model_hash=model_hash, num_team0=num_my_team, num_players=num_players)
+            session.add(f)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             last_upload[request.remote_addr] = datetime.datetime.now()
+            session.commit()
             return jsonify({'status': 'Success'})
         elif min_last_upload < UPLOAD_RATE_LIMIT_MINUTES:
             return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
