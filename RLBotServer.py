@@ -118,12 +118,14 @@ def unauthorized_handler():
 def upload_file():
     session = Session()
     if request.method == 'POST':
-        user = request.form['username']
-        ex = session.query(exists().where(User.name == user)).scalar()
-        if not ex:
-            new_user = User(name='user', password='')
-            session.add(new_user)
-            session.commit()
+        user = ''
+        if 'username' in request.form and request.form['username'] != '':
+            user = request.form['username']
+            ex = session.query(exists().where(User.name == user)).scalar()
+            if not ex:
+                new_user = User(name='user', password='')
+                session.add(new_user)
+                session.commit()
         # check if the post request has the file part
         if 'file' not in request.files:
             return jsonify({'status': 'No file uploaded'})
@@ -139,6 +141,10 @@ def upload_file():
         if file and allowed_file(file.filename):  # and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
             u = uuid.uuid4()
             filename = str(u) + '.gz'
+            if 'user' == '':
+                user_id = -1
+            else:
+                user_id = session.query(User).filter(User.name == user).first().id
             if 'model_hash' in request.form:
                 model_hash = request.form['model_hash']
             else:
@@ -151,7 +157,7 @@ def upload_file():
                 num_my_team = request.form['num_my_team']
             else:
                 num_my_team = 0
-            f = Replay(uuid=u, user=session.query(User).filter(User.name == user), ip=str(request.remote_addr),
+            f = Replay(uuid=u, user=user_id, ip=str(request.remote_addr),
                        model_hash=model_hash, num_team0=num_my_team, num_players=num_players)
             session.add(f)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
