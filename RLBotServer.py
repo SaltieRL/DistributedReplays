@@ -3,6 +3,7 @@ import glob
 import hashlib
 import os
 import uuid
+import argparse
 
 import flask
 import flask_login
@@ -14,6 +15,10 @@ from sqlalchemy.orm import sessionmaker
 import config
 from objects import Base, User, Replay
 
+parser = argparse.ArgumentParser(description='RLBot Server.')
+parser.add_argument('port', metavar='p', type=int, default=5000,
+                     help='The port to run the server on')
+args = parser.parse_args()
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
@@ -259,4 +264,5 @@ def get_replay(name):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+
+    app.run(host='0.0.0.0', port=args.port)
