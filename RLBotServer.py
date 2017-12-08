@@ -30,7 +30,7 @@ app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.secret_key = config.SECRET_KEY
 
 # Sql Stuff
-connection_string = 'postgresql://saltie'
+connection_string = 'postgresql:///saltie'
 print(connection_string)
 engine = create_engine(connection_string, echo=True)
 Base.metadata.create_all(engine)
