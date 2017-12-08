@@ -1,5 +1,6 @@
 import datetime
 import glob
+import hashlib
 import os
 import uuid
 
@@ -153,10 +154,49 @@ def get_config():
 @flask_login.login_required
 def set_config():
     if request.method == 'POST':
-        request.form
         request.files['file'].save('config.cfg')
         return redirect('/admin')
     return "this doesn't do anything"
+
+
+@app.route('/model/get')
+def get_model():
+    if os.path.isfile('recent.zip'):
+        return send_file('recent.zip', as_attachment=True, attachment_filename='recent.zip')
+    return jsonify([])
+
+
+@app.route('/model/get/<hash>')
+def get_model_hash(hash):
+    fs = glob.glob('models/*.zip')
+    filtered = [f for f in fs if f.startswith(hash)]
+    if len(filtered) > 0:
+        return send_file(filtered[0])
+    return jsonify([])
+
+
+@app.route('/model/set', methods=['GET', 'POST'])
+@flask_login.login_required
+def set_model():
+    if request.method == 'POST':
+        request.files['file'].save('recent.zip')
+        hash = hashlib.sha1()
+        if not os.path.isdir('models/'):
+            os.makedirs('models/')
+        with open('recent.zip', 'rb') as f:
+            buf = f.read()
+            hash.update(buf)
+        request.files['file'].seek(0)
+        request.files['file'].save(os.path.join('models', hash.hexdigest() + '.zip'))
+        return redirect('/admin')
+    return "this doesn't do anything"
+
+
+@app.route('/model/list')
+def list_model():
+    if not os.path.isdir('models/'):
+        os.makedirs('models/')
+    return jsonify([os.path.basename(f) for f in glob.glob('models/*.zip')])
 
 
 @app.route('/admin')
