@@ -9,14 +9,14 @@ import flask
 import flask_login
 import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template, redirect
-from sqlalchemy import create_engine, exists
+from sqlalchemy import create_engine, exists, func
 from sqlalchemy.orm import sessionmaker
 
 import config
 from objects import Base, User, Replay
 
 parser = argparse.ArgumentParser(description='RLBot Server.')
-parser.add_argument('port', metavar='p', type=int, default=5000,
+parser.add_argument('--port', metavar='p', type=int, default=5000,
                      help='The port to run the server on')
 args = parser.parse_args()
 UPLOAD_FOLDER = os.path.join(
@@ -173,12 +173,12 @@ def upload_file():
             return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
         elif not allowed_file(file.filename):
             return jsonify({'status': 'Not an allowed file'})
-
-    fs = glob.glob(os.path.join('replays', '*'))
-    df = pd.DataFrame(fs, columns=['FILENAME'])
-    df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
-    stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
-    return render_template('index.html', stats=stats, total=len(fs))
+    data = session.query(Replay.user, func.count(Replay.user).label('total')).group_by(Replay.user).order_by('total DESC').all()
+    # fs = glob.glob(os.path.join('replays', '*'))
+    # df = pd.DataFrame(fs, columns=['FILENAME'])
+    # df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
+    # stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
+    return render_template('index.html', stats=data, total=len(data))
 
 
 @app.route('/config/get')
