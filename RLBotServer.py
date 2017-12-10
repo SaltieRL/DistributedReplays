@@ -9,11 +9,12 @@ import flask
 import flask_login
 import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template, redirect
-from sqlalchemy import create_engine, exists, func
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import exists, func
+from startup import startup
 
 import config
-from objects import Base, User, Replay
+from objects import User, Replay
+import queries
 
 parser = argparse.ArgumentParser(description='RLBot Server.')
 parser.add_argument('--port', metavar='p', type=int, default=5000,
@@ -29,12 +30,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.secret_key = config.SECRET_KEY
 
-# Sql Stuff
-connection_string = 'postgresql:///saltie'
-print(connection_string)
-engine = create_engine(connection_string, echo=True)
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
+
+engine, Session = startup()
+
 
 # Login stuff
 login_manager = flask_login.LoginManager()
@@ -124,13 +122,10 @@ def upload_file():
     session = Session()
     if request.method == 'POST':
         user = ''
+        # passing username and create new user if it does not exist
         if 'username' in request.form and request.form['username'] != '':
             user = request.form['username']
-            ex = session.query(exists().where(User.name == user)).scalar()
-            if not ex:
-                new_user = User(name='user', password='')
-                session.add(new_user)
-                session.commit()
+            queries.create_user_if_not_exist(session, user)
         # check if the post request has the file part
         if 'file' not in request.files:
             return jsonify({'status': 'No file uploaded'})
@@ -146,12 +141,21 @@ def upload_file():
         if file and allowed_file(file.filename):  # and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
             u = uuid.uuid4()
             filename = str(u) + '.gz'
-            if 'user' == '':
+            if user == '':
                 user_id = -1
             else:
-                user_id = session.query(User).filter(User.name == user).first().id
-            if 'model_hash' in request.form:
-                model_hash = request.form['model_hash']
+                result = session.query(User).filter(User.name == user).first()
+                if result is not None:
+                    user_id = result.id
+                else:
+                    user_id = -1
+
+            if 'is_eval' in request.form:
+                is_eval = request.form['is_eval']
+            else:
+                is_eval = False
+            if 'hash' in request.form:
+                model_hash = request.form['hash']
             else:
                 model_hash = ''
             if 'num_players' in request.form:
@@ -162,8 +166,11 @@ def upload_file():
                 num_my_team = request.form['num_my_team']
             else:
                 num_my_team = 0
+
+            queries.create_model_if_not_exist(session, model_hash)
+
             f = Replay(uuid=u, user=user_id, ip=str(request.remote_addr),
-                       model_hash=model_hash, num_team0=num_my_team, num_players=num_players)
+                       model_hash=model_hash, num_team0=num_my_team, num_players=num_players, is_eval=is_eval)
             session.add(f)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             last_upload[request.remote_addr] = datetime.datetime.now()
@@ -173,12 +180,14 @@ def upload_file():
             return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
         elif not allowed_file(file.filename):
             return jsonify({'status': 'Not an allowed file'})
-    data = session.query(Replay.user, func.count(Replay.user).label('total')).group_by(Replay.user).order_by('total DESC').all()
+    replay_data = queries.get_replay_stats(session)
+    model_data = queries.get_model_stats(session)
+
     # fs = glob.glob(os.path.join('replays', '*'))
     # df = pd.DataFrame(fs, columns=['FILENAME'])
     # df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
     # stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
-    return render_template('index.html', stats=data, total=len(data))
+    return render_template('index.html', stats=replay_data, total=len(replay_data), model_stats=model_data)
 
 
 @app.route('/config/get')
