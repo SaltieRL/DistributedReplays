@@ -53,6 +53,26 @@
         {% set hours = (total * 5/60.0) %}
         <p><b>Hours of replays:</b> {{ hours|round(2, 'floor') }}</p>
         <p><b>Hour goal:</b> {{ hours|round }}/{{ hours - (hours % 1000) + 1000 }}</p>
+        <h3>Model Statitics</h3>
+        <table class="table">
+            <thead>
+            <th>Rank</th>
+            <th>Hash</th>
+            <th>Name</th>
+            <th>Count</th>
+            </thead>
+            <tbody>
+
+            {% for block in model_stats %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ block[2].model_hash }}</td>
+                <td>{{ block[1] }}</td>
+                <td>{{ block[0] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
         {#    <h2>Upload new File</h2>#}
         {#    <form method=post enctype=multipart/form-data>#}
         {#        <p><input type=file name=file>#}
