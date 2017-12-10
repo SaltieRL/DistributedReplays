@@ -146,7 +146,11 @@ def upload_file():
             if 'user' == '':
                 user_id = -1
             else:
-                user_id = session.query(User).filter(User.name == user).first().id
+                result = session.query(User).filter(User.name == user).first()
+                if result is not None:
+                    user_id = result.id
+                else:
+                    user_id = -1
             if 'model_hash' in request.form:
                 model_hash = request.form['model_hash']
             else:
