@@ -180,15 +180,14 @@ def upload_file():
             return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
         elif not allowed_file(file.filename):
             return jsonify({'status': 'Not an allowed file'})
-    data = session.query(Replay.user,
-                         func.count(Replay.user).label('total'))\
-        .join(User.name)\
-        .group_by(Replay.user).order_by('total DESC').all()
+    replay_data = queries.get_replay_stats(session)
+    model_data = queries.get_model_stats(session)
+
     # fs = glob.glob(os.path.join('replays', '*'))
     # df = pd.DataFrame(fs, columns=['FILENAME'])
     # df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
     # stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
-    return render_template('index.html', stats=data, total=len(data))
+    return render_template('index.html', stats=replay_data, total=len(replay_data), model_stats=model_data)
 
 
 @app.route('/config/get')

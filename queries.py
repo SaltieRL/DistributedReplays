@@ -73,3 +73,16 @@ def get_bot_names():
     'Viper',
     'Wolfman',
     'Yuri']
+
+
+def get_replay_stats(session):
+    return session.query(Replay.user, func.count(Replay.user).label('total'), User.name) \
+        .join(User) \
+        .group_by(Replay.user, User.id).order_by('total DESC').all()
+
+
+def get_model_stats(session):
+    return session.query(Replay.model_hash,
+                         func.row_number().over(order_by=Model.model_hash), Model.total_reward, func.count(Replay.model_hash).label('total')) \
+        .join(Model) \
+        .group_by(Replay.model_hash, Model.model_hash).order_by('models.total_reward ASC').all()

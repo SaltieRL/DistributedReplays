@@ -20,7 +20,7 @@ print(num_features)
 
 if __name__ == '__main__':
     test_server = server_converter.ServerConverter(server_ip, True, True, True, num_players=2, num_my_team=1,
-                                       username='test2', model_hash='123456')
+                                       username='test3', model_hash='1234567')
 
     test_files = offline_trainer.get_all_files(1, False)
     print(test_files)

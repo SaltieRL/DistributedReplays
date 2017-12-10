@@ -43,7 +43,7 @@
             {% for block in stats %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ block[2].name }}</td>
+                    <td>{{ block[2] }}</td>
                     <td>{{ block[0] }}</td>
                 </tr>
             {% endfor %}
@@ -59,6 +59,7 @@
             <th>Rank</th>
             <th>Hash</th>
             <th>Name</th>
+            <th>Reward</th>
             <th>Count</th>
             </thead>
             <tbody>
@@ -66,9 +67,10 @@
             {% for block in model_stats %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td>{{ block[2].model_hash }}</td>
-                <td>{{ block[1] }}</td>
                 <td>{{ block[0] }}</td>
+                <td>{{ block[1] }}</td>
+                <td>{{ block[2] }}</td>
+                <td>{{ block[3] }}</td>
             </tr>
             {% endfor %}
             </tbody>
