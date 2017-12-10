@@ -14,6 +14,7 @@ from startup import startup
 
 import config
 from objects import User, Replay
+import queries
 
 parser = argparse.ArgumentParser(description='RLBot Server.')
 parser.add_argument('--port', metavar='p', type=int, default=5000,
@@ -121,13 +122,10 @@ def upload_file():
     session = Session()
     if request.method == 'POST':
         user = ''
+        # passing username and create new user if it does not exist
         if 'username' in request.form and request.form['username'] != '':
             user = request.form['username']
-            ex = session.query(exists().where(User.name == user)).scalar()
-            if not ex:
-                new_user = User(name='user', password='')
-                session.add(new_user)
-                session.commit()
+            queries.create_user_if_not_exist(session, user)
         # check if the post request has the file part
         if 'file' not in request.files:
             return jsonify({'status': 'No file uploaded'})
@@ -143,7 +141,7 @@ def upload_file():
         if file and allowed_file(file.filename):  # and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
             u = uuid.uuid4()
             filename = str(u) + '.gz'
-            if 'user' == '':
+            if user == '':
                 user_id = -1
             else:
                 result = session.query(User).filter(User.name == user).first()
@@ -151,8 +149,13 @@ def upload_file():
                     user_id = result.id
                 else:
                     user_id = -1
-            if 'model_hash' in request.form:
-                model_hash = request.form['model_hash']
+
+            if 'is_eval' in request.form:
+                is_eval = request.form['is_eval']
+            else:
+                is_eval = False
+            if 'hash' in request.form:
+                model_hash = request.form['hash']
             else:
                 model_hash = ''
             if 'num_players' in request.form:
@@ -163,8 +166,11 @@ def upload_file():
                 num_my_team = request.form['num_my_team']
             else:
                 num_my_team = 0
+
+            queries.create_model_if_not_exist(session, model_hash)
+
             f = Replay(uuid=u, user=user_id, ip=str(request.remote_addr),
-                       model_hash=model_hash, num_team0=num_my_team, num_players=num_players)
+                       model_hash=model_hash, num_team0=num_my_team, num_players=num_players, is_eval=is_eval)
             session.add(f)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             last_upload[request.remote_addr] = datetime.datetime.now()
@@ -174,7 +180,10 @@ def upload_file():
             return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
         elif not allowed_file(file.filename):
             return jsonify({'status': 'Not an allowed file'})
-    data = session.query(Replay.user, func.count(Replay.user).label('total')).group_by(Replay.user).order_by('total DESC').all()
+    data = session.query(Replay.user,
+                         func.count(Replay.user).label('total'))\
+        .join(User.name)\
+        .group_by(Replay.user).order_by('total DESC').all()
     # fs = glob.glob(os.path.join('replays', '*'))
     # df = pd.DataFrame(fs, columns=['FILENAME'])
     # df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
