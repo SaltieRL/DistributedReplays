@@ -7,6 +7,10 @@ A replay collection server for [Saltie](https://github.com/RLBots/Saltie) the De
 ## Setup
 
 - Install Flask (`flask`).
+- Install Flask login (`flask_login`)
+- Install psycopg2 (`psycopg2`)
+- Install [postgreSQL](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04)
+- If only for local development [change the password](https://blog.2ndquadrant.com/how-to-safely-change-the-postgres-user-password-via-psql/) to `postgres`
 - Run RLBotServer.py.
 
 The server currently only allows uploads from a single IP address every 4.5 minutes, to prevent abuse.

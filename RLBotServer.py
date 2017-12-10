@@ -9,11 +9,11 @@ import flask
 import flask_login
 import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template, redirect
-from sqlalchemy import create_engine, exists, func
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import exists, func
+from startup import startup
 
 import config
-from objects import Base, User, Replay
+from objects import User, Replay
 
 parser = argparse.ArgumentParser(description='RLBot Server.')
 parser.add_argument('--port', metavar='p', type=int, default=5000,
@@ -29,12 +29,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.secret_key = config.SECRET_KEY
 
-# Sql Stuff
-connection_string = 'postgresql:///saltie'
-print(connection_string)
-engine = create_engine(connection_string, echo=True)
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
+
+engine, Session = startup()
+
 
 # Login stuff
 login_manager = flask_login.LoginManager()
