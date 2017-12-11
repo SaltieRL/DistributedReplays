@@ -8,7 +8,7 @@ import config
 from objects import Base, User, Replay
 
 
-connection_string = 'mysql://{}:{}@localhost/saltie'.format(config.db_user, config.db_password)
+connection_string = 'postgresql:///saltie'.format(config.db_user, config.db_password)
 print (connection_string)
 engine = create_engine(connection_string, echo=True)
 Base.metadata.create_all(engine)
