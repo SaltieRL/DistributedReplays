@@ -269,6 +269,9 @@ def get_replay(name):
         filename = [f for f in fs if name in f][0]
         return send_file('replays/' + filename, as_attachment=True, attachment_filename=filename.split('_')[-1])
 
+@app.route('/ping')
+def ping():
+    return jsonify({'status': 'Pong!'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
