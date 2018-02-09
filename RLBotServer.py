@@ -24,7 +24,8 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.secret_key = config.SECRET_KEY
-
+if os.name == 'nt':
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
 engine, Session = startup()
 
 # Login stuff

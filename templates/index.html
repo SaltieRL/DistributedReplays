@@ -1,4 +1,10 @@
 {% include 'header.html' %}
+<style>
+    /* Move down content because we have a fixed navbar that is 3.5rem tall */
+    body {
+        padding-top: 6.5rem;
+    }
+</style>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="#">Saltie</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
@@ -51,13 +57,13 @@
             <tbody>
 
             {% for block in model_stats %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ block[0] }}</td>
-                <td>{{ block[1] }}</td>
-                <td>{{ block[2] }}</td>
-                <td>{{ block[3] }}</td>
-            </tr>
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ block[0] }}</td>
+                    <td>{{ block[1] }}</td>
+                    <td>{{ block[2] }}</td>
+                    <td>{{ block[3] }}</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
