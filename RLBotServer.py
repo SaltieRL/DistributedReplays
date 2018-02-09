@@ -4,6 +4,7 @@ import hashlib
 import os
 import uuid
 import argparse
+import fnmatch
 
 import flask
 import flask_login
@@ -13,7 +14,7 @@ from sqlalchemy import exists, func
 from startup import startup
 
 import config
-from objects import User, Replay
+from objects import User, Replay, Model
 import queries
 
 
@@ -260,6 +261,13 @@ def list_replays():
         fs = os.listdir('replays/')
         return jsonify([f.split('_')[-1] for f in fs])
     return ''
+
+@app.route('/replays/eval/<hash>')
+def list_replays_by_hash(hash):
+    session = Session()
+    replays = [f.uuid + '.gz' for f in session.query(Replay).filter(Replay.model_hash.like("%{}%".format(hash))).all() if fnmatch.fnmatch('*{}*'.format(f.uuid))]
+    return jsonify(replays)
+
 
 
 @app.route('/replays/<name>')
