@@ -1,22 +1,19 @@
 import datetime
+import fnmatch
 import glob
 import hashlib
 import os
 import uuid
-import argparse
-import fnmatch
 
 import flask
 import flask_login
-import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template, redirect
-from sqlalchemy import exists, func
-from startup import startup
+from sqlalchemy.exc import InvalidRequestError
 
 import config
-from objects import User, Replay, Model
 import queries
-
+from objects import User, Replay
+from startup import startup
 
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
@@ -28,9 +25,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.secret_key = config.SECRET_KEY
 
-
 engine, Session = startup()
-
 
 # Login stuff
 login_manager = flask_login.LoginManager()
@@ -257,18 +252,28 @@ def admin():
 
 @app.route('/replays/list')
 def list_replays():
+    session = Session()
+    print(request.args)
     if request.method == 'GET':
-        fs = os.listdir('replays/')
-        return jsonify([f.split('_')[-1] for f in fs])
+        rs = session.query(Replay)
+        for arg in request.args:
+            try:
+                rs = rs.filter_by(**{arg: request.args.get(arg)})
+            except (AttributeError, InvalidRequestError) as e:
+                return jsonify({'status': 'error', 'exception': str(e), 'message': 'Property {} does not exist.'.format(arg)})
+        rs = [r.uuid + '.gz' for r in rs.all()]
+        fs = [f.split('_')[-1] for f in os.listdir('replays/')]
+
+        return jsonify(list(set(rs) & set(fs)))
     return ''
 
 @app.route('/replays/eval/<hash>')
 def list_replays_by_hash(hash):
     session = Session()
-    replays = [f.uuid + '.gz' for f in session.query(Replay).filter(Replay.model_hash.like("%{}%".format(hash))).all() if fnmatch.fnmatch('*{}*'.format(f.uuid))]
+    replays = [f.uuid + '.gz' for f in
+               session.query(Replay).filter(Replay.model_hash.like("%{}%".format(hash))).all() if
+               fnmatch.fnmatch('*{}*'.format(f.uuid))]
     return jsonify(replays)
-
-
 
 @app.route('/replays/<name>')
 def get_replay(name):
