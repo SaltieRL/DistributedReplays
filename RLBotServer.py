@@ -8,6 +8,7 @@ import uuid
 import flask
 import flask_login
 from flask import Flask, request, jsonify, send_file, render_template, redirect
+from sqlalchemy import extract, func
 from sqlalchemy.exc import InvalidRequestError
 
 import config
@@ -112,7 +113,21 @@ def unauthorized_handler():
 
 # Main stuff
 @app.route('/', methods=['GET', 'POST'])
-def upload_file():
+def home():
+    session = Session()
+    replay_count = queries.get_replay_count(session)
+    replay_data = queries.get_replay_stats(session)
+    model_data = queries.get_model_stats(session)
+
+    # fs = glob.glob(os.path.join('replays', '*'))
+    # df = pd.DataFrame(fs, columns=['FILENAME'])
+    # df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
+    # stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
+    return render_template('index.html', stats=replay_data, total=replay_count, model_stats=model_data)
+
+
+@app.route('/upload/replay', methods=['POST'])
+def upload_replay():
     session = Session()
     if request.method == 'POST':
         user = ''
@@ -174,15 +189,7 @@ def upload_file():
             return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
         elif not allowed_file(file.filename):
             return jsonify({'status': 'Not an allowed file'})
-    replay_count = queries.get_replay_count(session)
-    replay_data = queries.get_replay_stats(session)
-    model_data = queries.get_model_stats(session)
-
-    # fs = glob.glob(os.path.join('replays', '*'))
-    # df = pd.DataFrame(fs, columns=['FILENAME'])
-    # df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
-    # stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
-    return render_template('index.html', stats=replay_data, total=replay_count, model_stats=model_data)
+    return jsonify({})
 
 
 @app.route('/config/get')
@@ -261,12 +268,14 @@ def list_replays():
             try:
                 rs = rs.filter_by(**{arg: request.args.get(arg)})
             except (AttributeError, InvalidRequestError) as e:
-                return jsonify({'status': 'error', 'exception': str(e), 'message': 'Property {} does not exist.'.format(arg)})
+                return jsonify(
+                    {'status': 'error', 'exception': str(e), 'message': 'Property {} does not exist.'.format(arg)})
         rs = [r.uuid + '.gz' for r in rs.all()]
         fs = [f.split('_')[-1] for f in os.listdir('replays/')]
 
         return jsonify(list(set(rs) & set(fs)))
     return ''
+
 
 @app.route('/replays/eval/<hash>')
 def list_replays_by_hash(hash):
@@ -276,6 +285,7 @@ def list_replays_by_hash(hash):
                fnmatch.fnmatch('*{}*'.format(f.uuid))]
     return jsonify(replays)
 
+
 @app.route('/replays/<name>')
 def get_replay(name):
     if request.method == 'GET':
@@ -283,9 +293,28 @@ def get_replay(name):
         filename = [f for f in fs if name in f][0]
         return send_file('replays/' + filename, as_attachment=True, attachment_filename=filename.split('_')[-1])
 
+
+# Stats stuff
+
 @app.route('/ping')
 def ping():
     return jsonify({'status': 'Pong!'})
+
+
+@app.route('/uploads/<time>')
+def upload_stats(time):
+    session = Session()
+    if time == 'h':
+        result = session.query(extract('year', Replay.upload_date).label('y'),
+                               extract('month', Replay.upload_date).label('m'),
+                               extract('day', Replay.upload_date).label('d'),
+                               extract('hour', Replay.upload_date).label('h'), func.count(Replay.upload_date)).filter(
+            Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(hours=24)).group_by('y').group_by(
+            'm').group_by('d').group_by('h').all()
+    else:
+        result = []
+    return jsonify(result)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
