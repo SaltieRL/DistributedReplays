@@ -15,7 +15,7 @@ def create_model_if_not_exist(session, model_hash):
     if not ex:
         new_model = Model(model_hash=model_hash, model_type=-1, model_size=-1, total_reward=-100000, evaluated=False)
         session.add(new_model)
-        session.commit()
+
 
 
 def get_bot_names():

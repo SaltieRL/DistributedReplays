@@ -10,6 +10,7 @@ import flask_login
 from flask import Flask, request, jsonify, send_file, render_template, redirect
 from sqlalchemy import extract, func
 from sqlalchemy.exc import InvalidRequestError
+import pandas as pd
 
 import config
 import queries
@@ -125,70 +126,75 @@ def home():
     # stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
     return render_template('index.html', stats=replay_data, total=replay_count, model_stats=model_data)
 
+@app.route('/upload/replay/test', methods=['GET'])
+def upload_replay_test():
+    return upload_replay(True)
 
 @app.route('/upload/replay', methods=['POST'])
-def upload_replay():
+def upload_replay(test=False):
     session = Session()
-    if request.method == 'POST':
-        user = ''
-        # passing username and create new user if it does not exist
-        if 'username' in request.form and request.form['username'] != '':
-            user = request.form['username']
-            queries.create_user_if_not_exist(session, user)
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            return jsonify({'status': 'No file uploaded'})
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            return jsonify({'status': 'No selected file'})
-        if request.remote_addr not in last_upload:
-            last_upload[request.remote_addr] = datetime.datetime.now() - datetime.timedelta(minutes=15)
-        time_difference = datetime.datetime.now() - last_upload[request.remote_addr]
-        min_last_upload = (time_difference.total_seconds() / 60.0)
-        if file and allowed_file(file.filename):  # and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
-            u = uuid.uuid4()
-            filename = str(u) + '.gz'
-            if user == '':
+    user = ''
+    # passing username and create new user if it does not exist
+    if 'username' in request.form and request.form['username'] != '':
+        user = request.form['username']
+        queries.create_user_if_not_exist(session, user)
+    # check if the post request has the file part
+    if 'file' not in request.files and not test:
+        return jsonify({'status': 'No file uploaded'})
+    file = request.files['file'] if not test else ''
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if not test and file.filename == '':
+        return jsonify({'status': 'No selected file'})
+    # if request.remote_addr not in last_upload:
+    #     last_upload[request.remote_addr] = datetime.datetime.now() - datetime.timedelta(minutes=15)
+    # time_difference = datetime.datetime.now() - last_upload[request.remote_addr]
+    # min_last_upload = (time_difference.total_seconds() / 60.0)
+    if test or (file and allowed_file(file.filename)):  # and min_last_upload > UPLOAD_RATE_LIMIT_MINUTES:
+        u = uuid.uuid4()
+        filename = str(u) + '.gz'
+        if user == '':
+            user_id = -1
+        else:
+            result = session.query(User).filter(User.name == user).first()
+            if result is not None:
+                user_id = result.id
+            else:
                 user_id = -1
-            else:
-                result = session.query(User).filter(User.name == user).first()
-                if result is not None:
-                    user_id = result.id
-                else:
-                    user_id = -1
 
-            if 'is_eval' in request.form:
-                is_eval = request.form['is_eval']
-            else:
-                is_eval = False
-            if 'hash' in request.form:
-                model_hash = request.form['hash']
-            else:
-                model_hash = ''
-            if 'num_players' in request.form:
-                num_players = request.form['num_players']
-            else:
-                num_players = 0
-            if 'num_my_team' in request.form:
-                num_my_team = request.form['num_my_team']
-            else:
-                num_my_team = 0
+        if 'is_eval' in request.form:
+            is_eval = request.form['is_eval']
+        else:
+            is_eval = False
+        if 'hash' in request.form:
+            model_hash = request.form['hash']
+        else:
+            model_hash = ''
+        if 'num_players' in request.form:
+            num_players = request.form['num_players']
+        else:
+            num_players = 0
+        if 'num_my_team' in request.form:
+            num_my_team = request.form['num_my_team']
+        else:
+            num_my_team = 0
 
-            queries.create_model_if_not_exist(session, model_hash)
-
-            f = Replay(uuid=u, user=user_id, ip=str(request.remote_addr),
-                       model_hash=model_hash, num_team0=num_my_team, num_players=num_players, is_eval=is_eval)
-            session.add(f)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            last_upload[request.remote_addr] = datetime.datetime.now()
+        queries.create_model_if_not_exist(session, model_hash)
+        if not test:
             session.commit()
-            return jsonify({'status': 'Success'})
-        elif min_last_upload < UPLOAD_RATE_LIMIT_MINUTES:
-            return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
-        elif not allowed_file(file.filename):
-            return jsonify({'status': 'Not an allowed file'})
+        f = Replay(uuid=u, user=user_id, ip=str(request.remote_addr),
+                   model_hash=model_hash, num_team0=num_my_team, num_players=num_players, is_eval=is_eval)
+        session.add(f)
+        if not test:
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        last_upload[request.remote_addr] = datetime.datetime.now()
+        if not test:
+            session.commit()
+        return jsonify({'status': 'Success'})
+    # elif min_last_upload < UPLOAD_RATE_LIMIT_MINUTES:
+    #     return jsonify({'status': 'Try again later', 'seconds': 60 * (UPLOAD_RATE_LIMIT_MINUTES - min_last_upload)})
+    elif not allowed_file(file.filename):
+        return jsonify({'status': 'Not an allowed file'})
     return jsonify({})
 
 
@@ -305,15 +311,26 @@ def ping():
 def upload_stats(time):
     session = Session()
     if time == 'h':
+        r = pd.date_range(end=pd.datetime.now(), freq='H', periods=24)
+
         result = session.query(extract('year', Replay.upload_date).label('y'),
                                extract('month', Replay.upload_date).label('m'),
                                extract('day', Replay.upload_date).label('d'),
                                extract('hour', Replay.upload_date).label('h'), func.count(Replay.upload_date)).filter(
             Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(hours=24)).group_by('y').group_by(
             'm').group_by('d').group_by('h').all()
+    elif time == 'd':
+        r = pd.date_range(end=pd.datetime.today(), periods=30)
+        result = session.query(extract('year', Replay.upload_date).label('y'),
+                               extract('month', Replay.upload_date).label('m'),
+                               extract('day', Replay.upload_date).label('d'), func.count(Replay.upload_date)).filter(
+            Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(days=30)).group_by('y').group_by(
+            'm').group_by('d').all()
     else:
+        r = None
         result = []
-    return jsonify(result)
+    print (r)
+    return jsonify(result[::-1])
 
 
 if __name__ == '__main__':
