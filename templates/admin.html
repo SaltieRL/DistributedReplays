@@ -1,20 +1,39 @@
 {% include 'header.html' %}
+<body>
 <div class="container">
-    <h1>Admin Interface</h1>
     <h2>Submit new config file</h2>
     <p>Config file will be set on reboot of clients.</p>
-    <form action='/config/set' method='POST' enctype='multipart/form-data'>
+    <form action='{{ url_for('set_config') }}' method='POST' enctype='multipart/form-data'>
         <input type='file' name='file'/>
         <input type='submit' name='submit'/>
     </form>
     <hr/>
-    <h2>Submit new model</h2>
-    <p>Model will be set on reboot of clients.</p>
-    <form action='/model/set' method='POST' enctype='multipart/form-data'>
+    <h2>Models</h2>
+    <table class="table">
+        <thead>
+        <th>model_hash</th>
+        <th>model_type</th>
+        <th>model_size</th>
+        <th>total_reward</th>
+        <th>evaluated</th>
+        <th>Delete?</th>
+        </thead>
+        <tbody>
+        {% for model in models %}
+            <tr>
+                <td>{{ model.model_hash }}</td>
+                <td>{{ model.model_type }}</td>
+                <td>{{ model.model_size }}</td>
+                <td>{{ model.total_reward }}</td>
+                <td>{{ model.evaluated }}</td>
+                <td><a href="{{ url_for('delete_model', hash=model.model_hash) }}">Delete</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <form action='{{ url_for('upload_model') }}' method='POST' enctype='multipart/form-data'>
         <input type='file' name='file'/>
         <input type='submit' name='submit'/>
     </form>
-    <div id="uploads-hour"></div>
 </div>
-{% include 'footer.html' %}
-<script src="{{ url_for('static', filename='admin.js') }}"></script>
+{% include "footer.html" %}

@@ -7,14 +7,16 @@ import uuid
 
 import flask
 import flask_login
-from flask import Flask, request, jsonify, send_file, render_template, redirect
-from sqlalchemy import extract, func
-from sqlalchemy.exc import InvalidRequestError
 import pandas as pd
+from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for
+from numpy import extract
+from sqlalchemy import func
+from sqlalchemy.exc import InvalidRequestError
+from werkzeug.utils import secure_filename
 
 import config
 import queries
-from objects import User, Replay
+from objects import User, Replay, Model
 from startup import startup
 
 UPLOAD_FOLDER = os.path.join(
@@ -26,8 +28,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.secret_key = config.SECRET_KEY
-if os.name == 'nt':
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
+
 engine, Session = startup()
 
 # Login stuff
@@ -38,8 +39,9 @@ login_manager.init_app(app)
 users = config.users
 
 # Replay stuff
-if not os.path.isdir('replays/'):
-    os.mkdir('replays/')
+replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
+if not os.path.isdir(replay_dir):
+    os.mkdir(replay_dir)
 last_upload = {}
 
 
@@ -47,6 +49,9 @@ last_upload = {}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def return_error(msg):
+    return jsonify({'error': msg})
 
 
 # Admin stuff
@@ -75,7 +80,7 @@ def request_loader(request):
 
     # DO NOT ever store passwords in plaintext and always compare password
     # hashes using constant-time comparison!
-    user.is_authenticated = request.form['password'] == users[email]['password']
+    user.is_authenticated = request.form['password'] == users[email]
 
     return user
 
@@ -208,7 +213,7 @@ def get_config():
     return jsonify({'version': 1, 'content': file_str})
 
 
-@app.route('/config/set', methods=['GET', 'POST'])
+@app.route('/admin/config/set', methods=['GET', 'POST'])
 @flask_login.login_required
 def set_config():
     if request.method == 'POST':
@@ -217,23 +222,25 @@ def set_config():
     return "this doesn't do anything"
 
 
-@app.route('/model/get')
-def get_model():
-    if os.path.isfile('recent.zip'):
-        return send_file('recent.zip', as_attachment=True, attachment_filename='recent.zip')
-    return jsonify([])
-
-
 @app.route('/model/get/<hash>')
-def get_model_hash(hash):
-    fs = glob.glob('models/*.zip')
-    filtered = [f for f in fs if f.startswith(hash)]
-    if len(filtered) > 0:
-        return send_file(filtered[0])
+def get_model(hash):
+    session = Session()
+    model = session.query(Model).filter(Model.model_hash.like(hash + "%")).first()
+    if model:
+        return send_file(os.path.join(replay_dir, model.model_hash + '.zip'), as_attachment=True, attachment_filename=model.model_hash + '.zip')
     return jsonify([])
 
 
-@app.route('/model/set', methods=['GET', 'POST'])
+# @app.route('/model/get/<hash>')
+# def get_model_hash(hash):
+#     fs = glob.glob('models/*.zip')
+#     filtered = [f for f in fs if f.startswith(hash)]
+#     if len(filtered) > 0:
+#         return send_file(filtered[0])
+#     return jsonify([])
+
+
+@app.route('/admin/model/set', methods=['GET', 'POST'])
 @flask_login.login_required
 def set_model():
     if request.method == 'POST':
@@ -250,6 +257,37 @@ def set_model():
     return "this doesn't do anything"
 
 
+@app.route('/admin/model/upload', methods=['POST'])
+@flask_login.login_required
+def upload_model():
+    session = Session()
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        return return_error('No file part')
+    file = request.files['file']
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if file.filename == '':
+        return return_error('No selected file')
+    key = hashlib.sha1(file.read()).hexdigest()
+    file.filename = key + '.zip'
+    if file and file.filename.endswith('.zip'):
+        filename = secure_filename(file.filename)
+        model = Model(model_hash=key, model_size=0, model_type=0, total_reward=0.0, evaluated=False)
+        session.add(model)
+        file.save(os.path.join(replay_dir, filename))
+        session.commit()
+        return redirect(url_for('admin'))
+    return return_error('file type not allowed')
+
+@app.route('/admin/model/delete')
+def delete_model():
+    session = Session()
+    m = session.query(Model).filter(Model.model_hash == request.args['hash']).first()
+    session.delete(m)
+    session.commit()
+    return redirect(url_for('admin'))
+
 @app.route('/model/list')
 def list_model():
     if not os.path.isdir('models/'):
@@ -261,13 +299,14 @@ def list_model():
 @flask_login.login_required
 def admin():
     # 'Logged in as: ' + flask_login.current_user.id
-    return render_template('admin.html')
+    session = Session()
+    models = session.query(Model).all()
+    return render_template('admin.html', models=models)
 
 
 @app.route('/replays/list')
 def list_replays():
     session = Session()
-    print(request.args)
     if request.method == 'GET':
         rs = session.query(Replay)
         for arg in request.args:
@@ -282,7 +321,6 @@ def list_replays():
         return jsonify(list(set(rs) & set(fs)))
     return ''
 
-
 @app.route('/replays/eval/<hash>')
 def list_replays_by_hash(hash):
     session = Session()
@@ -290,7 +328,6 @@ def list_replays_by_hash(hash):
                session.query(Replay).filter(Replay.model_hash.like("%{}%".format(hash))).all() if
                fnmatch.fnmatch('*{}*'.format(f.uuid))]
     return jsonify(replays)
-
 
 @app.route('/replays/<name>')
 def get_replay(name):
@@ -329,7 +366,6 @@ def upload_stats(time):
     else:
         r = None
         result = []
-    print (r)
     return jsonify(result[::-1])
 
 
