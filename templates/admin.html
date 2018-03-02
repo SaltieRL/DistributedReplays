@@ -16,7 +16,8 @@
         <th>model_size</th>
         <th>total_reward</th>
         <th>evaluated</th>
-        <th>Delete?</th>
+        <th>Link</th>
+        <th>Delete</th>
         </thead>
         <tbody>
         {% for model in models %}
@@ -26,7 +27,8 @@
                 <td>{{ model.model_size }}</td>
                 <td>{{ model.total_reward }}</td>
                 <td>{{ model.evaluated }}</td>
-                <td><a href="{{ url_for('delete_model', hash=model.model_hash) }}">Delete</a></td>
+                <td><a href="{{ url_for('get_model', hash=model.model_hash) }}">Download</a></td>
+                <td><a href="{{ url_for('delete_model', h=model.model_hash) }}">Delete</a></td>
             </tr>
         {% endfor %}
         </tbody>

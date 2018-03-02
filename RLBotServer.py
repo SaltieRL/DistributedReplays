@@ -3,7 +3,10 @@ import fnmatch
 import glob
 import hashlib
 import os
+import io
+import random
 import uuid
+import zipfile
 
 import flask
 import flask_login
@@ -42,6 +45,9 @@ users = config.users
 replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
 if not os.path.isdir(replay_dir):
     os.mkdir(replay_dir)
+model_dir = os.path.join(os.path.dirname(__file__), 'models')
+if not os.path.isdir(model_dir):
+    os.mkdir(model_dir)
 last_upload = {}
 
 
@@ -97,7 +103,7 @@ def login():
                '''
 
     email = flask.request.form['email']
-    if flask.request.form['password'] == users[email]['password']:
+    if flask.request.form['password'] == users[email]:
         user = LoginUser()
         user.id = email
         flask_login.login_user(user)
@@ -275,24 +281,24 @@ def upload_model():
         filename = secure_filename(file.filename)
         model = Model(model_hash=key, model_size=0, model_type=0, total_reward=0.0, evaluated=False)
         session.add(model)
-        file.save(os.path.join(replay_dir, filename))
+        file.save(os.path.join(model_dir, filename))
         session.commit()
         return redirect(url_for('admin'))
     return return_error('file type not allowed')
 
-@app.route('/admin/model/delete')
-def delete_model():
+@app.route('/admin/model/delete/<h>')
+def delete_model(h):
     session = Session()
-    m = session.query(Model).filter(Model.model_hash == request.args['hash']).first()
+    m = session.query(Model).filter(Model.model_hash == h).first()
     session.delete(m)
     session.commit()
     return redirect(url_for('admin'))
 
 @app.route('/model/list')
 def list_model():
-    if not os.path.isdir('models/'):
-        os.makedirs('models/')
-    return jsonify([os.path.basename(f) for f in glob.glob('models/*.zip')])
+    session = Session()
+    models = session.query(Model).all()
+    return jsonify([{'model_hash' : m.model_hash, 'model_type': m.model_type, 'model_size': m.model_size, 'total_reward': m.total_reward, 'evaluated': m.evaluated, 'model_link': url_for('get_model', hash=m.model_hash)} for m in models])
 
 
 @app.route('/admin')
@@ -320,6 +326,18 @@ def list_replays():
 
         return jsonify(list(set(rs) & set(fs)))
     return ''
+
+
+@app.route('/replays/download/<n>')
+def download_zipped_replays(n):
+    filenames = random.sample(os.listdir(replay_dir), int(n))
+    file_like_object = io.BytesIO()
+    with zipfile.ZipFile(file_like_object, "w", zipfile.ZIP_DEFLATED) as zipfile_ob:
+        for f in filenames:
+            print (f)
+            zipfile_ob.write(os.path.join(replay_dir, f), f)
+    file_like_object.seek(0)
+    return send_file(file_like_object, attachment_filename='dl.zip')
 
 @app.route('/replays/eval/<hash>')
 def list_replays_by_hash(hash):
