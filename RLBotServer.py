@@ -7,6 +7,7 @@ import io
 import random
 import uuid
 import zipfile
+import json
 
 import flask
 import flask_login
@@ -338,6 +339,18 @@ def download_zipped_replays(n):
             zipfile_ob.write(os.path.join(replay_dir, f), f)
     file_like_object.seek(0)
     return send_file(file_like_object, attachment_filename='dl.zip')
+
+@app.route('/replays/download', methods=['POST']) # downloads based on filenames from /replays/list
+def download_zipped_replays_fn():
+    filenames = list(set(os.listdir(replay_dir)) & set(json.loads(request.form['files'])))
+    file_like_object = io.BytesIO()
+    with zipfile.ZipFile(file_like_object, "w", zipfile.ZIP_DEFLATED) as zipfile_ob:
+        for f in filenames:
+            print (f)
+            zipfile_ob.write(os.path.join(replay_dir, f), f)
+    file_like_object.seek(0)
+    return send_file(file_like_object, attachment_filename='dl.zip')
+
 
 @app.route('/replays/eval/<hash>')
 def list_replays_by_hash(hash):
