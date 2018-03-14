@@ -11,7 +11,7 @@ def create_user_if_not_exist(session, user):
 
 
 def create_model_if_not_exist(session, model_hash):
-    ex = session.query(exists().where(Model.model_hash == model_hash)).scalar()
+    ex = session.query(exists().where(Model.model_hash.like(model_hash + '%'))).scalar()
     if not ex:
         new_model = Model(model_hash=model_hash, model_type=-1, model_size=-1, total_reward=-100000, evaluated=False)
         session.add(new_model)
