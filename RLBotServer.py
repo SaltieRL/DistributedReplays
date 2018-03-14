@@ -180,8 +180,11 @@ def upload_replay(test=False):
             is_eval = False
         if 'hash' in request.form:
             model_hash = request.form['hash']
+            if len(model_hash) < 8:
+                return jsonify({'status': 'Invalid hash.'})
         else:
             model_hash = ''
+            return jsonify({'status': 'No hash supplied, not allowed.'})
         if 'num_players' in request.form:
             num_players = request.form['num_players']
         else:
@@ -231,6 +234,8 @@ def set_config():
 
 @app.route('/model/get/<hash>')
 def get_model(hash):
+    if len(hash) < 8:
+        return jsonify([])
     session = Session()
     model = session.query(Model).filter(Model.model_hash.like(hash + "%")).first()
     if model:
