@@ -25,7 +25,7 @@ class Replay(Base):
     ip = Column(String(64))
     num_players = Column(Integer)
     num_team0 = Column(Integer)
-    model_hash = Column(String(40), ForeignKey("models.model_hash"))  # always 40 chars long
+    model_hash = Column(String(40))# ForeignKey("models.model_hash"))  # always 40 chars long
     is_eval = Column(Boolean)
     upload_date = Column(DateTime, default=datetime.datetime.utcnow)
     def __repr__(self):
