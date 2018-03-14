@@ -12,6 +12,7 @@
     <table class="table">
         <thead>
         <th>model_hash</th>
+        <th>model_short</th>
         <th>model_type</th>
         <th>model_size</th>
         <th>total_reward</th>
@@ -23,6 +24,7 @@
         {% for model in models %}
             <tr>
                 <td>{{ model.model_hash }}</td>
+                <td>{{ model.model_hash[:8] }}</td>
                 <td>{{ model.model_type }}</td>
                 <td>{{ model.model_size }}</td>
                 <td>{{ model.total_reward }}</td>
