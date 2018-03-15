@@ -181,7 +181,7 @@ def upload_replay(test=False):
         if 'hash' in request.form:
             model_hash = request.form['hash']
             if len(model_hash) < 8:
-                return jsonify({'status': 'Invalid hash.'})
+                return jsonify({'status': 'Invalid hash. Must be 8 characters.'})
         else:
             model_hash = ''
             return jsonify({'status': 'No hash supplied, not allowed.'})
@@ -239,7 +239,7 @@ def get_model(hash):
     session = Session()
     model = session.query(Model).filter(Model.model_hash.like(hash + "%")).first()
     if model:
-        return send_file(os.path.join(replay_dir, model.model_hash + '.zip'), as_attachment=True, attachment_filename=model.model_hash + '.zip')
+        return send_file(os.path.join(model_dir, model.model_hash + '.zip'), as_attachment=True, attachment_filename=model.model_hash + '.zip')
     return jsonify([])
 
 
