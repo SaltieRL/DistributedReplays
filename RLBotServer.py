@@ -242,34 +242,6 @@ def get_model(hash):
         return send_file(os.path.join(model_dir, model.model_hash + '.zip'), as_attachment=True, attachment_filename=model.model_hash + '.zip')
     return jsonify([])
 
-
-# @app.route('/model/get/<hash>')
-# def get_model_hash(hash):
-#     fs = glob.glob('models/*.zip')
-#     filtered = [f for f in fs if f.startswith(hash)]
-#     if len(filtered) > 0:
-#         return send_file(filtered[0])
-#     return jsonify([])
-
-
-@app.route('/admin/model/set', methods=['GET', 'POST'])
-@flask_login.login_required
-def set_model():
-    if request.method == 'POST':
-        request.files['file'].save('recent.zip')
-        hash = hashlib.sha1()
-        if not os.path.isdir('models/'):
-            os.makedirs('models/')
-        with open('recent.zip', 'rb') as f:
-            buf = f.read()
-            hash.update(buf)
-            f.seek(0)
-            with open(os.path.join('models', hash.hexdigest() + '.zip'), 'wb') as f2:
-                f2.write(f.read())
-        return redirect('/admin')
-    return "this doesn't do anything"
-
-
 @app.route('/admin/model/upload', methods=['POST'])
 @flask_login.login_required
 def upload_model():
@@ -283,6 +255,7 @@ def upload_model():
     if file.filename == '':
         return return_error('No selected file')
     key = hashlib.sha1(file.read()).hexdigest()
+    file.seek(0)
     file.filename = key + '.zip'
     if file and file.filename.endswith('.zip'):
         filename = secure_filename(file.filename)
