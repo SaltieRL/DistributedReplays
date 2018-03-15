@@ -263,8 +263,9 @@ def set_model():
         with open('recent.zip', 'rb') as f:
             buf = f.read()
             hash.update(buf)
-        request.files['file'].seek(0)
-        request.files['file'].save(os.path.join('models', hash.hexdigest() + '.zip'))
+            f.seek(0)
+            with open(os.path.join('models', hash.hexdigest() + '.zip'), 'wb') as f2:
+                f2.write(f.read())
         return redirect('/admin')
     return "this doesn't do anything"
 
