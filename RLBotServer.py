@@ -196,7 +196,11 @@ def upload_replay(test=False):
 
         queries.create_model_if_not_exist(session, model_hash)
         if not test:
-            session.commit()
+            try:
+                session.commit()
+            except Exception as e:
+                print ('Error with models:', e)
+                return jsonify({})
         f = Replay(uuid=u, user=user_id, ip=str(request.remote_addr),
                    model_hash=model_hash, num_team0=num_my_team, num_players=num_players, is_eval=str(is_eval) not in ['False', 'f', '0'])
         session.add(f)
