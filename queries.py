@@ -84,7 +84,7 @@ def get_replay_stats(session):
 def get_model_stats(session):
     return session.query(Replay.model_hash,
                          func.row_number().over(order_by=Model.model_hash), Model.total_reward, func.count(Replay.model_hash).label('total')) \
-        .join(Model) \
+        .join(Model, Model.model_hash.startswith(Replay.model_hash)) \
         .group_by(Replay.model_hash, Model.model_hash).order_by('models.total_reward ASC').all()
 
 

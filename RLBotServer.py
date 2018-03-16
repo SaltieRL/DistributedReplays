@@ -198,7 +198,7 @@ def upload_replay(test=False):
         if not test:
             session.commit()
         f = Replay(uuid=u, user=user_id, ip=str(request.remote_addr),
-                   model_hash=model_hash, num_team0=num_my_team, num_players=num_players, is_eval=is_eval)
+                   model_hash=model_hash, num_team0=num_my_team, num_players=num_players, is_eval=str(is_eval) not in ['False', 'f', '0'])
         session.add(f)
         if not test:
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
