@@ -298,16 +298,17 @@ def admin():
 def list_replays():
     session = Session()
     if request.method == 'GET':
+        fs = [f.split('_')[-1] for f in os.listdir('replays/')]
+        if 'all' in request.args:
+            return jsonify(fs)
         rs = session.query(Replay)
         for arg in request.args:
             try:
                 rs = rs.filter_by(**{arg: request.args.get(arg)})
             except (AttributeError, InvalidRequestError) as e:
                 return jsonify(
-                    {'status': 'error', 'exception': str(e), 'message': 'Property {} does not exist.'.format(arg)})
+                    {'status': 'error', 'exception': str(e), 'message': 'Property "{}" does not exist.'.format(arg)})
         rs = [r.uuid + '.gz' for r in rs.all()]
-        fs = [f.split('_')[-1] for f in os.listdir('replays/')]
-
         return jsonify(list(set(rs) & set(fs)))
     return ''
 
@@ -325,6 +326,7 @@ def download_zipped_replays(n):
 
 @app.route('/replays/download', methods=['POST']) # downloads based on filenames from /replays/list
 def download_zipped_replays_fn():
+    print (request.form['files'])
     filenames = list(set(os.listdir(replay_dir)) & set(json.loads(request.form['files'])))
     file_like_object = io.BytesIO()
     with zipfile.ZipFile(file_like_object, "w", zipfile.ZIP_DEFLATED) as zipfile_ob:
