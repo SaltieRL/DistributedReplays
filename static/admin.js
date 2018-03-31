@@ -1,4 +1,5 @@
 $.getJSON('/uploads/d', function (data) {
+
     d = [data.map(x => [Date.UTC(x['year'], x['month'] - 1, x['day']), x['count']])];
     console.log(d);
     Highcharts.chart('uploads-hour', {
