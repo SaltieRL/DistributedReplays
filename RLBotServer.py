@@ -372,6 +372,13 @@ def upload_stats(time):
                                extract('hour', Replay.upload_date).label('h'), func.count(Replay.upload_date)).filter(
             Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(hours=24)).group_by('y').group_by(
             'm').group_by('d').group_by('h').all()
+        result = [{
+            'year': r[0],
+            'month': r[1],
+            'day': r[2],
+            'hour': r[3],
+            'count': r[4]
+        } for r in result[::-1]]
     elif time == 'd':
         r = pd.date_range(end=pd.datetime.today(), periods=30)
         result = session.query(extract('year', Replay.upload_date).label('y'),
@@ -379,10 +386,16 @@ def upload_stats(time):
                                extract('day', Replay.upload_date).label('d'), func.count(Replay.upload_date)).filter(
             Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(days=30)).group_by('y').group_by(
             'm').group_by('d').all()
+        result = [{
+            'year': r[0],
+            'month': r[1],
+            'day': r[2],
+            'count': r[3]
+        } for r in result[::-1]]
     else:
         r = None
         result = []
-    return jsonify(result[::-1])
+    return jsonify(result)
 
 
 if __name__ == '__main__':
