@@ -391,7 +391,7 @@ def upload_stats(time, model):
                            extract('day', Replay.upload_date).label('d'),
                            extract('hour', Replay.upload_date).label('h'), func.count(Replay.upload_date)).filter(
         Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(hours=24))
-    if result != '*':
+    if model != '*':
         result = result.filter(Replay.model_hash.startswith(model))
     result = result.group_by('y').group_by(
         'm').group_by('d')
