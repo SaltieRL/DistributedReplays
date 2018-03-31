@@ -388,8 +388,8 @@ def upload_stats(time, model):
     if time == 'h':
         result = session.query(extract('year', Replay.upload_date).label('y'),
                                extract('month', Replay.upload_date).label('m'),
-                               extract('day', Replay.upload_date).label('d',
-                               extract('hour', Replay.upload_date).label('h')), func.count(Replay.upload_date)).filter(
+                               extract('day', Replay.upload_date).label('d'),
+                               extract('hour', Replay.upload_date).label('h'), func.count(Replay.upload_date)).filter(
             Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(hours=24))
     else: # day
         result = session.query(extract('year', Replay.upload_date).label('y'),
