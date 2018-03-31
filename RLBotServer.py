@@ -379,6 +379,7 @@ def upload_stats(time):
             'hour': r[3],
             'count': r[4]
         } for r in result[::-1]]
+        result = sorted(result, key=lambda x: x['year'] * 365 + x['month'] * 30 + x['day'] + x['hour'] * (1/24.0))
     elif time == 'd':
         r = pd.date_range(end=pd.datetime.today(), periods=30)
         result = session.query(extract('year', Replay.upload_date).label('y'),
@@ -392,6 +393,7 @@ def upload_stats(time):
             'day': r[2],
             'count': r[3]
         } for r in result[::-1]]
+        result = sorted(result, key=lambda x: x['year'] * 365 + x['month'] * 30 + x['day'])
     else:
         r = None
         result = []
