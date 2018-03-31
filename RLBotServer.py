@@ -353,6 +353,25 @@ def get_replay(name):
         return send_file('replays/' + filename, as_attachment=True, attachment_filename=filename.split('_')[-1])
 
 
+@app.route('/replays/info/<uuid>')
+def replay_info(uuid):
+    session = Session()
+    replay = session.query(Replay).filter(Replay.uuid == uuid).first()
+    if replay is None:
+        return jsonify({})
+    info = {
+        'user': session.query(User).filter(User.id == replay.user).first().name + ' (' + str(Replay.user) + ')',
+        'model_hash': replay.model_hash,
+        'ip': replay.ip,
+        'is_eval': replay.is_eval,
+        'num_players': replay.num_players,
+        'num_team0': replay.num_team0,
+        'upload_date': replay.upload_date,
+        'uuid': replay.uuid,
+        'id': replay.id
+    }
+    return jsonify(info)
+
 # Stats stuff
 
 @app.route('/ping')
@@ -360,43 +379,33 @@ def ping():
     return jsonify({'status': 'Pong!'})
 
 
-@app.route('/uploads/<time>')
-def upload_stats(time):
+@app.route('/uploads/<time>/<model>')
+def upload_stats(time, model):
+    if time not in ['d', 'h']:
+        return jsonify([])
     session = Session()
-    if time == 'h':
-        r = pd.date_range(end=pd.datetime.now(), freq='H', periods=24)
 
-        result = session.query(extract('year', Replay.upload_date).label('y'),
-                               extract('month', Replay.upload_date).label('m'),
-                               extract('day', Replay.upload_date).label('d'),
-                               extract('hour', Replay.upload_date).label('h'), func.count(Replay.upload_date)).filter(
-            Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(hours=24)).group_by('y').group_by(
-            'm').group_by('d').group_by('h').all()
-        result = [{
-            'year': r[0],
-            'month': r[1],
-            'day': r[2],
-            'hour': r[3],
-            'count': r[4]
-        } for r in result[::-1]]
-        result = sorted(result, key=lambda x: x['year'] * 365 + x['month'] * 30 + x['day'] + x['hour'] * (1/24.0))
-    elif time == 'd':
-        r = pd.date_range(end=pd.datetime.today(), periods=30)
-        result = session.query(extract('year', Replay.upload_date).label('y'),
-                               extract('month', Replay.upload_date).label('m'),
-                               extract('day', Replay.upload_date).label('d'), func.count(Replay.upload_date)).filter(
-            Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(days=30)).group_by('y').group_by(
-            'm').group_by('d').all()
-        result = [{
-            'year': r[0],
-            'month': r[1],
-            'day': r[2],
-            'count': r[3]
-        } for r in result[::-1]]
-        result = sorted(result, key=lambda x: x['year'] * 365 + x['month'] * 30 + x['day'])
-    else:
-        r = None
-        result = []
+    result = session.query(extract('year', Replay.upload_date).label('y'),
+                           extract('month', Replay.upload_date).label('m'),
+                           extract('day', Replay.upload_date).label('d'),
+                           extract('hour', Replay.upload_date).label('h'), func.count(Replay.upload_date)).filter(
+        Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(hours=24))
+    if result != '*':
+        result = result.filter(Replay.model_hash.startswith(model))
+    result = result.group_by('y').group_by(
+        'm').group_by('d')
+    if time == 'h':
+        result = result.group_by('h')
+    result = result.all()
+    result = [{
+        'year': r[0],
+        'month': r[1],
+        'day': r[2],
+        'hour': r[3],
+        'count': r[4]
+    } for r in result[::-1]]
+    result = sorted(result, key=lambda x: x['year'] * 365 + x['month'] * 30 + x['day'] + x['hour'] * (1/24.0))
+
     return jsonify(result)
 
 
