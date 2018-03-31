@@ -354,13 +354,14 @@ def get_replay(name):
 
 
 @app.route('/replays/info/<uuid>')
+@flask_login.login_required
 def replay_info(uuid):
     session = Session()
     replay = session.query(Replay).filter(Replay.uuid == uuid).first()
     if replay is None:
         return jsonify({})
     info = {
-        'user': session.query(User).filter(User.id == replay.user).first().name + ' (' + str(Replay.user) + ')',
+        'user': session.query(User).filter(User.id == replay.user).first().name + ' (ID: ' + str(replay.user) + ')',
         'model_hash': replay.model_hash,
         'ip': replay.ip,
         'is_eval': replay.is_eval,
