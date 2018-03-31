@@ -13,9 +13,9 @@ import flask
 import flask_login
 import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for
-from numpy import extract
 from sqlalchemy import func
 from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy import extract
 from werkzeug.utils import secure_filename
 
 import config
