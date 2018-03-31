@@ -394,9 +394,7 @@ def upload_stats(time, model):
     if model != '*':
         result = result.filter(Replay.model_hash.startswith(model))
     result = result.group_by('y').group_by(
-        'm').group_by('d')
-    if time == 'h':
-        result = result.group_by('h')
+        'm').group_by('d').group_by('h')
     result = result.all()
     result = [{
         'year': r[0],

@@ -1,4 +1,4 @@
-$.getJSON('/uploads/h', function (data) {
+$.getJSON('/uploads/h/*', function (data) {
 
     d = data.map(x => [Date.UTC(x['year'], x['month'] - 1, x['day'], x['hour']), x['count']]);
     console.log(d);
@@ -31,7 +31,7 @@ $.getJSON('/uploads/h', function (data) {
         }]
     });
 });
-$.getJSON('/uploads/d', function (data) {
+$.getJSON('/uploads/d/*', function (data) {
 
     d = data.map(x => [Date.UTC(x['year'], x['month'] - 1, x['day']), x['count']]);
     console.log(d);
