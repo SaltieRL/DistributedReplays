@@ -1,27 +1,28 @@
 import datetime
 import fnmatch
-import glob
 import hashlib
-import os
 import io
+import json
+import os
 import random
 import uuid
 import zipfile
-import json
 
 import flask
 import flask_login
-import pandas as pd
+from celery import Celery
 from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for
+from sqlalchemy import extract
 from sqlalchemy import func
 from sqlalchemy.exc import InvalidRequestError
-from sqlalchemy import extract
 from werkzeug.utils import secure_filename
 
 import config
 import queries
 from objects import User, Replay, Model
 from startup import startup
+
+# APP SETUP
 
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
@@ -32,6 +33,13 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.secret_key = config.SECRET_KEY
+
+# WORKER SETUP
+
+broker_url = 'amqp://guest@localhost'  # Broker URL for RabbitMQ task queue
+
+celery = Celery(app.name, broker=broker_url)
+celery.config_from_object('celeryconfig')  # Your celery configurations in a celeryconfig.py
 
 engine, Session = startup()
 
@@ -56,6 +64,7 @@ last_upload = {}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def return_error(msg):
     return jsonify({'error': msg})
@@ -138,9 +147,21 @@ def home():
     # stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
     return render_template('index.html', stats=replay_data, total=replay_count, model_stats=model_data)
 
+
+@app.route('/admin')
+@flask_login.login_required
+def admin():
+    # 'Logged in as: ' + flask_login.current_user.id
+    session = Session()
+    models = session.query(Model).all()
+    return render_template('admin.html', models=models)
+
+
+# Replay uploading
 @app.route('/upload/replay/test', methods=['GET'])
 def upload_replay_test():
     return upload_replay(True)
+
 
 @app.route('/upload/replay', methods=['POST'])
 def upload_replay(test=False):
@@ -199,10 +220,11 @@ def upload_replay(test=False):
             try:
                 session.commit()
             except Exception as e:
-                print ('Error with models:', e)
+                print('Error with models:', e)
                 return jsonify({})
         f = Replay(uuid=u, user=user_id, ip=str(request.remote_addr),
-                   model_hash=model_hash, num_team0=num_my_team, num_players=num_players, is_eval=str(is_eval) not in ['False', 'f', '0'])
+                   model_hash=model_hash, num_team0=num_my_team, num_players=num_players,
+                   is_eval=str(is_eval) not in ['False', 'f', '0'])
         session.add(f)
         if not test:
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -215,6 +237,9 @@ def upload_replay(test=False):
     elif not allowed_file(file.filename):
         return jsonify({'status': 'Not an allowed file'})
     return jsonify({})
+
+
+# Config management
 
 
 @app.route('/config/get')
@@ -236,6 +261,9 @@ def set_config():
     return "this doesn't do anything"
 
 
+# Model management
+
+
 @app.route('/model/get/<hash>')
 def get_model(hash):
     if len(hash) < 8:
@@ -243,8 +271,10 @@ def get_model(hash):
     session = Session()
     model = session.query(Model).filter(Model.model_hash.like(hash + "%")).first()
     if model:
-        return send_file(os.path.join(model_dir, model.model_hash + '.zip'), as_attachment=True, attachment_filename=model.model_hash + '.zip')
+        return send_file(os.path.join(model_dir, model.model_hash + '.zip'), as_attachment=True,
+                         attachment_filename=model.model_hash + '.zip')
     return jsonify([])
+
 
 @app.route('/admin/model/upload', methods=['POST'])
 @flask_login.login_required
@@ -270,6 +300,7 @@ def upload_model():
         return redirect(url_for('admin'))
     return return_error('file type not allowed')
 
+
 @app.route('/admin/model/delete/<h>')
 def delete_model(h):
     session = Session()
@@ -278,22 +309,16 @@ def delete_model(h):
     session.commit()
     return redirect(url_for('admin'))
 
+
 @app.route('/model/list')
 def list_model():
     session = Session()
     models = session.query(Model).all()
-    return jsonify([{'model_hash' : m.model_hash, 'model_type': m.model_type, 'model_size': m.model_size, 'total_reward': m.total_reward, 'evaluated': m.evaluated, 'model_link': url_for('get_model', hash=m.model_hash)} for m in models])
+    return jsonify([{'model_hash': m.model_hash, 'model_type': m.model_type, 'model_size': m.model_size,
+                     'total_reward': m.total_reward, 'evaluated': m.evaluated,
+                     'model_link': url_for('get_model', hash=m.model_hash)} for m in models])
 
-
-@app.route('/admin')
-@flask_login.login_required
-def admin():
-    # 'Logged in as: ' + flask_login.current_user.id
-    session = Session()
-    models = session.query(Model).all()
-    return render_template('admin.html', models=models)
-
-
+# Replay management
 @app.route('/replays/list')
 def list_replays():
     session = Session()
@@ -319,19 +344,20 @@ def download_zipped_replays(n):
     file_like_object = io.BytesIO()
     with zipfile.ZipFile(file_like_object, "w", zipfile.ZIP_DEFLATED) as zipfile_ob:
         for f in filenames:
-            print (f)
+            print(f)
             zipfile_ob.write(os.path.join(replay_dir, f), f)
     file_like_object.seek(0)
     return send_file(file_like_object, attachment_filename='dl.zip')
 
-@app.route('/replays/download', methods=['POST']) # downloads based on filenames from /replays/list
+
+@app.route('/replays/download', methods=['POST'])  # downloads based on filenames from /replays/list
 def download_zipped_replays_fn():
-    print (request.form['files'])
+    print(request.form['files'])
     filenames = list(set(os.listdir(replay_dir)) & set(json.loads(request.form['files'])))
     file_like_object = io.BytesIO()
     with zipfile.ZipFile(file_like_object, "w", zipfile.ZIP_DEFLATED) as zipfile_ob:
         for f in filenames:
-            print (f)
+            print(f)
             zipfile_ob.write(os.path.join(replay_dir, f), f)
     file_like_object.seek(0)
     return send_file(file_like_object, attachment_filename='dl.zip')
@@ -344,6 +370,7 @@ def list_replays_by_hash(hash):
                session.query(Replay).filter(Replay.model_hash.like("%{}%".format(hash))).all() if
                fnmatch.fnmatch('*{}*'.format(f.uuid))]
     return jsonify(replays)
+
 
 @app.route('/replays/<name>')
 def get_replay(name):
@@ -373,7 +400,8 @@ def replay_info(uuid):
     }
     return jsonify(info)
 
-# Stats stuff
+
+# Stats
 
 @app.route('/ping')
 def ping():
@@ -391,7 +419,7 @@ def upload_stats(time, model):
                                extract('day', Replay.upload_date).label('d'),
                                extract('hour', Replay.upload_date).label('h'), func.count(Replay.upload_date)).filter(
             Replay.upload_date > datetime.datetime.utcnow() - datetime.timedelta(hours=24))
-    else: # day
+    else:  # day
         result = session.query(extract('year', Replay.upload_date).label('y'),
                                extract('month', Replay.upload_date).label('m'),
                                extract('day', Replay.upload_date).label('d'),
@@ -422,6 +450,17 @@ def upload_stats(time, model):
         } for r in result[::-1]]
         result = sorted(result, key=lambda x: x['year'] * 365 + x['month'] * 30 + x['day'])
     return jsonify(result)
+
+
+# Celery workers
+
+
+@celery.task(bind=True)
+def calculate_reward(self, fn):
+    # Do some long task
+    ...
+
+
 
 
 if __name__ == '__main__':
