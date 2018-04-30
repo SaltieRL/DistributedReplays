@@ -12,6 +12,7 @@ import flask
 import flask_login
 from celery import Celery
 from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for
+from pyrope import Replay as pyrope_replay
 from sqlalchemy import extract
 from sqlalchemy import func
 from sqlalchemy.exc import InvalidRequestError
@@ -69,6 +70,8 @@ def allowed_file(filename):
 def return_error(msg):
     return jsonify({'error': msg})
 
+def get_replay_path(uid, add_extension=True):
+    return os.path.join(replay_dir, uid + ('.gz' if add_extension else ''))
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
@@ -318,6 +321,7 @@ def list_model():
                      'total_reward': m.total_reward, 'evaluated': m.evaluated,
                      'model_link': url_for('get_model', hash=m.model_hash)} for m in models])
 
+
 # Replay management
 @app.route('/replays/list')
 def list_replays():
@@ -345,7 +349,7 @@ def download_zipped_replays(n):
     with zipfile.ZipFile(file_like_object, "w", zipfile.ZIP_DEFLATED) as zipfile_ob:
         for f in filenames:
             print(f)
-            zipfile_ob.write(os.path.join(replay_dir, f), f)
+            zipfile_ob.write(get_replay_path(f, add_extension=False), f)
     file_like_object.seek(0)
     return send_file(file_like_object, attachment_filename='dl.zip')
 
@@ -358,7 +362,7 @@ def download_zipped_replays_fn():
     with zipfile.ZipFile(file_like_object, "w", zipfile.ZIP_DEFLATED) as zipfile_ob:
         for f in filenames:
             print(f)
-            zipfile_ob.write(os.path.join(replay_dir, f), f)
+            zipfile_ob.write(get_replay_path(f, add_extension=False), f)
     file_like_object.seek(0)
     return send_file(file_like_object, attachment_filename='dl.zip')
 
@@ -452,15 +456,32 @@ def upload_stats(time, model):
     return jsonify(result)
 
 
-# Celery workers
+# Replay stuff
 
+@app.route('/replay/info', methods=['POST'])
+def rl_replay_info():
+    if 'file' not in request.files:
+        return return_error('No file part')
+    file = request.files['file']
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if file.filename == '':
+        return return_error('No selected file')
+    r = pyrope_replay(file.stream)
+    return '{]'
+
+
+@app.route('/replay/reward/<uid>')
+def get_reward_from_replay(uid):
+    calculate_reward.delay(get_replay_path(uid))
+    return redirect('/')
+
+# Celery workers
 
 @celery.task(bind=True)
 def calculate_reward(self, fn):
     # Do some long task
     ...
-
-
 
 
 if __name__ == '__main__':

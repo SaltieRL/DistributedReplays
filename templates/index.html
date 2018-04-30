@@ -18,7 +18,8 @@
                 <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://discord.gg/aCHWD3E"><i class="fab fa-discord"></i> <span class="sr-only">Discord</span></a>
+                <a class="nav-link" href="https://discord.gg/aCHWD3E"><i class="fab fa-discord"></i> <span
+                        class="sr-only">Discord</span></a>
             </li>
         </ul>
     </div>
@@ -60,21 +61,21 @@
             <tbody>
 
             {% for block in model_stats %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ block[0] }}</td>
-                <td>{{ block[1] }}</td>
-                <td>{{ block[2] }}</td>
-                <td>{{ block[3] }}</td>
-            </tr>
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ block[0] }}</td>
+                    <td>{{ block[1] }}</td>
+                    <td>{{ block[2] }}</td>
+                    <td>{{ block[3] }}</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
-        {#    <h2>Upload new File</h2>#}
-        {#    <form method=post enctype=multipart/form-data>#}
-        {#        <p><input type=file name=file>#}
-        {#            <input type=submit value=Upload>#}
-        {#    </form>#}
+        <h2>Analyze Rocket League replay</h2>
+        <form method='post' enctype='multipart/form-data' action='{{ url_for('rl_replay_info') }}'>
+            <input type=file name=file>
+            <input type=submit value=Upload>
+        </form>
     </div>
 </main>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
