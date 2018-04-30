@@ -20,6 +20,7 @@ from werkzeug.utils import secure_filename
 
 import config
 import queries
+import rewards
 from objects import User, Replay, Model
 from startup import startup
 
@@ -70,8 +71,10 @@ def allowed_file(filename):
 def return_error(msg):
     return jsonify({'error': msg})
 
+
 def get_replay_path(uid, add_extension=True):
     return os.path.join(replay_dir, uid + ('.gz' if add_extension else ''))
+
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
@@ -473,15 +476,20 @@ def rl_replay_info():
 
 @app.route('/replay/reward/<uid>')
 def get_reward_from_replay(uid):
-    calculate_reward.delay(get_replay_path(uid))
+    calculate_reward.delay(uid)
     return redirect('/')
+
 
 # Celery workers
 
 @celery.task(bind=True)
-def calculate_reward(self, fn):
-    # Do some long task
-    ...
+def calculate_reward(self, uid):
+    calc = rewards.RewardCalculator()
+    reward = calc.read_file(get_replay_path(uid))
+    session = Session()
+    r = session.query(Replay).filter(Replay.uuid == uid).first()
+    # TODO: Update replay reward in db
+    print(reward)
 
 
 if __name__ == '__main__':
