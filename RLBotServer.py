@@ -12,7 +12,6 @@ import flask
 import flask_login
 from celery import Celery
 from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for
-from pyrope import Replay as pyrope_replay
 from sqlalchemy import extract
 from sqlalchemy import func
 from sqlalchemy.exc import InvalidRequestError
@@ -23,6 +22,7 @@ import queries
 import rewards
 from objects import User, Replay, Model
 from startup import startup
+from replayanalysis.decompile_replays import decompile_replay
 
 # APP SETUP
 
@@ -460,24 +460,31 @@ def upload_stats(time, model):
 
 
 # Replay stuff
-
-@app.route('/replay/info', methods=['POST'])
-def rl_replay_info():
-    if 'file' not in request.files:
-        return return_error('No file part')
-    file = request.files['file']
-    # if user does not select file, browser also
-    # submit a empty part without filename
-    if file.filename == '':
-        return return_error('No selected file')
-    r = pyrope_replay(file.stream)
-    return '{]'
-
+#
+# @app.route('/replay/info', methods=['POST'])
+# def rl_replay_info():
+#     if 'file' not in request.files:
+#         return return_error('No file part')
+#     file = request.files['file']
+#     # if user does not select file, browser also
+#     # submit a empty part without filename
+#     if file.filename == '':
+#         return return_error('No selected file')
+#     r = pyrope_replay(file.stream)
+#     return '{]'
+#
 
 @app.route('/replay/reward/<uid>')
 def get_reward_from_replay(uid):
     calculate_reward.delay(uid)
     return redirect('/')
+
+
+@app.route('/replay/parse')
+def parse_replay():
+    f = request.files['file']
+    f.save('test.replay')
+    parse_replay_task('test.replay')
 
 
 # Celery workers
@@ -490,6 +497,11 @@ def calculate_reward(self, uid):
     r = session.query(Replay).filter(Replay.uuid == uid).first()
     # TODO: Update replay reward in db
     print(reward)
+
+
+@celery.task(bind=True)
+def parse_replay_task(fn):
+    decompile_replay(fn)
 
 
 if __name__ == '__main__':
