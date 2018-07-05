@@ -15,6 +15,7 @@ from flask import Flask, request, jsonify, send_file, render_template, redirect,
 from sqlalchemy import extract
 from sqlalchemy import func
 from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm import Session
 from werkzeug.utils import secure_filename
 
 import config
