@@ -498,7 +498,7 @@ def download_parsed(fn):
 @app.route('/parse/replays')
 def parse_replays():
     for f in os.listdir('rlreplays'):
-        parse_replay_task.delay(f)
+        parse_replay_task.delay(os.path.abspath(f))
     return redirect('/')
 
 
@@ -516,7 +516,7 @@ def calculate_reward(self, uid):
 
 @celery.task(bind=True)
 def parse_replay_task(self, fn):
-    g = decompile_replay(os.path.abspath(fn), 'output.json')
+    g = decompile_replay(fn, 'output.json')
     with open(os.path.join('parsed', fn + '.pkl'), 'wb') as f:
         pickle.dump(g, f)
 
