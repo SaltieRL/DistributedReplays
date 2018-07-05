@@ -11,7 +11,6 @@ import zipfile
 
 import flask
 import flask_login
-from celery import Celery
 from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for, send_from_directory
 from sqlalchemy import extract
 from sqlalchemy import func
@@ -26,6 +25,7 @@ from startup import startup
 from replayanalysis.decompile_replays import decompile_replay
 
 # APP SETUP
+from tasks import make_celery
 
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
@@ -35,17 +35,12 @@ UPLOAD_RATE_LIMIT_MINUTES = 4.5
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
+app.config.update(
+    CELERY_BROKER_URL='amqp://guest@localhost',
+    CELERY_RESULT_BACKEND='amqp://guest@localhost'
+)
+celery = make_celery(app)
 app.secret_key = config.SECRET_KEY
-
-# WORKER SETUP
-
-broker_url = 'amqp://guest@localhost'  # Broker URL for RabbitMQ task queue
-
-celery = Celery(app.name, broker=broker_url)
-celery.config_from_object('celeryconfig')  # Your celery configurations in a celeryconfig.py
-
-engine, Session = startup()
-
 # Login stuff
 login_manager = flask_login.LoginManager()
 
@@ -504,6 +499,7 @@ def parse_replays():
     for f in os.listdir('rlreplays'):
         parse_replay_task.delay(f)
     return redirect('/')
+
 
 # Celery workers
 
