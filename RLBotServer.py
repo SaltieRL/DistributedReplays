@@ -4,6 +4,7 @@ import hashlib
 import io
 import json
 import os
+import pickle
 import random
 import uuid
 import zipfile
@@ -498,6 +499,12 @@ def download_parsed(fn):
     return send_from_directory('parsed', fn, as_attachment=True)
 
 
+@app.route('/parse/replays')
+def parse_replays():
+    for f in os.listdir('rlreplays'):
+        parse_replay_task.delay(f)
+
+
 # Celery workers
 
 @celery.task(bind=True)
@@ -511,8 +518,10 @@ def calculate_reward(self, uid):
 
 
 @celery.task(bind=True)
-def parse_replay_task(fn):
-    decompile_replay(fn)
+def parse_replay_task(self, fn):
+    g = decompile_replay(fn, 'output.json')
+    with open(fn + '.pkl', 'wb') as f:
+        pickle.dump(g, f)
 
 
 if __name__ == '__main__':
