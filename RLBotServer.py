@@ -11,7 +11,7 @@ import zipfile
 import flask
 import flask_login
 from celery import Celery
-from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for
+from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for, send_from_directory
 from sqlalchemy import extract
 from sqlalchemy import func
 from sqlalchemy.exc import InvalidRequestError
@@ -277,8 +277,8 @@ def get_model(hash):
     session = Session()
     model = session.query(Model).filter(Model.model_hash.like(hash + "%")).first()
     if model:
-        return send_file(os.path.join(model_dir, model.model_hash + '.zip'), as_attachment=True,
-                         attachment_filename=model.model_hash + '.zip')
+        return send_from_directory(model_dir, model.model_hash + '.zip', as_attachment=True,
+                                   attachment_filename=model.model_hash + '.zip')
     return jsonify([])
 
 
@@ -384,7 +384,7 @@ def get_replay(name):
     if request.method == 'GET':
         fs = os.listdir('replays/')
         filename = [f for f in fs if name in f][0]
-        return send_file('replays/' + filename, as_attachment=True, attachment_filename=filename.split('_')[-1])
+        return send_from_directory('replays', filename, as_attachment=True, attachment_filename=filename.split('_')[-1])
 
 
 @app.route('/replays/info/<uuid>')
@@ -485,6 +485,17 @@ def parse_replay():
     f = request.files['file']
     f.save('test.replay')
     parse_replay_task('test.replay')
+
+
+@app.route('/parsed/list')
+def list_parsed_replays():
+    fs = os.listdir('parsed/')
+    return jsonify(fs)
+
+
+@app.route('/parsed/<path:fn>')
+def download_parsed(fn):
+    return send_from_directory('parsed', fn, as_attachment=True)
 
 
 # Celery workers
