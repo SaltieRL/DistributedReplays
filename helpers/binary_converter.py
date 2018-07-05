@@ -5,8 +5,6 @@ import struct
 import numpy as np
 import time
 import logging
-from bot_code.conversions.input import input_formatter
-
 import gzip
 
 EMPTY_FILE = 'empty'
@@ -26,7 +24,7 @@ def get_state_dim(file_version):
     if file_version == 4:
         return 206
     elif file_version is get_latest_file_version():
-        return input_formatter.get_state_dim()
+        return 219
 
 def write_array_to_file(game_file, array):
     """
