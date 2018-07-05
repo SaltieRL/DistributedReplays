@@ -485,7 +485,7 @@ def get_reward_from_replay(uid):
 def parse_replay():
     f = request.files['file']
     f.save('test.replay')
-    parse_replay_task('test.replay')
+    parse_replay_task.delay('test.replay')
 
 
 @app.route('/parsed/list')

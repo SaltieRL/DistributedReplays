@@ -72,7 +72,7 @@
             </tbody>
         </table>
         <h2>Analyze Rocket League replay</h2>
-        <form method='post' enctype='multipart/form-data' action='{{ url_for('rl_replay_info') }}'>
+        <form method='post' enctype='multipart/form-data' action='{{ url_for('parse_replay') }}'>
             <input type=file name=file>
             <input type=submit value=Upload>
         </form>
