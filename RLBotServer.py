@@ -15,7 +15,6 @@ from flask import Flask, request, jsonify, send_file, render_template, redirect,
 from sqlalchemy import extract
 from sqlalchemy import func
 from sqlalchemy.exc import InvalidRequestError
-from sqlalchemy.orm import Session
 from werkzeug.utils import secure_filename
 
 import config
@@ -28,6 +27,7 @@ from replayanalysis.decompile_replays import decompile_replay
 # APP SETUP
 from tasks import make_celery
 
+engine, Session = startup()
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
