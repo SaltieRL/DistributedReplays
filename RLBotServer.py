@@ -19,7 +19,7 @@ from werkzeug.utils import secure_filename
 
 import config
 import queries
-import rewards
+# import rewards
 from objects import User, Replay, Model
 from startup import startup
 from replayanalysis.decompile_replays import decompile_replay
