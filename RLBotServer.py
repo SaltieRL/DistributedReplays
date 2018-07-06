@@ -498,8 +498,9 @@ def download_parsed(fn):
 @app.route('/parse/replays')
 def parse_replays():
     for f in os.listdir('rlreplays'):
-        result = parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
-        break
+        if f.endswith('.replay'):
+            result = parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
+            break
     return redirect('/')
 
 
