@@ -499,7 +499,7 @@ def download_parsed(fn):
 def parse_replays():
     for f in os.listdir('rlreplays'):
         result = parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
-        result.wait()
+        break
     return redirect('/')
 
 
