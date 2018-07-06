@@ -516,9 +516,11 @@ def calculate_reward(self, uid):
 
 @celery.task(bind=True)
 def parse_replay_task(self, fn):
-    g = decompile_replay(fn, 'output.json')
+    output = fn + '.json'
+    g = decompile_replay(fn, output)
     with open(os.path.join('parsed', fn + '.pkl'), 'wb') as f:
         pickle.dump(g, f)
+    os.system('rm ' + output)
 
 
 if __name__ == '__main__':
