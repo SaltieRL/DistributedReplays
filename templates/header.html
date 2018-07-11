@@ -16,5 +16,36 @@
             crossorigin="anonymous"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        /* Move down content because we have a fixed navbar that is 3.5rem tall */
+        body {
+            padding-top: 6.5rem;
+        }
+    </style>
+
 </head>
 <body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">Saltie</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('view_random') }}">Random replay</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="https://discord.gg/aCHWD3E"><i class="fab fa-discord"></i> <span
+                        class="sr-only">Discord</span></a>
+            </li>
+        </ul>
+    </div>
+</nav>

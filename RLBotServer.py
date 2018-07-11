@@ -491,7 +491,7 @@ def parse_replay():
     filename = os.path.join('rlreplays', secure_filename(file.filename))
     file.save(filename)
     parse_replay_task.delay(os.path.abspath(filename))
-    return redirect('/')
+    return redirect(url_for('view_replay', id_=file.filename.split('.')[0]))
 
 
 @app.route('/parsed/list')
@@ -515,8 +515,22 @@ def parse_replays():
 
 @app.route('/parsed/view/<id_>')
 def view_replay(id_):
-    g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'))  # type: Game
+    pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
+    replay_path = os.path.join('rlreplays', id_ + '.replay')
+    if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
+        return render_template('replay.html', replay=None)
+    try:
+        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'))  # type: Game
+    except Exception as e:
+        return return_error('Error opening game: ' + str(e))
     return render_template('replay.html', replay=g)
+
+
+@app.route('/parsed/view/random')
+def view_random():
+    filelist = os.listdir('parsed')
+    return redirect(url_for('view_replay', id_=random.choice(filelist).split('.')[0]))
+
 # Celery workers
 
 @celery.task(bind=True)

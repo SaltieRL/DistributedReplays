@@ -2,62 +2,88 @@
 {% set frame_count = replay.frames|length %}
 <main role="main">
     <div class="container">
-        <h2>{{ replay.name }}</h2>
-        <p>Time: {{ replay.datetime }}</p>
-        <p>Frames: {{ frame_count }}</p>
-        <hr/>
-        <div>
-            <b>Goals:</b>
-            <table class="table">
-                {% for goal in replay.goals %}
-                    <tr style="{{ "color: white;" if not goal.player_team else "" }}background: {{ "#e66f33" if goal.player_team else "#0000aa" }}">
-                        <td>Player: {{ goal.player_name }}</td>
-                        <td>Frame: {{ goal.frame_number }}</td>
-                    </tr>
+        {% if replay == None %}
+            Loading... please refresh in a few minutes.
+            {# Include refresh script here #}
+        {% elif replay != None %}
+{#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
+            <h2>{{ replay.name }}</h2>
+            <p>Map: {{ replay.map['name'] }}</p>
+            <p>Version: {{ replay.replay_version }}</p>
+            <p>Time: {{ replay.datetime }}</p>
+            <p>Frames: {{ frame_count }}</p>
+            <p>Score: {{ replay.teams[0].score }}:{{ replay.teams[1].score }}</p>
+            <hr/>
+            <div>
+                <b>Goals:</b>
+                <table class="table">
+                    {% for goal in replay.goals %}
+                        <tr style="{{ "color: white;" if not goal.player_team else "" }}background: {{ "#e66f33" if goal.player_team else "#0000aa" }}">
+                            <td>Player: {{ goal.player_name }}</td>
+                            <td>Frame: {{ goal.frame_number }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <hr/>
+            <div>
+                <b>Teams:</b>
+                {% for team in replay.teams %}
+
+                    <ul style="{{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
+
+                        <li>Score: {{ team.score }}</li>
+                        <li>Players:
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Score</th>
+                                    <th>Goals</th>
+                                    <th>Assists</th>
+                                    <th>Saves</th>
+                                    <th>Shots</th>
+                                </tr>
+                                </thead>
+                                {% for p in team.players %}
+
+                                    <tr>
+                                        <td>{{ p.name }}
+                                            {% if p.online_id | string | length == 17 %}
+                                                |
+                                                <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
+                                            {% endif %}
+                                            {% if p.is_bot %}
+                                                | <i>Bot</i>
+                                            {% endif %}</td>
+                                        <td>{{ p.score }}</td>
+                                        <td>{{ p.goals }}</td>
+                                        <td>{{ p.assists }}</td>
+                                        <td>{{ p.saves }}</td>
+                                        <td>{{ p.shots }}</td>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+                            </table>
+                        </li>
+                    </ul>
                 {% endfor %}
-            </table>
-        </div>
-        <hr/>
-        <div>
-            <b>Teams:</b>
-            {% for team in replay.teams %}
+            </div>
+            <hr/>
+            <div>
+                <b>Player List:</b>
+                <ol>
+                    {% for p in replay.players %}
+                        <li><b>{{ p.name }}</b>
+                            {% if p.online_id | string | length == 17 %}
+                                | <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
+                            {% endif %}</li>
 
-                <ul style="{{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
-
-                    <li>Score: {{ team.score }}</li>
-                    <li>Players:
-
-                        <ol>
-                            {% for p in team.players %}
-                                <li><b>{{ p.name }}</b>
-                                    <ul>
-                                        <li>Stats: {{ p.score }} | {{ p.goals }} | {{ p.assists }} | {{ p.saves }}
-                                            | {{ p.shots }}</li>
-{#                                        <li>Camera settings:#}
-{#                                            <ul>#}
-{#                                                {% for k in p.camera_settings.keys() %}#}
-{#                                                    <li>{{ k }}: {{ p.camera_settings[k] }}</li>#}
-{#                                                {% endfor %}#}
-{#                                            </ul>#}
-{#                                        </li>#}
-                                    </ul>
-                                </li>
-                            {% endfor %}
-                        </ol>
-                    </li>
-                </ul>
-            {% endfor %}
-        </div>
-        <hr/>
-        <div>
-            <b>Player List:</b>
-            <ol>
-                {% for p in replay.players %}
-                    <li><b>{{ p.name }}</b></li>
-
-                {% endfor %}
-            </ol>
-        </div>
+                    {% endfor %}
+                </ol>
+            </div>
+        {% endif %}
     </div>
 </main>
 

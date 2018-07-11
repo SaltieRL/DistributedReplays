@@ -1,32 +1,14 @@
 {% include 'header.html' %}
-<style>
-    /* Move down content because we have a fixed navbar that is 3.5rem tall */
-    body {
-        padding-top: 6.5rem;
-    }
-</style>
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#">Saltie</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
-            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
 
-    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="https://discord.gg/aCHWD3E"><i class="fab fa-discord"></i> <span
-                        class="sr-only">Discord</span></a>
-            </li>
-        </ul>
-    </div>
-</nav>
 <main role="main">
     <div class="container">
         <h1>Saltie Reinforcement Learning Bot</h1>
+        <h3>Analyze Rocket League replay</h3>
+        <form method='post' enctype='multipart/form-data' action='{{ url_for('parse_replay') }}'>
+            <input type=file name=file>
+            <input type=submit value=Upload>
+        </form>
+        <hr />
         <h2>Statistics</h2>
         <table class="table">
             <thead>
@@ -71,11 +53,6 @@
             {% endfor %}
             </tbody>
         </table>
-        <h2>Analyze Rocket League replay</h2>
-        <form method='post' enctype='multipart/form-data' action='{{ url_for('parse_replay') }}'>
-            <input type=file name=file>
-            <input type=submit value=Upload>
-        </form>
     </div>
 </main>
 {% include "footer.html" %}
