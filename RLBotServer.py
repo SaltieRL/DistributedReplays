@@ -20,6 +20,7 @@ from werkzeug.utils import secure_filename
 import config
 import queries
 # import rewards
+from middleware import StreamConsumingMiddleware
 from objects import User, Replay, Model
 from startup import startup
 from replayanalysis.decompile_replays import decompile_replay
@@ -40,6 +41,7 @@ app.config.update(
     CELERY_BROKER_URL='amqp://guest@localhost',
     CELERY_RESULT_BACKEND='amqp://guest@localhost'
 )
+app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
 celery = make_celery(app)
 app.secret_key = config.SECRET_KEY
 # Login stuff
