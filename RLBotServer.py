@@ -520,7 +520,7 @@ def calculate_reward(self, uid):
 def parse_replay_task(self, fn):
     output = fn + '.json'
     g = decompile_replay(fn, output)
-    with open(os.path.join('parsed', fn + '.pkl'), 'wb') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl'), 'wb') as f:
         pickle.dump(g, f)
     os.system('rm ' + output)
 
