@@ -6,6 +6,7 @@ import json
 import os
 import pickle
 import random
+import sys
 import uuid
 import zipfile
 
@@ -20,14 +21,14 @@ from werkzeug.utils import secure_filename
 import config
 import queries
 # import rewards
-from middleware import StreamConsumingMiddleware
+from replayanalysis.game.game import Game
 from objects import User, Replay, Model
 from startup import startup
 from replayanalysis.decompile_replays import decompile_replay
 
 # APP SETUP
 from tasks import make_celery
-
+sys.path.append('replayanalysis')
 engine, Session = startup()
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
@@ -37,6 +38,7 @@ UPLOAD_RATE_LIMIT_MINUTES = 4.5
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config.update(
     CELERY_BROKER_URL='amqp://guest@localhost',
     CELERY_RESULT_BACKEND='amqp://guest@localhost'
@@ -511,7 +513,10 @@ def parse_replays():
             break
     return redirect('/')
 
-
+@app.route('/parsed/view/<id_>')
+def view_replay(id_):
+    g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'))  # type: Game
+    return render_template('replay.html', replay=g)
 # Celery workers
 
 @celery.task(bind=True)
