@@ -479,7 +479,7 @@ def get_reward_from_replay(uid):
     return redirect('/')
 
 
-@app.route('/replay/parse')
+@app.route('/replay/parse', methods=['POST'])
 def parse_replay():
     if 'file' not in request.files:
         return return_error('No file part')
