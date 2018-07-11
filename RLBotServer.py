@@ -41,7 +41,7 @@ app.config.update(
     CELERY_BROKER_URL='amqp://guest@localhost',
     CELERY_RESULT_BACKEND='amqp://guest@localhost'
 )
-app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
+# app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
 celery = make_celery(app)
 app.secret_key = config.SECRET_KEY
 # Login stuff
