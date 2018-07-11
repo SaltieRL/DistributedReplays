@@ -8,7 +8,7 @@ class StreamConsumingMiddleware(object):
 
     def __call__(self, environ, start_response):
         stream = LimitedStream(environ['wsgi.input'],
-                               self.app.config['MAX_CONTENT_LENGTH'])
+                               512 * 1024 * 1024)
         environ['wsgi.input'] = stream
         app_iter = self.app(environ, start_response)
         try:
