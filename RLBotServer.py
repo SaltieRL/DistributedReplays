@@ -483,9 +483,13 @@ def get_reward_from_replay(uid):
 def parse_replay():
     if 'file' not in request.files:
         return return_error('No file part')
-    f = request.files['file']
-    f.save('test.replay')
-    parse_replay_task.delay(os.path.abspath('test.replay'))
+    file = request.files['file']
+    if not file.filename.endswith('replay'):
+        return return_error('Only .replay files are allowed.')
+    filename = os.path.join('rlreplays', secure_filename(file.filename))
+    file.save(filename)
+    parse_replay_task.delay(os.path.abspath(filename))
+    return redirect('/')
 
 
 @app.route('/parsed/list')
