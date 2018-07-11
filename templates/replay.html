@@ -1,42 +1,45 @@
 {% include 'header.html' %}
-
+{% set frame_count = replay.frames|length %}
 <main role="main">
     <div class="container">
         <h2>{{ replay.name }}</h2>
         <p>Time: {{ replay.datetime }}</p>
+        <p>Frames: {{ frame_count }}</p>
         <hr/>
         <div>
             <b>Goals:</b>
-            <ol>
+            <table class="table">
                 {% for goal in replay.goals %}
-                    <li>Player: {{ goal.player_name }}</li>
-                    <li>Frame: {{ goal.frame_number }}</li>
+                    <tr style="{{ "color: white;" if not goal.player_team else "" }}background: {{ "#e66f33" if goal.player_team else "#0000aa" }}">
+                        <td>Player: {{ goal.player_name }}</td>
+                        <td>Frame: {{ goal.frame_number }}</td>
+                    </tr>
                 {% endfor %}
-            </ol>
+            </table>
         </div>
         <hr/>
         <div>
             <b>Teams:</b>
             {% for team in replay.teams %}
 
-                <ul>
-                    <li>Orange: {{ team.is_orange }}</li>
+                <ul style="{{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
+
                     <li>Score: {{ team.score }}</li>
                     <li>Players:
 
                         <ol>
                             {% for p in team.players %}
-                                <li>{{ p.name }}
+                                <li><b>{{ p.name }}</b>
                                     <ul>
                                         <li>Stats: {{ p.score }} | {{ p.goals }} | {{ p.assists }} | {{ p.saves }}
                                             | {{ p.shots }}</li>
-                                        <li>Camera settings:
-                                            <ul>
-                                                {% for k in p.camera_settings.keys() %}
-                                                    <li>{{ k }}: {{ p.camera_settings[k] }}</li>
-                                                {% endfor %}
-                                            </ul>
-                                        </li>
+{#                                        <li>Camera settings:#}
+{#                                            <ul>#}
+{#                                                {% for k in p.camera_settings.keys() %}#}
+{#                                                    <li>{{ k }}: {{ p.camera_settings[k] }}</li>#}
+{#                                                {% endfor %}#}
+{#                                            </ul>#}
+{#                                        </li>#}
                                     </ul>
                                 </li>
                             {% endfor %}
