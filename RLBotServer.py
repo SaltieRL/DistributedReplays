@@ -4,7 +4,6 @@ import hashlib
 import io
 import json
 import os
-import pickle
 import random
 import sys
 import uuid
@@ -19,24 +18,19 @@ from sqlalchemy.exc import InvalidRequestError
 from werkzeug.utils import secure_filename
 
 import config
-import constants
 import queries
 # import rewards
-from middleware import DBTask
-from replayanalysis.game.game import Game as Game_pickle
-from objects import User, Replay, Model, Game
+from functions import allowed_file, return_error, get_replay_path
+from objects import User, Replay, Model
 from startup import startup
-from replayanalysis.decompile_replays import decompile_replay
 
 # APP SETUP
-from tasks import make_celery
 
 sys.path.append('replayanalysis')
 engine, Session = startup()
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
-ALLOWED_EXTENSIONS = {'bin', 'gz'}
 UPLOAD_RATE_LIMIT_MINUTES = 4.5
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -46,8 +40,17 @@ app.config.update(
     CELERY_BROKER_URL='amqp://guest@localhost',
     CELERY_RESULT_BACKEND='amqp://guest@localhost'
 )
+
+last_upload = {}
+
+# Import modules AFTER app is initialized
+
+import replays
+import celery_tasks
+
+print(replays, celery_tasks)
 # app.wsgi_app = StreamConsumingMiddleware(app.wsgi_app)
-celery = make_celery(app)
+
 app.secret_key = config.SECRET_KEY
 # Login stuff
 login_manager = flask_login.LoginManager()
@@ -55,29 +58,6 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
 users = config.users
-
-# Replay stuff
-replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
-if not os.path.isdir(replay_dir):
-    os.mkdir(replay_dir)
-model_dir = os.path.join(os.path.dirname(__file__), 'models')
-if not os.path.isdir(model_dir):
-    os.mkdir(model_dir)
-last_upload = {}
-
-
-# Functions
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def return_error(msg):
-    return jsonify({'error': msg})
-
-
-def get_replay_path(uid, add_extension=True):
-    return os.path.join(replay_dir, uid + ('.gz' if add_extension else ''))
 
 
 # Admin stuff
@@ -477,102 +457,6 @@ def upload_stats(time, model):
 #     r = pyrope_replay(file.stream)
 #     return '{]'
 #
-
-@app.route('/replay/reward/<uid>')
-def get_reward_from_replay(uid):
-    calculate_reward.delay(uid)
-    return redirect('/')
-
-
-@app.route('/replay/parse', methods=['POST'])
-def parse_replay():
-    if 'file' not in request.files:
-        return return_error('No file part')
-    file = request.files['file']
-    if not file.filename.endswith('replay'):
-        return return_error('Only .replay files are allowed.')
-    filename = os.path.join('rlreplays', secure_filename(file.filename))
-    file.save(filename)
-    parse_replay_task.delay(os.path.abspath(filename))
-    return redirect(url_for('view_replay', id_=file.filename.split('.')[0]))
-
-
-@app.route('/parsed/list')
-def list_parsed_replays():
-    fs = os.listdir('parsed/')
-    return jsonify(fs)
-
-
-@app.route('/parsed/<path:fn>')
-def download_parsed(fn):
-    return send_from_directory('parsed', fn, as_attachment=True)
-
-
-@app.route('/parse/replays')
-def parse_replays():
-    for f in os.listdir('rlreplays'):
-        if f.endswith('.replay'):
-            result = parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
-    return redirect('/')
-
-
-@app.route('/parsed/view/<id_>')
-def view_replay(id_):
-    pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
-    replay_path = os.path.join('rlreplays', id_ + '.replay')
-    if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-        return render_template('replay.html', replay=None)
-    try:
-        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'))  # type: Game_pickle
-    except Exception as e:
-        return return_error('Error opening game: ' + str(e))
-    return render_template('replay.html', replay=g, cars=constants.cars, id=id_)
-
-
-@app.route('/parsed/view/random')
-def view_random():
-    filelist = os.listdir('parsed')
-    return redirect(url_for('view_replay', id_=random.choice(filelist).split('.')[0]))
-
-
-@app.route('/parsed/view/player/<id_>')
-def view_player(id_):
-    session = Session()
-    games = session.query(Game).filter(Game.players.any(str(id_))).all()
-    return render_template('player.html', games=games)
-
-
-@app.route('/download/replay/<id_>')
-def download_replay(id_):
-    return send_from_directory('rlreplays', id_)
-
-# Celery workers
-
-@celery.task(bind=True)
-def calculate_reward(self, uid):
-    calc = rewards.RewardCalculator()
-    reward = calc.read_file(get_replay_path(uid))
-    session = Session()
-    r = session.query(Replay).filter(Replay.uuid == uid).first()
-    # TODO: Update replay reward in db
-    print(reward)
-
-
-@celery.task(base=DBTask, bind=True)
-def parse_replay_task(self, fn):
-    output = fn + '.json'
-    pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
-    if os.path.isfile(pickled):
-        return
-    g = decompile_replay(fn, output)  # type: Game
-    with open(pickled, 'wb') as f:
-        pickle.dump(g, f)
-    os.system('rm ' + output)
-
-    sess = self.session()
-    game = Game(hash=str(os.path.basename(fn)).split('.')[0], players=[str(p.online_id) for p in g.players])
-    sess.add(game)
-    sess.commit()
 
 
 if __name__ == '__main__':
