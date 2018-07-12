@@ -19,3 +19,18 @@ Each replay has an IP address attached to it, so blame can be given.
 ## Replays
 
 Replays will be saved in `/replays` for later consumption. The server will eventually serve up the replays to training clients.
+
+## Structure
+
+The structure of the server is split into different files:
+
+- `celery_tasks.py` - this contains the tasks that run in the background (i.e. the replay parsing / pickling) using Celery workers
+- `celeryconfig.py` - configuration for the Celery worker
+- `constants.py` - things like dict of id -> car body name
+- `functions.py` - general helper functions for the server
+- `middleware.py` - classes that are used in the actual inner framework code of the server
+- `objects.py` - SQL ORM objects such as the Replay and Model objects
+- `replays.py` - contains all code pertaining to replay parsing (besides the Celery task)
+- `saltie.py` - contains all code pertaining to the Saltie data collection part
+- `startup.py` - is run to start the connection to the SQL server
+- `stats.py` - just some analysis on the upload patterns of the users
