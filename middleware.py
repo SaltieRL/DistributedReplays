@@ -1,4 +1,7 @@
+from celery import Task
 from werkzeug.wsgi import LimitedStream
+
+from startup import startup
 
 
 class StreamConsumingMiddleware(object):
@@ -18,3 +21,18 @@ class StreamConsumingMiddleware(object):
         finally:
             if hasattr(app_iter, 'close'):
                 app_iter.close()
+
+
+class DBTask(Task):
+    _session = None
+
+    def after_return(self, *args, **kwargs):
+        if self._session is not None:
+            self._session.remove()
+
+    @property
+    def session(self):
+        if self._session is None:
+            _, self._session = startup()
+
+        return self._session

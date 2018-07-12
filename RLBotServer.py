@@ -19,8 +19,10 @@ from sqlalchemy.exc import InvalidRequestError
 from werkzeug.utils import secure_filename
 
 import config
+import objects
 import queries
 # import rewards
+from middleware import DBTask
 from replayanalysis.game.game import Game
 from objects import User, Replay, Model
 from startup import startup
@@ -543,13 +545,19 @@ def calculate_reward(self, uid):
     print(reward)
 
 
-@celery.task(bind=True)
+@celery.task(base=DBTask, bind=True)
 def parse_replay_task(self, fn):
     output = fn + '.json'
-    g = decompile_replay(fn, output)
-    with open(os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl'), 'wb') as f:
+    pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
+    if os.path.isfile(pickled):
+        return
+    g = decompile_replay(fn, output)  # type: Game
+    game = objects.Game(hash=fn.split('.')[0], players=[str(p.online_id) for p in g.players])
+    with open(output, 'wb') as f:
         pickle.dump(g, f)
     os.system('rm ' + output)
+    self.session.add(game)
+    self.session.commit()
 
 
 if __name__ == '__main__':

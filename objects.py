@@ -1,5 +1,6 @@
 import datetime
 from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -25,9 +26,10 @@ class Replay(Base):
     ip = Column(String(64))
     num_players = Column(Integer)
     num_team0 = Column(Integer)
-    model_hash = Column(String(40))# ForeignKey("models.model_hash"))  # always 40 chars long
+    model_hash = Column(String(40))  # ForeignKey("models.model_hash"))  # always 40 chars long
     is_eval = Column(Boolean)
     upload_date = Column(DateTime, default=datetime.datetime.utcnow)
+
     def __repr__(self):
         return "<Replay(uuid='%s', user='%s', ip='%s')>" % (self.uuid, self.user, self.ip)
 
@@ -44,3 +46,11 @@ class Model(Base):
     def __repr__(self):
         return "<Model(model_hash='%s', total_reward='%s', evaluated='%s')>" % (self.model_hash,
                                                                                 self.total_reward, self.evaluated)
+
+
+class Game(Base):
+    __tablename__ = 'games'
+
+    id = Column(Integer, primary_key=True)
+    hash = Column(String(40))
+    players = Column(postgresql.ARRAY(String, dimensions=1))

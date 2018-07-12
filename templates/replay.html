@@ -6,13 +6,57 @@
             Loading... please refresh in a few minutes.
             {# Include refresh script here #}
         {% elif replay != None %}
-{#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
+            {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
             <h2>{{ replay.name }}</h2>
             <p>Map: {{ replay.map['name'] }}</p>
             <p>Version: {{ replay.replay_version }}</p>
             <p>Time: {{ replay.datetime }}</p>
             <p>Frames: {{ frame_count }}</p>
             <p>Score: {{ replay.teams[0].score }}:{{ replay.teams[1].score }}</p>
+            <hr/>
+            <div>
+                <b>Teams:</b>
+                {% for team in replay.teams %}
+
+                    <div class="team"
+                         style="padding: 10px; {{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
+
+                        Score: {{ team.score }}
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Score</th>
+                                <th>Goals</th>
+                                <th>Assists</th>
+                                <th>Saves</th>
+                                <th>Shots</th>
+                            </tr>
+                            </thead>
+                            {% for p in team.players|sort(attribute='score', reverse=True) %}
+
+                                <tr>
+                                    <td>{{ p.name }}
+                                        {% if p.online_id | string | length == 17 %}
+                                            |
+                                            <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
+                                        {% endif %}
+                                        {% if p.is_bot %}
+                                            | <i>Bot</i>
+                                        {% endif %}</td>
+                                    <td>{{ p.score }}</td>
+                                    <td>{{ p.goals }}</td>
+                                    <td>{{ p.assists }}</td>
+                                    <td>{{ p.saves }}</td>
+                                    <td>{{ p.shots }}</td>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
             <hr/>
             <div>
                 <b>Goals:</b>
@@ -27,59 +71,25 @@
             </div>
             <hr/>
             <div>
-                <b>Teams:</b>
-                {% for team in replay.teams %}
-
-                    <ul style="{{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
-
-                        <li>Score: {{ team.score }}</li>
-                        <li>Players:
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Score</th>
-                                    <th>Goals</th>
-                                    <th>Assists</th>
-                                    <th>Saves</th>
-                                    <th>Shots</th>
-                                </tr>
-                                </thead>
-                                {% for p in team.players %}
-
-                                    <tr>
-                                        <td>{{ p.name }}
-                                            {% if p.online_id | string | length == 17 %}
-                                                |
-                                                <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
-                                            {% endif %}
-                                            {% if p.is_bot %}
-                                                | <i>Bot</i>
-                                            {% endif %}</td>
-                                        <td>{{ p.score }}</td>
-                                        <td>{{ p.goals }}</td>
-                                        <td>{{ p.assists }}</td>
-                                        <td>{{ p.saves }}</td>
-                                        <td>{{ p.shots }}</td>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-
-                            </table>
-                        </li>
-                    </ul>
-                {% endfor %}
-            </div>
-            <hr/>
-            <div>
                 <b>Player List:</b>
                 <ol>
                     {% for p in replay.players %}
                         <li><b>{{ p.name }}</b>
                             {% if p.online_id | string | length == 17 %}
                                 | <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
-                            {% endif %}</li>
+                            {% endif %}
 
+                            {% if p.loadout|length > 0 %}
+
+                                <ul>
+                                    {% for k in p.loadout[0].keys() %}
+
+                                        <li>{{ k }}: {{ p.loadout[0][k] }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                        </li>
                     {% endfor %}
                 </ol>
             </div>
