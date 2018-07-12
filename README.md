@@ -18,7 +18,7 @@ This is also in-line with the data generation speed of a typical Rocket League g
 Each replay has an IP address attached to it, so blame can be given.
 ## Replays
 
-Replays will be saved in `/replays` for later consumption. The server will eventually serve up the replays to training clients.
+Replays will be saved in `/replays` for later consumption. The server provides these files to clients.
 
 ## Structure
 
