@@ -30,6 +30,7 @@ from replayanalysis.decompile_replays import decompile_replay
 
 # APP SETUP
 from tasks import make_celery
+
 sys.path.append('replayanalysis')
 engine, Session = startup()
 UPLOAD_FOLDER = os.path.join(
@@ -514,6 +515,7 @@ def parse_replays():
             result = parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
     return redirect('/')
 
+
 @app.route('/parsed/view/<id_>')
 def view_replay(id_):
     pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
@@ -524,7 +526,7 @@ def view_replay(id_):
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'))  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
-    return render_template('replay.html', replay=g, cars=constants.cars)
+    return render_template('replay.html', replay=g, cars=constants.cars, id=id_)
 
 
 @app.route('/parsed/view/random')
@@ -533,12 +535,16 @@ def view_random():
     return redirect(url_for('view_replay', id_=random.choice(filelist).split('.')[0]))
 
 
-
 @app.route('/parsed/view/player/<id_>')
 def view_player(id_):
     session = Session()
     games = session.query(Game).filter(Game.players.any(str(id_))).all()
     return render_template('player.html', games=games)
+
+
+@app.route('/download/replay/<id_>')
+def download_replay(id_):
+    return send_from_directory('rlreplays', id_)
 
 # Celery workers
 
