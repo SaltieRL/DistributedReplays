@@ -19,12 +19,12 @@ from sqlalchemy.exc import InvalidRequestError
 from werkzeug.utils import secure_filename
 
 import config
-import objects
+import constants
 import queries
 # import rewards
 from middleware import DBTask
-from replayanalysis.game.game import Game
-from objects import User, Replay, Model
+from replayanalysis.game.game import Game as Game_pickle
+from objects import User, Replay, Model, Game
 from startup import startup
 from replayanalysis.decompile_replays import decompile_replay
 
@@ -512,7 +512,6 @@ def parse_replays():
     for f in os.listdir('rlreplays'):
         if f.endswith('.replay'):
             result = parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
-            break
     return redirect('/')
 
 @app.route('/parsed/view/<id_>')
@@ -522,16 +521,24 @@ def view_replay(id_):
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None)
     try:
-        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'))  # type: Game
+        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'))  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
-    return render_template('replay.html', replay=g)
+    return render_template('replay.html', replay=g, cars=constants.cars)
 
 
 @app.route('/parsed/view/random')
 def view_random():
     filelist = os.listdir('parsed')
     return redirect(url_for('view_replay', id_=random.choice(filelist).split('.')[0]))
+
+
+
+@app.route('/parsed/view/player/<id_>')
+def view_player(id_):
+    session = Session()
+    games = session.query(Game).filter(Game.players.any(str(id_))).all()
+    return render_template('player.html', games=games)
 
 # Celery workers
 
@@ -552,12 +559,14 @@ def parse_replay_task(self, fn):
     if os.path.isfile(pickled):
         return
     g = decompile_replay(fn, output)  # type: Game
-    game = objects.Game(hash=fn.split('.')[0], players=[str(p.online_id) for p in g.players])
-    with open(output, 'wb') as f:
+    with open(pickled, 'wb') as f:
         pickle.dump(g, f)
     os.system('rm ' + output)
-    self.session.add(game)
-    self.session.commit()
+
+    sess = self.session()
+    game = Game(hash=str(os.path.basename(fn)).split('.')[0], players=[str(p.online_id) for p in g.players])
+    sess.add(game)
+    sess.commit()
 
 
 if __name__ == '__main__':

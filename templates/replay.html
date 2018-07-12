@@ -83,8 +83,7 @@
 
                                 <ul>
                                     {% for k in p.loadout[0].keys() %}
-
-                                        <li>{{ k }}: {{ p.loadout[0][k] }}</li>
+                                        <li>{{ k }}: {{ p.loadout[0][k] if k != 'car' else cars[p.loadout[0][k]|int] }}</li>
                                     {% endfor %}
                                 </ul>
                             {% endif %}

@@ -1,0 +1,15 @@
+{% include 'header.html' %}
+<main role="main">
+    <div class="container">
+        <ul>
+            {% for g in games %}
+                <li><a href="{{ url_for('view_replay', id_=g.hash) }}">{{ g.hash }}</a></li>
+
+            {% endfor %}
+
+    </ul>
+    </div>
+</main>
+
+
+{% include 'footer.html' %}

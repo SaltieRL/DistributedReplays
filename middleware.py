@@ -26,9 +26,9 @@ class StreamConsumingMiddleware(object):
 class DBTask(Task):
     _session = None
 
-    def after_return(self, *args, **kwargs):
-        if self._session is not None:
-            self._session.remove()
+    # def after_return(self, *args, **kwargs):
+    #     if self._session is not None:
+    #         self._session.remove()
 
     @property
     def session(self):
