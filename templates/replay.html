@@ -3,8 +3,13 @@
 <main role="main">
     <div class="container">
         {% if replay == None %}
-            Loading... please refresh in a few minutes.
+            Parsing... please wait a few minutes.
             {# Include refresh script here #}
+            <script>
+            setTimeout(function() {
+                location.reload();
+            }, 60000)
+            </script>
         {% elif replay != None %}
             {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
             <h2>{{ replay.name }}</h2>
@@ -17,7 +22,7 @@
             <hr/>
             <div>
                 <b>Teams:</b>
-                {% for team in replay.teams %}
+                {% for team in replay.teams|sort(attribute='is_orange', reverse=True) %}
 
                     <div class="team"
                          style="padding: 10px; {{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
@@ -40,8 +45,9 @@
                                     <td>{{ p.name }}
                                         {% if p.online_id | string | length == 17 %}
                                             |
-                                            <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
-                                            | <a href="{{ url_for('view_player', id_=p.online_id) }}">Replays</a>
+                                            <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">S</a>
+                                            | <a href="{{ url_for('view_player', id_=p.online_id) }}">R</a>
+                                            | <img src="/static/img/ranks/{{ ranks[p.online_id]['8'][0]['tier'] }}.png" height="30px"/>
                                         {% endif %}
                                         {% if p.is_bot %}
                                             | <i>Bot</i>
@@ -80,16 +86,26 @@
                             {% if p.online_id | string | length == 17 %}
                                 | <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
                             {% endif %}
+                            <ul>
+                                <li>
 
-                            {% if p.loadout|length > 0 %}
+                                    {% if p.loadout|length > 0 %}
 
-                                <ul>
-                                    {% for k in p.loadout[0].keys() %}
-                                        <li>{{ k }}: {{ p.loadout[0][k] if k != 'car' else cars[p.loadout[0][k]|int] }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-
+                                        <ul>
+                                            {% for k in p.loadout[0].keys() %}
+                                                <li>{{ k }}: {{ p.loadout[0][k] if k != 'car' else cars[p.loadout[0][k]|int] }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    <ul>
+                                        {% for k in p.camera_settings.keys() %}
+                                            <li>{{ k }}: {{ p.camera_settings[k] }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul>
                         </li>
                     {% endfor %}
                 </ol>

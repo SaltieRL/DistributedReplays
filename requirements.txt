@@ -4,3 +4,4 @@ flask_login
 pandas
 psycopg2
 sqlalchemy
+requests

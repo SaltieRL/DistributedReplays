@@ -6,10 +6,12 @@ from flask import request, redirect, jsonify, send_from_directory, render_templa
 from werkzeug.utils import secure_filename
 
 import constants
-from functions import return_error
+from functions import return_error, get_rank
 from objects import Game
 from RLBotServer import app, Session
 import celery_tasks
+
+
 #
 #
 # @app.route('/replay/reward/<uid>')
@@ -61,7 +63,9 @@ def view_replay(id_):
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
-    return render_template('replay.html', replay=g, cars=constants.cars, id=id_)
+    ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
+    print (ranks)
+    return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks)
 
 
 @app.route('/parsed/view/random')
@@ -73,8 +77,9 @@ def view_random():
 @app.route('/parsed/view/player/<id_>')
 def view_player(id_):
     session = Session()
+    rank = get_rank(id_)
     games = session.query(Game).filter(Game.players.any(str(id_))).all()
-    return render_template('player.html', games=games)
+    return render_template('player.html', games=games, rank=rank)
 
 
 @app.route('/download/replay/<id_>')
@@ -85,3 +90,8 @@ def download_replay(id_):
 @app.route('/autoreplays')
 def downloader_page():
     return render_template('saltie.html')
+
+
+@app.route('/rank/<id_>')
+def get_rank_api(id_):
+    return jsonify(get_rank(id_))
