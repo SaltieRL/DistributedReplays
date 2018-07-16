@@ -79,3 +79,8 @@ def view_player(id_):
 @app.route('/download/replay/<id_>')
 def download_replay(id_):
     return send_from_directory('rlreplays', id_)
+
+
+@app.route('/autoreplays')
+def downloader_page():
+    return render_template('saltie.html')
