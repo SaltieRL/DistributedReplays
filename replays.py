@@ -58,7 +58,7 @@ def view_replay(id_):
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None)
     try:
-        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'))  # type: Game_pickle
+        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
     return render_template('replay.html', replay=g, cars=constants.cars, id=id_)
