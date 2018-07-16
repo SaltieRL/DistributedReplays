@@ -9,7 +9,7 @@ import constants
 from functions import return_error
 from objects import Game
 from RLBotServer import app, Session
-from celery_tasks import parse_replay_task
+import celery_tasks
 #
 #
 # @app.route('/replay/reward/<uid>')
@@ -27,7 +27,7 @@ def parse_replay():
         return return_error('Only .replay files are allowed.')
     filename = os.path.join('rlreplays', secure_filename(file.filename))
     file.save(filename)
-    parse_replay_task.delay(os.path.abspath(filename))
+    celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return redirect(url_for('view_replay', id_=file.filename.split('.')[0]))
 
 
@@ -46,7 +46,7 @@ def download_parsed(fn):
 def parse_replays():
     for f in os.listdir('rlreplays'):
         if f.endswith('.replay'):
-            result = parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
+            result = celery_tasks.parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
     return redirect('/')
 
 

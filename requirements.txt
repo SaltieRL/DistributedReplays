@@ -2,3 +2,5 @@ celery
 flask
 flask_login
 pandas
+psycopg2
+sqlalchemy

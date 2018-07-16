@@ -26,6 +26,7 @@ from startup import startup
 
 # APP SETUP
 
+print ("Name:", __name__)
 sys.path.append('replayanalysis')
 engine, Session = startup()
 UPLOAD_FOLDER = os.path.join(
@@ -43,7 +44,8 @@ app.config.update(
 
 # Import modules AFTER app is initialized
 
-import replays, celery_tasks, saltie, stats
+import celery_tasks
+import replays, saltie, stats
 
 print(replays, celery_tasks, saltie, stats)  # prevents ide from removing it
 
@@ -132,7 +134,6 @@ def home():
     # df['IP_PREFIX'] = df['FILENAME'].apply(lambda x: ".".join(x.split('\\')[-1].split('/')[-1].split('.')[0:2]))
     # stats = df.groupby(by='IP_PREFIX').count().sort_values(by='FILENAME', ascending=False).reset_index().as_matrix()
     return render_template('index.html', stats=replay_data, total=replay_count, model_stats=model_data)
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
