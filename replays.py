@@ -45,7 +45,8 @@ def download_parsed(fn):
 @app.route('/parse/replays')
 def parse_replays():
     for f in os.listdir('rlreplays'):
-        if f.endswith('.replay'):
+        pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(f) + '.pkl')
+        if f.endswith('.replay') and not os.path.isfile(pickled):
             result = celery_tasks.parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
     return redirect('/')
 

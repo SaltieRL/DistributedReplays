@@ -47,11 +47,16 @@ def parse_replay_task(self, fn):
     pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
     if os.path.isfile(pickled):
         return
-    g = decompile_replay(fn, output)  # type: Game
-    with open(pickled, 'wb') as f:
-        pickle.dump(g, f)
-    os.system('rm ' + output)
+    try:
 
+        g = decompile_replay(fn, output)  # type: Game
+        with open(pickled, 'wb') as f:
+            pickle.dump(g, f)
+        os.system('rm ' + output)
+    except Exception as e:
+        print ('Error: ', e)
+        os.system('rm ' + output)
+        return
     sess = self.session()
     game = Game(hash=str(os.path.basename(fn)).split('.')[0], players=[str(p.online_id) for p in g.players])
     sess.add(game)
