@@ -70,11 +70,11 @@ def get_rank(steam_id):
         return {}
 
 
-def tier_div_to_string(rank, div):
+def tier_div_to_string(rank, div=-1):
     ranks = ['Unranked', 'Bronze I', 'Bronze II', 'Bronze III', 'Silver I', 'Silver II', 'Silver III', 'Gold I',
              'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
              'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
-    if rank < 19:
+    if rank < 19 and div > 0:
         return "{}, Division {}".format(ranks[rank], div + 1)
     else:
         return ranks[rank]
