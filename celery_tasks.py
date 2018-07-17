@@ -2,13 +2,14 @@
 import os
 import pickle
 
+from celery import Celery
+
 # from helpers import rewards
-from RLBotServer import Session, get_replay_path, app
+from RLBotServer import app
 from functions import get_rank
 from middleware import DBTask
-from objects import Game, Replay
+from objects import Game
 from replayanalysis.decompile_replays import decompile_replay
-from celery import Celery
 
 
 def make_celery(app):

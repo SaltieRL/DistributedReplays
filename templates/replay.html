@@ -12,7 +12,7 @@
             </script>
         {% elif replay != None %}
             {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
-            <h2>{{ replay.name }}</h2>
+            <h2>{{ replay.name|e }}</h2>
             <p><a href="{{ url_for('download_replay', id_=id + '.replay') }}">Download</a></p>
             <p>Map: {{ replay.map['name'] }}</p>
             <p>Version: {{ replay.replay_version }}</p>
@@ -86,11 +86,16 @@
                 <b>Player List:</b>
                 <ol>
                     {% for p in replay.players %}
-                        <li><b><span title="Actor ID: {{ p.actor_id }}">{{ p.name }}</span></b>
+                        <li><b><span title="Actor ID: {{ p.actor_id }}">{{ p.name }}
+
+                        </span></b>
                             {% if p.online_id | string | length == 17 %}
                                 | <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
                             {% endif %}
                             <ul>
+                                {% if p.title != None %}
+                                    <li>Title ID: {{ p.title|string }}</li>
+                                {% endif %}
                                 <li>Loadout
 
                                     {% if p.loadout|length > 0 %}

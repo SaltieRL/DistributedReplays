@@ -1,1 +1,1 @@
-celery -A RLBotServer.celery worker
+celery -A celery_tasks.celery worker

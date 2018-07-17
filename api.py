@@ -94,7 +94,10 @@ def api_v1_get_ranks():
 @key_required
 def api_v1_get_stats():
     # TODO: stats?
-    return jsonify({})
+    session = Session()
+    ct = session.query(Game).count()
+    dct = len([f for f in os.listdir('parsed') if f.endswith('pkl')])
+    return jsonify({'db_count': ct, 'count': dct})
 
 
 @app.route('/api/v1/replay/<id_>')
