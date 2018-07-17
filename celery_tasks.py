@@ -60,7 +60,6 @@ def parse_replay_task(self, fn):
         return
 
     ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
-    season = '8'
     if len(g.players) > 4:
         mode = 'standard'
     elif len(g.players) > 2:
@@ -70,7 +69,9 @@ def parse_replay_task(self, fn):
     rank_list = []
     mmr_list = []
     for k in ranks:
-        r = list(filter(lambda x: x['mode'] == mode, ranks[k][season]))[0]
+        keys = ranks[k].keys()
+        latest = sorted(keys, reverse=True)[0]
+        r = list(filter(lambda x: x['mode'] == mode, ranks[k][latest]))[0]
         if 'tier' in r:
             rank_list.append(r['tier'])
         if 'rank_points' in r:
