@@ -1,4 +1,5 @@
 # Helper functions
+import json
 import os
 
 import requests
@@ -14,6 +15,8 @@ if not os.path.isdir(model_dir):
     os.mkdir(model_dir)
 
 ALLOWED_EXTENSIONS = {'bin', 'gz'}
+with open('data/categorized_items.json', 'r') as f:
+    item_dict = json.load(f)
 
 
 def allowed_file(filename):
@@ -34,7 +37,7 @@ rank_cache = {}
 
 
 def get_rank(steam_id):
-    if len(steam_id) < 17:
+    if len(str(steam_id)) < 17:
         return {}
     if steam_id in rank_cache:
         return rank_cache[steam_id]
@@ -75,3 +78,10 @@ def tier_div_to_string(rank, div):
         return "{}, Division {}".format(ranks[rank], div + 1)
     else:
         return ranks[rank]
+
+
+def get_item_name_by_id(id_):
+    return item_dict[id_]
+
+def get_item_dict():
+    return item_dict

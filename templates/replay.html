@@ -6,9 +6,9 @@
             Parsing... please wait a few minutes.
             {# Include refresh script here #}
             <script>
-            setTimeout(function() {
-                location.reload();
-            }, 60000)
+                setTimeout(function () {
+                    location.reload();
+                }, 60000)
             </script>
         {% elif replay != None %}
             {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
@@ -47,7 +47,11 @@
                                             |
                                             <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">S</a>
                                             | <a href="{{ url_for('view_player', id_=p.online_id) }}">R</a>
-                                            | <img src="/static/img/ranks/{{ ranks[p.online_id]['8'][0]['tier'] }}.png" height="30px"/>
+                                            {% if '8' in ranks[p.online_id] %}
+                                                |
+                                                <img src="/static/img/ranks/{{ ranks[p.online_id]['8'][0]['tier'] }}.png"
+                                                     height="30px"/>
+                                            {% endif %}
                                         {% endif %}
                                         {% if p.is_bot %}
                                             | <i>Bot</i>
@@ -82,23 +86,31 @@
                 <b>Player List:</b>
                 <ol>
                     {% for p in replay.players %}
-                        <li><b>{{ p.name }}</b>
+                        <li><b><span title="Actor ID: {{ p.actor_id }}">{{ p.name }}</span></b>
                             {% if p.online_id | string | length == 17 %}
                                 | <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
                             {% endif %}
                             <ul>
-                                <li>
+                                <li>Loadout
 
                                     {% if p.loadout|length > 0 %}
 
                                         <ul>
-                                            {% for k in p.loadout[0].keys() %}
-                                                <li>{{ k }}: {{ p.loadout[0][k] if k != 'car' else cars[p.loadout[0][k]|int] }}</li>
+                                            {% for k in p.loadout[0].keys()|sort() %}
+                                                {% if k != 'version' %}
+                                                    {% set item_id = p.loadout[0][k] %}
+                                                    {% set item_props = item_dict[item_id|string] %}
+                                                    {% if 'LongLabel' in item_props %}
+                                                        <li>{{ k }}: {{ item_props['LongLabel'] }}</li>
+                                                    {% elif item_id != 0 and item_id != None %}
+                                                        <li>{{ k }}: {{ item_id }}</li>
+                                                    {% endif %}
+                                                {% endif %}
                                             {% endfor %}
                                         </ul>
                                     {% endif %}
                                 </li>
-                                <li>
+                                <li>Camera settings
                                     <ul>
                                         {% for k in p.camera_settings.keys() %}
                                             <li>{{ k }}: {{ p.camera_settings[k] }}</li>

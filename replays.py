@@ -6,7 +6,7 @@ from flask import request, redirect, jsonify, send_from_directory, render_templa
 from werkzeug.utils import secure_filename
 
 import constants
-from functions import return_error, get_rank
+from functions import return_error, get_rank, get_item_dict
 from objects import Game
 from RLBotServer import app, Session
 import celery_tasks
@@ -65,7 +65,7 @@ def view_replay(id_):
         return return_error('Error opening game: ' + str(e))
     ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
     print (ranks)
-    return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks)
+    return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
 
 
 @app.route('/parsed/view/random')
