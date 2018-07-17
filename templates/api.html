@@ -4,6 +4,41 @@
     <h2>Saltie Replay API</h2>
     <p>For an API key, please ask a developer in the <a href="https://discord.gg/aCHWD3E">Discord server</a>.</p>
     <p>Registration and login coming soon.</p>
+    <h3>Docs</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Endpoint</th>
+            <th>Description</th>
+            <th>Args (optional)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <a href="{{ url_for('api_v1_get_replays', key='123456') }}">{{ url_for('api_v1_get_replays') }}</a>
+            </td>
+            <td>
+                Gets a list of replays in the database. Can be filtered.
+            </td>
+            <td>
+                <ul>
+                    <li>
+                        <b><code>minrank</code>/<code>maxrank</code></b> - minimum / maximum rank limits to set.
+                        Integer, find ids from <code>{{ url_for('api_v1_get_ranks') }}</code>
+                    </li>
+                    <li>
+                        <b><code>minmmr</code>/<code>maxmmr</code></b> - minimum / maximum MMR limits to set.
+                        Integer
+                    </li>
+                    <li>
+                        <b><code>user</code></b> - User (SteamID64) to filter by.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 {% include "footer.html" %}
