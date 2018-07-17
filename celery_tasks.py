@@ -70,14 +70,15 @@ def parse_replay_task(self, fn):
     mmr_list = []
     for k in ranks:
         keys = ranks[k].keys()
-        latest = sorted(keys, reverse=True)[0]
-        r = list(filter(lambda x: x['mode'] == mode, ranks[k][latest]))[0]
-        if 'tier' in r:
-            rank_list.append(r['tier'])
-        if 'rank_points' in r:
-            mmr_list.append(r['rank_points'])
+        if len(keys) > 0:
+            latest = sorted(keys, reverse=True)[0]
+            r = list(filter(lambda x: x['mode'] == mode, ranks[k][latest]))[0]
+            if 'tier' in r:
+                rank_list.append(r['tier'])
+            if 'rank_points' in r:
+                mmr_list.append(r['rank_points'])
     sess = self.session()
     game = Game(hash=str(os.path.basename(fn)).split('.')[0], players=[str(p.online_id) for p in g.players],
-                ranks=rank_list, mmrs=mmr_list)
+                ranks=rank_list, mmrs=mmr_list, map=g.map)
     sess.add(game)
     sess.commit()

@@ -16,7 +16,8 @@
         <tbody>
         <tr>
             <td>
-                <a href="{{ url_for('api_v1_get_replays', key='123456') }}">{{ url_for('api_v1_get_replays') }}</a>
+                {% set url = url_for('api_v1_get_replays') %}
+                <a href="{{ url }}">{{ url }}</a>
             </td>
             <td>
                 Gets a list of replays in the database. Can be filtered.
@@ -35,6 +36,18 @@
                         <b><code>user</code></b> - User (SteamID64) to filter by.
                     </li>
                 </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {% set url = url_for('api_v1_get_stats') %}
+                <a href="{{ url }}">{{ url }}</a>
+            </td>
+            <td>
+                Gets some stats. Currently does nothing.
+            </td>
+            <td>
+                N/A
             </td>
         </tr>
         </tbody>

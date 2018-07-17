@@ -8,7 +8,7 @@
             <script>
                 setTimeout(function () {
                     location.reload();
-                }, 60000)
+                }, 10000)
             </script>
         {% elif replay != None %}
             {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
@@ -49,7 +49,7 @@
                                             | <a href="{{ url_for('view_player', id_=p.online_id) }}">R</a>
                                             {% if '8' in ranks[p.online_id] %}
                                                 |
-                                                <img src="/static/img/ranks/{{ ranks[p.online_id]['8'][0]['tier'] }}.png"
+                                                <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
                                                      height="30px"/>
                                             {% endif %}
                                         {% endif %}

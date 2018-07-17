@@ -1,3 +1,5 @@
+import os
+import pickle
 from functools import wraps
 
 from flask import render_template, url_for, redirect, request, g, jsonify
@@ -6,6 +8,7 @@ from sqlalchemy.sql import operators
 from RLBotServer import app, Session
 from functions import tier_div_to_string
 from objects import Game
+import pandas as pd
 
 
 def key_required(f):
@@ -71,6 +74,7 @@ def api_v1_get_replays():
     for game in games:
         data.append({'hash': game.hash, 'link': url_for('view_replay', id_=game.hash),
                      'download': url_for('download_replay', id_=game.hash),
+                     'info': url_for('api_v1_get_replay_info', id_=game.hash),
                      'mmrs': game.mmrs, 'ranks': game.ranks, 'players': game.players})
     response['data'] = data
     response['page'] = page + 1
@@ -83,4 +87,29 @@ def api_v1_get_replays():
 @key_required
 def api_v1_get_ranks():
     data = {i: tier_div_to_string(i) for i in range(0, 20)}
+    return jsonify(data)
+
+
+@app.route('/api/v1/stats')
+@key_required
+def api_v1_get_stats():
+    # TODO: stats?
+    return jsonify({})
+
+
+@app.route('/api/v1/replay/<id_>')
+@key_required
+def api_v1_get_replay_info(id_):
+    session = Session()
+    pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
+    replay_path = os.path.join('rlreplays', id_ + '.replay')
+    if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
+        return render_template('replay.html', replay=None)
+    try:
+        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')
+    except Exception as e:
+        return jsonify({'error': 'Error opening game: ' + str(e)})
+    game = session.query(Game).filter(Game.hash == id_).first()
+    data = {'datetime': g.datetime, 'map': g.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': g.name,
+            'hash': game.hash, 'version': g.replay_version, 'id': g.id}
     return jsonify(data)
