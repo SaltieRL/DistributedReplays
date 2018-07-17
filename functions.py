@@ -83,5 +83,6 @@ def tier_div_to_string(rank, div=-1):
 def get_item_name_by_id(id_):
     return item_dict[id_]
 
+
 def get_item_dict():
     return item_dict

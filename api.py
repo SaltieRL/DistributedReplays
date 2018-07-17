@@ -42,10 +42,25 @@ def api_v1_get_replays():
         page = 0
     session = Session()
     games = session.query(Game)
+    # RANK STUFF
+    if 'rankany' in args:
+        rank_opt = 'any'
+    else:
+        rank_opt = 'all'
     if 'maxrank' in args:
-        games = games.filter(Game.ranks.all(int(args['maxrank']), operator=operators.ge))
+        games = games.filter(getattr(Game.ranks, rank_opt)(int(args['maxrank']), operator=operators.ge))
     if 'minrank' in args:
-        games = games.filter(Game.ranks.all(int(args['minrank']), operator=operators.le))
+        games = games.filter(getattr(Game.ranks, rank_opt)(int(args['minrank']), operator=operators.le))
+
+    # MMR stuff
+    if 'mmrany' in args:
+        mmr_opt = 'any'
+    else:
+        mmr_opt = 'all'
+    if 'maxmmr' in args:
+        games = games.filter(getattr(Game.mmrs, mmr_opt)(int(args['maxmmr']), operator=operators.ge))
+    if 'minmmr' in args:
+        games = games.filter(getattr(Game.mmrs, mmr_opt)(int(args['minmmr']), operator=operators.le))
     response = {}
     data = []
     games = games[page * 50:(page + 1) * 50]
