@@ -70,7 +70,7 @@ def parse_replay_task(self, fn):
     rank_list = []
     mmr_list = []
     for k in ranks:
-        r = filter(lambda x: x['mode'] == mode, ranks[k][season])[0]
+        r = list(filter(lambda x: x['mode'] == mode, ranks[k][season]))[0]
         if 'tier' in r:
             rank_list.append(r['tier'])
         if 'rank_points' in r:
