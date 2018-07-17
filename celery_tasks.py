@@ -4,6 +4,7 @@ import pickle
 
 # from helpers import rewards
 from RLBotServer import Session, get_replay_path, app
+from functions import get_rank
 from middleware import DBTask
 from objects import Game, Replay
 from replayanalysis.decompile_replays import decompile_replay
@@ -54,10 +55,28 @@ def parse_replay_task(self, fn):
             pickle.dump(g, f)
         os.system('rm ' + output)
     except Exception as e:
-        print ('Error: ', e)
+        print('Error: ', e)
         os.system('rm ' + output)
         return
+
+    ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
+    season = '8'
+    if len(g.players) > 4:
+        mode = 'standard'
+    elif len(g.players) > 2:
+        mode = 'doubles'
+    else:
+        mode = 'duel'
+    rank_list = []
+    mmr_list = []
+    for k in ranks:
+        r = filter(lambda x: x['mode'] == mode, ranks[k][season])[0]
+        if 'tier' in r:
+            rank_list.append(r['tier'])
+        if 'rank_points' in r:
+            mmr_list.append(r['rank_points'])
     sess = self.session()
-    game = Game(hash=str(os.path.basename(fn)).split('.')[0], players=[str(p.online_id) for p in g.players])
+    game = Game(hash=str(os.path.basename(fn)).split('.')[0], players=[str(p.online_id) for p in g.players],
+                ranks=rank_list, mmrs=mmr_list)
     sess.add(game)
     sess.commit()

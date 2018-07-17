@@ -55,3 +55,6 @@ class Game(Base):
     id = Column(Integer, primary_key=True)
     hash = Column(String(40))
     players = Column(postgresql.ARRAY(String, dimensions=1))
+    map = Column(String(40))
+    ranks = Column(postgresql.ARRAY(Integer, dimensions=1))
+    mmrs = Column(postgresql.ARRAY(Integer, dimensions=1))
