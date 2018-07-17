@@ -61,13 +61,17 @@ def api_v1_get_replays():
         games = games.filter(getattr(Game.mmrs, mmr_opt)(int(args['maxmmr']), operator=operators.ge))
     if 'minmmr' in args:
         games = games.filter(getattr(Game.mmrs, mmr_opt)(int(args['minmmr']), operator=operators.le))
+
+    # USER stuff
+    if 'user' in args:
+        games = games.filter(Game.players.any(args['user']))
     response = {}
     data = []
     games = games[page * 50:(page + 1) * 50]
     for game in games:
         data.append({'hash': game.hash, 'link': url_for('view_replay', id_=game.hash),
                      'download': url_for('download_replay', id_=game.hash),
-                     'mmrs': game.mmrs, 'ranks': game.ranks})
+                     'mmrs': game.mmrs, 'ranks': game.ranks, 'players': game.players})
     response['data'] = data
     response['page'] = page + 1
     response['next'] = url_for('api_v1_get_replays', page=page + 2)
