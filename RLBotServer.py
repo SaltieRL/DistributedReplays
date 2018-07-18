@@ -11,13 +11,13 @@ import queries
 from startup import startup
 from argparse import ArgumentParser
 
-# ARGS STUFF
-
-parser = ArgumentParser()
-parser.add_argument("-c", "--clean", action='store_true',
-                    help="Clean database of files that do not exist")
-
-args = parser.parse_args()
+# # ARGS STUFF
+#
+# parser = ArgumentParser()
+# parser.add_argument("-c", "--clean", action='store_true',
+#                     help="Clean database of files that do not exist")
+#
+# args = parser.parse_args()
 
 
 # APP SETUP
@@ -134,8 +134,4 @@ def home():
 
 
 if __name__ == '__main__':
-    if args.clean:
-        from helpers.clean_database import main
-        main(Session)
-    else:
-        app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
