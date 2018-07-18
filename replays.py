@@ -63,6 +63,7 @@ def view_replay(id_):
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
+    # ranks = [{}] * 6
     ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
     print (ranks)
     return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())

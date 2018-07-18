@@ -13,7 +13,7 @@ from replayanalysis.decompile_replays import decompile_replay
 
 
 def make_celery(app):
-    celery = Celery(app.import_name, backend=app.config['CELERY_RESULT_BACKEND'],
+    celery = Celery(app.import_name, backend=app.config['result_backend'],
                     broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
     TaskBase = celery.Task
@@ -49,16 +49,17 @@ def parse_replay_task(self, fn):
     pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
     if os.path.isfile(pickled):
         return
-    try:
+    # try:
 
-        g = decompile_replay(fn, output)  # type: Game
-        with open(pickled, 'wb') as f:
-            pickle.dump(g, f)
-        os.system('rm ' + output)
-    except Exception as e:
-        print('Error: ', e)
-        os.system('rm ' + output)
-        return
+    g = decompile_replay(fn, output)  # type: Game
+    with open(pickled, 'wb') as f:
+        pickle.dump(g, f)
+    os.system('rm ' + output)
+    # except Exception as e:
+    #     print('Error: ', e)
+    #     os.system('rm ' + output)
+    #     os.system('mv {} {}'.format(fn, os.path.join(os.path.dirname(fn), 'broken', os.path.basename(fn))))
+    #     return
 
     ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
     if len(g.players) > 4:

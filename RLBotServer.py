@@ -1,28 +1,24 @@
-import datetime
-import fnmatch
-import hashlib
-import io
-import json
 import os
-import random
 import sys
-import uuid
-import zipfile
 
 import flask
 import flask_login
-from flask import Flask, request, jsonify, send_file, render_template, redirect, url_for, send_from_directory
-from sqlalchemy import extract
-from sqlalchemy import func
-from sqlalchemy.exc import InvalidRequestError
-from werkzeug.utils import secure_filename
+from flask import Flask, render_template
 
 import config
 import queries
 # import rewards
-from functions import allowed_file, return_error, get_replay_path
-from objects import User, Replay, Model
 from startup import startup
+from argparse import ArgumentParser
+
+# ARGS STUFF
+
+parser = ArgumentParser()
+parser.add_argument("-c", "--clean", action='store_true',
+                    help="Clean database of files that do not exist")
+
+args = parser.parse_args()
+
 
 # APP SETUP
 
@@ -39,7 +35,8 @@ app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config.update(
     CELERY_BROKER_URL='amqp://guest@localhost',
-    CELERY_RESULT_BACKEND='amqp://guest@localhost'
+    result_backend='amqp://guest@localhost',
+    worker_max_tasks_per_child=100
 )
 
 # Import modules AFTER app is initialized
@@ -137,4 +134,8 @@ def home():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    if args.clean:
+        from helpers.clean_database import main
+        main(Session)
+    else:
+        app.run(host='0.0.0.0', port=5000)

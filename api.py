@@ -114,5 +114,5 @@ def api_v1_get_replay_info(id_):
         return jsonify({'error': 'Error opening game: ' + str(e)})
     game = session.query(Game).filter(Game.hash == id_).first()
     data = {'datetime': g.datetime, 'map': g.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': g.name,
-            'hash': game.hash, 'version': g.replay_version, 'id': g.id}
+            'hash': game.hash, 'version': g.replay_version, 'id': g.id, 'team0': g.teams[0].name, 'team1': g.teams[1].name}
     return jsonify(data)

@@ -26,7 +26,7 @@
 
                     <div class="team"
                          style="padding: 10px; {{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
-
+                        <h4>{{ team.name }}</h4>
                         Score: {{ team.score }}
                         <table class="table">
                             <thead>

@@ -1,2 +1,2 @@
 enable_utc = True
-from tasks import make_celery
+worker_max_tasks_per_child = 100
