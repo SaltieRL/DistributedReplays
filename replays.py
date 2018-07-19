@@ -18,6 +18,7 @@ import celery_tasks
 # def get_reward_from_replay(uid):
 #     calculate_reward.delay(uid)
 #     return redirect('/')
+from steam import steam_id_to_profile
 
 
 @app.route('/replay/parse', methods=['POST'])
@@ -80,7 +81,8 @@ def view_player(id_):
     session = Session()
     rank = get_rank(id_)
     games = session.query(Game).filter(Game.players.any(str(id_))).all()
-    return render_template('player.html', games=games, rank=rank)
+    steam_profile = steam_id_to_profile(id_)
+    return render_template('player.html', games=games, rank=rank, profile=steam_profile)
 
 
 @app.route('/download/replay/<id_>')

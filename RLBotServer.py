@@ -42,10 +42,10 @@ app.config.update(
 CORS(app)
 # Import modules AFTER app is initialized
 
-import celery_tasks
+import celery_tasks, steam
 import replays, saltie, stats, api
 
-print(replays, celery_tasks, saltie, stats, api)  # prevents ide from removing it
+print(replays, celery_tasks, steam, saltie, stats, api)  # prevents ide from removing it
 
 app.secret_key = config.SECRET_KEY
 # Login stuff
