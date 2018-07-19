@@ -34,17 +34,6 @@ def parse_replay():
     return redirect(url_for('view_replay', id_=file.filename.split('.')[0]))
 
 
-@app.route('/parsed/list')
-def list_parsed_replays():
-    fs = os.listdir('parsed/')
-    return jsonify(fs)
-
-
-@app.route('/parsed/<path:fn>')
-def download_parsed(fn):
-    return send_from_directory('parsed', fn, as_attachment=True)
-
-
 @app.route('/parse/replays')
 def parse_replays():
     for f in os.listdir('rlreplays'):
@@ -93,8 +82,3 @@ def download_replay(id_):
 @app.route('/autoreplays')
 def downloader_page():
     return render_template('saltie.html')
-
-
-@app.route('/rank/<id_>')
-def get_rank_api(id_):
-    return jsonify(get_rank(id_))

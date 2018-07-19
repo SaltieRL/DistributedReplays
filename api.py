@@ -2,11 +2,11 @@ import os
 import pickle
 from functools import wraps
 
-from flask import render_template, url_for, redirect, request, g, jsonify
+from flask import render_template, url_for, redirect, request, g, jsonify, send_from_directory
 from sqlalchemy.sql import operators
 
 from RLBotServer import app, Session
-from functions import tier_div_to_string
+from functions import tier_div_to_string, get_rank
 from objects import Game
 import pandas as pd
 
@@ -114,5 +114,25 @@ def api_v1_get_replay_info(id_):
         return jsonify({'error': 'Error opening game: ' + str(e)})
     game = session.query(Game).filter(Game.hash == id_).first()
     data = {'datetime': g.datetime, 'map': g.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': g.name,
-            'hash': game.hash, 'version': g.replay_version, 'id': g.id, 'team0': g.teams[0].name, 'team1': g.teams[1].name}
+            'hash': game.hash, 'version': g.replay_version, 'id': g.id, 'team0': g.teams[0].name,
+            'team1': g.teams[1].name}
     return jsonify(data)
+
+
+@app.route('/api/v1/parsed/list')
+@key_required
+def list_parsed_replays():
+    fs = os.listdir('parsed/')
+    return jsonify(fs)
+
+
+@app.route('/api/v1/parsed/<path:fn>')
+@key_required
+def download_parsed(fn):
+    return send_from_directory('parsed', fn, as_attachment=True)
+
+
+@app.route('/rank/<id_>')
+@key_required
+def get_rank_api(id_):
+    return jsonify(get_rank(id_))
