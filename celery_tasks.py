@@ -54,7 +54,7 @@ def parse_replay_task(self, fn):
     g = decompile_replay(fn, output)  # type: Game
     with open(pickled, 'wb') as f:
         pickle.dump(g, f)
-    os.system('rm ' + output)
+    os.remove(output)
     # except Exception as e:
     #     print('Error: ', e)
     #     os.system('rm ' + output)

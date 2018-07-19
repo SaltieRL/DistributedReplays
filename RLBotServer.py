@@ -10,6 +10,7 @@ import queries
 # import rewards
 from startup import startup
 from argparse import ArgumentParser
+from flask_cors import CORS
 
 # # ARGS STUFF
 #
@@ -38,7 +39,7 @@ app.config.update(
     result_backend='amqp://guest@localhost',
     worker_max_tasks_per_child=100
 )
-
+CORS(app)
 # Import modules AFTER app is initialized
 
 import celery_tasks
