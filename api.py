@@ -121,18 +121,18 @@ def api_v1_get_replay_info(id_):
 
 @app.route('/api/v1/parsed/list')
 @key_required
-def list_parsed_replays():
+def api_v1_list_parsed_replays():
     fs = os.listdir('parsed/')
     return jsonify(fs)
 
 
 @app.route('/api/v1/parsed/<path:fn>')
 @key_required
-def download_parsed(fn):
+def api_v1_download_parsed(fn):
     return send_from_directory('parsed', fn, as_attachment=True)
 
 
-@app.route('/rank/<id_>')
+@app.route('/api/v1/rank/<id_>')
 @key_required
-def get_rank_api(id_):
+def api_v1_get_rank(id_):
     return jsonify(get_rank(id_))

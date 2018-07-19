@@ -40,11 +40,61 @@
         </tr>
         <tr>
             <td>
+                {% set url = url_for('api_v1_get_replay_info', id_='replayid') %}
+                <a href="{{ url }}">{{ url }}</a>
+            </td>
+            <td>
+                Gets information on a given replay given by <b><code>replayid</code></b>.
+            </td>
+            <td>
+                N/A
+            </td>
+        </tr>
+        <tr>
+            <td>
                 {% set url = url_for('api_v1_get_stats') %}
                 <a href="{{ url }}">{{ url }}</a>
             </td>
             <td>
-                Gets some stats. Currently does nothing.
+                Gets some stats.
+            </td>
+            <td>
+                N/A
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {% set url = url_for('api_v1_list_parsed_replays') %}
+                <a href="{{ url }}">{{ url }}</a>
+            </td>
+            <td>
+                List filenames for all parsed replays. These files are in pickled format parsed using our library (on <a
+                    href="https://github.com/SaltieRL/ReplayAnalysis">GitHub</a>)
+            </td>
+            <td>
+                N/A
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {% set url = url_for('api_v1_download_parsed', fn='filename') %}
+                <a href="{{ url }}">{{ url }}</a>
+            </td>
+            <td>
+                Download a parsed replay by filename (from <code>{{ url_for('api_v1_list_parsed_replays') }}</code>)
+                given by <b><code>filename</code></b>.
+            </td>
+            <td>
+                N/A
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {% set url = url_for('api_v1_get_rank', id_='steamid') %}
+                <a href="{{ url }}">{{ url }}</a>
+            </td>
+            <td>
+                Get rank information for a given <b><code>steamid</code></b>.
             </td>
             <td>
                 N/A
