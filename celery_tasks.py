@@ -10,6 +10,7 @@ from functions import get_rank
 from middleware import DBTask
 from objects import Game
 from replayanalysis.decompile_replays import decompile_replay
+from replayanalysis.game.game import Game as ReplayGame
 
 
 def make_celery(app):
@@ -51,7 +52,7 @@ def parse_replay_task(self, fn):
         return
     # try:
 
-    g = decompile_replay(fn, output)  # type: Game
+    g = decompile_replay(fn, output)  # type: ReplayGame
     with open(pickled, 'wb') as f:
         pickle.dump(g, f)
     os.remove(output)
@@ -80,7 +81,13 @@ def parse_replay_task(self, fn):
             if 'rank_points' in r:
                 mmr_list.append(r['rank_points'])
     sess = self.session()
-    game = Game(hash=str(os.path.basename(fn)).split('.')[0], players=[str(p.online_id) for p in g.players],
+    old_hash = str(os.path.basename(fn)).split('.')[0]
+    hash = g.replay_id
+    possible_duplicates = sess.query(Game).filter(Game.hash == hash).all()
+    if len(possible_duplicates) > 0:
+        for p in possible_duplicates:
+            sess.delete(p)
+    game = Game(hash=hash, players=[str(p.online_id) for p in g.players],
                 ranks=rank_list, mmrs=mmr_list, map=g.map)
     sess.add(game)
     sess.commit()
