@@ -15,16 +15,16 @@ def resolve_steam():
 
 
 def steam_id_to_profile(steamID):
-    profileUrl = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={steamKey}&steamids={steamID}'.format(
+    profile_url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={steamKey}&steamids={steamID}'.format(
         steamKey=STEAM_API_KEY, steamID=steamID)
-    r = requests.get(profileUrl)
+    r = requests.get(profile_url)
     r.raise_for_status()
     return r.json()
 
 
 def vanity_to_steam_id(vanity):
-    steamUrl = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={}&vanityurl={}'.format(
+    steam_url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={}&vanityurl={}'.format(
         STEAM_API_KEY, vanity)
-    r = requests.get(steamUrl)
+    r = requests.get(steam_url)
     r.raise_for_status()
     return r.json()
