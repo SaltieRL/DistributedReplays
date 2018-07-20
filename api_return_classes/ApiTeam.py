@@ -13,3 +13,11 @@ class ApiTeam:
         self.players = players
         self.score = score
         self.isOrange = isOrange
+
+    @staticmethod
+    def create_teams_from_game(game):
+        teams = []
+        for team in game.teams:
+            players = [ApiPlayer.create_from_player(player) for player in team.players]
+            teams.append(ApiTeam(team.name, players, team.score, team.is_orange))
+        return teams

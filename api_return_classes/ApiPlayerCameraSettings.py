@@ -10,3 +10,16 @@ class ApiPlayerCameraSettings:
         self.swivelSpeed = swivelSpeed
         self.fieldOfView = fieldOfView
         self.distance = distance
+
+    @staticmethod
+    def create_from_player(player):
+        player_camera_settings = player.camera_settings
+        return ApiPlayerCameraSettings(
+            stiffness=player_camera_settings['stiffness'],
+            height=player_camera_settings['height'],
+            transitionSpeed=player_camera_settings['transition_speed'],
+            pitch=player_camera_settings['pitch'],
+            swivelSpeed=player_camera_settings['swivel_speed'],
+            fieldOfView=player_camera_settings['field_of_view'],
+            distance=player_camera_settings['distance'],
+        )
