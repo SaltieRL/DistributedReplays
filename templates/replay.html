@@ -4,6 +4,7 @@
     <div class="container">
         {% if replay == None %}
             Parsing... please wait a few minutes.
+            <p><a href="{{ url_for('download_replay', id_=id + '.replay') }}">Download</a></p>
             {# Include refresh script here #}
             <script>
                 setTimeout(function () {

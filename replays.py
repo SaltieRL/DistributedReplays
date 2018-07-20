@@ -48,7 +48,7 @@ def view_replay(id_):
     pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
     replay_path = os.path.join('rlreplays', id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-        return render_template('replay.html', replay=None)
+        return render_template('replay.html', replay=None, id=id_)
     try:
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
