@@ -120,7 +120,7 @@ def api_v1_get_replay_info(id_):
     game = session.query(Game).filter(Game.hash == id_).first()
     data = {'datetime': g.datetime, 'map': g.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': g.name,
             'hash': game.hash, 'version': g.replay_version, 'id': g.id, 'frames': len(g.frames)}
-    data = player_interface(data, g)
+    data = player_interface(data, g, game.mmrs, game.ranks)
     data = team_interface(data, g)
     data = score_interface(data, g)
     data = goals_interface(data, g)
@@ -146,31 +146,31 @@ def api_v1_get_rank(id_):
     return jsonify(get_rank(id_))
 
 
-def player_interface(data, g):
+def player_interface(data, g, mmrs, ranks):
     data['players'] = []
-    for p in g.players:  # type: Player
+    for p, mmr, rank in zip(g.players, mmrs, ranks):  # type: Player
         d = {'camera_settings': p.camera_settings, 'name': p.name, 'online_id': p.online_id, 'score': p.score,
              'saves': p.saves, 'shots': p.shots, 'goals': p.goals, 'title': p.title, 'team_is_orange': p.team.is_orange,
-             'loadout': p.loadout}
+             'loadout': p.loadout, 'mmr': mmr, 'rank': rank}
         data['players'].append(d)
     return data
 
 
-def team_interface(data, g: ReplayGame):
+def team_interface(data, game: ReplayGame):
     data['teams'] = []
-    for t in g.teams:  # type: Team
+    for t in game.teams:  # type: Team
         d = {'name': t.name, 'players': [p.name for p in t.players], 'score': t.score, 'is_orange': t.is_orange}
         data['teams'].append(d)
     return data
 
 
-def score_interface(data, g: ReplayGame):
-    data['score'] = {'team0score': g.teams[0].score, 'team1score': g.teams[1].score}
+def score_interface(data, game: ReplayGame):
+    data['score'] = {'team0score': game.teams[0].score, 'team1score': game.teams[1].score}
     return data
 
 
-def goals_interface(data, g: ReplayGame):
+def goals_interface(data, game: ReplayGame):
     data['goals'] = []
-    for goal in g.goals:
+    for goal in game.goals:
         data['goals'].append({'frame': goal.frame_number, 'player': goal.player_name})
     return data

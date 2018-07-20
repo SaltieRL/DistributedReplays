@@ -20,6 +20,7 @@
             <p>Time: {{ replay.datetime }}</p>
             <p>Frames: {{ frame_count }}</p>
             <p>Score: {{ replay.teams[0].score }}:{{ replay.teams[1].score }}</p>
+            <p><a href="{{ url_for('api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
             <hr/>
             <div>
                 <b>Teams:</b>
