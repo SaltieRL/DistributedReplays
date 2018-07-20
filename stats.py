@@ -1,19 +1,19 @@
 # Stats
 import datetime
 
-from flask import jsonify
+from flask import jsonify, Blueprint
 from sqlalchemy import extract, func
 
-from RLBotServer import app, Session
+from RLBotServer import Session
 from objects import Replay
 
-
-@app.route('/ping')
+bp = Blueprint('stats', __name__)
+@bp.route('/ping')
 def ping():
     return jsonify({'status': 'Pong!'})
 
 
-@app.route('/uploads/<time>/<model>')
+@bp.route('/uploads/<time>/<model>')
 def upload_stats(time, model):
     if time not in ['d', 'h']:
         return jsonify([])

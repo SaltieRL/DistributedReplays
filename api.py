@@ -3,10 +3,10 @@ import pickle
 from functools import wraps
 from typing import Optional, Any
 
-from flask import render_template, url_for, redirect, request, g, jsonify, send_from_directory
+from flask import render_template, url_for, redirect, request, g, jsonify, send_from_directory, Blueprint
 from sqlalchemy.sql import operators
 
-from RLBotServer import app, Session
+from RLBotServer import Session
 from functions import tier_div_to_string, get_rank
 from objects import Game
 import pandas as pd
@@ -15,6 +15,7 @@ from replayanalysis.game.player import Player
 from replayanalysis.game.team import Team
 from replayanalysis.game.game import Game as ReplayGame
 
+bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
 def key_required(f):
     @wraps(f)
@@ -27,17 +28,17 @@ def key_required(f):
     return decorated_function
 
 
-@app.route('/api')
+@bp.route('/api')
 def api():
     return render_template('api.html')
 
 
-@app.route('/api/v1')
+@bp.route('/')
 def api_v1():
     return redirect(url_for('api'))
 
 
-@app.route('/api/v1/replays')
+@bp.route('/replays')
 @key_required
 def api_v1_get_replays():
     args = request.args
@@ -88,14 +89,14 @@ def api_v1_get_replays():
     return jsonify(response)
 
 
-@app.route('/api/v1/ranks')
+@bp.route('/ranks')
 @key_required
 def api_v1_get_ranks():
     data = {i: tier_div_to_string(i) for i in range(0, 20)}
     return jsonify(data)
 
 
-@app.route('/api/v1/stats')
+@bp.route('/stats')
 @key_required
 def api_v1_get_stats():
     # TODO: stats?
@@ -105,7 +106,7 @@ def api_v1_get_stats():
     return jsonify({'db_count': ct, 'count': dct})
 
 
-@app.route('/api/v1/replay/<id_>')
+@bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
     session = Session()
@@ -127,20 +128,20 @@ def api_v1_get_replay_info(id_):
     return jsonify(data)
 
 
-@app.route('/api/v1/parsed/list')
+@bp.route('/parsed/list')
 @key_required
 def api_v1_list_parsed_replays():
     fs = os.listdir('parsed/')
     return jsonify(fs)
 
 
-@app.route('/api/v1/parsed/<path:fn>')
+@bp.route('/parsed/<path:fn>')
 @key_required
 def api_v1_download_parsed(fn):
     return send_from_directory('parsed', fn, as_attachment=True)
 
 
-@app.route('/api/v1/rank/<id_>')
+@bp.route('/rank/<id_>')
 @key_required
 def api_v1_get_rank(id_):
     return jsonify(get_rank(id_))

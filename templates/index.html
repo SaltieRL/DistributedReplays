@@ -4,13 +4,13 @@
     <div class="container">
         <h1>Saltie Reinforcement Learning Bot</h1>
         <h3>Analyze Rocket League replay</h3>
-        <form method='post' enctype='multipart/form-data' action='{{ url_for('parse_replay') }}'>
+        <form method='post' enctype='multipart/form-data' action='{{ url_for('replays.parse_replay') }}'>
             <input type=file name=file>
             <input type=submit value=Upload>
         </form>
         <hr />
         <h3>Search replays by Steam ID</h3>
-        <form method='post' enctype='multipart/form-data' action='{{ url_for('resolve_steam') }}'>
+        <form method='post' enctype='multipart/form-data' action='{{ url_for('steam.resolve_steam') }}'>
             <input type=text name=name>
             <input type=submit value=Search>
         </form>

@@ -15,7 +15,7 @@ if not os.path.isdir(model_dir):
     os.mkdir(model_dir)
 
 ALLOWED_EXTENSIONS = {'bin', 'gz'}
-with open('data/categorized_items.json', 'r') as f:
+with open(os.path.join('data', 'categorized_items.json'), 'r') as f:
     item_dict = json.load(f)
 
 

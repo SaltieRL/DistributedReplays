@@ -9,19 +9,19 @@ import uuid
 import zipfile
 
 import flask_login
-from flask import render_template, request, jsonify, redirect, send_from_directory, url_for, send_file
+from flask import render_template, request, jsonify, redirect, send_from_directory, url_for, send_file, Blueprint
 from sqlalchemy.exc import InvalidRequestError
 from werkzeug.utils import secure_filename
 
 import queries
-from RLBotServer import app, Session
+from RLBotServer import Session
 from functions import allowed_file, model_dir, return_error, replay_dir, get_replay_path
 from objects import Model, User, Replay
 
 last_upload = {}
 
-
-@app.route('/admin')
+bp = Blueprint('saltie', __name__, url_prefix='/saltie')
+@bp.route('/admin')
 @flask_login.login_required
 def admin():
     # 'Logged in as: ' + flask_login.current_user.id
@@ -31,12 +31,12 @@ def admin():
 
 
 # Replay uploading
-@app.route('/upload/replay/test', methods=['GET'])
+@bp.route('/upload/replay/test', methods=['GET'])
 def upload_replay_test():
     return upload_replay(True)
 
 
-@app.route('/upload/replay', methods=['POST'])
+@bp.route('/upload/replay', methods=['POST'])
 def upload_replay(test=False):
     session = Session()
     user = ''
@@ -100,7 +100,7 @@ def upload_replay(test=False):
                    is_eval=str(is_eval) not in ['False', 'f', '0'])
         session.add(f)
         if not test:
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(bp.config['UPLOAD_FOLDER'], filename))
         last_upload[request.remote_addr] = datetime.datetime.now()
         if not test:
             session.commit()
@@ -115,7 +115,7 @@ def upload_replay(test=False):
 # Config management
 
 
-@app.route('/config/get')
+@bp.route('/config/get')
 def get_config():
     if not os.path.isfile('config.cfg'):
         with open('config.cfg', 'w') as f:
@@ -125,7 +125,7 @@ def get_config():
     return jsonify({'version': 1, 'content': file_str})
 
 
-@app.route('/admin/config/set', methods=['GET', 'POST'])
+@bp.route('/admin/config/set', methods=['GET', 'POST'])
 @flask_login.login_required
 def set_config():
     if request.method == 'POST':
@@ -137,7 +137,7 @@ def set_config():
 # Model management
 
 
-@app.route('/model/get/<hash>')
+@bp.route('/model/get/<hash>')
 def get_model(hash):
     if len(hash) < 8:
         return jsonify([])
@@ -149,7 +149,7 @@ def get_model(hash):
     return jsonify([])
 
 
-@app.route('/admin/model/upload', methods=['POST'])
+@bp.route('/admin/model/upload', methods=['POST'])
 @flask_login.login_required
 def upload_model():
     session = Session()
@@ -174,7 +174,7 @@ def upload_model():
     return return_error('file type not allowed')
 
 
-@app.route('/admin/model/delete/<h>')
+@bp.route('/admin/model/delete/<h>')
 def delete_model(h):
     session = Session()
     m = session.query(Model).filter(Model.model_hash == h).first()
@@ -183,7 +183,7 @@ def delete_model(h):
     return redirect(url_for('admin'))
 
 
-@app.route('/model/list')
+@bp.route('/model/list')
 def list_model():
     session = Session()
     models = session.query(Model).all()
@@ -193,7 +193,7 @@ def list_model():
 
 
 # Replay management
-@app.route('/replays/list')
+@bp.route('/replays/list')
 def list_replays():
     session = Session()
     if request.method == 'GET':
@@ -212,7 +212,7 @@ def list_replays():
     return ''
 
 
-@app.route('/replays/download/<n>')
+@bp.route('/replays/download/<n>')
 def download_zipped_replays(n):
     filenames = random.sample(os.listdir(replay_dir), int(n))
     file_like_object = io.BytesIO()
@@ -224,7 +224,7 @@ def download_zipped_replays(n):
     return send_file(file_like_object, attachment_filename='dl.zip')
 
 
-@app.route('/replays/download', methods=['POST'])  # downloads based on filenames from /replays/list
+@bp.route('/replays/download', methods=['POST'])  # downloads based on filenames from /replays/list
 def download_zipped_replays_fn():
     print(request.form['files'])
     filenames = list(set(os.listdir(replay_dir)) & set(json.loads(request.form['files'])))
@@ -237,7 +237,7 @@ def download_zipped_replays_fn():
     return send_file(file_like_object, attachment_filename='dl.zip')
 
 
-@app.route('/replays/eval/<hash>')
+@bp.route('/replays/eval/<hash>')
 def list_replays_by_hash(hash):
     session = Session()
     replays = [f.uuid + '.gz' for f in
@@ -246,7 +246,7 @@ def list_replays_by_hash(hash):
     return jsonify(replays)
 
 
-@app.route('/replays/<name>')
+@bp.route('/replays/<name>')
 def get_replay(name):
     if request.method == 'GET':
         fs = os.listdir('replays/')
@@ -254,7 +254,7 @@ def get_replay(name):
         return send_from_directory('replays', filename, as_attachment=True, attachment_filename=filename.split('_')[-1])
 
 
-@app.route('/replays/info/<uuid>')
+@bp.route('/replays/info/<uuid>')
 @flask_login.login_required
 def replay_info(uuid):
     session = Session()
