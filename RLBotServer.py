@@ -4,16 +4,24 @@ import sys
 import flask
 import flask_login
 from flask import Flask, render_template
+from flask_cors import CORS
 
+import api
+import celery_tasks
 import config
 import queries
+import replays
+import saltie
+import stats
+import steam
 from startup import startup
-from flask_cors import CORS
+
 # APP SETUP
 
 print("Name:", __name__)
 sys.path.append('replayanalysis')
 engine, Session = startup()
+g.Session = Session
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
@@ -30,6 +38,12 @@ app.config.update(
 CORS(app)
 # Import modules AFTER app is initialized
 
+app.register_blueprint(celery_tasks.bp)
+app.register_blueprint(steam.bp)
+app.register_blueprint(replays.bp)
+app.register_blueprint(saltie.bp)
+app.register_blueprint(stats.bp)
+app.register_blueprint(api.bp)
 app.secret_key = config.SECRET_KEY
 # Login stuff
 login_manager = flask_login.LoginManager()
@@ -105,7 +119,7 @@ def unauthorized_handler():
 # Main stuff
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    session = Session()
+    session = g.Session()
     replay_count = queries.get_replay_count(session)
     replay_data = queries.get_replay_stats(session)
     model_data = queries.get_model_stats(session)
@@ -118,12 +132,4 @@ def home():
 
 
 if __name__ == '__main__':
-    import steam, replays, saltie, stats, api
-
-    # app.register_blueprint(celery_tasks.bp)
-    app.register_blueprint(steam.bp)
-    app.register_blueprint(replays.bp)
-    app.register_blueprint(saltie.bp)
-    app.register_blueprint(stats.bp)
-    app.register_blueprint(api.bp)
     app.run(host='0.0.0.0', port=5000)

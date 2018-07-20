@@ -9,12 +9,11 @@ import uuid
 import zipfile
 
 import flask_login
-from flask import render_template, request, jsonify, redirect, send_from_directory, url_for, send_file, Blueprint
+from flask import render_template, request, jsonify, redirect, send_from_directory, url_for, send_file, Blueprint, g
 from sqlalchemy.exc import InvalidRequestError
 from werkzeug.utils import secure_filename
 
 import queries
-from RLBotServer import Session
 from functions import allowed_file, model_dir, return_error, replay_dir, get_replay_path
 from objects import Model, User, Replay
 
@@ -25,7 +24,7 @@ bp = Blueprint('saltie', __name__, url_prefix='/saltie')
 @flask_login.login_required
 def admin():
     # 'Logged in as: ' + flask_login.current_user.id
-    session = Session()
+    session = g.Session()
     models = session.query(Model).all()
     return render_template('admin.html', models=models)
 
@@ -38,7 +37,7 @@ def upload_replay_test():
 
 @bp.route('/upload/replay', methods=['POST'])
 def upload_replay(test=False):
-    session = Session()
+    session = g.Session()
     user = ''
     # passing username and create new user if it does not exist
     if 'username' in request.form and request.form['username'] != '':
@@ -141,7 +140,7 @@ def set_config():
 def get_model(hash):
     if len(hash) < 8:
         return jsonify([])
-    session = Session()
+    session = g.Session()
     model = session.query(Model).filter(Model.model_hash.like(hash + "%")).first()
     if model:
         return send_from_directory(model_dir, model.model_hash + '.zip', as_attachment=True,
@@ -152,7 +151,7 @@ def get_model(hash):
 @bp.route('/admin/model/upload', methods=['POST'])
 @flask_login.login_required
 def upload_model():
-    session = Session()
+    session = g.Session()
     # check if the post request has the file part
     if 'file' not in request.files:
         return return_error('No file part')
@@ -176,7 +175,7 @@ def upload_model():
 
 @bp.route('/admin/model/delete/<h>')
 def delete_model(h):
-    session = Session()
+    session = g.Session()
     m = session.query(Model).filter(Model.model_hash == h).first()
     session.delete(m)
     session.commit()
@@ -185,7 +184,7 @@ def delete_model(h):
 
 @bp.route('/model/list')
 def list_model():
-    session = Session()
+    session = g.Session()
     models = session.query(Model).all()
     return jsonify([{'model_hash': m.model_hash, 'model_type': m.model_type, 'model_size': m.model_size,
                      'total_reward': m.total_reward, 'evaluated': m.evaluated,
@@ -195,7 +194,7 @@ def list_model():
 # Replay management
 @bp.route('/replays/list')
 def list_replays():
-    session = Session()
+    session = g.Session()
     if request.method == 'GET':
         fs = [f.split('_')[-1] for f in os.listdir('replays/')]
         if 'all' in request.args:
@@ -239,7 +238,7 @@ def download_zipped_replays_fn():
 
 @bp.route('/replays/eval/<hash>')
 def list_replays_by_hash(hash):
-    session = Session()
+    session = g.Session()
     replays = [f.uuid + '.gz' for f in
                session.query(Replay).filter(Replay.model_hash.like("%{}%".format(hash))).all() if
                fnmatch.fnmatch('*{}*'.format(f.uuid))]
@@ -257,7 +256,7 @@ def get_replay(name):
 @bp.route('/replays/info/<uuid>')
 @flask_login.login_required
 def replay_info(uuid):
-    session = Session()
+    session = g.Session()
     replay = session.query(Replay).filter(Replay.uuid == uuid).first()
     if replay is None:
         return jsonify({})

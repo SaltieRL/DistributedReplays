@@ -1,10 +1,9 @@
 # Stats
 import datetime
 
-from flask import jsonify, Blueprint
+from flask import jsonify, Blueprint, g
 from sqlalchemy import extract, func
 
-from RLBotServer import Session
 from objects import Replay
 
 bp = Blueprint('stats', __name__)
@@ -17,7 +16,7 @@ def ping():
 def upload_stats(time, model):
     if time not in ['d', 'h']:
         return jsonify([])
-    session = Session()
+    session = g.Session()
     if time == 'h':
         result = session.query(extract('year', Replay.upload_date).label('y'),
                                extract('month', Replay.upload_date).label('m'),

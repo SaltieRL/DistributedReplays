@@ -1,17 +1,20 @@
 # Celery workers
 import os
 import pickle
+import sys
 
 from celery import Celery
 
 # from helpers import rewards
-from RLBotServer import app
+from flask import Blueprint
+
 from functions import get_rank
 from middleware import DBTask
 from objects import Game
 from replayanalysis.decompile_replays import decompile_replay
 from replayanalysis.game.game import Game as ReplayGame
-
+sys.path.append('replayanalysis')
+bp = Blueprint('celery', __name__)
 
 def make_celery(app):
     celery = Celery(app.import_name, backend=app.config['result_backend'],
@@ -30,7 +33,7 @@ def make_celery(app):
     return celery
 
 
-celery = make_celery(app)
+celery = make_celery(bp)
 
 
 #

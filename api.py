@@ -6,7 +6,6 @@ from typing import Optional, Any
 from flask import render_template, url_for, redirect, request, g, jsonify, send_from_directory, Blueprint
 from sqlalchemy.sql import operators
 
-from RLBotServer import Session
 from functions import tier_div_to_string, get_rank
 from objects import Game
 import pandas as pd
@@ -49,7 +48,7 @@ def api_v1_get_replays():
         page = int(args['page']) - 1
     if page < 0:
         page = 0
-    session = Session()
+    session = g.Session()
     games = session.query(Game)
     # RANK STUFF
     if 'rankany' in args:
@@ -100,7 +99,7 @@ def api_v1_get_ranks():
 @key_required
 def api_v1_get_stats():
     # TODO: stats?
-    session = Session()
+    session = g.Session()
     ct = session.query(Game).count()
     dct = len([f for f in os.listdir('parsed') if f.endswith('pkl')])
     return jsonify({'db_count': ct, 'count': dct})
@@ -109,7 +108,7 @@ def api_v1_get_stats():
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    session = Session()
+    session = g.Session()
     pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
     replay_path = os.path.join('rlreplays', id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):

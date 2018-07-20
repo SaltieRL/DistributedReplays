@@ -7,8 +7,6 @@ from werkzeug.utils import secure_filename
 
 import celery_tasks
 import constants
-from RLBotServer import Session
-from config import STEAM_API_KEY
 from functions import return_error, get_rank, get_item_dict
 from objects import Game
 from steam import steam_id_to_profile
@@ -70,7 +68,7 @@ def view_random():
 
 @bp.route('/parsed/view/player/<id_>')
 def view_player(id_):
-    session = Session()
+    session = g.Session()
     rank = get_rank(id_)
     games = session.query(Game).filter(Game.players.any(str(id_))).all()
     steam_profile = steam_id_to_profile(id_)
