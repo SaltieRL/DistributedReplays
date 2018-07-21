@@ -30,8 +30,11 @@ class ApiGameScore:
 
     @staticmethod
     def create_from_game(game):
-        team_0_score = game.properties['Team0Score']['value']['int']
-        team_1_score = game.properties['Team1Score']['value']['int']
+        for team in game.teams:
+            if team.is_orange:
+                team_1_score = team.score
+            else:
+                team_0_score = team.score
         return ApiGameScore(team_0_score, team_1_score)
 
 
