@@ -7,20 +7,8 @@ from flask import Flask, render_template
 
 import config
 import queries
-# import rewards
 from startup import startup
-from argparse import ArgumentParser
 from flask_cors import CORS
-
-# # ARGS STUFF
-#
-# parser = ArgumentParser()
-# parser.add_argument("-c", "--clean", action='store_true',
-#                     help="Clean database of files that do not exist")
-#
-# args = parser.parse_args()
-
-
 # APP SETUP
 
 print("Name:", __name__)
@@ -41,11 +29,6 @@ app.config.update(
 )
 CORS(app)
 # Import modules AFTER app is initialized
-
-import celery_tasks, steam
-import replays, saltie, stats, api
-
-print(replays, celery_tasks, steam, saltie, stats, api)  # prevents ide from removing it
 
 app.secret_key = config.SECRET_KEY
 # Login stuff
@@ -135,4 +118,12 @@ def home():
 
 
 if __name__ == '__main__':
+    import steam, replays, saltie, stats, api
+
+    # app.register_blueprint(celery_tasks.bp)
+    app.register_blueprint(steam.bp)
+    app.register_blueprint(replays.bp)
+    app.register_blueprint(saltie.bp)
+    app.register_blueprint(stats.bp)
+    app.register_blueprint(api.bp)
     app.run(host='0.0.0.0', port=5000)

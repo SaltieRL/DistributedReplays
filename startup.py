@@ -6,13 +6,13 @@ from objects import Base
 
 def login(connection_string, recreate_database=False):
     print(connection_string)
-    engine = create_engine(connection_string, echo=True)
+    engine = create_engine(connection_string, echo=False)
     if recreate_database:
         conn = engine.connect()
         conn.execute("commit")
         conn.execute("create database saltie")
         conn.close()
-        engine = create_engine(connection_string + '/saltie', echo=True)
+        engine = create_engine(connection_string + '/saltie', echo=False)
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     return engine, Session
@@ -29,5 +29,5 @@ def startup():
         try:
             engine, Session = login('postgresql://postgres:postgres@localhost/saltie')
         except Exception as e:
-            engine, Session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+            engine, Session = login('postgresql://postgres:postgres@localhost', recreate_database=False)
     return engine, Session

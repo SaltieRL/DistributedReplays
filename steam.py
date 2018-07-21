@@ -1,11 +1,10 @@
 import requests
-from flask import jsonify, request, redirect, url_for
-
-from RLBotServer import app
+from flask import jsonify, request, redirect, url_for, Blueprint
 from config import STEAM_API_KEY
 
+bp = Blueprint('steam', __name__, url_prefix='/steam')
 
-@app.route('/resolve/steam', methods=['POST'])
+@bp.route('/resolve', methods=['POST'])
 def resolve_steam():
     if 'name' not in request.form:
         return jsonify({})
