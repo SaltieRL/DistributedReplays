@@ -13,8 +13,12 @@ class ApiGameMap(Enum):
 
     @staticmethod
     def get_map_from_name(name):
-        # TODO: Implement more maps. Maybe as a string literal | thing?
-        # Maps are strings in the pickled game
+        # TODO: Implement more maps.
+        # Maps are strings in the pickled game - e.g. 'cs_p'
+        # JSON-ing should use the apiGameMap object's .name attribute which is a string
+        # Create with `api_game_map = ApiGameMap[pickled_game.map]`
+        # I'm not sure if this class is needed. It simply casts the game's .map into one of our specified strings
+        # which might be unnecessary
         return ApiGameMap.Map1
 
 
