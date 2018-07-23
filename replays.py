@@ -32,7 +32,7 @@ def parse_replay():
     filename = os.path.join('rlreplays', secure_filename(file.filename))
     file.save(filename)
     celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-    return redirect(url_for('view_replay', id_=file.filename.split('.')[0]))
+    return redirect(url_for('replays.view_replay', id_=file.filename.split('.')[0]))
 
 
 @bp.route('/parse/all')
@@ -63,7 +63,7 @@ def view_replay(id_):
 @bp.route('/parsed/view/random')
 def view_random():
     filelist = os.listdir('parsed')
-    return redirect(url_for('view_replay', id_=random.choice(filelist).split('.')[0]))
+    return redirect(url_for('replays.view_replay', id_=random.choice(filelist).split('.')[0]))
 
 
 @bp.route('/parsed/view/player/<id_>')

@@ -16,7 +16,7 @@
         <tbody>
         <tr>
             <td>
-                {% set url = url_for('api_v1_get_replays') %}
+                {% set url = url_for('apiv1.api_v1_get_replays') %}
                 <a href="{{ url }}">{{ url }}</a>
             </td>
             <td>
@@ -26,7 +26,7 @@
                 <ul>
                     <li>
                         <b><code>minrank</code>/<code>maxrank</code></b> - minimum / maximum rank limits to set.
-                        Integer, find ids from <code>{{ url_for('api_v1_get_ranks') }}</code>
+                        Integer, find ids from <code>{{ url_for('apiv1.api_v1_get_ranks') }}</code>
                     </li>
                     <li>
                         <b><code>minmmr</code>/<code>maxmmr</code></b> - minimum / maximum MMR limits to set.
@@ -40,7 +40,7 @@
         </tr>
         <tr>
             <td>
-                {% set url = url_for('api_v1_get_replay_info', id_='replayid') %}
+                {% set url = url_for('apiv1.api_v1_get_replay_info', id_=':replayid') %}
                 <a href="{{ url }}">{{ url }}</a>
             </td>
             <td>
@@ -52,7 +52,7 @@
         </tr>
         <tr>
             <td>
-                {% set url = url_for('api_v1_get_stats') %}
+                {% set url = url_for('apiv1.api_v1_get_stats') %}
                 <a href="{{ url }}">{{ url }}</a>
             </td>
             <td>
@@ -64,7 +64,7 @@
         </tr>
         <tr>
             <td>
-                {% set url = url_for('api_v1_list_parsed_replays') %}
+                {% set url = url_for('apiv1.api_v1_list_parsed_replays') %}
                 <a href="{{ url }}">{{ url }}</a>
             </td>
             <td>
@@ -77,11 +77,11 @@
         </tr>
         <tr>
             <td>
-                {% set url = url_for('api_v1_download_parsed', fn='filename') %}
+                {% set url = url_for('apiv1.api_v1_download_parsed', fn=':filename') %}
                 <a href="{{ url }}">{{ url }}</a>
             </td>
             <td>
-                Download a parsed replay by filename (from <code>{{ url_for('api_v1_list_parsed_replays') }}</code>)
+                Download a parsed replay by filename (from <code>{{ url_for('apiv1.api_v1_list_parsed_replays') }}</code>)
                 given by <b><code>filename</code></b>.
             </td>
             <td>
@@ -90,7 +90,7 @@
         </tr>
         <tr>
             <td>
-                {% set url = url_for('api_v1_get_rank', id_='steamid') %}
+                {% set url = url_for('apiv1.api_v1_get_rank', id_=':steamid') %}
                 <a href="{{ url }}">{{ url }}</a>
             </td>
             <td>
