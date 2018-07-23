@@ -4,7 +4,7 @@
     <div class="container">
         {% if replay == None %}
             Parsing... please wait a few minutes.
-            <p><a href="{{ url_for('download_replay', id_=id + '.replay') }}">Download</a></p>
+            <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
             {# Include refresh script here #}
             <script>
                 setTimeout(function () {
@@ -14,13 +14,13 @@
         {% elif replay != None %}
             {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
             <h2>{{ replay.name|e }}</h2>
-            <p><a href="{{ url_for('download_replay', id_=id + '.replay') }}">Download</a></p>
+            <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
             <p>Map: {{ replay.map['name'] }}</p>
             <p>Version: {{ replay.replay_version }}</p>
             <p>Time: {{ replay.datetime }}</p>
             <p>Frames: {{ frame_count }}</p>
             <p>Score: {{ replay.teams[0].score }}:{{ replay.teams[1].score }}</p>
-            <p><a href="{{ url_for('api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
+            <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
             <hr/>
             <div>
                 <b>Teams:</b>
@@ -48,7 +48,7 @@
                                         {% if p.online_id | string | length == 17 %}
                                             |
                                             <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">S</a>
-                                            | <a href="{{ url_for('view_player', id_=p.online_id) }}">R</a>
+                                            | <a href="{{ url_for('replays.view_player', id_=p.online_id) }}">R</a>
                                             {% if '8' in ranks[p.online_id] %}
                                                 |
                                                 <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"

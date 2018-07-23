@@ -3,17 +3,9 @@ import sys
 
 import flask
 import flask_login
-from flask import Flask, render_template
+from flask import Flask, render_template, g
 from flask_cors import CORS
 
-import api
-import celery_tasks
-import config
-import queries
-import replays
-import saltie
-import stats
-import steam
 from startup import startup
 
 # APP SETUP
@@ -21,7 +13,6 @@ from startup import startup
 print("Name:", __name__)
 sys.path.append('replayanalysis')
 engine, Session = startup()
-g.Session = Session
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
@@ -37,20 +28,31 @@ app.config.update(
 )
 CORS(app)
 # Import modules AFTER app is initialized
+#
+with app.app_context():
+    import celery_tasks
+    import api
+    import config
+    import queries
+    import replays
+    import saltie
+    import stats
+    import steam
+    app.register_blueprint(celery_tasks.bp)
+    app.register_blueprint(steam.bp)
+    app.register_blueprint(replays.bp)
+    app.register_blueprint(saltie.bp)
+    app.register_blueprint(stats.bp)
+    app.register_blueprint(api.bp)
+    app.secret_key = config.SECRET_KEY
+    # Login stuff
+    login_manager = flask_login.LoginManager()
 
-app.register_blueprint(celery_tasks.bp)
-app.register_blueprint(steam.bp)
-app.register_blueprint(replays.bp)
-app.register_blueprint(saltie.bp)
-app.register_blueprint(stats.bp)
-app.register_blueprint(api.bp)
-app.secret_key = config.SECRET_KEY
-# Login stuff
-login_manager = flask_login.LoginManager()
+    login_manager.init_app(app)
 
-login_manager.init_app(app)
+    users = config.users
 
-users = config.users
+    g.Session = Session
 
 
 # Admin stuff

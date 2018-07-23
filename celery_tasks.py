@@ -2,19 +2,17 @@
 import os
 import pickle
 import sys
-
 from celery import Celery
-
 # from helpers import rewards
-from flask import Blueprint
+from flask import Blueprint, current_app
 
 from functions import get_rank
 from middleware import DBTask
 from objects import Game
-from replayanalysis.decompile_replays import decompile_replay
-from replayanalysis.game.game import Game as ReplayGame
+
 sys.path.append('replayanalysis')
 bp = Blueprint('celery', __name__)
+
 
 def make_celery(app):
     celery = Celery(app.import_name, backend=app.config['result_backend'],
@@ -32,8 +30,7 @@ def make_celery(app):
     celery.Task = ContextTask
     return celery
 
-
-celery = make_celery(bp)
+celery = make_celery(current_app)
 
 
 #
@@ -49,6 +46,8 @@ celery = make_celery(bp)
 
 @celery.task(base=DBTask, bind=True)
 def parse_replay_task(self, fn):
+    from replayanalysis.decompile_replays import decompile_replay
+    from replayanalysis.game.game import Game as ReplayGame
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
     if os.path.isfile(pickled):
