@@ -2,7 +2,7 @@ import os
 import pickle
 import random
 
-from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint
+from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app
 from werkzeug.utils import secure_filename
 
 import celery_tasks
@@ -68,7 +68,7 @@ def view_random():
 
 @bp.route('/parsed/view/player/<id_>')
 def view_player(id_):
-    session = g.Session()
+    session = current_app.config['db']()
     rank = get_rank(id_)
     games = session.query(Game).filter(Game.players.any(str(id_))).all()
     steam_profile = steam_id_to_profile(id_)

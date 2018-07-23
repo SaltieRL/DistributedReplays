@@ -1,7 +1,7 @@
 # Stats
 import datetime
 
-from flask import jsonify, Blueprint, g
+from flask import jsonify, Blueprint, g, current_app
 from sqlalchemy import extract, func
 
 from objects import Replay
@@ -16,7 +16,7 @@ def ping():
 def upload_stats(time, model):
     if time not in ['d', 'h']:
         return jsonify([])
-    session = g.Session()
+    session = current_app.config['db']()
     if time == 'h':
         result = session.query(extract('year', Replay.upload_date).label('y'),
                                extract('month', Replay.upload_date).label('m'),

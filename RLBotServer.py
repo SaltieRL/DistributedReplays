@@ -125,7 +125,7 @@ def unauthorized_handler():
 # Main stuff
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    session = g.Session()
+    session = Session()
     replay_count = queries.get_replay_count(session)
     replay_data = queries.get_replay_stats(session)
     model_data = queries.get_model_stats(session)
