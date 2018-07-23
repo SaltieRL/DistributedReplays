@@ -27,6 +27,11 @@ app.config.update(
     worker_max_tasks_per_child=100
 )
 CORS(app)
+folders_to_make = ['rlreplays', 'replays', 'parsed']
+for f in folders_to_make:
+    abspath = os.path.join(os.path.dirname(__file__), f)
+    if not os.path.isdir(abspath):
+        os.makedirs(abspath)
 # Import modules AFTER app is initialized
 #
 with app.app_context():
