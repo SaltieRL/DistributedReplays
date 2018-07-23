@@ -3,7 +3,8 @@ import pickle
 from functools import wraps
 from typing import Optional, Any
 
-from flask import render_template, url_for, redirect, request, g, jsonify, send_from_directory, Blueprint
+from flask import render_template, url_for, redirect, request, g, jsonify, send_from_directory, Blueprint, current_app
+from sqlalchemy import func
 from sqlalchemy.sql import operators
 
 from functions import tier_div_to_string, get_rank
@@ -15,6 +16,7 @@ from replayanalysis.game.team import Team
 from replayanalysis.game.game import Game as ReplayGame
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
+
 
 def key_required(f):
     @wraps(f)
@@ -48,7 +50,7 @@ def api_v1_get_replays():
         page = int(args['page']) - 1
     if page < 0:
         page = 0
-    session = g.Session()
+    session = current_app.config['db']()
     games = session.query(Game)
     # RANK STUFF
     if 'rankany' in args:
@@ -60,6 +62,9 @@ def api_v1_get_replays():
     if 'minrank' in args:
         games = games.filter(getattr(Game.ranks, rank_opt)(int(args['minrank']), operator=operators.le))
 
+    any_rank_modifier = ['minrank', 'maxrank']
+    if any([m in args for m in any_rank_modifier]):
+        games = games.filter(func.array_length(Game.ranks, 1) > 0)
     # MMR stuff
     if 'mmrany' in args:
         mmr_opt = 'any'
@@ -70,6 +75,9 @@ def api_v1_get_replays():
     if 'minmmr' in args:
         games = games.filter(getattr(Game.mmrs, mmr_opt)(int(args['minmmr']), operator=operators.le))
 
+    any_mmr_modifier = ['maxmmr', 'minmmr']
+    if any([m in args for m in any_mmr_modifier]):
+        games = games.filter(func.array_length(Game.mmrs, 1) > 0)
     # USER stuff
     if 'user' in args:
         games = games.filter(Game.players.any(args['user']))
@@ -77,13 +85,13 @@ def api_v1_get_replays():
     data = []
     games = games[page * 50:(page + 1) * 50]
     for game in games:
-        data.append({'hash': game.hash, 'link': url_for('view_replay', id_=game.hash),
-                     'download': url_for('download_replay', id_=game.hash),
-                     'info': url_for('api_v1_get_replay_info', id_=game.hash),
+        data.append({'hash': game.hash, 'link': url_for('replays.view_replay', id_=game.hash),
+                     'download': url_for('replays.download_replay', id_=game.hash),
+                     'info': url_for('apiv1.api_v1_get_replay_info', id_=game.hash),
                      'mmrs': game.mmrs, 'ranks': game.ranks, 'players': game.players})
     response['data'] = data
     response['page'] = page + 1
-    response['next'] = url_for('api_v1_get_replays', page=page + 2)
+    response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2)
     response['version'] = 1
     return jsonify(response)
 
@@ -99,7 +107,7 @@ def api_v1_get_ranks():
 @key_required
 def api_v1_get_stats():
     # TODO: stats?
-    session = g.Session()
+    session = current_app.config['db']()
     ct = session.query(Game).count()
     dct = len([f for f in os.listdir('parsed') if f.endswith('pkl')])
     return jsonify({'db_count': ct, 'count': dct})
@@ -108,7 +116,8 @@ def api_v1_get_stats():
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    session = g.Session()
+    with current_app.app_context():
+        session = g.Session()
     pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
     replay_path = os.path.join('rlreplays', id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):

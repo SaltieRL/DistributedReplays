@@ -52,8 +52,7 @@ with app.app_context():
 
     users = config.users
 
-    g.Session = Session
-
+    app.config['db'] = Session
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
