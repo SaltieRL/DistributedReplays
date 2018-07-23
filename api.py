@@ -116,8 +116,7 @@ def api_v1_get_stats():
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    with current_app.app_context():
-        session = g.Session()
+    session = current_app.config['db']()
     pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
     replay_path = os.path.join('rlreplays', id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
