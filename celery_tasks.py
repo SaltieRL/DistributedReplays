@@ -10,7 +10,9 @@ from functions import get_rank
 from middleware import DBTask
 from objects import Game
 
-sys.path.append('replayanalysis')
+sys.path.append(os.path.join(os.path.dirname(__file__), 'replayanalysis'))
+from replayanalysis.decompile_replays import decompile_replay
+from replayanalysis.game.game import Game as ReplayGame
 # bp = Blueprint('celery', __name__)
 
 
@@ -32,6 +34,7 @@ sys.path.append('replayanalysis')
 
 celery = Celery()
 
+
 #
 # @celery.task(bind=True)
 # def calculate_reward(self, uid):
@@ -45,8 +48,6 @@ celery = Celery()
 
 @celery.task(base=DBTask, bind=True)
 def parse_replay_task(self, fn):
-    from replayanalysis.decompile_replays import decompile_replay
-    from replayanalysis.game.game import Game as ReplayGame
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
     if os.path.isfile(pickled):
