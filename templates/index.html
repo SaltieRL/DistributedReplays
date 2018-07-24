@@ -1,64 +1,34 @@
-{% include 'header.html' %}
-
-<main role="main">
-    <div class="container">
-        <h1>Saltie Reinforcement Learning Bot</h1>
-        <h3>Analyze Rocket League replay</h3>
-        <form method='post' enctype='multipart/form-data' action='{{ url_for('replays.parse_replay') }}'>
-            <input type=file name=file>
-            <input type=submit value=Upload>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>rlstats</title>
+    <link rel="stylesheet" type="text/css" href="/static/index.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="centerbox">
+      <div class="logo">
+        rlstats
+      </div>
+      <div class="searchblock">
+        <form action="/player" method="post">
+          <input name="usrInput" type="text" class="search" placeholder="enter steamID or username" required>
         </form>
-        <hr />
-        <h3>Search replays by Steam ID</h3>
-        <form method='post' enctype='multipart/form-data' action='{{ url_for('steam.resolve_steam') }}'>
-            <input type=text name=name>
-            <input type=submit value=Search>
-        </form>
-        <hr />
-        <h2>Statistics</h2>
-        <table class="table">
-            <thead>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Count</th>
-            </thead>
-            <tbody>
-
-            {% for block in stats %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ block[2] }}</td>
-                    <td>{{ block[1] }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <p><b>Total replays:</b> {{ total }}</p>
-        {% set hours = (total * 5/60.0) %}
-        <p><b>Hours of replays:</b> {{ hours|round(2, 'floor') }}</p>
-        <p><b>Hour goal:</b> {{ hours|round }}/{{ hours - (hours % 1000) + 1000 }}</p>
-        <h3>Model Statistics</h3>
-        <table class="table">
-            <thead>
-            <th>Rank</th>
-            <th>Hash</th>
-            <th>Name</th>
-            <th>Reward</th>
-            <th>Count</th>
-            </thead>
-            <tbody>
-
-            {% for block in model_stats %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ block[0] }}</td>
-                    <td>{{ block[1] }}</td>
-                    <td>{{ block[2] }}</td>
-                    <td>{{ block[3] }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+      </div>
+      <div class="hotlinks">
+        <a href = "#"><in>about</in></a>
+        <div class="dot">·</div>
+        <a href="https://github.com/SaltieRL/DistributedReplays"><in>github</in></a>
+        <div class="dot">·</div>
+        <a href = "#"><in>support</in></a>
+      </div>
+        <div class="hotlinks">
+            <a href = "#"><div class="framebox">global stats</div></a>
+            <a class="nav-link" href = "{{ url_for('replays.replays_home') }}"><div class="framebox">upload replay</div></a>
+        </div>
     </div>
-</main>
-{% include "footer.html" %}
+  </body>
+</html>
