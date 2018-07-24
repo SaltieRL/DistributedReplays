@@ -1,19 +1,18 @@
 import os
 import pickle
 from functools import wraps
-from typing import Optional, Any
 
-from flask import render_template, url_for, redirect, request, g, jsonify, send_from_directory, Blueprint, current_app
+from flask import render_template, url_for, redirect, request, jsonify, send_from_directory, Blueprint, current_app, \
+    Response
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
+from api_return_classes.ApiGame import ApiGame
 from functions import tier_div_to_string, get_rank
 from objects import Game
-import pandas as pd
-
+from replayanalysis.game.game import Game as ReplayGame
 from replayanalysis.game.player import Player
 from replayanalysis.game.team import Team
-from replayanalysis.game.game import Game as ReplayGame
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -123,6 +122,14 @@ def api_v1_get_replay_info(id_):
         return render_template('replay.html', replay=None)
     try:
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: ReplayGame
+        response = Response(
+            response=ApiGame.create_from_game(g).to_json(),
+            status=200,
+            mimetype='application/json'
+        )
+
+        return response
+
     except Exception as e:
         return jsonify({'error': 'Error opening game: ' + str(e)})
     game = session.query(Game).filter(Game.hash == id_).first()

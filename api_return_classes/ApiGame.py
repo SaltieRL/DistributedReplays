@@ -1,6 +1,6 @@
 import datetime
 import json
-from enum import Enum, auto
+from enum import Enum
 from typing import List
 
 from api_return_classes.ApiGoal import ApiGoal
@@ -9,7 +9,7 @@ from replayanalysis.game.game import Game
 
 
 class ApiGameMap(Enum):
-    Map1 = auto
+    Map1 = 1
 
     @staticmethod
     def get_map_from_name(name):
