@@ -43,7 +43,7 @@ with app.app_context():
     import saltie
     import stats
     import steam
-    app.register_blueprint(celery_tasks.bp)
+    # app.register_blueprint(celery_tasks.bp)
     app.register_blueprint(steam.bp)
     app.register_blueprint(replays.bp)
     app.register_blueprint(saltie.bp)
