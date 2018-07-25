@@ -14,10 +14,15 @@ a {
     align-items: center;
     flex-wrap: nowrap;
 }
+form {
+    margin: 0px;
+    padding: 0px;
+}
 .search {
     min-width: 300px;
     padding: 10px 15px;
     margin-left: 30px;
+    margin-bottom: 0px;
     font-family: "Fira Mono", monospace;
     border: 0px;
     border-left: 1px solid #ddd;

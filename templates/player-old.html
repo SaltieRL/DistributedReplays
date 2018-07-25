@@ -1,0 +1,48 @@
+{% include 'partials/header.html' %}
+{% set player=profile['response']['players'][0] %}
+<main role="main">
+    <div class="container">
+{#        {{ profile }}#}
+        <div class="row">
+            <div class="col-md-3">
+                <img src="{{ player['avatarfull'] }}" width="100px" />
+            </div>
+            <div class="col-md-9">
+                <h1><a href="{{ player['profileurl'] }}">{{ player['personaname'] }}</a></h1>
+            </div>
+        </div>
+        <h2>Replays</h2>
+        <ul>
+            {% for g in games %}
+                <li><a href="{{ url_for('view_replay', id_=g.hash) }}">{{ g.hash }}</a></li>
+
+            {% endfor %}
+        </ul>
+        <h2>Ranks</h2>
+        {% for k in rank.keys()|sort(reverse=True) %}
+            {% set season = rank[k] %}
+            <h3>Season {{ k }}</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Mode</th>
+                    <th>Rank</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for mode in season %}
+                    <tr>
+                        <td>
+                            {{ mode['mode'] }}
+                        </td>
+                        <td>
+                            <span title="Pts: {{ mode['rank_points'] }}">{{ mode['string'] }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+</main>
+{% include 'partials/footer.html' %}

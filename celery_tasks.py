@@ -6,7 +6,7 @@ from celery import Celery
 # from helpers import rewards
 from flask import Blueprint, current_app
 
-from functions import get_rank
+from players import get_rank
 from middleware import DBTask
 from objects import Game
 

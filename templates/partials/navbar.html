@@ -1,9 +1,9 @@
 <!-- views/partials/navbar.ejs -->
 <div class="navbar">
-    <link rel="stylesheet" type="text/css" href="/css/partials.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='partials.css') }}">
     <m>
         <logo>
-            <a href="/">rlstats</a>
+            <a href="/">saltie</a>
         </logo>
     </m>
     <m>
@@ -11,14 +11,14 @@
             a rocket league statistics platform
         </motto>
     </m>
-    <form action="player" method="post">
-        <input name="usrInput" type="text" class="search" placeholder="enter steamID or username" required>
-    </form>
+        <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
+            <input name=name type="text" class="search" placeholder="enter steamID or username" required>
+        </form>
     <m class="right"><a href = "#"><box>global stats</box></a></m>
     <m><d> · </d></m>
-    <m><a href = "https://www.google.com"><in>about</in></a></m>
+    <m><a href = "#"><in>about</in></a></m>
     <m><d> · </d></m>
-    <m><a href="https://github.com/jbyers44/rl.stat"><in>github</in></a></m>
+    <m><a href="https://github.com/SaltieRL/DistributedReplays"><in>github</in></a></m>
     <m><d> · </d></m>
     <m><a href = "#"><in>support</in></a></m>
     <m><d> · </d></m>

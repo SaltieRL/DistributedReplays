@@ -1,51 +1,169 @@
-{% include 'header.html' %}
-{% set player=profile['response']['players'][0] %}
-<main role="main">
-    <div class="container">
-{#        {{ profile }}#}
-        <div class="row">
-            <div class="col-md-3">
-                <img src="{{ player['avatarfull'] }}" width="100px" />
+{% include 'partials/navbar.html' %}
+{% set player = profile['response']['players'][0] %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Player Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
+    <script>
+    </script>
+  </head>
+  <style>
+  </style>
+  <body>
+    <div class="content">
+      <div class="sidebar">
+        /  profile information
+        <div class="playerpanel">
+          {% if player %}
+          <img class="avatar" src="{{ player['avatarfull'] }}" alt="avatar"/>
+          <div class="info">
+            <div class="t1">
+                {{ player['personaname'] }}
             </div>
-            <div class="col-md-9">
-                <h1><a href="{{ player['profileurl'] }}">{{ player['personaname'] }}</a></h1>
-            </div>
+            <ul class="detail">
+              <li class="cat">platform:</li>
+              <li>steam</li>
+            </ul>
+            <ul class="detail2">
+              <li class="cat"><a href={{ player['profileurl'] }}>profile link</a></li>
+            </ul>
+          </div>
+            {% endif %}
         </div>
-        <h2>Replays</h2>
-        <ul>
-            {% for g in games %}
-                <li><a href="{{ url_for('view_replay', id_=g.hash) }}">{{ g.hash }}</a></li>
-
-            {% endfor %}
-
-        </ul>
-        <h2>Ranks</h2>
-        {% for k in rank.keys()|sort(reverse=True) %}
-            {% set season = rank[k] %}
-            <h3>Season {{ k }}</h3>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Mode</th>
-                    <th>Rank</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for mode in season %}
-                    <tr>
-                        <td>
-                            {{ mode['mode'] }}
-                        </td>
-                        <td>
-                            <span title="Pts: {{ mode['rank_points'] }}">{{ mode['string'] }}</span>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+        / car stats
+        <div class="statpanel">
+          <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
+          <div class="t2">
+            highest win %
+          </div>
+          <div class="stat">
+            <div>
+              Octane
+            </div>
+            <div class="pctg">
+              51%
+            </div>
+          </div>
+        </div>
+        <div class="right">
+          per gamemode
+        </div>
+        <div class="statpanelnoborders">
+          <div class="verticalcarstat">
+              <div class="t3">3 v 3</div>
+            <div class="carname">
+              Octane
+            </div>
+            <div class="pctgfull">
+              76%
+            </div>
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
+          </div>
+          <div class="verticalcarstat">
+              <div class="t3">2 v 2</div>
+            <div class="carname">
+              Dominus
+            </div>
+            <div class="pctgfull">
+              54%
+            </div>
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
+          </div>
+          <div class="verticalcarstat">
+            <div class="t3">1 v 1</div>
+            <div class="carname">
+              Octane ZSR
+            </div>
+            <div class="pctgfull">
+              53%
+            </div>
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
+          </div>
+        </div>
+      </div>
+      <div class="main">
+        /  rank information
+        <div class="rankpanel">
+          {% if rank %}
+            {% set ranks = rank.keys()|sort(reverse=True) %}
+              {% set season = ranks[0] %}
+              {% for mode in season %}
+              <div class="panel">
+                <div class="t1">
+                  {{ mode['mode'] }}
+                </div>
+                  <div>
+                    {{ mode['string'] }}
+                  </div>
+                  <div>
+                    <img class="rankpic" src='{# "/static/img/ranks" + mode['tier'] + ".png" #}' alt="rank"/>
+                  </div>
+                  <div>
+                  rating: {{ mode['rank_points'] }}
+                  </div>
+              </div>
+              {% endfor %}
+          {% endif %}
+        </div>
+        / match history
+        <div class="matchhistory">
+          <% if(data.matchStats.recordset.length != 0) { %>
+            <table class="mhtable">
+              <tr>
+                <th>Gamemode</th>
+                <th>Blue Score</th>
+                <th>Orange Score</th>
+                <th>Player Score</th>
+                <th>Goals</th>
+                <th>Assists</th>
+                <th>Saves</th>
+                <th>Shots</th>
+                <th>Car</th>
+                <th>Date</th>
+              </tr>
+              <% var options = {day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: 'true'}; %>
+              <% for(var r = 0; r < data.matchStats.recordset.length; r++) { %>
+                <% if(data.matchStats.recordset[r].Verdict == true) { %>
+                  <tr class="win">
+                <% } %>
+                <% if(data.matchStats.recordset[r].Verdict == false) { %>
+                  <tr class="loss">
+                <% } %>
+                    <td><%= dict.gmDict[data.matchStats.recordset[r].TeamSize] %></td>
+                    <% if(data.matchStats.recordset[r].Team == 0) { %>
+                      <td class="team"><%= data.matchStats.recordset[r].Team0Score %></td>
+                    <% } %>
+                    <% if(data.matchStats.recordset[r].Team != 0) { %>
+                      <td><%= data.matchStats.recordset[r].Team0Score %></td>
+                    <% } %>
+                    <% if(data.matchStats.recordset[r].Team == 1) { %>
+                      <td class="team"><%= data.matchStats.recordset[r].Team1Score %></td>
+                    <% } %>
+                    <% if(data.matchStats.recordset[r].Team != 1) { %>
+                      <td><%= data.matchStats.recordset[r].Team1Score %></td>
+                    <% } %>
+                    <td><%= data.matchStats.recordset[r].Score %></td>
+                    <td><%= data.matchStats.recordset[r].Goals %></td>
+                    <td><%= data.matchStats.recordset[r].Assists %></td>
+                    <td><%= data.matchStats.recordset[r].Saves %></td>
+                    <td><%= data.matchStats.recordset[r].Shots %></td>
+                    <td><%= dict.carDict[data.matchStats.recordset[r].CarId] %></td>
+                    <td><%= data.matchStats.recordset[r].Date.toLocaleDateString("en-US", options) %></td>
+                  </tr>
+              <% } %>
             </table>
-        {% endfor %}
+          <% } %>
+          <% if(data.matchStats.recordset.length == 0) { %>
+            <div class="errmsg">
+              no matches recorded for this user (are you using the auto-uploader?)
+            </div>
+          <% } %>
+        </div>
+      </div>
     </div>
-</main>
-
-
-{% include 'footer.html' %}
+  </body>
+</html>

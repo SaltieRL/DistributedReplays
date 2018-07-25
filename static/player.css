@@ -83,7 +83,6 @@ th {
   margin: 5px 0px;
   display: flex;
   flex-direction: row;
-  align-items: center;
 }
 .stat {
   display: flex;

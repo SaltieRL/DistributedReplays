@@ -14,8 +14,8 @@
         saltie
       </div>
       <div class="searchblock">
-        <form action="/player" method="post">
-          <input name="usrInput" type="text" class="search" placeholder="enter steamID or username" required>
+        <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
+          <input name=name type="text" class="search" placeholder="enter steamID or username" required>
         </form>
       </div>
       <div class="hotlinks">
