@@ -4,9 +4,14 @@ html, body {
     width: 100%;
     font-family: "Fira Mono", monospace;
     display: flex;
+    background-image: url(/static/img/background/splash.png);
+    background-size: cover;
 }
 
 .centerbox  {
+    background: white;
+    padding: 20px;
+    border: 1px solid black;
     display: flex;
     margin: 12% auto auto auto;
     flex-direction: column;

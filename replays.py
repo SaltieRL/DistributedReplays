@@ -10,7 +10,6 @@ import constants
 from functions import return_error, get_rank, get_item_dict
 from objects import Game
 from steam import steam_id_to_profile
-from startup import startup
 import queries
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
@@ -24,10 +23,9 @@ bp = Blueprint('replays', __name__, url_prefix='/replays')
 print('Loaded replay app')
 
 
-@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET'])
 def replays_home():
-    engine, Session = startup()
-    session = Session()
+    session = current_app.config['db']()
     replay_count = queries.get_replay_count(session)
     replay_data = queries.get_replay_stats(session)
     model_data = queries.get_model_stats(session)
