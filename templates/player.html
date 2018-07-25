@@ -90,7 +90,7 @@
         <div class="rankpanel">
           {% if rank %}
             {% set ranks = rank.keys()|sort(reverse=True) %}
-              {% set season = ranks[0] %}
+              {% set season = rank[ranks[0]] %}
               {% for mode in season %}
               <div class="panel">
                 <div class="t1">
@@ -100,7 +100,7 @@
                     {{ mode['string'] }}
                   </div>
                   <div>
-                    <img class="rankpic" src='{# "/static/img/ranks" + mode['tier'] + ".png" #}' alt="rank"/>
+                    <img class="rankpic" src='{{ '/static/img/ranks/' + mode['tier']|string + '.png' }}' alt="rank"/>
                   </div>
                   <div>
                   rating: {{ mode['rank_points'] }}
@@ -111,57 +111,9 @@
         </div>
         / match history
         <div class="matchhistory">
-          <% if(data.matchStats.recordset.length != 0) { %>
-            <table class="mhtable">
-              <tr>
-                <th>Gamemode</th>
-                <th>Blue Score</th>
-                <th>Orange Score</th>
-                <th>Player Score</th>
-                <th>Goals</th>
-                <th>Assists</th>
-                <th>Saves</th>
-                <th>Shots</th>
-                <th>Car</th>
-                <th>Date</th>
-              </tr>
-              <% var options = {day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: 'true'}; %>
-              <% for(var r = 0; r < data.matchStats.recordset.length; r++) { %>
-                <% if(data.matchStats.recordset[r].Verdict == true) { %>
-                  <tr class="win">
-                <% } %>
-                <% if(data.matchStats.recordset[r].Verdict == false) { %>
-                  <tr class="loss">
-                <% } %>
-                    <td><%= dict.gmDict[data.matchStats.recordset[r].TeamSize] %></td>
-                    <% if(data.matchStats.recordset[r].Team == 0) { %>
-                      <td class="team"><%= data.matchStats.recordset[r].Team0Score %></td>
-                    <% } %>
-                    <% if(data.matchStats.recordset[r].Team != 0) { %>
-                      <td><%= data.matchStats.recordset[r].Team0Score %></td>
-                    <% } %>
-                    <% if(data.matchStats.recordset[r].Team == 1) { %>
-                      <td class="team"><%= data.matchStats.recordset[r].Team1Score %></td>
-                    <% } %>
-                    <% if(data.matchStats.recordset[r].Team != 1) { %>
-                      <td><%= data.matchStats.recordset[r].Team1Score %></td>
-                    <% } %>
-                    <td><%= data.matchStats.recordset[r].Score %></td>
-                    <td><%= data.matchStats.recordset[r].Goals %></td>
-                    <td><%= data.matchStats.recordset[r].Assists %></td>
-                    <td><%= data.matchStats.recordset[r].Saves %></td>
-                    <td><%= data.matchStats.recordset[r].Shots %></td>
-                    <td><%= dict.carDict[data.matchStats.recordset[r].CarId] %></td>
-                    <td><%= data.matchStats.recordset[r].Date.toLocaleDateString("en-US", options) %></td>
-                  </tr>
-              <% } %>
-            </table>
-          <% } %>
-          <% if(data.matchStats.recordset.length == 0) { %>
             <div class="errmsg">
               no matches recorded for this user (are you using the auto-uploader?)
             </div>
-          <% } %>
         </div>
       </div>
     </div>
