@@ -48,7 +48,7 @@
                                         {% if p.online_id | string | length == 17 %}
                                             |
                                             <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">S</a>
-                                            | <a href="{{ url_for('replays.view_player', id_=p.online_id) }}">R</a>
+                                            | <a href="{{ url_for('players.view_player', id_=p.online_id) }}">R</a>
                                             {% if '8' in ranks[p.online_id] %}
                                                 |
                                                 <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
