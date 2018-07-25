@@ -14,7 +14,7 @@
         <h2>Replays</h2>
         <ul>
             {% for g in games %}
-                <li><a href="{{ url_for('view_replay', id_=g.hash) }}">{{ g.hash }}</a></li>
+                <li><a href="{{ url_for('replays.view_replay', id_=g.hash) }}">{{ g.hash }}</a></li>
 
             {% endfor %}
 

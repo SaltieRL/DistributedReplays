@@ -70,6 +70,43 @@ def get_rank(steam_id):
         return {}
 
 
+def get_rank_batch(ids):
+    for steam_id in ids:
+        if steam_id in rank_cache:
+            return rank_cache[steam_id]
+    url = "https://api.rocketleaguestats.com/v1/player/batch"
+    headers = {'Authorization': config.RLSTATS_API_KEY}
+
+    post_data = list(
+        filter(lambda x: x['platformId'] == '1', [{'platformId': get_platform_id(i), 'uniqueId': str(i)} for i in ids]))
+    print (post_data)
+    data = requests.post(url, headers=headers, json=post_data)
+    data = data.json()
+    print (data)
+    if 'rankedSeasons' in data:
+        seasons = {}
+        for k in data['rankedSeasons']:
+            season = data['rankedSeasons'][k]
+            modes = []
+
+            names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+            for t in season:
+                if 'tier' in season[t]:  # excludes unranked
+                    s = {'mode': names[t], 'rank_points': season[t]['rankPoints'], 'tier': season[t]['tier'],
+                         'division': season[t]['division'],
+                         'string': tier_div_to_string(season[t]['tier'], season[t]['division'])}
+                    modes.append(s)
+                else:
+                    s = {'mode': names[t], 'rank_points': season[t]['rankPoints'], 'tier': 0,
+                         'division': 0, 'string': tier_div_to_string(0, 0)}
+                    modes.append(s)
+            seasons[k] = modes
+        rank_cache[steam_id] = seasons
+        return seasons
+    else:
+        return {}
+
+
 def tier_div_to_string(rank, div=-1):
     ranks = ['Unranked', 'Bronze I', 'Bronze II', 'Bronze III', 'Silver I', 'Silver II', 'Silver III', 'Gold I',
              'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
@@ -86,3 +123,10 @@ def get_item_name_by_id(id_):
 
 def get_item_dict():
     return item_dict
+
+
+def get_platform_id(i):
+    if len(str(i)) == 17:
+        return '1'  # steam
+    else:
+        return '-1'
