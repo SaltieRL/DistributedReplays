@@ -7,3 +7,10 @@ sqlalchemy
 requests
 flask-cors
 Flask-Celery-Helper
+jinja2
+flower
+matplotlib
+pip
+proj
+requests
+xlrd
