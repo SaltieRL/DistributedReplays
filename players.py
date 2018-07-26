@@ -15,6 +15,8 @@ def view_player(id_):
     rank = get_rank(id_)
     games = session.query(Game).filter(Game.players.any(str(id_))).all()
     steam_profile = steam_id_to_profile(id_)
+    if steam_profile is None:
+        return render_template('error.html', error="Unable to find the requested profile")
     return render_template('player.html', games=games, rank=rank, profile=steam_profile)
 
 

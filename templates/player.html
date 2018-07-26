@@ -32,7 +32,7 @@
               <li class="cat"><a href={{ player['profileurl'] }}>profile link</a></li>
             </ul>
           </div>
-            {% endif %}
+          {% endif %}
         </div>
         / car stats
         <div class="statpanel">
@@ -107,12 +107,16 @@
                   </div>
               </div>
               {% endfor %}
+          {% else %}
+              <div class="errmsg">
+                unable to find rank information for this profile (does this player own rocket league?)
+              </div>
           {% endif %}
         </div>
         / match history
         <div class="matchhistory">
             <div class="errmsg">
-              no matches recorded for this user (are you using the auto-uploader?)
+              no matches recorded for this profile (are you using the auto-uploader?)
             </div>
         </div>
       </div>
