@@ -6,7 +6,7 @@ from celery import Celery
 # from helpers import rewards
 from flask import Blueprint, current_app
 
-from functions import get_rank
+from functions import get_rank, convert_pickle_to_db
 from middleware import DBTask
 from objects import Game
 
@@ -63,25 +63,6 @@ def parse_replay_task(self, fn):
     #     os.system('rm ' + output)
     #     os.system('mv {} {}'.format(fn, os.path.join(os.path.dirname(fn), 'broken', os.path.basename(fn))))
     #     return
-
-    ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
-    if len(g.players) > 4:
-        mode = 'standard'
-    elif len(g.players) > 2:
-        mode = 'doubles'
-    else:
-        mode = 'duel'
-    rank_list = []
-    mmr_list = []
-    for k in ranks:
-        keys = ranks[k].keys()
-        if len(keys) > 0:
-            latest = sorted(keys, reverse=True)[0]
-            r = list(filter(lambda x: x['mode'] == mode, ranks[k][latest]))[0]
-            if 'tier' in r:
-                rank_list.append(r['tier'])
-            if 'rank_points' in r:
-                mmr_list.append(r['rank_points'])
     sess = self.session()
     old_hash = str(os.path.basename(fn)).split('.')[0]
     hash = g.replay_id
@@ -89,7 +70,6 @@ def parse_replay_task(self, fn):
     if len(possible_duplicates) > 0:
         for p in possible_duplicates:
             sess.delete(p)
-    game = Game(hash=hash, players=[str(p.online_id) for p in g.players],
-                ranks=rank_list, mmrs=mmr_list, map=g.map)
+    game = convert_pickle_to_db(g)
     sess.add(game)
     sess.commit()

@@ -7,6 +7,9 @@ import config
 from flask import jsonify, render_template
 
 # Replay stuff
+from objects import Game
+from replayanalysis.game.game import Game as ReplayGame
+
 replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
 if not os.path.isdir(replay_dir):
     os.mkdir(replay_dir)
@@ -79,10 +82,10 @@ def get_rank_batch(ids):
 
     post_data = list(
         filter(lambda x: x['platformId'] == '1', [{'platformId': get_platform_id(i), 'uniqueId': str(i)} for i in ids]))
-    print (post_data)
+    print(post_data)
     data = requests.post(url, headers=headers, json=post_data)
     data = data.json()
-    print (data)
+    print(data)
     if 'rankedSeasons' in data:
         seasons = {}
         for k in data['rankedSeasons']:
@@ -130,3 +133,28 @@ def get_platform_id(i):
         return '1'  # steam
     else:
         return '-1'
+
+
+def convert_pickle_to_db(game: ReplayGame) -> Game:
+    ranks = get_rank_batch([p.online_id for p in g.players])
+    # ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
+    if len(g.players) > 4:
+        mode = 'standard'
+    elif len(g.players) > 2:
+        mode = 'doubles'
+    else:
+        mode = 'duel'
+    rank_list = []
+    mmr_list = []
+    for k in ranks:
+        keys = ranks[k].keys()
+        if len(keys) > 0:
+            latest = sorted(keys, reverse=True)[0]
+            r = list(filter(lambda x: x['mode'] == mode, ranks[k][latest]))[0]
+            if 'tier' in r:
+                rank_list.append(r['tier'])
+            if 'rank_points' in r:
+                mmr_list.append(r['rank_points'])
+    g = Game(hash=game.replay_id, players=[str(p.online_id) for p in g.players],
+             ranks=rank_list, mmrs=mmr_list, map=g.map)
+    return g
