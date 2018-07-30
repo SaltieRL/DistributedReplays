@@ -1,9 +1,6 @@
-{% include 'partials/header.html' %}
-<main role="main">
+{% include 'partials/base.html' %}
+{% block body %}
     <div class="container">
         <p>{{ error }}</p>
     </div>
-</main>
-
-
-{% include 'partials/footer.html' %}
+{% endblock %}

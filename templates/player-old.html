@@ -1,7 +1,6 @@
-{% include 'partials/header.html' %}
+{% include 'partials/base.html' %}
 {% set player=profile['response']['players'][0] %}
-<main role="main">
-    <div class="container">
+{% block body %}
 {#        {{ profile }}#}
         <div class="row">
             <div class="col-md-3">
@@ -43,9 +42,8 @@
                 </tbody>
             </table>
         {% endfor %}
-    </div>
-</main>
-
+{% endblock %}
+{#
 <% if(data.matchStats.recordset.length != 0) { %>
             <table class="mhtable">
               <tr>
@@ -92,4 +90,4 @@
               <% } %>
             </table>
           <% } %>
-{% include 'partials/footer.html' %}
+#}

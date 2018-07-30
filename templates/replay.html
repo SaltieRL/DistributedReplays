@@ -1,136 +1,132 @@
-{% include 'partials/header.html' %}
+{% extends 'partials/base.html' %}
 {% set frame_count = replay.frames|length %}
-<main role="main">
-    <div class="container">
-        {% if replay == None %}
-            Parsing... please wait a few minutes.
-            <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
-            {# Include refresh script here #}
-            <script>
-                setTimeout(function () {
-                    location.reload();
-                }, 10000)
-            </script>
-        {% elif replay != None %}
-            {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
-            <h2>{{ replay.name|e }}</h2>
-            <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
-            <p>Map: {{ replay.map['name'] }}</p>
-            <p>Version: {{ replay.replay_version }}</p>
-            <p>Time: {{ replay.datetime }}</p>
-            <p>Frames: {{ frame_count }}</p>
-            <p>Score: {{ replay.teams[0].score }}:{{ replay.teams[1].score }}</p>
-            <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
-            <hr/>
-            <div>
-                <b>Teams:</b>
-                {% for team in replay.teams|sort(attribute='is_orange', reverse=True) %}
+{% block body %}
+    {% if replay == None %}
+        Parsing... please wait a few minutes.
+        <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
+        {# Include refresh script here #}
+        <script>
+            setTimeout(function () {
+                location.reload();
+            }, 10000)
+        </script>
+    {% elif replay != None %}
+        {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
+        <h2>{{ replay.name|e }}</h2>
+        <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
+        <p>Map: {{ replay.map['name'] }}</p>
+        <p>Version: {{ replay.replay_version }}</p>
+        <p>Time: {{ replay.datetime }}</p>
+        <p>Frames: {{ frame_count }}</p>
+        <p>Score: {{ replay.teams[0].score }}:{{ replay.teams[1].score }}</p>
+        <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
+        <hr/>
+        <div>
+            <b>Teams:</b>
+            {% for team in replay.teams|sort(attribute='is_orange', reverse=True) %}
 
-                    <div class="team"
-                         style="padding: 10px; {{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
-                        <h4>{{ team.name }}</h4>
-                        Score: {{ team.score }}
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Score</th>
-                                <th>Goals</th>
-                                <th>Assists</th>
-                                <th>Saves</th>
-                                <th>Shots</th>
-                            </tr>
-                            </thead>
-                            {% for p in team.players|sort(attribute='score', reverse=True) %}
-
-                                <tr>
-                                    <td>{{ p.name }}
-                                        {% if p.online_id | string | length == 17 %}
-                                            |
-                                            <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">S</a>
-                                            | <a href="{{ url_for('players.view_player', id_=p.online_id) }}">R</a>
-                                            {% if '8' in ranks[p.online_id] %}
-                                                |
-                                                <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
-                                                     height="30px"/>
-                                            {% endif %}
-                                        {% endif %}
-                                        {% if p.is_bot %}
-                                            | <i>Bot</i>
-                                        {% endif %}</td>
-                                    <td>{{ p.score }}</td>
-                                    <td>{{ p.goals }}</td>
-                                    <td>{{ p.assists }}</td>
-                                    <td>{{ p.saves }}</td>
-                                    <td>{{ p.shots }}</td>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-
-                        </table>
-                    </div>
-                {% endfor %}
-            </div>
-            <hr/>
-            <div>
-                <b>Goals:</b>
-                <table class="table">
-                    {% for goal in replay.goals %}
-                        <tr style="{{ "color: white;" if not goal.player_team else "" }}background: {{ "#e66f33" if goal.player_team else "#0000aa" }}">
-                            <td>Player: {{ goal.player_name }}</td>
-                            <td>Frame: {{ goal.frame_number }}</td>
+                <div class="team"
+                     style="padding: 10px; {{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
+                    <h4>{{ team.name }}</h4>
+                    Score: {{ team.score }}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Score</th>
+                            <th>Goals</th>
+                            <th>Assists</th>
+                            <th>Saves</th>
+                            <th>Shots</th>
                         </tr>
-                    {% endfor %}
-                </table>
-            </div>
-            <hr/>
-            <div>
-                <b>Player List:</b>
-                <ol>
-                    {% for p in replay.players %}
-                        <li><b><span title="Actor ID: {{ p.actor_id }}">{{ p.name }}
+                        </thead>
+                        {% for p in team.players|sort(attribute='score', reverse=True) %}
+
+                            <tr>
+                                <td>{{ p.name }}
+                                    {% if p.online_id | string | length == 17 %}
+                                        |
+                                        <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">S</a>
+                                        | <a href="{{ url_for('players.view_player', id_=p.online_id) }}">R</a>
+                                        {% if '8' in ranks[p.online_id] %}
+                                            |
+                                            <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
+                                                 height="30px"/>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if p.is_bot %}
+                                        | <i>Bot</i>
+                                    {% endif %}</td>
+                                <td>{{ p.score }}</td>
+                                <td>{{ p.goals }}</td>
+                                <td>{{ p.assists }}</td>
+                                <td>{{ p.saves }}</td>
+                                <td>{{ p.shots }}</td>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+        <hr/>
+        <div>
+            <b>Goals:</b>
+            <table class="table">
+                {% for goal in replay.goals %}
+                    <tr style="{{ "color: white;" if not goal.player_team else "" }}background: {{ "#e66f33" if goal.player_team else "#0000aa" }}">
+                        <td>Player: {{ goal.player_name }}</td>
+                        <td>Frame: {{ goal.frame_number }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <hr/>
+        <div>
+            <b>Player List:</b>
+            <ol>
+                {% for p in replay.players %}
+                    <li><b><span title="Actor ID: {{ p.actor_id }}">{{ p.name }}
 
                         </span></b>
-                            {% if p.online_id | string | length == 17 %}
-                                | <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
+                        {% if p.online_id | string | length == 17 %}
+                            | <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">Steam</a>
+                        {% endif %}
+                        <ul>
+                            {% if p.title != None %}
+                                <li>Title ID: {{ p.title|string }}</li>
                             {% endif %}
-                            <ul>
-                                {% if p.title != None %}
-                                    <li>Title ID: {{ p.title|string }}</li>
-                                {% endif %}
-                                <li>Loadout
+                            <li>Loadout
 
-                                    {% if p.loadout|length > 0 %}
+                                {% if p.loadout|length > 0 %}
 
-                                        <ul>
-                                            {% for k in p.loadout[0].keys()|sort() %}
-                                                {% if k != 'version' %}
-                                                    {% set item_id = p.loadout[0][k] %}
-                                                    {% set item_props = item_dict[item_id|string] %}
-                                                    {% if 'LongLabel' in item_props %}
-                                                        <li>{{ k }}: {{ item_props['LongLabel'] }}</li>
-                                                    {% elif item_id != 0 and item_id != None %}
-                                                        <li>{{ k }}: {{ item_id }}</li>
-                                                    {% endif %}
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                </li>
-                                <li>Camera settings
                                     <ul>
-                                        {% for k in p.camera_settings.keys() %}
-                                            <li>{{ k }}: {{ p.camera_settings[k] }}</li>
+                                        {% for k in p.loadout[0].keys()|sort() %}
+                                            {% if k != 'version' %}
+                                                {% set item_id = p.loadout[0][k] %}
+                                                {% set item_props = item_dict[item_id|string] %}
+                                                {% if 'LongLabel' in item_props %}
+                                                    <li>{{ k }}: {{ item_props['LongLabel'] }}</li>
+                                                {% elif item_id != 0 and item_id != None %}
+                                                    <li>{{ k }}: {{ item_id }}</li>
+                                                {% endif %}
+                                            {% endif %}
                                         {% endfor %}
                                     </ul>
-                                </li>
-                            </ul>
-                        </li>
-                    {% endfor %}
-                </ol>
-            </div>
-        {% endif %}
-    </div>
-</main>
-
-{% include 'partials/footer.html' %}
+                                {% endif %}
+                            </li>
+                            <li>Camera settings
+                                <ul>
+                                    {% for k in p.camera_settings.keys() %}
+                                        <li>{{ k }}: {{ p.camera_settings[k] }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endif %}
+{% endblock body %}

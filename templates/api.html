@@ -1,6 +1,5 @@
-{% include "partials/header.html" %}
-
-<div class="container">
+{% extends "partials/base.html" %}
+{% block body %}
     <h2>Saltie Replay API</h2>
     <p>For an API key, please ask a developer in the <a href="https://discord.gg/aCHWD3E">Discord server</a>.</p>
     <p>Registration and login coming soon.</p>
@@ -102,6 +101,4 @@
         </tr>
         </tbody>
     </table>
-</div>
-
-{% include "partials/footer.html" %}
+{% endblock body %}

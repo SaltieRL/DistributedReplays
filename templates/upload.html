@@ -1,7 +1,6 @@
-{% include 'partials/header.html' %}
+{% extends 'partials/base.html' %}
 
-<main role="main">
-    <div class="container">
+{% block body %}
         <h1>Saltie Reinforcement Learning Bot</h1>
         <h3>Analyze Rocket League replay</h3>
         <form method='post' enctype='multipart/form-data' action='{{ url_for('replays.parse_replay') }}'>
@@ -59,6 +58,4 @@
             {% endfor %}
             </tbody>
         </table>
-    </div>
-</main>
-{% include "partials/footer.html" %}
+{% endblock body %}

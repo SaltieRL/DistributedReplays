@@ -1,6 +1,5 @@
-{% include 'partials/header.html' %}
-<body>
-<div class="container">
+{% extends "partials/base.html" %}
+{% block body %}
     <h2>Submit new config file</h2>
     <p>Config file will be set on reboot of clients.</p>
     <form action='{{ url_for('set_config') }}' method='POST' enctype='multipart/form-data'>
@@ -41,6 +40,5 @@
     </form>
     <div id="uploads-hour"></div>
     <div id="uploads-day"></div>
-</div>
-<script src="/static/admin.js"></script>
-{% include "partials/footer.html" %}
+    <script src="/static/admin.js"></script>
+{% endblock body %}
