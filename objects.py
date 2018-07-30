@@ -18,12 +18,17 @@ class Playlist(enum.Enum):
 
 
 class PlatformName(enum.Enum):
+    unknown = 0
     steam = 1
     ps4 = 2
-    xbox = 3
-    switch = 4
-    other = 5
+    xbox = 4
+    switch = 6
 
+
+class MatchType(enum.Enum):
+    private = 1
+    unlisted = 2
+    public = 3
 
 
 class User(Base):
@@ -68,11 +73,21 @@ class Model(Base):
                                                                                 self.total_reward, self.evaluated)
 
 
-class Game(Base):
-    __tablename__ = 'games'
+class PlayerGame(Base):
+    __tablename__ = 'playergames'
 
     id = Column(Integer, primary_key=True)
-    hash = Column(String(40))  # replayid
+    player = relationship('Player')
+    game = Column(String(40), ForeignKey('games.hash'))
+    score = Column(Integer)
+    goals = Column(Integer)
+    assists = Column(Integer)
+    saves = Column(Integer)
+    shots = Column(Integer)
+
+class Game(Base):
+    __tablename__ = 'games'
+    hash = Column(String(40), primary_key=True)  # replayid
     players = Column(postgresql.ARRAY(String, dimensions=1))
     map = Column(String(40))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))
@@ -84,23 +99,11 @@ class Game(Base):
     playergames = relationship("PlayerGame")  # TODO: should this just replace .players?
     upload_date = Column(DateTime, default=datetime.datetime.utcnow)
 
+
 class Player(Base):
     __tablename__ = 'players'
-    id = Column(Integer, primary_key=True)
     platformid = Column(String(40), primary_key=True)
     platformname = Column(String(10))
     avatar = Column(String(100))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
 
-
-class PlayerGame(Base):
-    __tablename__ = 'playergame'
-
-    id = Column(Integer, primary_key=True)
-    player = relationship('Player')
-    hash = Column(String(40), ForeignKey('games.hash'))
-    score = Column(Integer)
-    goals = Column(Integer)
-    assists = Column(Integer)
-    saves = Column(Integer)
-    shots = Column(Integer)
