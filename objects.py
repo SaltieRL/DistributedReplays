@@ -77,7 +77,7 @@ class PlayerGame(Base):
     __tablename__ = 'playergames'
 
     id = Column(Integer, primary_key=True)
-    player = relationship('Player')
+    player = Column(String(40), ForeignKey('players.platformid'))
     game = Column(String(40), ForeignKey('games.hash'))
     score = Column(Integer)
     goals = Column(Integer)
@@ -106,4 +106,4 @@ class Player(Base):
     platformname = Column(String(10))
     avatar = Column(String(100))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
-
+    games = relationship('PlayerGame')
