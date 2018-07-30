@@ -40,13 +40,13 @@ with app.app_context():
     import config
     import queries
     import replays
-    import saltie
+    # import saltie
     import stats
     import steam
     # app.register_blueprint(celery_tasks.bp)
     app.register_blueprint(steam.bp)
     app.register_blueprint(replays.bp)
-    app.register_blueprint(saltie.bp)
+    # app.register_blueprint(saltie.bp)
     app.register_blueprint(stats.bp)
     app.register_blueprint(api.bp)
     app.secret_key = config.SECRET_KEY
