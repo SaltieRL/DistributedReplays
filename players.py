@@ -1,3 +1,5 @@
+import json
+
 import redis
 import requests
 from config import RLSTATS_API_KEY
@@ -27,8 +29,15 @@ rank_cache = {}
 def get_rank(steam_id):
     if len(str(steam_id)) < 17:
         return {}
-    if steam_id in rank_cache:
-        return rank_cache[steam_id]
+    try:
+        r = current_app.config['r']  # type: redis.Redis
+        print('successfully found redis')
+        result = r.get(steam_id)
+        print(result)
+        if result is not None:
+            return json.loads(result.decode("utf-8"))
+    except KeyError:
+        r = None
     url = "https://api.rocketleaguestats.com/v1/player?unique_id={}&platform_id=1".format(steam_id)
     post_data = {'Authorization': RLSTATS_API_KEY}
     data = requests.get(url, headers=post_data)
@@ -52,7 +61,9 @@ def get_rank(steam_id):
                          'division': 0, 'string': tier_div_to_string(0, 0)}
                     modes.append(s)
             seasons[k] = modes
-        rank_cache[steam_id] = seasons
+
+        if r is not None:
+            r.set(steam_id, json.dumps(seasons), ex=24 * 60 * 60)
         return seasons
     else:
         return {}
@@ -62,15 +73,16 @@ def get_rank_batch(ids):
     return_data = {}
     try:
         r = current_app.config['r']  # type: redis.Redis
+        print('successfully found redis')
         ids_to_find = []
         for steam_id in ids:
-
             result = r.get(steam_id)
+            print(result)
             if result is not None:
-                return_data[steam_id] = result
+                return_data[steam_id] = json.loads(result.decode("utf-8"))
             else:
                 ids_to_find.append(steam_id)
-    except:
+    except KeyError:
         r = None
         ids_to_find = ids
     url = "https://api.rocketleaguestats.com/v1/player/batch"
@@ -103,7 +115,7 @@ def get_rank_batch(ids):
                         modes.append(s)
                 seasons[k] = modes
             if r is not None:
-                r.set(unique_id, seasons, ex=24 * 60 * 60)
+                r.set(unique_id, json.dumps(seasons), ex=24 * 60 * 60)
             return_data[unique_id] = seasons
         else:
             return_data[unique_id] = {}
