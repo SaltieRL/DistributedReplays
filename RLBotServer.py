@@ -7,6 +7,7 @@ from flask import Flask, render_template, g
 from flask_cors import CORS
 
 from startup import startup
+import redis
 
 # APP SETUP
 
@@ -43,6 +44,7 @@ with app.app_context():
     # import saltie
     import stats
     import steam
+
     # app.register_blueprint(celery_tasks.bp)
     app.register_blueprint(steam.bp)
     app.register_blueprint(replays.bp)
@@ -58,6 +60,12 @@ with app.app_context():
     users = config.users
 
     app.config['db'] = Session
+
+    # REDIS STUFF
+    r = redis.Redis(
+        host='localhost',
+        port=6379)
+    app.config['r'] = r
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
