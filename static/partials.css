@@ -1,0 +1,114 @@
+body {
+    font-family: "Fira Mono", monospace;
+    margin: 0;
+}
+a {
+    color: #333;
+}
+.navbar {
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px 20px 0px 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+form {
+    margin: 0px;
+    padding: 0px;
+}
+.search {
+    min-width: 300px;
+    padding: 10px 15px;
+    margin-left: 30px;
+    margin-bottom: 0px;
+    font-family: "Fira Mono", monospace;
+    border: 0px;
+    border-left: 1px solid #ddd;
+    border-bottom:1px solid #ddd;
+    color: #4b545f;
+    font-size: 15px;
+    outline: none;
+}
+
+.navbar m {
+    color: #333;
+    text-align: center;
+    text-decoration: none;
+
+}
+
+.navbar m.right {
+    margin-left: auto;
+}
+
+.navbar m logo {
+    padding-left: 10px;
+    font-family: "Shrikhand";
+    font-size: 50px;
+}
+
+.navbar m motto {
+    display: block;
+    word-wrap: break-word;
+    width: 120px;
+    text-align: center;
+    padding: 0px 15px;
+    font-size: 10px;
+}
+
+.navbar m in {
+    margin: 0px 10px;
+    padding: 5px;
+}
+
+.navbar m d {
+    color: #4b545f;
+}
+
+.navbar m in:hover{
+    background-color: #ddd;
+}
+
+.navbar m box {
+    display: block;
+    flex-wrap: nowrap;
+    min-width: 150px;
+    margin: 0px 30px;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #333;
+}
+
+.navbar m box:hover {
+    background-color: #ddd;
+}
+
+@media screen and (max-width : 600px)
+{
+    .navbar {
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .navbar m {
+        margin: 5px 0px;
+    }
+    .navbar m.right {
+        margin-left: 0px;
+    }
+    .navbar m motto {
+        display: none;
+    }
+    .navbar m in {
+        display: none;
+    }
+    .search {
+        border: 1px solid #333;
+        margin-left: 0px;
+        text-align: center;
+    }
+    .navbar m d {
+        display: none;
+    }
+}

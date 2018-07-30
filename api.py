@@ -8,7 +8,8 @@ from sqlalchemy import func
 from sqlalchemy.sql import operators
 
 from api_return_classes.ApiGame import ApiGame
-from functions import tier_div_to_string, get_rank
+from functions import tier_div_to_string
+from players import get_rank
 from objects import Game
 from replayanalysis.game.game import Game as ReplayGame
 from replayanalysis.game.player import Player

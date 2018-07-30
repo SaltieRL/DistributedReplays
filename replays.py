@@ -7,9 +7,9 @@ from werkzeug.utils import secure_filename
 
 import celery_tasks
 import constants
-from functions import return_error, get_rank, get_item_dict
-from objects import Game
-from steam import steam_id_to_profile
+from functions import return_error, get_item_dict
+from players import get_rank
+import queries
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
 #
@@ -20,6 +20,15 @@ bp = Blueprint('replays', __name__, url_prefix='/replays')
 #     return redirect('/')
 
 print('Loaded replay app')
+
+
+@bp.route('/', methods=['GET'])
+def replays_home():
+    session = current_app.config['db']()
+    replay_count = queries.get_replay_count(session)
+    replay_data = queries.get_replay_stats(session)
+    model_data = queries.get_model_stats(session)
+    return render_template('upload.html', stats=replay_data, total=replay_count, model_stats=model_data)
 
 
 @bp.route('/parse', methods=['POST'])
@@ -64,15 +73,6 @@ def view_replay(id_):
 def view_random():
     filelist = os.listdir('parsed')
     return redirect(url_for('replays.view_replay', id_=random.choice(filelist).split('.')[0]))
-
-
-@bp.route('/parsed/view/player/<id_>')
-def view_player(id_):
-    session = current_app.config['db']()
-    rank = get_rank(id_)
-    games = session.query(Game).filter(Game.players.any(str(id_))).all()
-    steam_profile = steam_id_to_profile(id_)
-    return render_template('player.html', games=games, rank=rank, profile=steam_profile)
 
 
 @bp.route('/download/replay/<id_>')

@@ -1,0 +1,95 @@
+{% include 'partials/header.html' %}
+{% set player=profile['response']['players'][0] %}
+<main role="main">
+    <div class="container">
+{#        {{ profile }}#}
+        <div class="row">
+            <div class="col-md-3">
+                <img src="{{ player['avatarfull'] }}" width="100px" />
+            </div>
+            <div class="col-md-9">
+                <h1><a href="{{ player['profileurl'] }}">{{ player['personaname'] }}</a></h1>
+            </div>
+        </div>
+        <h2>Replays</h2>
+        <ul>
+            {% for g in games %}
+                <li><a href="{{ url_for('view_replay', id_=g.hash) }}">{{ g.hash }}</a></li>
+
+            {% endfor %}
+        </ul>
+        <h2>Ranks</h2>
+        {% for k in rank.keys()|sort(reverse=True) %}
+            {% set season = rank[k] %}
+            <h3>Season {{ k }}</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Mode</th>
+                    <th>Rank</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for mode in season %}
+                    <tr>
+                        <td>
+                            {{ mode['mode'] }}
+                        </td>
+                        <td>
+                            <span title="Pts: {{ mode['rank_points'] }}">{{ mode['string'] }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+</main>
+
+<% if(data.matchStats.recordset.length != 0) { %>
+            <table class="mhtable">
+              <tr>
+                <th>Gamemode</th>
+                <th>Blue Score</th>
+                <th>Orange Score</th>
+                <th>Player Score</th>
+                <th>Goals</th>
+                <th>Assists</th>
+                <th>Saves</th>
+                <th>Shots</th>
+                <th>Car</th>
+                <th>Date</th>
+              </tr>
+              <% var options = {day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: 'true'}; %>
+              <% for(var r = 0; r < data.matchStats.recordset.length; r++) { %>
+                <% if(data.matchStats.recordset[r].Verdict == true) { %>
+                  <tr class="win">
+                <% } %>
+                <% if(data.matchStats.recordset[r].Verdict == false) { %>
+                  <tr class="loss">
+                <% } %>
+                    <td><%= dict.gmDict[data.matchStats.recordset[r].TeamSize] %></td>
+                    <% if(data.matchStats.recordset[r].Team == 0) { %>
+                      <td class="team"><%= data.matchStats.recordset[r].Team0Score %></td>
+                    <% } %>
+                    <% if(data.matchStats.recordset[r].Team != 0) { %>
+                      <td><%= data.matchStats.recordset[r].Team0Score %></td>
+                    <% } %>
+                    <% if(data.matchStats.recordset[r].Team == 1) { %>
+                      <td class="team"><%= data.matchStats.recordset[r].Team1Score %></td>
+                    <% } %>
+                    <% if(data.matchStats.recordset[r].Team != 1) { %>
+                      <td><%= data.matchStats.recordset[r].Team1Score %></td>
+                    <% } %>
+                    <td><%= data.matchStats.recordset[r].Score %></td>
+                    <td><%= data.matchStats.recordset[r].Goals %></td>
+                    <td><%= data.matchStats.recordset[r].Assists %></td>
+                    <td><%= data.matchStats.recordset[r].Saves %></td>
+                    <td><%= data.matchStats.recordset[r].Shots %></td>
+                    <td><%= dict.carDict[data.matchStats.recordset[r].CarId] %></td>
+                    <td><%= data.matchStats.recordset[r].Date.toLocaleDateString("en-US", options) %></td>
+                  </tr>
+              <% } %>
+            </table>
+          <% } %>
+{% include 'partials/footer.html' %}
