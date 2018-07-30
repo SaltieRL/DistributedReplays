@@ -151,11 +151,11 @@ def get_platform_id(i):
 
 
 def convert_pickle_to_db(game: ReplayGame) -> Game:
-    ranks = get_rank_batch([p.online_id for p in g.players])
+    ranks = get_rank_batch([p.online_id for p in game.players])
     # ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
-    if len(g.players) > 4:
+    if len(game.players) > 4:
         mode = 'standard'
-    elif len(g.players) > 2:
+    elif len(game.players) > 2:
         mode = 'doubles'
     else:
         mode = 'duel'
@@ -171,5 +171,5 @@ def convert_pickle_to_db(game: ReplayGame) -> Game:
             if 'rank_points' in r:
                 mmr_list.append(r['rank_points'])
     g = Game(hash=game.replay_id, players=[str(p.online_id) for p in g.players],
-             ranks=rank_list, mmrs=mmr_list, map=g.map)
+             ranks=rank_list, mmrs=mmr_list, map=game.map)
     return g
