@@ -116,3 +116,14 @@ class Player(Base):
     avatar = Column(String(100))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
+
+class CameraSettings(Base):
+    __tablename__ = 'camera_settings'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    field_of_view = Column(Integer)
+    transition_speed = Column(Integer)
+    pitch = Column(Integer)
+    swivel_speed = Column(Integer)
+    stiffness = Column(Float)
+    height = Column(Integer)
+    distance = Column(Integer)

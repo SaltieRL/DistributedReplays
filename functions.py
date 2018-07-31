@@ -1,10 +1,6 @@
 # Helper functions
 import json
 import os
-
-import redis
-import requests
-import config
 from flask import jsonify, render_template, current_app
 
 # Replay stuff
@@ -21,7 +17,8 @@ if not os.path.isdir(model_dir):
     os.mkdir(model_dir)
 
 ALLOWED_EXTENSIONS = {'bin', 'gz'}
-with open(os.path.join('data', 'categorized_items.json'), 'r') as f:
+json_loc = os.path.join(os.path.dirname(__file__), 'data', 'categorized_items.json')
+with open(json_loc, 'r') as f:
     item_dict = json.load(f)
 
 
@@ -42,23 +39,6 @@ def get_replay_path(uid, add_extension=True):
 rank_cache = {}
 
 
-def tier_div_to_string(rank: int, div: int=-1):
-    """
-    Converts rank and division to a fancy string.
-
-    :param rank: integer rank (0-19)
-    :param div: division (0-3), -1 to omit
-    :return: Rank string
-    """
-    ranks = ['Unranked', 'Bronze I', 'Bronze II', 'Bronze III', 'Silver I', 'Silver II', 'Silver III', 'Gold I',
-             'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
-             'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
-    if rank < 19 and div > 0:
-        return "{}, Division {}".format(ranks[rank], div + 1)
-    else:
-        return ranks[rank]
-
-
 def get_item_name_by_id(id_):
     return item_dict[id_]
 
@@ -67,21 +47,14 @@ def get_item_dict():
     return item_dict
 
 
-def get_platform_id(i):
-    if len(str(i)) == 17:
-        return '1'  # steam
-    else:
-        return '-1'
-
-
-def convert_pickle_to_db(game: ReplayGame) -> (Game, list, list):
+def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, list):
     """
     Converts pickled games into various database objects.
 
     :param game: Pickled game to process into Database object
     :return: Game db object, PlayerGame array, Player array
     """
-    ranks = get_rank_batch([p.online_id for p in game.players])
+    ranks = get_rank_batch([p.online_id for p in game.players], offline_redis=offline_redis)
     # ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
     if len(game.players) > 4:
         mode = 'standard'
@@ -95,25 +68,40 @@ def convert_pickle_to_db(game: ReplayGame) -> (Game, list, list):
         keys = ranks[k].keys()
         if len(keys) > 0:
             latest = sorted(keys, reverse=True)[0]
-            r = list(filter(lambda x: x['mode'] == mode, ranks[k][latest]))[0]
-            if 'tier' in r:
-                rank_list.append(r['tier'])
-            if 'rank_points' in r:
-                mmr_list.append(r['rank_points'])
-    g = Game(hash=game.replay_id, players=[str(p.online_id) for p in g.players],
+            r = list(filter(lambda x: x['mode'] == mode, ranks[k][latest]))
+            if len(r) > 0:
+                r = r[0]
+                if 'tier' in r:
+                    rank_list.append(r['tier'])
+                if 'rank_points' in r:
+                    mmr_list.append(r['rank_points'])
+    g = Game(hash=game.replay_id, players=[str(p.online_id) for p in game.players],
              ranks=rank_list, mmrs=mmr_list, map=game.map)
     player_games = []
     players = []
     for p in game.players:  # type: GamePlayer
         camera = p.camera_settings
-        loadout = p.loadout[int(p.team.is_orange)]
+        if len(p.loadout) > 1:
+            loadout = p.loadout[int(p.team.is_orange)]
+        elif len(p.loadout) > 0:
+            loadout = p.loadout[0]
+        else:
+            loadout = None
+
+        field_of_view = camera.get('field_of_view', None)
+        transition_speed = camera.get('transition_speed', None)
+        pitch = camera.get('pitch', None)
+        swivel_speed = camera.get('swivel_speed', None)
+        stiffness = camera.get('stiffness', None)
+        height = camera.get('height', None)
+        distance = camera.get('distance', None)
         pg = PlayerGame(player=p.online_id, game=game.replay_id, score=p.score, goals=p.goals, assists=p.assists,
-                        saves=p.saves, shots=p.shots, field_of_view=camera['field_of_view'],
-                        transition_speed=camera['transition_speed'], pitch=camera['pitch'],
-                        swivel_speed=camera['swivel_speed'], stiffness=camera['stiffness'], height=camera['height'],
-                        distance=camera['distance'], car=loadout['car'])
+                        saves=p.saves, shots=p.shots, field_of_view=field_of_view,
+                        transition_speed=transition_speed, pitch=pitch,
+                        swivel_speed=swivel_speed, stiffness=stiffness, height=height,
+                        distance=distance, car=-1 if loadout is None else loadout['car'])
         player_games.append(pg)
 
-        p = Player(platformid=p.online_id, platformname=p.name, avatar="", ranks=[])
+        p = Player(platformid=p.online_id, platformname="", avatar="", ranks=[])
         players.append(p)
     return g, player_games, players

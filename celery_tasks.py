@@ -6,7 +6,7 @@ from celery import Celery
 # from helpers import rewards
 from flask import Blueprint, current_app
 
-from functions import get_rank, convert_pickle_to_db
+from functions import convert_pickle_to_db
 from middleware import DBTask
 from objects import Game
 
