@@ -91,6 +91,8 @@ class PlayerGame(Base):
     stiffness = Column(Float)
     height = Column(Integer)
     distance = Column(Integer)
+    car = Column(String(20))
+
 
 class Game(Base):
     __tablename__ = 'games'
