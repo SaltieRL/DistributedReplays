@@ -84,6 +84,13 @@ class PlayerGame(Base):
     assists = Column(Integer)
     saves = Column(Integer)
     shots = Column(Integer)
+    field_of_view = Column(Integer)
+    transition_speed = Column(Integer)
+    pitch = Column(Integer)
+    swivel_speed = Column(Integer)
+    stiffness = Column(Float)
+    height = Column(Integer)
+    distance = Column(Integer)
 
 class Game(Base):
     __tablename__ = 'games'
