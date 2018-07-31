@@ -70,6 +70,6 @@ def parse_replay_task(self, fn):
     if len(possible_duplicates) > 0:
         for p in possible_duplicates:
             sess.delete(p)
-    game = convert_pickle_to_db(g)
+    game, player_games, players = convert_pickle_to_db(g)
     sess.add(game)
     sess.commit()

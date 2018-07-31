@@ -8,9 +8,10 @@ import config
 from flask import jsonify, render_template, current_app
 
 # Replay stuff
-from objects import Game
+from objects import Game, PlayerGame, Player
 from players import get_rank_batch
 from replayanalysis.game.game import Game as ReplayGame
+from replayanalysis.game.player import Player as GamePlayer
 
 replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
 if not os.path.isdir(replay_dir):
@@ -41,8 +42,14 @@ def get_replay_path(uid, add_extension=True):
 rank_cache = {}
 
 
+def tier_div_to_string(rank: int, div: int=-1):
+    """
+    Converts rank and division to a fancy string.
 
-def tier_div_to_string(rank, div=-1):
+    :param rank: integer rank (0-19)
+    :param div: division (0-3), -1 to omit
+    :return: Rank string
+    """
     ranks = ['Unranked', 'Bronze I', 'Bronze II', 'Bronze III', 'Silver I', 'Silver II', 'Silver III', 'Gold I',
              'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
              'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
@@ -67,7 +74,13 @@ def get_platform_id(i):
         return '-1'
 
 
-def convert_pickle_to_db(game: ReplayGame) -> Game:
+def convert_pickle_to_db(game: ReplayGame) -> (Game, list, list):
+    """
+    Converts pickled games into various database objects.
+
+    :param game: Pickled game to process into Database object
+    :return: Game db object, PlayerGame array, Player array
+    """
     ranks = get_rank_batch([p.online_id for p in game.players])
     # ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
     if len(game.players) > 4:
@@ -89,4 +102,18 @@ def convert_pickle_to_db(game: ReplayGame) -> Game:
                 mmr_list.append(r['rank_points'])
     g = Game(hash=game.replay_id, players=[str(p.online_id) for p in g.players],
              ranks=rank_list, mmrs=mmr_list, map=game.map)
-    return g
+    player_games = []
+    players = []
+    for p in game.players:  # type: GamePlayer
+        camera = p.camera_settings
+        loadout = p.loadout[int(p.team.is_orange)]
+        pg = PlayerGame(player=p.online_id, game=game.replay_id, score=p.score, goals=p.goals, assists=p.assists,
+                        saves=p.saves, shots=p.shots, field_of_view=camera['field_of_view'],
+                        transition_speed=camera['transition_speed'], pitch=camera['pitch'],
+                        swivel_speed=camera['swivel_speed'], stiffness=camera['stiffness'], height=camera['height'],
+                        distance=camera['distance'], car=loadout['car'])
+        player_games.append(pg)
+
+        p = Player(platformid=p.online_id, platformname=p.name, avatar="", ranks=[])
+        players.append(p)
+    return g, player_games, players

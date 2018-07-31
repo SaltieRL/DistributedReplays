@@ -77,8 +77,8 @@ class PlayerGame(Base):
     __tablename__ = 'playergames'
 
     id = Column(Integer, primary_key=True)
-    player = Column(String(40), ForeignKey('players.platformid'))
-    game = Column(String(40), ForeignKey('games.hash'))
+    player = Column(String(40), ForeignKey('players.platformid'), index=True)
+    game = Column(String(40), ForeignKey('games.hash'), index=True)
     score = Column(Integer)
     goals = Column(Integer)
     assists = Column(Integer)

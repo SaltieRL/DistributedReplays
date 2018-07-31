@@ -22,7 +22,7 @@ for p in pickles:
         if match is not None:
             s.delete(match)
             print ('deleting {}'.format(match.hash))
-        game = convert_pickle_to_db(g)
+        game, player_games, players = convert_pickle_to_db(g)
         s.add(game)
         print('adding {}'.format(game.hash))
 s.commit()
