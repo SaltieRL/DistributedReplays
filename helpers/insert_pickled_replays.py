@@ -32,16 +32,13 @@ pickles = glob.glob(os.path.join(pickled_location, '*.pkl'))
 
 
 def main():
-
     with ThreadPoolExecutor() as executor:
-        s = Session()  # type: Session
-        fn = partial(parse_pickle, s=s)
+        fn = partial(parse_pickle)
         executor.map(fn, pickles, timeout=120)
 
-        s.commit()
 
-
-def parse_pickle(p, s=None):
+def parse_pickle(p):
+    s = Session()  # type: Session
     with open(p, 'rb') as f:
         try:
             g = pickle.load(f)  # type: ReplayGame
@@ -71,7 +68,8 @@ def parse_pickle(p, s=None):
         for pg in player_games:
             s.add(pg)
         print('adding {}'.format(game.hash))
-    s.flush()
+
+    s.commit()
 
 
 if __name__ == '__main__':
