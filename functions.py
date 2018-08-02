@@ -80,6 +80,9 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
     player_games = []
     players = []
     for p in game.players:  # type: GamePlayer
+        if isinstance(p.online_id, list): # some players have array platform-ids
+            p.online_id = p.online_id[0]
+            print('array online_id', p.online_id)
         camera = p.camera_settings
         if len(p.loadout) > 1:
             loadout = p.loadout[int(p.team.is_orange)]
@@ -101,7 +104,9 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
                         swivel_speed=swivel_speed, stiffness=stiffness, height=height,
                         distance=distance, car=-1 if loadout is None else loadout['car'])
         player_games.append(pg)
-
+        p.online_id = str(p.online_id)
+        if len(str(p.online_id)) > 40:
+            p.online_id = p.online_id[:40]
         p = Player(platformid=p.online_id, platformname="", avatar="", ranks=[])
         players.append(p)
     return g, player_games, players

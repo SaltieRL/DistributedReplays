@@ -41,6 +41,10 @@ def get_rank(steam_id):
     url = "https://api.rocketleaguestats.com/v1/player?unique_id={}&platform_id=1".format(steam_id)
     post_data = {'Authorization': RLSTATS_API_KEY}
     data = requests.get(url, headers=post_data)
+    response_headers = data.headers
+    remaining = response_headers['X-Rate-Limit-Remaining']
+    if remaining == 1:
+        time.sleep(1)
     data = data.json()
     # print (data)
     if 'rankedSeasons' in data:
@@ -88,10 +92,16 @@ def get_rank_batch(ids, offline_redis=None):
         for steam_id in ids:
             result = r.get(steam_id)
             if result is not None:
-                print('Rank is cached')
+                # print('Rank is cached')
                 return_data[steam_id] = json.loads(result.decode("utf-8"))
-            else:
+            elif steam_id != '0':
                 ids_to_find.append(steam_id)
+            else:
+                return_data['0'] = {}
+        if len(ids_to_find) == 0:
+            return return_data
+        else:
+            print(ids_to_find)
     url = "https://api.rocketleaguestats.com/v1/player/batch"
     headers = {'Authorization': RLSTATS_API_KEY}
 
@@ -99,13 +109,18 @@ def get_rank_batch(ids, offline_redis=None):
         filter(lambda x: x['platformId'] == '1',
                [{'platformId': get_platform_id(i), 'uniqueId': str(i)} for i in ids_to_find]))
     data = requests.post(url, headers=headers, json=post_data)
+    response_headers = data.headers
+    remaining = response_headers['X-Rate-Limit-Remaining']
+    print ('Remaining:', remaining)
+    if remaining == 1:
+        time.sleep(1)
     data = data.json()
     if 'code' in data:
         if data['code'] == 400:
             print('invalid request')
             print(post_data)
             return {}
-        print(data)
+        print('Return data', data)
         print('API call exceeded')
         time.sleep(5)
         return get_rank_batch(ids, offline_redis=offline_redis)
