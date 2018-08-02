@@ -76,11 +76,12 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
                 if 'rank_points' in r:
                     mmr_list.append(r['rank_points'])
     g = Game(hash=game.replay_id, players=[str(p.online_id) for p in game.players],
-             ranks=rank_list, mmrs=mmr_list, map=game.map)
+             ranks=rank_list, mmrs=mmr_list, map=game.map, team0score=game.teams[0].score,
+             team1score=game.teams[1].score, teamsize=len(game.teams[0].players))
     player_games = []
     players = []
     for p in game.players:  # type: GamePlayer
-        if isinstance(p.online_id, list): # some players have array platform-ids
+        if isinstance(p.online_id, list):  # some players have array platform-ids
             p.online_id = p.online_id[0]
             print('array online_id', p.online_id)
         camera = p.camera_settings
