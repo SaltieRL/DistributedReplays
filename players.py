@@ -1,5 +1,6 @@
 import json
 import time
+from typing import List
 
 import redis
 import requests
@@ -16,7 +17,7 @@ bp = Blueprint('players', __name__, url_prefix='/players')
 def view_player(id_):
     session = current_app.config['db']()
     rank = get_rank(id_)
-    games = session.query(Game).filter(Game.players.any(str(id_))).all()
+    games = session.query(Game).filter(Game.players.any(str(id_))).all()  # type: List[Game]
     steam_profile = steam_id_to_profile(id_)
     if steam_profile is None:
         return render_template('error.html', error="Unable to find the requested profile")
@@ -115,15 +116,18 @@ def get_rank_batch(ids, offline_redis=None):
     if remaining == 1:
         time.sleep(1)
     data = data.json()
-    if 'code' in data:
-        if data['code'] == 400:
-            print('invalid request')
-            print(post_data)
-            return {}
-        print('Return data', data)
-        print('API call exceeded')
-        time.sleep(5)
-        return get_rank_batch(ids, offline_redis=offline_redis)
+
+    retries = 5
+    for x in range(retries):
+        if 'code' in data:
+            if data['code'] == 400:
+                print('invalid request')
+                print(post_data)
+                return {}
+            data = requests.post(url, headers=headers, json=post_data)
+            print('Return data', data)
+            print('API call exceeded')
+            time.sleep(5)
 
     # return data
     print(data)

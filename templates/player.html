@@ -2,124 +2,142 @@
 {% set player = profile['response']['players'][0] %}
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <title>Player Info</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet"
+          type="text/css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
     <script>
     </script>
-  </head>
-  <style>
-  </style>
-  <body>
-    <div class="content">
-      <div class="sidebar">
-        /  profile information
+</head>
+<style>
+</style>
+<body>
+<div class="content">
+    <div class="sidebar">
+        / profile information
         <div class="playerpanel">
-          {% if player %}
-          <img class="avatar" src="{{ player['avatarfull'] }}" alt="avatar"/>
-          <div class="info">
-            <div class="t1">
-                {{ player['personaname'] }}
-            </div>
-            <ul class="detail">
-              <li class="cat">platform:</li>
-              <li>steam</li>
-            </ul>
-            <ul class="detail2">
-              <li class="cat"><a href={{ player['profileurl'] }}>profile link</a></li>
-            </ul>
-          </div>
-          {% endif %}
+            {% if player %}
+                <img class="avatar" src="{{ player['avatarfull'] }}" alt="avatar"/>
+                <div class="info">
+                    <div class="t1">
+                        {{ player['personaname'] }}
+                    </div>
+                    <ul class="detail">
+                        <li class="cat">platform:</li>
+                        <li>steam</li>
+                    </ul>
+                    <ul class="detail2">
+                        <li class="cat"><a href={{ player['profileurl'] }}>profile link</a></li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
         / car stats
         <div class="statpanel">
-          <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-          <div class="t2">
-            highest win %
-          </div>
-          <div class="stat">
-            <div>
-              Octane
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
+            <div class="t2">
+                highest win %
             </div>
-            <div class="pctg">
-              51%
+            <div class="stat">
+                <div>
+                    Octane
+                </div>
+                <div class="pctg">
+                    51%
+                </div>
             </div>
-          </div>
         </div>
         <div class="right">
-          per gamemode
+            per gamemode
         </div>
         <div class="statpanelnoborders">
-          <div class="verticalcarstat">
-              <div class="t3">3 v 3</div>
-            <div class="carname">
-              Octane
-            </div>
-            <div class="pctgfull">
-              76%
-            </div>
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
-          </div>
-          <div class="verticalcarstat">
-              <div class="t3">2 v 2</div>
-            <div class="carname">
-              Dominus
-            </div>
-            <div class="pctgfull">
-              54%
-            </div>
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
-          </div>
-          <div class="verticalcarstat">
-            <div class="t3">1 v 1</div>
-            <div class="carname">
-              Octane ZSR
-            </div>
-            <div class="pctgfull">
-              53%
-            </div>
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
-          </div>
-        </div>
-      </div>
-      <div class="main">
-        /  rank information
-        <div class="rankpanel">
-          {% if rank %}
-            {% set ranks = rank.keys()|sort(reverse=True) %}
-              {% set season = rank[ranks[0]] %}
-              {% for mode in season %}
-              <div class="panel">
-                <div class="t1">
-                  {{ mode['mode'] }}
+            <div class="verticalcarstat">
+                <div class="t3">3 v 3</div>
+                <div class="carname">
+                    Octane
                 </div>
-                  <div>
-                    {{ mode['string'] }}
-                  </div>
-                  <div>
-                    <img class="rankpic" src='{{ '/static/img/ranks/' + mode['tier']|string + '.png' }}' alt="rank"/>
-                  </div>
-                  <div>
-                  rating: {{ mode['rank_points'] }}
-                  </div>
-              </div>
-              {% endfor %}
-          {% else %}
-              <div class="errmsg">
-                unable to find rank information for this profile (does this player own rocket league?)
-              </div>
-          {% endif %}
+                <div class="pctgfull">
+                    76%
+                </div>
+                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
+            </div>
+            <div class="verticalcarstat">
+                <div class="t3">2 v 2</div>
+                <div class="carname">
+                    Dominus
+                </div>
+                <div class="pctgfull">
+                    54%
+                </div>
+                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
+            </div>
+            <div class="verticalcarstat">
+                <div class="t3">1 v 1</div>
+                <div class="carname">
+                    Octane ZSR
+                </div>
+                <div class="pctgfull">
+                    53%
+                </div>
+                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        / rank information
+        <div class="rankpanel">
+            {% if rank %}
+                {% set ranks = rank.keys()|sort(reverse=True) %}
+                {% set season = rank[ranks[0]] %}
+                {% for mode in season %}
+                    <div class="panel">
+                        <div class="t1">
+                            {{ mode['mode'] }}
+                        </div>
+                        <div>
+                            {{ mode['string'] }}
+                        </div>
+                        <div>
+                            <img class="rankpic" src='{{ '/static/img/ranks/' + mode['tier']|string + '.png' }}'
+                                 alt="rank"/>
+                        </div>
+                        <div>
+                            rating: {{ mode['rank_points'] }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="errmsg">
+                    unable to find rank information for this profile (does this player own rocket league?)
+                </div>
+            {% endif %}
         </div>
         / match history
         <div class="matchhistory">
-            <div class="errmsg">
-              no matches recorded for this profile (are you using the auto-uploader?)
-            </div>
+            {% if games %}
+                <table class="table">
+
+                    {% for game in games %}
+                        <tr>
+                            <td><a href="{{ url_for('replays.view_replay', id_=game.hash) }}">{{ game.hash }}</a></td>
+                            <td>{{ game.teamsize }}s</td>
+                            <td>{{ game.team0score }} - {{ game.team1score }}</td>
+
+                        </tr>
+                    {% endfor %}
+
+
+                </table>
+            {% else %}
+                <div class="errmsg">
+                    no matches recorded for this profile (are you using the auto-uploader?)
+                </div>
+            {% endif %}
         </div>
-      </div>
     </div>
-  </body>
+</div>
+</body>
 </html>

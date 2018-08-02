@@ -14,7 +14,7 @@
         <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
             <input name=name type="text" class="search" placeholder="enter steamID or username" required>
         </form>
-    <m class="right"><a href = "#"><box>global stats</box></a></m>
+    <m class="right"><a href = "{{ url_for('replays.replay_stats') }}"><box>global stats</box></a></m>
     <m><d> · </d></m>
     <m><a href = "#"><in>about</in></a></m>
     <m><d> · </d></m>

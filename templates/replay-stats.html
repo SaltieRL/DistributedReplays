@@ -1,0 +1,264 @@
+{% include 'partials/navbar.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Player Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet"
+          type="text/css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+</head>
+<style>
+</style>
+<body>
+<div class="content">
+    <div class="main">
+        / player distribution
+
+        <canvas id="canvas1">
+
+        </canvas>
+        <script>
+            var color = Chart.helpers.color;
+            function jsonGet(yourUrl) {
+                let req = new XMLHttpRequest(); // a new request
+                req.open("GET", yourUrl, false);
+                req.send(null);
+                return JSON.parse(req.responseText);
+            }
+
+            var obj = jsonGet('/replays/stats/score');
+            var data = {
+                'labels': Object.keys(obj),
+                'datasets': [
+
+                    {
+                        label: 'Count',
+                        data: Object.values(obj),
+                        backgroundColor: "rgb(255, 99, 132)"
+                    }
+                ]
+            };
+            var ctx = document.getElementById('canvas1').getContext('2d');
+            var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Score per Game Distribution'
+                    }
+                }
+            });
+        </script>
+        <canvas id="canvas2">
+
+        </canvas>
+        <script>
+            var obj = jsonGet('/replays/stats/goals');
+            var data = {
+                'labels': Object.keys(obj),
+                'datasets': [
+
+                    {
+                        label: 'Count',
+                        data: Object.values(obj),
+                        backgroundColor: "rgb(0, 99, 132)"
+                    }
+                ]
+            };
+            var ctx = document.getElementById('canvas2').getContext('2d');
+            var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Goal per Game Distribution'
+                    }
+                }
+            });
+        </script>
+        <canvas id="canvas3">
+
+        </canvas>
+        <script>
+            var obj = jsonGet('/replays/stats/assists');
+            var data = {
+                'labels': Object.keys(obj),
+                'datasets': [
+
+                    {
+                        label: 'Count',
+                        data: Object.values(obj),
+                        backgroundColor: "rgb(0, 99, 132)"
+                    }
+                ]
+            };
+            var ctx = document.getElementById('canvas3').getContext('2d');
+            var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Assist per Game Distribution'
+                    }
+                }
+            });
+        </script>
+        <canvas id="canvas4">
+
+        </canvas>
+        <script>
+            var obj = jsonGet('/replays/stats/saves');
+            var data = {
+                'labels': Object.keys(obj),
+                'datasets': [
+
+                    {
+                        label: 'Count',
+                        data: Object.values(obj),
+                        backgroundColor: "rgb(0, 99, 132)"
+                    }
+                ]
+            };
+            var ctx = document.getElementById('canvas4').getContext('2d');
+            var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Save per Game Distribution'
+                    }
+                }
+            });
+        </script>
+        <canvas id="canvas5">
+
+        </canvas>
+        <script>
+            var obj = jsonGet('/replays/stats/shots');
+            var data = {
+                'labels': Object.keys(obj),
+                'datasets': [
+
+                    {
+                        label: 'Count',
+                        data: Object.values(obj),
+                        backgroundColor: "rgb(0, 99, 132)"
+                    }
+                ]
+            };
+            var ctx = document.getElementById('canvas5').getContext('2d');
+            var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Shot per Game Distribution'
+                    }
+                }
+            });
+        </script>
+        <canvas id="canvas99">
+
+        </canvas>
+        <script>
+
+            var obj = jsonGet('/replays/stats/cars');
+            concise = true;
+            if (concise) {
+                obj = obj.slice(0, 10);
+            }
+            console.log(obj);
+            labels = obj.map(x => x[0]);
+            data = obj.map(x => x[1]);
+            var data = {
+                'labels': labels,
+                'datasets': [
+                    {
+                        label: 'Count',
+                        data: data,
+                        backgroundColor: "rgb(100, 0, 132)"
+                    }
+                ]
+            };
+            var ctx = document.getElementById('canvas99').getContext('2d');
+            var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Most Used Cars'
+                    }
+                }
+            });
+        </script>
+        <canvas id="canvas999"> {# Don't judge me, it's a proof of concept #}
+
+        </canvas>
+        <script>
+
+            var obj = jsonGet('/replays/stats/cars');
+            labels = obj.map(x => x[0]);
+            data = obj.map(x => x[1]);
+            var data = {
+                'labels': labels,
+                'datasets': [
+                    {
+                        label: 'Count',
+                        data: data,
+                        backgroundColor: "rgb(100, 0, 132)"
+                    }
+                ]
+            };
+            var ctx = document.getElementById('canvas999').getContext('2d');
+            var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Full Most Used Car Distribution'
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>
