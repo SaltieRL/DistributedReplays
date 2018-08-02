@@ -30,6 +30,9 @@ r = redis.Redis(
 pickled_location = os.path.join(os.path.dirname(__file__), '..', 'parsed')
 pickles = glob.glob(os.path.join(pickled_location, '*.pkl'))
 
+s = Session()
+games = s.query(Game.hash).all()
+
 
 def main():
     with ThreadPoolExecutor() as executor:
@@ -42,6 +45,9 @@ def parse_pickle(p):
     with open(p, 'rb') as f:
         try:
             g = pickle.load(f)  # type: ReplayGame
+            if g.replay_id in games:
+                print('skipping', g.replay_id)
+                return
         except EOFError:
             return
         try:
