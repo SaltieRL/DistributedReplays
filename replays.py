@@ -2,12 +2,14 @@ import os
 import pickle
 import random
 
-from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app
+from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app, jsonify
+from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
 
 import celery_tasks
 import constants
 from functions import return_error, get_item_dict
+from objects import PlayerGame
 from players import get_rank
 import queries
 
@@ -83,3 +85,61 @@ def download_replay(id_):
 @bp.route('/autoreplays')
 def downloader_page():
     return render_template('saltie.html')
+
+
+@bp.route('/stats')
+def replay_stats():
+    return render_template('replay-stats.html')
+
+
+@bp.route('/stats/score')
+def score_distribution():
+    session = current_app.config['db']()
+    data = session.query(PlayerGame.score, func.count(PlayerGame.id)).group_by(PlayerGame.score).filter(
+        PlayerGame.score % 10 == 0).order_by(PlayerGame.score).all()
+    return jsonify({k: v for k, v in data})
+
+
+@bp.route('/stats/goals')
+def goal_distribution():
+    session = current_app.config['db']()
+    data = session.query(PlayerGame.goals, func.count(PlayerGame.id)).group_by(PlayerGame.goals).order_by(
+        PlayerGame.goals).all()
+    return jsonify({k: v for k, v in data if k is not None})
+
+
+@bp.route('/stats/assists')
+def assist_distribution():
+    session = current_app.config['db']()
+    data = session.query(PlayerGame.assists, func.count(PlayerGame.id)).group_by(PlayerGame.assists).order_by(
+        PlayerGame.assists).all()
+    return jsonify({k: v for k, v in data if k is not None})
+
+
+@bp.route('/stats/saves')
+def save_distribution():
+    session = current_app.config['db']()
+    data = session.query(PlayerGame.saves, func.count(PlayerGame.id)).group_by(PlayerGame.saves).order_by(
+        PlayerGame.saves).all()
+    return jsonify({k: v for k, v in data if k is not None})
+
+
+@bp.route('/stats/shots')
+def shot_distribution():
+    session = current_app.config['db']()
+    data = session.query(PlayerGame.shots, func.count(PlayerGame.id)).group_by(PlayerGame.shots).order_by(
+        PlayerGame.shots).all()
+    return jsonify({k: v for k, v in data if k is not None})
+
+
+@bp.route('/stats/cars')
+def car_distribution():
+    session = current_app.config['db']()
+    data = session.query(PlayerGame.car, func.count(PlayerGame.id).label('count')).group_by(PlayerGame.car).order_by(
+        desc('count')).all()
+    car_data = []
+    for entry in data:
+        car, val = entry
+        if int(car) in constants.cars:
+            car_data.append([constants.cars[int(car)], val])
+    return jsonify(car_data)
