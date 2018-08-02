@@ -41,6 +41,10 @@ def api_v1():
 @bp.route('/replays')
 @key_required
 def api_v1_get_replays():
+    if 'key' in request.args:
+        api_key = request.args['key']
+    else:
+        api_key = None
     args = request.args
     print(args)
     if 'page' not in args:
@@ -86,11 +90,11 @@ def api_v1_get_replays():
     for game in games:
         data.append({'hash': game.hash, 'link': url_for('replays.view_replay', id_=game.hash),
                      'download': url_for('replays.download_replay', id_=game.hash),
-                     'info': url_for('apiv1.api_v1_get_replay_info', id_=game.hash),
+                     'info': url_for('apiv1.api_v1_get_replay_info', id_=game.hash, key=api_key),
                      'mmrs': game.mmrs, 'ranks': game.ranks, 'players': game.players})
     response['data'] = data
     response['page'] = page + 1
-    response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2)
+    response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2, key=api_key)
     response['version'] = 1
     return jsonify(response)
 
