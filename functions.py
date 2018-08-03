@@ -103,7 +103,8 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
                         saves=p.saves, shots=p.shots, field_of_view=field_of_view,
                         transition_speed=transition_speed, pitch=pitch,
                         swivel_speed=swivel_speed, stiffness=stiffness, height=height,
-                        distance=distance, car=-1 if loadout is None else loadout['car'])
+                        distance=distance, car=-1 if loadout is None else loadout['car'], is_orange=not p.is_orange,
+                        win=game.teams[not p.is_orange].score > game.teams[p.is_orange].score)
         player_games.append(pg)
         p.online_id = str(p.online_id)
         if len(str(p.online_id)) > 40:

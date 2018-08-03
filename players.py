@@ -1,11 +1,14 @@
 import json
 import time
+from statistics import mode
 from typing import List
 
 import redis
 import requests
+
+import constants
 from config import RLSTATS_API_KEY
-from objects import Game
+from objects import Game, PlayerGame
 from steam import steam_id_to_profile
 
 from flask import render_template, Blueprint, current_app
@@ -13,15 +16,25 @@ from flask import render_template, Blueprint, current_app
 bp = Blueprint('players', __name__, url_prefix='/players')
 
 
-@bp.route('/view/<id_>')
+@bp.route('/overview/<id_>')  # ID must be always at the end
 def view_player(id_):
     session = current_app.config['db']()
     rank = get_rank(id_)
-    games = session.query(Game).filter(Game.players.any(str(id_))).all()  # type: List[Game]
+    games = session.query(PlayerGame).filter(PlayerGame.player == id_).all()  # type: List[PlayerGame]
+    if len(games) > 0:
+        car_arr = [g.car for g in games]
+
+        fav_car_str = mode(car_arr)
+        favorite_car = constants.cars[int(fav_car_str)]
+        favorite_car_pctg = car_arr.count(fav_car_str) / len(car_arr)
+    else:
+        favorite_car = "Unknown"
+        favorite_car_pctg = 0.0
     steam_profile = steam_id_to_profile(id_)
     if steam_profile is None:
         return render_template('error.html', error="Unable to find the requested profile")
-    return render_template('player.html', games=games, rank=rank, profile=steam_profile)
+    return render_template('player.html', games=games, rank=rank, profile=steam_profile, car=favorite_car,
+                           favorite_car_pctg=favorite_car_pctg)
 
 
 rank_cache = {}
@@ -112,7 +125,7 @@ def get_rank_batch(ids, offline_redis=None):
     data = requests.post(url, headers=headers, json=post_data)
     response_headers = data.headers
     remaining = response_headers['X-Rate-Limit-Remaining']
-    print ('Remaining:', remaining)
+    print('Remaining:', remaining)
     if remaining == 1:
         time.sleep(1)
     data = data.json()

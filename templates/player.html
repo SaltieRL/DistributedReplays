@@ -39,14 +39,14 @@
         <div class="statpanel">
             <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
             <div class="t2">
-                highest win %
+                favorite car
             </div>
             <div class="stat">
                 <div>
-                    Octane
+                    {{ car }}
                 </div>
                 <div class="pctg">
-                    51%
+                    {{ (favorite_car_pctg * 100.0)|round }}%
                 </div>
             </div>
         </div>
@@ -121,10 +121,17 @@
                 <table class="table">
 
                     {% for game in games %}
+                        {% set avg_rank = (game.game_object.ranks|max)|int %}
                         <tr>
-                            <td><a href="{{ url_for('replays.view_replay', id_=game.hash) }}">{{ game.hash }}</a></td>
-                            <td>{{ game.teamsize }}s</td>
-                            <td>{{ game.team0score }} - {{ game.team1score }}</td>
+                            <td>
+                                <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.hash }}</a>
+                            </td>
+                            <td>{{ game.game_object.teamsize }}s</td>
+                            <td><span style="color:blue">{{ game.game_object.team0score }}</span> -
+                                <span style="color:orange">{{ game.game_object.team1score }}</span></td>
+                            <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
+                            <td><img class="rankpic" src='{{ '/static/img/ranks/' + avg_rank|string + '.png' }}'
+                                     alt="rank {{ avg_rank }}" title="rank {{ avg_rank }}" width="50px"/></td>
 
                         </tr>
                     {% endfor %}

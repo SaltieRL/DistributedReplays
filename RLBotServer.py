@@ -3,9 +3,10 @@ import sys
 
 import flask
 import flask_login
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, current_app
 from flask_cors import CORS
 
+from objects import Game
 from startup import startup
 import redis
 
@@ -135,7 +136,9 @@ def unauthorized_handler():
 # Main stuff
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template('index.html')
+    session = current_app.config['db']()
+    count = session.query(Game).count()
+    return render_template('index.html', game_count=count)
 
 
 if __name__ == '__main__':
