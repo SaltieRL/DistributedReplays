@@ -110,6 +110,7 @@ class Game(Base):
     matchtype = Column(Enum(Playlist))
     playergames = relationship("PlayerGame")  # TODO: should this just replace .players?
     upload_date = Column(DateTime, default=datetime.datetime.utcnow)
+    match_date = Column(DateTime)
 
 
 class Player(Base):
@@ -119,6 +120,7 @@ class Player(Base):
     avatar = Column(String(100))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
+
 
 class CameraSettings(Base):
     __tablename__ = 'camera_settings'
