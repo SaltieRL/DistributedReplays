@@ -47,6 +47,7 @@ with app.app_context():
     import steam
 
     import players
+
     # app.register_blueprint(celery_tasks.bp)
     app.register_blueprint(players.bp)
     app.register_blueprint(steam.bp)
@@ -65,10 +66,15 @@ with app.app_context():
     app.config['db'] = Session
 
     # REDIS STUFF
-    r = redis.Redis(
-        host='localhost',
-        port=6379)
-    app.config['r'] = r
+    try:
+        r = redis.Redis(
+            host='localhost',
+            port=6379)
+        app.config['r'] = r
+    except:
+        print('Not using redis...')
+        app.config['r'] = None
+
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
