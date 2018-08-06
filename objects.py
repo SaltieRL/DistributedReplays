@@ -100,6 +100,7 @@ class PlayerGame(Base):
 class Game(Base):
     __tablename__ = 'games'
     hash = Column(String(40), primary_key=True)  # replayid
+    name = Column(String(40))
     players = Column(postgresql.ARRAY(String, dimensions=1))
     map = Column(String(40))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))
