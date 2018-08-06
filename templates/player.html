@@ -129,11 +129,11 @@
                         {% set replay = game.game_object %}
                         <tr class="match">
                             <td>
-                                <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.upload_date }}</a>
+                                <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date }}</a>
                             </td>
                             <td>{{ game.game_object.teamsize }}s</td>
-                            <td><span style="color:blue">{{ game.game_object.team0score }}</span> -
-                                <span style="color:orange">{{ game.game_object.team1score }}</span></td>
+                            <td><span style="color:blue">{{ game.game_object.team0score }}</span></td>
+                            <td><span style="color:orange">{{ game.game_object.team1score }}</span></td>
                             <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
                         </tr>
                         <tr class="dropdowndata">
@@ -156,7 +156,6 @@
                                                 </tr>
                                                 </thead>
                                                 {% for p in team.players|sort(attribute='score', reverse=True) %}
-
                                                     <tr>
                                                         <td>{{ p.name }}
                                                             {% if p.online_id | string | length == 17 %}
@@ -175,7 +174,6 @@
                                                         <td>{{ p.assists }}</td>
                                                         <td>{{ p.saves }}</td>
                                                         <td>{{ p.shots }}</td>
-                                                        </td>
                                                     </tr>
                                                 {% endfor %}
                                             </table>
