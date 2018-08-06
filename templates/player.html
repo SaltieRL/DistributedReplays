@@ -33,7 +33,7 @@
                 </div>
             {% endif %}
         </div>
-        / car stats
+        / player stats
         <div class="statpanel">
             <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
             <div class="t2">
@@ -48,41 +48,96 @@
                 </div>
             </div>
         </div>
-        <div class="right">
-            per gamemode
-        </div>
-        <div class="statpanelnoborders">
-            <div class="verticalcarstat">
-                <div class="t3">3 v 3</div>
-                <div class="carname">
-                    Octane
-                </div>
-                <div class="pctgfull">
-                    76%
-                </div>
-                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
+        <div class="statpanel">
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
+            <div class="t2">
+                score per game
             </div>
-            <div class="verticalcarstat">
-                <div class="t3">2 v 2</div>
-                <div class="carname">
-                    Dominus
+            <div class="stat">
+                <div class="pctg">
+                    {{ stats[0]|round(1) }}
                 </div>
-                <div class="pctgfull">
-                    54%
-                </div>
-                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
-            </div>
-            <div class="verticalcarstat">
-                <div class="t3">1 v 1</div>
-                <div class="carname">
-                    Octane ZSR
-                </div>
-                <div class="pctgfull">
-                    53%
-                </div>
-                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">
             </div>
         </div>
+        <div class="statpanel">
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
+            <div class="t2">
+                goals per game
+            </div>
+            <div class="stat">
+                <div class="pctg">
+                    {{ stats[1]|round(2) }}
+                </div>
+            </div>
+        </div>
+        <div class="statpanel">
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
+            <div class="t2">
+                assists per game
+            </div>
+            <div class="stat">
+                <div class="pctg">
+                    {{ stats[2]|round(2) }}
+                </div>
+            </div>
+        </div>
+        <div class="statpanel">
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
+            <div class="t2">
+                saves per game
+            </div>
+            <div class="stat">
+                <div class="pctg">
+                    {{ stats[3]|round(2) }}
+                </div>
+            </div>
+        </div>
+        <div class="statpanel">
+            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
+            <div class="t2">
+                shots per game
+            </div>
+            <div class="stat">
+                <div class="pctg">
+                    {{ stats[4]|round(2) }}
+                </div>
+            </div>
+        </div>
+{#        <div class="right">#}
+{#            per gamemode#}
+{#        </div>#}
+{#        <div class="statpanelnoborders">#}
+{#            <div class="verticalcarstat">#}
+{#                <div class="t3">3 v 3</div>#}
+{#                <div class="carname">#}
+{#                    Octane#}
+{#                </div>#}
+{#                <div class="pctgfull">#}
+{#                    76%#}
+{#                </div>#}
+{#                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">#}
+{#            </div>#}
+{#            <div class="verticalcarstat">#}
+{#                <div class="t3">2 v 2</div>#}
+{#                <div class="carname">#}
+{#                    Dominus#}
+{#                </div>#}
+{#                <div class="pctgfull">#}
+{#                    54%#}
+{#                </div>#}
+{#                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">#}
+{#            </div>#}
+{#            <div class="verticalcarstat">#}
+{#                <div class="t3">1 v 1</div>#}
+{#                <div class="carname">#}
+{#                    Octane ZSR#}
+{#                </div>#}
+{#                <div class="pctgfull">#}
+{#                    53%#}
+{#                </div>#}
+{#                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">#}
+{#            </div>#}
+{#        </div>#}
     </div>
     <div class="main">
         / rank information
@@ -119,21 +174,25 @@
                 <table class="mhtable">
                     <tr>
                         <th>Date</th>
+                        <th>Name</th>
                         <th>Gamemode</th>
-                        <th>Blue Score</th>
-                        <th>Orange Score</th>
+                        <th>Score</th>
                         <th>Outcome</th>
                     </tr>
-                    {% for game in games %}
+                    {% for game in games|sort(attribute='game_object.match_date') %}
+                        {% set name = game.game_object.hash if game.game_object.name == None else game.game_object.name %}
                         {% set avg_rank = (game.game_object.ranks|max)|int %}
                         {% set replay = game.game_object %}
                         <tr class="match">
                             <td>
-                                <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date }}</a>
+                                <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ name }}</a>
                             </td>
                             <td>{{ game.game_object.teamsize }}s</td>
-                            <td><span style="color:blue">{{ game.game_object.team0score }}</span></td>
-                            <td><span style="color:orange">{{ game.game_object.team1score }}</span></td>
+                            <td><span style="color:blue">{{ game.game_object.team0score }}</span> - <span
+                                    style="color:orange">{{ game.game_object.team1score }}</span></td>
                             <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
                         </tr>
                         <tr class="dropdowndata">

@@ -1,10 +1,11 @@
 import json
 import time
-from statistics import mode
+from statistics import mode, mean
 from typing import List
 
 import redis
 import requests
+from sqlalchemy import func, desc
 
 import constants
 from config import RLSTATS_API_KEY
@@ -20,21 +21,30 @@ bp = Blueprint('players', __name__, url_prefix='/players')
 def view_player(id_):
     session = current_app.config['db']()
     rank = get_rank(id_)
-    games = session.query(PlayerGame).filter(PlayerGame.player == id_).all()  # type: List[PlayerGame]
+    games = session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
+        PlayerGame.game != None).all()  # type: List[PlayerGame]
     if len(games) > 0:
-        car_arr = [g.car for g in games]
+        fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
+            PlayerGame.player == id_).group_by(PlayerGame.car).order_by(desc('c')).first()
+        print(fav_car_str)
+        # car_arr = [g.car for g in games]
+        favorite_car = constants.cars[int(fav_car_str[0])]
+        favorite_car_pctg = fav_car_str[1] / len(games)
 
-        fav_car_str = mode(car_arr)
-        favorite_car = constants.cars[int(fav_car_str)]
-        favorite_car_pctg = car_arr.count(fav_car_str) / len(car_arr)
+        stats = session.query(func.avg(PlayerGame.score), func.avg(PlayerGame.goals), func.avg(PlayerGame.assists),
+                              func.avg(PlayerGame.saves), func.avg(PlayerGame.shots)).filter(
+            PlayerGame.player == id_).first()
     else:
         favorite_car = "Unknown"
         favorite_car_pctg = 0.0
+        gpg = 0.0
+        stats = (0.0, 0.0, 0.0, 0.0, 0.0)
+
     steam_profile = steam_id_to_profile(id_)
     if steam_profile is None:
         return render_template('error.html', error="Unable to find the requested profile")
     return render_template('player.html', games=games, rank=rank, profile=steam_profile, car=favorite_car,
-                           favorite_car_pctg=favorite_car_pctg)
+                           favorite_car_pctg=favorite_car_pctg, stats=stats)
 
 
 rank_cache = {}
