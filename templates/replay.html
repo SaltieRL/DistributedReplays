@@ -20,6 +20,7 @@
             }, 10000)
         </script>
     {% elif replay != None %}
+        <script>var REPLAY_HASH = "{{ id }}";</script>
         {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
         <h2>{{ replay.name|e }}</h2>
         <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
@@ -29,6 +30,7 @@
         <p>Frames: {{ frame_count }}</p>
         <p>Score: {{ replay.teams[0].score }}:{{ replay.teams[1].score }}</p>
         <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
+        <div id="viewer"></div>
         <hr/>
         <div>
             <b>Teams:</b>
@@ -138,4 +140,5 @@
             </ol>
         </div>
     {% endif %}
+    <script src="{{ url_for('static', filename='js/viewer.js') }}"></script>
 {% endblock body %}
