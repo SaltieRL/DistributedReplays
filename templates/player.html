@@ -9,8 +9,6 @@
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet"
           type="text/css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
-    <script>
-    </script>
 </head>
 <style>
 </style>
@@ -118,25 +116,75 @@
         / match history
         <div class="matchhistory">
             {% if games %}
-                <table class="table">
-
-                    {% for game in games|sort(attribute='game_object.match_date') %}
+                <table class="mhtable">
+                    <tr>
+                        <th>Date</th>
+                        <th>Gamemode</th>
+                        <th>Blue Score</th>
+                        <th>Orange Score</th>
+                        <th>Verdict</th>
+                    </tr>
+                    {% for game in games %}
                         {% set avg_rank = (game.game_object.ranks|max)|int %}
-                        <tr>
+                        {% set replay = game.game_object %}
+                        <tr class="match">
                             <td>
-                                <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.hash }}</a>
+                                <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.upload_date }}</a>
                             </td>
                             <td>{{ game.game_object.teamsize }}s</td>
                             <td><span style="color:blue">{{ game.game_object.team0score }}</span> -
                                 <span style="color:orange">{{ game.game_object.team1score }}</span></td>
                             <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
-                            <td><img class="rankpic" src='{{ '/static/img/ranks/' + avg_rank|string + '.png' }}'
-                                     alt="rank {{ avg_rank }}" title="rank {{ avg_rank }}" width="50px"/></td>
-                            <td>{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</td>
+                        </tr>
+                        <tr class="dropdowndata">
+                            <td colspan="5">
+                                <div>
+                                    {% for team in replay.teams|sort(attribute='is_orange', reverse=True) %}
+                                        <div class="team"
+                                             style="padding: 10px; {{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
+                                            <h4>{{ team.name }}</h4>
+                                            Score: {{ team.score }}
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Score</th>
+                                                    <th>Goals</th>
+                                                    <th>Assists</th>
+                                                    <th>Saves</th>
+                                                    <th>Shots</th>
+                                                </tr>
+                                                </thead>
+                                                {% for p in team.players|sort(attribute='score', reverse=True) %}
+
+                                                    <tr>
+                                                        <td>{{ p.name }}
+                                                            {% if p.online_id | string | length == 17 %}
+                                                                | <a href="{{ url_for('players.view_player', id_=p.online_id) }}">profile link</a>
+                                                                {% if '8' in ranks[p.online_id] %}
+                                                                    |
+                                                                    <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
+                                                                         height="30px"/>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            {% if p.is_bot %}
+                                                                | <i>Bot</i>
+                                                            {% endif %}</td>
+                                                        <td>{{ p.score }}</td>
+                                                        <td>{{ p.goals }}</td>
+                                                        <td>{{ p.assists }}</td>
+                                                        <td>{{ p.saves }}</td>
+                                                        <td>{{ p.shots }}</td>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
-
-
                 </table>
             {% else %}
                 <div class="errmsg">
@@ -146,5 +194,27 @@
         </div>
     </div>
 </div>
+<script>
+    var matches = document.getElementsByClassName("match");
+    var dropdowns = document.getElementsByClassName("dropdowndata");
+    for (var i = 0; i < matches.length; i++) {
+        matches[i].onclick = function() {
+            var data = !this.classList.contains('active');
+            propSet(matches, 'active', 'remove');
+            propSet(dropdowns, 'show', 'remove');
+
+            if (data) {
+                this.classList.toggle("active");
+                this.nextElementSibling.classList.toggle("show");
+            }
+        }
+    }
+
+    function propSet(elements, prop, op) {
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].classList[op](prop);
+        }
+    }
+</script>
 </body>
 </html>

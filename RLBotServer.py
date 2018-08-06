@@ -9,7 +9,6 @@ from flask_cors import CORS
 from objects import Game
 from startup import startup
 import redis
-
 # APP SETUP
 
 print("Name:", __name__)
@@ -74,7 +73,6 @@ with app.app_context():
     except:
         print('Not using redis...')
         app.config['r'] = None
-
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
