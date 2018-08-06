@@ -8,7 +8,6 @@ from flask_cors import CORS
 
 from objects import Game
 from startup import startup
-import redis
 
 # APP SETUP
 
@@ -65,16 +64,17 @@ with app.app_context():
 
     app.config['db'] = Session
 
+'''
     # REDIS STUFF
     try:
         r = redis.Redis(
             host='localhost',
-            port=6379)
+            port=6359)
         app.config['r'] = r
     except:
         print('Not using redis...')
         app.config['r'] = None
-
+'''
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
