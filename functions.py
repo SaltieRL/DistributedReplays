@@ -100,7 +100,7 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
         stiffness = camera.get('stiffness', None)
         height = camera.get('height', None)
         distance = camera.get('distance', None)
-        pg = PlayerGame(player=p.online_id, game=game.replay_id, score=p.score, goals=p.goals, assists=p.assists,
+        pg = PlayerGame(player=p.online_id, name=p.name, game=game.replay_id, score=p.score, goals=p.goals, assists=p.assists,
                         saves=p.saves, shots=p.shots, field_of_view=field_of_view,
                         transition_speed=transition_speed, pitch=pitch,
                         swivel_speed=swivel_speed, stiffness=stiffness, height=height,

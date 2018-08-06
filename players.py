@@ -47,7 +47,6 @@ def get_rank(steam_id):
         r = current_app.config['r']  # type: redis.Redis
         print('successfully found redis')
         result = r.get(steam_id)
-        print(result)
         if result is not None:
             return json.loads(result.decode("utf-8"))
     except KeyError:

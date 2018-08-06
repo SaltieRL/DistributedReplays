@@ -67,6 +67,12 @@ def view_replay(id_):
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
     # ranks = [{}] * 6
+    ranks = {}
+    for p in g.players:
+        if isinstance(p.online_id, list):  # some players have array platform-ids
+            p.online_id = p.online_id[0]
+            print('array online_id', p.online_id)
+        ranks[p.online_id] = get_rank(p.online_id)
     ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
     print(ranks)
     return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())

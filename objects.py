@@ -77,7 +77,9 @@ class PlayerGame(Base):
     __tablename__ = 'playergames'
 
     id = Column(Integer, primary_key=True)
+    name = Column(String(100))
     player = Column(String(40), ForeignKey('players.platformid'), index=True)
+    player_object = relationship('Player', foreign_keys=[player])
     game = Column(String(40), ForeignKey('games.hash'), index=True)
     game_object = relationship("Game", foreign_keys=[game])
     is_orange = Column(Boolean)

@@ -137,52 +137,61 @@
                             <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
                         </tr>
                         <tr class="dropdowndata">
-                            <td colspan="5">
-                                <div>
-                                    {% for team in replay.teams|sort(attribute='is_orange', reverse=True) %}
-                                        <div class="team"
-                                             style="padding: 10px; {{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
-                                            <h4>{{ team.name }}</h4>
-                                            Score: {{ team.score }}
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>Score</th>
-                                                    <th>Goals</th>
-                                                    <th>Assists</th>
-                                                    <th>Saves</th>
-                                                    <th>Shots</th>
-                                                </tr>
-                                                </thead>
-                                                {% for p in team.players|sort(attribute='score', reverse=True) %}
-                                                    <tr>
-                                                        <td>{{ p.name }}
-                                                            {% if p.online_id | string | length == 17 %}
-                                                                | <a href="{{ url_for('players.view_player', id_=p.online_id) }}">profile link</a>
-                                                                {% if '8' in ranks[p.online_id] %}
-                                                                    |
-                                                                    <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
-                                                                         height="30px"/>
-                                                                {% endif %}
-                                                            {% endif %}
-                                                            {% if p.is_bot %}
-                                                                | <i>Bot</i>
-                                                            {% endif %}</td>
-                                                        <td>{{ p.score }}</td>
-                                                        <td>{{ p.goals }}</td>
-                                                        <td>{{ p.assists }}</td>
-                                                        <td>{{ p.saves }}</td>
-                                                        <td>{{ p.shots }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </table>
-                                        </div>
+                        <td colspan="5">
+                        <div>
+                        {# orange #}
+                        {% set offset = replay.teamsize %}
+                        {% for team in range(2) %}
+                            {% set team_names = ['Blue', 'Orange'] %}
+                            {% set high = offset * 2 if team == 1 else offset %}
+                            {% set low = offset if team == 1 else 0 %}
+                            {% set team_members = ((replay.playergames|sort(attribute='is_orange', reverse=True))[low:high])|sort(attribute='score', reverse=True) %}
+                            <div class="team"
+                                 style="padding: 10px; {{ "color: white !important;" if not team else "" }}background: {{ "#e66f33" if team else "#0000aa" }}">
+                                <h4>{{ team_names[i] }}</h4>
+                                Score: {{ team.score }}
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Score</th>
+                                        <th>Goals</th>
+                                        <th>Assists</th>
+                                        <th>Saves</th>
+                                        <th>Shots</th>
+                                    </tr>
+                                    </thead>
+                                    {% for p in team_members %}
+                                        {% set pid = p.player_object.platformid %}
+                                        <tr>
+                                            <td>
+                                                {% if pid|string|length == 17 %}
+                                                    <a href="{{ url_for('players.view_player', id_=pid) }}">{{ p.name }}</a>
+                                                {% else %}
+                                                    {{ p.name }}
+                                                {% endif %}
+                                                {% if '8' in ranks[p.online_id] %}
+                                                    |
+                                                    <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
+                                                         height="30px"/>
+                                                {% endif %}
+                                                {% if p.is_bot %}
+                                                    | <i>Bot</i>
+                                                {% endif %}</td>
+                                            <td>{{ p.score }}</td>
+                                            <td>{{ p.goals }}</td>
+                                            <td>{{ p.assists }}</td>
+                                            <td>{{ p.saves }}</td>
+                                            <td>{{ p.shots }}</td>
+                                        </tr>
                                     {% endfor %}
-                                </div>
-                            </td>
-                        </tr>
+                                </table>
+                            </div>
+                        {% endfor %}
                     {% endfor %}
+                    </div>
+                    </td>
+                    </tr>
                 </table>
             {% else %}
                 <div class="errmsg">
@@ -196,7 +205,7 @@
     var matches = document.getElementsByClassName("match");
     var dropdowns = document.getElementsByClassName("dropdowndata");
     for (var i = 0; i < matches.length; i++) {
-        matches[i].onclick = function() {
+        matches[i].onclick = function () {
             var data = !this.classList.contains('active');
             propSet(matches, 'active', 'remove');
             propSet(dropdowns, 'show', 'remove');
