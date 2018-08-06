@@ -120,7 +120,7 @@
             {% if games %}
                 <table class="table">
 
-                    {% for game in games %}
+                    {% for game in games|sort(attribute='game_object.match_date') %}
                         {% set avg_rank = (game.game_object.ranks|max)|int %}
                         <tr>
                             <td>
@@ -132,7 +132,7 @@
                             <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
                             <td><img class="rankpic" src='{{ '/static/img/ranks/' + avg_rank|string + '.png' }}'
                                      alt="rank {{ avg_rank }}" title="rank {{ avg_rank }}" width="50px"/></td>
-
+                            <td>{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</td>
                         </tr>
                     {% endfor %}
 
