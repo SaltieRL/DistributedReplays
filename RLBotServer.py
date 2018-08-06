@@ -141,7 +141,7 @@ def unauthorized_handler():
 @app.route('/', methods=['GET', 'POST'])
 def home():
     session = current_app.config['db']()
-    count = session.query(Game).count()
+    count = session.query(Game.hash).count()
     return render_template('index.html', game_count=count)
 
 

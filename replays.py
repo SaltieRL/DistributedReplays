@@ -12,6 +12,7 @@ from functions import return_error, get_item_dict
 from objects import PlayerGame
 from players import get_rank
 import queries
+from replayanalysis.game.game import Game as Game_pickle
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
 #
@@ -71,6 +72,30 @@ def view_replay(id_):
     return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
 
 
+@bp.route('/parsed/view/<id_>/positions')
+def view_replay_data(id_):
+    pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
+    replay_path = os.path.join('rlreplays', id_ + '.replay')
+    if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
+        return render_template('replay.html', replay=None, id=id_)
+    try:
+        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
+    except Exception as e:
+        return return_error('Error opening game: ' + str(e))
+
+    cs = ['pos_x', 'pos_y', 'pos_z']
+    rot_cs = ['rot_z', 'rot_y', 'rot_z']
+    ball_df = g.ball[cs]
+    players_data = [p.data[cs + rot_cs].fillna(0).values.tolist() for p in g.players]
+
+    data = {
+        'ball': ball_df.fillna(0).values.tolist(),
+        'players': players_data,
+        'colors': [p.is_orange for p in g.players]
+    }
+    return jsonify(data)
+
+
 @bp.route('/parsed/view/random')
 def view_random():
     filelist = os.listdir('parsed')
@@ -86,6 +111,8 @@ def download_replay(id_):
 def downloader_page():
     return render_template('saltie.html')
 
+
+# STATS STUFF
 
 @bp.route('/stats')
 def replay_stats():
