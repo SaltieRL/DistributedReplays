@@ -33,14 +33,15 @@ function createLabel(text, x, y, z, size, color) {
     mesh.position.y = y - canvas.height / 2;
     return mesh;
 }
-
+width = 600;
+height = 300;
 var data = jsonGet('/replays/parsed/view/' + REPLAY_HASH + '/positions');
 const num_players = data['players'].length;
 console.log(data);
 
 
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 
 var renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -50,7 +51,7 @@ renderer.gammaOutput = true;
 
 
 // window.innerHeight
-renderer.setSize(500, 500);
+renderer.setSize(width, height);
 document.getElementById('viewer').appendChild(renderer.domElement);
 
 const field = new THREE.BoxGeometry(100, 100, 1);
@@ -129,7 +130,6 @@ controls.screenSpacePanning = false;
 
 camera.position.z = 5;
 let frame = 0;
-const divider = 100;
 var clock = new THREE.Clock(true);
 clock.start();
 console.log(clock);
@@ -146,11 +146,17 @@ function animate() {
         let x = d[0] / 100.0;
         let y = d[1] / 100.0;
         let z = d[2] / 30.0;
-        let rot_x = d[3] / 65536.0 * 2 * 3.14159265;
-        let rot_y = d[5] / 65536.0 * 2 * 3.14159265;
+
+
+        let rot_x = d[5] / 65536.0 * 2 * 3.14159265;
+        let rot_y = d[3] / 65536.0 * 2 * 3.14159265;
         let rot_z = d[4] / 65536.0 * 2 * 3.14159265;
         cars[i].position.set(x, y, z);
-        cars[i].rotation.set(rot_x, rot_y, rot_z);
+        cars[i].rotation.set(0, 0, 0);
+        cars[i].rotateX(rot_x);
+        cars[i].rotateY(rot_y);
+        cars[i].rotateZ(rot_z);
+        // cars[i].rotation.set(rot_x, rot_y, rot_z);
         // names[i].position.set(x, y, z + 5);
     }
 
