@@ -104,7 +104,11 @@ def get_rank_batch(ids, offline_redis=None):
         print('successfully found redis')
         ids_to_find = []
         for steam_id in ids:
-            result = r.get(steam_id)
+            try:
+                result = r.get(steam_id)
+            except redis.ConnectionError:
+                ids_to_find = ids
+                break
             if result is not None:
                 # print('Rank is cached')
                 return_data[steam_id] = json.loads(result.decode("utf-8"))
