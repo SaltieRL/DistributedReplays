@@ -24,13 +24,22 @@
         {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
         <h2>{{ replay.name|e }}</h2>
         <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
-        <p>Map: {{ replay.map['name'] }}</p>
+        <p>Map: {{ replay.map }}</p>
         <p>Version: {{ replay.replay_version }}</p>
         <p>Time: {{ replay.datetime }}</p>
         <p>Frames: {{ frame_count }}</p>
         <p>Score: {{ replay.teams[0].score }}:{{ replay.teams[1].score }}</p>
         <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
-        <div id="viewer"></div>
+        <div id="viewer-container" style="position: relative">
+            <div id="viewer" style="display: block"></div>
+            <button onclick="cameraTop()">Top View</button>
+            <button onclick="cameraSide()">Side View</button>
+            <button onclick="rotateLeft()">Rotate Left</button>
+            <button onclick="rotateRight()">Rotate Right</button>
+            <button onclick="raiseCamera()">Raise</button>
+            <button onclick="lowerCamera()">Lower</button>
+        </div>
+
         <hr/>
         <div>
             <b>Teams:</b>

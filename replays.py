@@ -88,27 +88,37 @@ def view_replay_data(id_):
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
-
+    field_ratio = 5140.0 / 4120
+    x_mult = 100.0 / 4120
+    y_mult = 100.0 / 5140 * field_ratio
+    z_mult = 100.0 / 2000
     cs = ['pos_x', 'pos_y', 'pos_z']
     rot_cs = ['rot_z', 'rot_y', 'rot_z']
-    g.ball[['pos_x', 'pos_y']] = g.ball[['pos_x', 'pos_y']] / 50.0
-    g.ball['pos_z'] = g.ball['pos_z'] / 15.0
+    g.ball['pos_x'] = g.ball['pos_x'] * x_mult
+    g.ball['pos_y'] = g.ball['pos_y'] * y_mult
+    g.ball['pos_z'] = g.ball['pos_z'] * z_mult
     ball_df = g.ball[cs]
 
     def process_player_df(game):
         d = []
         for p in game.players:
             p.data[rot_cs] = p.data[rot_cs] / 65536.0 * 2 * 3.14159265
-            p.data[['pos_x', 'pos_y']] = p.data[['pos_x', 'pos_y']] / 50.0
-            p.data['pos_z'] = p.data['pos_z'] / 15.0
-            d.append(p.data[cs + rot_cs].fillna(-100).values.tolist())
+            p.data['pos_x'] = p.data['pos_x'] * x_mult
+            p.data['pos_y'] = p.data['pos_y'] * y_mult
+            p.data['pos_z'] = p.data['pos_z'] * z_mult
+            d.append(p.data[cs + rot_cs + ['boost_active']].fillna(-100).values.tolist())
         return d
 
     players_data = process_player_df(g)
+    frame_data = g.frames[['delta', 'seconds_remaining', 'time']]
+    goal_data = [[gl.frame_number, gl.player_team] for gl in g.goals]
     data = {
-        'ball': ball_df.fillna(0).values.tolist(),
+        'ball': ball_df.fillna(-100).values.tolist(),
         'players': players_data,
-        'colors': [p.is_orange for p in g.players]
+        'colors': [p.is_orange for p in g.players],
+        'names': [p.name for p in g.players],
+        'frames': frame_data,
+        'goals': goal_data
     }
     return jsonify(data)
 
