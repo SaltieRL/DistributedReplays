@@ -181,7 +181,9 @@
                     </tr>
                     {% for game in games|sort(attribute='game_object.match_date') %}
                         {% set name = game.game_object.hash if game.game_object.name == None else game.game_object.name %}
-                        {% set avg_rank = (game.game_object.ranks|max)|int %}
+                        {% if game.game_object.ranks|length > 0 %}
+                            {% set avg_rank = (game.game_object.ranks|max)|int %}
+                        {% endif %}
                         {% set replay = game.game_object %}
                         <tr class="match">
                             <td>

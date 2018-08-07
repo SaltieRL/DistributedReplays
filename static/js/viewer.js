@@ -33,6 +33,7 @@ function createLabel(text, x, y, z, size, color) {
     mesh.position.y = y - canvas.height / 2;
     return mesh;
 }
+
 width = 600;
 height = 300;
 var data = jsonGet('/replays/parsed/view/' + REPLAY_HASH + '/positions');
@@ -41,8 +42,9 @@ console.log(data);
 
 
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-
+var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100000);
+camera.position.set(0, 0, 150);
+camera.rotation.set(Math.PI, 0, 0);
 var renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -50,11 +52,34 @@ renderer.gammaInput = true;
 renderer.gammaOutput = true;
 
 
+var ambient = new THREE.AmbientLight(0x666666, 0.1);
+scene.add(ambient);
+
+var light = new THREE.SpotLight(0xdfebff, 1.75);
+light.position.set(300, 400, 50);
+// light.position.multiplyScalar(1.3);
+
+light.castShadow = true;
+
+// light.shadow.mapSize.width = 512;
+// light.shadow.mapSize.height = 512;
+
+var d = 20000;
+
+//Set up shadow properties for the light
+light.shadow.mapSize.width = 512  // default
+light.shadow.mapSize.height = 512 // default
+
+light.shadow.camera.fov = 45;
+light.shadow.camera.near = 0.5;    // default
+light.shadow.camera.far = 5000;     // default
+
+scene.add(light);
 // window.innerHeight
 renderer.setSize(width, height);
 document.getElementById('viewer').appendChild(renderer.domElement);
 
-const field = new THREE.BoxGeometry(100, 100, 1);
+const field = new THREE.PlaneGeometry(200, 200);
 const field_material = new THREE.MeshBasicMaterial({color: 0x007B0C});
 const car = new THREE.BoxGeometry(6, 3, 2);
 const wheel = new THREE.CylinderGeometry(1, 1, 1, 16);
@@ -87,6 +112,8 @@ for (let x = 0; x < num_players; x++) {
     group.add(front);
     group.add(body);
     cars[x] = group;
+    group.castShadow = true;
+    group.receiveShadow = true;
     scene.add(group);
 
     // // TEXT
@@ -96,44 +123,52 @@ for (let x = 0; x < num_players; x++) {
 }
 
 const field_obj = new THREE.Mesh(field, field_material);
-
+field_obj.receiveShadow = true;
 scene.add(field_obj);
 
 const ball_obj = new THREE.Mesh(ball, ball_material);
-
+ball_obj.receiveShadow = true;
+ball_obj.castShadow = true;
 scene.add(ball_obj);
-
-
+//Create a helper for the shadow camera (optional)
+var helper = new THREE.CameraHelper( light.shadow.camera );
+scene.add( helper );
+// orbit controls setup
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.addEventListener('change', animate);
 controls.minDistance = 100;
 controls.maxDistance = 500;
-controls.enablePan = true;
-controls.screenSpacePanning = false;
-// white spotlight shining from the side, casting a shadow
-//
-// var spotLight = new THREE.SpotLight(0xffffff);
-// spotLight.position.set(100, 1000, 100);
-//
-// spotLight.castShadow = true;
-//
-// spotLight.shadow.mapSize.width = 1024;
-// spotLight.shadow.mapSize.height = 1024;
-//
-// spotLight.shadow.camera.near = 500;
-// spotLight.shadow.camera.far = 4000;
-// spotLight.shadow.camera.fov = 30;
-//
-// scene.add(spotLight);
-// var lightHelper = new THREE.SpotLightHelper(spotLight);
-// scene.add(lightHelper);
+// this is the angle for the weird horizontal rotation TODO: figure out how to get it to rotate around the center of the field
+controls.minAzimuthAngle = 0;
+controls.maxAzimuthAngle = 0;
+// controls.enablePan = true;
+// controls.screenSpacePanning = true;
 
-camera.position.z = 5;
+// TODO: figure out why shadows are not working
+// white spotlight shining from the side, casting a shadow?
+
+var spotLight = new THREE.SpotLight(0xffffff);
+spotLight.position.set(100, 100, 100);
+
+spotLight.castShadow = true;
+
+spotLight.shadow.mapSize.width = 100;
+spotLight.shadow.mapSize.height = 100;
+
+spotLight.shadow.camera.near = 500;
+spotLight.shadow.camera.far = 100000;
+spotLight.shadow.camera.fov = 75;
+
+scene.add(spotLight);
+var lightHelper = new THREE.SpotLightHelper(spotLight);
+scene.add(lightHelper);
 let frame = 0;
 var clock = new THREE.Clock(true);
+var ratio = 0.5;
 clock.start();
 console.log(clock);
 animate();
+
 
 function animate() {
     requestAnimationFrame(animate);
@@ -143,26 +178,35 @@ function animate() {
     let actual_frame = Math.floor(elapsed * 30);
     for (let i = 0; i < num_players; i++) {
         let d = data['players'][i][actual_frame];
-        let x = d[0] / 100.0;
-        let y = d[1] / 100.0;
-        let z = d[2] / 30.0;
+        let d_next = data['players'][i][actual_frame + 1];
+        let x = d[0];
+        let y = d[1];
+        let z = d[2];
 
 
-        let rot_x = d[5] / 65536.0 * 2 * 3.14159265;
-        let rot_y = d[3] / 65536.0 * 2 * 3.14159265;
-        let rot_z = d[4] / 65536.0 * 2 * 3.14159265;
+        // let rot_x = d[5];
+        // let rot_y = d[3];
+        // let rot_z = d[4];
+        let rot = [d[5], d[3], d[4]];
+        let rot_next = [d_next[5], d_next[3], d_next[4]];
+        let r_f = function (rot, next, idx) {
+            if (Math.abs(rot[idx] - next[idx]) > Math.PI / 4) {
+                return rot[idx]
+            }
+            return rot[idx] + ratio * (next[idx] - rot[idx]);
+        };
         cars[i].position.set(x, y, z);
         cars[i].rotation.set(0, 0, 0);
-        cars[i].rotateX(rot_x);
-        cars[i].rotateY(rot_y);
-        cars[i].rotateZ(rot_z);
+        cars[i].rotateX(r_f(rot, rot_next, 0));
+        cars[i].rotateY(r_f(rot, rot_next, 1));
+        cars[i].rotateZ(r_f(rot, rot_next, 2));
         // cars[i].rotation.set(rot_x, rot_y, rot_z);
         // names[i].position.set(x, y, z + 5);
     }
 
-    let x = data['ball'][actual_frame][0] / 100.0;
-    let y = data['ball'][actual_frame][1] / 100.0;
-    let z = data['ball'][actual_frame][2] / 30.0;
+    let x = data['ball'][actual_frame][0];
+    let y = data['ball'][actual_frame][1];
+    let z = data['ball'][actual_frame][2];
     ball_obj.position.set(x, y, z);
     renderer.render(scene, camera);
 }

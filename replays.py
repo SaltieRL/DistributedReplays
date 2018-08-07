@@ -91,9 +91,20 @@ def view_replay_data(id_):
 
     cs = ['pos_x', 'pos_y', 'pos_z']
     rot_cs = ['rot_z', 'rot_y', 'rot_z']
+    g.ball[['pos_x', 'pos_y']] = g.ball[['pos_x', 'pos_y']] / 50.0
+    g.ball['pos_z'] = g.ball['pos_z'] / 15.0
     ball_df = g.ball[cs]
-    players_data = [p.data[cs + rot_cs].fillna(0).values.tolist() for p in g.players]
 
+    def process_player_df(game):
+        d = []
+        for p in game.players:
+            p.data[rot_cs] = p.data[rot_cs] / 65536.0 * 2 * 3.14159265
+            p.data[['pos_x', 'pos_y']] = p.data[['pos_x', 'pos_y']] / 50.0
+            p.data['pos_z'] = p.data['pos_z'] / 15.0
+            d.append(p.data[cs + rot_cs].fillna(-100).values.tolist())
+        return d
+
+    players_data = process_player_df(g)
     data = {
         'ball': ball_df.fillna(0).values.tolist(),
         'players': players_data,
