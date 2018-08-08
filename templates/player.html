@@ -143,9 +143,7 @@
         / rank information
         <div class="rankpanel">
             {% if rank %}
-                {% set ranks = rank.keys()|sort(reverse=True) %}
-                {% set season = rank[ranks[0]] %}
-                {% for mode in season %}
+                {% for mode in rank %}
                     <div class="panel">
                         <div class="t1">
                             {{ mode['mode'] }}
@@ -231,7 +229,7 @@
                                                 {% else %}
                                                     {{ p.name }}
                                                 {% endif %}
-                                                {% if '8' in ranks[p.online_id] %}
+                                                {% if p.online_id in ranks %}
                                                     |
                                                     <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
                                                          height="30px"/>

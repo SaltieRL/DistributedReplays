@@ -1,6 +1,7 @@
 // import * as THREE from "./three";
 
 var container = document.getElementById('viewer');
+window.playing = true;
 
 function jsonGet(yourUrl) {
     let req = new XMLHttpRequest(); // a new request
@@ -34,8 +35,25 @@ function project(x, y, z) {
     return [pos.x * wh + wh - 10, -(pos.y * hh) + hh];
 }
 
-var width = 600;
-var height = 300;
+window.debug = false;
+
+function addDebug() {
+    window.debug = true;
+    var div = document.createElement("div");
+    div.style.display = 'inline-block';
+    div.style.position = 'absolute';
+    div.style.color = 'white';
+    div.style.borderRadius = '10px';
+    div.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    div.style.padding = '0 5px';
+    div.style.fontSize = '0.3em';
+    container.appendChild(div);
+    window.fps = div;
+}
+
+addDebug();
+var width = 800;
+var height = 450;
 const data = jsonGet('/replays/parsed/view/' + REPLAY_HASH + '/positions');
 const num_players = data['players'].length;
 const frames = data['frames'];
@@ -64,8 +82,8 @@ var stats = new Stats();
 stats.dom.style.position = 'relative';
 container.appendChild(stats.dom);
 
-axis = new THREE.AxisHelper()
-scene.add(axis);
+// axis = new THREE.AxisHelper()
+// scene.add(axis);
 // orbit controls setup
 // var controls = new THREE.OrbitControls(camera, renderer.domElement);
 // controls.addEventListener('change', animate);
@@ -91,6 +109,7 @@ const FIELD_LENGTH = FIELD_SIZE * FIELD_RATIO;
 const FIELD_WIDTH = FIELD_SIZE;
 const ASPECT_RATIO = 1.4;
 const CAMERA_DISTANCE = 100.0;
+
 // OBJECTS //
 function setOrthoView(camera) {
     var w = FIELD_LENGTH * Math.cos(Math.PI / 4) + FIELD_SIZE * Math.cos(Math.PI / 4);
@@ -169,7 +188,7 @@ const car = new THREE.BoxGeometry(CAR_LENGTH, CAR_WIDTH, CAR_HEIGHT);
 const wheel = new THREE.CylinderGeometry(1, 1, 1, 16);
 const front_mesh = new THREE.SphereGeometry(2, 16);
 const ball_geo = new THREE.SphereGeometry(4, 32);
-
+const car_top = new THREE.BoxGeometry(CAR_LENGTH * 2 / 3, CAR_WIDTH, CAR_HEIGHT);
 
 //OBJ loader
 // instantiate a loader
@@ -244,6 +263,7 @@ scene.add(ball_obj);
 const cars = [];
 const names = [];
 const name_arr = data['names'];
+const boosts = [];
 for (let x = 0; x < num_players; x++) {
     var group = new THREE.Group();
     let body_mat = data['colors'][x] ? car_material_orange : car_material_blue;
@@ -251,6 +271,10 @@ for (let x = 0; x < num_players; x++) {
 
     body.castShadow = true;
     body.position.set(0, 0, 1.5);
+
+    let top = new THREE.Mesh(car_top, body_mat);
+    top.castShadow = true;
+    top.position.set(0, 0, CAR_HEIGHT * 1.5);
     let wheel_pos = [
         [CAR_WIDTH / 2, -CAR_LENGTH / 3, 0],
         [CAR_WIDTH / 2, CAR_LENGTH / 3, 0],
@@ -267,6 +291,14 @@ for (let x = 0; x < num_players; x++) {
     group.add(front);
 
     group.add(body);
+    group.add(top);
+    // PARTICLE BOOST
+    let particleSystem = new THREE.GPUParticleSystem({
+        maxParticles: 2000
+    });
+    ;
+    group.add(particleSystem)
+    boosts[x] = particleSystem;
     cars[x] = group;
     group.castShadow = true;
     group.receiveShadow = true;
@@ -276,6 +308,26 @@ for (let x = 0; x < num_players; x++) {
     names[x] = createLabel(name_arr[x].toString(), 0, 0, 0, 3, '');
     // scene.add(text);
 }
+// PARTICLE BOOST OPTIONS
+
+var options = {
+    position: new THREE.Vector3(-3, 0, 0),
+    positionRandomness: .05,
+    velocity: new THREE.Vector3(),
+    velocityRandomness: .2,
+    color: 0xaa88ff,
+    colorRandomness: .2,
+    turbulence: .5,
+    lifetime: 2,
+    size: 5,
+    sizeRandomness: 1
+};
+var spawnerOptions = {
+    spawnRate: 2000,
+    horizontalSpeed: 1.5,
+    verticalSpeed: 0,
+    timeScale: 1
+};
 
 
 // LIGHTS //
@@ -309,20 +361,23 @@ function createLight() {
 
 // ANIMATION
 let frame = 0;
-var clock = new THREE.Clock(true);
+const clock = new THREE.Clock(true);
 var current_frame = 0;
+const clock_offset = frames[current_frame][2];
 const ratio = 0.5;
 clock.start();
 let xs = {};
 console.log(clock);
+var tick = 0;
 animate();
 
 function animate() {
     stats.begin();
-    let elapsed = clock.getElapsedTime();
+    let elapsed = clock_offset + clock.getElapsedTime();
     let current_time = frames[current_frame][2];
     let next_time = frames[current_frame + 1][2];
-    if (elapsed > next_time) {
+    // if we should go onto the next frame or our frame time is > 1s (prevents weird interp artifacts)
+    if ((elapsed > next_time) || (next_time - current_time > 1)) {
         current_frame += 1;
         current_time = next_time;
         next_time = frames[current_frame + 1][2];
@@ -341,28 +396,29 @@ function animate() {
         let y_t = y + (y_n - y) * delta;
         let z_t = z + (z_n - z) * delta;
         cars[i].position.set(x_t, y_t, z_t);
-        let rot_x = d[5];
-        // if (rot_x > Math.PI / 2)
-        let rot_y = d[3];
-
-        // let rot = [d[3], d[5], d[4]];
-        let rot = [0, 0, d[4]];
+        let rot = [d[3], d[5], d[4]];
+        // let rot = [0, 0, d[4]];
         // let rot = [0, d[5], d[4]];
-        let rot_next = [0, 0, d_next[4]];
-        // let rot_next = [0, d_next[5], d_next[4]];
+        // let rot_next = [0, 0, d_next[4]];
+        let rot_next = [d_next[3], d_next[5], d_next[4]];
         let r_f = function (rot, next, idx) {
             if (Math.abs(rot[idx] - rot_next[idx]) > Math.PI / 4) {
                 return rot[idx]
             }
             return rot[idx] + (rot_next[idx] - rot[idx]) * delta;
         };
-        cars[i].rotation.set(rot[0], rot[1], rot[2]);
+        // cars[i].rotation.set(rot[0], rot[1], rot[2]);
+        let zyx = new THREE.Euler(-d[5], d[3], d[4], "ZXY");
+        cars[i].setRotationFromEuler(zyx);
         // cars[i].rotateX(r_f(rot, rot_next, 0));
         // cars[i].rotateY(r_f(rot, rot_next, 1));
         // cars[i].rotateZ(r_f(rot, rot_next, 2));
         // TODO: y rotation is broken (seems like there is some sort of relationship between them that is not working)
         // cars[i].rotation.set(rot_x, rot_y, rot_z);
         let pos = project(x_t, y_t, z_t + 40);
+        if (pos[0] < 0) {
+            console.log(pos);
+        }
         for (let idx = 0; idx < 3; idx++) {
             if (Math.abs(Math.sin(rot[idx]) - Math.sin(rot_next[idx])) > 1) {
                 // console.log(i, current_frame, idx, rot[idx], rot_next[idx])
@@ -371,6 +427,25 @@ function animate() {
         if (i === 0 && current_frame > 0) {
             xs[elapsed] = rot[1];
         }
+
+        if (d[6]) {
+            var clock_delta = clock.getDelta() * spawnerOptions.timeScale;
+            tick += clock_delta;
+            if (tick < 0) tick = 0;
+            // console.log('boosting');
+            // player is boosting
+            options.position.x = 0;//-3 - Math.sin(tick * spawnerOptions.horizontalSpeed);
+            options.position.y = 0; //Math.sin(tick * spawnerOptions.verticalSpeed) * 10;
+            options.position.z = 0;//Math.sin(tick * spawnerOptions.horizontalSpeed + spawnerOptions.verticalSpeed) * 5;
+            for (let x = 0; x < spawnerOptions.spawnRate * clock_delta; x++) {
+                // Yep, that's really it.	Spawning particles is super cheap, and once you spawn them, the rest of
+                // their lifecycle is handled entirely on the GPU, driven by a time uniform updated below
+                boosts[i].spawnParticle(options);
+            }
+            boosts[i].update(tick);
+        }
+
+
         names[i].style.top = pos[1].toString() + 'px';
         names[i].style.left = pos[0].toString() + 'px';
     }
@@ -391,7 +466,12 @@ function animate() {
     renderer.render(scene, camera);
 
     stats.end();
-    requestAnimationFrame(animate);
+    if (window.debug) {
+        window.fps.innerText = current_frame.toString();
+    }
+    if (playing) {
+        requestAnimationFrame(animate);
+    }
 }
 
 function graph() {

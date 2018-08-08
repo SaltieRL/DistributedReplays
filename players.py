@@ -1,4 +1,5 @@
 import json
+import random
 import time
 from statistics import mode, mean
 from typing import List
@@ -8,12 +9,18 @@ import requests
 from sqlalchemy import func, desc
 
 import constants
-from config import RLSTATS_API_KEY
+
 from objects import Game, PlayerGame
 from steam import steam_id_to_profile
 
 from flask import render_template, Blueprint, current_app
 
+fake_data = False
+try:
+    from config import RL_API_KEY
+except ImportError:
+    RL_API_KEY = None
+    fake_data = True
 bp = Blueprint('players', __name__, url_prefix='/players')
 
 
@@ -37,7 +44,6 @@ def view_player(id_):
     else:
         favorite_car = "Unknown"
         favorite_car_pctg = 0.0
-        gpg = 0.0
         stats = (0.0, 0.0, 0.0, 0.0, 0.0)
 
     steam_profile = steam_id_to_profile(id_)
@@ -51,53 +57,32 @@ rank_cache = {}
 
 
 def get_rank(steam_id):
-    if len(str(steam_id)) < 17:
-        return {}
-    try:
-        r = current_app.config['r']  # type: redis.Redis
-        print('successfully found redis')
-        result = r.get(steam_id)
-        if result is not None:
-            return json.loads(result.decode("utf-8"))
-    except KeyError:
-        r = None
-    url = "https://api.rocketleaguestats.com/v1/player?unique_id={}&platform_id=1".format(steam_id)
-    post_data = {'Authorization': RLSTATS_API_KEY}
-    data = requests.get(url, headers=post_data)
-    response_headers = data.headers
-    remaining = response_headers['X-Rate-Limit-Remaining']
-    if remaining == 1:
-        time.sleep(1)
-    data = data.json()
-    # print (data)
-    if 'rankedSeasons' in data:
-        seasons = {}
-        for k in data['rankedSeasons']:
-            season = data['rankedSeasons'][k]
-            modes = []
+    rank = get_rank_batch([steam_id])
+    return rank[list(rank.keys())[0]]
 
-            names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
-            for t in season:
-                if 'tier' in season[t]:  # excludes unranked
-                    s = {'mode': names[t], 'rank_points': season[t]['rankPoints'], 'tier': season[t]['tier'],
-                         'division': season[t]['division'],
-                         'string': tier_div_to_string(season[t]['tier'], season[t]['division'])}
-                    modes.append(s)
-                else:
-                    s = {'mode': names[t], 'rank_points': season[t]['rankPoints'], 'tier': 0,
-                         'division': 0, 'string': tier_div_to_string(0, 0)}
-                    modes.append(s)
-            seasons[k] = modes
 
-        if r is not None:
-            r.set(steam_id, json.dumps(seasons), ex=24 * 60 * 60)
-        return seasons
-    else:
-        return {}
+def make_fake_data(ids):
+    names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+    base_rank = random.randint(3, 17)
+    return_data = {}
+    for id_ in ids:
+        modes = []
+        for mode in names.values():
+            rank = base_rank + random.randint(-2, 2)
+            div = random.randint(0, 4)
+            s = {'mode': mode, 'rank_points': rank * random.randint(60, 75) + 15 * div,
+                 'tier': rank,
+                 'division': div,
+                 'string': tier_div_to_string(rank, div)}
+            modes.append(s)
+        return_data[id_] = modes
+    return return_data
 
 
 def get_rank_batch(ids, offline_redis=None):
     return_data = {}
+    if fake_data:
+        return make_fake_data(ids)
     try:
         r = current_app.config['r']  # type: redis.Redis
     except KeyError:
@@ -110,12 +95,13 @@ def get_rank_batch(ids, offline_redis=None):
                 port=6379)
         r = offline_redis
     if r is not None:
-        print('successfully found redis')
         ids_to_find = []
         for steam_id in ids:
             try:
                 result = r.get(steam_id)
             except redis.ConnectionError:
+                print('error connecting to redis')
+                r = None
                 ids_to_find = ids
                 break
             if result is not None:
@@ -129,57 +115,33 @@ def get_rank_batch(ids, offline_redis=None):
             return return_data
         else:
             print(ids_to_find)
-    url = "https://api.rocketleaguestats.com/v1/player/batch"
-    headers = {'Authorization': RLSTATS_API_KEY}
+    url = "https://api.rocketleague.com/api/v1/steam/playerskills/"
+    headers = {'Authorization': 'Token ' + RL_API_KEY, 'Referer': 'http://api.rocketleague.com'}
 
-    post_data = list(
-        filter(lambda x: x['platformId'] == '1',
-               [{'platformId': get_platform_id(i), 'uniqueId': str(i)} for i in ids_to_find]))
+    ids_dict = list(
+        filter(lambda x: x['platformId'] == 'steam',
+               [{'platformId': get_platform_id(i), 'uniqueId': i} for i in ids_to_find]))
+    post_data = {'player_ids': [p['uniqueId'] for p in ids_dict]}
     data = requests.post(url, headers=headers, json=post_data)
-    response_headers = data.headers
-    remaining = response_headers['X-Rate-Limit-Remaining']
-    print('Remaining:', remaining)
-    if remaining == 1:
-        time.sleep(1)
     data = data.json()
-
-    retries = 5
-    for x in range(retries):
-        if 'code' in data:
-            if data['code'] == 400:
-                print('invalid request')
-                print(post_data)
-                return {}
-            data = requests.post(url, headers=headers, json=post_data)
-            print('Return data', data)
-            print('API call exceeded')
-            time.sleep(5)
-
-    # return data
-    print(data)
+    if 'detail' in data:
+        return {str(i): {} for i in ids}
     for player in data:
-        unique_id = player['uniqueId']
-        if 'rankedSeasons' in player:
-            seasons = {}
-            for k in player['rankedSeasons']:
-                season = player['rankedSeasons'][k]
-                modes = []
+        modes = []
+        unique_id = player['user_id']
+        names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+        if 'player_skills' in player:
 
-                names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
-                for t in season:
-                    if 'tier' in season[t]:  # excludes unranked
-                        s = {'mode': names[t], 'rank_points': season[t]['rankPoints'], 'tier': season[t]['tier'],
-                             'division': season[t]['division'],
-                             'string': tier_div_to_string(season[t]['tier'], season[t]['division'])}
-                        modes.append(s)
-                    else:
-                        s = {'mode': names[t], 'rank_points': season[t]['rankPoints'], 'tier': 0,
-                             'division': 0, 'string': tier_div_to_string(0, 0)}
-                        modes.append(s)
-                seasons[k] = modes
+            for playlist in player['player_skills']:
+                if 'tier' in playlist:  # excludes unranked
+                    s = {'mode': names[str(playlist['playlist'])], 'rank_points': playlist['skill'],
+                         'tier': playlist['tier'],
+                         'division': playlist['division'],
+                         'string': tier_div_to_string(playlist['tier'], playlist['division'])}
+                    modes.append(s)
             if r is not None:
-                r.set(unique_id, json.dumps(seasons), ex=24 * 60 * 60)
-            return_data[unique_id] = seasons
+                r.set(unique_id, json.dumps(modes), ex=24 * 60 * 60)
+            return_data[unique_id] = modes
         else:
             return_data[unique_id] = {}
     return return_data
@@ -204,6 +166,6 @@ def tier_div_to_string(rank: int, div: int = -1):
 
 def get_platform_id(i):
     if len(str(i)) == 17:
-        return '1'  # steam
+        return 'steam'  # steam
     else:
         return '-1'

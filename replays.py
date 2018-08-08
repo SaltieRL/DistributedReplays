@@ -2,6 +2,7 @@ import os
 import pickle
 import random
 
+import numpy as np
 from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app, jsonify
 from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
@@ -10,7 +11,7 @@ import celery_tasks
 import constants
 from functions import return_error, get_item_dict
 from objects import PlayerGame
-from players import get_rank
+from players import get_rank, get_rank_batch
 import queries
 from replayanalysis.game.game import Game as Game_pickle
 
@@ -66,15 +67,11 @@ def view_replay(id_):
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
-    # ranks = [{}] * 6
-    ranks = {}
     for p in g.players:
         if isinstance(p.online_id, list):  # some players have array platform-ids
             p.online_id = p.online_id[0]
             print('array online_id', p.online_id)
-        ranks[p.online_id] = get_rank(p.online_id)
-    ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
-    print(ranks)
+    ranks = get_rank_batch([p.online_id for p in g.players])
     return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
 
 
@@ -152,6 +149,17 @@ def score_distribution():
     data = session.query(PlayerGame.score, func.count(PlayerGame.id)).group_by(PlayerGame.score).filter(
         PlayerGame.score % 10 == 0).order_by(PlayerGame.score).all()
     return jsonify({k: v for k, v in data})
+
+
+@bp.route('/stats/score/numpy')
+def score_distribution_np():
+    session = current_app.config['db']()
+    data = np.array(session.query(PlayerGame.score).filter(
+        PlayerGame.score % 10 == 0).filter(PlayerGame.score > 0).all())
+    non_log = np.histogram(data, bins=30)
+    log = np.histogram(np.log(data), bins=30)
+    return jsonify({'log': {'data': log[0].tolist(), 'bins': log[1].tolist()},
+                    'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
 
 @bp.route('/stats/goals')
