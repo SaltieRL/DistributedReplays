@@ -64,17 +64,11 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
         mode = 'duel'
     rank_list = []
     mmr_list = []
-    for k in ranks:
-        keys = ranks[k].keys()
-        if len(keys) > 0:
-            latest = sorted(keys, reverse=True)[0]
-            r = list(filter(lambda x: x['mode'] == mode, ranks[k][latest]))
-            if len(r) > 0:
-                r = r[0]
-                if 'tier' in r:
-                    rank_list.append(r['tier'])
-                if 'rank_points' in r:
-                    mmr_list.append(r['rank_points'])
+    for r in ranks:
+        if 'tier' in r:
+            rank_list.append(r['tier'])
+        if 'rank_points' in r:
+            mmr_list.append(r['rank_points'])
     g = Game(hash=game.replay_id, players=[str(p.online_id) for p in game.players],
              ranks=rank_list, mmrs=mmr_list, map=game.map, team0score=game.teams[0].score,
              team1score=game.teams[1].score, teamsize=len(game.teams[0].players), match_date=game.datetime,
