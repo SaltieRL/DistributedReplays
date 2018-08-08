@@ -1,6 +1,7 @@
 // import * as THREE from "./three";
 
 var container = document.getElementById('viewer');
+
 function jsonGet(yourUrl) {
     let req = new XMLHttpRequest(); // a new request
     req.open("GET", yourUrl, false);
@@ -37,6 +38,10 @@ var width = 600;
 var height = 300;
 const data = jsonGet('/replays/parsed/view/' + REPLAY_HASH + '/positions');
 const num_players = data['players'].length;
+const frames = data['frames'];
+const goals = data['goals'];
+const ball = data['ball'];
+const players = data['players'];
 console.log(data);
 
 
@@ -59,7 +64,8 @@ var stats = new Stats();
 stats.dom.style.position = 'relative';
 container.appendChild(stats.dom);
 
-
+axis = new THREE.AxisHelper()
+scene.add(axis);
 // orbit controls setup
 // var controls = new THREE.OrbitControls(camera, renderer.domElement);
 // controls.addEventListener('change', animate);
@@ -84,7 +90,7 @@ const FIELD_HEIGHT = 100.0;
 const FIELD_LENGTH = FIELD_SIZE * FIELD_RATIO;
 const FIELD_WIDTH = FIELD_SIZE;
 const ASPECT_RATIO = 1.4;
-
+const CAMERA_DISTANCE = 100.0;
 // OBJECTS //
 function setOrthoView(camera) {
     var w = FIELD_LENGTH * Math.cos(Math.PI / 4) + FIELD_SIZE * Math.cos(Math.PI / 4);
@@ -103,6 +109,7 @@ function cameraTop() {
     camera.position.set(0, 0, FIELD_HEIGHT * 3);
     camera.lookAt(0, 0, 0)
 }
+
 var angle = 50;
 var height_multiplier = 2;
 var multiplier = 2.5;
@@ -111,9 +118,10 @@ function cameraSide() {
     camera.up = new THREE.Vector3(0, 0, 1);
     let x_multiplier = Math.cos(angle * Math.PI / 180);
     let y_multiplier = Math.sin(angle * Math.PI / 180);
-    camera.position.set(FIELD_HEIGHT * multiplier * x_multiplier, FIELD_HEIGHT * multiplier * y_multiplier, FIELD_HEIGHT * height_multiplier);
+    camera.position.set(CAMERA_DISTANCE * multiplier * x_multiplier, CAMERA_DISTANCE * multiplier * y_multiplier, CAMERA_DISTANCE * height_multiplier);
     camera.lookAt(-FIELD_HEIGHT / 2 * x_multiplier, -FIELD_HEIGHT / 2 * y_multiplier, 0);
 }
+
 // TODO: save camera settings in browser using cookie
 function rotateLeft() {
     angle -= 10;
@@ -160,7 +168,7 @@ const field = new THREE.PlaneGeometry(FIELD_WIDTH, FIELD_LENGTH);
 const car = new THREE.BoxGeometry(CAR_LENGTH, CAR_WIDTH, CAR_HEIGHT);
 const wheel = new THREE.CylinderGeometry(1, 1, 1, 16);
 const front_mesh = new THREE.SphereGeometry(2, 16);
-const ball = new THREE.SphereGeometry(4, 32);
+const ball_geo = new THREE.SphereGeometry(4, 32);
 
 
 //OBJ loader
@@ -226,7 +234,7 @@ wall2.rotation.set(Math.PI / 2, Math.PI / 2, 0);
 scene.add(wall2);
 
 // Ball creation
-const ball_obj = new THREE.Mesh(ball, ball_material);
+const ball_obj = new THREE.Mesh(ball_geo, ball_material);
 ball_obj.receiveShadow = true;
 ball_obj.castShadow = true;
 scene.add(ball_obj);
@@ -254,9 +262,9 @@ for (let x = 0; x < num_players; x++) {
         wh.position.set(w[0], w[1], w[2]);
         group.add(wh);
     });
-    // let front = new THREE.Mesh(front_mesh, yellow_toon);
-    // front.position.set(3, 0, 0);
-    // group.add(front);
+    let front = new THREE.Mesh(front_mesh, yellow_toon);
+    front.position.set(3, 0, 0);
+    group.add(front);
 
     group.add(body);
     cars[x] = group;
@@ -302,25 +310,27 @@ function createLight() {
 // ANIMATION
 let frame = 0;
 var clock = new THREE.Clock(true);
+var current_frame = 0;
 const ratio = 0.5;
 clock.start();
+let xs = {};
 console.log(clock);
 animate();
 
-var now, delta, then = Date.now();
-var interval = 1000 / 30;
-
 function animate() {
-    // lightHelper.update();
-    // console.log(camera.position, camera.rotation);
     stats.begin();
     let elapsed = clock.getElapsedTime();
-    let current_frame = elapsed * 30;
-    let actual_frame = Math.floor(current_frame);
-    let delta = current_frame - actual_frame;
+    let current_time = frames[current_frame][2];
+    let next_time = frames[current_frame + 1][2];
+    if (elapsed > next_time) {
+        current_frame += 1;
+        current_time = next_time;
+        next_time = frames[current_frame + 1][2];
+    }
+    let delta = (elapsed - current_time) / (next_time - current_time);
     for (let i = 0; i < num_players; i++) {
-        let d = data['players'][i][actual_frame];
-        let d_next = data['players'][i][actual_frame + 1];
+        let d = players[i][current_frame];
+        let d_next = players[i][current_frame + 1];
         let x = d[0];
         let y = d[1];
         let z = d[2];
@@ -331,32 +341,41 @@ function animate() {
         let y_t = y + (y_n - y) * delta;
         let z_t = z + (z_n - z) * delta;
         cars[i].position.set(x_t, y_t, z_t);
-        // cars[i].position.set(x, y, z);
+        let rot_x = d[5];
+        // if (rot_x > Math.PI / 2)
+        let rot_y = d[3];
 
-        // let rot_x = d[5];
-        // let rot_y = d[3];
-        // let rot_z = d[4];
-        let rot = [d[5], d[3], d[4]];
-        let rot_next = [d_next[5], d_next[3], d_next[4]];
+        // let rot = [d[3], d[5], d[4]];
+        let rot = [0, 0, d[4]];
+        // let rot = [0, d[5], d[4]];
+        let rot_next = [0, 0, d_next[4]];
+        // let rot_next = [0, d_next[5], d_next[4]];
         let r_f = function (rot, next, idx) {
-            if (Math.abs(rot[idx] - next[idx]) > Math.PI / 4) {
+            if (Math.abs(rot[idx] - rot_next[idx]) > Math.PI / 4) {
                 return rot[idx]
             }
-            return rot[idx] + (next[idx] - rot[idx]) * delta;
+            return rot[idx] + (rot_next[idx] - rot[idx]) * delta;
         };
-        cars[i].rotation.set(0, 0, 0);
-        cars[i].rotateX(r_f(rot, rot_next, 0));
-        cars[i].rotateY(r_f(rot, rot_next, 1));
-        cars[i].rotateZ(r_f(rot, rot_next, 2));
+        cars[i].rotation.set(rot[0], rot[1], rot[2]);
+        // cars[i].rotateX(r_f(rot, rot_next, 0));
+        // cars[i].rotateY(r_f(rot, rot_next, 1));
+        // cars[i].rotateZ(r_f(rot, rot_next, 2));
         // TODO: y rotation is broken (seems like there is some sort of relationship between them that is not working)
         // cars[i].rotation.set(rot_x, rot_y, rot_z);
         let pos = project(x_t, y_t, z_t + 40);
-
+        for (let idx = 0; idx < 3; idx++) {
+            if (Math.abs(Math.sin(rot[idx]) - Math.sin(rot_next[idx])) > 1) {
+                // console.log(i, current_frame, idx, rot[idx], rot_next[idx])
+            }
+        }
+        if (i === 0 && current_frame > 0) {
+            xs[elapsed] = rot[1];
+        }
         names[i].style.top = pos[1].toString() + 'px';
         names[i].style.left = pos[0].toString() + 'px';
     }
-    let d = data['ball'][actual_frame];
-    let d_next = data['ball'][actual_frame + 1];
+    let d = ball[current_frame];
+    let d_next = ball[current_frame + 1];
     let x = d[0];
     let y = d[1];
     let z = d[2];
@@ -375,6 +394,49 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-function followBall() {
-
+function graph() {
+    var config = {
+        type: 'line',
+        data: {
+            labels: Object.keys(xs),
+            datasets: [{
+                label: 'My First dataset',
+                data: Object.values(xs),
+                fill: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Chart.js Line Chart'
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Time'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Value'
+                    }
+                }]
+            }
+        }
+    };
+    var ctx = document.getElementById('chart').getContext('2d');
+    window.myLine = new Chart(ctx, config);
 }

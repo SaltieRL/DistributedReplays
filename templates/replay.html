@@ -38,8 +38,9 @@
             <button onclick="rotateRight()">Rotate Right</button>
             <button onclick="raiseCamera()">Raise</button>
             <button onclick="lowerCamera()">Lower</button>
+            <button onclick="graph()">Graph</button>
         </div>
-
+        <canvas id="chart"></canvas>
         <hr/>
         <div>
             <b>Teams:</b>
@@ -149,5 +150,6 @@
             </ol>
         </div>
     {% endif %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/viewer.js') }}"></script>
 {% endblock body %}

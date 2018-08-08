@@ -93,7 +93,7 @@ def view_replay_data(id_):
     y_mult = 100.0 / 5140 * field_ratio
     z_mult = 100.0 / 2000
     cs = ['pos_x', 'pos_y', 'pos_z']
-    rot_cs = ['rot_z', 'rot_y', 'rot_z']
+    rot_cs = ['rot_x', 'rot_y', 'rot_z']
     g.ball['pos_x'] = g.ball['pos_x'] * x_mult
     g.ball['pos_y'] = g.ball['pos_y'] * y_mult
     g.ball['pos_z'] = g.ball['pos_z'] * z_mult
@@ -117,7 +117,7 @@ def view_replay_data(id_):
         'players': players_data,
         'colors': [p.is_orange for p in g.players],
         'names': [p.name for p in g.players],
-        'frames': frame_data,
+        'frames': frame_data.fillna(-100).values.tolist(),
         'goals': goal_data
     }
     return jsonify(data)
