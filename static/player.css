@@ -220,3 +220,11 @@ ul, li {
   margin:0;
   padding:0;
 }
+
+.team.orange {
+  background: radial-gradient(farthest-side at 22% -80%,orange 1%, white 90%);
+}
+
+.team.blue {
+  background: radial-gradient(farthest-side at 22% -80%,blue 1%, white 90%);
+}
