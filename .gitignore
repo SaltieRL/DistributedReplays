@@ -75,3 +75,6 @@ fabric.properties
 /config.cfg
 config.cfg
 *.iml
+
+parsed/
+rlreplays/
