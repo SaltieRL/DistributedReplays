@@ -270,7 +270,7 @@ ul, li {
   background-color: #ffdba8;
   transform: skew(-50deg, 0deg);
 }
-
+/*
 .team.blue h4::after {
   content: "";
   position: absolute;
@@ -280,6 +280,36 @@ ul, li {
   border-width: 35px 45px 0;
   border-style: solid;
   border-color: #b2b2ff transparent transparent;
+}
+*/
+
+.team.blue h4::after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 25%;
+  top: 0;
+  left: -25%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #000000;
+  background-color: #b2b2ff;
+  transform: skew(-50deg, 0deg);
+}
+
+.team.blue h4::before {
+  content: "";
+  position: absolute;
+  width: 4%;
+  height: 25%;
+  top: 0;
+  left: 27%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #000000;
+  /* border-color: #25fdf7cc #c73d3d #ffdba8; */
+  background-color: #b2b2ff;
+  transform: skew(-50deg, 0deg);
 }
 
 .team {
