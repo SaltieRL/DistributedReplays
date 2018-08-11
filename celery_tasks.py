@@ -12,7 +12,7 @@ from objects import Game
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'replayanalysis'))
 from replayanalysis.decompile_replays import decompile_replay
-from replayanalysis.game.game import Game as ReplayGame
+from replayanalysis.json_parser.game import Game as ReplayGame
 # bp = Blueprint('celery', __name__)
 
 

@@ -29,5 +29,5 @@ def startup():
         try:
             engine, Session = login('postgresql://postgres:postgres@localhost/saltie')
         except Exception as e:
-            engine, Session = login('postgresql://postgres:postgres@localhost', recreate_database=False)
+            engine, Session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
     return engine, Session

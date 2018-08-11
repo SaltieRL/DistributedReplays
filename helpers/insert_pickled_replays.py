@@ -19,7 +19,7 @@ from objects import Game, Player
 from startup import startup
 from functions import convert_pickle_to_db
 
-from replayanalysis.game.game import Game as ReplayGame
+from replayanalysis.json_parser.game import Game as ReplayGame
 
 logger = logging.getLogger(__name__)
 engine, Session = startup()  # type: (Engine, sessionmaker)

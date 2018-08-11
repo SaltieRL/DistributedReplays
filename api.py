@@ -10,9 +10,9 @@ from sqlalchemy.sql import operators
 from api_return_classes.ApiGame import ApiGame
 from players import get_rank, tier_div_to_string
 from objects import Game
-from replayanalysis.game.game import Game as ReplayGame
-from replayanalysis.game.player import Player
-from replayanalysis.game.team import Team
+from replayanalysis.json_parser.game import Game as ReplayGame
+from replayanalysis.json_parser.player import Player
+from replayanalysis.json_parser.team import Team
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
