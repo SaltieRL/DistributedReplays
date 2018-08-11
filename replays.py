@@ -13,7 +13,7 @@ from functions import return_error, get_item_dict
 from objects import PlayerGame
 from players import get_rank, get_rank_batch
 import queries
-from replayanalysis.game.game import Game as Game_pickle
+from replayanalysis.json_parser.game import Game as Game_pickle
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
 #

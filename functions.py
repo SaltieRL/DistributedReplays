@@ -6,8 +6,8 @@ from flask import jsonify, render_template, current_app
 # Replay stuff
 from objects import Game, PlayerGame, Player
 from players import get_rank_batch
-from replayanalysis.game.game import Game as ReplayGame
-from replayanalysis.game.player import Player as GamePlayer
+from replayanalysis.json_parser.game import Game as ReplayGame
+from replayanalysis.json_parser.player import Player as GamePlayer
 
 replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
 if not os.path.isdir(replay_dir):

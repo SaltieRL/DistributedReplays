@@ -5,7 +5,7 @@ from typing import List
 
 from api_return_classes.ApiGoal import ApiGoal
 from api_return_classes.ApiTeam import ApiTeam
-from replayanalysis.game.game import Game
+from replayanalysis.json_parser.game import Game
 
 
 class ApiGameMap(Enum):
