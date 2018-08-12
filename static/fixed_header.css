@@ -1,0 +1,44 @@
+section {
+    position: relative;
+    padding-top: 37px;
+    width: 100%;
+}
+section.positioned {
+    position: absolute;
+    top:100px;
+    left:100px;
+}
+
+.container {
+    overflow-y: auto;
+}
+table {
+    border-spacing: 0;
+    width:100%;
+}
+td + td {
+}
+td, th {
+    padding: 10px 25px;
+}
+th {
+    height: 0;
+    line-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    color: transparent;
+    border: none;
+    white-space: nowrap;
+}
+th div{
+    position: absolute;
+    background: transparent;
+    padding: 9px 25px;
+    top: 0;
+    color: initial;
+    margin-left: -25px;
+    line-height: normal;
+}
+th:first-child div{
+    border: none;
+}
