@@ -15,7 +15,7 @@
 {%- endmacro %}
 
 
-<div>
+<div style="position:relative; overflow-x: hidden; width:100%;">
     {# orange #}
     {% set team_names = ['Blue', 'Orange'] %}
     {% set team_members = ((replay.playergames|sort(attribute='is_orange', reverse=True)))|sort(attribute='score', reverse=True) %}

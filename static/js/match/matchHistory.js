@@ -1,6 +1,10 @@
-define(function () {
+define(['colors'], function (colors) {
 
-    function loadBarChart(graphLabel, canvas, replayData, playerNames) {
+    function isOrange(isOrange) {
+        return isOrange == "True"
+    }
+
+    function loadBarChart(shouldShowLabel, graphLabel, canvas, replayData, playerNames) {
         const barData = {
             labels: [graphLabel],
             datasets: getDatasetsForReplay(replayData, graphLabel)
@@ -16,23 +20,29 @@ define(function () {
         new Chart(canvas, {
           type: 'horizontalBar',
           data: barData,
-          options: getOptions(true, xLimit)
+          options: getOptions(shouldShowLabel, xLimit)
         });
     }
 
     function getDatasetsForReplay(replayData, key) {
         var datasets = [];
+        var blueCount = 0;
         replayData.forEach((player, index) => {
             let playerData = [parseInt(player[key], 10)];
-            if (!player.is_orange) {
+            let colorIndex = 0;
+            if (!isOrange(player.is_orange)) {
                 playerData = playerData.map((value) => -value);
+                blueCount += 1;
+                colorIndex = blueCount;
+            } else {
+                colorIndex = index - blueCount;
             }
 
             const playerDataSet = {
                 label: player.name,
                 data: playerData,
                 stack: "1",  // player.team_is_orange? "orange" : "blue"
-                // ...getColour(player.team_is_orange)
+                ...colors.getHorizontaChartColor(colorIndex, isOrange(player.is_orange))
             };
             datasets.push(playerDataSet)
         });
@@ -48,7 +58,7 @@ define(function () {
             canvas_holder.appendChild(canvas);
             canvas.width = 100;
             canvas.height = 50;
-            loadBarChart(graphs[i], canvas, replayData, playerNames);
+            loadBarChart(i==0, graphs[i], canvas, replayData, playerNames);
         }
     }
 
