@@ -56,9 +56,9 @@ define(['colors'], function (colors) {
             canvas.className = graphs[i];
             let canvas_holder = graphs_holder.querySelector('.' + graphs[i]);
             canvas_holder.appendChild(canvas);
-            canvas.width = 100;
-            canvas.height = 50;
-            loadBarChart(i==0, graphs[i], canvas, replayData, playerNames);
+            let show_label = i===0;
+            canvas.height = 75;
+            loadBarChart(show_label, graphs[i], canvas, replayData, playerNames);
         }
     }
 
@@ -70,14 +70,13 @@ define(['colors'], function (colors) {
     }
 
     function addAction(action_element_id, host_id, label_data, replayData, playerNames) {
+        var touched = false;
         document.getElementById(action_element_id).addEventListener("click", function (ev) {
+            touched = true;
             var elements = document.getElementById(host_id).querySelectorAll("canvas");
             if (elements.length <= 0) {
-                console.log('creating canvs');
+                console.log('creating canvas');
                 createCanvasElements(host_id, label_data, replayData, playerNames);
-            } else {
-                console.log('removing canvs');
-                remove_canvas_elements(host_id);
             }
         });
 
@@ -86,9 +85,11 @@ define(['colors'], function (colors) {
             for(var mutation of mutations) {
                 if (mutation.type == 'attributes' && mutation.attributeName == 'class') {
                     var hidden = !element.classList.contains('show');
-                    if (hidden) {
+                    if (hidden && !touched) {
                         console.log('removing canvs');
                         remove_canvas_elements(host_id);
+                    } else if (touched) {
+                        touched = false;
                     }
                 }
             }
@@ -103,7 +104,7 @@ define(['colors'], function (colors) {
                     stacked: true,
                     gridLines: {
                         zeroLineWidth: 2,
-                        zeroLineColor: "rgba(0, 0, 0, 0.3)",
+                        zeroLineColor: colors.getLineColor(),
                         drawBorder: false
                     },
                     ticks: {
