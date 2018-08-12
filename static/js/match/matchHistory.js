@@ -62,7 +62,7 @@ define(['colors'], function (colors) {
         }
     }
 
-    function remove_canvas_elements() {
+    function remove_canvas_elements(host_id) {
         var elements = document.getElementById(host_id).querySelectorAll("canvas");
         for (var i = 0; i < elements.length; i++) {
             elements[i].parentNode.removeChild(elements[i]);
@@ -77,9 +77,23 @@ define(['colors'], function (colors) {
                 createCanvasElements(host_id, label_data, replayData, playerNames);
             } else {
                 console.log('removing canvs');
-                remove_canvas_elements();
+                remove_canvas_elements(host_id);
             }
         });
+
+        var observer = new MutationObserver(function (mutations) {
+            var element = document.getElementById(host_id);
+            for(var mutation of mutations) {
+                if (mutation.type == 'attributes' && mutation.attributeName == 'class') {
+                    var hidden = !element.classList.contains('show');
+                    if (hidden) {
+                        console.log('removing canvs');
+                        remove_canvas_elements(host_id);
+                    }
+                }
+            }
+        });
+        observer.observe(document.getElementById(host_id), { attributes:true});
     }
 
     function getOptions(showLegend, xLimit) {
