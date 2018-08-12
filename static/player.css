@@ -35,7 +35,6 @@ a {
 }
 .matchhistory {
   display: flex;
-  overflow-y: auto;
   margin: 5px 0px;
   padding: 5px 0px;
   border-bottom: 1px solid #ddd;
@@ -43,7 +42,6 @@ a {
 }
 .mhtable {
   border-spacing: 0px;
-  max-height: 550px;
   flex-grow: 1;
 }
 .match {
@@ -79,7 +77,7 @@ td {
   text-align: center;
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+  border-right: 1px solid #ddd;
   padding: 8px;
 }
 td.team {
@@ -221,28 +219,6 @@ ul, li {
   padding:0;
 }
 
-.team.orange {
-  /* background: radial-gradient(farthest-side at 22% -80%,orange 1%, white 90%); */
-}
-
-
-.team.blue {
- /* background: radial-gradient(farthest-side at 22% -80%,blue 1%, white 90%); */
-}
-
-/*
-.team.orange h4::after {
-  content: "";
-  position: absolute;
-  width: 50%;
-  bottom:0;
-  right: -25%;
-  border-width: 0 45px 35px;
-  border-style: solid;
-  border-color: transparent transparent #ffdba8;
-}
-*/
-
 .team.orange h4::after {
   content: "";
   position: absolute;
@@ -270,18 +246,6 @@ ul, li {
   background-color: #ffdba8;
   transform: skew(-50deg, 0deg);
 }
-/*
-.team.blue h4::after {
-  content: "";
-  position: absolute;
-  width: 50%;
-  top:0;
-  left:-25%;
-  border-width: 35px 45px 0;
-  border-style: solid;
-  border-color: #b2b2ff transparent transparent;
-}
-*/
 
 .team.blue h4::after {
   content: "";
@@ -310,6 +274,15 @@ ul, li {
   /* border-color: #25fdf7cc #c73d3d #ffdba8; */
   background-color: #b2b2ff;
   transform: skew(-50deg, 0deg);
+}
+
+.team.blue h4 {
+  margin-top: 0;
+}
+
+.team.orange h4 {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .team {

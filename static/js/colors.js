@@ -54,7 +54,12 @@ define('colors', function () {
         return list[index % list.length];
     }
 
+    function getLineColor() {
+        return "rgba(32, 45, 21, 0.3)";
+    }
+
     return {
-        getHorizontaChartColor: getHorizontaChartColor
+        getHorizontaChartColor: getHorizontaChartColor,
+        getLineColor: getLineColor
     }
 });
