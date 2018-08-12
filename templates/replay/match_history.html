@@ -1,3 +1,29 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var matches = document.getElementsByClassName("match");
+        var dropdowns = document.getElementsByClassName("dropdowndata");
+        for (var i = 0; i < matches.length; i++) {
+            matches[i].addEventListener('click', function (ev) {
+                var data = !this.classList.contains('active');
+                propSet(matches, 'active', 'remove');
+                propSet(dropdowns, 'show', 'remove');
+
+                /* if we are not active */
+                if (data) {
+                    this.classList.toggle("active");
+                    this.nextElementSibling.classList.toggle("show");
+                }
+            });
+        }
+
+        function propSet(elements, prop, op) {
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].classList[op](prop);
+            }
+        }
+    });
+</script>
+
 <table class="mhtable">
     <tr>
         <th>Date</th>
@@ -12,7 +38,9 @@
     {% set avg_rank = (game.game_object.ranks|max)|int %}
     {% endif %}
     {% set replay = game.game_object %}
-    <tr class="match">
+    {% set dropdown_id = 'drop_down' + game.game_object.hash %}
+    {% set match_id = 'match_' + game.game_object.hash %}
+    <tr class="match" id="{{ match_id }}">
         <td>
             <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</a>
         </td>
@@ -24,60 +52,10 @@
                 style="color:orange">{{ game.game_object.team1score }}</span></td>
         <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
     </tr>
-    <tr class="dropdowndata">
+    <tr class="dropdowndata" id="{{ dropdown_id }}">
         <td colspan="5">
-            <div>
-                {# orange #}
-                {% set offset = replay.teamsize %}
-                {% for team in range(2) %}
-                {% set team_names = ['Blue', 'Orange'] %}
-                {% set high = offset * 2 if team == 1 else offset %}
-                {% set low = offset if team == 1 else 0 %}
-                {% set team_members = ((replay.playergames|sort(attribute='is_orange', reverse=True))[low:high])|sort(attribute='score', reverse=True) %}
-                <div class="team {{ "orange" if team else "blue" }}"
-                style="padding: 10px; {{ "color: white !important;" if not team else "" }}">
-                <h4>{{ team_names[i] }}</h4>
-                Score: {{ team.score }}
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Score</th>
-                        <th>Goals</th>
-                        <th>Assists</th>
-                        <th>Saves</th>
-                        <th>Shots</th>
-                    </tr>
-                    </thead>
-                    {% for p in team_members %}
-                    {% set pid = p.player_object.platformid %}
-                    <tr>
-                        <td>
-                            {% if pid|string|length == 17 %}
-                            <a href="{{ url_for('players.view_player', id_=pid) }}">{{ p.name }}</a>
-                            {% else %}
-                            {{ p.name }}
-                            {% endif %}
-                            {% if p.online_id in ranks %}
-                            |
-                            <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
-                                 height="30px"/>
-                            {% endif %}
-                            {% if p.is_bot %}
-                            | <i>Bot</i>
-                            {% endif %}</td>
-                        <td>{{ p.score }}</td>
-                        <td>{{ p.goals }}</td>
-                        <td>{{ p.assists }}</td>
-                        <td>{{ p.saves }}</td>
-                        <td>{{ p.shots }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-            {% endfor %}
-            {% endfor %}
-            </div>
+            {% include "replay/score_graph.html" %}
         </td>
     </tr>
+    {% endfor %}
 </table>
