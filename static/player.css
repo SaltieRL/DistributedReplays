@@ -35,7 +35,6 @@ a {
 }
 .matchhistory {
   display: flex;
-  overflow-y: auto;
   margin: 5px 0px;
   padding: 5px 0px;
   border-bottom: 1px solid #ddd;
@@ -43,7 +42,6 @@ a {
 }
 .mhtable {
   border-spacing: 0px;
-  max-height: 550px;
   flex-grow: 1;
 }
 .match {
@@ -79,7 +77,7 @@ td {
   text-align: center;
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+  border-right: 1px solid #ddd;
   padding: 8px;
 }
 td.team {
@@ -219,4 +217,74 @@ ul, li {
   list-style-position:inside;
   margin:0;
   padding:0;
+}
+
+.team.orange h4::after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 25%;
+  bottom: 0;
+  right: -25%;
+  border-width: 2px;
+  border-style: solid;
+  /* border-color: #25fdf7cc #c73d3d #ffdba8; */
+  background-color: #ffdba8;
+  transform: skew(-50deg, 0deg);
+}
+
+.team.orange h4::before {
+  content: "";
+  position: absolute;
+  width: 4%;
+  height: 25%;
+  bottom: 0;
+  right: 27%;
+  border-width: 2px;
+  border-style: solid;
+  /* border-color: #25fdf7cc #c73d3d #ffdba8; */
+  background-color: #ffdba8;
+  transform: skew(-50deg, 0deg);
+}
+
+.team.blue h4::after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 25%;
+  top: 0;
+  left: -25%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #000000;
+  background-color: #b2b2ff;
+  transform: skew(-50deg, 0deg);
+}
+
+.team.blue h4::before {
+  content: "";
+  position: absolute;
+  width: 4%;
+  height: 25%;
+  top: 0;
+  left: 27%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #000000;
+  /* border-color: #25fdf7cc #c73d3d #ffdba8; */
+  background-color: #b2b2ff;
+  transform: skew(-50deg, 0deg);
+}
+
+.team.blue h4 {
+  margin-top: 0;
+}
+
+.team.orange h4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.team {
+  position: relative;
 }
