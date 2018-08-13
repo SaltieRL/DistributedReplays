@@ -1,5 +1,5 @@
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var matches = document.getElementsByClassName("match");
         var dropdowns = document.getElementsByClassName("dropdowndata");
         for (var i = 0; i < matches.length; i++) {
@@ -30,36 +30,37 @@
             <tr class="header">
                 {% set headers = ["Date", "Name", "Gamemode", "Score", "Outcome"] %}
                 {% for header in headers %}
-                <th>{{header}}<div>{{header}}</div></th>
+                    <th>{{ header }}
+                    </th>
                 {% endfor %}
             </tr>
             </thead>
             <tbody>
             {% for game in games|sort(attribute='game_object.match_date') %}
-            {% set name = game.game_object.hash if game.game_object.name == None else game.game_object.name %}
-            {% if game.game_object.ranks|length > 0 %}
-            {% set avg_rank = (game.game_object.ranks|max)|int %}
-            {% endif %}
-            {% set replay = game.game_object %}
-            {% set dropdown_id = 'drop_down' + game.game_object.hash %}
-            {% set match_id = 'match_' + game.game_object.hash %}
-            <tr class="match" id="{{ match_id }}">
-                <td>
-                    <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</a>
-                </td>
-                <td>
-                    <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ name }}</a>
-                </td>
-                <td>{{ game.game_object.teamsize }}s</td>
-                <td><span style="color:blue">{{ game.game_object.team0score }}</span> - <span
-                        style="color:orange">{{ game.game_object.team1score }}</span></td>
-                <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
-            </tr>
-            <tr class="dropdowndata" id="{{ dropdown_id }}">
-                <td colspan="5">
-                    {% include "replay/score_graph.html" %}
-                </td>
-            </tr>
+                {% set name = game.game_object.hash if game.game_object.name == None else game.game_object.name %}
+                {% if game.game_object.ranks|length > 0 %}
+                    {% set avg_rank = (game.game_object.ranks|max)|int %}
+                {% endif %}
+                {% set replay = game.game_object %}
+                {% set dropdown_id = 'drop_down' + game.game_object.hash %}
+                {% set match_id = 'match_' + game.game_object.hash %}
+                <tr class="match" id="{{ match_id }}">
+                    <td>
+                        <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</a>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ name }}</a>
+                    </td>
+                    <td>{{ game.game_object.teamsize }}s</td>
+                    <td><span style="color:blue">{{ game.game_object.team0score }}</span> - <span
+                            style="color:orange">{{ game.game_object.team1score }}</span></td>
+                    <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
+                </tr>
+                <tr class="dropdowndata" id="{{ dropdown_id }}">
+                    <td colspan="5">
+                        {% include "replay/score_graph.html" %}
+                    </td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>

@@ -79,7 +79,9 @@ define(['colors'], function (colors) {
             } else {
                 colorIndex = index - blueCount;
             }
-            let labelElement = hostElement.querySelector(".player-" + player.name + ' .label-color');
+            console.log(".player-" + player.player + ' .label-color');
+            console.log(player);
+            let labelElement = hostElement.querySelector(".player-" + player.player + ' .label-color');
             let color_option = colors.getHorizontaChartColor(colorIndex, isOrange(player.is_orange));
             labelElement.style.backgroundColor = color_option.backgroundColor;
             labelElement.style.borderColor = color_option.borderColor;
