@@ -9,11 +9,11 @@ from werkzeug.utils import secure_filename
 
 import celery_tasks
 import constants
+import queries
 from functions import return_error, get_item_dict
 from objects import PlayerGame
-from players import get_rank, get_rank_batch
-import queries
-from replayanalysis.json_parser.game import Game as Game_pickle
+from players import get_rank_batch
+from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as Game_pickle
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
 #
@@ -67,11 +67,12 @@ def view_replay(id_):
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
-    for p in g.players:
-        if isinstance(p.online_id, list):  # some players have array platform-ids
-            p.online_id = p.online_id[0]
-            print('array online_id', p.online_id)
-    ranks = get_rank_batch([p.online_id for p in g.players])
+    players = g.api_game.teams[0].players + g.api_game.teams[1].players
+    for p in players:
+        if isinstance(p.id, list):  # some players have array platform-ids
+            p.id = p.id
+            print('array online_id', p.id)
+    ranks = get_rank_batch([p.id for p in players])
     return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
 
 
@@ -91,31 +92,34 @@ def view_replay_data(id_):
     z_mult = 100.0 / 2000
     cs = ['pos_x', 'pos_y', 'pos_z']
     rot_cs = ['rot_x', 'rot_y', 'rot_z']
-    g.ball['pos_x'] = g.ball['pos_x'] * x_mult
-    g.ball['pos_y'] = g.ball['pos_y'] * y_mult
-    g.ball['pos_z'] = g.ball['pos_z'] * z_mult
-    ball_df = g.ball[cs]
+    ball = g.data_frame['ball']
+    # ball['pos_x'] = ball['pos_x'] * x_mult
+    # ball['pos_y'] = ball['pos_y'] * y_mult
+    # ball['pos_z'] = ball['pos_z'] * z_mult
+    ball_df = ball[cs]
+    players = g.api_game.teams[0].players + g.api_game.teams[1].players
+    names = [p.name for p in players]
 
     def process_player_df(game):
         d = []
-        for p in game.players:
-            p.data[rot_cs] = p.data[rot_cs] / 65536.0 * 2 * 3.14159265
-            p.data['pos_x'] = p.data['pos_x'] * x_mult
-            p.data['pos_y'] = p.data['pos_y'] * y_mult
-            p.data['pos_z'] = p.data['pos_z'] * z_mult
-            d.append(p.data[cs + rot_cs + ['boost_active']].fillna(-100).values.tolist())
+        for p in names:
+            game.data_frame[p][rot_cs] = game.data_frame[p][rot_cs] / 65536.0 * 2 * 3.14159265
+            game.data_frame[p]['pos_x'] = game.data_frame[p]['pos_x'] * x_mult
+            game.data_frame[p]['pos_y'] = game.data_frame[p]['pos_y'] * y_mult
+            game.data_frame[p]['pos_z'] = game.data_frame[p]['pos_z'] * z_mult
+            d.append(game.data_frame[p][cs + rot_cs + ['boost_active']].fillna(-100).values.tolist())
         return d
 
     players_data = process_player_df(g)
-    frame_data = g.frames[['delta', 'seconds_remaining', 'time']]
-    goal_data = [[gl.frame_number, gl.player_team] for gl in g.goals]
+    frame_data = g.data_frame['game'][['delta', 'seconds_remaining', 'time']]
+    # goal_data = [[gl.frame_number, gl.player_team] for gl in g.goals]
     data = {
         'ball': ball_df.fillna(-100).values.tolist(),
         'players': players_data,
-        'colors': [p.is_orange for p in g.players],
-        'names': [p.name for p in g.players],
+        'colors': [p.isOrange for p in players],
+        'names': [p.name for p in players],
         'frames': frame_data.fillna(-100).values.tolist(),
-        'goals': goal_data
+        # 'goals': goal_data
     }
     return jsonify(data)
 

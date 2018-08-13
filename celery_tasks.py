@@ -12,7 +12,7 @@ from objects import Game
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'replayanalysis'))
 from replayanalysis.decompile_replays import decompile_replay
-from replayanalysis.json_parser.game import Game as ReplayGame
+from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 # bp = Blueprint('celery', __name__)
 
 
@@ -65,7 +65,7 @@ def parse_replay_task(self, fn):
     #     return
     sess = self.session()
     old_hash = str(os.path.basename(fn)).split('.')[0]
-    hash = g.replay_id
+    hash = g.api_game.id
     possible_duplicates = sess.query(Game).filter(Game.hash == hash).all()
     if len(possible_duplicates) > 0:
         for p in possible_duplicates:

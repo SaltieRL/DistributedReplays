@@ -10,7 +10,7 @@ from sqlalchemy.sql import operators
 from api_return_classes.ApiGame import ApiGame
 from players import get_rank, tier_div_to_string
 from objects import Game
-from replayanalysis.json_parser.game import Game as ReplayGame
+from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 from replayanalysis.json_parser.player import Player
 from replayanalysis.json_parser.team import Team
 
@@ -127,7 +127,7 @@ def api_v1_get_replay_info(id_):
     try:
         g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: ReplayGame
         response = Response(
-            response=ApiGame.create_from_game(g).to_json(),
+            response=g.api_game.to_json(),
             status=200,
             mimetype='application/json'
         )

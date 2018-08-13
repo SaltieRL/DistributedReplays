@@ -6,8 +6,8 @@ from flask import jsonify, render_template, current_app
 # Replay stuff
 from objects import Game, PlayerGame, Player
 from players import get_rank_batch
-from replayanalysis.json_parser.game import Game as ReplayGame
-from replayanalysis.json_parser.player import Player as GamePlayer
+from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
+from replayanalysis.analysis.saltie_game.metadata.ApiPlayer import ApiPlayer as GamePlayer
 
 replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
 if not os.path.isdir(replay_dir):
@@ -54,14 +54,10 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
     :param game: Pickled game to process into Database object
     :return: Game db object, PlayerGame array, Player array
     """
-    ranks = get_rank_batch([p.online_id for p in game.players], offline_redis=offline_redis)
-    # ranks = {p.online_id: get_rank(p.online_id) for p in g.players}
-    if len(game.players) > 4:
-        mode = 'standard'
-    elif len(game.players) > 2:
-        mode = 'doubles'
-    else:
-        mode = 'duel'
+    teamsize = len(game.api_game.teams[0].players)
+    player_objs = game.api_game.teams[0].players + game.api_game.teams[1].players
+    ranks = get_rank_batch([p.id for p in player_objs], offline_redis=offline_redis)
+    print ('got ranks')
     rank_list = []
     mmr_list = []
     for r in ranks:
@@ -69,41 +65,42 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
             rank_list.append(r['tier'])
         if 'rank_points' in r:
             mmr_list.append(r['rank_points'])
-    g = Game(hash=game.replay_id, players=[str(p.online_id) for p in game.players],
-             ranks=rank_list, mmrs=mmr_list, map=game.map, team0score=game.teams[0].score,
-             team1score=game.teams[1].score, teamsize=len(game.teams[0].players), match_date=game.datetime,
-             name=game.name)
+    replay_id = game.api_game.id
+    g = Game(hash=replay_id, players=[str(p.id) for p in player_objs],
+             ranks=rank_list, mmrs=mmr_list, map=game.api_game.map, team0score=game.api_game.teams[0].score,
+             team1score=game.api_game.teams[1].score, teamsize=teamsize, match_date=game.api_game.time) # TODO: add name back
+             #name=game.)
     player_games = []
     players = []
-    for p in game.players:  # type: GamePlayer
-        if isinstance(p.online_id, list):  # some players have array platform-ids
-            p.online_id = p.online_id[0]
-            print('array online_id', p.online_id)
-        camera = p.camera_settings
-        if len(p.loadout) > 1:
-            loadout = p.loadout[int(p.team.is_orange)]
-        elif len(p.loadout) > 0:
-            loadout = p.loadout[0]
-        else:
-            loadout = None
-
-        field_of_view = camera.get('field_of_view', None)
-        transition_speed = camera.get('transition_speed', None)
-        pitch = camera.get('pitch', None)
-        swivel_speed = camera.get('swivel_speed', None)
-        stiffness = camera.get('stiffness', None)
-        height = camera.get('height', None)
-        distance = camera.get('distance', None)
-        pg = PlayerGame(player=p.online_id, name=p.name, game=game.replay_id, score=p.score, goals=p.goals, assists=p.assists,
-                        saves=p.saves, shots=p.shots, field_of_view=field_of_view,
+    # print('iterating over players')
+    for p in player_objs:  # type: GamePlayer
+        if isinstance(p.id, list):  # some players have array platform-ids
+            p.id = p.id[0]
+            print('array id', p.id)
+        print ('done checking for array')
+        camera = p.cameraSettings
+        print ('done with camera settings')
+        loadout = p.loadout
+        print('loadout done')
+        field_of_view = camera.fieldOfView
+        transition_speed = camera.transitionSpeed
+        pitch = camera.pitch
+        swivel_speed = camera.swivelSpeed
+        stiffness = camera.stiffness
+        height = camera.height
+        distance = camera.distance
+        pg = PlayerGame(player=p.id, name=p.name, game=replay_id, score=p.matchScore, goals=p.matchGoals, assists=p.matchAssists,
+                        saves=p.matchSaves, shots=p.matchShots, field_of_view=field_of_view,
                         transition_speed=transition_speed, pitch=pitch,
                         swivel_speed=swivel_speed, stiffness=stiffness, height=height,
-                        distance=distance, car=-1 if loadout is None else loadout['car'], is_orange=not p.is_orange,
-                        win=game.teams[not p.is_orange].score > game.teams[p.is_orange].score)
+                        distance=distance, car=-1 if loadout is None else loadout.car, is_orange=not p.isOrange,
+                        win=game.api_game.teams[int(not p.isOrange)].score > game.api_game.teams[int(p.isOrange)].score)
         player_games.append(pg)
-        p.online_id = str(p.online_id)
-        if len(str(p.online_id)) > 40:
-            p.online_id = p.online_id[:40]
-        p = Player(platformid=p.online_id, platformname="", avatar="", ranks=[])
+        print('appended player')
+        p.id = str(p.id)
+        if len(str(p.id)) > 40:
+            p.id = p.id[:40]
+        p = Player(platformid=p.id, platformname="", avatar="", ranks=[])
         players.append(p)
+    print ('returning info')
     return g, player_games, players

@@ -99,20 +99,19 @@ container.appendChild(stats.dom);
 // controls.screenSpacePanning = true;
 // CONSTANTS
 
-const CAR_LENGTH = 6;
-const CAR_WIDTH = 4;
-const CAR_HEIGHT = 2;
+const CAR_LENGTH = 240;
+const CAR_WIDTH = 160;
+const CAR_HEIGHT = 80;
 const FIELD_RATIO = 5140.0 / 4120;
-const FIELD_SIZE = 200.0;
-const FIELD_HEIGHT = 100.0;
-const FIELD_LENGTH = FIELD_SIZE * FIELD_RATIO;
-const FIELD_WIDTH = FIELD_SIZE;
+const FIELD_WIDTH = 4120.0 * 2;
+const FIELD_HEIGHT = 2000.0;
+const FIELD_LENGTH = FIELD_WIDTH * FIELD_RATIO;
 const ASPECT_RATIO = 1.4;
-const CAMERA_DISTANCE = 100.0;
+const CAMERA_DISTANCE = 5000.0;
 
 // OBJECTS //
 function setOrthoView(camera) {
-    var w = FIELD_LENGTH * Math.cos(Math.PI / 4) + FIELD_SIZE * Math.cos(Math.PI / 4);
+    var w = FIELD_LENGTH * Math.cos(Math.PI / 4) + FIELD_WIDTH * Math.cos(Math.PI / 4);
     var h = FIELD_LENGTH * Math.cos(Math.PI / 8) + FIELD_HEIGHT;
     camera.left = -h / 2 * ASPECT_RATIO;
     camera.right = h / 2 * ASPECT_RATIO;
@@ -187,7 +186,7 @@ const field = new THREE.PlaneGeometry(FIELD_WIDTH, FIELD_LENGTH);
 const car = new THREE.BoxGeometry(CAR_LENGTH, CAR_WIDTH, CAR_HEIGHT);
 const wheel = new THREE.CylinderGeometry(1, 1, 1, 16);
 const front_mesh = new THREE.SphereGeometry(2, 16);
-const ball_geo = new THREE.SphereGeometry(4, 32);
+const ball_geo = new THREE.SphereGeometry(120, 32);
 const car_top = new THREE.BoxGeometry(CAR_LENGTH * 2 / 3, CAR_WIDTH, CAR_HEIGHT);
 
 //OBJ loader
