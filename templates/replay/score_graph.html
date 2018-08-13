@@ -36,9 +36,32 @@
     <div class="team blue">
         <h4>{{ team_names[0] }}</h4>
     </div>
-    <div class="graph_holder" style="position:relative;">
+    <div class="graph-labels-container">
+        {% for player in team_members %}
+        <div class="graph-label player-{{ player.name }}">
+            <div class="label-color"> </div>
+            {% set pid = player.player_object.platformid %}
+            {% if pid|string|length == 17 %}
+            <a href="{{ url_for('players.view_player', id_=pid) }}" class="name">{{ player.name }}</a>
+            {% else %}
+            <div class="name">{{ player.name }}</div>
+            {% endif %}
+            {% if player.online_id in ranks %}
+            <img src="/static/img/ranks/{{ (ranks[player.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
+                 height="30px"/>
+            {% endif %}
+            {% if player.is_bot %}
+            <i class="bot">Bot</i>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="graph-list-container" style="position:relative;">
         {% for graph in graphs %}
-        <div style="width=100%; height={{ 90/graph_length }}%" class="{{ graph }}"></div>
+        <div style="position:relative; height={{ 90/graph_length }}%; width:100%;" class="graph-name-container">
+            <div class="graph-name">{{ graph }}</div>
+            <div class="graph-holder {{ graph }}"></div>
+        </div>
         {% endfor %}
     </div>
     <div class="team orange">

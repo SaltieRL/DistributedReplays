@@ -1,16 +1,16 @@
 define(['colors'], function (colors) {
 
     function isOrange(isOrange) {
-        return isOrange == "True"
+        return isOrange === "True"
     }
 
-    function loadBarChart(shouldShowLabel, graphLabel, canvas, replayData, playerNames) {
+    function loadBarChart(shouldShowLabel, graphLabel, canvas, replayData) {
         const barData = {
-            labels: [graphLabel],
+            // labels: [graphLabel],
             datasets: getDatasetsForReplay(replayData, graphLabel)
         };
-        var positiveValuesSum = 0;
-        var negativeValuesSum = 0;
+        let positiveValuesSum = 0;
+        let negativeValuesSum = 0;
         barData.datasets.forEach((dataset) => {
             const playerData = dataset.data;
             playerData[0] < 0 ? negativeValuesSum += playerData[0] : positiveValuesSum += playerData[0];
@@ -25,8 +25,8 @@ define(['colors'], function (colors) {
     }
 
     function getDatasetsForReplay(replayData, key) {
-        var datasets = [];
-        var blueCount = 0;
+        let datasets = [];
+        let blueCount = 0;
         replayData.forEach((player, index) => {
             let playerData = [parseInt(player[key], 10)];
             let colorIndex = 0;
@@ -49,52 +49,72 @@ define(['colors'], function (colors) {
         return datasets;
     }
 
-    function createCanvasElements(host_id, graphs, replayData, playerNames) {
-        var graphs_holder = document.getElementById(host_id).querySelector('.graph_holder');
+    function createCanvasElements(hostId, graphs, replayData) {
+        let graphsHolder = document.getElementById(hostId).querySelector('.graph-list-container');
         for (let i = 0; i < graphs.length; i++) {
             let canvas = document.createElement('canvas');
-            canvas.className = graphs[i];
-            let canvas_holder = graphs_holder.querySelector('.' + graphs[i]);
-            canvas_holder.appendChild(canvas);
-            let show_label = i===0;
+            canvas.className = 'canvas-' + graphs[i];
+            let canvasHolder = graphsHolder.querySelector('.' + graphs[i]);
+            canvasHolder.appendChild(canvas);
+            let showLabel = i===0;
             canvas.height = 75;
-            loadBarChart(show_label, graphs[i], canvas, replayData, playerNames);
+            loadBarChart(showLabel, graphs[i], canvas, replayData);
         }
     }
 
-    function remove_canvas_elements(host_id) {
-        var elements = document.getElementById(host_id).querySelectorAll("canvas");
-        for (var i = 0; i < elements.length; i++) {
+    function removeCanvasElements(hostId) {
+        let elements = document.getElementById(hostId).querySelectorAll("canvas");
+        for (let i = 0; i < elements.length; i++) {
             elements[i].parentNode.removeChild(elements[i]);
         }
     }
 
-    function addAction(action_element_id, host_id, label_data, replayData, playerNames) {
-        var touched = false;
-        document.getElementById(action_element_id).addEventListener("click", function (ev) {
+    function colorGraphLabel(hostElement, replayData) {
+        let blueCount = 0;
+        replayData.forEach((player, index) => {
+            let colorIndex = 0;
+            if (!isOrange(player.is_orange)) {
+                blueCount += 1;
+                colorIndex = blueCount;
+            } else {
+                colorIndex = index - blueCount;
+            }
+            let labelElement = hostElement.querySelector(".player-" + player.name + ' .label-color');
+            let color_option = colors.getHorizontaChartColor(colorIndex, isOrange(player.is_orange));
+            labelElement.style.backgroundColor = color_option.backgroundColor;
+            labelElement.style.borderColor = color_option.borderColor;
+            labelElement.style.borderWidth = color_option.borderWidth;
+        });
+    }
+
+    function addAction(actionElementId, hostId, labelData, replayData) {
+        let touched = false;
+        document.getElementById(actionElementId).addEventListener("click", (ev) => {
             touched = true;
-            var elements = document.getElementById(host_id).querySelectorAll("canvas");
+            let hostElement = document.getElementById(hostId);
+            colorGraphLabel(hostElement, replayData);
+            let elements = hostElement.querySelectorAll("canvas");
             if (elements.length <= 0) {
                 console.log('creating canvas');
-                createCanvasElements(host_id, label_data, replayData, playerNames);
+                createCanvasElements(hostId, labelData, replayData);
             }
         });
 
-        var observer = new MutationObserver(function (mutations) {
-            var element = document.getElementById(host_id);
-            for(var mutation of mutations) {
-                if (mutation.type == 'attributes' && mutation.attributeName == 'class') {
-                    var hidden = !element.classList.contains('show');
+        let observer = new MutationObserver((mutations) => {
+            let element = document.getElementById(hostId);
+            for(let mutation of mutations) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    let hidden = !element.classList.contains('show');
                     if (hidden && !touched) {
                         console.log('removing canvs');
-                        remove_canvas_elements(host_id);
+                        removeCanvasElements(hostId);
                     } else if (touched) {
                         touched = false;
                     }
                 }
             }
         });
-        observer.observe(document.getElementById(host_id), { attributes:true});
+        observer.observe(document.getElementById(hostId), { attributes:true});
     }
 
     function getOptions(showLegend, xLimit) {
@@ -110,13 +130,10 @@ define(['colors'], function (colors) {
                     ticks: {
                         min: -xLimit,
                         max: xLimit,
-                        callback: function(value) {
+                        callback: (value) =>
                             value < 0 ? -parseInt(value, 10) : parseInt(value, 10)
-                        }
                     },
-                    afterFit: function(scaleInstance) {
-                        scaleInstance.width = 100; /* sets the width to 100px */
-                    }
+                    afterFit: (scaleInstance) => scaleInstance.width = 100 /* sets the width to 100px */
                 }],
                 yAxes: [{
                     stacked: true,
@@ -124,21 +141,18 @@ define(['colors'], function (colors) {
                         display: false
                     },
                     barThickness: 25,
-                    afterFit: function(scaleInstance) {
-                        scaleInstance.height = 50; // sets the height to 100px
-                    }
+                    afterFit: (scaleInstance) => scaleInstance.height = 50 // sets the height to 100px
                 }]
             },
             legend: {
-                display: showLegend,
-                onClick: function(e) { e.stopPropagation() }
+                display: false,
+                onClick: (e) => e.stopPropagation()
             },
             tooltips: {
                 callbacks: {
-                    label: function(tooltipItem, data) {
-                        return data.datasets[tooltipItem.datasetIndex].label + ": " +
+                    label: (tooltipItem, data) =>
+                        data.datasets[tooltipItem.datasetIndex].label + ": " +
                         Math.abs(parseInt(tooltipItem.xLabel, 10))
-                    }
                 }
             },
             maintainAspectRatio: false

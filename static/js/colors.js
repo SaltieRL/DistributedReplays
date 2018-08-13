@@ -50,7 +50,7 @@ define('colors', function () {
     };
 
     function getHorizontaChartColor(index, is_orange) {
-        var list = is_orange? chartColors.orange : chartColors.blue;
+        var list = is_orange ? chartColors.orange : chartColors.blue;
         return list[index % list.length];
     }
 
