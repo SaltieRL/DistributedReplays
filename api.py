@@ -1,3 +1,4 @@
+import datetime
 import os
 import pickle
 from functools import wraps
@@ -7,7 +8,6 @@ from flask import render_template, url_for, redirect, request, jsonify, send_fro
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
-from api_return_classes.ApiGame import ApiGame
 from players import get_rank, tier_div_to_string
 from objects import Game
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
@@ -84,14 +84,41 @@ def api_v1_get_replays():
     # USER stuff
     if 'user' in args:
         games = games.filter(Game.players.any(args['user']))
+
+    # YEAR stuff
+    if 'year' in args:
+        games = games.filter(Game.match_date > datetime.date(int(args['year']), 1, 1)).filter(
+            Game.match_date < datetime.date(int(args['year']) + 1, 1, 1))
+
+    # GAME stuff
+    if 'map' in args:
+        games = games.filter(Game.map == args['map'])
+    if 'teamsize' in args:
+        games = games.filter(Game.teamsize == int(args['teamsize']))
+    pagesize = 50
+    if 'num' in args:
+        pagesize = int(args['num'])
     response = {}
     data = []
-    games = games[page * 50:(page + 1) * 50]
+    games = games[page * pagesize:(page + 1) * pagesize]
+    game: Game
     for game in games:
-        data.append({'hash': game.hash, 'link': url_for('replays.view_replay', id_=game.hash),
-                     'download': url_for('replays.download_replay', id_=game.hash),
-                     'info': url_for('apiv1.api_v1_get_replay_info', id_=game.hash, key=api_key),
-                     'mmrs': game.mmrs, 'ranks': game.ranks, 'players': game.players})
+        data.append(
+            {
+                'team_blue_score': game.team0score,
+                'team_orange_score': game.team1score,
+                'match_date': game.match_date,
+                'upload_date': game.upload_date,
+                'map': game.map,
+                'matchtype': game.matchtype,
+                'teamsize': game.teamsize,
+                'hash': game.hash,
+                'link': url_for('replays.view_replay', id_=game.hash),
+                'download': url_for('replays.download_replay', id_=game.hash),
+                'info': url_for('apiv1.api_v1_get_replay_info', id_=game.hash, key=api_key),
+                'mmrs': game.mmrs,
+                'ranks': game.ranks,
+                'players': game.players})
     response['data'] = data
     response['page'] = page + 1
     response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2, key=api_key)

@@ -7,7 +7,7 @@ from flask import jsonify, render_template, current_app
 from objects import Game, PlayerGame, Player
 from players import get_rank_batch
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
-from replayanalysis.analysis.saltie_game.metadata.ApiPlayer import ApiPlayer as GamePlayer
+
 
 replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
 if not os.path.isdir(replay_dir):
@@ -59,11 +59,19 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
     ranks = get_rank_batch([p.id for p in player_objs], offline_redis=offline_redis)
     rank_list = []
     mmr_list = []
-    for r in ranks:
-        if 'tier' in r:
-            rank_list.append(r['tier'])
-        if 'rank_points' in r:
-            mmr_list.append(r['rank_points'])
+    gamemode = -1
+    if teamsize == 1:
+        gamemode = 0
+    elif teamsize == 2:
+        gamemode = 1
+    elif teamsize == 3:
+        gamemode = 3
+    for r in ranks.values():
+        if len(r) > gamemode:
+            if 'tier' in r[gamemode]:
+                rank_list.append(r[gamemode]['tier'])
+            if 'rank_points' in r[gamemode]:
+                mmr_list.append(r[gamemode]['rank_points'])
     replay_id = game.api_game.id
     g = Game(hash=replay_id, players=[str(p.id) for p in player_objs],
              ranks=rank_list, mmrs=mmr_list, map=game.api_game.map, team0score=game.api_game.teams[0].score,
@@ -121,7 +129,7 @@ def add_objs_to_db(game, player_games, players, s):
         if not match:  # we don't need to add duplicate players
             s.add(pl)
     for pg in player_games:
-        match = s.query(PlayerGame).filter(PlayerGame.player == pg.player).filter(PlayerGame.game == pg.game).first()
+        match = s.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(PlayerGame.game == pg.game).first()
         if match is not None:
             s.delete(match)
         s.add(pg)

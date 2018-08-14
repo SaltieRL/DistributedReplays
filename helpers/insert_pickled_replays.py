@@ -3,6 +3,7 @@ import logging
 import os
 import pickle
 import sys
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 
@@ -56,9 +57,7 @@ def parse_pickle(p):
             add_objs_to_db(game, player_games, players, s)
         except Exception as e:
             print(e)
-        print ('adding ', game.hash)
-
-        print('adding {}'.format(game.hash))
+            traceback.print_exc()
     s.commit()
 
 

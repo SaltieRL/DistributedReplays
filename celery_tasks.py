@@ -6,6 +6,7 @@ from celery import Celery
 # from helpers import rewards
 from flask import Blueprint, current_app
 
+import celeryconfig
 from functions import convert_pickle_to_db, add_objs_to_db
 from middleware import DBTask
 from objects import Game
@@ -32,7 +33,7 @@ from replayanalysis import SaltieGame as ReplayGame
 #     return celery
 
 celery = Celery()
-
+celery.config_from_object(celeryconfig)
 
 #
 # @celery.task(bind=True)
