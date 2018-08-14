@@ -6,13 +6,12 @@ from celery import Celery
 # from helpers import rewards
 from flask import Blueprint, current_app
 
-from functions import convert_pickle_to_db
+from functions import convert_pickle_to_db, add_objs_to_db
 from middleware import DBTask
 from objects import Game
+from replayanalysis import decompile_replay
+from replayanalysis import SaltieGame as ReplayGame
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'replayanalysis'))
-from replayanalysis.decompile_replays import decompile_replay
-from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 # bp = Blueprint('celery', __name__)
 
 
@@ -71,5 +70,16 @@ def parse_replay_task(self, fn):
         for p in possible_duplicates:
             sess.delete(p)
     game, player_games, players = convert_pickle_to_db(g)
-    sess.add(game)
+    add_objs_to_db(game, player_games, players, sess)
     sess.commit()
+
+if __name__ == '__main__':
+
+    fn = '/home/matthew/PycharmProjects/Distributed-Replays/replays/88E7A7BE41717522C30040AA4B187E9E.replay'
+    output = fn + '.json'
+    pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
+    # try:
+
+    g = decompile_replay(fn, output)  # type: ReplayGame
+    game, player_games, players = convert_pickle_to_db(g)
+    pass

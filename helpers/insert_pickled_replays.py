@@ -17,7 +17,7 @@ sys.path.append(loc)
 
 from objects import Game, Player, PlayerGame
 from startup import startup
-from functions import convert_pickle_to_db
+from functions import convert_pickle_to_db, add_objs_to_db
 
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 
@@ -52,32 +52,12 @@ def parse_pickle(p):
             print ('what error')
             return
         try:
-            match = s.query(Game).filter(Game.hash == g.api_game.id).first()
-            if match is not None:
-                s.delete(match)
-                print('deleting {}'.format(match.hash))
-        except TypeError as e:
-            print('Error object: ', e)
-            print("error",  g.api_game.id)
-            pass
-        game, player_games, players = convert_pickle_to_db(g, offline_redis=r)
+            game, player_games, players = convert_pickle_to_db(g, offline_redis=r)
+            add_objs_to_db(game, player_games, players, s)
+        except Exception as e:
+            print(e)
         print ('adding ', game.hash)
-        s.add(game)
-        for pl in players:  # type: Player
-            try:
-                match = s.query(Player).filter(Player.platformid == str(pl.platformid)).first()
-            except TypeError:
 
-                print("error",  g.api_game.id)
-                print('platform id', pl.platformid)
-                match = None
-            if not match:
-                s.add(pl)
-        for pg in player_games:
-            match = s.query(PlayerGame).filter(PlayerGame.player == pg.player).filter(PlayerGame.game == pg.game).first()
-            if match is not None:
-                s.delete(match)
-            s.add(pg)
         print('adding {}'.format(game.hash))
     s.commit()
 

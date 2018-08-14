@@ -158,6 +158,9 @@ def tier_div_to_string(rank: int, div: int = -1):
     ranks = ['Unranked', 'Bronze I', 'Bronze II', 'Bronze III', 'Silver I', 'Silver II', 'Silver III', 'Gold I',
              'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
              'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
+    if rank is None:
+        print (rank, div)
+        return 'Unknown'
     if rank < 19 and div > 0:
         return "{}, Division {}".format(ranks[rank], div + 1)
     else:

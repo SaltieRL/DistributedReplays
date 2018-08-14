@@ -57,7 +57,6 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
     teamsize = len(game.api_game.teams[0].players)
     player_objs = game.api_game.teams[0].players + game.api_game.teams[1].players
     ranks = get_rank_batch([p.id for p in player_objs], offline_redis=offline_redis)
-    print ('got ranks')
     rank_list = []
     mmr_list = []
     for r in ranks:
@@ -68,8 +67,9 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
     replay_id = game.api_game.id
     g = Game(hash=replay_id, players=[str(p.id) for p in player_objs],
              ranks=rank_list, mmrs=mmr_list, map=game.api_game.map, team0score=game.api_game.teams[0].score,
-             team1score=game.api_game.teams[1].score, teamsize=teamsize, match_date=game.api_game.time) # TODO: add name back
-             #name=game.)
+             team1score=game.api_game.teams[1].score, teamsize=teamsize,
+             match_date=game.api_game.time)  # TODO: add name back
+    # name=game.)
     player_games = []
     players = []
     # print('iterating over players')
@@ -77,11 +77,8 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
         if isinstance(p.id, list):  # some players have array platform-ids
             p.id = p.id[0]
             print('array id', p.id)
-        print ('done checking for array')
         camera = p.cameraSettings
-        print ('done with camera settings')
         loadout = p.loadout
-        print('loadout done')
         field_of_view = camera.fieldOfView
         transition_speed = camera.transitionSpeed
         pitch = camera.pitch
@@ -89,18 +86,42 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
         stiffness = camera.stiffness
         height = camera.height
         distance = camera.distance
-        pg = PlayerGame(player=p.id, name=p.name, game=replay_id, score=p.matchScore, goals=p.matchGoals, assists=p.matchAssists,
+        pg = PlayerGame(player=p.id, name=p.name, game=replay_id, score=p.matchScore, goals=p.matchGoals,
+                        assists=p.matchAssists,
                         saves=p.matchSaves, shots=p.matchShots, field_of_view=field_of_view,
                         transition_speed=transition_speed, pitch=pitch,
                         swivel_speed=swivel_speed, stiffness=stiffness, height=height,
                         distance=distance, car=-1 if loadout is None else loadout.car, is_orange=not p.isOrange,
                         win=game.api_game.teams[int(not p.isOrange)].score > game.api_game.teams[int(p.isOrange)].score)
         player_games.append(pg)
-        print('appended player')
         p.id = str(p.id)
         if len(str(p.id)) > 40:
             p.id = p.id[:40]
         p = Player(platformid=p.id, platformname="", avatar="", ranks=[])
         players.append(p)
-    print ('returning info')
     return g, player_games, players
+
+
+def add_objs_to_db(game, player_games, players, s):
+    try:
+        match = s.query(Game).filter(Game.hash == game.hash).first()
+        if match is not None:
+            s.delete(match)
+            print('deleting {}'.format(match.hash))
+        s.add(game)
+    except TypeError as e:
+        print('Error object: ', e)
+        pass
+    for pl in players:  # type: Player
+        try:
+            match = s.query(Player).filter(Player.platformid == str(pl.platformid)).first()
+        except TypeError:
+            print('platform id', pl.platformid)
+            match = None
+        if not match:  # we don't need to add duplicate players
+            s.add(pl)
+    for pg in player_games:
+        match = s.query(PlayerGame).filter(PlayerGame.player == pg.player).filter(PlayerGame.game == pg.game).first()
+        if match is not None:
+            s.delete(match)
+        s.add(pg)
