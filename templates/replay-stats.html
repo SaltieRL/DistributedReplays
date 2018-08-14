@@ -28,7 +28,7 @@
         </canvas>
         <canvas id="canvas5">
         </canvas>
-                <script>
+        <script>
             var color = Chart.helpers.color;
 
             function jsonGet(yourUrl) {
@@ -66,6 +66,15 @@
                         responsive: true,
                         legend: {
                             position: 'none',
+                        },
+                        scales: {
+                            xAxes: [{
+                                categoryPercentage: 1.0,
+                                // This is required for the bars to 'touch' each other to
+                                // look more like bins in a histogram
+                                barPercentage: c === 'score' ? 1.5 : 1.03
+                                {#barPercentage: 1.2#}
+                            }]
                         },
                         title: {
                             display: true,
