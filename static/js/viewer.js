@@ -184,7 +184,7 @@ const backboard = new THREE.BoxGeometry(FIELD_WIDTH, FIELD_HEIGHT, 5);
 const wall = new THREE.BoxGeometry(FIELD_LENGTH, FIELD_HEIGHT, 5);
 const field = new THREE.PlaneGeometry(FIELD_WIDTH, FIELD_LENGTH);
 const car = new THREE.BoxGeometry(CAR_LENGTH, CAR_WIDTH, CAR_HEIGHT);
-const wheel = new THREE.CylinderGeometry(1, 1, 1, 16);
+const wheel = new THREE.CylinderGeometry(50, 50, 50, 16);
 const front_mesh = new THREE.SphereGeometry(2, 16);
 const ball_geo = new THREE.SphereGeometry(120, 32);
 const car_top = new THREE.BoxGeometry(CAR_LENGTH * 2 / 3, CAR_WIDTH, CAR_HEIGHT);
@@ -271,9 +271,9 @@ for (let x = 0; x < num_players; x++) {
     body.castShadow = true;
     body.position.set(0, 0, 1.5);
 
-    let top = new THREE.Mesh(car_top, body_mat);
-    top.castShadow = true;
-    top.position.set(0, 0, CAR_HEIGHT * 1.5);
+    // let top = new THREE.Mesh(car_top, body_mat);
+    // top.castShadow = true;
+    // top.position.set(0, 0, CAR_HEIGHT * 1.5);
     let wheel_pos = [
         [CAR_WIDTH / 2, -CAR_LENGTH / 3, 0],
         [CAR_WIDTH / 2, CAR_LENGTH / 3, 0],
@@ -290,7 +290,7 @@ for (let x = 0; x < num_players; x++) {
     group.add(front);
 
     group.add(body);
-    group.add(top);
+    // group.add(top);
     // PARTICLE BOOST
     let particleSystem = new THREE.GPUParticleSystem({
         maxParticles: 2000
@@ -407,7 +407,15 @@ function animate() {
             return rot[idx] + (rot_next[idx] - rot[idx]) * delta;
         };
         // cars[i].rotation.set(rot[0], rot[1], rot[2]);
-        let zyx = new THREE.Euler(-d[5], d[3], d[4], "ZXY");
+		let pitch = d[3];
+		let yaw = d[4];
+		let roll = d[5];
+		
+		pitch = pitch / 65536 * Math.PI;
+		yaw = yaw / 65536 * 2 * Math.PI;
+		roll = roll / 65536 * 2 * Math.PI;
+		console.log(pitch.toFixed(5), yaw.toFixed(5), roll.toFixed(5))
+        let zyx = new THREE.Euler(roll, pitch, yaw, "ZYX");
         cars[i].setRotationFromEuler(zyx);
         // cars[i].rotateX(r_f(rot, rot_next, 0));
         // cars[i].rotateY(r_f(rot, rot_next, 1));
