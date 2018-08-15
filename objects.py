@@ -82,6 +82,8 @@ class PlayerGame(Base):
     player_object = relationship('Player', foreign_keys=[player])
     game = Column(String(40), ForeignKey('games.hash'), index=True)
     game_object = relationship("Game", foreign_keys=[game])
+
+    # game information
     is_orange = Column(Boolean)
     win = Column(Boolean)
     score = Column(Integer)
@@ -89,6 +91,8 @@ class PlayerGame(Base):
     assists = Column(Integer)
     saves = Column(Integer)
     shots = Column(Integer)
+
+    # camera stuff
     field_of_view = Column(Integer)
     transition_speed = Column(Integer)
     pitch = Column(Integer)
@@ -96,7 +100,22 @@ class PlayerGame(Base):
     stiffness = Column(Float)
     height = Column(Integer)
     distance = Column(Integer)
-    car = Column(String(20))
+
+    # game specific stuff
+    car = Column(Integer)
+
+    # hit analysis stuff
+    a_hits = Column(Integer)
+    a_dribbles = Column(Integer)
+    a_dribble_conts = Column(Integer)
+    a_saves = Column(Integer)
+    a_goals = Column(Integer)
+    a_shots = Column(Integer)
+    a_passes = Column(Integer)
+
+    # other analysis stuff
+    a_turnovers = Column(Integer)
+    a_possession = Column(Float)
 
 
 class Game(Base):
@@ -114,6 +133,8 @@ class Game(Base):
     playergames = relationship("PlayerGame")  # TODO: should this just replace .players?
     upload_date = Column(DateTime, default=datetime.datetime.utcnow)
     match_date = Column(DateTime)
+    team0possession = Column(Float)
+    team1possession = Column(Float)
 
 
 class Player(Base):

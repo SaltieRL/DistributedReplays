@@ -28,8 +28,9 @@ bp = Blueprint('players', __name__, url_prefix='/players')
 def view_player(id_):
     session = current_app.config['db']()
     rank = get_rank(id_)
-    games = session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
-        PlayerGame.game != None).all()  # type: List[PlayerGame]
+    games = session.query(PlayerGame).filter(PlayerGame.player == id_).filter(PlayerGame.game != None).all()  # type: List[PlayerGame]
+    stats_query = func.avg(PlayerGame.score), func.avg(PlayerGame.goals), func.avg(PlayerGame.assists), \
+                  func.avg(PlayerGame.saves), func.avg(PlayerGame.shots), func.avg(PlayerGame.a_possession)
     if len(games) > 0:
         fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
             PlayerGame.player == id_).group_by(PlayerGame.car).order_by(desc('c')).first()
@@ -38,13 +39,12 @@ def view_player(id_):
         favorite_car = constants.cars[int(fav_car_str[0])]
         favorite_car_pctg = fav_car_str[1] / len(games)
 
-        stats = session.query(func.avg(PlayerGame.score), func.avg(PlayerGame.goals), func.avg(PlayerGame.assists),
-                              func.avg(PlayerGame.saves), func.avg(PlayerGame.shots)).filter(
+        stats = session.query(*stats_query).filter(
             PlayerGame.player == id_).first()
     else:
         favorite_car = "Unknown"
         favorite_car_pctg = 0.0
-        stats = (0.0, 0.0, 0.0, 0.0, 0.0)
+        stats = [0.0] * len(stats_query)
 
     steam_profile = steam_id_to_profile(id_)
     if steam_profile is None:
@@ -159,7 +159,7 @@ def tier_div_to_string(rank: int, div: int = -1):
              'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
              'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
     if rank is None:
-        print (rank, div)
+        print(rank, div)
         return 'Unknown'
     if rank < 19 and div > 0:
         return "{}, Division {}".format(ranks[rank], div + 1)
