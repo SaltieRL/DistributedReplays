@@ -1,6 +1,6 @@
 {% extends 'partials/base.html' %}
-{% set frame_count = replay.frames|length %}
-
+{% set frame_count = replay.api_game.frames %}
+{% set pla %}
 
 {% block title %}
     {% if replay != None %}
@@ -44,10 +44,10 @@
         <hr/>
         <div>
             <b>Teams:</b>
-            {% for team in replay.teams|sort(attribute='is_orange', reverse=True) %}
+            {% for team in replay.api_game.teams|sort(attribute='isOrange', reverse=True) %}
 
                 <div class="team"
-                     style="padding: 10px; {{ "color: white;" if not team.is_orange else "" }}background: {{ "#e66f33" if team.is_orange else "#0000aa" }}">
+                     style="padding: 10px; {{ "color: white;" if not team.isOrange else "" }}background: {{ "#e66f33" if team.isOrange else "#0000aa" }}">
                     <h4>{{ team.name }}</h4>
                     Score: {{ team.score }}
                     <table class="table">
@@ -61,7 +61,7 @@
                             <th>Shots</th>
                         </tr>
                         </thead>
-                        {% for p in team.players|sort(attribute='score', reverse=True) %}
+                        {% for p in team.players|sort(attribute='matchScore', reverse=True) %}
 
                             <tr>
                                 <td>{{ p.name }}
@@ -78,11 +78,11 @@
                                     {% if p.is_bot %}
                                         | <i>Bot</i>
                                     {% endif %}</td>
-                                <td>{{ p.score }}</td>
-                                <td>{{ p.goals }}</td>
-                                <td>{{ p.assists }}</td>
-                                <td>{{ p.saves }}</td>
-                                <td>{{ p.shots }}</td>
+                                <td>{{ p.matchScore }}</td>
+                                <td>{{ p.matchGoals }}</td>
+                                <td>{{ p.matchAssists }}</td>
+                                <td>{{ p.matchSaves }}</td>
+                                <td>{{ p.matchShots }}</td>
                                 </td>
                             </tr>
                         {% endfor %}
