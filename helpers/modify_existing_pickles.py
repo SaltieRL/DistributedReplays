@@ -20,7 +20,7 @@ def process_file(obj: SaltieGame):
 
 
 if __name__ == '__main__':
-    files = glob.glob(os.path.join(os.path.basename(__file__), '..', 'parsed', '*.pkl'))
+    files = glob.glob(os.path.join(os.path.basename(__file__), '..', 'data', 'parsed', '*.pkl'))
     for f in files:
         with open(f, 'rb') as fo:
             pkl = pickle.load(fo)
