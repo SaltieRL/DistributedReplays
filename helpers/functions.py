@@ -97,7 +97,7 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
         distance = camera.distance
 
         # analysis stuff
-        player_hits = [h for h in game.saltie_hits.values() if h.hit.player.online_id == '76561198051844298']
+        player_hits = [h for h in game.saltie_hits.values() if h.hit.player.online_id == p.id]
         # and not (h.dribble or h.dribble_continuation)])
         hits = len(player_hits)
         analytics = {'dribbles': 0, 'dribble_conts': 0, 'passes': 0, 'shots': 0, 'goals': 0, 'saves': 0}
@@ -114,7 +114,7 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
                 analytics['shots'] += 1
             if h.save:
                 analytics['saves'] += 1
-
+        print(analytics)
         pg = PlayerGame(player=p.id, name=p.name, game=replay_id, score=p.matchScore, goals=p.matchGoals,
                         assists=p.matchAssists, saves=p.matchSaves, shots=p.matchShots, field_of_view=field_of_view,
                         transition_speed=transition_speed, pitch=pitch, swivel_speed=swivel_speed, stiffness=stiffness,

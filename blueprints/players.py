@@ -4,7 +4,7 @@ from typing import List
 
 import redis
 import requests
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, case
 
 from data import constants
 
@@ -26,9 +26,14 @@ bp = Blueprint('players', __name__, url_prefix='/players')
 def view_player(id_):
     session = current_app.config['db']()
     rank = get_rank(id_)
-    games = session.query(PlayerGame).filter(PlayerGame.player == id_).filter(PlayerGame.game != None).all()  # type: List[PlayerGame]
+    games = session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
+        PlayerGame.game != None).all()  # type: List[PlayerGame]
     stats_query = func.avg(PlayerGame.score), func.avg(PlayerGame.goals), func.avg(PlayerGame.assists), \
-                  func.avg(PlayerGame.saves), func.avg(PlayerGame.shots), func.avg(PlayerGame.a_possession)
+                  func.avg(PlayerGame.saves), func.avg(PlayerGame.shots), func.avg(PlayerGame.a_possession), \
+                  func.avg(PlayerGame.a_hits - PlayerGame.a_dribble_conts), \
+                  func.avg((100 * PlayerGame.shots) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
+                  func.avg((100 * PlayerGame.a_passes) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
+                  func.avg((100 * PlayerGame.assists) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts))
     if len(games) > 0:
         fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
             PlayerGame.player == id_).group_by(PlayerGame.car).order_by(desc('c')).first()
@@ -36,9 +41,11 @@ def view_player(id_):
         # car_arr = [g.car for g in games]
         favorite_car = constants.cars[int(fav_car_str[0])]
         favorite_car_pctg = fav_car_str[1] / len(games)
-
-        stats = session.query(*stats_query).filter(
-            PlayerGame.player == id_).first()
+        q = session.query(*stats_query).filter(PlayerGame.a_hits > 0)
+        global_stats = q.first()
+        stats = q.filter(PlayerGame.player == id_).first()
+        print(stats)
+        stats = [s / g for s, g in zip(stats, global_stats)]
     else:
         favorite_car = "Unknown"
         favorite_car_pctg = 0.0

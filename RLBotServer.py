@@ -25,8 +25,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['BASE_URL'] = 'http://saltie.tk'
-app.config['REPLAY_DIR'] = os.path.join('data', 'rlreplays')
-app.config['PARSED_DIR'] = os.path.join('data', 'parsed')
+app.config['REPLAY_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'rlreplays')
+app.config['PARSED_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'parsed')
 app.config.update(
     CELERY_BROKER_URL='amqp://guest@localhost',
     result_backend='amqp://guest@localhost',
@@ -35,7 +35,7 @@ app.config.update(
 CORS(app)
 folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
 for f in folders_to_make:
-    abspath = os.path.join(os.path.dirname(__file__), 'data', f)
+    abspath = os.path.join(os.path.dirname(__file__), f)
     if not os.path.isdir(abspath):
         os.makedirs(abspath)
 # Import modules AFTER app is initialized

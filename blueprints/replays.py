@@ -51,20 +51,21 @@ def parse_replay():
 @bp.route('/parse/all')
 def parse_replays():
     for f in os.listdir(current_app.config['REPLAY_DIR']):
-        pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(f) + '.pkl')
+        pickled = os.path.join(current_app.config['PARSED_DIR'], os.path.basename(f) + '.pkl')
         if f.endswith('.replay') and not os.path.isfile(pickled):
-            result = celery_tasks.parse_replay_task.delay(os.path.abspath(os.path.join(current_app.config['REPLAY_DIR'], f)))
+            result = celery_tasks.parse_replay_task.delay(
+                os.path.abspath(os.path.join(current_app.config['REPLAY_DIR'], f)))
     return redirect('/')
 
 
 @bp.route('/parsed/view/<id_>')
 def view_replay(id_):
-    pickle_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay.pkl')
+    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None, id=id_)
     try:
-        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
+        g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
     players = g.api_game.teams[0].players + g.api_game.teams[1].players

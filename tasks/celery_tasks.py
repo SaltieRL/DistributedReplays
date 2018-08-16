@@ -3,13 +3,14 @@ import os
 import pickle
 from celery import Celery
 # from helpers import rewards
-
-from ..tasks import celeryconfig
-from ..helpers.functions import convert_pickle_to_db, add_objs_to_db
-from ..helpers.middleware import DBTask
-from ..database.objects import Game
-from ..replayanalysis import decompile_replay
-from ..replayanalysis import SaltieGame as ReplayGame
+import sys
+sys.path.append('..')
+from tasks import celeryconfig
+from helpers.functions import convert_pickle_to_db, add_objs_to_db
+from helpers.middleware import DBTask
+from database.objects import Game
+from replayanalysis import decompile_replay
+from replayanalysis import SaltieGame as ReplayGame
 
 # bp = Blueprint('celery', __name__)
 
@@ -47,7 +48,7 @@ celery.config_from_object(celeryconfig)
 @celery.task(base=DBTask, bind=True)
 def parse_replay_task(self, fn):
     output = fn + '.json'
-    pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
+    pickled = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed', os.path.basename(fn) + '.pkl')
     if os.path.isfile(pickled):
         return
     # try:

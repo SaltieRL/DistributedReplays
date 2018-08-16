@@ -34,7 +34,7 @@
         </div>
         <div class="hotlinks">
             {% if g.user %}
-                <p>Logged in as <img src="{{ g.user.avatar }}" width="15px"> {{ g.user.platformname }}</p>
+                <p>Logged in as <a href="{{ url_for('players.view_player', id_=g.user.platformid) }}"><img src="{{ g.user.avatar }}" width="15px"> {{ g.user.platformname }}</a></p>
                 <p> <a href="{{ url_for('auth.logout') }}">Logout</a></p>
             {% else %}
             <a href="{{ url_for('auth.steam_auth') }}"><div class="framebox">Log in with Steam</div></a>
