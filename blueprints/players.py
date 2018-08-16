@@ -36,7 +36,8 @@ def view_player(id_):
                   func.avg((100 * PlayerGame.assists) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts))
     if len(games) > 0:
         fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
-            PlayerGame.player == id_).group_by(PlayerGame.car).order_by(desc('c')).first()
+            PlayerGame.player == id_).filter(
+        PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
         print(fav_car_str)
         # car_arr = [g.car for g in games]
         favorite_car = constants.cars[int(fav_car_str[0])]

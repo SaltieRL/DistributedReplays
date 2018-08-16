@@ -139,7 +139,7 @@ def api_v1_get_stats():
     # TODO: stats?
     session = current_app.config['db']()
     ct = session.query(Game).count()
-    dct = len([f for f in os.listdir('parsed') if f.endswith('pkl')])
+    dct = len([f for f in os.listdir(current_app.config['PARSED_DIR']) if f.endswith('pkl')])
     return jsonify({'db_count': ct, 'count': dct})
 
 
@@ -147,7 +147,7 @@ def api_v1_get_stats():
 @key_required
 def api_v1_get_replay_info(id_):
     session = current_app.config['db']()
-    pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
+    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None)
@@ -176,14 +176,14 @@ def api_v1_get_replay_info(id_):
 @bp.route('/parsed/list')
 @key_required
 def api_v1_list_parsed_replays():
-    fs = os.listdir('parsed/')
+    fs = os.listdir(current_app.config['PARSED_DIR'])
     return jsonify(fs)
 
 
 @bp.route('/parsed/<path:fn>')
 @key_required
 def api_v1_download_parsed(fn):
-    return send_from_directory('parsed', fn, as_attachment=True)
+    return send_from_directory(current_app.config['PARSED_DIR'], fn, as_attachment=True)
 
 
 @bp.route('/rank/<id_>')

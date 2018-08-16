@@ -84,7 +84,7 @@ def view_replay_data(id_):
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None, id=id_)
     try:
-        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: Game_pickle
+        g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
     field_ratio = 5140.0 / 4120
@@ -127,7 +127,7 @@ def view_replay_data(id_):
 
 @bp.route('/parsed/view/random')
 def view_random():
-    filelist = os.listdir('parsed')
+    filelist = os.listdir(current_app.config['PARSED_DIR'])
     return redirect(url_for('replays.view_replay', id_=random.choice(filelist).split('.')[0]))
 
 
