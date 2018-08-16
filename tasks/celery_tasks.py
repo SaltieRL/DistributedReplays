@@ -4,12 +4,12 @@ import pickle
 from celery import Celery
 # from helpers import rewards
 
-from tasks import celeryconfig
-from helpers.functions import convert_pickle_to_db, add_objs_to_db
-from helpers.middleware import DBTask
-from database.objects import Game
-from replayanalysis import decompile_replay
-from replayanalysis import SaltieGame as ReplayGame
+from ..tasks import celeryconfig
+from ..helpers.functions import convert_pickle_to_db, add_objs_to_db
+from ..helpers.middleware import DBTask
+from ..database.objects import Game
+from ..replayanalysis import decompile_replay
+from ..replayanalysis import SaltieGame as ReplayGame
 
 # bp = Blueprint('celery', __name__)
 
