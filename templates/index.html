@@ -33,7 +33,12 @@
             <span>{{ game_count }} replays and counting...</span>
         </div>
         <div class="hotlinks">
-            <a href="{{ url_for('auth.steam_auth') }}"><button>Log in with Steam</button></a>
+            {% if g.user %}
+                <p>Logged in as <img src="{{ g.user.avatar }}" width="15px"> {{ g.user.platformname }}</p>
+                <p> <a href="{{ url_for('auth.logout') }}">Logout</a></p>
+            {% else %}
+            <a href="{{ url_for('auth.steam_auth') }}"><div class="framebox">Log in with Steam</div></a>
+            {% endif %}
         </div>
     </div>
   </body>
