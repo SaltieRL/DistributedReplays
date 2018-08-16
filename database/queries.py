@@ -1,5 +1,5 @@
 from sqlalchemy import exists, func, desc, asc
-from objects import User, Replay, Model
+from database.objects import User, Replay, Model
 
 
 def create_user_if_not_exist(session, user):

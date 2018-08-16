@@ -7,8 +7,8 @@ from flask import Flask, render_template, g, current_app, session
 from flask_cors import CORS
 
 from blueprints import auth, api, players, replays, stats, steam
-from objects import Game, Player
-from startup import startup
+from database.objects import Game, Player
+from database.startup import startup
 import redis
 
 # APP SETUP

@@ -4,7 +4,7 @@ import os
 from flask import render_template
 
 # Replay stuff
-from objects import Game, PlayerGame, Player
+from database.objects import Game, PlayerGame, Player
 from blueprints.players import get_rank_batch
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 

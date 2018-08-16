@@ -9,9 +9,9 @@ from werkzeug.utils import secure_filename
 
 from tasks import celery_tasks
 from data import constants
-import queries
+from database import queries
 from helpers.functions import return_error, get_item_dict
-from objects import PlayerGame
+from database.objects import PlayerGame
 from blueprints.players import get_rank_batch
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as Game_pickle
 

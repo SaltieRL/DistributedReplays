@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, exists
 from sqlalchemy.orm import sessionmaker
 
 import config
-from objects import Base, User, Replay, Model
+from database.objects import Base, User, Replay, Model
 
 connection_string = 'postgresql:///saltie'.format(config.db_user, config.db_password)
 print (connection_string)

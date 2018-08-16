@@ -7,7 +7,7 @@ from celery import Celery
 from tasks import celeryconfig
 from helpers.functions import convert_pickle_to_db, add_objs_to_db
 from helpers.middleware import DBTask
-from objects import Game
+from database.objects import Game
 from replayanalysis import decompile_replay
 from replayanalysis import SaltieGame as ReplayGame
 

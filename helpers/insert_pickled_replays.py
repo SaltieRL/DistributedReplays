@@ -16,8 +16,8 @@ sys.path.append(lib_location)
 loc = os.path.join(os.path.dirname(__file__), '..')
 sys.path.append(loc)
 
-from objects import Game
-from startup import startup
+from database.objects import Game
+from database.startup import startup
 from helpers.functions import convert_pickle_to_db, add_objs_to_db
 
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame

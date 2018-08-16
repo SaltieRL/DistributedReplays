@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 import requests
 from flask import Blueprint, current_app, redirect, request, url_for, jsonify, session
 
-from objects import Player
+from database.objects import Player
 from blueprints.steam import steam_id_to_profile
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')

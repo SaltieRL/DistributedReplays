@@ -1,13 +1,12 @@
 # Stats
 import datetime
-import io
-from io import StringIO, BytesIO
+from io import BytesIO
 
-from flask import jsonify, Blueprint, g, current_app, send_file, make_response
+from flask import jsonify, Blueprint, current_app, make_response
 from sqlalchemy import extract, func
 from sqlalchemy.orm import Session
 
-from objects import Replay, Game
+from database.objects import Replay, Game
 
 bp = Blueprint('stats', __name__, url_prefix='/stats')
 

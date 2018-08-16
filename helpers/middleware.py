@@ -1,7 +1,7 @@
 from celery import Task
 from werkzeug.wsgi import LimitedStream
 
-from startup import startup
+from database.startup import startup
 
 
 class StreamConsumingMiddleware(object):

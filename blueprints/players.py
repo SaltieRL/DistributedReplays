@@ -8,7 +8,7 @@ from sqlalchemy import func, desc
 
 from data import constants
 
-from objects import PlayerGame
+from database.objects import PlayerGame
 from blueprints.steam import steam_id_to_profile
 
 from flask import render_template, Blueprint, current_app
