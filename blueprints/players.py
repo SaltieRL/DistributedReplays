@@ -1,5 +1,6 @@
 import json
 import random
+import re
 from typing import List
 
 import redis
@@ -9,9 +10,9 @@ from sqlalchemy import func, desc, case
 from data import constants
 
 from database.objects import PlayerGame
-from blueprints.steam import steam_id_to_profile
+from blueprints.steam import steam_id_to_profile, vanity_to_steam_id
 
-from flask import render_template, Blueprint, current_app
+from flask import render_template, Blueprint, current_app, redirect, url_for
 
 fake_data = False
 try:
@@ -20,10 +21,18 @@ except ImportError:
     RL_API_KEY = None
     fake_data = True
 bp = Blueprint('players', __name__, url_prefix='/players')
+regex = re.compile('[0-9]{17}')
 
 
 @bp.route('/overview/<id_>')  # ID must be always at the end
 def view_player(id_):
+    print(re.match(regex, id_))
+    if len(id_) != 17 or re.match(regex, id_) is None:
+        r = vanity_to_steam_id(id_)
+        if r is None:
+            return redirect(url_for('home'))
+        id_ = r['response']['steamid']
+        return redirect(url_for('players.view_player', id_=id_))
     session = current_app.config['db']()
     rank = get_rank(id_)
     games = session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
@@ -37,7 +46,7 @@ def view_player(id_):
     if len(games) > 0:
         fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
             PlayerGame.player == id_).filter(
-        PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
+            PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
         print(fav_car_str)
         # car_arr = [g.car for g in games]
         favorite_car = constants.cars[int(fav_car_str[0])]
