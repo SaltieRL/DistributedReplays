@@ -33,7 +33,7 @@ app.config.update(
     worker_max_tasks_per_child=100
 )
 CORS(app)
-folders_to_make = [current_app.config['REPLAY_DIR'], current_app.config['PARSED_DIR']]
+folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
 for f in folders_to_make:
     abspath = os.path.join(os.path.dirname(__file__), 'data', f)
     if not os.path.isdir(abspath):
