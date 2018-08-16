@@ -3,12 +3,14 @@ import sys
 
 import flask
 import flask_login
-from flask import Flask, render_template, g, current_app
+from flask import Flask, render_template, g, current_app, session
 from flask_cors import CORS
 
-from objects import Game
+import auth
+from objects import Game, User, Player
 from startup import startup
 import redis
+
 # APP SETUP
 
 print("Name:", __name__)
@@ -22,6 +24,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['BASE_URL'] = 'http://saltie.tk'
 app.config.update(
     CELERY_BROKER_URL='amqp://guest@localhost',
     result_backend='amqp://guest@localhost',
@@ -54,6 +57,7 @@ with app.app_context():
     app.register_blueprint(saltie.bp)
     app.register_blueprint(stats.bp)
     app.register_blueprint(api.bp)
+    app.register_blueprint(auth.bp)
     app.secret_key = config.SECRET_KEY
     # Login stuff
     login_manager = flask_login.LoginManager()
@@ -73,6 +77,7 @@ with app.app_context():
     except:
         print('Not using redis...')
         app.config['r'] = None
+
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
@@ -135,6 +140,15 @@ def logout():
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return 'Unauthorized'
+
+
+@app.before_request
+def lookup_current_user():
+    s = current_app.config['db']()
+    g.user = None
+    if 'openid' in session:
+        openid = session['openid']
+        g.user = s.query(Player).filter(Player.platformid == openid).first()
 
 
 # Main stuff
