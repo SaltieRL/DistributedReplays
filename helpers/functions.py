@@ -1,11 +1,11 @@
 # Helper functions
 import json
 import os
-from flask import jsonify, render_template, current_app
+from flask import render_template
 
 # Replay stuff
-from objects import Game, PlayerGame, Player
-from players import get_rank_batch
+from database.objects import Game, PlayerGame, Player
+from blueprints.players import get_rank_batch
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 
 replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
@@ -16,7 +16,7 @@ if not os.path.isdir(model_dir):
     os.mkdir(model_dir)
 
 ALLOWED_EXTENSIONS = {'bin', 'gz'}
-json_loc = os.path.join(os.path.dirname(__file__), 'data', 'categorized_items.json')
+json_loc = os.path.join(os.path.dirname(__file__), '..', 'data', 'categorized_items.json')
 with open(json_loc, 'r') as f:
     item_dict = json.load(f)
 

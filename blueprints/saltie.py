@@ -9,14 +9,14 @@ import uuid
 import zipfile
 
 import flask_login
-from flask import render_template, request, jsonify, redirect, send_from_directory, url_for, send_file, Blueprint, g, \
+from flask import render_template, request, jsonify, redirect, send_from_directory, url_for, send_file, Blueprint, \
     current_app
 from sqlalchemy.exc import InvalidRequestError
 from werkzeug.utils import secure_filename
 
-import queries 
-from functions import allowed_file, model_dir, return_error, replay_dir, get_replay_path
-from objects import Model, User, Replay
+from database import queries
+from helpers.functions import allowed_file, model_dir, return_error, replay_dir, get_replay_path
+from database.objects import Model, User, Replay
 
 last_upload = {}
 

@@ -6,9 +6,9 @@ import flask_login
 from flask import Flask, render_template, g, current_app, session
 from flask_cors import CORS
 
-import auth
-from objects import Game, User, Player
-from startup import startup
+from blueprints import auth, api, players, replays, stats, steam
+from database.objects import Game, Player
+from database.startup import startup
 import redis
 
 # APP SETUP
@@ -25,36 +25,29 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['BASE_URL'] = 'http://saltie.tk'
+app.config['REPLAY_DIR'] = os.path.join('data', 'rlreplays')
+app.config['PARSED_DIR'] = os.path.join('data', 'parsed')
 app.config.update(
     CELERY_BROKER_URL='amqp://guest@localhost',
     result_backend='amqp://guest@localhost',
     worker_max_tasks_per_child=100
 )
 CORS(app)
-folders_to_make = ['rlreplays', 'replays', 'parsed']
+folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
 for f in folders_to_make:
-    abspath = os.path.join(os.path.dirname(__file__), f)
+    abspath = os.path.join(os.path.dirname(__file__), 'data', f)
     if not os.path.isdir(abspath):
         os.makedirs(abspath)
 # Import modules AFTER app is initialized
 #
 with app.app_context():
-    import celery_tasks
-    import api
     import config
-    import queries
-    import replays
-    import saltie
-    import stats
-    import steam
-
-    import players
 
     # app.register_blueprint(celery_tasks.bp)
     app.register_blueprint(players.bp)
     app.register_blueprint(steam.bp)
     app.register_blueprint(replays.bp)
-    app.register_blueprint(saltie.bp)
+    # app.register_blueprint(saltie.bp)
     app.register_blueprint(stats.bp)
     app.register_blueprint(api.bp)
     app.register_blueprint(auth.bp)

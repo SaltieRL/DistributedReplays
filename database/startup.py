@@ -1,7 +1,7 @@
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from objects import Base
+from database.objects import Base
 
 
 def login(connection_string, recreate_database=False):

@@ -8,8 +8,8 @@ from flask import render_template, url_for, redirect, request, jsonify, send_fro
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
-from players import get_rank, tier_div_to_string
-from objects import Game
+from blueprints.players import get_rank, tier_div_to_string
+from database.objects import Game
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 from replayanalysis.json_parser.player import Player
 from replayanalysis.json_parser.team import Team
@@ -148,7 +148,7 @@ def api_v1_get_stats():
 def api_v1_get_replay_info(id_):
     session = current_app.config['db']()
     pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
-    replay_path = os.path.join('rlreplays', id_ + '.replay')
+    replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None)
     try:
