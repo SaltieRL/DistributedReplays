@@ -7,12 +7,12 @@ from flask import request, redirect, send_from_directory, render_template, url_f
 from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
 
-import celery_tasks
-import constants
+from tasks import celery_tasks
+from data import constants
 import queries
-from functions import return_error, get_item_dict
+from helpers.functions import return_error, get_item_dict
 from objects import PlayerGame
-from players import get_rank_batch
+from blueprints.players import get_rank_batch
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as Game_pickle
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
@@ -42,7 +42,7 @@ def parse_replay():
     file = request.files['file']
     if not file.filename.endswith('replay'):
         return return_error('Only .replay files are allowed.')
-    filename = os.path.join('rlreplays', secure_filename(file.filename))
+    filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
     file.save(filename)
     celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return redirect(url_for('replays.view_replay', id_=file.filename.split('.')[0]))
@@ -50,17 +50,17 @@ def parse_replay():
 
 @bp.route('/parse/all')
 def parse_replays():
-    for f in os.listdir('rlreplays'):
+    for f in os.listdir(current_app.config['REPLAY_DIR']):
         pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(f) + '.pkl')
         if f.endswith('.replay') and not os.path.isfile(pickled):
-            result = celery_tasks.parse_replay_task.delay(os.path.abspath(os.path.join('rlreplays', f)))
+            result = celery_tasks.parse_replay_task.delay(os.path.abspath(os.path.join(current_app.config['REPLAY_DIR'], f)))
     return redirect('/')
 
 
 @bp.route('/parsed/view/<id_>')
 def view_replay(id_):
-    pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
-    replay_path = os.path.join('rlreplays', id_ + '.replay')
+    pickle_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay.pkl')
+    replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None, id=id_)
     try:
@@ -78,8 +78,8 @@ def view_replay(id_):
 
 @bp.route('/parsed/view/<id_>/positions')
 def view_replay_data(id_):
-    pickle_path = os.path.join('parsed', id_ + '.replay.pkl')
-    replay_path = os.path.join('rlreplays', id_ + '.replay')
+    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
+    replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None, id=id_)
     try:
@@ -132,7 +132,7 @@ def view_random():
 
 @bp.route('/download/replay/<id_>')
 def download_replay(id_):
-    return send_from_directory('rlreplays', id_)
+    return send_from_directory(current_app.config['REPLAY_DIR'], id_)
 
 
 @bp.route('/autoreplays')

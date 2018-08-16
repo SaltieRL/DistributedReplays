@@ -1,12 +1,11 @@
 import re
-from pprint import pprint
 from urllib.parse import urlencode
 
 import requests
-from flask import Blueprint, current_app, redirect, request, render_template, url_for, jsonify, g, session
+from flask import Blueprint, current_app, redirect, request, url_for, jsonify, session
 
 from objects import Player
-from steam import steam_id_to_profile
+from blueprints.steam import steam_id_to_profile
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 STEAM_OPEN_ID_URL = 'https://steamcommunity.com/openid/login'
