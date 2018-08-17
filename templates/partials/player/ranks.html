@@ -1,0 +1,17 @@
+{% for mode in rank %}
+<div class="panel">
+    <div class="t1">
+        {{ mode['mode'] }}
+    </div>
+    <div>
+        {{ mode['string'] }}
+    </div>
+    <div>
+        <img class="rankpic" src='{{ '/static/img/ranks/' + mode['tier']|string + '.png' }}'
+        alt="rank"/>
+    </div>
+    <div>
+        rating: {{ mode['rank_points'] }}
+    </div>
+</div>
+{% endfor %}

@@ -1,26 +1,11 @@
+{% from "macros/json.html" import jsonify %}
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var matches = document.getElementsByClassName("match");
-        var dropdowns = document.getElementsByClassName("dropdowndata");
-        for (var i = 0; i < matches.length; i++) {
-            matches[i].addEventListener('click', function (ev) {
-                var data = !this.classList.contains('active');
-                propSet(matches, 'active', 'remove');
-                propSet(dropdowns, 'show', 'remove');
-
-                /* if we are not active */
-                if (data) {
-                    this.classList.toggle("active");
-                    this.nextElementSibling.classList.toggle("show");
-                }
-            });
-        }
-
-        function propSet(elements, prop, op) {
-            for (var i = 0; i < elements.length; i++) {
-                elements[i].classList[op](prop);
-            }
-        }
+        let matches = document.getElementsByClassName("match");
+        requirejs(['matchHistory'], function (matchHistory) {
+            matchHistory.addMatchHandler(matches);
+        });
     });
 </script>
 <section>
@@ -58,7 +43,23 @@
                 </tr>
                 <tr class="dropdowndata" id="{{ dropdown_id }}">
                     <td colspan="5">
-                        {% include "replay/score_graph.html" %}
+                        {# orange #}
+                        {% set team_names = ['Blue', 'Orange'] %}
+                        {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
+                        {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
+                        {% set graph_length = graphs|length %}
+                        {% set json_keys = ["player", "name", "is_orange"] + graphs %}
+                        <script>
+                            (function(host_id, action_element_id,  labels) {
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    const replay_data = [ {{ jsonify(team_members, json_keys) }} ];
+                                    requirejs(['matchHistory'], function (matchHistory) {
+                                        matchHistory.addAction(action_element_id, host_id, labels, replay_data);
+                                    });
+                                });
+                            })('{{ dropdown_id }}', '{{ match_id }}', {{ graphs|tojson }})
+                        </script>
+                        {% include "partials/replay/score_graph.html" %}
                     </td>
                 </tr>
             {% endfor %}

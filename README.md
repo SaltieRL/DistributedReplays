@@ -42,3 +42,4 @@ The structure of the server is split into different files:
 - `saltie.py` - contains all code pertaining to the Saltie data collection part
 - `startup.py` - is run to start the connection to the SQL server
 - `stats.py` - just some analysis on the upload patterns of the users
+

@@ -410,11 +410,11 @@ function animate() {
 		let pitch = d[3];
 		let yaw = d[4];
 		let roll = d[5];
-		
+
 		pitch = pitch / 65536 * Math.PI;
 		yaw = yaw / 65536 * 2 * Math.PI;
 		roll = roll / 65536 * 2 * Math.PI;
-		console.log(pitch.toFixed(5), yaw.toFixed(5), roll.toFixed(5))
+		// console.log(pitch.toFixed(5), yaw.toFixed(5), roll.toFixed(5))
         let zyx = new THREE.Euler(roll, pitch, yaw, "ZYX");
         cars[i].setRotationFromEuler(zyx);
         // cars[i].rotateX(r_f(rot, rot_next, 0));
