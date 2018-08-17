@@ -189,6 +189,29 @@ def goal_distribution(id_):
         return jsonify({})
 
 
+@bp.route('/stats/all')
+def distribution():
+    session = current_app.config['db']()
+    overall_data = {}
+    numbers = []
+    for n in range(4):
+        numbers.append(session.query(func.count(PlayerGame.id)).join(Game).filter(Game.teamsize == (n + 1)).first()[0])
+    print(numbers)
+    for id_ in stats:
+        gamemodes = range(1, 5)
+        q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
+            getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
+        if id_ == 'score':
+            q = q.filter(PlayerGame.score % 10 == 0)
+        data = {}
+        for g in gamemodes:
+            # print(g)
+            d = q.join(Game).filter(Game.teamsize == g).all()
+            data[g] = {k: v/float(numbers[g - 1]) for k, v in d if k is not None}
+        overall_data[id_] = data
+    return jsonify(overall_data)
+
+
 @bp.route('/stats/cars')
 def car_distribution():
     session = current_app.config['db']()

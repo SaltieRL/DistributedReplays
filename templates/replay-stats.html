@@ -21,9 +21,9 @@
         / distributions
         <div class="container">
 
-        <button onclick="mode = 1; updateGraphs()">1s</button>
-        <button onclick="mode = 2; updateGraphs()">2s</button>
-        <button onclick="mode = 3; updateGraphs()">3s</button>
+            <button onclick="mode = 1; updateGraphs()">1s</button>
+            <button onclick="mode = 2; updateGraphs()">2s</button>
+            <button onclick="mode = 3; updateGraphs()">3s</button>
         </div>
         <canvas id="canvas1"></canvas>
         <canvas id="canvas2">
@@ -54,73 +54,118 @@
                 req.send(null);
                 return JSON.parse(req.responseText);
             }
+
             var mode = 3;
             var categories = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles'];
             var names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Hits', 'Turnovers', 'Passes', 'Dribbles'];
             var colors = ['#fd79a8', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
-            var hist_data = [];
             var charts = [];
+
             function generateGraph(obj, i, gamemode) {
                 var c = categories[i];
-                obj = obj[i][gamemode];
-                var labels = Object.keys(obj).map(x => parseInt(x));
+                obj = obj[c];
+                var labels = Object.keys(obj[2]).map(x => parseInt(x));
                 if (c.startsWith('a_')) {
                     obj[0] = 0
                 }
+                ds = [];
+                for (let x = 1; x < 4; x++) {
+                    ds.push({
+                        label: x + 's',
+                        data: Object.values(obj[x]),
+                        backgroundColor: colors[(i + x) % colors.length]
+                    })
+                }
                 charts[i].data = {
                     'labels': labels,
-                    'datasets': [
-
-                        {
-                            label: 'Count',
-                            data: Object.values(obj),
-                            backgroundColor: colors[i % colors.length]
-                        }
-                    ]
+                    'datasets': ds
                 };
                 charts[i].update();
                 console.log(charts[i].data);
             }
+
             function updateGraphs() {
                 categories.forEach(function (c, i) {
                     generateGraph(hist_data, i, mode);
                 });
             }
-            categories.forEach(function (c, i) {
-                var obj = jsonGet('/replays/stats/' + c);
-                hist_data.push(obj);
 
+            var hist_data = jsonGet('/replays/stats/all');
+            categories.forEach(function (c, i) {
+                let obj = hist_data[c];
                 var canvas_id = 'canvas' + (i + 1).toString();
                 {#console.log('canvas id', canvas_id);#}
                 var e = document.getElementById(canvas_id);
                 var ctx = e.getContext('2d');
+                cat = 1.0;
+                bar = (['score', 'a_hits'].indexOf(c) >= 0) ? (1 + (Object.keys(obj).length / 800.0)) : 1.03;
                 var myBar = new Chart(ctx, {
-                    type: 'bar',
-                    data: [],
-                    options: {
-                        responsive: true,
-                        legend: {
-                            position: 'none',
-                        },
-                        scales: {
-                            xAxes: [{
-                                categoryPercentage: 1.0,
-                                // This is required for the bars to 'touch' each other to
-                                // look more like bins in a histogram
-                                barPercentage: (['score', 'a_hits'].indexOf(c) >= 0) ? (1 + (Object.keys(obj).length / 800.0)) : 1.05,
-                                scaleLabel: {
-                                    display: true,
-                                    labelString: names[i]
-                                }
-                                {#barPercentage: 1.2#}
-                            }]
-                        },
-                        title: {
-                            display: true,
-                            text: names[i] + ' per Game'
+                        type: 'bar',
+                        data: [],
+                        options: {
+                            responsive: true,
+                            {#legend: {#}
+                            {#    position: 'none',#}
+                            {# }, #}
+                            scales: {
+                                xAxes: [
+                                    {
+                                        categoryPercentage: cat,
+                                        // This is required for the bars to 'touch' each other to
+                                        // look more like bins in a histogram
+                                        barPercentage: bar,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: names[i]
+                                        },
+                                        stacked: true,
+
+                                        {#barPercentage: 1.2#}
+                                    },
+                                    {
+                                        display: false,
+                                        stacked: true,
+                                        id: "bar-x-axis2",
+                                        {#barThickness: 70,#}
+                                        // these are needed because the bar controller defaults set only the first x axis properties
+                                        type: 'category',
+                                        categoryPercentage: cat,
+                                        // This is required for the bars to 'touch' each other to
+                                        // look more like bins in a histogram
+                                        barPercentage: bar,
+                                        gridLines: {
+                                            offsetGridLines: true
+                                        }
+                                    }, {
+                                        display: false,
+                                        stacked: true,
+                                        id: "bar-x-axis3",
+                                        {#barThickness: 70,#}
+                                        // these are needed because the bar controller defaults set only the first x axis properties
+                                        type: 'category',
+                                        categoryPercentage: cat,
+                                        // This is required for the bars to 'touch' each other to
+                                        // look more like bins in a histogram
+                                        barPercentage: bar,
+                                        gridLines: {
+                                            offsetGridLines: true
+                                        }
+                                    }],
+
+                                yAxes: [{
+                                    stacked: false,
+                                    ticks: {
+                                        beginAtZero: true
+                                    },
+                                }]
+                            },
+                            title: {
+                                display: true,
+                                text: names[i] + ' per Game'
+                            }
                         }
-                    }
-                });
+                    })
+                ;
                 charts.push(myBar);
                 generateGraph(hist_data, i, mode)
 
