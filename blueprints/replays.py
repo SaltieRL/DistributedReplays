@@ -167,37 +167,18 @@ def score_distribution_np():
                     'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
 
-@bp.route('/stats/goals')
-def goal_distribution():
-    session = current_app.config['db']()
-    data = session.query(PlayerGame.goals, func.count(PlayerGame.id)).group_by(PlayerGame.goals).order_by(
-        PlayerGame.goals).all()
-    return jsonify({k: v for k, v in data if k is not None})
+stats = ['goals', 'assists', 'saves', 'shots', 'a_hits', 'a_passes', 'a_dribbles', 'a_turnovers']
 
 
-@bp.route('/stats/assists')
-def assist_distribution():
-    session = current_app.config['db']()
-    data = session.query(PlayerGame.assists, func.count(PlayerGame.id)).group_by(PlayerGame.assists).order_by(
-        PlayerGame.assists).all()
-    return jsonify({k: v for k, v in data if k is not None})
-
-
-@bp.route('/stats/saves')
-def save_distribution():
-    session = current_app.config['db']()
-    data = session.query(PlayerGame.saves, func.count(PlayerGame.id)).group_by(PlayerGame.saves).order_by(
-        PlayerGame.saves).all()
-    return jsonify({k: v for k, v in data if k is not None})
-
-
-@bp.route('/stats/shots')
-def shot_distribution():
-    session = current_app.config['db']()
-    data = session.query(PlayerGame.shots, func.count(PlayerGame.id)).group_by(PlayerGame.shots).order_by(
-        PlayerGame.shots).all()
-    return jsonify({k: v for k, v in data if k is not None})
-
+@bp.route('/stats/<id_>')
+def goal_distribution(id_):
+    if id_ in stats:
+        session = current_app.config['db']()
+        data = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
+            getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_)).all()
+        return jsonify({k: v for k, v in data if k is not None})
+    else:
+        return jsonify({})
 
 @bp.route('/stats/cars')
 def car_distribution():

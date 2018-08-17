@@ -123,7 +123,8 @@ def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, l
                         win=game.api_game.teams[int(not p.isOrange)].score > game.api_game.teams[int(p.isOrange)].score,
                         a_dribble_conts=analytics['dribble_conts'], a_dribbles=analytics['dribbles'], a_hits=hits,
                         a_goals=analytics['goals'], a_passes=analytics['passes'], a_shots=analytics['shots'],
-                        a_saves=analytics['saves'], a_turnovers=0,
+                        a_saves=analytics['saves'],
+                        a_turnovers=0 if 'turnovers' not in game.stats else game.stats['turnovers'][p.name],
                         a_possession=poss.player_possessions[p.name])
         player_games.append(pg)
         p.id = str(p.id)

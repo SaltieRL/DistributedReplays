@@ -28,7 +28,7 @@ engine, Session = startup()  # type: (Engine, sessionmaker)
 r = redis.Redis(
     host='localhost',
     port=6379)
-pickled_location = os.path.join(os.path.dirname(__file__), '..', 'parsed')
+pickled_location = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed')
 pickles = glob.glob(os.path.join(pickled_location, '*.pkl'))
 
 s = Session()

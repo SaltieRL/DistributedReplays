@@ -11,6 +11,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 </head>
 <style>
+    canvas {
+        margin-bottom: 50px;
+    }
 </style>
 <body>
 <div class="content">
@@ -28,6 +31,14 @@
         </canvas>
         <canvas id="canvas5">
         </canvas>
+        <canvas id="canvas6">
+        </canvas>
+        <canvas id="canvas7">
+        </canvas>
+        <canvas id="canvas8">
+        </canvas>
+        <canvas id="canvas9">
+        </canvas>
         <script>
             var color = Chart.helpers.color;
 
@@ -38,13 +49,16 @@
                 return JSON.parse(req.responseText);
             }
 
-            var categories = ['score', 'goals', 'assists', 'saves', 'shots'];
-            var names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots'];
+            var categories = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles'];
+            var names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Hits', 'Turnovers', 'Passes', 'Dribbles'];
             var colors = ['#fd79a8', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
             categories.forEach(function (c, i) {
                 var obj = jsonGet('/replays/stats/' + c);
                 var labels = Object.keys(obj).map(x => parseInt(x));
                 console.log(labels);
+                if (c.startsWith('a_')) {
+                    obj[0] = 0
+                }
                 var data = {
                     'labels': labels,
                     'datasets': [
@@ -52,7 +66,7 @@
                         {
                             label: 'Count',
                             data: Object.values(obj),
-                            backgroundColor: colors[i]
+                            backgroundColor: colors[i % colors.length]
                         }
                     ]
                 };
@@ -72,7 +86,11 @@
                                 categoryPercentage: 1.0,
                                 // This is required for the bars to 'touch' each other to
                                 // look more like bins in a histogram
-                                barPercentage: c === 'score' ? 1.5 : 1.03
+                                barPercentage: (['score', 'a_hits'].indexOf(c) >= 0) ? (1 + (Object.keys(obj).length / 800.0)) : 1.05,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: names[i]
+                                }
                                 {#barPercentage: 1.2#}
                             }]
                         },

@@ -4,6 +4,7 @@ import pickle
 from celery import Celery
 # from helpers import rewards
 import sys
+
 sys.path.append('..')
 from tasks import celeryconfig
 from helpers.functions import convert_pickle_to_db, add_objs_to_db
@@ -33,6 +34,7 @@ from replayanalysis import SaltieGame as ReplayGame
 
 celery = Celery()
 celery.config_from_object(celeryconfig)
+
 
 #
 # @celery.task(bind=True)
@@ -73,8 +75,8 @@ def parse_replay_task(self, fn):
     add_objs_to_db(game, player_games, players, sess)
     sess.commit()
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     fn = '/home/matthew/PycharmProjects/Distributed-Replays/replays/88E7A7BE41717522C30040AA4B187E9E.replay'
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
