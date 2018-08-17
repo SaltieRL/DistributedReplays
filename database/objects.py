@@ -140,7 +140,7 @@ class Game(Base):
 class Player(Base):
     __tablename__ = 'players'
     platformid = Column(String(40), primary_key=True)
-    platformname = Column(String(10))
+    platformname = Column(String(50))
     avatar = Column(String(150))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
