@@ -9,7 +9,12 @@
     {% else %}
         Loading...
     {% endif %}
-{% endblock title %}Z
+{% endblock title %}
+{% block imports %}
+{% include "partials/imports/viewer.html"%}
+{% include "partials/imports/graph.html"%}
+{% include "partials/imports/require.html" %}
+{% endblock imports %}
 {% block body %}
     {% if replay == None %}
         Parsing... please wait a few minutes.
@@ -39,7 +44,7 @@
         <!-- SCORE BOX -->
         <div id="scoreBox">
         {% set team_names = ['Blue', 'Orange'] %}
-        {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
+        {% set team_members = ((replay.players|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
         {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
         {% set graph_length = graphs|length %}
         {% set json_keys = ["player", "name", "is_orange"] + graphs %}
@@ -114,6 +119,5 @@
             </ol>
         </div>
     {% endif %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/viewer.js') }}"></script>
 {% endblock body %}

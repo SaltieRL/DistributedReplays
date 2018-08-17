@@ -15,17 +15,9 @@
             integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c"
             crossorigin="anonymous"></script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='js/three.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/controls/OrbitControls.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/controls/FlyControls.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/controls/MapControls.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/controls/PointerLockControls.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/controls/OBJLoader.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/controls/GPUParticleSystem.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/stats.min.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
-
+    {% block imports %}
+    {% endblock %}
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -74,12 +66,5 @@
     </div>
 
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
-        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
-        crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
-        integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
-        crossorigin="anonymous"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
 </body>
 </html>
