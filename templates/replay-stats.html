@@ -19,6 +19,12 @@
 <div class="content">
     <div class="main">
         / distributions
+        <div class="container">
+
+        <button onclick="mode = 1; updateGraphs()">1s</button>
+        <button onclick="mode = 2; updateGraphs()">2s</button>
+        <button onclick="mode = 3; updateGraphs()">3s</button>
+        </div>
         <canvas id="canvas1"></canvas>
         <canvas id="canvas2">
 
@@ -48,18 +54,20 @@
                 req.send(null);
                 return JSON.parse(req.responseText);
             }
-
+            var mode = 3;
             var categories = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles'];
             var names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Hits', 'Turnovers', 'Passes', 'Dribbles'];
             var colors = ['#fd79a8', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
-            categories.forEach(function (c, i) {
-                var obj = jsonGet('/replays/stats/' + c);
+            var hist_data = [];
+            var charts = [];
+            function generateGraph(obj, i, gamemode) {
+                var c = categories[i];
+                obj = obj[i][gamemode];
                 var labels = Object.keys(obj).map(x => parseInt(x));
-                console.log(labels);
                 if (c.startsWith('a_')) {
                     obj[0] = 0
                 }
-                var data = {
+                charts[i].data = {
                     'labels': labels,
                     'datasets': [
 
@@ -70,12 +78,25 @@
                         }
                     ]
                 };
+                charts[i].update();
+                console.log(charts[i].data);
+            }
+            function updateGraphs() {
+                categories.forEach(function (c, i) {
+                    generateGraph(hist_data, i, mode);
+                });
+            }
+            categories.forEach(function (c, i) {
+                var obj = jsonGet('/replays/stats/' + c);
+                hist_data.push(obj);
+
                 var canvas_id = 'canvas' + (i + 1).toString();
-                console.log('canvas id', canvas_id);
-                var ctx = document.getElementById(canvas_id).getContext('2d');
+                {#console.log('canvas id', canvas_id);#}
+                var e = document.getElementById(canvas_id);
+                var ctx = e.getContext('2d');
                 var myBar = new Chart(ctx, {
                     type: 'bar',
-                    data: data,
+                    data: [],
                     options: {
                         responsive: true,
                         legend: {
@@ -100,6 +121,9 @@
                         }
                     }
                 });
+                charts.push(myBar);
+                generateGraph(hist_data, i, mode)
+
             });
         </script>
         <canvas id="canvas99"></canvas>

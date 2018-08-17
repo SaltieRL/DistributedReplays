@@ -11,7 +11,7 @@ from tasks import celery_tasks
 from data import constants
 from database import queries
 from helpers.functions import return_error, get_item_dict
-from database.objects import PlayerGame
+from database.objects import PlayerGame, Game
 from blueprints.players import get_rank_batch
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as Game_pickle
 
@@ -148,12 +148,12 @@ def replay_stats():
     return render_template('replay-stats.html')
 
 
-@bp.route('/stats/score')
-def score_distribution():
-    session = current_app.config['db']()
-    data = session.query(PlayerGame.score, func.count(PlayerGame.id)).group_by(PlayerGame.score).filter(
-        PlayerGame.score % 10 == 0).order_by(PlayerGame.score).all()
-    return jsonify({k: v for k, v in data})
+# @bp.route('/stats/score')
+# def score_distribution():
+#     session = current_app.config['db']()
+#     data = session.query(PlayerGame.score, func.count(PlayerGame.id)).group_by(PlayerGame.score).order_by(
+#         PlayerGame.score).all()
+#     return jsonify({k: v for k, v in data})
 
 
 @bp.route('/stats/score/numpy')
@@ -167,18 +167,27 @@ def score_distribution_np():
                     'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
 
-stats = ['goals', 'assists', 'saves', 'shots', 'a_hits', 'a_passes', 'a_dribbles', 'a_turnovers']
+stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_passes', 'a_dribbles', 'a_turnovers']
 
 
 @bp.route('/stats/<id_>')
 def goal_distribution(id_):
     if id_ in stats:
+        gamemodes = range(1, 5)
         session = current_app.config['db']()
-        data = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
-            getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_)).all()
-        return jsonify({k: v for k, v in data if k is not None})
+        q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
+            getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
+        if id_ == 'score':
+            q = q.filter(PlayerGame.score % 10 == 0)
+        data = {}
+        for g in gamemodes:
+            # print(g)
+            d = q.join(Game).filter(Game.teamsize == g).all()
+            data[g] = {k: v for k, v in d if k is not None}
+        return jsonify(data)
     else:
         return jsonify({})
+
 
 @bp.route('/stats/cars')
 def car_distribution():
