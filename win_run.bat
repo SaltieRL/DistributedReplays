@@ -5,7 +5,7 @@ IF NOT EXIST "rlreplays" (
     PAUSE
 ) ELSE (
     start RLBotServer.py
-    start celery -A celery_tasks.celery worker --pool=solo -l info
+    start celery -A tasks.celery_tasks.celery worker --pool=solo -l info
     start flower --port=5555
     EXIT
 )
