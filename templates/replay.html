@@ -1,3 +1,5 @@
+{% from "macros/json.html" import jsonify %}
+
 {% extends 'partials/base.html' %}
 {% set frame_count = replay.api_game.frames %}
 
@@ -7,7 +9,12 @@
     {% else %}
         Loading...
     {% endif %}
-{% endblock title %}Z
+{% endblock title %}
+{% block imports %}
+{% include "partials/imports/viewer.html"%}
+{% include "partials/imports/graph.html"%}
+{% include "partials/imports/require.html" %}
+{% endblock imports %}
 {% block body %}
     {% if replay == None %}
         Parsing... please wait a few minutes.
@@ -29,66 +36,29 @@
         <p>Frames: {{ frame_count }}</p>
         <p>Score: {{ replay.api_game.teams[0].score }}:{{ replay.api_game.teams[1].score }}</p>
         <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
-        <div id="viewer-container" style="position: relative">
-            <div id="viewer" style="display: block"></div>
-            <button onclick="cameraTop()">Top View</button>
-            <button onclick="cameraSide()">Side View</button>
-            <button onclick="rotateLeft()">Rotate Left</button>
-            <button onclick="rotateRight()">Rotate Right</button>
-            <button onclick="raiseCamera()">Raise</button>
-            <button onclick="lowerCamera()">Lower</button>
-            <button onclick="graph()">Graph</button>
-        </div>
-        <canvas id="chart"></canvas>
+
+        <!-- VIEWER -->
+        {% include "partials/replay/viewer.html" %}
         <hr/>
-        <div>
-            <b>Teams:</b>
-            {% for team in replay.api_game.teams|sort(attribute='isOrange', reverse=True) %}
 
-                <div class="team"
-                     style="padding: 10px; {{ "color: white;" if not team.isOrange else "" }}background: {{ "#e66f33" if team.isOrange else "#0000aa" }}">
-                    <h4>{{ team.name }}</h4>
-                    Score: {{ team.score }}
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Score</th>
-                            <th>Goals</th>
-                            <th>Assists</th>
-                            <th>Saves</th>
-                            <th>Shots</th>
-                        </tr>
-                        </thead>
-                        {% for p in team.players|sort(attribute='matchScore', reverse=True) %}
-
-                            <tr>
-                                <td>{{ p.name }}
-                                    {% if p.online_id | string | length == 17 %}
-                                        |
-                                        <a href="https://steamcommunity.com/profiles/{{ p.online_id }}">S</a>
-                                        | <a href="{{ url_for('players.view_player', id_=p.online_id) }}">R</a>
-                                        {% if '8' in ranks[p.online_id] %}
-                                            |
-                                            <img src="/static/img/ranks/{{ (ranks[p.online_id]['8']|sort(attribute='mode'))[-1]['tier'] }}.png"
-                                                 height="30px"/>
-                                        {% endif %}
-                                    {% endif %}
-                                    {% if p.is_bot %}
-                                        | <i>Bot</i>
-                                    {% endif %}</td>
-                                <td>{{ p.matchScore }}</td>
-                                <td>{{ p.matchGoals }}</td>
-                                <td>{{ p.matchAssists }}</td>
-                                <td>{{ p.matchSaves }}</td>
-                                <td>{{ p.matchShots }}</td>
-                                </td>
-                            </tr>
-                        {% endfor %}
-
-                    </table>
-                </div>
-            {% endfor %}
+        <!-- SCORE BOX -->
+        <div id="scoreBox">
+        {% set team_names = ['Blue', 'Orange'] %}
+        {% set team_members = ((replay.players|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
+        {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
+        {% set graph_length = graphs|length %}
+        {% set json_keys = ["player", "name", "is_orange"] + graphs %}
+        <script>
+            (function(hostId,  labels) {
+                document.addEventListener("DOMContentLoaded", function () {
+                    const replayData = [ {{ jsonify(team_members, json_keys) }} ];
+                    requirejs(['overallReplayGraph'], function (replayGraphs) {
+                        replayGraphs.showOverallReplayGraphs(hostId, '.graph-labels-container', labels, replayData);
+                    });
+                });
+            })('scoreBox', {{ graphs|tojson }});
+        </script>
+        {% include "partials/replay/score_graph.html" %}
         </div>
         <hr/>
         <div>
@@ -149,6 +119,5 @@
             </ol>
         </div>
     {% endif %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/viewer.js') }}"></script>
 {% endblock body %}
