@@ -1,0 +1,15 @@
+{% macro jsonify(list, keys) -%}
+{% for item in list %}
+{
+{% for key in keys %}
+{{key}}: '{{item[key]}}',
+{% endfor %}
+},
+{% endfor %}
+{%- endmacro %}
+
+
+
+{% macro print_list(list, key) -%}
+{% for item in list %}"{{item[key]}}",{% endfor %}
+{%- endmacro %}
