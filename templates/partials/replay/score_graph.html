@@ -18,7 +18,7 @@
 <div style="position:relative; overflow-x: hidden; width:100%;">
     {# orange #}
     {% set team_names = ['Blue', 'Orange'] %}
-    {% set team_members = ((replay.playergames|sort(attribute='is_orange', reverse=True)))|sort(attribute='score', reverse=True) %}
+    {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
     {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
     {% set graph_length = graphs|length %}
     {% set json_keys = ["player", "name", "is_orange"] + graphs %}

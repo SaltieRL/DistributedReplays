@@ -24,11 +24,11 @@ define(['colors'], function (colors) {
         let blueCount = 0;
         replayData.forEach((player, index) => {
             let colorIndex = 0;
-            if (!isOrange(player.is_orange)) {
-                blueCount += 1;
-                colorIndex = blueCount;
-            } else {
+            if (isOrange(player.is_orange)) {
                 colorIndex = index - blueCount;
+            } else {
+                colorIndex = blueCount;
+                blueCount += 1;
             }
             console.log(".player-" + player.player + ' .label-color');
             console.log(player);

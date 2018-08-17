@@ -24,203 +24,17 @@
         / profile information
         <div class="playerpanel">
             {% if player %}
-                <img class="avatar" src="{{ player['avatarfull'] }}" alt="avatar"/>
-                <div class="info">
-                    <div class="t1">
-                        {{ player['personaname'] }}
-                    </div>
-                    <ul class="detail">
-                        <li class="cat">platform:</li>
-                        <li>steam</li>
-                    </ul>
-                    <ul class="detail2">
-                        <li class="cat"><a href={{ player['profileurl'] }}>profile link</a></li>
-                    </ul>
-                </div>
+            {% include "partials/player/profile.html" %}
             {% endif %}
         </div>
         / player stats
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                favorite car
-            </div>
-            <div class="stat">
-                <div>
-                    {{ car }}
-                </div>
-                <div class="pctg">
-                    {{ (favorite_car_pctg * 100.0)|round }}%
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                score per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[0]|round(1) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                goals per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[1]|round(2) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                assists per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[2]|round(2) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                saves per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[3]|round(2) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                shots per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[4]|round(2) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                possession per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[5]|round(2) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                hits per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[6]|round(2) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                shots/hit per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[7]|round(2) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                passes/hit per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[8]|round(2) }}
-                </div>
-            </div>
-        </div>
-        <div class="statpanel">
-            <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" width="20">
-            <div class="t2">
-                assists/hit per game
-            </div>
-            <div class="stat">
-                <div class="pctg">
-                    {{ stats[9]|round(2) }}
-                </div>
-            </div>
-        </div>
-{#        <div class="right">#}
-{#            per gamemode#}
-{#        </div>#}
-{#        <div class="statpanelnoborders">#}
-{#            <div class="verticalcarstat">#}
-{#                <div class="t3">3 v 3</div>#}
-{#                <div class="carname">#}
-{#                    Octane#}
-{#                </div>#}
-{#                <div class="pctgfull">#}
-{#                    76%#}
-{#                </div>#}
-{#                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">#}
-{#            </div>#}
-{#            <div class="verticalcarstat">#}
-{#                <div class="t3">2 v 2</div>#}
-{#                <div class="carname">#}
-{#                    Dominus#}
-{#                </div>#}
-{#                <div class="pctgfull">#}
-{#                    54%#}
-{#                </div>#}
-{#                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">#}
-{#            </div>#}
-{#            <div class="verticalcarstat">#}
-{#                <div class="t3">1 v 1</div>#}
-{#                <div class="carname">#}
-{#                    Octane ZSR#}
-{#                </div>#}
-{#                <div class="pctgfull">#}
-{#                    53%#}
-{#                </div>#}
-{#                <img src="/static/img/icons/bar_graph_icon.png" alt="baricon" class="verticalcaricon">#}
-{#            </div>#}
-{#        </div>#}
+        {% include "partials/player/stats.html" %}
     </div>
     <div class="main">
         / rank information
         <div class="rankpanel">
             {% if rank %}
-                {% for mode in rank %}
-                    <div class="panel">
-                        <div class="t1">
-                            {{ mode['mode'] }}
-                        </div>
-                        <div>
-                            {{ mode['string'] }}
-                        </div>
-                        <div>
-                            <img class="rankpic" src='{{ '/static/img/ranks/' + mode['tier']|string + '.png' }}'
-                                 alt="rank"/>
-                        </div>
-                        <div>
-                            rating: {{ mode['rank_points'] }}
-                        </div>
-                    </div>
-                {% endfor %}
+            {% include "partials/player/ranks.html" %}
             {% else %}
                 <div class="errmsg">
                     unable to find rank information for this profile (does this player own rocket league?)
@@ -230,7 +44,7 @@
         / match history
         <div class="matchhistory">
             {% if games %}
-                {% include "replay/match_history.html" %}
+                {% include "partials/replay/match_history.html" %}
             {% else %}
                 <div class="errmsg">
                     no matches recorded for this profile (are you using the auto-uploader?)
