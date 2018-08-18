@@ -49,7 +49,7 @@ define('colors', function () {
         ]
     };
 
-    const overalColors = ['#fd79a8', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
+    const overallColors = ['#fd79a8', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
 
     function getHorizontaChartColor(index, is_orange) {
         var list = is_orange ? teamChartColors.orange : teamChartColors.blue;
@@ -61,7 +61,7 @@ define('colors', function () {
     }
 
     function getChartColorList(numberOfColorsNeeded) {
-        return overalColors.slice(0, numberOfColorsNeeded)
+        return overallColors.slice(0, numberOfColorsNeeded)
     }
 
     return {

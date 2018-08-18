@@ -39,11 +39,10 @@
     <canvas id="canvas9">
     </canvas>
     <script>
-        requirejs(['server', 'colors'], function (server, colors2) {
+        requirejs(['server', 'colors'], function (server, colors) {
             let hist_data;
             let categories = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles'];
             let names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Hits', 'Turnovers', 'Passes', 'Dribbles'];
-            let colors = ['#fd79a8', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
             let charts = [];
             let mode = 3;
             function updateGraphs() {
@@ -53,6 +52,7 @@
             }
 
             function generateGraph(obj, i, gamemode) {
+                let color_list = colors.getChartColors(3);
                 var c = categories[i];
                 obj = obj[c];
                 var labels = Object.keys(obj[2]).map(x => parseInt(x));
@@ -64,7 +64,7 @@
                     ds.push({
                         label: x + 's',
                         data: Object.values(obj[x]),
-                        backgroundColor: colors[(i + x) % colors.length]
+                        backgroundColor: color_list[(i + x) % color_list.length]
                     })
                 }
                 charts[i].data = {
