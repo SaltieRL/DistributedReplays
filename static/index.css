@@ -57,3 +57,17 @@ a {
     padding: 0px 10px;
 }
 
+.framebox {
+    overflow: hidden;
+    padding: 10px 30px 10px 20px;
+    align-items: center;
+    flex-wrap: nowrap;
+    display: block;
+    min-width: 120px;
+    font-size: 15px;
+    border: 1px solid #333;
+}
+
+.framebox:hover {
+    background-color: #ddd;
+}

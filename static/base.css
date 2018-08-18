@@ -22,3 +22,10 @@ a {
 .framebox:hover {
     background-color: #ddd;
 }
+
+.content {
+    display: flex;
+    flex-direction: row;
+    margin: 0% 10%;
+    margin-top: 10px;
+}
