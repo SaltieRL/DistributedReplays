@@ -2,7 +2,7 @@ define('colors', function () {
     const blueBorderColor = "rgba(100, 100, 255, 0.8)";
     const orangeBorderColor = "rgba(255, 150, 0, 0.8)";
 
-    const chartColors = {
+    const teamChartColors = {
         "blue": [
             {
                 backgroundColor: "rgba(29, 53, 224, 0.4)",
@@ -49,8 +49,10 @@ define('colors', function () {
         ]
     };
 
+    const overalColors = ['#fd79a8', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
+
     function getHorizontaChartColor(index, is_orange) {
-        var list = is_orange ? chartColors.orange : chartColors.blue;
+        var list = is_orange ? teamChartColors.orange : teamChartColors.blue;
         return list[index % list.length];
     }
 
@@ -58,8 +60,13 @@ define('colors', function () {
         return "rgba(32, 45, 21, 0.3)";
     }
 
+    function getChartColorList(numberOfColorsNeeded) {
+        return overalColors.slice(0, numberOfColorsNeeded)
+    }
+
     return {
         getHorizontaChartColor: getHorizontaChartColor,
-        getLineColor: getLineColor
+        getLineColor: getLineColor,
+        getChartColors: getChartColorList
     }
 });
