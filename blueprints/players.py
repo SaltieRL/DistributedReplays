@@ -9,10 +9,10 @@ from sqlalchemy import func, desc, case
 
 from data import constants
 
-from database.objects import PlayerGame
+from database.objects import PlayerGame, Game
 from blueprints.steam import steam_id_to_profile, vanity_to_steam_id
 
-from flask import render_template, Blueprint, current_app, redirect, url_for
+from flask import render_template, Blueprint, current_app, redirect, url_for, jsonify
 
 fake_data = False
 try:
@@ -66,6 +66,15 @@ def view_player(id_):
         return render_template('error.html', error="Unable to find the requested profile")
     return render_template('player.html', games=games, rank=rank, profile=steam_profile, car=favorite_car,
                            favorite_car_pctg=favorite_car_pctg, stats=stats)
+
+
+@bp.route('/compare/<id1>/<id2>')
+def compare_player(id1, id2):
+    session = current_app.config['db']()
+    q = session.query(Game.hash).filter(Game.players.op('@>')('{\'%s\', \'%s\'}' % (id1, id2)))
+    print(str(q))
+    common_games = q.all()
+    return jsonify([url_for('replays.view_replay', id_=h) for h in common_games])
 
 
 rank_cache = {}
