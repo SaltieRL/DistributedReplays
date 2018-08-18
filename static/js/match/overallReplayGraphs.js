@@ -21,22 +21,23 @@ define(['colors'], function (colors) {
     }
 
     function colorGraphLabel(hostElement, replayData) {
+        let totalNumberOfBlue = replayData.filter(player => !isOrange(player.is_orange)).length;
         let blueCount = 0;
         replayData.forEach((player, index) => {
             let colorIndex = 0;
             if (isOrange(player.is_orange)) {
                 colorIndex = index - blueCount;
             } else {
-                colorIndex = blueCount;
+                colorIndex = totalNumberOfBlue - blueCount;
                 blueCount += 1;
             }
             console.log(".player-" + player.player + ' .label-color');
             console.log(player);
             let labelElement = hostElement.querySelector(".player-" + player.player + ' .label-color');
-            let color_option = colors.getHorizontaChartColor(colorIndex, isOrange(player.is_orange));
+            let color_option = colors.getHorizontalChartColor(colorIndex, isOrange(player.is_orange));
             labelElement.style.backgroundColor = color_option.backgroundColor;
             labelElement.style.borderColor = color_option.borderColor;
-            labelElement.style.borderWidth = color_option.borderWidth;
+            labelElement.style.borderWidth = color_option.borderWidth + "px";
         });
     }
 
@@ -78,7 +79,7 @@ define(['colors'], function (colors) {
                 label: player.name,
                 data: playerData,
                 stack: "1",  // player.team_is_orange? "orange" : "blue"
-                ...colors.getHorizontaChartColor(colorIndex, isOrange(player.is_orange))
+                ...colors.getHorizontalChartColor(colorIndex, isOrange(player.is_orange))
             };
             datasets.push(playerDataSet)
         });
