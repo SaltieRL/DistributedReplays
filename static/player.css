@@ -2,9 +2,7 @@ body {
     margin: 0;
     font-family: "Fira Mono", monospace;
 }
-a {
-  text-decoration: none;
-}
+
 .content {
   display: flex;
   flex-direction: row;
