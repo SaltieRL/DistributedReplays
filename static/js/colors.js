@@ -99,8 +99,8 @@ define('colors', function () {
     const materialTeamChartColors = {
         "blue": [
             {
-                // purple
-                backgroundColor: "rgba(180, 100, 173, 0.8)",
+                // dark green
+                backgroundColor: "rgba(48,129,55, 0.8)",
                 borderColor: materialBlueBorderColor,
                 borderWidth: 1
             },
@@ -115,12 +115,18 @@ define('colors', function () {
                 backgroundColor: "rgba(27,106,221, 0.8)",
                 borderColor: materialBlueBorderColor,
                 borderWidth: 1
+            },
+            {
+                // purple
+                backgroundColor: "rgba(108,92,231, 0.8)",
+                borderColor: materialBlueBorderColor,
+                borderWidth: 1
             }
         ],
         "orange": [
             {
-                // red
-                backgroundColor: "rgba(208,1,27, 0.8)",
+                // yellow
+                backgroundColor: "rgba(254,206,62, 0.8)",
                 borderColor: materialOrangeBorderColor,
                 borderWidth: 1
             },
@@ -131,20 +137,21 @@ define('colors', function () {
                 borderWidth: 1
             },
             {
-                // yellow
-                backgroundColor: "rgba(254,206,62, 0.8)",
+                // red
+                backgroundColor: "rgba(240,30,40, 0.8)",
                 borderColor: materialOrangeBorderColor,
                 borderWidth: 1
             },
             {
-                backgroundColor: "rgba(251, 50, 60, 0.4)",
+                // super light yellow
+                backgroundColor: "rgba(255,234,167, 0.8)",
                 borderColor: materialOrangeBorderColor,
                 borderWidth: 1
-            }
+            },
         ]
     };
 
-    const overallColors = ['#fd79a8', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
+    const overallColors = ['#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4', '#fd79a8'];
 
     function getHorizontalChartColor(index, is_orange) {
         let chart = materialTeamChartColors;
