@@ -1,3 +1,4 @@
+import json
 import os
 import pickle
 import random
@@ -192,6 +193,14 @@ def goal_distribution(id_):
 @bp.route('/stats/all')
 def distribution():
     session = current_app.config['db']()
+    try:
+        r = current_app.config['r']
+    except KeyError:
+        r = None
+    if r is not None:
+        cache = r.get('stats_cache')
+        if cache is not None:
+            return jsonify(json.loads(cache))
     overall_data = {}
     numbers = []
     for n in range(4):
@@ -207,8 +216,11 @@ def distribution():
         for g in gamemodes:
             # print(g)
             d = q.join(Game).filter(Game.teamsize == g).all()
-            data[g] = {k: v/float(numbers[g - 1]) for k, v in d if k is not None}
+            data[g] = {k: v / float(numbers[g - 1]) for k, v in d if k is not None}
         overall_data[id_] = data
+
+    if r is not None:
+        r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
     return jsonify(overall_data)
 
 
