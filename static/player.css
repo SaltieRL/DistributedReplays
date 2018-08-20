@@ -2,15 +2,7 @@ body {
     margin: 0;
     font-family: "Fira Mono", monospace;
 }
-a {
-  text-decoration: none;
-}
-.content {
-  display: flex;
-  flex-direction: row;
-  margin: 0% 10%;
-  margin-top: 10px;
-}
+
 .sidebar {
   margin-top: 10px;
   padding-right: 20px;

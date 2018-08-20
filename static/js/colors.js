@@ -1,8 +1,10 @@
 define('colors', function () {
     const blueBorderColor = "rgba(100, 100, 255, 0.8)";
+    const materialBlueBorderColor = "rgba(27,106,221, 0.8)";
     const orangeBorderColor = "rgba(255, 150, 0, 0.8)";
+    const materialOrangeBorderColor = "rgba(255,138,0, 0.8)";
 
-    const chartColors = {
+    const builtInTeamChartColors = {
         "blue": [
             {
                 backgroundColor: "rgba(29, 53, 224, 0.4)",
@@ -49,8 +51,111 @@ define('colors', function () {
         ]
     };
 
-    function getHorizontaChartColor(index, is_orange) {
-        var list = is_orange ? chartColors.orange : chartColors.blue;
+    const ganderTeamChartColors = {
+        "blue": [
+            {
+                // purple
+                backgroundColor: "rgba(184, 104, 173, 0.8)",
+                borderColor: blueBorderColor,
+                borderWidth: 1
+            },
+            {
+                // dark blue
+                backgroundColor: "rgba(50, 118, 181, 0.8)",
+                borderColor: blueBorderColor,
+                borderWidth: 1
+            },
+            {
+                // light blue
+                backgroundColor: "rgba(51, 184, 165, 0.8)",
+                borderColor: blueBorderColor,
+                borderWidth: 1
+            }
+        ],
+        "orange": [
+            {
+                backgroundColor: "rgba(240, 73, 80, 0.8)",
+                borderColor: orangeBorderColor,
+                borderWidth: 1
+            },
+            {
+                backgroundColor: "rgba(245,141,78, 0.8)",
+                borderColor: orangeBorderColor,
+                borderWidth: 1
+            },
+            {
+                backgroundColor: "rgba(254,206,62, 0.8)",
+                borderColor: orangeBorderColor,
+                borderWidth: 1
+            },
+            {
+                backgroundColor: "rgba(251, 50, 60, 0.4)",
+                borderColor: orangeBorderColor,
+                borderWidth: 1
+            }
+        ]
+    };
+
+    const materialTeamChartColors = {
+        "blue": [
+            {
+                // dark green
+                backgroundColor: "rgba(48,129,55, 0.8)",
+                borderColor: materialBlueBorderColor,
+                borderWidth: 1
+            },
+            {
+                // turquoise
+                backgroundColor: "rgba(45,204,211, 0.8)",
+                borderColor: materialBlueBorderColor,
+                borderWidth: 1
+            },
+            {
+                // blue
+                backgroundColor: "rgba(27,106,221, 0.8)",
+                borderColor: materialBlueBorderColor,
+                borderWidth: 1
+            },
+            {
+                // purple
+                backgroundColor: "rgba(108,92,231, 0.8)",
+                borderColor: materialBlueBorderColor,
+                borderWidth: 1
+            }
+        ],
+        "orange": [
+            {
+                // yellow
+                backgroundColor: "rgba(254,206,62, 0.8)",
+                borderColor: materialOrangeBorderColor,
+                borderWidth: 1
+            },
+            {
+                // orange
+                backgroundColor: "rgba(255,138,0, 0.8)",
+                borderColor: materialOrangeBorderColor,
+                borderWidth: 1
+            },
+            {
+                // red
+                backgroundColor: "rgba(240,30,40, 0.8)",
+                borderColor: materialOrangeBorderColor,
+                borderWidth: 1
+            },
+            {
+                // super light yellow
+                backgroundColor: "rgba(255,234,167, 0.8)",
+                borderColor: materialOrangeBorderColor,
+                borderWidth: 1
+            },
+        ]
+    };
+
+    const overallColors = ['#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4', '#fd79a8'];
+
+    function getHorizontalChartColor(index, is_orange) {
+        let chart = materialTeamChartColors;
+        let list = is_orange ? chart.orange : chart.blue;
         return list[index % list.length];
     }
 
@@ -58,8 +163,13 @@ define('colors', function () {
         return "rgba(32, 45, 21, 0.3)";
     }
 
+    function getChartColorList(numberOfColorsNeeded) {
+        return overallColors.slice(0, numberOfColorsNeeded)
+    }
+
     return {
-        getHorizontaChartColor: getHorizontaChartColor,
-        getLineColor: getLineColor
+        getHorizontalChartColor: getHorizontalChartColor,
+        getLineColor: getLineColor,
+        getChartColors: getChartColorList
     }
 });

@@ -14,11 +14,13 @@
 {% include "partials/imports/viewer.html"%}
 {% include "partials/imports/graph.html"%}
 {% include "partials/imports/require.html" %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='replay.css') }}">
+<script src="{{ url_for('static', filename='js/viewer.js') }}"></script>
 {% endblock imports %}
 {% block body %}
     {% if replay == None %}
         Parsing... please wait a few minutes.
-        <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
+        <p class="download"><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
         {# Include refresh script here #}
         <script>
             setTimeout(function () {
@@ -26,10 +28,39 @@
             }, 10000)
         </script>
     {% elif replay != None %}
+    <div style="flex: 1 0 auto">
         <script>var REPLAY_HASH = "{{ id }}";</script>
         {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
         <h2>{{ replay.name|e }}</h2>
         <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
+        <div class="replay-header">
+            <div class="group1">
+                <!-- Player box -->
+                {% include "partials/replay/players.html "%}
+            </div>
+            <div class="group2">
+
+                <!-- SCORE BOX -->
+                <div id="scoreBox">
+                    {% set team_names = ['Blue', 'Orange'] %}
+                    {% set team_members = ((replay.players|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
+                    {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
+                    {% set graph_length = graphs|length %}
+                    {% set json_keys = ["player", "name", "is_orange"] + graphs %}
+                    <script>
+                        (function(hostId,  labels) {
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const replayData = [ {{ jsonify(team_members, json_keys) }} ];
+                                requirejs(['overallReplayGraph'], function (replayGraphs) {
+                                    replayGraphs.showOverallReplayGraphs(hostId, '.graph-labels-container', labels, replayData);
+                                });
+                            });
+                        })('scoreBox', {{ graphs|tojson }});
+                    </script>
+                    {% include "partials/replay/score_graph.html" %}
+                </div>
+            </div>
+        </div>
         <p>Map: {{ replay.api_game.map }}</p>
 {#        <p>Version: {{ replay.api_game.replay_version }}</p>#}
 {#        <p>Time: {{ replay.api_game.datetime }}</p>#}
@@ -40,26 +71,6 @@
         <!-- VIEWER -->
         {% include "partials/replay/viewer.html" %}
         <hr/>
-
-        <!-- SCORE BOX -->
-        <div id="scoreBox">
-        {% set team_names = ['Blue', 'Orange'] %}
-        {% set team_members = ((replay.players|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
-        {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
-        {% set graph_length = graphs|length %}
-        {% set json_keys = ["player", "name", "is_orange"] + graphs %}
-        <script>
-            (function(hostId,  labels) {
-                document.addEventListener("DOMContentLoaded", function () {
-                    const replayData = [ {{ jsonify(team_members, json_keys) }} ];
-                    requirejs(['overallReplayGraph'], function (replayGraphs) {
-                        replayGraphs.showOverallReplayGraphs(hostId, '.graph-labels-container', labels, replayData);
-                    });
-                });
-            })('scoreBox', {{ graphs|tojson }});
-        </script>
-        {% include "partials/replay/score_graph.html" %}
-        </div>
         <hr/>
         <div>
             <b>Goals:</b>
@@ -118,6 +129,6 @@
                 {% endfor %}
             </ol>
         </div>
+    </div>
     {% endif %}
-    <script src="{{ url_for('static', filename='js/viewer.js') }}"></script>
 {% endblock body %}

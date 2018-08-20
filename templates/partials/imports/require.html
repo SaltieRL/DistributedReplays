@@ -1,2 +1,13 @@
-{%include "partials/requirejsConfig.html" %}
+<script>
+    var require = {
+        baseUrl: '/static/js',
+        paths: {
+            matchHistory: "{{ url_for('static', filename='js/match/matchHistory') }}",
+            overallReplayGraph: "{{ url_for('static', filename='js/match/overallReplayGraphs') }}",
+            colors: "{{ url_for('static', filename='js/colors') }}",
+            server: "{{ url_for('static', filename='js/basic_async') }}"
+        }
+    }
+</script>
+
 <script src="{{ url_for('static', filename='js/require.js') }}"></script>

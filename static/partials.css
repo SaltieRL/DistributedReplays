@@ -33,7 +33,7 @@ form {
     outline: none;
 }
 
-.navbar m {
+.navbar  {
     color: #333;
     text-align: center;
     text-decoration: none;
@@ -44,13 +44,7 @@ form {
     margin-left: auto;
 }
 
-.navbar m logo {
-    padding-left: 10px;
-    font-family: "Shrikhand";
-    font-size: 50px;
-}
-
-.navbar m motto {
+.navbar div motto {
     display: block;
     word-wrap: break-word;
     width: 120px;
@@ -59,20 +53,20 @@ form {
     font-size: 10px;
 }
 
-.navbar m in {
+.navbar div in {
     margin: 0px 10px;
     padding: 5px;
 }
 
-.navbar m d {
+.navbar div d {
     color: #4b545f;
 }
 
-.navbar m in:hover{
+.navbar div in:hover{
     background-color: #ddd;
 }
 
-.navbar m box {
+.navbar div div.framebox {
     display: block;
     flex-wrap: nowrap;
     min-width: 150px;
@@ -82,7 +76,7 @@ form {
     border: 1px solid #333;
 }
 
-.navbar m box:hover {
+.navbar div box:hover {
     background-color: #ddd;
 }
 
@@ -92,16 +86,16 @@ form {
         flex-direction: column;
         justify-content: space-between;
     }
-    .navbar m {
+    .navbar div {
         margin: 5px 0px;
     }
     .navbar m.right {
         margin-left: 0px;
     }
-    .navbar m motto {
+    .navbar div motto {
         display: none;
     }
-    .navbar m in {
+    .navbar div in {
         display: none;
     }
     .search {
@@ -109,7 +103,7 @@ form {
         margin-left: 0px;
         text-align: center;
     }
-    .navbar m d {
+    .navbar div d {
         display: none;
     }
 }

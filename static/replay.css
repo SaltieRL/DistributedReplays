@@ -1,0 +1,9 @@
+.replay-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.replay-header > * {
+    border: 1px solid #333;
+}
+
