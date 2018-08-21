@@ -61,21 +61,26 @@ def parse_replays():
 
 @bp.route('/parsed/view/<id_>')
 def view_replay(id_):
-    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
-    replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-    if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-        return render_template('replay.html', replay=None, id=id_)
-    try:
-        g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
-    except Exception as e:
-        return return_error('Error opening game: ' + str(e))
-    players = g.api_game.teams[0].players + g.api_game.teams[1].players
-    for p in players:
-        if isinstance(p.id, list):  # some players have array platform-ids
-            p.id = p.id
-            print('array online_id', p.id)
-    ranks = get_rank_batch([p.id for p in players])
-    return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
+    session = current_app.config['db']()
+    game = session.query(Game).filter(Game.hash == id_).first()
+    if game is None:
+        return redirect('/')
+    players = game.players
+    # pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
+    # replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
+    # if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
+    #     return render_template('replay.html', replay=None, id=id_)
+    # try:
+    #     g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
+    # except Exception as e:
+    #     return return_error('Error opening game: ' + str(e))
+    # players = g.api_game.teams[0].players + g.api_game.teams[1].players
+    # for p in players:
+    #     if isinstance(p.id, list):  # some players have array platform-ids
+    #         p.id = p.id
+    #         print('array online_id', p.id)
+    ranks = get_rank_batch(players)
+    return render_template('replay.html', replay=game, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
 
 
 @bp.route('/parsed/view/<id_>/positions')
