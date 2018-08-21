@@ -1,9 +1,10 @@
 import os
 import sys
+from pprint import pprint
 
 import flask
 import flask_login
-from flask import Flask, render_template, g, current_app, session
+from flask import Flask, render_template, g, current_app, session, request
 from flask_cors import CORS
 
 from blueprints import auth, api, players, replays, stats, steam
@@ -139,9 +140,18 @@ def unauthorized_handler():
 def lookup_current_user():
     s = current_app.config['db']()
     g.user = None
+    allowed_routes = ['/auth', '/api', '/replays/stats']
+    allowed = any([request.path.startswith(a) for a in allowed_routes])
+    if allowed:
+        return
     if 'openid' in session:
         openid = session['openid']
+        if openid not in config.ALLOWED_STEAM_ACCOUNTS:
+            return render_template('login.html')
+
         g.user = s.query(Player).filter(Player.platformid == openid).first()
+    else:
+        return render_template('login.html')
 
 
 # Main stuff
