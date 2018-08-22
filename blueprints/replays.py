@@ -1,3 +1,4 @@
+import json
 import os
 import pickle
 import random
@@ -60,21 +61,26 @@ def parse_replays():
 
 @bp.route('/parsed/view/<id_>')
 def view_replay(id_):
-    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
-    replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-    if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-        return render_template('replay.html', replay=None, id=id_)
-    try:
-        g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
-    except Exception as e:
-        return return_error('Error opening game: ' + str(e))
-    players = g.api_game.teams[0].players + g.api_game.teams[1].players
-    for p in players:
-        if isinstance(p.id, list):  # some players have array platform-ids
-            p.id = p.id
-            print('array online_id', p.id)
-    ranks = get_rank_batch([p.id for p in players])
-    return render_template('replay.html', replay=g, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
+    session = current_app.config['db']()
+    game = session.query(Game).filter(Game.hash == id_).first()
+    if game is None:
+        return redirect('/')
+    players = game.players
+    # pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
+    # replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
+    # if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
+    #     return render_template('replay.html', replay=None, id=id_)
+    # try:
+    #     g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
+    # except Exception as e:
+    #     return return_error('Error opening game: ' + str(e))
+    # players = g.api_game.teams[0].players + g.api_game.teams[1].players
+    # for p in players:
+    #     if isinstance(p.id, list):  # some players have array platform-ids
+    #         p.id = p.id
+    #         print('array online_id', p.id)
+    ranks = get_rank_batch(players)
+    return render_template('replay.html', replay=game, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
 
 
 @bp.route('/parsed/view/<id_>/positions')
@@ -192,6 +198,14 @@ def goal_distribution(id_):
 @bp.route('/stats/all')
 def distribution():
     session = current_app.config['db']()
+    try:
+        r = current_app.config['r']
+    except KeyError:
+        r = None
+    if r is not None:
+        cache = r.get('stats_cache')
+        if cache is not None:
+            return jsonify(json.loads(cache))
     overall_data = {}
     numbers = []
     for n in range(4):
@@ -207,8 +221,11 @@ def distribution():
         for g in gamemodes:
             # print(g)
             d = q.join(Game).filter(Game.teamsize == g).all()
-            data[g] = {k: v/float(numbers[g - 1]) for k, v in d if k is not None}
+            data[g] = {k: v / float(numbers[g - 1]) for k, v in d if k is not None}
         overall_data[id_] = data
+
+    if r is not None:
+        r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
     return jsonify(overall_data)
 
 
