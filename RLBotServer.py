@@ -7,6 +7,11 @@ import flask_login
 from flask import Flask, render_template, g, current_app, session, request
 from flask_cors import CORS
 
+import config
+try:
+    from config import ALLOWED_STEAM_ACCOUNTS
+except ImportError:
+    ALLOWED_STEAM_ACCOUNTS = []
 from blueprints import auth, api, players, replays, stats, steam
 from database.objects import Game, Player
 from database.startup import startup
@@ -42,8 +47,6 @@ for f in folders_to_make:
 # Import modules AFTER app is initialized
 #
 with app.app_context():
-    import config
-
     # app.register_blueprint(celery_tasks.bp)
     app.register_blueprint(players.bp)
     app.register_blueprint(steam.bp)
@@ -146,19 +149,19 @@ def lookup_current_user():
         return
     if 'openid' in session:
         openid = session['openid']
-        if openid not in config.ALLOWED_STEAM_ACCOUNTS:
+        if len(ALLOWED_STEAM_ACCOUNTS) > 0 and openid not in ALLOWED_STEAM_ACCOUNTS:
             return render_template('login.html')
 
         g.user = s.query(Player).filter(Player.platformid == openid).first()
-    else:
+    elif len(ALLOWED_STEAM_ACCOUNTS) > 0:
         return render_template('login.html')
 
 
 # Main stuff
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    session = current_app.config['db']()
-    count = session.query(Game.hash).count()
+    s = current_app.config['db']()
+    count = s.query(Game.hash).count()
     return render_template('index.html', game_count=count)
 
 
