@@ -1,61 +1,21 @@
 {% extends 'partials/base.html' %}
-
+{% block imports %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fixed_header.css') }}">
+    {% include "partials/imports/graph.html" %}
+{% endblock imports %}
+{% block title %}
+    Upload
+{% endblock title %}
 {% block body %}
-        <h1>Saltie Reinforcement Learning Bot</h1>
-        <h3>Analyze Rocket League replay</h3>
-        <form method='post' enctype='multipart/form-data' action='{{ url_for('replays.parse_replay') }}'>
-            <input type=file name=file>
-            <input type=submit value=Upload>
-        </form>
-        <hr />
-        <h3>Search replays by Steam ID</h3>
-        <form method='post' enctype='multipart/form-data' action='{{ url_for('steam.resolve_steam') }}'>
-            <input type=text name=name>
-            <input type=submit value=Search>
-        </form>
-        <hr />
-        <h2>Statistics</h2>
-        <table class="table">
-            <thead>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Count</th>
-            </thead>
-            <tbody>
 
-            {% for block in stats %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ block[2] }}</td>
-                    <td>{{ block[1] }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <p><b>Total replays:</b> {{ total }}</p>
-        {% set hours = (total * 5/60.0) %}
-        <p><b>Hours of replays:</b> {{ hours|round(2, 'floor') }}</p>
-        <p><b>Hour goal:</b> {{ hours|round }}/{{ hours - (hours % 1000) + 1000 }}</p>
-        <h3>Model Statistics</h3>
-        <table class="table">
-            <thead>
-            <th>Rank</th>
-            <th>Hash</th>
-            <th>Name</th>
-            <th>Reward</th>
-            <th>Count</th>
-            </thead>
-            <tbody>
-
-            {% for block in model_stats %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ block[0] }}</td>
-                    <td>{{ block[1] }}</td>
-                    <td>{{ block[2] }}</td>
-                    <td>{{ block[3] }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+<div class="main">
+    <h3>Analyze Rocket League replay</h3>
+    <p>
+    <form method='post' enctype='multipart/form-data' action='{{ url_for('replays.parse_replay') }}'>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+    </form>
+    </p>
+</div>
 {% endblock body %}

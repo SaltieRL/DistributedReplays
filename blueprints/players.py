@@ -53,8 +53,11 @@ def view_player(id_):
         favorite_car_pctg = fav_car_str[1] / len(games)
         q = session.query(*stats_query).filter(PlayerGame.a_hits > 0)
         global_stats = q.first()
-        stats = q.filter(PlayerGame.player == id_).first()
+        stats = list(q.filter(PlayerGame.player == id_).first())
         print(stats)
+        for i, s in enumerate(stats):
+            if s is None:
+                stats[i] = 0
         stats = [s / g for s, g in zip(stats, global_stats)]
     else:
         favorite_car = "Unknown"
