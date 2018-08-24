@@ -8,7 +8,14 @@
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
-        / comparing {% for p in users %}<a href="{{ url_for('players.view_player', id_=p['id']) }}">{{ p['steam_profile']['response']['players'][0]['personaname'] }}</a> {% endfor %}
+        / comparing
+{#        {% for p in users %}#}
+{#            <a href="{{ url_for('players.view_player', id_=p['id']) }}">{{ p['steam_profile']['response']['players'][0]['personaname'] }}</a>#}
+{#        {% endfor %}#}
+        {% for p in users %}
+            {% set player = p['steam_profile']['response']['players'][0] %}
+            {% include "partials/player/profile.html" %}
+        {% endfor %}
     </div>
     <div class="main">
         / tendencies
@@ -36,7 +43,7 @@
                                                 {{ stats[i] }},
                                             {% endfor %}
                                         ],
-                                    {% set color = [range(0, 255) | random, range(0, 255) | random, range(0, 255) | random] %}
+                                        {% set color = [range(0, 255) | random, range(0, 255) | random, range(0, 255) | random] %}
                                         backgroundColor: 'rgba({{ color[0] }}, {{ color[1] }}, {{ color[2] }}, 0.2)',
                                         pointBackgroundColor: 'rgba({{ color[0] }}, {{ color[1] }}, {{ color[2] }}, 1)',
                                         borderColor: 'rgba({{ color[0] }}, {{ color[1] }}, {{ color[2] }}, 1)',
