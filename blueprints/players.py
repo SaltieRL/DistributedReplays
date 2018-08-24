@@ -67,6 +67,8 @@ def view_player(id_):
     steam_profile = steam_id_to_profile(id_)
     if steam_profile is None:
         return render_template('error.html', error="Unable to find the requested profile")
+
+    session.close()
     return render_template('player.html', games=games, rank=rank, profile=steam_profile, car=favorite_car,
                            favorite_car_pctg=favorite_car_pctg, stats=stats)
 
@@ -77,6 +79,7 @@ def compare_player(id1, id2):
     q = session.query(Game.hash).filter(Game.players.op('@>')('{\'%s\', \'%s\'}' % (id1, id2)))
     print(str(q))
     common_games = q.all()
+    session.close()
     return jsonify([url_for('replays.view_replay', id_=h) for h in common_games])
 
 

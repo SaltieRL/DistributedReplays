@@ -142,6 +142,7 @@ def lookup_current_user():
     if 'openid' in session:
         openid = session['openid']
         g.user = s.query(Player).filter(Player.platformid == openid).first()
+    s.close()
 
 
 # Main stuff

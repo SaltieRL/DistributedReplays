@@ -33,6 +33,7 @@ def replays_home():
     replay_count = queries.get_replay_count(session)
     replay_data = queries.get_replay_stats(session)
     model_data = queries.get_model_stats(session)
+    session.close()
     return render_template('upload.html', stats=replay_data, total=replay_count, model_stats=model_data)
 
 
@@ -80,6 +81,7 @@ def view_replay(id_):
     #         p.id = p.id
     #         print('array online_id', p.id)
     ranks = get_rank_batch(players)
+    session.close()
     return render_template('replay.html', replay=game, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
 
 
@@ -169,6 +171,7 @@ def score_distribution_np():
         PlayerGame.score % 10 == 0).filter(PlayerGame.score > 0).all())
     non_log = np.histogram(data, bins=30)
     log = np.histogram(np.log(data), bins=30)
+    session.close()
     return jsonify({'log': {'data': log[0].tolist(), 'bins': log[1].tolist()},
                     'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
@@ -226,6 +229,8 @@ def distribution():
 
     if r is not None:
         r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
+
+    session.close()
     return jsonify(overall_data)
 
 
@@ -239,4 +244,6 @@ def car_distribution():
         car, val = entry
         if int(car) in constants.cars:
             car_data.append([constants.cars[int(car)], val])
+
+    session.close()
     return jsonify(car_data)

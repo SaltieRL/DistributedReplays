@@ -74,6 +74,7 @@ def parse_replay_task(self, fn):
     game, player_games, players = convert_pickle_to_db(g)
     add_objs_to_db(game, player_games, players, sess)
     sess.commit()
+    sess.close()
 
 
 if __name__ == '__main__':

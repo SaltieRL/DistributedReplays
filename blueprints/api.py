@@ -123,6 +123,7 @@ def api_v1_get_replays():
     response['page'] = page + 1
     response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2, key=api_key)
     response['version'] = 1
+    session.close()
     return jsonify(response)
 
 
@@ -140,13 +141,13 @@ def api_v1_get_stats():
     session = current_app.config['db']()
     ct = session.query(Game).count()
     dct = len([f for f in os.listdir(current_app.config['PARSED_DIR']) if f.endswith('pkl')])
+    session.close()
     return jsonify({'db_count': ct, 'count': dct})
 
 
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    session = current_app.config['db']()
     pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
