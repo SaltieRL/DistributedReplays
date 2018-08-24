@@ -17,6 +17,10 @@
         </div>
         / player stats
         {% include "partials/player/stats.html" %}
+        <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
+            <input type="text" name="other" placeholder="Compare other user"/>
+            <button type="submit">Submit</button>
+        </form>
     </div>
     <div class="main">
         / rank information

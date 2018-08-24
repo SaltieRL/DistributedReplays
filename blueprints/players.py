@@ -9,7 +9,7 @@ from data import constants
 from database.objects import PlayerGame, Game
 from blueprints.steam import steam_id_to_profile, vanity_to_steam_id
 
-from flask import render_template, Blueprint, current_app, redirect, url_for, jsonify
+from flask import render_template, Blueprint, current_app, redirect, url_for, jsonify, request
 
 from helpers.functions import render_with_session, get_rank
 
@@ -34,15 +34,28 @@ def view_player(id_):
         return render_template('error.html', error="Unable to find the requested profile")
 
     return render_with_session('player.html', session, games=games, rank=rank, profile=steam_profile, car=favorite_car,
-                               favorite_car_pctg=favorite_car_pctg, stats=stats)
+                               favorite_car_pctg=favorite_car_pctg, stats=stats, id=id_)
 
 
-@bp.route('/compare/<ids>')
+@bp.route('/overview/<id_>/compare', methods=['POST'])
+def compare_player_redir(id_):
+    print(request.form)
+    other = request.form['other']
+    if len(other) != 17 or re.match(regex, other) is None:
+        r = vanity_to_steam_id(other)
+        if r is None:
+            return redirect(url_for('players.view_player', id_=id_))
+        other = r['response']['steamid']
+    return redirect(url_for('players.compare_player', ids=",".join([id_, other])))
+
+
+@bp.route('/overview/compare/<ids>')
 def compare_player(ids):
     session = current_app.config['db']()
     ids = ids.split(',')
     # q = session.query(Game.hash).filter(cast(Game.players, postgresql.ARRAY(String)).contains([id1, id2]))
-    q = session.query(PlayerGame).join(Game).filter(Game.players.contains(cast(ids, postgresql.ARRAY(String)))).filter(PlayerGame.player == ids[0])
+    q = session.query(PlayerGame).join(Game).filter(Game.players.contains(cast(ids, postgresql.ARRAY(String)))).filter(
+        PlayerGame.player == ids[0])
     # q = session.query(Game.hash).filter(Game.players.op('@>')('{\'%s\', \'%s\'}' % (id1, id2)))
     common_games = q.all()
     users = []
