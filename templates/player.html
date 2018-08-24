@@ -8,36 +8,93 @@
     {% include "partials/imports/graph.html" %}
 {% endblock imports %}
 {% block body %}
-<div class="sidebar">
-    / profile information
-    <div class="playerpanel">
-        {% if player %}
-        {% include "partials/player/profile.html" %}
-        {% endif %}
+    <div class="sidebar">
+        / profile information
+        <div class="playerpanel">
+            {% if player %}
+                {% include "partials/player/profile.html" %}
+            {% endif %}
+        </div>
+        / player stats
+        {% include "partials/player/stats.html" %}
     </div>
-    / player stats
-    {% include "partials/player/stats.html" %}
-</div>
-<div class="main">
-    / rank information
-    <div class="rankpanel">
-        {% if rank %}
-        {% include "partials/player/ranks.html" %}
-        {% else %}
-            <div class="errmsg">
-                unable to find rank information for this profile (does this player own rocket league?)
-            </div>
-        {% endif %}
+    <div class="main">
+        / rank information
+        <div class="rankpanel">
+            {% if rank %}
+                {% include "partials/player/ranks.html" %}
+            {% else %}
+                <div class="errmsg">
+                    unable to find rank information for this profile (does this player own rocket league?)
+                </div>
+            {% endif %}
+        </div>
+        / tendencies
+        <div class="rankpanel" style="max-width: 400px;">
+            {% set names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Possession', 'Hits', 'Shots/Hit', 'Passes/Hit', 'Assists/Hit'] %}
+            {% set titles = ['Basic', 'Aggressiveness'] %}
+            {% set groups = [[1, 2, 3, 4], [5, 6, 7, 8, 9]] %}
+            {% for g in groups %}
+                <canvas id="radar{{ loop.index }}">
+
+                </canvas>
+                <script>
+
+                    var data = {
+                        labels: [
+                            {% for i in g %}'{{ names[i] }}',{% endfor %}
+                        ],
+                        datasets:
+                            [
+                                {
+                                    data: [
+                                        {% for i in g %}
+                                            {{ stats[i] }},
+                                        {% endfor %}
+                                    ],
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    label: 'Player'
+                                },
+                                {
+                                    data: [{% for x in range(g|length) %}1,{% endfor %}],
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    label: 'Average'
+                                },
+
+                            ],
+                    };
+                    var ctx = document.getElementById('radar{{ loop.index }}').getContext('2d');
+                    var myRadarChart{{ loop.index }} = new Chart(ctx, {
+                        type: 'radar',
+                        data: data,
+                        options: {
+                            scale: {
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '{{ titles[loop.index - 1] }}'
+                            }
+                        }
+                    });
+                </script>
+            {% endfor %}
+        </div>
+        / match history
+        <div class="matchhistory">
+            {% if games %}
+                {% include "partials/replay/match_history.html" %}
+            {% else %}
+                <div class="errmsg">
+                    no matches recorded for this profile (are you using the auto-uploader?)
+                </div>
+            {% endif %}
+        </div>
     </div>
-    / match history
-    <div class="matchhistory">
-        {% if games %}
-            {% include "partials/replay/match_history.html" %}
-        {% else %}
-            <div class="errmsg">
-                no matches recorded for this profile (are you using the auto-uploader?)
-            </div>
-        {% endif %}
-    </div>
-</div>
 {% endblock body %}
