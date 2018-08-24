@@ -11,9 +11,8 @@ from werkzeug.utils import secure_filename
 from tasks import celery_tasks
 from data import constants
 from database import queries
-from helpers.functions import return_error, get_item_dict
+from helpers.functions import return_error, get_item_dict, render_with_session, get_rank_batch
 from database.objects import PlayerGame, Game
-from blueprints.players import get_rank_batch
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as Game_pickle
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
@@ -33,8 +32,7 @@ def replays_home():
     replay_count = queries.get_replay_count(session)
     replay_data = queries.get_replay_stats(session)
     model_data = queries.get_model_stats(session)
-    session.close()
-    return render_template('upload.html', stats=replay_data, total=replay_count, model_stats=model_data)
+    return render_with_session('upload.html', session, stats=replay_data, total=replay_count, model_stats=model_data)
 
 
 @bp.route('/parse', methods=['POST'])
@@ -81,8 +79,8 @@ def view_replay(id_):
     #         p.id = p.id
     #         print('array online_id', p.id)
     ranks = get_rank_batch(players)
-    session.close()
-    return render_template('replay.html', replay=game, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
+    return render_with_session('replay.html', session, replay=game, cars=constants.cars, id=id_, ranks=ranks,
+                               item_dict=get_item_dict())
 
 
 @bp.route('/parsed/view/<id_>/positions')

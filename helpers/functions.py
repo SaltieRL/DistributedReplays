@@ -1,13 +1,21 @@
 # Helper functions
 import json
 import os
-from flask import render_template
+import random
+
+import redis
+import requests
+from flask import render_template, current_app
 
 # Replay stuff
 from database.objects import Game, PlayerGame, Player
-from blueprints.players import get_rank_batch
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 
+try:
+    from config import RL_API_KEY
+except ImportError:
+    RL_API_KEY = None
+    fake_data = True
 replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
 if not os.path.isdir(replay_dir):
     os.mkdir(replay_dir)
@@ -159,3 +167,130 @@ def add_objs_to_db(game, player_games, players, s):
         if match is not None:
             s.delete(match)
         s.add(pg)
+
+
+def render_with_session(template, session, **kwargs):
+    response = render_template(template, **kwargs)
+    session.close()
+    return response
+
+
+def get_rank_batch(ids, offline_redis=None):
+    return_data = {}
+    if fake_data:
+        return make_fake_data(ids)
+    try:
+        r = current_app.config['r']  # type: redis.Redis
+    except KeyError:
+        r = None
+        ids_to_find = ids
+    except RuntimeError:  # we're not in application context, use our own redis
+        if offline_redis is None:
+            offline_redis = redis.Redis(
+                host='localhost',
+                port=6379)
+        r = offline_redis
+    if r is not None:
+        ids_to_find = []
+        for steam_id in ids:
+            try:
+                result = r.get(steam_id)
+            except redis.ConnectionError:
+                print('error connecting to redis')
+                r = None
+                ids_to_find = ids
+                break
+            if result is not None:
+                # print('Rank is cached')
+                return_data[steam_id] = json.loads(result.decode("utf-8"))
+            elif steam_id != '0':
+                ids_to_find.append(steam_id)
+            else:
+                return_data['0'] = {}
+        if len(ids_to_find) == 0:
+            return return_data
+        else:
+            print(ids_to_find)
+    url = "https://api.rocketleague.com/api/v1/steam/playerskills/"
+    headers = {'Authorization': 'Token ' + RL_API_KEY, 'Referer': 'http://api.rocketleague.com'}
+
+    ids_dict = list(
+        filter(lambda x: x['platformId'] == 'steam',
+               [{'platformId': get_platform_id(i), 'uniqueId': i} for i in ids_to_find]))
+    post_data = {'player_ids': [p['uniqueId'] for p in ids_dict]}
+    data = requests.post(url, headers=headers, json=post_data)
+    data = data.json()
+    if 'detail' in data:
+        return {str(i): {} for i in ids}
+    for player in data:
+        modes = []
+        unique_id = player['user_id']
+        names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+        if 'player_skills' in player:
+
+            for playlist in player['player_skills']:
+                if 'tier' in playlist:  # excludes unranked
+                    s = {'mode': names[str(playlist['playlist'])], 'rank_points': playlist['skill'],
+                         'tier': playlist['tier'],
+                         'division': playlist['division'],
+                         'string': tier_div_to_string(playlist['tier'], playlist['division'])}
+                    modes.append(s)
+            if r is not None:
+                r.set(unique_id, json.dumps(modes), ex=24 * 60 * 60)
+            return_data[unique_id] = modes
+        else:
+            return_data[unique_id] = {}
+    return return_data
+
+
+fake_data = False
+
+
+def get_rank(steam_id):
+    rank = get_rank_batch([steam_id])
+    return rank[list(rank.keys())[0]]
+
+
+def make_fake_data(ids):
+    names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+    base_rank = random.randint(3, 17)
+    return_data = {}
+    for id_ in ids:
+        modes = []
+        for mode in names.values():
+            rank = base_rank + random.randint(-2, 2)
+            div = random.randint(0, 4)
+            s = {'mode': mode, 'rank_points': rank * random.randint(60, 75) + 15 * div,
+                 'tier': rank,
+                 'division': div,
+                 'string': tier_div_to_string(rank, div)}
+            modes.append(s)
+        return_data[id_] = modes
+    return return_data
+
+
+def tier_div_to_string(rank: int, div: int = -1):
+    """
+    Converts rank and division to a fancy string.
+
+    :param rank: integer rank (0-19)
+    :param div: division (0-3), -1 to omit
+    :return: Rank string
+    """
+    ranks = ['Unranked', 'Bronze I', 'Bronze II', 'Bronze III', 'Silver I', 'Silver II', 'Silver III', 'Gold I',
+             'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
+             'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
+    if rank is None:
+        print(rank, div)
+        return 'Unknown'
+    if rank < 19 and div > 0:
+        return "{}, Division {}".format(ranks[rank], div + 1)
+    else:
+        return ranks[rank]
+
+
+def get_platform_id(i):
+    if len(str(i)) == 17:
+        return 'steam'  # steam
+    else:
+        return '-1'

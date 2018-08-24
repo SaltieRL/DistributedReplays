@@ -8,7 +8,7 @@ from flask import render_template, url_for, redirect, request, jsonify, send_fro
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
-from blueprints.players import get_rank, tier_div_to_string
+from helpers.functions import get_rank, tier_div_to_string
 from database.objects import Game
 from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 from replayanalysis.json_parser.player import Player
