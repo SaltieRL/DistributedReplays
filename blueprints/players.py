@@ -1,7 +1,8 @@
 import re
 from typing import List
 
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, cast, String
+from sqlalchemy.dialects import postgresql
 
 from data import constants
 
@@ -27,14 +28,45 @@ def view_player(id_):
         return redirect(url_for('players.view_player', id_=id_))
     session = current_app.config['db']()
     rank = get_rank(id_)
+    games, stats, favorite_car, favorite_car_pctg = get_stats(id_, session)
+    steam_profile = steam_id_to_profile(id_)
+    if steam_profile is None:
+        return render_template('error.html', error="Unable to find the requested profile")
+
+    return render_with_session('player.html', session, games=games, rank=rank, profile=steam_profile, car=favorite_car,
+                               favorite_car_pctg=favorite_car_pctg, stats=stats)
+
+
+@bp.route('/compare/<ids>')
+def compare_player(ids):
+    session = current_app.config['db']()
+    ids = ids.split(',')
+    # q = session.query(Game.hash).filter(cast(Game.players, postgresql.ARRAY(String)).contains([id1, id2]))
+    q = session.query(PlayerGame).join(Game).filter(Game.players.contains(cast(ids, postgresql.ARRAY(String)))).filter(PlayerGame.player == ids[0])
+    # q = session.query(Game.hash).filter(Game.players.op('@>')('{\'%s\', \'%s\'}' % (id1, id2)))
+    common_games = q.all()
+    users = []
+    for p in ids:
+        games, stats, favorite_car, favorite_car_pctg = get_stats(p, session)
+        steam_profile = steam_id_to_profile(p)
+        if steam_profile is None:
+            return render_template('error.html', error="Unable to find the requested profile: " + p)
+        user = {
+            'id': p,
+            'games': games,
+            'stats': stats,
+            'favorite_car': favorite_car,
+            'favorite_car_pctg': favorite_car_pctg,
+            'steam_profile': steam_profile
+        }
+        users.append(user)
+    return render_with_session('compare.html', session, games=common_games, users=users)
+
+
+def get_stats(id_, session):
+    stats_query = get_stats_query()
     games = session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
         PlayerGame.game != None).all()  # type: List[PlayerGame]
-    stats_query = func.avg(PlayerGame.score), func.avg(PlayerGame.goals), func.avg(PlayerGame.assists), \
-                  func.avg(PlayerGame.saves), func.avg(PlayerGame.shots), func.avg(PlayerGame.a_possession), \
-                  func.avg(PlayerGame.a_hits - PlayerGame.a_dribble_conts), \
-                  func.avg((100 * PlayerGame.shots) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
-                  func.avg((100 * PlayerGame.a_passes) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
-                  func.avg((100 * PlayerGame.assists) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts))
     if len(games) > 0:
         fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
             PlayerGame.player == id_).filter(
@@ -55,23 +87,15 @@ def view_player(id_):
         favorite_car = "Unknown"
         favorite_car_pctg = 0.0
         stats = [0.0] * len(stats_query)
-
-    steam_profile = steam_id_to_profile(id_)
-    if steam_profile is None:
-        return render_template('error.html', error="Unable to find the requested profile")
-
-    return render_with_session('player.html', session, games=games, rank=rank, profile=steam_profile, car=favorite_car,
-                               favorite_car_pctg=favorite_car_pctg, stats=stats)
+    return games, stats, favorite_car, favorite_car_pctg
 
 
-@bp.route('/compare/<id1>/<id2>')
-def compare_player(id1, id2):
-    session = current_app.config['db']()
-    q = session.query(Game.hash).filter(Game.players.op('@>')('{\'%s\', \'%s\'}' % (id1, id2)))
-    print(str(q))
-    common_games = q.all()
-    session.close()
-    return jsonify([url_for('replays.view_replay', id_=h) for h in common_games])
-
-
-
+def get_stats_query():
+    q = func.avg(PlayerGame.score), func.avg(PlayerGame.goals), func.avg(PlayerGame.assists), \
+        func.avg(PlayerGame.saves), func.avg(PlayerGame.shots), func.avg(PlayerGame.a_possession), \
+        func.avg(PlayerGame.a_hits - PlayerGame.a_dribble_conts), \
+        func.avg((100 * PlayerGame.shots) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
+        func.avg((100 * PlayerGame.a_passes) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
+        func.avg((100 * PlayerGame.assists) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
+        func.avg(PlayerGame.a_turnovers)
+    return q
