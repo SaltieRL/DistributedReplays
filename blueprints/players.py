@@ -49,7 +49,7 @@ def compare_player_redir(id_):
     return redirect(url_for('players.compare_player', ids=",".join([id_, other])))
 
 
-@bp.route('/overview/compare/<ids>')
+@bp.route('/compare/<ids>')
 def compare_player(ids):
     session = current_app.config['db']()
     ids = ids.split(',')

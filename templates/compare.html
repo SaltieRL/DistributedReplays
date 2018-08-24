@@ -8,7 +8,7 @@
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
-        / comparing {% for p in users %}{{ p['steam_profile']['response']['players'][0]['personaname'] }} {% endfor %}
+        / comparing {% for p in users %}<a href="{{ url_for('players.view_player', id_=p['id']) }}">{{ p['steam_profile']['response']['players'][0]['personaname'] }}</a> {% endfor %}
     </div>
     <div class="main">
         / tendencies
