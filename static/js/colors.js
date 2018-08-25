@@ -178,7 +178,7 @@ define('colors', function () {
         ]
     };
 
-    const overallColors = [0x36a2eb, 0xa29bfe, 0xffeaa7, 0x55efc4, 0xfd79a8];
+    const overallColors = [0x36a2eb, 0xff6384, 0xa29bfe, 0xffeaa7, 0x55efc4, 0xfd79a8];
 
     function getHorizontalChartColor(index, is_orange) {
         let chart = materialTeamChartColors;
