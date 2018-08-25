@@ -9,9 +9,6 @@
 {% block body %}
     <div class="sidebar">
         / comparing
-{#        {% for p in users %}#}
-{#            <a href="{{ url_for('players.view_player', id_=p['id']) }}">{{ p['steam_profile']['response']['players'][0]['personaname'] }}</a>#}
-{#        {% endfor %}#}
         {% for p in users %}
             {% set player = p['steam_profile']['response']['players'][0] %}
             {% include "partials/player/profile.html" %}
@@ -20,64 +17,7 @@
     <div class="main">
         / tendencies
         <div class="rankpanel" style="max-width: 400px;">
-            {% set names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Possession', 'Hits', 'Shots/Hit', 'Passes/Hit', 'Assists/Hit', 'Turnovers'] %}
-            {% set titles = ['Basic', 'Aggressiveness'] %}
-            {% set groups = [[1, 2, 3, 4, 10], [5, 6, 7, 8, 9]] %}
-            {% for g in groups %}
-                <canvas id="radar{{ loop.index }}">
-
-                </canvas>
-                <script>
-
-                    var data = {
-                        labels: [
-                            {% for i in g %}'{{ names[i] }}',{% endfor %}
-                        ],
-                        datasets:
-                            [
-                                {% for p in users %}
-                                    {% set stats = p['stats'] %}
-                                    {
-                                        data: [
-                                            {% for i in g %}
-                                                {{ stats[i] }},
-                                            {% endfor %}
-                                        ],
-                                        {% set color = [range(0, 255) | random, range(0, 255) | random, range(0, 255) | random] %}
-                                        backgroundColor: 'rgba({{ color[0] }}, {{ color[1] }}, {{ color[2] }}, 0.2)',
-                                        pointBackgroundColor: 'rgba({{ color[0] }}, {{ color[1] }}, {{ color[2] }}, 1)',
-                                        borderColor: 'rgba({{ color[0] }}, {{ color[1] }}, {{ color[2] }}, 1)',
-                                        label: '{{ p['steam_profile']['response']['players'][0]['personaname'] }}'
-                                    },
-                                {% endfor %}
-                                {
-                                    data: [{% for x in range(g|length) %}1,{% endfor %}],
-                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                    pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                    label: 'Average'
-                                },
-
-                            ],
-                    };
-                    var ctx = document.getElementById('radar{{ loop.index }}').getContext('2d');
-                    var myRadarChart{{ loop.index }} = new Chart(ctx, {
-                        type: 'radar',
-                        data: data,
-                        options: {
-                            scale: {
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: '{{ titles[loop.index - 1] }}'
-                            }
-                        }
-                    });
-                </script>
-            {% endfor %}
+            {% include "partials/player/spider_charts.html" %}
         </div>
         / match history
         <div class="matchhistory">
@@ -85,7 +25,7 @@
                 {% include "partials/replay/match_history.html" %}
             {% else %}
                 <div class="errmsg">
-                    no matches recorded for this profile (are you using the auto-uploader?)
+                    No matches are shared between these players.
                 </div>
             {% endif %}
         </div>

@@ -1,0 +1,25 @@
+{% from "macros/json.html" import jsonify_nested %}
+{% from "macros/json.html" import print_list %}
+{% set names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Possession', 'Hits', 'Shots/Hit', 'Passes/Hit', 'Assists/Hit', 'Turnovers'] %}
+{% set titles = ['Basic', 'Aggressiveness'] %}
+{% set groups = [[1, 2, 3, 4, 10], [5, 6, 7, 8, 9]] %}
+
+{% if not users %}
+    {% set users=[{'stats': stats}] %}
+{% endif %}
+
+<script>
+    let stat_data = {{ jsonify_nested(users, ['stats']) }}
+    let label_data = {{ names|tojson }}
+    let groups = {{ groups|tojson }}
+    let titles = {{titles|tojson}}
+</script>
+
+{% for g in groups %}
+<canvas id="radar{{ loop.index }}">
+
+</canvas>
+<script>
+
+</script>
+{% endfor %}

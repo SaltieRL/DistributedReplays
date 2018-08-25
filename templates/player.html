@@ -35,60 +35,14 @@
         </div>
         / tendencies
         <div class="rankpanel" style="max-width: 400px;">
-            {% set names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Possession', 'Hits', 'Shots/Hit', 'Passes/Hit', 'Assists/Hit', 'Turnovers'] %}
-            {% set titles = ['Basic', 'Aggressiveness'] %}
-            {% set groups = [[1, 2, 3, 4, 10], [5, 6, 7, 8, 9]] %}
-            {% for g in groups %}
-                <canvas id="radar{{ loop.index }}">
-
-                </canvas>
-                <script>
-
-                    var data = {
-                        labels: [
-                            {% for i in g %}'{{ names[i] }}',{% endfor %}
-                        ],
-                        datasets:
-                            [
-                                {
-                                    data: [
-                                        {% for i in g %}
-                                            {{ stats[i] }},
-                                        {% endfor %}
-                                    ],
-                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-                                    borderColor: 'rgba(255, 99, 132, 1)',
-                                    label: 'Player'
-                                },
-                                {
-                                    data: [{% for x in range(g|length) %}1,{% endfor %}],
-                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                    pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                    label: 'Average'
-                                },
-
-                            ],
-                    };
-                    var ctx = document.getElementById('radar{{ loop.index }}').getContext('2d');
-                    var myRadarChart{{ loop.index }} = new Chart(ctx, {
-                        type: 'radar',
-                        data: data,
-                        options: {
-                            scale: {
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: '{{ titles[loop.index - 1] }}'
-                            }
-                        }
-                    });
-                </script>
-            {% endfor %}
+            {% set min_replays = 1 %}
+            {% if games|length > min_replays %}
+                {% include "partials/player/spider_charts.html" %}
+            {% else %}
+            <div class="errmsg">
+                no replays recorded for this profile (are you using the auto-uploader?)
+            </div>
+            {% endif %}
         </div>
         / match history
         <div class="matchhistory">
