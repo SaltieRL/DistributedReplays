@@ -4,6 +4,7 @@ import pickle
 import random
 
 import numpy as np
+import redis
 from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app, jsonify
 from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
@@ -204,9 +205,12 @@ def distribution():
     except KeyError:
         r = None
     if r is not None:
-        cache = r.get('stats_cache')
-        if cache is not None:
-            return jsonify(json.loads(cache))
+        try:
+            cache = r.get('stats_cache')
+            if cache is not None:
+                return jsonify(json.loads(cache))
+        except redis.exceptions.ConnectionError as e:
+            print('Issue connecting to cache')
     overall_data = {}
     numbers = []
     for n in range(4):
@@ -226,7 +230,10 @@ def distribution():
         overall_data[id_] = data
 
     if r is not None:
-        r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
+        try:
+            r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
+        except redis.exceptions.ConnectionError as e:
+            print('connection error')
 
     session.close()
     return jsonify(overall_data)
