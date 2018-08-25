@@ -177,7 +177,7 @@ def render_with_session(template, session, **kwargs):
 
 def get_rank_batch(ids, offline_redis=None):
     return_data = {}
-    if fake_data:
+    if fake_data or RL_API_KEY is None:
         return make_fake_data(ids)
     try:
         r = current_app.config['r']  # type: redis.Redis

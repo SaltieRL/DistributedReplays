@@ -92,10 +92,15 @@ def get_stats(id_, session):
         global_stats = q.first()
         stats = list(q.filter(PlayerGame.player == id_).first())
         print(stats)
+
         for i, s in enumerate(stats):
-            if s is None:
-                stats[i] = 0
-        stats = [s / g for s, g in zip(stats, global_stats)]
+            player_stat = s
+            if player_stat is None:
+                player_stat = 0
+            global_stat = global_stats[i]
+            if global_stat is None or global_stat == 0:
+                global_stat = 1
+            stats[i] = float(player_stat / global_stat)
     else:
         favorite_car = "Unknown"
         favorite_car_pctg = 0.0
