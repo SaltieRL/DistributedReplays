@@ -28,7 +28,7 @@
     {% for item in list %}
 {
     {% for key in keys %}
-    {{key}}: {{item[key]|tojson}},
+        {{key}}: {{item[key]|tojson}},
     {% endfor %}
 },
     {% endfor %}

@@ -1,25 +1,37 @@
 {% from "macros/json.html" import jsonify_nested %}
 {% from "macros/json.html" import print_list %}
-{% set names = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Possession', 'Hits', 'Shots/Hit', 'Passes/Hit', 'Assists/Hit', 'Turnovers'] %}
+{% set labels = ['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Possession', 'Hits', 'Shots/Hit', 'Passes/Hit', 'Assists/Hit', 'Turnovers'] %}
 {% set titles = ['Basic', 'Aggressiveness'] %}
 {% set groups = [[1, 2, 3, 4, 10], [5, 6, 7, 8, 9]] %}
 
-{% if not users %}
-    {% set users=[{'stats': stats}] %}
+{% if not stats %}
+    {% set stats = [] %}
 {% endif %}
 
-<script>
-    let stat_data = {{ jsonify_nested(users, ['stats']) }}
-    let label_data = {{ names|tojson }}
-    let groups = {{ groups|tojson }}
-    let titles = {{titles|tojson}}
-</script>
+{% if not users %}
+    {% set users = [{'stats': stats}] %}
+    {% set user_names = ['Player'] %}
+{% else %}
+    {% set user_names = [] %}
+    {% for player in users %}
+        {{ user_names.append(player['steam_profile']['response']['players'][0]['personaname']) }}
+    {% endfor %}
+{% endif %}
 
-{% for g in groups %}
+{% for group in groups %}
 <canvas id="radar{{ loop.index }}">
 
 </canvas>
 <script>
-
+    requirejs(['spiderChart'], function (spiderChart) {
+        spiderChart.createChart(
+            "radar{{ loop.index }}",
+            "{{ titles[loop.index] }}",
+            [{{ jsonify_nested(users, ['stats']) }}],
+            {{ labels|tojson }},
+            {{ user_names|tojson }},
+            {{ group|tojson }}
+        )
+    })
 </script>
 {% endfor %}

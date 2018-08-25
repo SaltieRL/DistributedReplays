@@ -151,7 +151,13 @@ define('colors', function () {
         ]
     };
 
-    const overallColors = ['#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4', '#fd79a8'];
+    const spider_chart_colors = {
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+    };
+
+    const overallColors = [0x74b9ff, 0xa29bfe, 0xffeaa7, 0x55efc4, 0xfd79a8];
 
     function getHorizontalChartColor(index, is_orange) {
         let chart = materialTeamChartColors;
@@ -159,17 +165,46 @@ define('colors', function () {
         return list[index % list.length];
     }
 
+    function getSpiderColors(numberOfColorsNeeded) {
+        let colors = overallColors.slice(0, numberOfColorsNeeded);
+        let result = [];
+        for (let i = 0; i < colors.length; i++) {
+            result.push({
+                backgroundColor: convertColorToString(colors[i], 0.2),
+                pointBackgroundColor: convertColorToString(colors[i], 1),
+                borderColor: convertColorToString(colors[i], 1)
+            })
+        }
+        return result
+    }
+
     function getLineColor() {
         return "rgba(32, 45, 21, 0.3)";
     }
 
-    function getChartColorList(numberOfColorsNeeded) {
-        return overallColors.slice(0, numberOfColorsNeeded)
+    function getChartColorList(numberOfColorsNeeded, colorList=overallColors) {
+        let colors = colorList.slice(0, numberOfColorsNeeded);
+        let result = [];
+        for (let i = 0; i < colors.length; i++) {
+            result.push(convertColorToString(colors[i]))
+        }
+        return result
+    }
+
+    /**
+     * Converts a color to string + alpha
+     * @param color
+     * @param alpha between 0 and 1
+     * @returns {string}
+     */
+    function convertColorToString(color, alpha = 1) {
+        return "#"+((color)>>>0).toString(16).slice(-6) + Math.round(alpha * 255).toString(16)
     }
 
     return {
         getHorizontalChartColor: getHorizontalChartColor,
         getLineColor: getLineColor,
-        getChartColors: getChartColorList
+        getChartColors: getChartColorList,
+        getSpiderColors: getSpiderColors,
     }
 });
