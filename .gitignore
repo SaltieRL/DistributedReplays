@@ -78,3 +78,5 @@ config.cfg
 
 parsed/
 rlreplays/
+privkey.pem
+cert.pem

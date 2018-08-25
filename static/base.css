@@ -3,6 +3,10 @@
     font-family: "Shrikhand";
     font-size: 50px;
 }
+.logo-small {
+    font-family: "Fira Mono";
+    font-size: 20px;
+}
 
 a {
     text-decoration: none;
