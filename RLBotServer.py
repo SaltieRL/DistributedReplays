@@ -30,7 +30,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['BASE_URL'] = 'http://saltie.tk'
+app.config['BASE_URL'] = 'https://calculated.gg'
 app.config['REPLAY_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'rlreplays')
 app.config['PARSED_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'parsed')
 app.config.update(
