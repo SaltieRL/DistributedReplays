@@ -27,7 +27,7 @@ bp = Blueprint('replays', __name__, url_prefix='/replays')
 print('Loaded replay app')
 
 
-@bp.route('/', methods=['GET'])
+@bp.route('/upload', methods=['GET'])
 def replays_home():
     session = current_app.config['db']()
     replay_count = queries.get_replay_count(session)
