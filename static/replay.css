@@ -7,3 +7,12 @@
     border: 1px solid #333;
 }
 
+.player-box {
+    flex-grow: 2;
+    margin-right: 10px;
+}
+
+.score-box {
+    flex-grow: 8;
+    padding: 10px;
+}
