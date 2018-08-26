@@ -47,13 +47,28 @@ def filter_proto_fields(proto_field_list: List[ProtoFieldResult], blacklist_fiel
     return result_list
 
 
-def get_db_proto_union(proto_field_list: List[ProtoFieldResult], db_object: DBObjectBase):
+def get_db_proto_union(proto_field_list: List[ProtoFieldResult], db_object: DBObjectBase) -> List[ProtoFieldResult]:
     result_list = []
     for item in proto_field_list:
         if not hasattr(db_object, item.field_name):
             continue
         result_list.append(item)
     return result_list
+
+
+def create_and_filter_proto_field(proto_message: message, blacklist_field_names: List[str],
+                                  blacklist_message_types: List[str], db_object: DBObjectBase) -> List[ProtoFieldResult]:
+    """
+    Creates a flatten list of the union of protobuf and db objects.
+    :param proto_message: The protobuf message we are grabbing fields from.
+    :param blacklist_field_names: Fields we do not want included.
+    :param blacklist_message_types: Message types we do not want included.
+    :param db_object: The database object that is being unioned with the protobuf
+    :return: A list of fields that can be used to go between protobuf and the database.
+    """
+    list = get_proto_fields_as_flatten_list(proto_message)
+    list = filter_proto_fields(list, blacklist_field_names, blacklist_message_types)
+    return get_db_proto_union(list, db_object)
 
 
 if __name__ == "__main__":
