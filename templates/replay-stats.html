@@ -14,8 +14,8 @@
 <div class="main">
     / distributions
     <h5>Click legend items to toggle</h5>
-    {% set graphs=['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Hits', 'Turnovers', 'Passes', 'Dribbles'] %}
-    {% set fields=['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles'] %}
+    {% set graphs=['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Hits', 'Turnovers', 'Passes', 'Dribbles', 'Assists per Hit', 'Shots per Hit', 'Turnovers per Hit', 'Dribbles per Hit'] %}
+    {% set fields=['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles', 'assistsph', 'savesph', 'shotsph', 'a_turnoversph', 'a_dribblesph'] %}
     {% set graph_length = graphs|length %}
     <div id="graphs" class="graph-list-container" style="position:relative;">
         {% for graph in graphs %}
@@ -48,13 +48,14 @@
                 let category = element.getAttribute('data-field');
                 let categoryHistogram = histData[category];
                 if (typeof categoryHistogram !== 'undefined') {
-                    console.log('recreating graph', mode);
+                    {#console.log('recreating graph', mode);#}
                     generateGraph(categoryHistogram, category, index, mode);
                 }
             }
 
             function generateGraph(categoryHistogram, category, index, gamemode) {
-                let labels = Object.keys(categoryHistogram[2]).map(x => parseInt(x));
+                let labels = categoryHistogram[2]['keys']
+                labels.sort((a, b) => Number(a) - Number(b));
                 if (category.startsWith('a_')) {
                     categoryHistogram[0] = 0
                 }
@@ -62,7 +63,7 @@
                 for (let x = 1; x < 4; x++) {
                     ds.push({
                         label: x + 's',
-                        data: Object.values(categoryHistogram[x]),
+                        data: Object.values(categoryHistogram[x]['values']),
                         backgroundColor: color_list[(x) % color_list.length]
                     })
                 }
@@ -71,7 +72,7 @@
                     'datasets': ds
                 };
                 charts[index].update();
-                console.log(charts[index].data);
+                {#console.log(charts[index].data);#}
             }
 
             server.asyncJsonGet('/replays/stats/all', function (data) {

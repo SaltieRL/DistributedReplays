@@ -6,15 +6,14 @@ import random
 import numpy as np
 import redis
 from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app, jsonify
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, Float, cast, Numeric
 from werkzeug.utils import secure_filename
 
-from tasks import celery_tasks
 from data import constants
 from database import queries
-from helpers.functions import return_error, get_item_dict, render_with_session, get_rank_batch
 from database.objects import PlayerGame, Game
-from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as Game_pickle
+from helpers.functions import return_error, get_item_dict, render_with_session, get_rank_batch
+from tasks import celery_tasks
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
 #
@@ -175,7 +174,8 @@ def score_distribution_np():
                     'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
 
-stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_passes', 'a_dribbles', 'a_turnovers']
+stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles', 'assistsph',
+         'savesph', 'shotsph', 'a_turnoversph', 'a_dribblesph']
 
 
 @bp.route('/stats/<id_>')
@@ -218,15 +218,27 @@ def distribution():
     print(numbers)
     for id_ in stats:
         gamemodes = range(1, 5)
-        q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
-            getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
+        print(id_)
+        if id_.endswith('ph'):
+            q = session.query(func.round(cast(getattr(PlayerGame, id_.replace('ph', '')), Numeric) / PlayerGame.a_hits, 2).label('n'),
+                              func.count(PlayerGame.id)).filter(PlayerGame.a_hits > 0).group_by('n').order_by('n')
+        else:
+            q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
+                getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
         if id_ == 'score':
             q = q.filter(PlayerGame.score % 10 == 0)
         data = {}
         for g in gamemodes:
             # print(g)
             d = q.join(Game).filter(Game.teamsize == g).all()
-            data[g] = {k: v / float(numbers[g - 1]) for k, v in d if k is not None}
+            data[g] = {
+                'keys': [],
+                'values':[]
+            }
+            for k, v in d:
+                if k is not None:
+                    data[g]['keys'].append(float(k))
+                    data[g]['values'].append(float(v) / float(numbers[g - 1]))
         overall_data[id_] = data
 
     if r is not None:
