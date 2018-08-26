@@ -2,7 +2,9 @@ from typing import List
 from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf import message
 
+from database.objects import DBObjectBase, PlayerGame
 from replayanalysis.replay_analysis.generated.api import player_pb2
+
 
 class ProtoFieldResult:
     def __init__(self, nested_parents, field_name, field_descriptor):
@@ -44,8 +46,20 @@ def filter_proto_fields(proto_field_list: List[ProtoFieldResult], blacklist_fiel
             result_list.append(item)
     return result_list
 
+
+def get_db_proto_union(proto_field_list: List[ProtoFieldResult], db_object: DBObjectBase):
+    result_list = []
+    for item in proto_field_list:
+        if not hasattr(db_object, item.field_name):
+            continue
+        result_list.append(item)
+    return result_list
+
+
 if __name__ == "__main__":
     list = get_proto_fields_as_flatten_list(player_pb2.Player)
     list = filter_proto_fields(list, ['name', 'title_id', 'is_orange'],
-                        ['api.metadata.CameraSettings', 'api.metadata.PlayerLoadout', 'api.PlayerId'])
+                               ['api.metadata.CameraSettings', 'api.metadata.PlayerLoadout', 'api.PlayerId'])
+
+    list = get_db_proto_union(list, PlayerGame)
     print(list)

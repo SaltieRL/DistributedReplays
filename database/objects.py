@@ -6,7 +6,7 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+DBObjectBase = declarative_base()
 
 
 class Playlist(enum.Enum):
@@ -31,7 +31,7 @@ class MatchType(enum.Enum):
     public = 3
 
 
-class User(Base):
+class User(DBObjectBase):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
@@ -42,7 +42,7 @@ class User(Base):
         return "<User(name='%s')>" % self.name
 
 
-class Replay(Base):
+class Replay(DBObjectBase):
     __tablename__ = 'replays'
 
     id = Column(Integer, primary_key=True)
@@ -59,7 +59,7 @@ class Replay(Base):
         return "<Replay(uuid='%s', user='%s', ip='%s')>" % (self.uuid, self.user, self.ip)
 
 
-class Model(Base):
+class Model(DBObjectBase):
     __tablename__ = 'models'
 
     model_hash = Column(String(40), primary_key=True)
@@ -73,7 +73,7 @@ class Model(Base):
                                                                                 self.total_reward, self.evaluated)
 
 
-class PlayerGame(Base):
+class PlayerGame(DBObjectBase):
     __tablename__ = 'playergames'
 
     id = Column(Integer, primary_key=True)
@@ -118,7 +118,7 @@ class PlayerGame(Base):
     a_possession = Column(Float)
 
 
-class Game(Base):
+class Game(DBObjectBase):
     __tablename__ = 'games'
     hash = Column(String(40), primary_key=True)  # replayid
     name = Column(String(40))
@@ -137,7 +137,7 @@ class Game(Base):
     team1possession = Column(Float)
 
 
-class Player(Base):
+class Player(DBObjectBase):
     __tablename__ = 'players'
     platformid = Column(String(40), primary_key=True)
     platformname = Column(String(50))
@@ -146,7 +146,7 @@ class Player(Base):
     games = relationship('PlayerGame')
 
 
-class CameraSettings(Base):
+class CameraSettings(DBObjectBase):
     __tablename__ = 'camera_settings'
     id = Column(Integer, primary_key=True, autoincrement=True)
     field_of_view = Column(Integer)
