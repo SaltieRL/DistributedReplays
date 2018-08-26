@@ -313,7 +313,7 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 
 		options = options || {};
 
-		// setup reasonable default values for all arguments
+		// getCore reasonable default values for all arguments
 
 		position = options.position !== undefined ? position.copy( options.position ) : position.set( 0, 0, 0 );
 		velocity = options.velocity !== undefined ? velocity.copy( options.velocity ) : velocity.set( 0, 0, 0 );
