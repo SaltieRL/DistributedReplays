@@ -13,6 +13,11 @@ class ProtoFieldResult:
         self.nested_parents = nested_parents
 
 
+class DynamicFieldResult:
+    def __init__(self, field_name):
+        self.field_name = field_name
+
+
 def get_proto_fields_as_flatten_list(proto_message: message, nested_parents=None) -> List[ProtoFieldResult]:
     list = []
     message_name = proto_message.DESCRIPTOR.full_name
@@ -70,6 +75,9 @@ def create_and_filter_proto_field(proto_message: message, blacklist_field_names:
     list = filter_proto_fields(list, blacklist_field_names, blacklist_message_types)
     return get_db_proto_union(list, db_object)
 
+
+def add_dynamic_fields(names):
+    return [DynamicFieldResult(name) for name in names]
 
 if __name__ == "__main__":
     list = get_proto_fields_as_flatten_list(player_pb2.Player)
