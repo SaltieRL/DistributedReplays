@@ -1,4 +1,9 @@
 <div id="viewer-container" style="position: relative">
+    <script>
+        requirejs(['replayViewer'], function (viewer) {
+            viewer.startViewer('{{ id }}');
+        });
+    </script>
     <div id="viewer" style="display: block"></div>
     <button onclick="cameraTop()">Top View</button>
     <button onclick="cameraSide()">Side View</button>
@@ -8,4 +13,3 @@
     <button onclick="lowerCamera()">Lower</button>
     <button onclick="graph()">Graph</button>
 </div>
-<canvas id="chart"></canvas>

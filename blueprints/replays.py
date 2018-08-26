@@ -89,7 +89,7 @@ def view_replay_data(id_):
     pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-        return render_template('replay.html', replay=None, id=id_)
+        return jsonify("Error no replay exists for this user")
     try:
         g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
