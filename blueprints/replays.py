@@ -4,17 +4,16 @@ import pickle
 import random
 
 import numpy as np
+import redis
 from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app, jsonify
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, Float, cast, Numeric
 from werkzeug.utils import secure_filename
 
-from tasks import celery_tasks
 from data import constants
 from database import queries
-from helpers.functions import return_error, get_item_dict
 from database.objects import PlayerGame, Game
-from blueprints.players import get_rank_batch
-from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as Game_pickle
+from helpers.functions import return_error, get_item_dict, render_with_session, get_rank_batch
+from tasks import celery_tasks
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
 #
@@ -27,13 +26,13 @@ bp = Blueprint('replays', __name__, url_prefix='/replays')
 print('Loaded replay app')
 
 
-@bp.route('/', methods=['GET'])
+@bp.route('/upload', methods=['GET'])
 def replays_home():
     session = current_app.config['db']()
     replay_count = queries.get_replay_count(session)
     replay_data = queries.get_replay_stats(session)
     model_data = queries.get_model_stats(session)
-    return render_template('upload.html', stats=replay_data, total=replay_count, model_stats=model_data)
+    return render_with_session('upload.html', session, stats=replay_data, total=replay_count, model_stats=model_data)
 
 
 @bp.route('/parse', methods=['POST'])
@@ -80,7 +79,8 @@ def view_replay(id_):
     #         p.id = p.id
     #         print('array online_id', p.id)
     ranks = get_rank_batch(players)
-    return render_template('replay.html', replay=game, cars=constants.cars, id=id_, ranks=ranks, item_dict=get_item_dict())
+    return render_with_session('replay.html', session, replay=game, cars=constants.cars, id=id_, ranks=ranks,
+                               item_dict=get_item_dict())
 
 
 @bp.route('/parsed/view/<id_>/positions')
@@ -88,7 +88,7 @@ def view_replay_data(id_):
     pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-        return render_template('replay.html', replay=None, id=id_)
+        return jsonify("Error no replay exists for this user")
     try:
         g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
     except Exception as e:
@@ -169,11 +169,13 @@ def score_distribution_np():
         PlayerGame.score % 10 == 0).filter(PlayerGame.score > 0).all())
     non_log = np.histogram(data, bins=30)
     log = np.histogram(np.log(data), bins=30)
+    session.close()
     return jsonify({'log': {'data': log[0].tolist(), 'bins': log[1].tolist()},
                     'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
 
-stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_passes', 'a_dribbles', 'a_turnovers']
+stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles', 'assistsph',
+         'savesph', 'shotsph', 'a_turnoversph', 'a_dribblesph']
 
 
 @bp.route('/stats/<id_>')
@@ -203,9 +205,12 @@ def distribution():
     except KeyError:
         r = None
     if r is not None:
-        cache = r.get('stats_cache')
-        if cache is not None:
-            return jsonify(json.loads(cache))
+        try:
+            cache = r.get('stats_cache')
+            if cache is not None:
+                return jsonify(json.loads(cache))
+        except redis.exceptions.ConnectionError as e:
+            print('Issue connecting to cache')
     overall_data = {}
     numbers = []
     for n in range(4):
@@ -213,19 +218,36 @@ def distribution():
     print(numbers)
     for id_ in stats:
         gamemodes = range(1, 5)
-        q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
-            getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
+        print(id_)
+        if id_.endswith('ph'):
+            q = session.query(func.round(cast(getattr(PlayerGame, id_.replace('ph', '')), Numeric) / PlayerGame.a_hits, 2).label('n'),
+                              func.count(PlayerGame.id)).filter(PlayerGame.a_hits > 0).group_by('n').order_by('n')
+        else:
+            q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
+                getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
         if id_ == 'score':
             q = q.filter(PlayerGame.score % 10 == 0)
         data = {}
         for g in gamemodes:
             # print(g)
             d = q.join(Game).filter(Game.teamsize == g).all()
-            data[g] = {k: v / float(numbers[g - 1]) for k, v in d if k is not None}
+            data[g] = {
+                'keys': [],
+                'values':[]
+            }
+            for k, v in d:
+                if k is not None:
+                    data[g]['keys'].append(float(k))
+                    data[g]['values'].append(float(v) / float(numbers[g - 1]))
         overall_data[id_] = data
 
     if r is not None:
-        r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
+        try:
+            r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
+        except redis.exceptions.ConnectionError as e:
+            print('connection error')
+
+    session.close()
     return jsonify(overall_data)
 
 
@@ -239,4 +261,6 @@ def car_distribution():
         car, val = entry
         if int(car) in constants.cars:
             car_data.append([constants.cars[int(car)], val])
+
+    session.close()
     return jsonify(car_data)

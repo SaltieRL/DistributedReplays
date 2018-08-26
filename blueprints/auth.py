@@ -85,6 +85,7 @@ def steam_process():
             u = Player(platformid=user_id, platformname=profile['personaname'], avatar=profile['avatarfull'])
             s.add(u)
         s.commit()
+        s.close()
         session['openid'] = user_id
         return redirect(url_for('home'))
     return jsonify({'error': 'invalid openid credentials'})

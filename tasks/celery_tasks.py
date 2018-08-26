@@ -5,14 +5,12 @@ from celery import Celery
 # from helpers import rewards
 import sys
 
-sys.path.append('..')
+sys.path.append(os.path.abspath('replayanalysis/'))
 from tasks import celeryconfig
 from helpers.functions import convert_pickle_to_db, add_objs_to_db
 from helpers.middleware import DBTask
 from database.objects import Game
-from replayanalysis import decompile_replay
-from replayanalysis import SaltieGame as ReplayGame
-
+from replayanalysis.decompile_replays import decompile_replay
 # bp = Blueprint('celery', __name__)
 
 
@@ -74,6 +72,7 @@ def parse_replay_task(self, fn):
     game, player_games, players = convert_pickle_to_db(g)
     add_objs_to_db(game, player_games, players, sess)
     sess.commit()
+    sess.close()
 
 
 if __name__ == '__main__':

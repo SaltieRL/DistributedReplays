@@ -8,11 +8,8 @@ from flask import render_template, url_for, redirect, request, jsonify, send_fro
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
-from blueprints.players import get_rank, tier_div_to_string
+from helpers.functions import get_rank, tier_div_to_string
 from database.objects import Game
-from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
-from replayanalysis.json_parser.player import Player
-from replayanalysis.json_parser.team import Team
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -123,6 +120,7 @@ def api_v1_get_replays():
     response['page'] = page + 1
     response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2, key=api_key)
     response['version'] = 1
+    session.close()
     return jsonify(response)
 
 
@@ -140,13 +138,13 @@ def api_v1_get_stats():
     session = current_app.config['db']()
     ct = session.query(Game).count()
     dct = len([f for f in os.listdir(current_app.config['PARSED_DIR']) if f.endswith('pkl')])
+    session.close()
     return jsonify({'db_count': ct, 'count': dct})
 
 
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    session = current_app.config['db']()
     pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
@@ -191,32 +189,3 @@ def api_v1_download_parsed(fn):
 def api_v1_get_rank(id_):
     return jsonify(get_rank(id_))
 
-
-def player_interface(data, g, mmrs, ranks):
-    data['players'] = []
-    for p, mmr, rank in zip(g.players, mmrs, ranks):  # type: Player
-        d = {'camera_settings': p.camera_settings, 'name': p.name, 'online_id': p.online_id, 'score': p.score,
-             'saves': p.saves, 'shots': p.shots, 'goals': p.goals, 'title': p.title, 'team_is_orange': p.team.is_orange,
-             'loadout': p.loadout, 'mmr': mmr, 'rank': rank}
-        data['players'].append(d)
-    return data
-
-
-def team_interface(data, game: ReplayGame):
-    data['teams'] = []
-    for t in game.teams:  # type: Team
-        d = {'name': t.name, 'players': [p.name for p in t.players], 'score': t.score, 'is_orange': t.is_orange}
-        data['teams'].append(d)
-    return data
-
-
-def score_interface(data, game: ReplayGame):
-    data['score'] = {'team0score': game.teams[0].score, 'team1score': game.teams[1].score}
-    return data
-
-
-def goals_interface(data, game: ReplayGame):
-    data['goals'] = []
-    for goal in game.goals:
-        data['goals'].append({'frame': goal.frame_number, 'player': goal.player_name})
-    return data

@@ -8,36 +8,51 @@
     {% include "partials/imports/graph.html" %}
 {% endblock imports %}
 {% block body %}
-<div class="sidebar">
-    / profile information
-    <div class="playerpanel">
-        {% if player %}
-        {% include "partials/player/profile.html" %}
-        {% endif %}
+    <div class="sidebar">
+        / profile information
+        <div class="playerpanel">
+            {% if player %}
+                {% include "partials/player/profile.html" %}
+            {% endif %}
+        </div>
+        / player stats
+        {% include "partials/player/stats.html" %}
+        <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
+            <input type="text" name="other" placeholder="Compare other user"/>
+            <button type="submit">Submit</button>
+        </form>
     </div>
-    / player stats
-    {% include "partials/player/stats.html" %}
-</div>
-<div class="main">
-    / rank information
-    <div class="rankpanel">
-        {% if rank %}
-        {% include "partials/player/ranks.html" %}
-        {% else %}
+    <div class="main">
+        / rank information
+        <div class="rankpanel">
+            {% if rank %}
+                {% include "partials/player/ranks.html" %}
+            {% else %}
+                <div class="errmsg">
+                    unable to find rank information for this profile (does this player own rocket league?)
+                </div>
+            {% endif %}
+        </div>
+        / tendencies
+        <div class="rankpanel" style="max-width: 400px;">
+            {% set min_replays = 1 %}
+            {% if games|length > min_replays %}
+                {% include "partials/player/spider_charts.html" %}
+            {% else %}
             <div class="errmsg">
-                unable to find rank information for this profile (does this player own rocket league?)
+                no replays recorded for this profile (are you using the auto-uploader?)
             </div>
-        {% endif %}
+            {% endif %}
+        </div>
+        / match history
+        <div class="matchhistory">
+            {% if games %}
+                {% include "partials/replay/match_history.html" %}
+            {% else %}
+                <div class="errmsg">
+                    no matches recorded for this profile (are you using the auto-uploader?)
+                </div>
+            {% endif %}
+        </div>
     </div>
-    / match history
-    <div class="matchhistory">
-        {% if games %}
-            {% include "partials/replay/match_history.html" %}
-        {% else %}
-            <div class="errmsg">
-                no matches recorded for this profile (are you using the auto-uploader?)
-            </div>
-        {% endif %}
-    </div>
-</div>
 {% endblock body %}

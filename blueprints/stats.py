@@ -57,6 +57,7 @@ def upload_stats(time, model):
             'count': r[3]
         } for r in result[::-1]]
         result = sorted(result, key=lambda x: x['year'] * 365 + x['month'] * 30 + x['day'])
+    session.close()
     return jsonify(result)
 
 
@@ -127,6 +128,7 @@ def get_mmr_array():
     mmrs = np.array([])
     for g in games:
         mmrs = np.concatenate((mmrs, g.mmrs))
+    session.close()
     return mmrs
 
 
@@ -137,4 +139,5 @@ def get_rank_array():
     arr = np.array([])
     for g in games:
         arr = np.concatenate((arr, g.ranks))
+    session.close()
     return arr
