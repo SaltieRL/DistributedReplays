@@ -1,7 +1,7 @@
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from database.objects import Base
+from database.objects import DBObjectBase
 
 
 def login(connection_string, recreate_database=False):
@@ -13,7 +13,7 @@ def login(connection_string, recreate_database=False):
         conn.execute("create database saltie")
         conn.close()
         engine = create_engine(connection_string + '/saltie', echo=False)
-    Base.metadata.create_all(engine)
+    DBObjectBase.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     return engine, Session
 
