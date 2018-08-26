@@ -8,6 +8,8 @@ from flask import Flask, render_template, g, current_app, session, request
 from flask_cors import CORS
 
 import config
+
+sys.path.append(os.path.abspath('replayanalysis/'))
 try:
     from config import ALLOWED_STEAM_ACCOUNTS
 except ImportError:
@@ -20,7 +22,7 @@ import redis
 # APP SETUP
 
 print("Name:", __name__)
-sys.path.append('replayanalysis')
+print(os.path.abspath('replayanalysis/'))
 engine, Session = startup()
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(

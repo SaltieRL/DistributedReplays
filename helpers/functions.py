@@ -9,7 +9,6 @@ from flask import render_template, current_app
 
 # Replay stuff
 from database.objects import Game, PlayerGame, Player
-from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
 
 try:
     from config import RL_API_KEY
@@ -54,7 +53,7 @@ def get_item_dict():
     return item_dict
 
 
-def convert_pickle_to_db(game: ReplayGame, offline_redis=None) -> (Game, list, list):
+def convert_pickle_to_db(game, offline_redis=None) -> (Game, list, list):
     """
     Converts pickled games into various database objects.
 

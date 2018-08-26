@@ -10,9 +10,6 @@ from sqlalchemy.sql import operators
 
 from helpers.functions import get_rank, tier_div_to_string
 from database.objects import Game
-from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
-from replayanalysis.json_parser.player import Player
-from replayanalysis.json_parser.team import Team
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -192,32 +189,3 @@ def api_v1_download_parsed(fn):
 def api_v1_get_rank(id_):
     return jsonify(get_rank(id_))
 
-
-def player_interface(data, g, mmrs, ranks):
-    data['players'] = []
-    for p, mmr, rank in zip(g.players, mmrs, ranks):  # type: Player
-        d = {'camera_settings': p.camera_settings, 'name': p.name, 'online_id': p.online_id, 'score': p.score,
-             'saves': p.saves, 'shots': p.shots, 'goals': p.goals, 'title': p.title, 'team_is_orange': p.team.is_orange,
-             'loadout': p.loadout, 'mmr': mmr, 'rank': rank}
-        data['players'].append(d)
-    return data
-
-
-def team_interface(data, game: ReplayGame):
-    data['teams'] = []
-    for t in game.teams:  # type: Team
-        d = {'name': t.name, 'players': [p.name for p in t.players], 'score': t.score, 'is_orange': t.is_orange}
-        data['teams'].append(d)
-    return data
-
-
-def score_interface(data, game: ReplayGame):
-    data['score'] = {'team0score': game.teams[0].score, 'team1score': game.teams[1].score}
-    return data
-
-
-def goals_interface(data, game: ReplayGame):
-    data['goals'] = []
-    for goal in game.goals:
-        data['goals'].append({'frame': goal.frame_number, 'player': goal.player_name})
-    return data
