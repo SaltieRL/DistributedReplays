@@ -7,6 +7,10 @@ from helpers.dynamic_field_manager import create_and_filter_proto_field, add_dyn
 from replayanalysis.replay_analysis.generated.api import player_pb2
 
 
+def safe_divide(sql_value):
+    return func.greatest(sql_value, 1)
+
+
 class PlayerStatWrapper:
 
     def __init__(self):
@@ -63,20 +67,35 @@ class PlayerStatWrapper:
             field = getattr(PlayerGame, field.field_name)
             stat_list.append(func.avg(field))
 
-        stat_list += func.avg(PlayerGame.a_possession), \
-            func.avg(PlayerGame.a_hits - PlayerGame.a_dribble_conts), \
-            func.avg((100 * PlayerGame.shots) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
-            func.avg((100 * PlayerGame.a_passes) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
-            func.avg((100 * PlayerGame.assists) / (PlayerGame.a_hits - PlayerGame.a_dribble_conts)), \
-            func.avg(PlayerGame.a_turnovers)
+        stat_list += [
+            func.avg(PlayerGame.a_possession),
+            func.avg(PlayerGame.a_hits - PlayerGame.a_dribble_conts),  # hits that are not dribbles
+            func.avg((100 * PlayerGame.shots) /
+                     safe_divide(PlayerGame.a_hits - PlayerGame.a_dribble_conts)),  # Shots per non dribble
+            func.avg((100 * PlayerGame.a_passes) /
+                     safe_divide(PlayerGame.a_hits - PlayerGame.a_dribble_conts)),  # passes per non dribble
+            func.avg((100 * PlayerGame.assists) /
+                     safe_divide(PlayerGame.a_hits - PlayerGame.a_dribble_conts)),  # assists per non dribble
+            func.avg((100 * PlayerGame.shots + PlayerGame.a_passes + PlayerGame.a_saves + PlayerGame.a_goals) /
+                     safe_divide(PlayerGame.a_hits - PlayerGame.a_dribble_conts)),  # useful hit per non dribble
+            func.avg(PlayerGame.a_turnovers),
+            func.avg(100 * PlayerGame.goals / safe_divide(PlayerGame.a_shots)),
+            func.random(), func.avg(func.random()), func.avg(func.random()), func.avg(func.random())]
 
-        field_list += add_dynamic_fields(['possesion', 'non dribbles',
-                                          'shots/hit', 'passes/hit', 'assists/hit', 'turnovers'])
+        field_list += add_dynamic_fields(['possession', 'hits',
+                                          'shots/hit', 'passes/hit', 'assists/hit', 'useful/hits',
+                                          'turnovers', 'shot %',
+                                          'luck1', 'luck2', 'luck3', 'luck4'])
 
         return stat_list, field_list
 
     @staticmethod
     def get_stat_spider_charts():
-        titles = ['Basic', 'Aggressiveness']
-        groups = [['score', 'goals', 'assists', 'saves', 'turnovers'], ['shots', 'posession', 'hits', 'shots/hit', 'passes/hit']]
+        titles = ['Basic', 'Aggressiveness', 'Chemistry', 'Skill', 'Luck']
+        groups = [['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
+                  ['shots', 'possession', 'hits', 'shots/hit'],  # agressive
+                  ['passes/hit', 'assists/hit'],  # chemistry
+                  ['useful/hits', 'shot %'],  # skill
+                  ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
+
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]

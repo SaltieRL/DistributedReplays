@@ -18,6 +18,7 @@
 {% endif %}
 
 {% for chart in spider_charts %}
+<div class="graph-holder">
     <canvas id="radar{{ loop.index }}">
     {% set title = chart.title %}
     {% set group = chart.group %}}
@@ -33,4 +34,5 @@
             )
         })
     </script>
+</div>
 {% endfor %}
