@@ -1,14 +1,10 @@
+import json
+
 from database.objects import PlayerGame
 from sqlalchemy import func, desc, cast, String
 from data import constants
 from helpers.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
 from replayanalysis.replay_analysis.generated.api import player_pb2
-
-
-class ComputedStat:
-    def __init__(self, field_name, stat_value):
-        self.stat_value = stat_value
-        self.field_name = field_name
 
 
 class PlayerStatWrapper:
@@ -17,7 +13,12 @@ class PlayerStatWrapper:
         self.stats_query, self.field_names = self.get_stats_query()
 
     def get_wrapped_stats(self, stats):
-        return [ComputedStat(stat, field.field_name) for stat, field in zip(stats, self.field_names)]
+        zipped_stats = dict()
+
+        for i in range(len(self.field_names)):
+            zipped_stats[self.field_names[i].field_name] = stats[i]
+
+        return zipped_stats
 
     def get_averaged_stats(self, id_, session):
         stats_query = self.stats_query
@@ -70,6 +71,12 @@ class PlayerStatWrapper:
             func.avg(PlayerGame.a_turnovers)
 
         field_list += add_dynamic_fields(['possesion', 'non dribbles',
-                                          'shots per hit', 'passes per hit', 'assists per hit', 'turnovers'])
+                                          'shots/hit', 'passes/hit', 'assists/hit', 'turnovers'])
 
         return stat_list, field_list
+
+    @staticmethod
+    def get_stat_spider_charts():
+        titles = ['Basic', 'Aggressiveness']
+        groups = [['score', 'goals', 'assists', 'saves', 'turnovers'], ['shots', 'posession', 'hits', 'shots/hit', 'passes/hit']]
+        return [{'title': title, 'group': group} for title, group in zip(titles, groups)]

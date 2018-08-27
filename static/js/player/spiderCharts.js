@@ -4,12 +4,11 @@ define(['colors'], function (colors) {
      * Creates a single spider chart given a bunch of data.
      * @param chartId the id of the chart being added
      * @param title the title for this chart
-     * @param stats the stats for all users
-     * @param label_data the labels for all charts
+     * @param stats the stats for all users, stored as a map of label to stat
      * @param users the usernames in this chart
      * @param group where to pull data from
      */
-    function createChart(chartId, title, stats, label_data, users, group) {
+    function createChart(chartId, title, stats, users, group) {
         let user_colors = colors.getSpiderColors(users.length + 1);
         let dataset = [
             {
@@ -20,19 +19,19 @@ define(['colors'], function (colors) {
         ];
 
         for (let i = 0; i < users.length; i++) {
-            dataset.push(addDataset(stats[i], users[i], group, user_colors[i + 1]))
+            dataset.push(addDataset(stats[i], users[i], group, user_colors[i + 1]));
         }
         let labels = [];
         for (let i = 0; i < group.length; i++) {
-            labels.push(label_data[group[i]])
+            labels.push(group[i]);
         }
-        var data = {
+        let data = {
             datasets: dataset,
             labels: labels
         };
 
-        var ctx = document.getElementById(chartId).getContext('2d');
-        var myRadarChart = new Chart(ctx, {
+        let ctx = document.getElementById(chartId).getContext('2d');
+        let myRadarChart = new Chart(ctx, {
             type: 'radar',
             data: data,
             options: {
