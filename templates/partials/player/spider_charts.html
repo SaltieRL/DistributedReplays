@@ -26,7 +26,7 @@
     requirejs(['spiderChart'], function (spiderChart) {
         spiderChart.createChart(
             "radar{{ loop.index }}",
-            "{{ titles[loop.index] }}",
+            "{{ titles[loop.index0] }}",
             [{{ jsonify_nested(users, ['stats']) }}],
             {{ labels|tojson }},
             {{ user_names|tojson }},

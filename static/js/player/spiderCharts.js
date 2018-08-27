@@ -24,7 +24,7 @@ define(['colors'], function (colors) {
         }
         let labels = [];
         for (let i = 0; i < group.length; i++) {
-            labels.push(label_data[i])
+            labels.push(label_data[group[i]])
         }
         var data = {
             datasets: dataset,
