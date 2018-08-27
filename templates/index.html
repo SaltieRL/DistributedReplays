@@ -3,15 +3,18 @@
   <head>
     <meta charset="utf-8">
     <title>calculated</title>
+    <link rel="stylesheet" type="text/css" href="/static/base.css">
     <link rel="stylesheet" type="text/css" href="/static/index.css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet" type="text/css">
+      <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900|Raleway" rel="stylesheet">
   </head>
   <body>
     <div class="centerbox">
       <div class="logo">
-        calculated<span class="logo-small">.gg</span>
+{#        calculated<span class="logo-small">.gg</span>#}
+          <img height="75px" src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}" />
       </div>
       <div class="searchblock">
         <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">

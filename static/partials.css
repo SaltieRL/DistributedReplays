@@ -24,7 +24,8 @@ form {
     padding: 10px 15px;
     margin-left: 30px;
     margin-bottom: 0px;
-    font-family: "Fira Mono", monospace;
+    font-family: "Lato", "Fira Mono", monospace;
+    font-weight: 300;
     border: 0px;
     border-left: 1px solid #ddd;
     border-bottom:1px solid #ddd;
