@@ -1,6 +1,5 @@
 import os
 import sys
-from pprint import pprint
 
 import flask
 import flask_login
@@ -166,6 +165,11 @@ def home():
     s = current_app.config['db']()
     count = s.query(Game.hash).count()
     return render_template('index.html', game_count=count)
+
+
+@app.route('/about', methods=['GET'])
+def home():
+    return render_template('about.html')
 
 
 if __name__ == '__main__':
