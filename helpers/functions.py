@@ -10,7 +10,7 @@ from flask import render_template, current_app
 from google.protobuf.descriptor import FieldDescriptor
 # Replay stuff
 from database.objects import Game, PlayerGame, Player
-from helpers.dynamic_field_manager import create_and_filter_proto_field
+from helpers.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
 from replayanalysis.replay_analysis.generated.api import game_pb2
 
 try:
@@ -99,7 +99,8 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
         fields = create_and_filter_proto_field(p, ['name', 'title_id', 'is_orange'],
                                                ['api.metadata.CameraSettings', 'api.metadata.PlayerLoadout',
                                                 'api.PlayerId'], PlayerGame)
-        kwargs = {field.field_name: field.value for field in fields}
+        values = get_proto_values(p, fields)
+        kwargs = {k.field_name: v for k,v  in zip(fields, values)}
         camera = p.camera_settings
         loadout = p.loadout
         field_of_view = camera.field_of_view
