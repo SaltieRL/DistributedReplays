@@ -1,5 +1,8 @@
+import ast
+import gzip
 import json
 import os
+import pandas as pd
 import pickle
 import random
 
@@ -13,6 +16,8 @@ from data import constants
 from database import queries
 from database.objects import PlayerGame, Game
 from helpers.functions import return_error, get_item_dict, render_with_session, get_rank_batch
+from replayanalysis.replay_analysis.analysis.utils import proto_manager, pandas_manager
+from replayanalysis.replay_analysis.analysis.utils.numpy_manager import read_array_from_file
 from tasks import celery_tasks
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
@@ -51,7 +56,7 @@ def parse_replay():
 @bp.route('/parse/all')
 def parse_replays():
     for f in os.listdir(current_app.config['REPLAY_DIR']):
-        pickled = os.path.join(current_app.config['PARSED_DIR'], os.path.basename(f) + '.pkl')
+        pickled = os.path.join(current_app.config['PARSED_DIR'], os.path.basename(f) + '.pts')
         if f.endswith('.replay') and not os.path.isfile(pickled):
             result = celery_tasks.parse_replay_task.delay(
                 os.path.abspath(os.path.join(current_app.config['REPLAY_DIR'], f)))
@@ -85,12 +90,22 @@ def view_replay(id_):
 
 @bp.route('/parsed/view/<id_>/positions')
 def view_replay_data(id_):
-    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
+    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
+    gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return jsonify("Error no replay exists for this user")
+
+    def process_tuple_str(s):
+        return ast.literal_eval(s)
+
     try:
-        g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
+        with gzip.open(gzip_path, 'rb') as f:
+            df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f).set_index('index')
+            df.columns = pd.MultiIndex.from_tuples([process_tuple_str(s) for s in df.columns])
+            print(df.columns)
+        with open(pickle_path, 'rb') as f:
+            g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
     except Exception as e:
         return return_error('Error opening game: ' + str(e))
     field_ratio = 5140.0 / 4120
@@ -99,31 +114,31 @@ def view_replay_data(id_):
     z_mult = 100.0 / 2000
     cs = ['pos_x', 'pos_y', 'pos_z']
     rot_cs = ['rot_x', 'rot_y', 'rot_z']
-    ball = g.data_frame['ball']
+    ball = df['ball']
     # ball['pos_x'] = ball['pos_x'] * x_mult
     # ball['pos_y'] = ball['pos_y'] * y_mult
     # ball['pos_z'] = ball['pos_z'] * z_mult
     ball_df = ball[cs]
-    players = g.api_game.teams[0].players + g.api_game.teams[1].players
+    players = g.players
     names = [p.name for p in players]
 
     def process_player_df(game):
         d = []
         for p in names:
-            game.data_frame[p][rot_cs] = game.data_frame[p][rot_cs] / 65536.0 * 2 * 3.14159265
-            game.data_frame[p]['pos_x'] = game.data_frame[p]['pos_x'] * x_mult
-            game.data_frame[p]['pos_y'] = game.data_frame[p]['pos_y'] * y_mult
-            game.data_frame[p]['pos_z'] = game.data_frame[p]['pos_z'] * z_mult
-            d.append(game.data_frame[p][cs + rot_cs + ['boost_active']].fillna(-100).values.tolist())
+            df[p][rot_cs] = df[p][rot_cs] / 65536.0 * 2 * 3.14159265
+            df[p]['pos_x'] = df[p]['pos_x'] * x_mult
+            df[p]['pos_y'] = df[p]['pos_y'] * y_mult
+            df[p]['pos_z'] = df[p]['pos_z'] * z_mult
+            d.append(df[p][cs + rot_cs + ['boost_active']].fillna(-100).values.tolist())
         return d
 
     players_data = process_player_df(g)
-    frame_data = g.data_frame['game'][['delta', 'seconds_remaining', 'time']]
+    frame_data = df['game'][['delta', 'seconds_remaining', 'time']]
     # goal_data = [[gl.frame_number, gl.player_team] for gl in g.goals]
     data = {
         'ball': ball_df.fillna(-100).values.tolist(),
         'players': players_data,
-        'colors': [p.isOrange for p in players],
+        'colors': [p.is_orange for p in players],
         'names': [p.name for p in players],
         'frames': frame_data.fillna(-100).values.tolist(),
         # 'goals': goal_data
@@ -174,7 +189,8 @@ def score_distribution_np():
                     'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
 
-stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'turnovers', 'total_passes', 'total_dribbles', 'assistsph',
+stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'turnovers', 'total_passes', 'total_dribbles',
+         'assistsph',
          'savesph', 'shotsph', 'turnoversph', 'total_dribblesph']
 
 
@@ -220,8 +236,10 @@ def distribution():
         gamemodes = range(1, 5)
         print(id_)
         if id_.endswith('ph'):
-            q = session.query(func.round(cast(getattr(PlayerGame, id_.replace('ph', '')), Numeric) / PlayerGame.total_hits, 2).label('n'),
-                              func.count(PlayerGame.id)).filter(PlayerGame.total_hits > 0).group_by('n').order_by('n')
+            q = session.query(
+                func.round(cast(getattr(PlayerGame, id_.replace('ph', '')), Numeric) / PlayerGame.total_hits, 2).label(
+                    'n'),
+                func.count(PlayerGame.id)).filter(PlayerGame.total_hits > 0).group_by('n').order_by('n')
         else:
             q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
                 getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
@@ -233,7 +251,7 @@ def distribution():
             d = q.join(Game).filter(Game.teamsize == g).all()
             data[g] = {
                 'keys': [],
-                'values':[]
+                'values': []
             }
             for k, v in d:
                 if k is not None:
