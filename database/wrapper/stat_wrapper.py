@@ -91,11 +91,12 @@ class PlayerStatWrapper:
 
     @staticmethod
     def get_stat_spider_charts():
-        titles = ['Basic', 'Aggressiveness', 'Chemistry', 'Skill', 'Luck']
-        groups = [['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
+        titles = [# 'Basic',
+                  'Aggressiveness', 'Chemistry', 'Skill', 'Luck']
+        groups = [# ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
                   ['shots', 'possession', 'hits', 'shots/hit'],  # agressive
-                  ['passes/hit', 'assists/hit'],  # chemistry
-                  ['useful/hits', 'shot %'],  # skill
+                  ['score', 'passes/hit', 'assists/hit'],  # chemistry
+                  ['score', 'useful/hits', 'shot %'],  # skill
                   ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
