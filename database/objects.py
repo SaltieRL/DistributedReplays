@@ -112,10 +112,41 @@ class PlayerGame(DBObjectBase):
     total_goals = Column(Integer)
     total_shots = Column(Integer)
     total_passes = Column(Integer)
+    total_aerials = Column(Integer)
 
     # other analysis stuff
     turnovers = Column(Integer)
+    turnovers_on_my_half = Column(Integer)
+    turnovers_on_their_half = Column(Integer)
+    won_turnovers = Column(Integer)
     possession_time = Column(Float)
+    average_speed = Column(Float)
+    average_hit_distance = Column(Float)
+
+    # boost
+    usage = Column(Float)
+    num_small_boosts = Column(Integer)
+    num_large_boosts = Column(Integer)
+    wasted_collection = Column(Float)
+    wasted_useage = Column(Float)
+
+    # tendencies
+    time_on_ground = Column(Float)
+    time_low_in_air = Column(Float)
+    time_high_in_air = Column(Float)
+    time_in_defending_half = Column(Float)
+    time_in_attacking_half = Column(Float)
+    time_in_defending_third = Column(Float)
+    time_in_neutral_third = Column(Float)
+    time_in_attacking_third = Column(Float)
+    time_behind_ball = Column(Float)
+    time_in_front_ball = Column(Float)
+
+    # distance
+    forward = Column(Float)
+    backward = Column(Float)
+
+
 
 
 class Game(DBObjectBase):

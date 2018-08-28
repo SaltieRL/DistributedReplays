@@ -1,4 +1,5 @@
 import json
+import sqlalchemy
 
 from database.objects import PlayerGame
 from sqlalchemy import func, desc, cast, String
@@ -68,6 +69,8 @@ class PlayerStatWrapper:
             stat_list.append(func.avg(field))
 
         stat_list += [
+            func.avg(PlayerGame.usage),
+            func.avg(PlayerGame.average_speed),
             func.avg(PlayerGame.possession_time),
             func.avg(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # hits that are not dribbles
             func.avg((100 * PlayerGame.shots) /
@@ -79,12 +82,13 @@ class PlayerStatWrapper:
             func.avg((100 * PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
                      safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # useful hit per non dribble
             func.avg(PlayerGame.turnovers),
-            func.avg(100 * PlayerGame.goals / safe_divide(PlayerGame.total_shots)),
+            func.sum(PlayerGame.goals) / cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric),
+            func.avg(PlayerGame.total_aerials),
             func.random(), func.avg(func.random()), func.avg(func.random()), func.avg(func.random())]
 
-        field_list += add_dynamic_fields(['possession', 'hits',
+        field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
                                           'shots/hit', 'passes/hit', 'assists/hit', 'useful/hits',
-                                          'turnovers', 'shot %',
+                                          'turnovers', 'shot %', 'aerials',
                                           'luck1', 'luck2', 'luck3', 'luck4'])
 
         return stat_list, field_list
@@ -92,11 +96,12 @@ class PlayerStatWrapper:
     @staticmethod
     def get_stat_spider_charts():
         titles = [# 'Basic',
-                  'Aggressiveness', 'Chemistry', 'Skill', 'Luck']
+                  'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
         groups = [# ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
-                  ['shots', 'possession', 'hits', 'shots/hit'],  # agressive
+                  ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
                   ['score', 'passes/hit', 'assists/hit'],  # chemistry
-                  ['score', 'useful/hits', 'shot %'],  # skill
-                  ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
+                  ['turnovers', 'useful/hits', 'shot %', 'aerials'],  # skill
+                  ['time_in_attacking_half', 'time_in_attacking_third', 'time_in_defending_third', 'time_in_defending_half', 'time_behind_ball', 'time_in_front_ball']]#,  # tendencies
+                  # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]

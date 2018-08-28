@@ -189,7 +189,7 @@ def score_distribution_np():
                     'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
 
-stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'turnovers', 'total_passes', 'total_dribbles',
+stats = ['score', 'goals', 'assists', 'saves', 'shots', 'total_hits', 'turnovers', 'total_passes', 'total_dribbles',
          'assistsph',
          'savesph', 'shotsph', 'turnoversph', 'total_dribblesph']
 
