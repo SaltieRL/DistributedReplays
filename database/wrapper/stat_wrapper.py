@@ -36,7 +36,7 @@ class PlayerStatWrapper:
             # car_arr = [g.car for g in games]
             favorite_car = constants.cars[int(fav_car_str[0])]
             favorite_car_pctg = fav_car_str[1] / len(games)
-            q = session.query(*stats_query).filter(PlayerGame.a_hits > 0)
+            q = session.query(*stats_query).filter(PlayerGame.total_hits > 0)
             global_stats = q.first()
             stats = list(q.filter(PlayerGame.player == id_).first())
 
@@ -68,18 +68,18 @@ class PlayerStatWrapper:
             stat_list.append(func.avg(field))
 
         stat_list += [
-            func.avg(PlayerGame.a_possession),
-            func.avg(PlayerGame.a_hits - PlayerGame.a_dribble_conts),  # hits that are not dribbles
+            func.avg(PlayerGame.possession_time),
+            func.avg(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # hits that are not dribbles
             func.avg((100 * PlayerGame.shots) /
-                     safe_divide(PlayerGame.a_hits - PlayerGame.a_dribble_conts)),  # Shots per non dribble
-            func.avg((100 * PlayerGame.a_passes) /
-                     safe_divide(PlayerGame.a_hits - PlayerGame.a_dribble_conts)),  # passes per non dribble
+                     safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # Shots per non dribble
+            func.avg((100 * PlayerGame.total_passes) /
+                     safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # passes per non dribble
             func.avg((100 * PlayerGame.assists) /
-                     safe_divide(PlayerGame.a_hits - PlayerGame.a_dribble_conts)),  # assists per non dribble
-            func.avg((100 * PlayerGame.shots + PlayerGame.a_passes + PlayerGame.a_saves + PlayerGame.a_goals) /
-                     safe_divide(PlayerGame.a_hits - PlayerGame.a_dribble_conts)),  # useful hit per non dribble
-            func.avg(PlayerGame.a_turnovers),
-            func.avg(100 * PlayerGame.goals / safe_divide(PlayerGame.a_shots)),
+                     safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # assists per non dribble
+            func.avg((100 * PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
+                     safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # useful hit per non dribble
+            func.avg(PlayerGame.turnovers),
+            func.avg(100 * PlayerGame.goals / safe_divide(PlayerGame.total_shots)),
             func.random(), func.avg(func.random()), func.avg(func.random()), func.avg(func.random())]
 
         field_list += add_dynamic_fields(['possession', 'hits',

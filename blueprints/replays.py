@@ -174,8 +174,8 @@ def score_distribution_np():
                     'non_log': {'data': non_log[0].tolist(), 'bins': non_log[1].tolist()}})
 
 
-stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles', 'assistsph',
-         'savesph', 'shotsph', 'a_turnoversph', 'a_dribblesph']
+stats = ['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'turnovers', 'total_passes', 'total_dribbles', 'assistsph',
+         'savesph', 'shotsph', 'turnoversph', 'total_dribblesph']
 
 
 @bp.route('/stats/<id_>')
@@ -220,8 +220,8 @@ def distribution():
         gamemodes = range(1, 5)
         print(id_)
         if id_.endswith('ph'):
-            q = session.query(func.round(cast(getattr(PlayerGame, id_.replace('ph', '')), Numeric) / PlayerGame.a_hits, 2).label('n'),
-                              func.count(PlayerGame.id)).filter(PlayerGame.a_hits > 0).group_by('n').order_by('n')
+            q = session.query(func.round(cast(getattr(PlayerGame, id_.replace('ph', '')), Numeric) / PlayerGame.total_hits, 2).label('n'),
+                              func.count(PlayerGame.id)).filter(PlayerGame.total_hits > 0).group_by('n').order_by('n')
         else:
             q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
                 getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))

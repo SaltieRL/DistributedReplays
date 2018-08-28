@@ -7,7 +7,7 @@ import random
 import redis
 import requests
 from flask import render_template, current_app
-
+from google.protobuf.descriptor import FieldDescriptor
 # Replay stuff
 from database.objects import Game, PlayerGame, Player
 from helpers.dynamic_field_manager import create_and_filter_proto_field
@@ -96,9 +96,10 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
     players = []
     # print('iterating over players')
     for p in player_objs:  # type: GamePlayer
-        fields = create_and_filter_proto_field(game.players[0], ['name', 'title_id', 'is_orange'],
+        fields = create_and_filter_proto_field(p, ['name', 'title_id', 'is_orange'],
                                                ['api.metadata.CameraSettings', 'api.metadata.PlayerLoadout',
                                                 'api.PlayerId'], PlayerGame)
+        kwargs = {field.field_name: field.value for field in fields}
         camera = p.camera_settings
         loadout = p.loadout
         field_of_view = camera.field_of_view
@@ -115,21 +116,12 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
             win = orange_score > blue_score
         else:
             win = blue_score > orange_score
-        pg = PlayerGame(player=p.id, name=p.name, game=replay_id, score=p.score, goals=p.goals,
-                        assists=p.assists, saves=p.saves, shots=p.shots, field_of_view=field_of_view,
-                        transition_speed=transition_speed, pitch=pitch, swivel_speed=swivel_speed, stiffness=stiffness,
+        pg = PlayerGame(player=p.id, name=p.name, game=replay_id, field_of_view=field_of_view,
+                        transition_speed=transition_speed, pitch=pitch, swivel_speed=swivel_speed,
+                        stiffness=stiffness,
                         height=height, distance=distance, car=-1 if loadout is None else loadout.car,
                         is_orange=p.is_orange,
-                        win=win,
-                        a_dribble_conts=p.stats.hit_counts.total_dribble_conts,
-                        a_dribbles=p.stats.hit_counts.total_dribbles,
-                        a_hits=p.stats.hit_counts.total_hits,
-                        a_goals=p.stats.hit_counts.total_goals,
-                        a_passes=p.stats.hit_counts.total_passes,
-                        a_shots=p.stats.hit_counts.total_shots,
-                        a_saves=p.stats.hit_counts.total_saves,
-                        a_turnovers=p.stats.possession.turnovers,
-                        a_possession=p.stats.possession.possession_time)
+                        win=win, **kwargs)
         player_games.append(pg)
         pid = str(p.id.id)
         if len(str(pid)) > 40:

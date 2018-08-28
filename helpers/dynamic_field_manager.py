@@ -7,10 +7,11 @@ from replayanalysis.replay_analysis.generated.api import player_pb2
 
 
 class ProtoFieldResult:
-    def __init__(self, nested_parents, field_name, field_descriptor):
+    def __init__(self, nested_parents, field_name, field_descriptor, value=None):
         self.field_descriptor = field_descriptor
         self.field_name = field_name
         self.nested_parents = nested_parents
+        self.value = value
 
 
 class DynamicFieldResult:
@@ -27,12 +28,12 @@ def get_proto_fields_as_flatten_list(proto_message: message, nested_parents=None
         nested_parents = nested_parents + [message_name]
 
     for field in proto_message.DESCRIPTOR.fields:
-        if field.type == FieldDescriptor.TYPE_MESSAGE:
-            results = get_proto_fields_as_flatten_list(field.message_type._concrete_class, nested_parents)
+        value = getattr(proto_message, field.name)
+        if field.type == FieldDescriptor.TYPE_MESSAGE and isinstance(value, message.Message):
+            results = get_proto_fields_as_flatten_list(getattr(proto_message, field.name), nested_parents)
             list += results
         else:
-            list.append(ProtoFieldResult(nested_parents, field.name, field))
-
+            list.append(ProtoFieldResult(nested_parents, field.name, field, getattr(proto_message, field.name)))
     return list
 
 

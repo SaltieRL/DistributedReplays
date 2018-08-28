@@ -105,17 +105,17 @@ class PlayerGame(DBObjectBase):
     car = Column(Integer)
 
     # hit analysis stuff
-    a_hits = Column(Integer)
-    a_dribbles = Column(Integer)
-    a_dribble_conts = Column(Integer)
-    a_saves = Column(Integer)
-    a_goals = Column(Integer)
-    a_shots = Column(Integer)
-    a_passes = Column(Integer)
+    total_hits = Column(Integer)
+    total_dribbles = Column(Integer)
+    total_dribble_conts = Column(Integer)
+    total_saves = Column(Integer)
+    total_goals = Column(Integer)
+    total_shots = Column(Integer)
+    total_passes = Column(Integer)
 
     # other analysis stuff
-    a_turnovers = Column(Integer)
-    a_possession = Column(Float)
+    turnovers = Column(Integer)
+    possession_time = Column(Float)
 
 
 class Game(DBObjectBase):
