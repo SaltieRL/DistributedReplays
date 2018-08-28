@@ -100,7 +100,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                                                ['api.metadata.CameraSettings', 'api.metadata.PlayerLoadout',
                                                 'api.PlayerId'], PlayerGame)
         values = get_proto_values(p, fields)
-        kwargs = {k.field_name: v for k,v  in zip(fields, values)}
+        kwargs = {k.field_name: v for k, v in zip(fields, values)}
         camera = p.camera_settings
         loadout = p.loadout
         field_of_view = camera.field_of_view
@@ -117,14 +117,14 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
             win = orange_score > blue_score
         else:
             win = blue_score > orange_score
-        pg = PlayerGame(player=p.id, name=p.name, game=replay_id, field_of_view=field_of_view,
+        pid = str(p.id.id)
+        pg = PlayerGame(player=pid, name=p.name, game=replay_id, field_of_view=field_of_view,
                         transition_speed=transition_speed, pitch=pitch, swivel_speed=swivel_speed,
                         stiffness=stiffness,
                         height=height, distance=distance, car=-1 if loadout is None else loadout.car,
                         is_orange=p.is_orange,
                         win=win, **kwargs)
         player_games.append(pg)
-        pid = str(p.id.id)
         if len(str(pid)) > 40:
             pid = pid[:40]
         p = Player(platformid=pid, platformname="", avatar="", ranks=[])
