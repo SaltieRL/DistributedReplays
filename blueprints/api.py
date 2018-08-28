@@ -5,11 +5,13 @@ from functools import wraps
 
 from flask import render_template, url_for, redirect, request, jsonify, send_from_directory, Blueprint, current_app, \
     Response
+from google.protobuf.json_format import MessageToJson
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
 from helpers.functions import get_rank, tier_div_to_string
 from database.objects import Game
+from replayanalysis.replay_analysis.analysis.utils import proto_manager
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -137,7 +139,7 @@ def api_v1_get_stats():
     # TODO: stats?
     session = current_app.config['db']()
     ct = session.query(Game).count()
-    dct = len([f for f in os.listdir(current_app.config['PARSED_DIR']) if f.endswith('pkl')])
+    dct = len([f for f in os.listdir(current_app.config['PARSED_DIR']) if f.endswith('pts')])
     session.close()
     return jsonify({'db_count': ct, 'count': dct})
 
@@ -145,14 +147,15 @@ def api_v1_get_stats():
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
+    pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return render_template('replay.html', replay=None)
     try:
-        g = pickle.load(open(os.path.join('parsed', id_ + '.replay.pkl'), 'rb'), encoding='latin1')  # type: ReplayGame
+        with open(pickle_path, 'rb') as f:
+            g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
         response = Response(
-            response=g.api_game.to_json(),
+            response=convert_proto_to_json(g),
             status=200,
             mimetype='application/json'
         )
@@ -189,3 +192,6 @@ def api_v1_download_parsed(fn):
 def api_v1_get_rank(id_):
     return jsonify(get_rank(id_))
 
+
+def convert_proto_to_json(proto):
+    return MessageToJson(proto)
