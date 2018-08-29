@@ -78,48 +78,44 @@ define('colors', function () {
         ]
     };
 
-    const ganderTeamChartColors = {
+    const designer = {
         "blue": [
             {
-                // purple
-                backgroundColor: convertColorToString(0xb868ad, 0.8),
+                // lightest blue
+                backgroundColor: convertColorToString(0x108EE8, 1),
                 borderColor: blueBorderColor,
                 borderWidth: 1
             },
             {
-                // dark blue
-                backgroundColor: convertColorToString(0x3276b5, 0.8),
+                // lighter blue
+                backgroundColor: convertColorToString(0x0564F5, 1),
                 borderColor: blueBorderColor,
                 borderWidth: 1
             },
             {
-                // light blue
-                backgroundColor: convertColorToString(0x33b8a5, 0.8),
+                // darkest blue
+                backgroundColor: convertColorToString(0x0511F5, 1),
                 borderColor: blueBorderColor,
                 borderWidth: 1
-            }
+            },
         ],
         "orange": [
             {
-                backgroundColor: convertColorToString(0xf04950, 0.8),
+                // Red
+                backgroundColor: convertColorToString(0xEB1000, 1),
                 borderColor: orangeBorderColor,
                 borderWidth: 1
             },
             {
-                backgroundColor: convertColorToString(0xf58d4e, 0.4),
+                backgroundColor: convertColorToString(0xF55105, 1),
                 borderColor: orangeBorderColor,
                 borderWidth: 1
             },
             {
-                backgroundColor: convertColorToString(0xfece3e, 0.4),
+                backgroundColor: convertColorToString(0xFF9C12, 1),
                 borderColor: orangeBorderColor,
                 borderWidth: 1
             },
-            {
-                backgroundColor: convertColorToString(0xfb323c, 0.4),
-                borderColor: orangeBorderColor,
-                borderWidth: 1
-            }
         ]
     };
 
@@ -178,10 +174,11 @@ define('colors', function () {
         ]
     };
 
+
     const overallColors = [0x36a2eb, 0xff6384, 0xa29bfe, 0xffeaa7, 0x55efc4, 0xfd79a8];
 
     function getHorizontalChartColor(index, is_orange) {
-        let chart = materialTeamChartColors;
+        let chart = designer;
         let list = is_orange ? chart.orange : chart.blue;
         return list[index % list.length];
     }
