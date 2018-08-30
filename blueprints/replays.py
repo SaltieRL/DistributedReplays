@@ -34,6 +34,12 @@ def replays_home():
     model_data = queries.get_model_stats(session)
     return render_with_session('upload.html', session, stats=replay_data, total=replay_count, model_stats=model_data)
 
+@bp.route('/upload/confirmation', methods=['GET'])
+def upload_confirmation():
+    session = current_app.config['db']()
+    replay_count = queries.get_replay_count(session)
+    return render_with_session('confirmation.html', session, total=replay_count)
+
 
 @bp.route('/parse', methods=['POST'])
 def parse_replay():
