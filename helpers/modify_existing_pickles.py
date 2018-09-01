@@ -5,7 +5,7 @@ import sys
 
 replay_lib = os.path.join(os.path.dirname(__file__), '..')
 sys.path.append(replay_lib)
-from ReplayAnalysis.analysis.saltie_game.saltie_game import SaltieGame
+from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame
 
 
 def should_process_file(obj: SaltieGame):
@@ -13,7 +13,7 @@ def should_process_file(obj: SaltieGame):
 
 
 def process_file(obj: SaltieGame):
-    from ReplayAnalysis.analysis.stats.possession.turnovers import TurnoverStat
+    from replayanalysis.analysis.stats.possession.turnovers import TurnoverStat
     turnovers = TurnoverStat.get_player_turnovers(obj)
     obj.stats['turnovers'] = turnovers
     return obj
