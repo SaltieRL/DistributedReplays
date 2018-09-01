@@ -39,6 +39,12 @@ def replays_home():
     model_data = queries.get_model_stats(session)
     return render_with_session('upload.html', session, stats=replay_data, total=replay_count, model_stats=model_data)
 
+@bp.route('/upload/confirmation', methods=['GET'])
+def upload_confirmation():
+    session = current_app.config['db']()
+    replay_count = session.query(Game.hash).count()
+    return render_with_session('confirmation.html', session, total=replay_count)
+
 
 @bp.route('/parse', methods=['POST'])
 def parse_replay():
@@ -50,7 +56,9 @@ def parse_replay():
     filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
     file.save(filename)
     celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-    return redirect(url_for('replays.view_replay', id_=file.filename.split('.')[0]))
+    #return redirect(url_for('replays.view_replay', id_=file.filename.split('.')[0]))
+    #do this when it works. until then,
+    return redirect(url_for('replays.upload_confirmation'))
 
 
 @bp.route('/parse/all')

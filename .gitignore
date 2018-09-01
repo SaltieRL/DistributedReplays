@@ -32,6 +32,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
+.gitmodules
 .hypothesis/
 *.mo
 *.pot
