@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 
@@ -6,17 +7,25 @@ import flask_login
 from flask import Flask, render_template, g, current_app, session, request
 from flask_cors import CORS
 
-import config
+try:
+    import config
+except ImportError:
+    config = None
 
 sys.path.append(os.path.abspath('replayanalysis/'))
+
 try:
     from config import ALLOWED_STEAM_ACCOUNTS
 except ImportError:
     ALLOWED_STEAM_ACCOUNTS = []
+    users = []
+
 from blueprints import auth, api, players, replays, stats, steam, debug
 from database.objects import Game, Player
 from database.startup import startup
 import redis
+
+logger = logging.getLogger(__name__)
 
 # APP SETUP
 
@@ -57,13 +66,19 @@ with app.app_context():
     app.register_blueprint(api.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(debug.bp)
-    app.secret_key = config.SECRET_KEY
+    try:
+        app.secret_key = config.SECRET_KEY
+    except:
+        logger.warning('no secret key has been set')
     # Login stuff
     login_manager = flask_login.LoginManager()
 
     login_manager.init_app(app)
 
-    users = config.users
+    try:
+        users = config.users
+    except:
+        users = []
 
     app.config['db'] = Session
 
