@@ -6,7 +6,7 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+DBObjectBase = declarative_base()
 
 
 class Playlist(enum.Enum):
@@ -31,7 +31,7 @@ class MatchType(enum.Enum):
     public = 3
 
 
-class User(Base):
+class User(DBObjectBase):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
@@ -42,7 +42,7 @@ class User(Base):
         return "<User(name='%s')>" % self.name
 
 
-class Replay(Base):
+class Replay(DBObjectBase):
     __tablename__ = 'replays'
 
     id = Column(Integer, primary_key=True)
@@ -59,7 +59,7 @@ class Replay(Base):
         return "<Replay(uuid='%s', user='%s', ip='%s')>" % (self.uuid, self.user, self.ip)
 
 
-class Model(Base):
+class Model(DBObjectBase):
     __tablename__ = 'models'
 
     model_hash = Column(String(40), primary_key=True)
@@ -73,7 +73,7 @@ class Model(Base):
                                                                                 self.total_reward, self.evaluated)
 
 
-class PlayerGame(Base):
+class PlayerGame(DBObjectBase):
     __tablename__ = 'playergames'
 
     id = Column(Integer, primary_key=True)
@@ -105,20 +105,51 @@ class PlayerGame(Base):
     car = Column(Integer)
 
     # hit analysis stuff
-    a_hits = Column(Integer)
-    a_dribbles = Column(Integer)
-    a_dribble_conts = Column(Integer)
-    a_saves = Column(Integer)
-    a_goals = Column(Integer)
-    a_shots = Column(Integer)
-    a_passes = Column(Integer)
+    total_hits = Column(Integer)
+    total_dribbles = Column(Integer)
+    total_dribble_conts = Column(Integer)
+    total_saves = Column(Integer)
+    total_goals = Column(Integer)
+    total_shots = Column(Integer)
+    total_passes = Column(Integer)
+    total_aerials = Column(Integer)
 
     # other analysis stuff
-    a_turnovers = Column(Integer)
-    a_possession = Column(Float)
+    turnovers = Column(Integer)
+    turnovers_on_my_half = Column(Integer)
+    turnovers_on_their_half = Column(Integer)
+    won_turnovers = Column(Integer)
+    possession_time = Column(Float)
+    average_speed = Column(Float)
+    average_hit_distance = Column(Float)
+
+    # boost
+    usage = Column(Float)
+    num_small_boosts = Column(Integer)
+    num_large_boosts = Column(Integer)
+    wasted_collection = Column(Float)
+    wasted_useage = Column(Float)
+
+    # tendencies
+    time_on_ground = Column(Float)
+    time_low_in_air = Column(Float)
+    time_high_in_air = Column(Float)
+    time_in_defending_half = Column(Float)
+    time_in_attacking_half = Column(Float)
+    time_in_defending_third = Column(Float)
+    time_in_neutral_third = Column(Float)
+    time_in_attacking_third = Column(Float)
+    time_behind_ball = Column(Float)
+    time_in_front_ball = Column(Float)
+
+    # distance
+    forward = Column(Float)
+    backward = Column(Float)
 
 
-class Game(Base):
+
+
+class Game(DBObjectBase):
     __tablename__ = 'games'
     hash = Column(String(40), primary_key=True)  # replayid
     name = Column(String(40))
@@ -137,7 +168,7 @@ class Game(Base):
     team1possession = Column(Float)
 
 
-class Player(Base):
+class Player(DBObjectBase):
     __tablename__ = 'players'
     platformid = Column(String(40), primary_key=True)
     platformname = Column(String(50))
@@ -146,7 +177,7 @@ class Player(Base):
     games = relationship('PlayerGame')
 
 
-class CameraSettings(Base):
+class CameraSettings(DBObjectBase):
     __tablename__ = 'camera_settings'
     id = Column(Integer, primary_key=True, autoincrement=True)
     field_of_view = Column(Integer)

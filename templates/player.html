@@ -34,7 +34,7 @@
             {% endif %}
         </div>
         <span class="header">/ tendencies</span>
-        <div class="rankpanel" style="max-width: 400px;">
+        <div class="chartpanel">
             {% set min_replays = 1 %}
             {% if games|length > min_replays %}
                 {% include "partials/player/spider_charts.html" %}

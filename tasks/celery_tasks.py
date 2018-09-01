@@ -1,4 +1,5 @@
 # Celery workers
+import gzip
 import os
 import pickle
 from celery import Celery
@@ -48,14 +49,17 @@ celery.config_from_object(celeryconfig)
 @celery.task(base=DBTask, bind=True)
 def parse_replay_task(self, fn):
     output = fn + '.json'
-    pickled = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed', os.path.basename(fn) + '.pkl')
+    pickled = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed', os.path.basename(fn))
     if os.path.isfile(pickled):
         return
     # try:
 
-    g = decompile_replay(fn, output)  # type: ReplayGame
-    with open(pickled, 'wb') as f:
-        pickle.dump(g, f)
+    analysis_manager = decompile_replay(fn, output)  # type: ReplayGame
+    with open(pickled + '.pts', 'wb') as fo:
+        analysis_manager.write_proto_out_to_file(fo)
+    with gzip.open(pickled + '.gzip', 'wb') as fo:
+        analysis_manager.write_pandas_out_to_file(fo)
+    g = analysis_manager.protobuf_game
     os.remove(output)
     # except Exception as e:
     #     print('Error: ', e)
@@ -64,7 +68,7 @@ def parse_replay_task(self, fn):
     #     return
     sess = self.session()
     old_hash = str(os.path.basename(fn)).split('.')[0]
-    hash = g.api_game.id
+    hash = g.game_metadata.id
     possible_duplicates = sess.query(Game).filter(Game.hash == hash).all()
     if len(possible_duplicates) > 0:
         for p in possible_duplicates:
