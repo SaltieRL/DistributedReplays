@@ -9,13 +9,13 @@
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
-        / profile information
+        <span class="header">/ profile information</span>
         <div class="playerpanel">
             {% if player %}
                 {% include "partials/player/profile.html" %}
             {% endif %}
         </div>
-        / player stats
+        <span class="header">/ player stats</span>
         {% include "partials/player/stats.html" %}
         <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
             <input type="text" name="other" placeholder="Compare other user"/>
@@ -23,7 +23,7 @@
         </form>
     </div>
     <div class="main">
-        / rank information
+        <span class="header">/ rank information</span>
         <div class="rankpanel">
             {% if rank %}
                 {% include "partials/player/ranks.html" %}
@@ -33,8 +33,8 @@
                 </div>
             {% endif %}
         </div>
-        / tendencies
-        <div class="rankpanel" style="max-width: 400px;">
+        <span class="header">/ tendencies</span>
+        <div class="chartpanel">
             {% set min_replays = 1 %}
             {% if games|length > min_replays %}
                 {% include "partials/player/spider_charts.html" %}
@@ -44,7 +44,7 @@
             </div>
             {% endif %}
         </div>
-        / match history
+        <span class="header">/ match history</span>
         <div class="matchhistory">
             {% if games %}
                 {% include "partials/replay/match_history.html" %}

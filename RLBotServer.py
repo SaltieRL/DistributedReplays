@@ -1,6 +1,5 @@
 import os
 import sys
-from pprint import pprint
 
 import flask
 import flask_login
@@ -14,7 +13,7 @@ try:
     from config import ALLOWED_STEAM_ACCOUNTS
 except ImportError:
     ALLOWED_STEAM_ACCOUNTS = []
-from blueprints import auth, api, players, replays, stats, steam
+from blueprints import auth, api, players, replays, stats, steam, debug
 from database.objects import Game, Player
 from database.startup import startup
 import redis
@@ -57,6 +56,7 @@ with app.app_context():
     app.register_blueprint(stats.bp)
     app.register_blueprint(api.bp)
     app.register_blueprint(auth.bp)
+    app.register_blueprint(debug.bp)
     app.secret_key = config.SECRET_KEY
     # Login stuff
     login_manager = flask_login.LoginManager()
@@ -166,6 +166,11 @@ def home():
     s = current_app.config['db']()
     count = s.query(Game.hash).count()
     return render_template('index.html', game_count=count)
+
+
+@app.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
 
 
 if __name__ == '__main__':
