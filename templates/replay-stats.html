@@ -15,7 +15,7 @@
     / distributions
     <h5>Click legend items to toggle</h5>
     {% set graphs=['Score', 'Goals', 'Assists', 'Saves', 'Shots', 'Hits', 'Turnovers', 'Passes', 'Dribbles', 'Assists per Hit', 'Shots per Hit', 'Turnovers per Hit', 'Dribbles per Hit'] %}
-    {% set fields=['score', 'goals', 'assists', 'saves', 'shots', 'a_hits', 'a_turnovers', 'a_passes', 'a_dribbles', 'assistsph', 'savesph', 'shotsph', 'a_turnoversph', 'a_dribblesph'] %}
+    {% set fields=['score', 'goals', 'assists', 'saves', 'shots', 'total_hits', 'turnovers', 'total_passes', 'total_dribbles', 'assistsph', 'savesph', 'shotsph', 'turnoversph', 'total_dribblesph'] %}
     {% set graph_length = graphs|length %}
     <div id="graphs" class="graph-list-container" style="position:relative;">
         {% for graph in graphs %}

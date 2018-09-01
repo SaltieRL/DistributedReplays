@@ -2,7 +2,7 @@
 <div class="navbar">
     <div>
         <div class="logo">
-            <a href="/">calculated<span class="logo-small">.gg</span></a>
+            <a href="/"><img style="margin-top: 5px" height="50px" src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/></a>
         </div>
     </div>
     <div>
@@ -10,15 +10,31 @@
             a rocket league statistics platform
         </motto>
     </div>
-        <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
-            <input name=name type="text" class="search" placeholder="enter steamID or username" required>
-        </form>
-    <div class="right"><a href = "{{ url_for('replays.replay_stats') }}"><div class="framebox">global stats</div></a></div>
-    <div><d> · </d></div>
-    <div><a href = "#"><in>about</in></a></div>
-    <div><d> · </d></div>
-    <div><a href="https://github.com/SaltieRL/DistributedReplays"><in>github</in></a></div>
-    <div><d> · </d></div>
-    <div><a href="https://discord.gg/c8cArY9"><in>discord</in></a></div>
-    <div><d> · </d></div>
+    <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
+        <input name=name type="text" class="search" placeholder="enter steamID or username" required>
+    </form>
+    <div class="right"><a href="{{ url_for('replays.replay_stats') }}">
+        <div class="framebox">global stats</div>
+    </a></div>
+    <div>
+        <d> ·</d>
+    </div>
+    <div><a href="#">
+        <in>about</in>
+    </a></div>
+    <div>
+        <d> ·</d>
+    </div>
+    <div><a href="https://github.com/SaltieRL/DistributedReplays">
+        <in>github</in>
+    </a></div>
+    <div>
+        <d> ·</d>
+    </div>
+    <div><a href="https://discord.gg/c8cArY9">
+        <in>discord</in>
+    </a></div>
+    <div>
+        <d> ·</d>
+    </div>
 </div>
