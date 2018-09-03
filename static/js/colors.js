@@ -82,19 +82,19 @@ define('colors', function () {
         "blue": [
             {
                 // lightest blue
-                backgroundColor: convertColorToString(0x108EE8, 1),
-                borderColor: blueBorderColor,
-                borderWidth: 1
-            },
-            {
-                // lighter blue
-                backgroundColor: convertColorToString(0x0564F5, 1),
+                backgroundColor: convertColorToString(0x108EE8, 0.8),
                 borderColor: blueBorderColor,
                 borderWidth: 1
             },
             {
                 // darkest blue
                 backgroundColor: convertColorToString(0x0511F5, 1),
+                borderColor: blueBorderColor,
+                borderWidth: 1
+            },
+            {
+                // lighter blue
+                backgroundColor: convertColorToString(0x0564F5, 0.9),
                 borderColor: blueBorderColor,
                 borderWidth: 1
             },
