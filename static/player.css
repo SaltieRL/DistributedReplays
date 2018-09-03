@@ -16,7 +16,6 @@ body {
 
 .playerpanel {
     margin: 5px 0px;
-    padding: 5px 0px;
     border-bottom: 1px solid #ddd;
     border-top: 1px solid #ddd;
     display: flex;

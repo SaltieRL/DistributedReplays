@@ -53,3 +53,9 @@ i.clickable {
     font-size: 70%;
     padding: .1em 1em;
 }
+
+
+body {
+    width:100%;
+    height: 100%;
+}
