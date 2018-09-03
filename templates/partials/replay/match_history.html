@@ -1,12 +1,18 @@
 {% from "macros/json.html" import jsonify %}
-
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let matches = document.getElementsByClassName("match");
-        requirejs(['matchHistory'], function (matchHistory) {
-            matchHistory.addMatchHandler(matches);
+    (function () {
+        console.log('executing function right?');
+        requirejs(['match/matchHistoryLoader'], function (loader) {
+            let matchHistory = function () {
+                console.log('creating match list');
+                let matches = document.getElementsByClassName("match");
+                requirejs(['matchHistory'], function (matchHistory) {
+                    matchHistory.addMatchHandler(matches);
+                });
+            };
+            loader.setHistoryList(matchHistory);
         });
-    });
+    })();
 </script>
 <section>
     <div class="container">
@@ -48,13 +54,18 @@
                         {% set json_keys = ["player", "name", "is_orange"] + graphs %}
                         <script>
                             (function(host_id, action_element_id,  labels) {
-                                document.addEventListener("DOMContentLoaded", function () {
-                                    const replay_data = [ {{ jsonify(team_members, json_keys) }} ];
-                                    requirejs(['matchHistory'], function (matchHistory) {
-                                        matchHistory.addAction(action_element_id, host_id, labels, replay_data);
-                                    });
+                                requirejs(['match/matchHistoryLoader'], function (loader) {
+                                    console.log('creating graph loader function');
+                                    let matchLoader = function () {
+                                        console.log('graph loader called');
+                                        const replay_data = [{{jsonify(team_members, json_keys)}}];
+                                        requirejs(['matchHistory'], function (matchHistory) {
+                                            matchHistory.addAction(action_element_id, host_id, labels, replay_data);
+                                        });
+                                    };
+                                    loader.addHistoryCallback(matchLoader);
                                 });
-                            })('{{ dropdown_id }}', '{{ match_id }}', {{ graphs|tojson }})
+                            })('{{ dropdown_id }}', '{{ match_id }}', {{ graphs|tojson }});
                         </script>
                         {% include "partials/replay/score_graph.html" %}
                     </td>

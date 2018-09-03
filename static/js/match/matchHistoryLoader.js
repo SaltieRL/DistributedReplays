@@ -1,52 +1,111 @@
 define(['server'], function (server) {
-    let page = 1;
+    let page = 0;
     let history = null;
+    let playerId = null;
+    let dataCallback = [];
+    let maxPages = null;
+    let historyList = null;
 
     function loadData(callback) {
-        server.asyncJsonGet(playerid + '/history/' + page.toString(), callback);
+        server.asyncJsonGet(playerId + '/history/' + page.toString(), callback);
     }
 
-    function addNextPageListener(element, h) {
+    function createToggleCallback(elements) {
+        let disabled_class = "pure-button-disabled";
+        return function (elementToToggle) {
+            for (let i = 0; i < elements.length; i++) {
+                let element = elements[i];
+                if (element.classList.contains(disabled_class)) {
+                    element.classList.remove(disabled_class);
+                } else if (elementToToggle === element){
+                    element.classList.add(disabled_class);
+                }
+            }
+        }
+    }
+
+    function addNextPageListener(element, h, toggleCallback) {
         history = h;
         element.addEventListener('click', function (ev) {
+            if (page >= maxPages) {
+                return;
+            }
             page += 1;
             loadData(processPage, history);
+            if (page <= maxPages) {
+                toggleCallback(element);
+            }
         });
     }
 
-    function addPreviousPageListener(element, h) {
+    function addPreviousPageListener(element, h, toggleCallback) {
         history = h;
         element.addEventListener('click', function (ev) {
+            if (page <= 0) {
+                return;
+            }
             page -= 1;
             loadData(processPage, history);
+            if (page <= 0) {
+                toggleCallback(element);
+            }
         });
     }
 
     function processPage(data) {
-        for (let x = 0; x < handlers.length; x++) {
-            document.removeEventListener("DOMContentLoaded", handlers[x]);
-        }
-
         while (history.firstChild) {
             history.removeChild(history.firstChild);
         }
         let div = document.createElement('div');
-        div.innerHTML = data['html'];
-        history.appendChild(div);
+        history.innerHTML = data['html'];
 
+        if (dataCallback != null) {
+            console.debug('calling script');
+            for (let i = 0; i < dataCallback.length; i++) {
+                dataCallback[i]();
+            }
+            if (historyList != null) {
+                historyList();
+            }
+            dataCallback = [];
+        }
+    }
 
-        let arr = div.getElementsByTagName('script');
-        for (let n = 0; n < arr.length; n++)
-            eval(arr[n].innerHTML)//run script inside div
+    function initializePage(playerPageId, maxPage) {
+        playerId = playerPageId;
+        maxPages = maxPage;
+        console.debug('creating pages', playerPageId, maxPages);
+        let nextpage = document.getElementById('nextpage');
+        let prevpage = document.getElementById('prevpage');
+        let history = document.getElementsByClassName('matchhistory')[0];
+        let callbacks = createToggleCallback([nextpage, prevpage]);
+        addNextPageListener(nextpage, history, callbacks);
+        addPreviousPageListener(prevpage, history, callbacks);
+        if (dataCallback != null) {
+            for (let i = 0; i < dataCallback.length; i++) {
+                dataCallback[i]();
+            }
+            if (historyList != null) {
+                historyList();
+            }
+        } else {
+            console.debug("Callback is null no data graph data was initialized");
+        }
 
-        let DOMContentLoaded_event = document.createEvent("Event");
-        DOMContentLoaded_event.initEvent("DOMContentLoaded", true, true);
-        window.document.dispatchEvent(DOMContentLoaded_event);
+        callbacks(prevpage);
+    }
 
+    function setHistoryCallback(callback) {
+        dataCallback.push(callback);
+    }
+
+    function setHistoryList(callback) {
+        historyList = callback;
     }
 
     return {
-        addNextPageListener: addNextPageListener,
-        addPreviousPageListener: addPreviousPageListener
+        initializeMatchHistory: initializePage,
+        addHistoryCallback: setHistoryCallback,
+        setHistoryList: setHistoryList
     }
 });

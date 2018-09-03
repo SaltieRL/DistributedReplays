@@ -3,9 +3,9 @@
 {% set player = profile['response']['players'][0] %}
 {% block title %}Player Info{% endblock title %}
 {% block imports %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fixed_header.css') }}">
-    {% include "partials/imports/graph.html" %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fixed_header.css') }}">
+{% include "partials/imports/graph.html" %}
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
@@ -52,7 +52,17 @@
         </span>
         <div class="matchhistory">
             {% if games %}
+                {% set max_pages=total_games/game_per_page %}
                 {% include "partials/replay/match_history.html" %}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        console.log('adding history loader');
+                        requirejs(['match/matchHistoryLoader'], function (loader) {
+                            console.log('creating history loader');
+                            loader.initializeMatchHistory('{{ id }}', {{ max_pages }});
+                        })
+                    });
+                </script>
             {% else %}
                 <div class="errmsg">
                     no matches recorded for this profile (are you using the auto-uploader?)

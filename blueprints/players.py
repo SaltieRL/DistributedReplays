@@ -77,10 +77,10 @@ def compare_player(ids):
 
 @bp.route('/overview/<id_>/history/<page_number>')
 def render_player_history(id_, page_number):
-    page_number = int(page_number) - 1
+    page_number = int(page_number)
     print(re.match(regex, id_))
     if len(id_) != 17 or re.match(regex, id_) is None:
-        r = get_vanity_to_steam_id_or_random_response(id_)
+        r = get_vanity_to_steam_id_or_random_response(id_, current_app)
         if r is None:
             return redirect(url_for('home'))
         id_ = r['response']['steamid']
