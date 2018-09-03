@@ -51,7 +51,7 @@ define(['server', 'three', 'viewerSetup',
         let state = createStateObject();
 
         console.debug('loading data');
-        server.asyncJsonGet('/replays/parsed/view/' + replayHash + '/positions', function (data) {
+        server.asyncJsonGet('/replays/parsed/view/positions/' + replayHash, function (data) {
             console.debug('data has been loaded');
             let cars = objects.createCars(staticObjects.geometry, staticObjects.materials, data);
             // Adding cars

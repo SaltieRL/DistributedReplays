@@ -96,7 +96,7 @@ def view_replay(id_):
                                item_dict=get_item_dict())
 
 
-@bp.route('/parsed/view/<id_>/positions')
+@bp.route('/parsed/view/positions/<id_>') # ID must always be last
 def view_replay_data(id_):
     pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
     gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
