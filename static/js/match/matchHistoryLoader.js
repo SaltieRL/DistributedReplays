@@ -2,7 +2,7 @@ define(['server'], function (server) {
     let page = 0;
     let history = null;
     let playerId = null;
-    let dataCallback = [];
+    let dataCallback = null;
     let maxPages = null;
     let historyList = null;
 
@@ -56,19 +56,22 @@ define(['server'], function (server) {
         while (history.firstChild) {
             history.removeChild(history.firstChild);
         }
-        let div = document.createElement('div');
+        console.debug('added new html');
         history.innerHTML = data['html'];
 
-        if (dataCallback != null) {
-            console.debug('calling script');
-            for (let i = 0; i < dataCallback.length; i++) {
-                dataCallback[i]();
+        eval(document.getElementById('historyScript').innerHTML);
+        eval(document.getElementById('graphScript').innerHTML);
+
+        setTimeout(function () {
+            if (dataCallback != null) {
+                console.debug('calling script');
+                dataCallback();
+                if (historyList != null) {
+                    historyList();
+                }
+                dataCallback = null;
             }
-            if (historyList != null) {
-                historyList();
-            }
-            dataCallback = [];
-        }
+        }, 100);
     }
 
     function initializePage(playerPageId, maxPage) {
@@ -82,9 +85,7 @@ define(['server'], function (server) {
         addNextPageListener(nextpage, history, callbacks);
         addPreviousPageListener(prevpage, history, callbacks);
         if (dataCallback != null) {
-            for (let i = 0; i < dataCallback.length; i++) {
-                dataCallback[i]();
-            }
+            dataCallback();
             if (historyList != null) {
                 historyList();
             }
@@ -96,7 +97,7 @@ define(['server'], function (server) {
     }
 
     function setHistoryCallback(callback) {
-        dataCallback.push(callback);
+        dataCallback = callback;
     }
 
     function setHistoryList(callback) {
@@ -105,7 +106,7 @@ define(['server'], function (server) {
 
     return {
         initializeMatchHistory: initializePage,
-        addHistoryCallback: setHistoryCallback,
+        setHistoryCallback: setHistoryCallback,
         setHistoryList: setHistoryList
     }
 });

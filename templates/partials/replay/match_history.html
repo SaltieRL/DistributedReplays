@@ -1,5 +1,5 @@
 {% from "macros/json.html" import jsonify %}
-<script>
+<script id="historyScript">
     (function () {
         console.log('executing function right?');
         requirejs(['match/matchHistoryLoader'], function (loader) {
@@ -52,7 +52,7 @@
                         {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
                         {% set graph_length = graphs|length %}
                         {% set json_keys = ["player", "name", "is_orange"] + graphs %}
-                        <script>
+                        <script id="graphScript">
                             (function(host_id, action_element_id,  labels) {
                                 requirejs(['match/matchHistoryLoader'], function (loader) {
                                     console.log('creating graph loader function');
@@ -63,7 +63,7 @@
                                             matchHistory.addAction(action_element_id, host_id, labels, replay_data);
                                         });
                                     };
-                                    loader.addHistoryCallback(matchLoader);
+                                    loader.setHistoryCallback(matchLoader);
                                 });
                             })('{{ dropdown_id }}', '{{ match_id }}', {{ graphs|tojson }});
                         </script>
