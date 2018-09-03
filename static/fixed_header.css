@@ -14,7 +14,7 @@ section.positioned {
 }
 table {
     border-spacing: 0;
-    width:100%;
+    width: calc(100% - 2px);
 }
 td + td {
 }
