@@ -34,3 +34,17 @@ a {
     margin: 0% 5%;
     margin-top: 10px;
 }
+
+.pure-button {
+    font-family: "Lato", "Fira Mono", monospace;
+    font-weight: 300;
+}
+
+.button-small {
+    font-size: 85%;
+}
+
+.button-xsmall {
+    font-size: 85%;
+    padding: .1em 1em;
+}

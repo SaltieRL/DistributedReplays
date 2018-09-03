@@ -44,7 +44,12 @@
             </div>
             {% endif %}
         </div>
-        <span class="header">/ match history</span>
+        <span class="header">/ match history<span>&nbsp;&nbsp;</span>
+        {% if total_games > game_per_page %}
+            <span id="prevpage" class="pure-button button-xsmall">back</span>
+            <span id="nextpage" class="pure-button button-xsmall">foward</span>
+        {% endif %}
+        </span>
         <div class="matchhistory">
             {% if games %}
                 {% include "partials/replay/match_history.html" %}

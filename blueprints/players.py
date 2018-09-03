@@ -12,7 +12,7 @@ from helpers.functions import render_with_session, get_rank
 bp = Blueprint('players', __name__, url_prefix='/players')
 regex = re.compile('[0-9]{17}')
 
-player_wrapper = PlayerWrapper()
+player_wrapper = PlayerWrapper(limit=1)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
@@ -35,7 +35,7 @@ def view_player(id_):
 
     return render_with_session('player.html', session, games=games, rank=rank, profile=steam_profile, car=favorite_car,
                                favorite_car_pctg=favorite_car_pctg, stats=stats,
-                               total_games=total_games,
+                               total_games=total_games, game_per_page=player_wrapper.limit,
                                id=id_, get_stat_spider_charts=PlayerStatWrapper.get_stat_spider_charts)
 
 
