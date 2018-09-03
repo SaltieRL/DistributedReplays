@@ -4,7 +4,10 @@ import os
 from sqlalchemy import create_engine, exists
 from sqlalchemy.orm import sessionmaker
 
-import config
+try:
+    import config
+except ImportError:
+    config = {'db_user': None, 'db_password': None }
 from database.objects import DBObjectBase, User, Replay, Model
 
 connection_string = 'postgresql:///saltie'.format(config.db_user, config.db_password)

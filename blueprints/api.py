@@ -1,6 +1,5 @@
 import datetime
 import os
-import pickle
 from functools import wraps
 
 from flask import render_template, url_for, redirect, request, jsonify, send_from_directory, Blueprint, current_app, \

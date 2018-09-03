@@ -1,6 +1,16 @@
+import logging
+
 import requests
-from flask import jsonify, request, redirect, url_for, Blueprint
-from config import STEAM_API_KEY
+from flask import jsonify, request, redirect, url_for, Blueprint, current_app
+
+from database.wrapper.player_wrapper import get_random_player, create_default_player
+
+try:
+    from config import STEAM_API_KEY
+except:
+    STEAM_API_KEY = 'INVALID_KEY'
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint('steam', __name__, url_prefix='/steam')
 
@@ -9,7 +19,7 @@ bp = Blueprint('steam', __name__, url_prefix='/steam')
 def resolve_steam():
     if 'name' not in request.form:
         return jsonify({})
-    r = vanity_to_steam_id(request.form['name'])
+    r = get_vanity_to_steam_id_or_random_response(request.form['name'], current_app)
     if r is None:
         steamid = request.form['name']
     else:
@@ -17,9 +27,34 @@ def resolve_steam():
     return redirect(url_for('players.view_player', id_=steamid))
 
 
-def steam_id_to_profile(steamID):
+def get_steam_profile_or_random_response(steam_id, current_app):
+    try:
+        return steam_id_to_profile(steam_id)
+    except BaseException as e:
+        logger.warning(e)
+        player = create_default_player()
+        print(player)
+        return {
+            'response': {
+                'steamid': player.platformid,
+                'personaname': player.platformname,
+                'avatarfull': player.avatar,
+                'players': [
+                    {
+                        'steamid': player.platformid,
+                        'personaname': player.platformname,
+                        'platformname': player.platformname,
+                        'avatarfull': player.avatar,
+                        'avatar': player.avatar,
+                    }
+                ]
+            }
+        }
+
+
+def steam_id_to_profile(steam_id):
     profile_url = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={steamKey}&steamids={steamID}'.format(
-        steamKey=STEAM_API_KEY, steamID=steamID)
+        steamKey=STEAM_API_KEY, steamID=steam_id)
     r = requests.get(profile_url)
     r.raise_for_status()
     if len(r.json()['response']['players']) == 0:
@@ -28,9 +63,23 @@ def steam_id_to_profile(steamID):
         return r.json()
 
 
+def get_vanity_to_steam_id_or_random_response(vanity, current_app):
+    try:
+        return vanity_to_steam_id(vanity)
+    except BaseException as e:
+        logger.warning(e)
+        session = current_app.config['db']()
+        player = get_random_player(session)
+        return {
+            'response': {
+                'steamid': player.platformid
+            }
+        }
+
+
 def vanity_to_steam_id(vanity):
     steam_url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={}&vanityurl={}'.format(
-        STEAM_API_KEY, vanity)
+        steamKey=STEAM_API_KEY, steamID=vanity)
     r = requests.get(steam_url)
     r.raise_for_status()
     if r.json()['response']['success'] == 42:
