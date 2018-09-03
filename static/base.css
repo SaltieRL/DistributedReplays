@@ -35,6 +35,10 @@ a {
     margin-top: 10px;
 }
 
+i.clickable {
+    color: #333;
+}
+
 .pure-button {
     font-family: "Lato", "Fira Mono", monospace;
     font-weight: 300;
@@ -45,6 +49,7 @@ a {
 }
 
 .button-xsmall {
-    font-size: 85%;
+    transform: scale(0.7);
+    font-size: 70%;
     padding: .1em 1em;
 }
