@@ -9,26 +9,26 @@
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
+        <div class="searchblock" style="margin-bottom: 15px;">
+            <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
+                <i class="icono-sync"></i>
+                <input type="text" name="other" placeholder="Compare to other user" class="search"/>
+            </form>
+        </div>
         <div class="header_holder">
-            <span class="header">/ profile information</span>
+            <span class="header">/ Profile Information</span>
         </div>
         <div class="playerpanel">
             {% if player %}
                 {% include "partials/player/profile.html" %}
             {% endif %}
         </div>
-        <div class="searchblock">
-            <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
-                <i class="icono-sync"></i>
-                <input type="text" name="other" placeholder="Compare other user" class="search"/>
-            </form>
-        </div>
-        <div class="header_holder" style="margin-top: 10px;">
-        <span class="header">/ player stats</span>
+        <div class="header_holder">
+        <span class="header">/ Player Stats</span>
         </div>
         {% include "partials/player/stats.html" %}
         <div class="header_holder">
-        <span class="header">/ rank information</span>
+        <span class="header">/ Rank Information</span>
         </div>
         <div class="rankpanel">
             {% if rank %}
@@ -41,8 +41,9 @@
         </div>
     </div>
     <div class="main">
+        {% if False %}
         <div class="header_holder">
-        <span class="header">/ rank information</span>
+        <span class="header">/ Rank Information</span>
         </div>
         <div class="rankpanel">
             {% if rank %}
@@ -53,8 +54,9 @@
                 </div>
             {% endif %}
         </div>
+        {% endif %}
         <div class="header_holder">
-        <span class="header">/ tendencies</span>
+        <span class="header">/ Tendencies</span>
         </div>
         <div class="chartpanel">
             {% set min_replays = 1 %}
@@ -67,7 +69,7 @@
             {% endif %}
         </div>
         <div class="header_holder">
-        <span class="header">/ match history<span>&nbsp;&nbsp;</span>
+        <span class="header">/ Match History<span>&nbsp;&nbsp;</span>
         </span>
         </div>
         {% if total_games > game_per_page %}
