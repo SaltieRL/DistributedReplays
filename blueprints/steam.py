@@ -1,4 +1,5 @@
 import logging
+import traceback
 
 import requests
 from flask import jsonify, request, redirect, url_for, Blueprint, current_app
@@ -32,6 +33,7 @@ def get_steam_profile_or_random_response(steam_id, current_app):
         return steam_id_to_profile(steam_id)
     except BaseException as e:
         logger.warning(e)
+        traceback.print_exc()
         player = create_default_player()
         print(player)
         return {
@@ -68,6 +70,7 @@ def get_vanity_to_steam_id_or_random_response(vanity, current_app):
         return vanity_to_steam_id(vanity)
     except BaseException as e:
         logger.warning(e)
+        traceback.print_exc()
         session = current_app.config['db']()
         player = get_random_player(session)
         return {
@@ -78,7 +81,7 @@ def get_vanity_to_steam_id_or_random_response(vanity, current_app):
 
 
 def vanity_to_steam_id(vanity):
-    steam_url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={}&vanityurl={}'.format(
+    steam_url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={steamKey}&vanityurl={steamID}'.format(
         steamKey=STEAM_API_KEY, steamID=vanity)
     r = requests.get(steam_url)
     r.raise_for_status()
