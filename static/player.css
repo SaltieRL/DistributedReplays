@@ -16,9 +16,9 @@ body {
 
 .playerpanel {
     margin: 5px 0px;
-    border-bottom: 1px solid #ddd;
-    border-top: 1px solid #ddd;
     display: flex;
+    border: 1px solid #ddd;
+    border-top: initial;
 }
 
 .main {
@@ -34,8 +34,6 @@ body {
     display: flex;
     margin: 5px 0px;
     padding: 5px 0px;
-    border-bottom: 1px solid #ddd;
-    border-top: 1px solid #ddd;
 }
 
 .mhtable {
@@ -84,6 +82,10 @@ td {
     padding: 8px;
 }
 
+tbody {
+    border-bottom: 1px solid #ddd;
+}
+
 td.team {
     font-weight: bold;
 }
@@ -95,24 +97,20 @@ th {
 .rankpanel {
     margin: 5px 0px;
     padding: 5px 0px;
-    border-bottom: 1px solid #ddd;
-    border-top: 1px solid #ddd;
+
+
     display: flex;
 }
 
 .chartpanel {
     margin: 5px 0px;
     padding: 5px 0px;
-    border-bottom: 1px solid #ddd;
-    border-top: 1px solid #ddd;
     display: flex;
 }
 
 .statpanel {
     margin: 5px 0px;
     padding: 5px 0px;
-    border-bottom: 1px solid #ddd;
-    border-top: 1px solid #ddd;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -202,6 +200,42 @@ th {
     max-width: 150px;
     max-height: 150px;
     align-self: center;
+}
+
+.sidebar .rankpanel {
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.header_holder {
+    margin-bottom: 5px;
+    position: relative;
+    border-bottom: 1px solid #ddd;
+}
+
+.header_holder:after {
+    content:"";
+    position:absolute;
+    width:100%;
+    height: 10px;
+    background: linear-gradient(to bottom, #eee 0%,#ffffff 70%);
+    bottom:-11px;
+    left:0;
+    z-index:-1;
+}
+
+.sidebar .rankpanel .panel {
+    max-width: calc(50% - 1px);
+    margin-bottom: 20px;
+}
+
+.sidebar .rankpic {
+    max-width: calc(50% - 1px);
+    align-self: center;
+}
+
+.sidebar .t1 {
+    font-size: 1.5em;
 }
 
 .info {

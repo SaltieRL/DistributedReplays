@@ -28,6 +28,10 @@ html, body {
     margin: auto;
 }
 
+.search {
+    border-left: initial;
+}
+
 .logo {
     padding-left: 10px;
     font-family: "Shrikhand";

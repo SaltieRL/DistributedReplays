@@ -35,7 +35,7 @@ class PlayerStatWrapper:
                 PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
             print(fav_car_str)
             # car_arr = [g.car for g in games]
-            favorite_car = constants.cars[int(fav_car_str[0])]
+            favorite_car = constants.get_car(int(fav_car_str[0]))
             favorite_car_pctg = fav_car_str[1] / total_games
             q = session.query(*stats_query).filter(PlayerGame.total_hits > 0)
             global_stats = q.first()

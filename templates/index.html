@@ -23,13 +23,6 @@
           <input name=name type="text" class="search " placeholder="enter steamID or username" required>
         </form>
       </div>
-      <div class="hotlinks">
-        <a href = "#"><in>about</in></a>
-        <div class="dot">·</div>
-        <a href="https://github.com/SaltieRL/DistributedReplays"><in>github</in></a>
-        <div class="dot">·</div>
-        <a href="https://discord.gg/c8cArY9"><in>discord</in></a>
-      </div>
         <div class="hotlinks">
             <a href = "{{ url_for('replays.replay_stats') }}"><div class="framebox">global stats</div></a>
             <a class="nav-link" href = "{{ url_for('replays.replays_home') }}"><div class="framebox">upload replay</div></a>
@@ -44,6 +37,13 @@
             {% else %}
             <a href="{{ url_for('auth.steam_auth') }}"><div class="framebox">Log in with Steam</div></a>
             {% endif %}
+        </div>
+        <div class="hotlinks">
+            <a href = "#"><in>about</in></a>
+            <div class="dot">·</div>
+            <a href="https://github.com/SaltieRL/DistributedReplays"><in>github</in></a>
+            <div class="dot">·</div>
+            <a href="https://discord.gg/c8cArY9"><in>discord</in></a>
         </div>
     </div>
   </body>

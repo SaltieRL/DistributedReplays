@@ -79,6 +79,7 @@ body {
     border: 0px;
     font-weight: 300;
     border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
     color: #4b545f;
     text-align: center;
     font-size: 18px;
