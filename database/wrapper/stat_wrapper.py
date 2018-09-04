@@ -28,7 +28,7 @@ class PlayerStatWrapper:
 
     def get_averaged_stats(self, session, id_, total_games, page=0):
         stats_query = self.stats_query
-        games = self.player_wrapper.get_player_games(session, id_, page=page)
+        games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
         if len(games) > 0:
             fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
                 PlayerGame.player == id_).filter(

@@ -80,6 +80,13 @@ define(['server'], function (server) {
         console.debug('creating pages', playerPageId, maxPages);
         let nextpage = document.getElementById('nextpage');
         let prevpage = document.getElementById('prevpage');
+        if (nextpage === null || prevpage === null) {
+            if (historyList != null) {
+                historyList();
+            }
+            dataCallback();
+            return;
+        }
         let history = document.getElementsByClassName('matchhistory')[0];
         let callbacks = createToggleCallback([nextpage, prevpage]);
         addNextPageListener(nextpage, history, callbacks);
@@ -96,8 +103,17 @@ define(['server'], function (server) {
         callbacks(prevpage);
     }
 
-    function setHistoryCallback(callback) {
-        dataCallback = callback;
+    function addHistoryCallback(callback) {
+        let oldDataCallback = dataCallback;
+        dataCallback = function () {
+            try {
+                oldDataCallback();
+            } catch(exception) {
+                console.log(exception);
+            }
+            callback();
+        };
+
     }
 
     function setHistoryList(callback) {
@@ -106,7 +122,7 @@ define(['server'], function (server) {
 
     return {
         initializeMatchHistory: initializePage,
-        setHistoryCallback: setHistoryCallback,
+        setHistoryCallback: addHistoryCallback,
         setHistoryList: setHistoryList
     }
 });

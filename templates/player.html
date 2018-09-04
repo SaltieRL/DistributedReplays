@@ -36,7 +36,7 @@
         <span class="header">/ tendencies</span>
         <div class="chartpanel">
             {% set min_replays = 1 %}
-            {% if games|length > min_replays %}
+            {% if total_games > min_replays %}
                 {% include "partials/player/spider_charts.html" %}
             {% else %}
             <div class="errmsg">

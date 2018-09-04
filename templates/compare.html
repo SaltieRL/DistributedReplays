@@ -22,6 +22,15 @@
         / match history
         <div class="matchhistory">
             {% if games %}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        console.log('adding history loader');
+                        requirejs(['match/matchHistoryLoader'], function (loader) {
+                            console.log('creating history loader');
+                            loader.initializeMatchHistory('{{ id }}', {{ max_pages }});
+                        })
+                    });
+                </script>
                 {% include "partials/replay/match_history.html" %}
             {% else %}
                 <div class="errmsg">

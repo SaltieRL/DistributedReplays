@@ -55,10 +55,11 @@ def compare_player_redir(id_):
 def compare_player(ids):
     session = current_app.config['db']()
     ids = ids.split(',')
-    common_games = player_wrapper.get_player_games(session, ids)
+    common_games = player_wrapper.get_player_games(session, ids, id_list=True)
     users = []
     for player_id in ids:
-        games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, player_id)
+        total_games = player_wrapper.get_total_games(session, player_id)
+        games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, player_id, total_games)
         steam_profile = get_steam_profile_or_random_response(player_id, current_app)
         if steam_profile is None:
             return render_template('error.html', error="Unable to find the requested profile: " + player_id)
@@ -71,7 +72,7 @@ def compare_player(ids):
             'steam_profile': steam_profile
         }
         users.append(user)
-    return render_with_session('compare.html', session, games=common_games, users=users,
+    return render_with_session('compare.html', session, games=common_games, users=users, max_pages=1,
                                get_stat_spider_charts=PlayerStatWrapper.get_stat_spider_charts)
 
 
@@ -86,5 +87,5 @@ def render_player_history(id_, page_number):
         id_ = r['response']['steamid']
         return redirect(url_for('players.view_player', id_=id_))
     session = current_app.config['db']()
-    games = player_wrapper.get_player_games(session, id_, page=page_number)
+    games = player_wrapper.get_player_games_paginated(session, id_, page=page_number)
     return jsonify({'html': render_template('partials/replay/match_history.html', games=games)})
