@@ -17,10 +17,12 @@
         </div>
         <span class="header">/ player stats</span>
         {% include "partials/player/stats.html" %}
-        <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
-            <input type="text" name="other" placeholder="Compare other user"/>
-            <button type="submit">Submit</button>
-        </form>
+        <div class="searchblock">
+            <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
+                <i class="icono-sync"></i>
+                <input type="text" name="other" placeholder="Compare other user" class="search"/>
+            </form>
+        </div>
     </div>
     <div class="main">
         <span class="header">/ rank information</span>

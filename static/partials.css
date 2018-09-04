@@ -20,20 +20,6 @@ form {
     margin: 0px;
     padding: 0px;
 }
-.search {
-    min-width: 300px;
-    padding: 10px 15px;
-    margin-left: 30px;
-    margin-bottom: 0px;
-    font-family: "Lato", "Fira Mono", monospace;
-    font-weight: 300;
-    border: 0px;
-    border-left: 1px solid #ddd;
-    border-bottom:1px solid #ddd;
-    color: #4b545f;
-    font-size: 15px;
-    outline: none;
-}
 
 .navbar  {
     color: #333;
