@@ -8,18 +8,24 @@
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
-        / comparing
+        <div class="header_holder">
+            <span class="header">/ Comparing</span>
+        </div>
         {% for p in users %}
             {% set player = p['steam_profile']['response']['players'][0] %}
             {% include "partials/player/profile.html" %}
         {% endfor %}
     </div>
     <div class="main">
-        / tendencies
+        <div class="header_holder">
+            <span class="header">/ Tendencies</span>
+        </div>
         <div class="rankpanel" style="max-width: 400px;">
             {% include "partials/player/spider_charts.html" %}
         </div>
-        / match history
+        <div class="header_holder">
+            <span class="header">/ Match History<span>&nbsp;&nbsp;</span></span>
+        </div>
         <div class="matchhistory">
             {% if games %}
                 <script>

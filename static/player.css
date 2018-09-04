@@ -207,23 +207,6 @@ th {
     flex-direction: row;
 }
 
-.header_holder {
-    margin-bottom: 5px;
-    position: relative;
-    border-bottom: 1px solid #ddd;
-}
-
-.header_holder:after {
-    content:"";
-    position:absolute;
-    width:100%;
-    height: 10px;
-    background: linear-gradient(to bottom, #eee 0%,#ffffff 70%);
-    bottom:-11px;
-    left:0;
-    z-index:-1;
-}
-
 .sidebar .rankpanel .panel {
     max-width: calc(50% - 1px);
     margin-bottom: 20px;
@@ -356,9 +339,4 @@ ul, li {
 
 .team {
     position: relative;
-}
-
-.header {
-    font-weight: 600;
-    font-size: 1.2em;
 }
