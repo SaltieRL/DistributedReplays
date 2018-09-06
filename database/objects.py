@@ -128,7 +128,7 @@ class PlayerGame(DBObjectBase):
     num_small_boosts = Column(Integer)
     num_large_boosts = Column(Integer)
     wasted_collection = Column(Float)
-    wasted_useage = Column(Float)
+    wasted_usage = Column(Float)
 
     # tendencies
     time_on_ground = Column(Float)
@@ -143,8 +143,8 @@ class PlayerGame(DBObjectBase):
     time_in_front_ball = Column(Float)
 
     # distance
-    forward = Column(Float)
-    backward = Column(Float)
+    ball_hit_forward = Column(Float)
+    ball_hit_backward = Column(Float)
 
 
 

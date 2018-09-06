@@ -31,7 +31,7 @@ print('Loaded replay app')
 
 
 @bp.route('/upload', methods=['GET'])
-def replays_home():
+def upload():
     session = current_app.config['db']()
     replay_count = queries.get_replay_count(session)
     replay_data = queries.get_replay_stats(session)
@@ -47,17 +47,20 @@ def upload_confirmation():
 
 @bp.route('/parse', methods=['POST'])
 def parse_replay():
-    if 'file' not in request.files:
+    uploaded_files = request.files.getlist("file")
+    print(uploaded_files)
+    if uploaded_files is None or 'file' not in request.files or len(uploaded_files) == 0:
         return return_error('No file part')
-    file = request.files['file']
-    if not file.filename.endswith('replay'):
-        return return_error('Only .replay files are allowed.')
-    filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
-    file.save(filename)
-    celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-    #return redirect(url_for('replays.view_replay', id_=file.filename.split('.')[0]))
+    f = uploaded_files[0]
+    for file in uploaded_files:
+        if not file.filename.endswith('replay'):
+            continue
+        filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
+        file.save(filename)
+        celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+    return redirect(url_for('replays.view_replay', id_=f.filename.split('.')[0]))
     #do this when it works. until then,
-    return redirect(url_for('replays.upload_confirmation'))
+    # return redirect(url_for('replays.upload_confirmation'))
 
 
 @bp.route('/parse/all')
@@ -75,7 +78,7 @@ def view_replay(id_):
     session = current_app.config['db']()
     game = session.query(Game).filter(Game.hash == id_).first()
     if game is None:
-        return redirect('/')
+        return render_with_session('replay.html', session, replay=game, cars=constants.cars, id=id_, item_dict=get_item_dict())
     players = game.players
     # pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
     # replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
@@ -110,7 +113,6 @@ def view_replay_data(id_):
         with gzip.open(gzip_path, 'rb') as f:
             df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f).set_index('index')
             df.columns = pd.MultiIndex.from_tuples([process_tuple_str(s) for s in df.columns])
-            print(df.columns)
         with open(pickle_path, 'rb') as f:
             g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
     except Exception as e:
@@ -132,10 +134,10 @@ def view_replay_data(id_):
     def process_player_df(game):
         d = []
         for p in names:
-            df[p][rot_cs] = df[p][rot_cs] / 65536.0 * 2 * 3.14159265
-            df[p]['pos_x'] = df[p]['pos_x'] * x_mult
-            df[p]['pos_y'] = df[p]['pos_y'] * y_mult
-            df[p]['pos_z'] = df[p]['pos_z'] * z_mult
+            df[p].loc[:, rot_cs] = df[p][rot_cs] / 65536.0 * 2 * 3.14159265
+            df[p].loc[:, 'pos_x'] = df[p]['pos_x'] * x_mult
+            df[p].loc[:, 'pos_y'] = df[p]['pos_y'] * y_mult
+            df[p].loc[:, 'pos_z'] = df[p]['pos_z'] * z_mult
             d.append(df[p][cs + rot_cs + ['boost_active']].fillna(-100).values.tolist())
         return d
 
