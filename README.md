@@ -1,8 +1,4 @@
-# Saltie Replay Server
-
-A replay collection server for [Saltie](https://github.com/RLBots/Saltie) the Deep Reinforcement Learning Bot
-
-*Modeled after the [Leela Zero](https://github.com/gcp/leela-zero) distributed Go engine.*
+# Calculated.gg Backend
 
 ## Setup
 
