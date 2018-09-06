@@ -37,18 +37,19 @@ class PlayerStatWrapper:
             # car_arr = [g.car for g in games]
             favorite_car = constants.cars[int(fav_car_str[0])]
             favorite_car_pctg = fav_car_str[1] / len(games)
-            q = session.query(*stats_query).filter(PlayerGame.total_hits > 0)
+            q = session.query(func.avg(*stats_query), func.std(*stats_query)).filter(PlayerGame.total_hits > 0)
             global_stats = q.first()
             stats = list(q.filter(PlayerGame.player == id_).first())
 
             for i, s in enumerate(stats):
-                player_stat = s
+                player_stat = s[0][0]
                 if player_stat is None:
                     player_stat = 0
-                global_stat = global_stats[i]
+                global_stat = global_stats[i][0]
+                global_std = global_stats[i][1]
                 if global_stat is None or global_stat == 0:
                     global_stat = 1
-                stats[i] = float(player_stat / global_stat)
+                stats[i] = float((player_stat - global_stat) / global_std)
         else:
             favorite_car = "Unknown"
             favorite_car_pctg = 0.0
@@ -66,25 +67,25 @@ class PlayerStatWrapper:
         stat_list = []
         for field in field_list:
             field = getattr(PlayerGame, field.field_name)
-            stat_list.append(func.avg(field))
+            stat_list.append(field)
 
         stat_list += [
-            func.avg(PlayerGame.usage),
-            func.avg(PlayerGame.average_speed),
-            func.avg(PlayerGame.possession_time),
-            func.avg(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # hits that are not dribbles
-            func.avg((100 * PlayerGame.shots) /
-                     safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # Shots per non dribble
-            func.avg((100 * PlayerGame.total_passes) /
-                     safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # passes per non dribble
-            func.avg((100 * PlayerGame.assists) /
-                     safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # assists per non dribble
-            func.avg((100 * PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
-                     safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)),  # useful hit per non dribble
-            func.avg(PlayerGame.turnovers),
+            PlayerGame.usage,
+            PlayerGame.average_speed,
+            PlayerGame.possession_time,
+            PlayerGame.total_hits - PlayerGame.total_dribble_conts,  # hits that are not dribbles
+            (100 * PlayerGame.shots) /
+                safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # Shots per non dribble
+            (100 * PlayerGame.total_passes) /
+                safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # passes per non dribble
+            (100 * PlayerGame.assists) /
+                safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # assists per non dribble
+            (100 * PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
+                safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # useful hit per non dribble
+            PlayerGame.turnovers,
             func.sum(PlayerGame.goals) / cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric),
-            func.avg(PlayerGame.total_aerials),
-            func.random(), func.avg(func.random()), func.avg(func.random()), func.avg(func.random())]
+            PlayerGame.total_aerials,
+            func.random(), func.random(), func.random(), func.random()]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
                                           'shots/hit', 'passes/hit', 'assists/hit', 'useful/hits',
@@ -95,13 +96,14 @@ class PlayerStatWrapper:
 
     @staticmethod
     def get_stat_spider_charts():
-        titles = [# 'Basic',
-                  'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
-        groups = [# ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
-                  ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
-                  ['score', 'passes/hit', 'assists/hit'],  # chemistry
-                  ['turnovers', 'useful/hits', 'shot %', 'aerials'],  # skill
-                  ['time_in_attacking_half', 'time_in_attacking_third', 'time_in_defending_third', 'time_in_defending_half', 'time_behind_ball', 'time_in_front_ball']]#,  # tendencies
-                  # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
+        titles = [  # 'Basic',
+            'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
+        groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
+            ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
+            ['score', 'passes/hit', 'assists/hit'],  # chemistry
+            ['turnovers', 'useful/hits', 'shot %', 'aerials'],  # skill
+            ['time_in_attacking_half', 'time_in_attacking_third', 'time_in_defending_third', 'time_in_defending_half',
+             'time_behind_ball', 'time_in_front_ball']]  # ,  # tendencies
+        # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
