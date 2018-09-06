@@ -5,7 +5,7 @@ from sqlalchemy import func, desc, cast, String
 from data import constants
 from database.wrapper.player_wrapper import PlayerWrapper
 from helpers.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
-from replayanalysis.replay_analysis.generated.api import player_pb2
+from carball.generated.api import player_pb2
 
 
 def safe_divide(sql_value):

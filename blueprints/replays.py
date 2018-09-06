@@ -16,8 +16,7 @@ from data import constants
 from database import queries
 from database.objects import PlayerGame, Game
 from helpers.functions import return_error, get_item_dict, render_with_session, get_rank_batch
-from replayanalysis.replay_analysis.analysis.utils import proto_manager, pandas_manager
-from replayanalysis.replay_analysis.analysis.utils.numpy_manager import read_array_from_file
+from carball.analysis.utils import proto_manager, pandas_manager
 from tasks import celery_tasks
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
@@ -96,7 +95,7 @@ def view_replay(id_):
                                item_dict=get_item_dict())
 
 
-@bp.route('/parsed/view/positions/<id_>') # ID must always be last
+@bp.route('/parsed/view/<id_>/positions')
 def view_replay_data(id_):
     pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
     gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')

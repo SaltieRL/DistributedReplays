@@ -11,7 +11,7 @@ from google.protobuf.descriptor import FieldDescriptor
 # Replay stuff
 from database.objects import Game, PlayerGame, Player
 from helpers.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
-from replayanalysis.replay_analysis.generated.api import game_pb2
+from carball.generated.api import game_pb2
 
 try:
     from config import RL_API_KEY

@@ -59,4 +59,4 @@ def get_car(index):
         return cars[index]
     except KeyError as e:
         print(e)
-        return "Car Not Found"
+        return "Unknown"

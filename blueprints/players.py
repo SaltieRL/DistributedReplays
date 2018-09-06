@@ -55,7 +55,7 @@ def compare_player_redir(id_):
 def compare_player(ids):
     session = current_app.config['db']()
     ids = ids.split(',')
-    common_games = player_wrapper.get_player_games(session, ids, id_list=True)
+    common_games = player_wrapper.get_player_games(session, ids)
     users = []
     for player_id in ids:
         total_games = player_wrapper.get_total_games(session, player_id)
