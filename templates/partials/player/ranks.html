@@ -9,10 +9,16 @@
     </div>
     <div class="rank_info">
         <div>
+            {% if mode['rank_points'] > 0 %}
             {{ mode['string'] }}
+            {% endif %}
         </div>
         <div>
-            rating: {{ mode['rank_points'] }}
+            {% if mode['rank_points'] == 0 %}
+                API error
+            {% else %}
+                rating: {{ mode['rank_points'] }}
+            {% endif %}
         </div>
     </div>
 </div>
