@@ -1,7 +1,7 @@
 import sqlalchemy
 
 from database.objects import PlayerGame, Game
-from sqlalchemy import func, desc, cast, String
+from sqlalchemy import func, desc, cast, String, literal
 from data import constants
 from database.wrapper.player_wrapper import PlayerWrapper
 from helpers.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
@@ -15,7 +15,7 @@ def safe_divide(sql_value):
 class PlayerStatWrapper:
 
     def __init__(self, player_wrapper: PlayerWrapper):
-        self.stats_query, self.field_names = self.get_stats_query()
+        self.stats_query, self.field_names, self.std_query = self.get_stats_query()
         self.player_wrapper = player_wrapper
 
     def get_wrapped_stats(self, stats):
@@ -28,6 +28,7 @@ class PlayerStatWrapper:
 
     def get_averaged_stats(self, session, id_, total_games, page=0):
         stats_query = self.stats_query
+        std_query = self.std_query
         games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
         if len(games) > 0:
             fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
@@ -37,19 +38,26 @@ class PlayerStatWrapper:
             # car_arr = [g.car for g in games]
             favorite_car = constants.get_car(int(fav_car_str[0]))
             favorite_car_pctg = fav_car_str[1] / total_games
-            q = session.query(func.avg(*stats_query), func.std(*stats_query)).filter(PlayerGame.total_hits > 0)
+            q = session.query(*stats_query).filter(PlayerGame.total_hits > 0)
+            stds = session.query(*std_query).filter(PlayerGame.total_hits > 0)
+            global_stds = stds.first()
             global_stats = q.first()
             stats = list(q.filter(PlayerGame.player == id_).first())
 
             for i, s in enumerate(stats):
-                player_stat = s[0][0]
+                player_stat = s
                 if player_stat is None:
                     player_stat = 0
-                global_stat = global_stats[i][0]
-                global_std = global_stats[i][1]
+                global_stat = global_stats[i]
+                global_std = global_stds[i]
                 if global_stat is None or global_stat == 0:
                     global_stat = 1
-                stats[i] = float((player_stat - global_stat) / global_std)
+                if global_std == 0:
+                    print(self.field_names[i].field_name, 'std is 0')
+                if global_std != 1 and global_std > 0:
+                    stats[i] = float((player_stat - global_stat) / global_std)
+                else:
+                    stats[i] = float(player_stat / global_stat)
         else:
             favorite_car = "Unknown"
             favorite_car_pctg = 0.0
@@ -91,8 +99,16 @@ class PlayerStatWrapper:
                                           'shots/hit', 'passes/hit', 'assists/hit', 'useful/hits',
                                           'turnovers', 'shot %', 'aerials',
                                           'luck1', 'luck2', 'luck3', 'luck4'])
-
-        return stat_list, field_list
+        avg_list = []
+        std_list = []
+        for i, s in enumerate(stat_list):
+            if field_list[i].field_name in ['shot %']:
+                std_list.append(literal(1))
+                avg_list.append(s)
+            else:
+                std_list.append(func.stddev_samp(s))
+                avg_list.append(func.avg(s))
+        return avg_list, field_list, std_list
 
     @staticmethod
     def get_stat_spider_charts():
@@ -101,7 +117,7 @@ class PlayerStatWrapper:
         groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
             ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
             ['score', 'passes/hit', 'assists/hit'],  # chemistry
-            ['turnovers', 'useful/hits', 'shot %', 'aerials'],  # skill
+            ['turnovers', 'useful/hits', 'aerials'],  # skill
             ['time_in_attacking_half', 'time_in_attacking_third', 'time_in_defending_third', 'time_in_defending_half',
              'time_behind_ball', 'time_in_front_ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
