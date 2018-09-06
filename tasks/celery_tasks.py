@@ -11,7 +11,7 @@ from tasks import celeryconfig
 from helpers.functions import convert_pickle_to_db, add_objs_to_db
 from helpers.middleware import DBTask
 from database.objects import Game
-from replayanalysis.decompile_replays import decompile_replay
+from carball import analyze_replay_file
 # bp = Blueprint('celery', __name__)
 
 
@@ -54,7 +54,7 @@ def parse_replay_task(self, fn):
         return
     # try:
 
-    analysis_manager = decompile_replay(fn, output)  # type: ReplayGame
+    analysis_manager = analyze_replay_file(fn, output)  # type: ReplayGame
     with open(pickled + '.pts', 'wb') as fo:
         analysis_manager.write_proto_out_to_file(fo)
     with gzip.open(pickled + '.gzip', 'wb') as fo:
@@ -85,6 +85,6 @@ if __name__ == '__main__':
     pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
     # try:
 
-    g = decompile_replay(fn, output)  # type: ReplayGame
+    g = analyze_replay_file(fn, output)  # type: ReplayGame
     game, player_games, players = convert_pickle_to_db(g)
     pass

@@ -10,6 +10,7 @@ from flask_cors import CORS
 try:
     import config
 except ImportError:
+    print('No config exists', file=sys.stderr)
     config = None
 
 sys.path.append(os.path.abspath('replayanalysis/'))

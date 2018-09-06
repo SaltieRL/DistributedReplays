@@ -1,8 +1,4 @@
-# Saltie Replay Server
-
-A replay collection server for [Saltie](https://github.com/RLBots/Saltie) the Deep Reinforcement Learning Bot
-
-*Modeled after the [Leela Zero](https://github.com/gcp/leela-zero) distributed Go engine.*
+# Calculated.gg Backend
 
 ## Setup
 
@@ -24,22 +20,13 @@ Each replay has an IP address attached to it, so blame can be given.
 - Run win_setup.bat
 - Run win_run.bat
 
-## Replays
-
-Replays will be saved in `/replays` for later consumption. The server provides these files to clients.
-
 ## Structure
 
-The structure of the server is split into different files:
+The structure of the server is split into different directories:
 
-- `celery_tasks.py` - this contains the tasks that run in the background (i.e. the replay parsing / pickling) using Celery workers
-- `celeryconfig.py` - configuration for the Celery worker
-- `constants.py` - things like dict of id -> car body name
-- `functions.py` - general helper functions for the server
-- `middleware.py` - classes that are used in the actual inner framework code of the server
-- `objects.py` - SQL ORM objects such as the Replay and Model objects
-- `replays.py` - contains all code pertaining to replay parsing (besides the Celery task)
-- `saltie.py` - contains all code pertaining to the Saltie data collection part
-- `startup.py` - is run to start the connection to the SQL server
-- `stats.py` - just some analysis on the upload patterns of the users
-
+- `blueprints` - Backend Python code, split into subsections
+- `database` - Database objects and queries
+- `helpers` - Various scripts to help in maintaining the server
+- `static` - Static website files (JS/CSS/images)
+- `tasks` - Contains celery code user for processing the queue of replays
+- `templates` - Dynamic website files (rendered HTML templates)

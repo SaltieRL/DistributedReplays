@@ -1,11 +1,11 @@
-import json
 import sqlalchemy
 
-from database.objects import PlayerGame
+from database.objects import PlayerGame, Game
 from sqlalchemy import func, desc, cast, String
 from data import constants
+from database.wrapper.player_wrapper import PlayerWrapper
 from helpers.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
-from replayanalysis.replay_analysis.generated.api import player_pb2
+from carball.generated.api import player_pb2
 
 
 def safe_divide(sql_value):
@@ -14,8 +14,9 @@ def safe_divide(sql_value):
 
 class PlayerStatWrapper:
 
-    def __init__(self):
+    def __init__(self, player_wrapper: PlayerWrapper):
         self.stats_query, self.field_names = self.get_stats_query()
+        self.player_wrapper = player_wrapper
 
     def get_wrapped_stats(self, stats):
         zipped_stats = dict()
@@ -25,18 +26,17 @@ class PlayerStatWrapper:
 
         return zipped_stats
 
-    def get_averaged_stats(self, id_, session):
+    def get_averaged_stats(self, session, id_, total_games, page=0):
         stats_query = self.stats_query
-        games = session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
-            PlayerGame.game != None).all()  # type: List[PlayerGame]
+        games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
         if len(games) > 0:
             fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
                 PlayerGame.player == id_).filter(
                 PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
             print(fav_car_str)
             # car_arr = [g.car for g in games]
-            favorite_car = constants.cars[int(fav_car_str[0])]
-            favorite_car_pctg = fav_car_str[1] / len(games)
+            favorite_car = constants.get_car(int(fav_car_str[0]))
+            favorite_car_pctg = fav_car_str[1] / total_games
             q = session.query(func.avg(*stats_query), func.std(*stats_query)).filter(PlayerGame.total_hits > 0)
             global_stats = q.first()
             stats = list(q.filter(PlayerGame.player == id_).first())

@@ -3,7 +3,7 @@ from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf import message
 
 from database.objects import DBObjectBase, PlayerGame
-from replayanalysis.replay_analysis.generated.api import player_pb2
+from carball.generated.api import player_pb2
 
 
 class ProtoFieldResult:

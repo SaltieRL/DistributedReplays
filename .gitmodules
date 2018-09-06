@@ -1,3 +1,0 @@
-[submodule "replayanalysis"]
-	path = replayanalysis
-	url = https://github.com/SaltieRL/ReplayAnalysis

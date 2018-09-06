@@ -29,16 +29,7 @@ html, body {
 }
 
 .search {
-    min-width: 300px;
-    padding: 10px 15px;
-    font-family: "Lato", "Fira Mono", monospace;
-    border: 0px;
-    font-weight: 300;
-    border-bottom: 1px solid #ddd;
-    color: #4b545f;
-    text-align: center;
-    font-size: 15px;
-    outline: none;
+    border-left: initial;
 }
 
 .logo {

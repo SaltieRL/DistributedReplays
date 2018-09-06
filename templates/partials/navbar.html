@@ -10,11 +10,14 @@
             a rocket league statistics platform
         </motto>
     </div>
-    <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
-        <input name=name type="text" class="search" placeholder="enter steamID or username" required>
-    </form>
-    <div class="right"><a href="{{ url_for('replays.replay_stats') }}">
-        <div class="framebox">global stats</div>
+    <div class="searchblock">
+        <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
+            <i class="icono-search"></i>
+            <input name=name type="text" class="search" placeholder="enter steamID or username" required>
+        </form>
+    </div>
+    <div class="right"><a href="{{ url_for('replays.upload') }}">
+        <div class="framebox">upload replays</div>
     </a></div>
     <div>
         <d> ·</d>

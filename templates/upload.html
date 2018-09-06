@@ -13,8 +13,8 @@
     <h3>Analyze Rocket League replay</h3>
     <p>
     <form method='post' enctype='multipart/form-data' action='{{ url_for('replays.parse_replay') }}'>
-        <input type=file name=file>
-        <input type=submit value=Upload>
+        <input type='file' name='file' multiple>
+        <input type='submit' value='Upload'>
     </form>
     </p>
 </div>

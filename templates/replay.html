@@ -19,16 +19,21 @@
 {% endblock imports %}
 {% block body %}
     {% if replay == None %}
-        Parsing... please wait a few minutes.
-        <p class="download"><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
-        {# Include refresh script here #}
-        <script>
-            setTimeout(function () {
-                location.reload();
-            }, 10000)
-        </script>
+        <div style="flex: 1 0 auto">
+            <h3>Thank you for your submission!</h3>
+            <p>We are currently parsing your replay... please wait a minute.</p>
+            <p class="download">In the meantime, you can <a
+                    href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">download</a> the
+                <code>.replay</code> file</p>
+            {# Include refresh script here #}
+            <script>
+                setTimeout(function () {
+                    location.reload();
+                }, 10000)
+            </script>
+        </div>
     {% elif replay != None %}
-    {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
+        {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
         <div style="flex: 1 0 auto">
             {#            <p><a href="{{ url_for('view_random') }}">Random</a></p>#}
             <h2>{{ replay.name|e }}</h2>
@@ -64,24 +69,24 @@
             <p>Map: {{ replay.map }}</p>
             {#        <p>Version: {{ replay.api_game.replay_version }}</p>#}
             {#        <p>Time: {{ replay.api_game.datetime }}</p>#}
-{#            <p>Frames: {{ frame_count }}</p>#}
-{#            <p>Score: {{ replay.teams[0].score }}:{{ replay.api_game.teams[1].score }}</p>#}
+            {#            <p>Frames: {{ frame_count }}</p>#}
+            {#            <p>Score: {{ replay.teams[0].score }}:{{ replay.api_game.teams[1].score }}</p>#}
             <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
 
             <!-- VIEWER -->
             {% include "partials/replay/viewer.html" %}
             <hr/>
-{#            <div>#}
-{#                <b>Goals:</b>#}
-{#                <table class="table">#}
-{#                    {% for goal in replay.goals %}#}
-{#                        <tr style="{{ "color: white;" if not goal.player_team else "" }}background: {{ "#e66f33" if goal.player_team else "#0000aa" }}">#}
-{#                            <td>Player: {{ goal.player_name }}</td>#}
-{#                            <td>Frame: {{ goal.frame_number }}</td>#}
-{#                        </tr>#}
-{#                    {% endfor %}#}
-{#                </table>#}
-{#            </div>#}
+            {#            <div>#}
+            {#                <b>Goals:</b>#}
+            {#                <table class="table">#}
+            {#                    {% for goal in replay.goals %}#}
+            {#                        <tr style="{{ "color: white;" if not goal.player_team else "" }}background: {{ "#e66f33" if goal.player_team else "#0000aa" }}">#}
+            {#                            <td>Player: {{ goal.player_name }}</td>#}
+            {#                            <td>Frame: {{ goal.frame_number }}</td>#}
+            {#                        </tr>#}
+            {#                    {% endfor %}#}
+            {#                </table>#}
+            {#            </div>#}
             <hr/>
             <div>
             </div>

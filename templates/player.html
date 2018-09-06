@@ -3,27 +3,48 @@
 {% set player = profile['response']['players'][0] %}
 {% block title %}Player Info{% endblock title %}
 {% block imports %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fixed_header.css') }}">
-    {% include "partials/imports/graph.html" %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fixed_header.css') }}">
+{% include "partials/imports/graph.html" %}
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
-        <span class="header">/ profile information</span>
+        <div class="searchblock" style="margin-bottom: 15px;">
+            <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
+                <i class="icono-sync"></i>
+                <input type="text" name="other" placeholder="Compare to other user" class="search"/>
+            </form>
+        </div>
+        <div class="header_holder">
+            <span class="header">/ Profile Information</span>
+        </div>
         <div class="playerpanel">
             {% if player %}
                 {% include "partials/player/profile.html" %}
             {% endif %}
         </div>
-        <span class="header">/ player stats</span>
+        <div class="header_holder">
+        <span class="header">/ Player Stats</span>
+        </div>
         {% include "partials/player/stats.html" %}
-        <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
-            <input type="text" name="other" placeholder="Compare other user"/>
-            <button type="submit">Submit</button>
-        </form>
+        <div class="header_holder">
+        <span class="header">/ Rank Information</span>
+        </div>
+        <div class="rankpanel">
+            {% if rank %}
+            {% include "partials/player/ranks.html" %}
+            {% else %}
+            <div class="errmsg">
+                unable to find rank information for this profile (does this player own rocket league?)
+            </div>
+            {% endif %}
+        </div>
     </div>
     <div class="main">
-        <span class="header">/ rank information</span>
+        {% if False %}
+        <div class="header_holder">
+        <span class="header">/ Rank Information</span>
+        </div>
         <div class="rankpanel">
             {% if rank %}
                 {% include "partials/player/ranks.html" %}
@@ -33,10 +54,13 @@
                 </div>
             {% endif %}
         </div>
-        <span class="header">/ tendencies</span>
+        {% endif %}
+        <div class="header_holder">
+        <span class="header">/ Tendencies</span>
+        </div>
         <div class="chartpanel">
             {% set min_replays = 1 %}
-            {% if games|length > min_replays %}
+            {% if total_games > min_replays %}
                 {% include "partials/player/spider_charts.html" %}
             {% else %}
             <div class="errmsg">
@@ -44,10 +68,28 @@
             </div>
             {% endif %}
         </div>
-        <span class="header">/ match history</span>
+        <div class="header_holder">
+        <span class="header">/ Match History<span>&nbsp;&nbsp;</span>
+        </span>
+        </div>
+        {% if total_games > game_per_page %}
+            <span id="prevpage" class="pure-button button-xsmall"><i class="icono-caretLeft clickable"></i></span>
+            <span id="nextpage" class="pure-button button-xsmall"><i class="icono-caretRight clickable"></i></span>
+        {% endif %}
+        </span>
         <div class="matchhistory">
             {% if games %}
+                {% set max_pages=total_games/game_per_page %}
                 {% include "partials/replay/match_history.html" %}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        console.log('adding history loader');
+                        requirejs(['match/matchHistoryLoader'], function (loader) {
+                            console.log('creating history loader');
+                            loader.initializeMatchHistory('{{ id }}', {{ max_pages }});
+                        })
+                    });
+                </script>
             {% else %}
                 <div class="errmsg">
                     no matches recorded for this profile (are you using the auto-uploader?)
