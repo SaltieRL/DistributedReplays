@@ -22,7 +22,7 @@ except ImportError:
     users = []
 
 from blueprints import auth, api, players, replays, stats, steam, debug
-from database.objects import Game, Player
+from database.objects import Game, Player, Group
 from database.startup import startup
 import redis
 
@@ -93,6 +93,15 @@ with app.app_context():
         print('Not using redis...')
         app.config['r'] = None
 
+    s = Session()
+    groups_to_add = ['admin', 'alpha', 'beta']
+    for g in groups_to_add:
+        num = s.query(Group).filter(Group.name == g).count()
+        if num == 0:
+            gr = Group(name=g)
+            s.add(gr)
+    s.commit()
+    s.close()
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):

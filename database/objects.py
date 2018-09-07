@@ -147,8 +147,6 @@ class PlayerGame(DBObjectBase):
     ball_hit_backward = Column(Float)
 
 
-
-
 class Game(DBObjectBase):
     __tablename__ = 'games'
     hash = Column(String(40), primary_key=True)  # replayid
@@ -176,6 +174,7 @@ class Player(DBObjectBase):
     avatar = Column(String(150))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
+    groups = Column(postgresql.ARRAY(Integer, dimensions=1))
 
 
 class CameraSettings(DBObjectBase):
@@ -188,3 +187,9 @@ class CameraSettings(DBObjectBase):
     stiffness = Column(Float)
     height = Column(Integer)
     distance = Column(Integer)
+
+
+class Group(DBObjectBase):
+    __tablename__ = 'groups'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50))
