@@ -219,13 +219,13 @@ def is_admin():
 def is_alpha():
     if g.user is None:
         return False
-    return g.admin or g.alpha
+    return is_admin() or g.alpha
 
 
 def is_beta():
     if g.user is None:
         return False
-    return g.admin or g.alpha or g.beta
+    return is_admin() or is_alpha() or g.beta
 
 
 app.jinja_env.globals.update(isAdmin=is_admin)
