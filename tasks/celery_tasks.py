@@ -11,7 +11,8 @@ from tasks import celeryconfig
 from helpers.functions import convert_pickle_to_db, add_objs_to_db
 from helpers.middleware import DBTask
 from database.objects import Game
-from replayanalysis.decompile_replays import decompile_replay
+from carball import analyze_replay_file
+
 # bp = Blueprint('celery', __name__)
 
 
@@ -46,7 +47,7 @@ celery.config_from_object(celeryconfig)
 #     print(reward)
 
 
-@celery.task(base=DBTask, bind=True)
+@celery.task(base=DBTask, bind=True, priority=5)
 def parse_replay_task(self, fn):
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed', os.path.basename(fn))
@@ -54,7 +55,7 @@ def parse_replay_task(self, fn):
         return
     # try:
 
-    analysis_manager = decompile_replay(fn, output)  # type: ReplayGame
+    analysis_manager = analyze_replay_file(fn, output)  # type: ReplayGame
     with open(pickled + '.pts', 'wb') as fo:
         analysis_manager.write_proto_out_to_file(fo)
     with gzip.open(pickled + '.gzip', 'wb') as fo:
@@ -79,12 +80,17 @@ def parse_replay_task(self, fn):
     sess.close()
 
 
+@celery.task(base=DBTask, bind=True, priority=9)
+def parse_replay_task_low_priority(self, fn):
+    parse_replay_task(fn)
+
+
 if __name__ == '__main__':
     fn = '/home/matthew/PycharmProjects/Distributed-Replays/replays/88E7A7BE41717522C30040AA4B187E9E.replay'
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
     # try:
 
-    g = decompile_replay(fn, output)  # type: ReplayGame
+    g = analyze_replay_file(fn, output)  # type: ReplayGame
     game, player_games, players = convert_pickle_to_db(g)
     pass

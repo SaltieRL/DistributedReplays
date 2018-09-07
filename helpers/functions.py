@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 import random
+import time
 
 import redis
 import requests
@@ -11,7 +12,7 @@ from google.protobuf.descriptor import FieldDescriptor
 # Replay stuff
 from database.objects import Game, PlayerGame, Player
 from helpers.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
-from replayanalysis.replay_analysis.generated.api import game_pb2
+from carball.generated.api import game_pb2
 
 try:
     from config import RL_API_KEY
@@ -91,7 +92,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
              team0score=game.game_metadata.score.team_0_score,
              team1score=game.game_metadata.score.team_1_score, teamsize=teamsize,
              match_date=match_date, team0possession=team0poss.possession_time,
-             team1possession=team1poss.possession_time, name=game.game_metadata.name)
+             team1possession=team1poss.possession_time, name=game.game_metadata.name, frames=game.game_metadata.frames)
     player_games = []
     players = []
     # print('iterating over players')
@@ -127,7 +128,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
         player_games.append(pg)
         if len(str(pid)) > 40:
             pid = pid[:40]
-        p = Player(platformid=pid, platformname="", avatar="", ranks=[])
+        p = Player(platformid=pid, platformname=p.name, avatar="", ranks=[], groups=[])
         players.append(p)
     return g, player_games, players
 
@@ -208,7 +209,12 @@ def get_rank_batch(ids, offline_redis=None):
                [{'platformId': get_platform_id(i), 'uniqueId': i} for i in ids_to_find]))
     post_data = {'player_ids': [p['uniqueId'] for p in ids_dict]}
     data = requests.post(url, headers=headers, json=post_data)
-    data = data.json()
+
+    print(data.text)
+    try:
+        data = data.json()
+    except:
+        return get_empty_data(ids)
     if 'detail' in data:
         return {str(i): {} for i in ids}
     for player in data:
@@ -237,6 +243,8 @@ fake_data = False
 
 def get_rank(steam_id):
     rank = get_rank_batch([steam_id])
+    if rank is None:
+        return None
     return rank[list(rank.keys())[0]]
 
 
@@ -249,6 +257,23 @@ def make_fake_data(ids):
         for mode in names.values():
             rank = base_rank + random.randint(-2, 2)
             div = random.randint(0, 4)
+            s = {'mode': mode, 'rank_points': rank * random.randint(60, 75) + 15 * div,
+                 'tier': rank,
+                 'division': div,
+                 'string': tier_div_to_string(rank, div)}
+            modes.append(s)
+        return_data[id_] = modes
+    return return_data
+
+
+def get_empty_data(ids):
+    names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+    return_data = {}
+    for id_ in ids:
+        modes = []
+        for mode in names.values():
+            rank = 0
+            div = 0
             s = {'mode': mode, 'rank_points': rank * random.randint(60, 75) + 15 * div,
                  'tier': rank,
                  'division': div,

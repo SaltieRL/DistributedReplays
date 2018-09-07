@@ -1,21 +1,19 @@
 import re
 
-from sqlalchemy import func, desc, cast, String
-from sqlalchemy.dialects import postgresql
-
-from database.objects import PlayerGame, Game
-from blueprints.steam import get_vanity_to_steam_id_or_random_response, \
-    get_steam_profile_or_random_response
-
 from flask import render_template, Blueprint, current_app, redirect, url_for, jsonify, request
 
+from blueprints.steam import get_vanity_to_steam_id_or_random_response, \
+    get_steam_profile_or_random_response
+from database.objects import Player
+from database.wrapper.player_wrapper import PlayerWrapper
 from database.wrapper.stat_wrapper import PlayerStatWrapper
 from helpers.functions import render_with_session, get_rank
 
 bp = Blueprint('players', __name__, url_prefix='/players')
 regex = re.compile('[0-9]{17}')
 
-playerStatWrapper = PlayerStatWrapper()
+player_wrapper = PlayerWrapper(limit=10)
+player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
 @bp.route('/overview/<id_>')  # ID must be always at the end
@@ -29,14 +27,22 @@ def view_player(id_):
         return redirect(url_for('players.view_player', id_=id_))
     session = current_app.config['db']()
     rank = get_rank(id_)
-    games, stats, favorite_car, favorite_car_pctg = playerStatWrapper.get_averaged_stats(id_, session)
+    total_games = player_wrapper.get_total_games(session, id_)
+    games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, id_, total_games)
     steam_profile = get_steam_profile_or_random_response(id_, current_app)
+    user = session.query(Player).filter(Player.platformid == id_).first()
+    if user is not None:
+        groups = [current_app.config['groups'][i] for i in user.groups]
+    else:
+        groups = []
     if steam_profile is None:
         return render_template('error.html', error="Unable to find the requested profile")
 
     return render_with_session('player.html', session, games=games, rank=rank, profile=steam_profile, car=favorite_car,
                                favorite_car_pctg=favorite_car_pctg, stats=stats,
-                               id=id_, get_stat_spider_charts=PlayerStatWrapper.get_stat_spider_charts)
+                               total_games=total_games, game_per_page=player_wrapper.limit,
+                               id=id_, get_stat_spider_charts=PlayerStatWrapper.get_stat_spider_charts,
+                               groups=groups)
 
 
 @bp.route('/overview/<id_>/compare', methods=['POST'])
@@ -55,14 +61,12 @@ def compare_player_redir(id_):
 def compare_player(ids):
     session = current_app.config['db']()
     ids = ids.split(',')
-    # q = session.query(Game.hash).filter(cast(Game.players, postgresql.ARRAY(String)).contains([id1, id2]))
-    q = session.query(PlayerGame).join(Game).filter(Game.players.contains(cast(ids, postgresql.ARRAY(String)))).filter(
-        PlayerGame.player == ids[0])
-    # q = session.query(Game.hash).filter(Game.players.op('@>')('{\'%s\', \'%s\'}' % (id1, id2)))
-    common_games = q.all()
+    common_games = player_wrapper.get_player_games(session, ids)
     users = []
     for player_id in ids:
-        games, stats, favorite_car, favorite_car_pctg = playerStatWrapper.get_averaged_stats(player_id, session)
+        total_games = player_wrapper.get_total_games(session, player_id)
+        games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, player_id,
+                                                                                               total_games)
         steam_profile = get_steam_profile_or_random_response(player_id, current_app)
         if steam_profile is None:
             return render_template('error.html', error="Unable to find the requested profile: " + player_id)
@@ -75,5 +79,20 @@ def compare_player(ids):
             'steam_profile': steam_profile
         }
         users.append(user)
-    return render_with_session('compare.html', session, games=common_games, users=users,
+    return render_with_session('compare.html', session, games=common_games, users=users, max_pages=1,
                                get_stat_spider_charts=PlayerStatWrapper.get_stat_spider_charts)
+
+
+@bp.route('/overview/<id_>/history/<page_number>')
+def render_player_history(id_, page_number):
+    page_number = int(page_number)
+    print(re.match(regex, id_))
+    if len(id_) != 17 or re.match(regex, id_) is None:
+        r = get_vanity_to_steam_id_or_random_response(id_, current_app)
+        if r is None:
+            return redirect(url_for('home'))
+        id_ = r['response']['steamid']
+        return redirect(url_for('players.view_player', id_=id_))
+    session = current_app.config['db']()
+    games = player_wrapper.get_player_games_paginated(session, id_, page=page_number)
+    return jsonify({'html': render_template('partials/replay/match_history.html', games=games)})

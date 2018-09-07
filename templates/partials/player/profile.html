@@ -1,4 +1,4 @@
-<img class="avatar" src="{{ player['avatarfull'] }}" alt="avatar"/>
+<a href="{{ url_for('players.view_player', id_=player['steamid']) }}"><img class="avatar" src="{{ player['avatarfull'] }}" alt="avatar"/></a>
 <div class="info">
     <div class="t1">
         {{ player['personaname'] }}

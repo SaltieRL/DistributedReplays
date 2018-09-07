@@ -10,7 +10,7 @@ from sqlalchemy.sql import operators
 
 from helpers.functions import get_rank, tier_div_to_string
 from database.objects import Game
-from replayanalysis.replay_analysis.analysis.utils import proto_manager
+from carball.analysis.utils import proto_manager
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 

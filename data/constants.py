@@ -1,4 +1,5 @@
 # Data dicts
+
 cars = {
   21: "Backfire",
   22: "Breakout",
@@ -51,3 +52,11 @@ cars = {
   2665: "TDK Tumbler",
   2666: "'89 Batmobile",
 }
+
+
+def get_car(index):
+    try:
+        return cars[index]
+    except KeyError as e:
+        print(e)
+        return "Unknown"

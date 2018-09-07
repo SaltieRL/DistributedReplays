@@ -1,4 +1,4 @@
-celery
+celery[redis]
 flask
 flask_login
 pandas
@@ -16,3 +16,4 @@ requests
 xlrd
 redis
 werkzeug
+carball

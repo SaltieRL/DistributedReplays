@@ -2,19 +2,23 @@
 <div class="navbar">
     <div>
         <div class="logo">
-            <a href="/"><img style="margin-top: 5px" height="50px" src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/></a>
+            <a href="/"><img style="margin-top: 5px" height="50px"
+                             src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/></a>
         </div>
     </div>
     <div>
         <motto>
-            a rocket league statistics platform
+            a rocket league statistics platform {% if isBeta() %}(beta){% endif %}
         </motto>
     </div>
-    <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
-        <input name=name type="text" class="search" placeholder="enter steamID or username" required>
-    </form>
-    <div class="right"><a href="{{ url_for('replays.replay_stats') }}">
-        <div class="framebox">global stats</div>
+    <div class="searchblock">
+        <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
+            <i class="icono-search"></i>
+            <input name=name type="text" class="search" placeholder="enter steamID or username" required>
+        </form>
+    </div>
+    <div class="right"><a href="{{ url_for('replays.upload') }}">
+        <div class="framebox">upload replays</div>
     </a></div>
     <div>
         <d> ·</d>
@@ -37,4 +41,12 @@
     <div>
         <d> ·</d>
     </div>
+    {% if isAdmin() %}
+        <div><a href="{{ url_for('admin.home') }}">
+            <in>admin</in>
+        </a></div>
+        <div>
+            <d> ·</d>
+        </div>
+    {% endif %}
 </div>

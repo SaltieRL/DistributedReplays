@@ -128,7 +128,7 @@ class PlayerGame(DBObjectBase):
     num_small_boosts = Column(Integer)
     num_large_boosts = Column(Integer)
     wasted_collection = Column(Float)
-    wasted_useage = Column(Float)
+    wasted_usage = Column(Float)
 
     # tendencies
     time_on_ground = Column(Float)
@@ -143,10 +143,8 @@ class PlayerGame(DBObjectBase):
     time_in_front_ball = Column(Float)
 
     # distance
-    forward = Column(Float)
-    backward = Column(Float)
-
-
+    ball_hit_forward = Column(Float)
+    ball_hit_backward = Column(Float)
 
 
 class Game(DBObjectBase):
@@ -166,6 +164,7 @@ class Game(DBObjectBase):
     match_date = Column(DateTime)
     team0possession = Column(Float)
     team1possession = Column(Float)
+    frames = Column(Integer)
 
 
 class Player(DBObjectBase):
@@ -175,6 +174,7 @@ class Player(DBObjectBase):
     avatar = Column(String(150))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
+    groups = Column(postgresql.ARRAY(Integer, dimensions=1), default=[])
 
 
 class CameraSettings(DBObjectBase):
@@ -187,3 +187,9 @@ class CameraSettings(DBObjectBase):
     stiffness = Column(Float)
     height = Column(Integer)
     distance = Column(Integer)
+
+
+class Group(DBObjectBase):
+    __tablename__ = 'groups'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50))

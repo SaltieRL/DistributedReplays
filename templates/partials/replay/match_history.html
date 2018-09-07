@@ -1,12 +1,18 @@
 {% from "macros/json.html" import jsonify %}
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let matches = document.getElementsByClassName("match");
-        requirejs(['matchHistory'], function (matchHistory) {
-            matchHistory.addMatchHandler(matches);
+<script id="historyScript">
+    (function () {
+        console.log('executing function right?');
+        requirejs(['match/matchHistoryLoader'], function (loader) {
+            let matchHistory = function () {
+                console.log('creating match list');
+                let matches = document.getElementsByClassName("match");
+                requirejs(['matchHistory'], function (matchHistory) {
+                    matchHistory.addMatchHandler(matches);
+                });
+            };
+            loader.setHistoryList(matchHistory);
         });
-    });
+    })();
 </script>
 <section>
     <div class="container">
@@ -23,9 +29,6 @@
             <tbody>
             {% for game in games|sort(attribute='game_object.match_date') %}
                 {% set name = game.game_object.hash if game.game_object.name == None else game.game_object.name %}
-{#                {% if game.game_object.ranks|length > 0 %}#}
-{#                    {% set avg_rank = (game.game_object.ranks|max)|int %}#}
-{#                {% endif %}#}
                 {% set replay = game.game_object %}
                 {% set dropdown_id = 'drop_down' + game.game_object.hash %}
                 {% set match_id = 'match_' + game.game_object.hash %}
@@ -49,15 +52,20 @@
                         {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
                         {% set graph_length = graphs|length %}
                         {% set json_keys = ["player", "name", "is_orange"] + graphs %}
-                        <script>
+                        <script id="graphScript">
                             (function(host_id, action_element_id,  labels) {
-                                document.addEventListener("DOMContentLoaded", function () {
-                                    const replay_data = [ {{ jsonify(team_members, json_keys) }} ];
-                                    requirejs(['matchHistory'], function (matchHistory) {
-                                        matchHistory.addAction(action_element_id, host_id, labels, replay_data);
-                                    });
+                                requirejs(['match/matchHistoryLoader'], function (loader) {
+                                    console.log('creating graph loader function');
+                                    let matchLoader = function () {
+                                        console.log('graph loader called');
+                                        const replay_data = [{{jsonify(team_members, json_keys)}}];
+                                        requirejs(['matchHistory'], function (matchHistory) {
+                                            matchHistory.addAction(action_element_id, host_id, labels, replay_data);
+                                        });
+                                    };
+                                    loader.setHistoryCallback(matchLoader);
                                 });
-                            })('{{ dropdown_id }}', '{{ match_id }}', {{ graphs|tojson }})
+                            })('{{ dropdown_id }}', '{{ match_id }}', {{ graphs|tojson }});
                         </script>
                         {% include "partials/replay/score_graph.html" %}
                     </td>
