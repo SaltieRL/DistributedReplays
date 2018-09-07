@@ -12,7 +12,7 @@ define(['colors'], function (colors) {
         let user_colors = colors.getSpiderColors(users.length + 1);
         let dataset = [
             {
-                data: Array(group.length - 0 + 1).fill(1),
+                data: Array(group.length - 0 + 1).fill(0),
                 label: 'Average',
                 ...user_colors[0]
             },
@@ -37,7 +37,11 @@ define(['colors'], function (colors) {
             options: {
                 scale: {
                     ticks: {
-                        beginAtZero: true
+                        // beginAtZero: true
+                        // suggestedMin: -0.5,
+                        // suggestedMax: 0.5
+                        suggestedMin: -1,
+                        suggestedMax: 1
                     }
                 },
                 title: {

@@ -166,6 +166,7 @@ class Game(DBObjectBase):
     match_date = Column(DateTime)
     team0possession = Column(Float)
     team1possession = Column(Float)
+    frames = Column(Integer)
 
 
 class Player(DBObjectBase):
