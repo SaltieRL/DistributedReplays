@@ -65,7 +65,16 @@ a {
     padding: 0px 10px;
 }
 
-
 .framebox:hover {
     background-color: #ddd;
+}
+
+.example {
+
+    margin-top: 10px;
+}
+
+.example > a {
+    font-size: 1em;
+    color: rgba(0, 0, 100, 0.5) !important;
 }
