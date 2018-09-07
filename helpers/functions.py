@@ -128,7 +128,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
         player_games.append(pg)
         if len(str(pid)) > 40:
             pid = pid[:40]
-        p = Player(platformid=pid, platformname="", avatar="", ranks=[])
+        p = Player(platformid=pid, platformname="", avatar="", ranks=[], groups=[])
         players.append(p)
     return g, player_games, players
 

@@ -174,7 +174,7 @@ class Player(DBObjectBase):
     avatar = Column(String(150))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
-    groups = Column(postgresql.ARRAY(Integer, dimensions=1))
+    groups = Column(postgresql.ARRAY(Integer, dimensions=1), default=[])
 
 
 class CameraSettings(DBObjectBase):
