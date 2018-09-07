@@ -12,7 +12,7 @@ from helpers.functions import render_with_session, get_rank
 bp = Blueprint('players', __name__, url_prefix='/players')
 regex = re.compile('[0-9]{17}')
 
-player_wrapper = PlayerWrapper()
+player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 

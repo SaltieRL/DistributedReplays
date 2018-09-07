@@ -47,7 +47,7 @@ celery.config_from_object(celeryconfig)
 #     print(reward)
 
 
-@celery.task(base=DBTask, bind=True, priority=1)
+@celery.task(base=DBTask, bind=True, priority=5)
 def parse_replay_task(self, fn):
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed', os.path.basename(fn))
@@ -82,7 +82,7 @@ def parse_replay_task(self, fn):
 
 @celery.task(base=DBTask, bind=True, priority=9)
 def parse_replay_task_low_priority(self, fn):
-    parse_replay_task(self, fn)
+    parse_replay_task(fn)
 
 
 if __name__ == '__main__':

@@ -18,21 +18,21 @@
 {% endif %}
 
 {% for chart in spider_charts %}
-<div class="graph-holder">
-    <canvas id="radar{{ loop.index }}">
-    {% set title = chart.title %}
-    {% set group = chart.group %}}
-    </canvas>
-    <script>
-        requirejs(['spiderChart'], function (spiderChart) {
-            spiderChart.createChart(
-                "radar{{ loop.index }}",
-                "{{ title }}",
-                [{{ jsonify_nested(users, ['stats']) }}],
-                {{ user_names|tojson }},
-                {{ group|tojson }}
-            )
-        })
-    </script>
-</div>
+    <div class="graph-holder">
+        <canvas id="radar{{ loop.index }}">
+            {% set title = chart.title %}
+            {% set group = chart.group %}}
+        </canvas>
+        <script>
+            requirejs(['spiderChart'], function (spiderChart) {
+                spiderChart.createChart(
+                    "radar{{ loop.index }}",
+                    "{{ title }}",
+                    [{{ jsonify_nested(users, ['stats']) }}],
+                    {{ user_names|tojson }},
+                    {{ group|tojson }}
+                )
+            })
+        </script>
+    </div>
 {% endfor %}
