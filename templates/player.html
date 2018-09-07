@@ -16,16 +16,20 @@
             </form>
         </div>
         <div class="header_holder">
-            <span class="header">/ Profile Information</span>
+            <span class="header">/ Profile Information
+                {% if 'admin' in groups %}
+                    <span title="Admin" style="color: red">[A]</span>
+                {% endif %}
+                {% if 'beta' in groups %}
+                    <span title="Beta" style="color: blue">[β]</span>
+                {% endif %}
+                {% if 'alpha' in groups %}
+                    <span title="Alpha" style="color: green">[α]</span>
+                {% endif %}
         </div>
         <div class="playerpanel">
             {% if player %}
                 {% include "partials/player/profile.html" %}
-            {% endif %}
-        </div>
-        <div class="playerpanel">
-            {% if 'admin' in groups %}
-                <p>Admin :)</p>
             {% endif %}
         </div>
         <div class="header_holder">
@@ -52,11 +56,11 @@
                 {% set editable_groups = ['alpha', 'beta'] %}
                 {% for gp in editable_groups %}
                     {% if gp in groups %}
-                        <form action="{{ url_for('admin.home') }}">
+                        <form action="{{ url_for('admin.delrole', id=id, role=gp) }}">
                             <button>Remove from {{ gp }}</button>
                         </form>
                     {% else %}
-                        <form action="{{ url_for('admin.home') }}">
+                        <form action="{{ url_for('admin.addrole', id=id, role=gp) }}">
                             <button>Add to {{ gp }}</button>
                         </form>
                     {% endif %}
