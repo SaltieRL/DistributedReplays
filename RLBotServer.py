@@ -21,7 +21,7 @@ except ImportError:
     ALLOWED_STEAM_ACCOUNTS = []
     users = []
 
-from blueprints import auth, api, players, replays, stats, steam, debug
+from blueprints import auth, api, players, replays, stats, steam, debug, admin
 from database.objects import Game, Player, Group
 from database.startup import startup
 import redis
@@ -67,6 +67,7 @@ with app.app_context():
     app.register_blueprint(api.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(debug.bp)
+    app.register_blueprint(admin.bp)
     try:
         app.secret_key = config.SECRET_KEY
     except:
@@ -196,14 +197,20 @@ def lookup_current_user():
 
 
 def is_admin():
+    if g.user is None:
+        return False
     return g.admin
 
 
 def is_alpha():
+    if g.user is None:
+        return False
     return g.admin or g.alpha
 
 
 def is_beta():
+    if g.user is None:
+        return False
     return g.admin or g.beta
 
 

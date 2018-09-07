@@ -1,8 +1,17 @@
+html, body {
+    font-family: "Lato", "Fira Mono", monospace;
+    font-weight: 300;
+    -webkit-font-feature-settings: "lnum";
+    -moz-font-feature-settings: "lnum";
+    font-feature-settings: "lnum";
+}
+
 .logo {
     padding-left: 10px;
     font-family: "Shrikhand";
     font-size: 50px;
 }
+
 .logo-small {
     font-family: "Fira Mono";
     font-size: 20px;
@@ -54,9 +63,8 @@ i.clickable {
     padding: .1em 1em;
 }
 
-
 body {
-    width:100%;
+    width: 100%;
     height: 100%;
 }
 
@@ -92,7 +100,6 @@ body {
     top: 10%;
 }
 
-
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus
@@ -115,14 +122,14 @@ select:-webkit-autofill:focus {
 }
 
 .header_holder:after {
-    content:"";
-    position:absolute;
-    width:100%;
+    content: "";
+    position: absolute;
+    width: 100%;
     height: 10px;
-    background: linear-gradient(to bottom, #eee 0%,#ffffff 70%);
-    bottom:-11px;
-    left:0;
-    z-index:-1;
+    background: linear-gradient(to bottom, #eee 0%, #ffffff 70%);
+    bottom: -11px;
+    left: 0;
+    z-index: -1;
 }
 
 .header {
