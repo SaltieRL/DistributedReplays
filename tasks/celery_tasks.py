@@ -12,6 +12,7 @@ from helpers.functions import convert_pickle_to_db, add_objs_to_db
 from helpers.middleware import DBTask
 from database.objects import Game
 from carball import analyze_replay_file
+
 # bp = Blueprint('celery', __name__)
 
 
@@ -46,7 +47,7 @@ celery.config_from_object(celeryconfig)
 #     print(reward)
 
 
-@celery.task(base=DBTask, bind=True)
+@celery.task(base=DBTask, bind=True, priority=1)
 def parse_replay_task(self, fn):
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed', os.path.basename(fn))
@@ -77,6 +78,11 @@ def parse_replay_task(self, fn):
     add_objs_to_db(game, player_games, players, sess)
     sess.commit()
     sess.close()
+
+
+@celery.task(base=DBTask, bind=True, priority=9)
+def parse_replay_task_low_priority(self, fn):
+    parse_replay_task(self, fn)
 
 
 if __name__ == '__main__':

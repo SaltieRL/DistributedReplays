@@ -45,9 +45,10 @@ app.config['BASE_URL'] = 'https://calculated.gg'
 app.config['REPLAY_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'rlreplays')
 app.config['PARSED_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'parsed')
 app.config.update(
-    CELERY_BROKER_URL='amqp://guest@localhost',
-    result_backend='amqp://guest@localhost',
-    worker_max_tasks_per_child=100
+    broker_url='redis://localhost:6379/0',
+    result_backend='redis://',
+    worker_max_tasks_per_child=100,
+    broker_transport_options={'fanout_prefix': True}
 )
 CORS(app)
 folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]

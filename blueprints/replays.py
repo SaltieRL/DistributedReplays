@@ -38,6 +38,7 @@ def upload():
     model_data = queries.get_model_stats(session)
     return render_with_session('upload.html', session, stats=replay_data, total=replay_count, model_stats=model_data)
 
+
 @bp.route('/upload/confirmation', methods=['GET'])
 def upload_confirmation():
     session = current_app.config['db']()
@@ -59,7 +60,7 @@ def parse_replay():
         file.save(filename)
         celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return redirect(url_for('replays.view_replay', id_=f.filename.split('.')[0]))
-    #do this when it works. until then,
+    # do this when it works. until then,
     # return redirect(url_for('replays.upload_confirmation'))
 
 
@@ -68,7 +69,7 @@ def parse_replays():
     for f in os.listdir(current_app.config['REPLAY_DIR']):
         pickled = os.path.join(current_app.config['PARSED_DIR'], os.path.basename(f) + '.pts')
         if f.endswith('.replay') and not os.path.isfile(pickled):
-            result = celery_tasks.parse_replay_task.delay(
+            result = celery_tasks.parse_replay_task_low_priority.delay(
                 os.path.abspath(os.path.join(current_app.config['REPLAY_DIR'], f)))
     return redirect('/')
 
@@ -78,7 +79,8 @@ def view_replay(id_):
     session = current_app.config['db']()
     game = session.query(Game).filter(Game.hash == id_).first()
     if game is None:
-        return render_with_session('replay.html', session, replay=game, cars=constants.cars, id=id_, item_dict=get_item_dict())
+        return render_with_session('replay.html', session, replay=game, cars=constants.cars, id=id_,
+                                   item_dict=get_item_dict())
     players = game.players
     # pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
     # replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')

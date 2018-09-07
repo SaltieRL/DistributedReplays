@@ -1,4 +1,4 @@
-celery
+celery[redis]
 flask
 flask_login
 pandas
