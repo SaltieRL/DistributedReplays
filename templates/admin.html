@@ -40,7 +40,7 @@
                 </thead>
                 <tbody>
                 {% for pl in players %}
-                    {% if pl.platformid|length == 17 %}
+                    {% if pl.platformid|length == 17 and pl.groups|length > 0 %}
                         <tr class="match">
                             {% for p in player_properties %}
                                 <td>
