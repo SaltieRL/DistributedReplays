@@ -1,4 +1,7 @@
 {% extends "partials/base.html" %}
+{% block imports %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+{% endblock %}
 
 {% block body %}
     <style>
@@ -25,36 +28,42 @@
 
     </style>
     {% set player_properties = ['avatar', 'platformid', 'platformname', 'groups'] %}
-    <table class="mhtable">
-        <thead>
-        <tr class="header">
-            {% for p in player_properties %}
-                <th>{{ p }}</th>
-            {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for pl in players %}
-            <tr class="match">
-                {% for p in player_properties %}
-                    <td>
-                        {% if p == 'avatar' %}
-                            {% set url = pl.avatar %}
-                            {% if url != None %}
-                                <img src="{{ url }}" width="40px"/>
-                            {% endif %}
-                        {% elif p in ['platformid', 'platformname'] %}
-                            {{ pl[p] }}
+    <section>
+        <div class="container">
+            <table class="mhtable">
+                <thead>
+                <tr class="header">
+                    {% for p in player_properties %}
+                        <th>{{ p }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for pl in players %}
+                    {% if pl.platformid|length == 17 %}
+                        <tr class="match">
+                            {% for p in player_properties %}
+                                <td>
+                                    {% if p == 'avatar' %}
+                                        {% set url = pl.avatar %}
+                                        {% if url != None %}
+                                            <img src="{{ url }}" width="40px"/>
+                                        {% endif %}
+                                    {% elif p in ['platformid', 'platformname'] %}
+                                        {{ pl[p] }}
 
-                        {% elif p == 'groups' %}
-                            {% for gr in pl[p] %}
-                                {{ id_to_groups[gr] }},
+                                    {% elif p == 'groups' %}
+                                        {% for gr in pl[p] %}
+                                            {{ id_to_groups[gr] }},
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
                             {% endfor %}
-                        {% endif %}
-                    </td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </section>
 {% endblock body %}
