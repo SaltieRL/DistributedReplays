@@ -5,7 +5,7 @@
 - pip Install Flask (`flask`).
 - pip Install Flask login (`flask_login`)
 - pip Install psycopg2 (`psycopg2`)
-- pip Install carball (`carball`)
+- pip requirements.txt
 - Intall Redis
 - Install [postgreSQL](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04)
 - If only for local development [change the password](https://blog.2ndquadrant.com/how-to-safely-change-the-postgres-user-password-via-psql/) to `postgres`
