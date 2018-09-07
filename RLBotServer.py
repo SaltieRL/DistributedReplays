@@ -7,11 +7,20 @@ import flask_login
 from flask import Flask, render_template, g, current_app, session, request, redirect
 from flask_cors import CORS
 
+local_dev = False
 try:
     import config
 except ImportError:
     print('No config exists', file=sys.stderr)
     config = None
+    local_dev = True
+
+if config is not None:
+    try:
+        api_key = config.RL_API_KEY
+        local_dev = False
+    except:
+        local_dev = True
 
 sys.path.append(os.path.abspath('replayanalysis/'))
 
@@ -196,12 +205,12 @@ def lookup_current_user():
         g.admin = ids['admin'] in g.user.groups
         g.alpha = ids['alpha'] in g.user.groups
         g.beta = ids['beta'] in g.user.groups
-    elif len(ALLOWED_STEAM_ACCOUNTS) > 0:
-        return render_template('login.html')
     s.close()
 
 
 def is_admin():
+    if local_dev:
+        return True
     if g.user is None:
         return False
     return g.admin

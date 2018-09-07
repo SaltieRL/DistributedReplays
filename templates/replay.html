@@ -74,22 +74,9 @@
             <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
 
             <!-- VIEWER -->
-            {% include "partials/replay/viewer.html" %}
-            <hr/>
-            {#            <div>#}
-            {#                <b>Goals:</b>#}
-            {#                <table class="table">#}
-            {#                    {% for goal in replay.goals %}#}
-            {#                        <tr style="{{ "color: white;" if not goal.player_team else "" }}background: {{ "#e66f33" if goal.player_team else "#0000aa" }}">#}
-            {#                            <td>Player: {{ goal.player_name }}</td>#}
-            {#                            <td>Frame: {{ goal.frame_number }}</td>#}
-            {#                        </tr>#}
-            {#                    {% endfor %}#}
-            {#                </table>#}
-            {#            </div>#}
-            <hr/>
-            <div>
-            </div>
+            {% if isAlpha() %}
+                {% include "partials/replay/viewer.html" %}
+            {% endif %}
         </div>
     {% endif %}
 {% endblock body %}
