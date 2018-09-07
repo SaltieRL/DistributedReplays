@@ -3,9 +3,9 @@
 {% set player = profile['response']['players'][0] %}
 {% block title %}Player Info{% endblock title %}
 {% block imports %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fixed_header.css') }}">
-{% include "partials/imports/graph.html" %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='player.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fixed_header.css') }}">
+    {% include "partials/imports/graph.html" %}
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
@@ -23,27 +23,17 @@
                 {% include "partials/player/profile.html" %}
             {% endif %}
         </div>
+        <div class="playerpanel">
+            {% if 'admin' in groups %}
+                <p>Admin :)</p>
+            {% endif %}
+        </div>
         <div class="header_holder">
-        <span class="header">/ Player Stats</span>
+            <span class="header">/ Player Stats</span>
         </div>
         {% include "partials/player/stats.html" %}
         <div class="header_holder">
-        <span class="header">/ Rank Information</span>
-        </div>
-        <div class="rankpanel">
-            {% if rank %}
-            {% include "partials/player/ranks.html" %}
-            {% else %}
-            <div class="errmsg">
-                unable to find rank information for this profile (does this player own rocket league?)
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="main">
-        {% if False %}
-        <div class="header_holder">
-        <span class="header">/ Rank Information</span>
+            <span class="header">/ Rank Information</span>
         </div>
         <div class="rankpanel">
             {% if rank %}
@@ -54,18 +44,52 @@
                 </div>
             {% endif %}
         </div>
+        {% if isAdmin() %}
+            <div class="header_holder">
+                <span class="header">/ Admin Tools</span>
+            </div>
+            <div class="rankpanel">
+                {% set editable_groups = ['alpha', 'beta'] %}
+                {% for gp in editable_groups %}
+                    {% if gp in groups %}
+                        <form action="{{ url_for('admin.home') }}">
+                            <button>Remove from {{ gp }}</button>
+                        </form>
+                    {% else %}
+                        <form action="{{ url_for('admin.home') }}">
+                            <button>Add to {{ gp }}</button>
+                        </form>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="main">
+        {% if False %}
+            <div class="header_holder">
+                <span class="header">/ Rank Information</span>
+            </div>
+            <div class="rankpanel">
+                {% if rank %}
+                    {% include "partials/player/ranks.html" %}
+                {% else %}
+                    <div class="errmsg">
+                        unable to find rank information for this profile (does this player own rocket league?)
+                    </div>
+                {% endif %}
+            </div>
         {% endif %}
         <div class="header_holder">
-        <span class="header">/ Tendencies</span>
+            <span class="header">/ Tendencies</span>
         </div>
         <div class="chartpanel">
             {% set min_replays = 1 %}
             {% if total_games > min_replays %}
                 {% include "partials/player/spider_charts.html" %}
             {% else %}
-            <div class="errmsg">
-                no replays recorded for this profile (are you using the auto-uploader?)
-            </div>
+                <div class="errmsg">
+                    no replays recorded for this profile (are you using the auto-uploader?)
+                </div>
             {% endif %}
         </div>
         <div class="header_holder">

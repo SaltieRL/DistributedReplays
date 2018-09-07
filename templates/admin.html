@@ -43,20 +43,23 @@
                     {% if pl.platformid|length == 17 and pl.groups|length > 0 %}
                         <tr class="match">
                             {% for p in player_properties %}
-                                <td>
-                                    {% if p == 'avatar' %}
-                                        {% set url = pl.avatar %}
-                                        {% if url != None %}
-                                            <img src="{{ url }}" width="40px"/>
-                                        {% endif %}
-                                    {% elif p in ['platformid', 'platformname'] %}
-                                        {{ pl[p] }}
 
-                                    {% elif p == 'groups' %}
-                                        {% for gr in pl[p] %}
-                                            {{ id_to_groups[gr] }},
-                                        {% endfor %}
-                                    {% endif %}
+                                <td>
+                                    <a href="{{ url_for('players.view_player', id_=pl.platformid) }}">
+                                        {% if p == 'avatar' %}
+                                            {% set url = pl.avatar %}
+                                            {% if url != None %}
+                                                <img src="{{ url }}" width="40px"/>
+                                            {% endif %}
+                                        {% elif p in ['platformid', 'platformname'] %}
+                                            {{ pl[p] }}
+
+                                        {% elif p == 'groups' %}
+                                            {% for gr in pl[p] %}
+                                                {{ id_to_groups[gr] }},
+                                            {% endfor %}
+                                        {% endif %}
+                                    </a>
                                 </td>
                             {% endfor %}
                         </tr>

@@ -102,8 +102,12 @@ with app.app_context():
             grp = Group(name=group_name)
             s.add(grp)
     ids = {}
+    ids_to_group = {}
     for group_name in groups_to_add:
-        ids[group_name] = s.query(Group).filter(Group.name == group_name).first().id
+        i = s.query(Group).filter(Group.name == group_name).first().id
+        ids[group_name] = i
+        ids_to_group[i] = group_name
+    app.config['groups'] = ids_to_group
     s.commit()
     s.close()
 

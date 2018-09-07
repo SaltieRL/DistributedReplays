@@ -1,10 +1,10 @@
 import re
 
-from blueprints.steam import get_vanity_to_steam_id_or_random_response, \
-    get_steam_profile_or_random_response
-
 from flask import render_template, Blueprint, current_app, redirect, url_for, jsonify, request
 
+from blueprints.steam import get_vanity_to_steam_id_or_random_response, \
+    get_steam_profile_or_random_response
+from database.objects import Player
 from database.wrapper.player_wrapper import PlayerWrapper
 from database.wrapper.stat_wrapper import PlayerStatWrapper
 from helpers.functions import render_with_session, get_rank
@@ -30,13 +30,19 @@ def view_player(id_):
     total_games = player_wrapper.get_total_games(session, id_)
     games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, id_, total_games)
     steam_profile = get_steam_profile_or_random_response(id_, current_app)
+    user = session.query(Player).filter(Player.platformid == id_).first()
+    if user is not None:
+        groups = [current_app.config['groups'][i] for i in user.groups]
+    else:
+        groups = []
     if steam_profile is None:
         return render_template('error.html', error="Unable to find the requested profile")
 
     return render_with_session('player.html', session, games=games, rank=rank, profile=steam_profile, car=favorite_car,
                                favorite_car_pctg=favorite_car_pctg, stats=stats,
                                total_games=total_games, game_per_page=player_wrapper.limit,
-                               id=id_, get_stat_spider_charts=PlayerStatWrapper.get_stat_spider_charts)
+                               id=id_, get_stat_spider_charts=PlayerStatWrapper.get_stat_spider_charts,
+                               groups=groups)
 
 
 @bp.route('/overview/<id_>/compare', methods=['POST'])
@@ -59,7 +65,8 @@ def compare_player(ids):
     users = []
     for player_id in ids:
         total_games = player_wrapper.get_total_games(session, player_id)
-        games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, player_id, total_games)
+        games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, player_id,
+                                                                                               total_games)
         steam_profile = get_steam_profile_or_random_response(player_id, current_app)
         if steam_profile is None:
             return render_template('error.html', error="Unable to find the requested profile: " + player_id)
