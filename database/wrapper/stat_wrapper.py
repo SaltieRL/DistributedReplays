@@ -1,11 +1,11 @@
 import sqlalchemy
+from carball.generated.api import player_pb2
+from sqlalchemy import func, desc, cast, literal
 
-from database.objects import PlayerGame, Game
-from sqlalchemy import func, desc, cast, String, literal
 from data import constants
+from database.objects import PlayerGame, Game
 from database.wrapper.player_wrapper import PlayerWrapper
 from helpers.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
-from carball.generated.api import player_pb2
 
 
 def safe_divide(sql_value):
@@ -91,14 +91,14 @@ class PlayerStatWrapper:
             (100 * PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
                 safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # useful hit per non dribble
             PlayerGame.turnovers,
-            func.sum(PlayerGame.goals) / cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric),
+            func.sum(PlayerGame.goals) / safe_divide(cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric)),
             PlayerGame.total_aerials,
-            PlayerGame.time_in_attacking_half / Game.frames,
-            PlayerGame.time_in_attacking_third / Game.frames,
-            PlayerGame.time_in_defending_half / Game.frames,
-            PlayerGame.time_in_defending_third / Game.frames,
-            PlayerGame.time_behind_ball / Game.frames,
-            PlayerGame.time_in_front_ball / Game.frames,
+            PlayerGame.time_in_attacking_half / safe_divide(Game.frames),
+            PlayerGame.time_in_attacking_third / safe_divide(Game.frames),
+            PlayerGame.time_in_defending_half / safe_divide(Game.frames),
+            PlayerGame.time_in_defending_third / safe_divide(Game.frames),
+            PlayerGame.time_behind_ball / safe_divide(Game.frames),
+            PlayerGame.time_in_front_ball / safe_divide(Game.frames),
             func.random(), func.random(), func.random(), func.random()]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
