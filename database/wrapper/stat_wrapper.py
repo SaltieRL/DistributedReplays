@@ -38,8 +38,8 @@ class PlayerStatWrapper:
             # car_arr = [g.car for g in games]
             favorite_car = constants.get_car(int(fav_car_str[0]))
             favorite_car_pctg = fav_car_str[1] / total_games
-            q = session.query(*stats_query).filter(PlayerGame.total_hits > 0)
-            stds = session.query(*std_query).filter(PlayerGame.total_hits > 0)
+            q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0)
+            stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0)
             global_stds = stds.first()
             global_stats = q.first()
             stats = list(q.filter(PlayerGame.player == id_).first())
@@ -93,11 +93,18 @@ class PlayerStatWrapper:
             PlayerGame.turnovers,
             func.sum(PlayerGame.goals) / cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric),
             PlayerGame.total_aerials,
+            PlayerGame.time_in_attacking_half / Game.frames,
+            PlayerGame.time_in_attacking_third / Game.frames,
+            PlayerGame.time_in_defending_half / Game.frames,
+            PlayerGame.time_in_defending_third / Game.frames,
+            PlayerGame.time_behind_ball / Game.frames,
+            PlayerGame.time_in_front_ball / Game.frames,
             func.random(), func.random(), func.random(), func.random()]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
                                           'shots/hit', 'passes/hit', 'assists/hit', 'useful/hits',
                                           'turnovers', 'shot %', 'aerials',
+                                          'att 1/2', 'att 1/3', 'def 1/2', 'def 1/3', '< ball', '> ball',
                                           'luck1', 'luck2', 'luck3', 'luck4'])
         avg_list = []
         std_list = []
@@ -118,8 +125,7 @@ class PlayerStatWrapper:
             ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
             ['assists', 'passes/hit', 'assists/hit'],  # chemistry
             ['turnovers', 'useful/hits', 'aerials'],  # skill
-            ['time_in_attacking_half', 'time_in_attacking_third', 'time_in_defending_third', 'time_in_defending_half',
-             'time_behind_ball', 'time_in_front_ball']]  # ,  # tendencies
+            ['att 1/3', 'att 1/2', 'def 1/2', 'def 1/3', '< ball', '> ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
