@@ -13,10 +13,10 @@ The server currently only allows uploads from a single IP address every 4.5 minu
 This is also in-line with the data generation speed of a typical Rocket League game (~5 minutes).
 Each replay has an IP address attached to it, so blame can be given.
 
-##Windows
+## Windows
 - Install python/pip
 - Install postgreSQL
-- Install RabbitMQ
+- Install Redis (used for queue and caching)
 - Run win_setup.bat
 - Run win_run.bat
 
