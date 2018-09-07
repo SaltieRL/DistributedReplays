@@ -4,7 +4,7 @@ import sys
 
 import flask
 import flask_login
-from flask import Flask, render_template, g, current_app, session, request
+from flask import Flask, render_template, g, current_app, session, request, redirect
 from flask_cors import CORS
 
 try:
@@ -95,13 +95,17 @@ with app.app_context():
 
     s = Session()
     groups_to_add = ['admin', 'alpha', 'beta']
-    for g in groups_to_add:
-        num = s.query(Group).filter(Group.name == g).count()
+    for group_name in groups_to_add:
+        num = s.query(Group).filter(Group.name == group_name).count()
         if num == 0:
-            gr = Group(name=g)
-            s.add(gr)
+            grp = Group(name=group_name)
+            s.add(grp)
+    ids = {}
+    for group_name in groups_to_add:
+        ids[group_name] = s.query(Group).filter(Group.name == group_name).first().id
     s.commit()
     s.close()
+
 
 # Admin stuff
 class LoginUser(flask_login.UserMixin):
@@ -180,9 +184,32 @@ def lookup_current_user():
             return render_template('login.html')
 
         g.user = s.query(Player).filter(Player.platformid == openid).first()
+        if g.user is None:
+            del session['openid']
+            return redirect('/')
+        g.admin = ids['admin'] in g.user.groups
+        g.alpha = ids['alpha'] in g.user.groups
+        g.beta = ids['beta'] in g.user.groups
     elif len(ALLOWED_STEAM_ACCOUNTS) > 0:
         return render_template('login.html')
     s.close()
+
+
+def is_admin():
+    return g.admin
+
+
+def is_alpha():
+    return g.admin or g.alpha
+
+
+def is_beta():
+    return g.admin or g.beta
+
+
+app.jinja_env.globals.update(isAdmin=is_admin)
+app.jinja_env.globals.update(isAlpha=is_alpha)
+app.jinja_env.globals.update(isBeta=is_beta)
 
 
 # Main stuff

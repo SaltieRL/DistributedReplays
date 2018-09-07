@@ -82,7 +82,7 @@ def steam_process():
             match.platformname = profile['personaname']
             match.avatar = profile['avatarfull']
         else:
-            u = Player(platformid=user_id, platformname=profile['personaname'], avatar=profile['avatarfull'])
+            u = Player(platformid=user_id, platformname=profile['personaname'], avatar=profile['avatarfull'], groups=[])
             s.add(u)
         s.commit()
         s.close()
