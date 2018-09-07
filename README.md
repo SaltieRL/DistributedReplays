@@ -1,12 +1,8 @@
 # Calculated.gg Backend
 
 ## Setup
-
-- pip install Flask (`flask`).
-- pip install Flask login (`flask_login`)
-- pip install psycopg2 (`psycopg2`)
 - pip install -r requirements.txt
-- Intall Redis
+- Install and run Redis with default port + settings ([Windows](https://dingyuliang.me/redis-3-2-install-redis-windows/), [Ubuntu](https://redis.io/topics/quickstart))
 - Install [postgreSQL](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04)
 - If only for local development [change the password](https://blog.2ndquadrant.com/how-to-safely-change-the-postgres-user-password-via-psql/) to `postgres`
 - Run RLBotServer.py.
@@ -16,9 +12,9 @@ This is also in-line with the data generation speed of a typical Rocket League g
 Each replay has an IP address attached to it, so blame can be given.
 
 ## Windows
-- Install python/pip
-- Install postgreSQL
-- Install Redis (used for queue and caching)
+- Install Python 3.6/pip
+- Install and run postgreSQL
+- Install Redis (used for queue and caching) and run it. Instructions above
 - Run win_setup.bat
 - Run win_run.bat
 
