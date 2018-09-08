@@ -16,6 +16,7 @@ define('colors', function () {
      * @returns {string}
      */
     function convertColorToString(color, alpha = 1, shouldFakeAlpha = false) {
+        alpha = Math.min(1, alpha);
         let r = (color >> 16) & 255;
         let g = (color >> 8) & 255;
         let b = color & 255;
