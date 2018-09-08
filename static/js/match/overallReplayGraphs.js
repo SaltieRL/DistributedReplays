@@ -13,6 +13,19 @@ define(['colors'], function (colors) {
         }
     }
 
+    function reverseBlues(playerList) {
+        let oranges = [];
+        let blues = [];
+        playerList.forEach((player, index) => {
+            if (isOrange(player.is_orange)) {
+                oranges.push(player);
+            } else {
+                blues.push(player);
+            }
+        });
+        return oranges.concat(blues.reverse());
+    }
+
     function removeGraphs(hostId) {
         let elements = document.getElementById(hostId).querySelectorAll("canvas");
         for (let i = 0; i < elements.length; i++) {
@@ -20,21 +33,35 @@ define(['colors'], function (colors) {
         }
     }
 
-    function colorGraphLabel(hostElement, replayData) {
-        let totalNumberOfBlue = replayData.filter(player => !isOrange(player.is_orange)).length;
+    function createColorMap(playerList) {
         let blueCount = 0;
-        replayData.forEach((player, index) => {
-            let colorIndex = 0;
+        let orangeCount = 0;
+        let colorMap = [];
+        let totalNumberOfBlue = playerList.filter(player => !isOrange(player.is_orange)).length;
+        let blues = [];
+        for (let i = 0; i < totalNumberOfBlue; i++) {
+            blues.push(colors.getHorizontalChartColor(i, false));
+        }
+        blues = blues.reverse();
+        playerList.forEach((player, index) => {
             if (isOrange(player.is_orange)) {
-                colorIndex = index - blueCount;
+                colorMap[player.name] = colors.getHorizontalChartColor(orangeCount, isOrange(player.is_orange));
+                orangeCount += 1;
             } else {
-                colorIndex = totalNumberOfBlue - blueCount;
+                colorMap[player.name] = blues[blueCount];
                 blueCount += 1;
             }
+        });
+        return colorMap;
+    }
+
+    function colorGraphLabel(hostElement, replayData) {
+        let colorMap = createColorMap(replayData);
+        replayData.forEach((player, index) => {
             console.log(".player-" + player.player + ' .label-color');
             console.log(player);
             let labelElement = hostElement.querySelector(".player-" + player.player + ' .label-color');
-            let color_option = colors.getHorizontalChartColor(colorIndex, isOrange(player.is_orange));
+            let color_option = colorMap[player.name];
             labelElement.style.backgroundColor = color_option.backgroundColor;
             labelElement.style.borderColor = color_option.borderColor;
             labelElement.style.borderWidth = color_option.borderWidth + "px";
@@ -63,23 +90,19 @@ define(['colors'], function (colors) {
 
     function getDatasetsForReplay(replayData, key) {
         let datasets = [];
-        let blueCount = 0;
-        replayData.forEach((player, index) => {
+        let colorMap = createColorMap(replayData);
+        let players = reverseBlues(replayData);
+        players.forEach((player, index) => {
             let playerData = [parseInt(player[key], 10)];
-            let colorIndex = 0;
             if (!isOrange(player.is_orange)) {
                 playerData = playerData.map((value) => -value);
-                blueCount += 1;
-                colorIndex = blueCount;
-            } else {
-                colorIndex = index - blueCount;
             }
 
             const playerDataSet = {
                 label: player.name,
                 data: playerData,
                 stack: "1",  // player.team_is_orange? "orange" : "blue"
-                ...colors.getHorizontalChartColor(colorIndex, isOrange(player.is_orange))
+                ...colorMap[player.name]
             };
             datasets.push(playerDataSet)
         });

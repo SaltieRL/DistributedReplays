@@ -14,7 +14,7 @@ def create_default_player():
     player = Player()
     player.platformid = 3678
     player.platformname = 'test user'
-    player.avatar = "https://i.ytimg.com/vi/rziIg5V1RdA/maxresdefault.jpg"
+    player.avatar = "https://cdn3-www.dogtime.com/assets/uploads/2014/12/file_19035_square_100_rainy-day-activity-dog-playing-with-food-toy.jpg"
 
     return player
 

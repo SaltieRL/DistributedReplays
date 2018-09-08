@@ -27,7 +27,7 @@
                     <span title="Alpha Tester <3" style="color: green">[α]</span>
                 {% endif %}
         </div>
-        <div class="playerpanel">
+        <div class="playerpanel" style="margin-top: 0px; margin-bottom: 15px;">
             {% if player %}
                 {% include "partials/player/profile.html" %}
             {% endif %}
@@ -99,16 +99,15 @@
         </div>
         <div class="header_holder">
         <span class="header">/ Match History<span>&nbsp;&nbsp;</span>
-        </span>
-        </div>
-        {% if total_games > game_per_page %}
+            {% if total_games > game_per_page %}
             <span id="prevpage" class="pure-button button-xsmall"><i class="icono-caretLeft clickable"></i></span>
             <span id="nextpage" class="pure-button button-xsmall"><i class="icono-caretRight clickable"></i></span>
         {% endif %}
         </span>
+        </div>
         <div class="matchhistory">
             {% if games %}
-                {% set max_pages=total_games/game_per_page %}
+                {% set max_pages=(total_games/game_per_page)|round(1, 'ceil') %}
                 {% include "partials/replay/match_history.html" %}
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
