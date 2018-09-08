@@ -32,7 +32,7 @@ define(['server'], function (server) {
             }
             page += 1;
             loadData(processPage, history);
-            if (page <= maxPages) {
+            if (page >= maxPages - 1) {
                 toggleCallback(element);
             }
         });
@@ -56,21 +56,27 @@ define(['server'], function (server) {
         while (history.firstChild) {
             history.removeChild(history.firstChild);
         }
+        clearHistoryCallback();
         console.debug('added new html');
         history.innerHTML = data['html'];
-
-        eval(document.getElementById('historyScript').innerHTML);
-        eval(document.getElementById('graphScript').innerHTML);
-
         setTimeout(function () {
-            if (dataCallback != null) {
-                console.debug('calling script');
-                dataCallback();
-                if (historyList != null) {
-                    historyList();
-                }
-                dataCallback = null;
-            }
+            eval(document.getElementById('historyScript').innerHTML);
+            setTimeout(function () {
+                history.querySelectorAll('script.graphScript').forEach((element) => {
+                    eval(element.innerHTML);
+                });
+                setTimeout(function () {
+                    if (historyList != null) {
+                        console.debug('adding match history');
+                        historyList();
+                    }
+                    if (dataCallback != null) {
+                        console.debug('calling script');
+                        dataCallback();
+                        dataCallback = null;
+                    }
+                }, 100);
+            }, 100);
         }, 100);
     }
 
@@ -107,13 +113,18 @@ define(['server'], function (server) {
         let oldDataCallback = dataCallback;
         dataCallback = function () {
             try {
-                oldDataCallback();
+                if (oldDataCallback != null) {
+                    oldDataCallback();
+                }
             } catch(exception) {
                 console.log(exception);
             }
             callback();
         };
+    }
 
+    function clearHistoryCallback() {
+        dataCallback = null;
     }
 
     function setHistoryList(callback) {
@@ -123,6 +134,7 @@ define(['server'], function (server) {
     return {
         initializeMatchHistory: initializePage,
         setHistoryCallback: addHistoryCallback,
-        setHistoryList: setHistoryList
+        setHistoryList: setHistoryList,
+        clearHistoryCallback: clearHistoryCallback
     }
 });

@@ -52,7 +52,7 @@
                         {% set graphs = ["score", "goals", "assists", "saves", "shots"] %}
                         {% set graph_length = graphs|length %}
                         {% set json_keys = ["player", "name", "is_orange"] + graphs %}
-                        <script id="graphScript">
+                        <script class="graphScript">
                             (function(host_id, action_element_id,  labels) {
                                 requirejs(['match/matchHistoryLoader'], function (loader) {
                                     console.log('creating graph loader function');
@@ -63,6 +63,7 @@
                                             matchHistory.addAction(action_element_id, host_id, labels, replay_data);
                                         });
                                     };
+                                    console.log('adding history callback');
                                     loader.setHistoryCallback(matchLoader);
                                 });
                             })('{{ dropdown_id }}', '{{ match_id }}', {{ graphs|tojson }});
