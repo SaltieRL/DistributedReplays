@@ -12,18 +12,28 @@ define('colors', function () {
      * Converts a color to string + alpha
      * @param color
      * @param alpha between 0 and 1
-     * @param returnHex if true this will return hex value otherwise it will return rgba
+     * @param shouldFakeAlpha if true this will recreate the alpha color
      * @returns {string}
      */
-    function convertColorToString(color, alpha = 1, returnHex = false) {
-        if (returnHex) {
-            return "#" + ((color) >>> 0).toString(16).slice(-6) + Math.round(alpha * 255).toString(16)
-        } else {
-            let r = (color >> 16) & 255;
-            let g = (color >> 8) & 255;
-            let b = color & 255;
-            return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+    function convertColorToString(color, alpha = 1, shouldFakeAlpha = false) {
+        let r = (color >> 16) & 255;
+        let g = (color >> 8) & 255;
+        let b = color & 255;
+        let a = alpha;
+        if (shouldFakeAlpha) {
+            a = 1;
         }
+        return 'rgba(' +
+            fakeAlpha(r, alpha, shouldFakeAlpha) + ', ' +
+            fakeAlpha(g, alpha, shouldFakeAlpha) + ', ' +
+            fakeAlpha(b, alpha, shouldFakeAlpha) + ', ' + a + ')';
+    }
+
+    function fakeAlpha(component, alpha, shouldFakeAlpha = false) {
+        if (!shouldFakeAlpha) {
+            return component
+        }
+        return component * alpha + (1 - alpha) * 255;
     }
 
     const blueBorderColor = convertColorToString(0x6464ff, 0.8);
@@ -31,6 +41,104 @@ define('colors', function () {
     const orangeBorderColor = convertColorToString(0xff9600, 0.8);
     const materialOrangeBorderColor = convertColorToString(0xff8a00, 0.8);
 
+    const designer = {
+        "blue": [
+            {
+                // darkest blue
+                backgroundColor: convertColorToString(0x0511F5, 1),
+                borderColor: blueBorderColor,
+                borderWidth: 1
+            },
+            {
+                // lighter blue
+                backgroundColor: convertColorToString(0x108EF5, 0.8),
+                borderColor: blueBorderColor,
+                borderWidth: 1
+            },
+            {
+                // lightest blue
+                backgroundColor: convertColorToString(0x05E0CC, 1),
+                borderColor: blueBorderColor,
+                borderWidth: 1
+            },
+        ],
+        "orange": [
+            {
+                // Red
+                backgroundColor: convertColorToString(0xEB1000, 1),
+                borderColor: orangeBorderColor,
+                borderWidth: 1
+            },
+            {
+                backgroundColor: convertColorToString(0xF55105, 1),
+                borderColor: orangeBorderColor,
+                borderWidth: 1
+            },
+            {
+                backgroundColor: convertColorToString(0xFF9C12, 1),
+                borderColor: orangeBorderColor,
+                borderWidth: 1
+            },
+        ]
+    };
+
+    const overallColorsOld = [0x36a2eb, 0xff6384, 0xaFF9C12, 0xffeaa7, 0x55efc4, 0xfd79a8];
+    // const overallColors = [0x0511F5, 0xEB1000, 0x05E0CC, 0xaffeaa7];
+    const overallColors = [0x108EF5, 0xF55105, 0x05E0CC, 0xaffeaa7];
+    const alphas = [0.5, 0.5, 0.5, 0.7];
+
+
+
+    function getHorizontalChartColor(index, is_orange) {
+        let chart = designer;
+        let list = is_orange ? chart.orange : chart.blue;
+        return list[index % list.length];
+    }
+
+    function getHorizontalColors() {
+        let chart = designer;
+        return [].concat(chart.orange).concat(chart.blue);
+    }
+
+    function getSpiderColors(numberOfColorsNeeded) {
+        numberOfColorsNeeded = Math.min(numberOfColorsNeeded, overallColors.length);
+        let colors = overallColors.slice(0, numberOfColorsNeeded);
+        let result = [];
+        for (let i = 0; i < colors.length; i++) {
+            result.push({
+                backgroundColor: convertColorToString(colors[i], 0.2),
+                pointBackgroundColor: convertColorToString(colors[i], 0.6),
+                borderColor: convertColorToString(colors[i], 0.5)
+            });
+        }
+        return result
+    }
+
+    function getLineColor() {
+        return "rgba(32, 45, 21, 0.3)";
+    }
+
+    function getChartColorList(numberOfColorsNeeded, colorList=overallColors) {
+        numberOfColorsNeeded = Math.min(numberOfColorsNeeded, overallColors.length);
+        let colors = colorList.slice(0, numberOfColorsNeeded);
+        let result = [];
+        for (let i = 0; i < colors.length; i++) {
+            result.push(convertColorToString(colors[i], alphas[i], true))
+        }
+        return result
+    }
+
+    return {
+        getHorizontalColors: getHorizontalColors,
+        getHorizontalChartColor: getHorizontalChartColor,
+        getLineColor: getLineColor,
+        getChartColors: getChartColorList,
+        getSpiderColors: getSpiderColors,
+    }
+});
+
+
+function oldColors() {
     const builtInTeamChartColors = {
         "blue": [
             {
@@ -78,46 +186,6 @@ define('colors', function () {
         ]
     };
 
-    const designer = {
-        "blue": [
-            {
-                // lightest blue
-                backgroundColor: convertColorToString(0x05E0CC, 1),
-                borderColor: blueBorderColor,
-                borderWidth: 1
-            },
-            {
-                // darkest blue
-                backgroundColor: convertColorToString(0x0511F5, 1),
-                borderColor: blueBorderColor,
-                borderWidth: 1
-            },
-            {
-                // lighter blue
-                backgroundColor: convertColorToString(0x108EF5, 0.8),
-                borderColor: blueBorderColor,
-                borderWidth: 1
-            },
-        ],
-        "orange": [
-            {
-                // Red
-                backgroundColor: convertColorToString(0xEB1000, 1),
-                borderColor: orangeBorderColor,
-                borderWidth: 1
-            },
-            {
-                backgroundColor: convertColorToString(0xF55105, 1),
-                borderColor: orangeBorderColor,
-                borderWidth: 1
-            },
-            {
-                backgroundColor: convertColorToString(0xFF9C12, 1),
-                borderColor: orangeBorderColor,
-                borderWidth: 1
-            },
-        ]
-    };
 
     const materialTeamChartColors = {
         "blue": [
@@ -173,46 +241,4 @@ define('colors', function () {
             },
         ]
     };
-
-
-    const overallColors = [0x36a2eb, 0xff6384, 0xa29bfe, 0xffeaa7, 0x55efc4, 0xfd79a8];
-
-    function getHorizontalChartColor(index, is_orange) {
-        let chart = designer;
-        let list = is_orange ? chart.orange : chart.blue;
-        return list[index % list.length];
-    }
-
-    function getSpiderColors(numberOfColorsNeeded) {
-        let colors = overallColors.slice(0, numberOfColorsNeeded);
-        let result = [];
-        for (let i = 0; i < colors.length; i++) {
-            result.push({
-                backgroundColor: convertColorToString(colors[i], 0.2),
-                pointBackgroundColor: convertColorToString(colors[i], 1),
-                borderColor: convertColorToString(colors[i], 1)
-            })
-        }
-        return result
-    }
-
-    function getLineColor() {
-        return "rgba(32, 45, 21, 0.3)";
-    }
-
-    function getChartColorList(numberOfColorsNeeded, colorList=overallColors) {
-        let colors = colorList.slice(0, numberOfColorsNeeded);
-        let result = [];
-        for (let i = 0; i < colors.length; i++) {
-            result.push(convertColorToString(colors[i]))
-        }
-        return result
-    }
-
-    return {
-        getHorizontalChartColor: getHorizontalChartColor,
-        getLineColor: getLineColor,
-        getChartColors: getChartColorList,
-        getSpiderColors: getSpiderColors,
-    }
-});
+}
