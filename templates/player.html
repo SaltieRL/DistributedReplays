@@ -15,6 +15,7 @@
                 <input type="text" name="other" placeholder="Compare to other user" class="search"/>
             </form>
         </div>
+        {% if player %}
         <div class="header_holder">
             <span class="header">/ Profile Information
                 {% if 'admin' in groups %}
@@ -26,12 +27,10 @@
                 {% if 'alpha' in groups %}
                     <span title="Alpha Tester <3" style="color: green">[α]</span>
                 {% endif %}
+            </span>
         </div>
-        <div class="playerpanel" style="margin-top: 0px; margin-bottom: 15px;">
-            {% if player %}
-                {% include "partials/player/profile.html" %}
-            {% endif %}
-        </div>
+            {% include "partials/player/profile.html" %}
+        {% endif %}
         <div class="header_holder">
             <span class="header">/ Player Stats</span>
         </div>
