@@ -103,9 +103,9 @@ define('colors', function () {
         let result = [];
         for (let i = 0; i < colors.length; i++) {
             result.push({
-                backgroundColor: convertColorToString(colors[i], 0.2),
-                pointBackgroundColor: convertColorToString(colors[i], 0.6),
-                borderColor: convertColorToString(colors[i], 0.5)
+                backgroundColor: convertColorToString(colors[i], alphas[i] - 0.3),
+                pointBackgroundColor: convertColorToString(colors[i], alphas[i] + 0.1),
+                borderColor: convertColorToString(colors[i], alphas[i])
             });
         }
         return result
