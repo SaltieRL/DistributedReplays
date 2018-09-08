@@ -82,3 +82,5 @@ rlreplays/
 privkey.pem
 cert.pem
 localhost*
+
+*.rdb
