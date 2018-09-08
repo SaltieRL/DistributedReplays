@@ -6,7 +6,8 @@ body {
 
 .sidebar {
     margin-top: 10px;
-    padding-right: 20px;
+    padding-right: 10px;
+    padding-left: 10px;
     border-right: 1px solid #ddd;
     flex-grow: 1;
     display: flex;
@@ -212,21 +213,26 @@ th {
     margin-bottom: 20px;
 }
 
+.rankpic {
+    background: radial-gradient(#404050 40%, transparent 60%);
+}
+
 .sidebar .rankpic {
     max-width: calc(50% - 1px);
     align-self: center;
+
 }
 
 .sidebar .t1 {
     font-size: 1.5em;
 }
 
-.info {
+.playerpanel .info {
     background-color: white;
     display: flex;
-    margin-top: 10px;
     margin-left: 10px;
     flex-direction: column;
+    justify-content: center;
 }
 
 .detail {

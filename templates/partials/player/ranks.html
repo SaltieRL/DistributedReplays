@@ -4,16 +4,16 @@
     {% if rp != None %}
     <div class="panel">
         <div class="t1">
-            {{ mode['mode'] }}
+            {{ mode['mode']|title  }}
         </div>
-        <div>
+        <div class="rankpic-holder">
             <img class="rankpic" src='{{ '/static/img/ranks/' + mode['tier']|string + '.png' }}'
                  alt="rank"/>
         </div>
         <div class="rank_info">
             <div>
                 {% if rp > 0 %}
-                    {{ mode['string'] }}
+                    {{ mode['string']  }}
                 {% endif %}
             </div>
             <div>
