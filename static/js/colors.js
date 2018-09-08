@@ -27,7 +27,7 @@ define('colors', function () {
     }
 
     const blueBorderColor = convertColorToString(0x6464ff, 0.8);
-    const materialBlueBorderColor = convertColorToString(0x1b6add, 0.8);
+    const materialBlueBorderColor = convertColorToString(0x108EF5, 0.8);
     const orangeBorderColor = convertColorToString(0xff9600, 0.8);
     const materialOrangeBorderColor = convertColorToString(0xff8a00, 0.8);
 
@@ -82,7 +82,7 @@ define('colors', function () {
         "blue": [
             {
                 // lightest blue
-                backgroundColor: convertColorToString(0x108EE8, 0.8),
+                backgroundColor: convertColorToString(0x05E0CC, 1),
                 borderColor: blueBorderColor,
                 borderWidth: 1
             },
@@ -94,7 +94,7 @@ define('colors', function () {
             },
             {
                 // lighter blue
-                backgroundColor: convertColorToString(0x0564F5, 0.9),
+                backgroundColor: convertColorToString(0x108EF5, 0.8),
                 borderColor: blueBorderColor,
                 borderWidth: 1
             },
