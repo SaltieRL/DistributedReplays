@@ -48,13 +48,12 @@
                 let category = element.getAttribute('data-field');
                 let categoryHistogram = histData[category];
                 if (typeof categoryHistogram !== 'undefined') {
-                    {#console.log('recreating graph', mode);#}
                     generateGraph(categoryHistogram, category, index, mode);
                 }
             }
 
             function generateGraph(categoryHistogram, category, index, gamemode) {
-                let labels = categoryHistogram[2]['keys']
+                let labels = categoryHistogram[2]['keys'];
                 labels.sort((a, b) => Number(a) - Number(b));
                 if (category.startsWith('a_')) {
                     categoryHistogram[0] = 0
@@ -64,7 +63,7 @@
                     ds.push({
                         label: x + 's',
                         data: Object.values(categoryHistogram[x]['values']),
-                        backgroundColor: color_list[(x) % color_list.length]
+                        ...color_list[(x) % color_list.length]
                     })
                 }
                 charts[index].data = {
@@ -72,7 +71,6 @@
                     'datasets': ds
                 };
                 charts[index].update();
-                {#console.log(charts[index].data);#}
             }
 
             server.asyncJsonGet('/replays/stats/all', function (data) {

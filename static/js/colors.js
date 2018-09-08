@@ -82,12 +82,8 @@ define('colors', function () {
         ]
     };
 
-    const overallColorsOld = [0x36a2eb, 0xff6384, 0xaFF9C12, 0xffeaa7, 0x55efc4, 0xfd79a8];
-    // const overallColors = [0x0511F5, 0xEB1000, 0x05E0CC, 0xaffeaa7];
     const overallColors = [0x108EF5, 0xF55105, 0x05E0CC, 0xaffeaa7];
     const alphas = [0.5, 0.5, 0.5, 0.7];
-
-
 
     function getHorizontalChartColor(index, is_orange) {
         let chart = designer;
@@ -118,12 +114,19 @@ define('colors', function () {
         return "rgba(32, 45, 21, 0.3)";
     }
 
-    function getChartColorList(numberOfColorsNeeded, colorList=overallColors) {
-        numberOfColorsNeeded = Math.min(numberOfColorsNeeded, overallColors.length);
+    function getChartColorList(numberOfColorsNeeded, colorList=overallColors, alphaList=alphas) {
+        numberOfColorsNeeded = Math.min(numberOfColorsNeeded, colorList.length);
         let colors = colorList.slice(0, numberOfColorsNeeded);
         let result = [];
         for (let i = 0; i < colors.length; i++) {
-            result.push(convertColorToString(colors[i], alphas[i], true))
+            let backgroundColor = convertColorToString(colors[i], alphaList[i], true);
+            let hoverBackgroundColor = convertColorToString(colors[i], alphaList[i] + 0.2, true);
+            result.push({
+                backgroundColor: backgroundColor,
+                hoverBackgroundColor: hoverBackgroundColor,
+                borderColor: backgroundColor,
+                hoverBorderColor: hoverBackgroundColor
+            })
         }
         return result
     }
@@ -139,6 +142,8 @@ define('colors', function () {
 
 
 function oldColors() {
+    const overallColorsOld = [0x36a2eb, 0xff6384, 0xaFF9C12, 0xffeaa7, 0x55efc4, 0xfd79a8];
+
     const builtInTeamChartColors = {
         "blue": [
             {
