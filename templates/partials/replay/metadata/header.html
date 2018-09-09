@@ -1,11 +1,10 @@
+{% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
 <h2>{{ replay.name|e }}</h2>
-<p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
-<p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
 <div class="replay-header">
     <div class="player-box blue">
         <!-- Player box -->
-        {% set team = team_members|rejectattr('is_orange', False) %}
-        {% include "partials/replay/players.html" %}
+        {% set team = team_members|rejectattr('is_orange') %}
+        {% include "partials/replay/metadata/players.html" %}
     </div>
     <div class="score-box">
         <!-- SCORE BOX -->
@@ -25,13 +24,13 @@
                     });
                 })('scoreBox', {{ graphs|tojson }});
             </script>
-            {% include "partials/replay/score_graph.html" %}
+            {% include "partials/replay/shared/score_graph.html" %}
         </div>
     </div>
     <div class="player-box orange">
         <!-- Player box -->
-        {% set team = team_members|rejectattr('is_orange', True) %}
-        {% include "partials/replay/players.html" %}
+        {% set team = team_members|rejectattr('is_orange', 'equalto', 0) %}
+        {% include "partials/replay/metadata/players.html" %}
     </div>
 </div>
 <p>Map: {{ replay.map }}</p>

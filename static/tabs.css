@@ -7,10 +7,15 @@
 .tabs-holder ul li label {
     float: left;
     padding: 15px 25px;
-    border: 1px solid var(--tabUnactiveHoverColor);
+    border: 1px solid var(--borderColor);
     border-bottom: 0;
-    background: #eeeeee;
+    background: var(--tabUnactiveColor);
     color: #444;
+    position: relative;
+}
+
+.tabs-holder ul li label:hover {
+    background: var(--tabUnactiveHoverColor);
 }
 
 .tabs-holder ul {
@@ -31,7 +36,7 @@
     clear: both;
 }
 
-.pc-tab section div {
+.pc-tab section > div {
     padding: 20px;
     width: 100%;
     border: 1px solid #ddd;
