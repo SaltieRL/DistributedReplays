@@ -1,6 +1,6 @@
 <b>Player List:</b>
 <ol>
-    {% for p in team_members %}
+    {% for p in team %}
     <li><b><span title="Actor ID: {{ p.actor_id }}">{{ p.name }}
 
                         </span></b>
@@ -11,7 +11,6 @@
             <li>Loadout
 
                 {% if p.loadout|length > 0 %}
-
                     <ul>
                             {% for k in p.loadout[0].keys()|sort() %}
                                 {% if k != 'version' %}

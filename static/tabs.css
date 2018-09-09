@@ -1,0 +1,38 @@
+:root {
+    --tabActiveColor: #ffffff;
+    --tabUnactiveColor: #eeeeee;
+    --tabUnactiveHoverColor: #dddddd;
+}
+
+.tabs-holder ul li label {
+    float: left;
+    padding: 15px 25px;
+    border: 1px solid var(--tabUnactiveHoverColor);
+    border-bottom: 0;
+    background: #eeeeee;
+    color: #444;
+}
+
+.tabs-holder ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tabs-holder ul li:not(:last-child) label {
+    border-right-width: 0;
+}
+
+.tabs-holder {
+    box-sizing: border-box;
+}
+
+.tabs-holder section {
+    clear: both;
+}
+
+.pc-tab section div {
+    padding: 20px;
+    width: 100%;
+    border: 1px solid #ddd;
+}

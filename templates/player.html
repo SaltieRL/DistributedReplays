@@ -107,7 +107,7 @@
         <div class="matchhistory">
             {% if games %}
                 {% set max_pages=(total_games/game_per_page)|round(1, 'ceil') %}
-                {% include "partials/replay/match_history.html" %}
+                {% include "partials/player/match_history.html" %}
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         console.log('adding history loader');
