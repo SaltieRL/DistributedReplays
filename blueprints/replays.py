@@ -177,7 +177,7 @@ def downloader_page():
 
 @bp.route('/stats')
 def replay_stats():
-    return render_template('replay-stats.html')
+    return render_template('replay_stats.html')
 
 
 # @bp.route('/stats/score')

@@ -1,5 +1,5 @@
 {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
-<h2>{{ replay.name|e }}</h2>
+<h2 style="margin-top: 0;">{{ replay.name|e }}</h2>
 <div class="replay-header">
     <div class="player-box blue">
         <!-- Player box -->
@@ -33,9 +33,3 @@
         {% include "partials/replay/metadata/players.html" %}
     </div>
 </div>
-<p>Map: {{ replay.map }}</p>
-{#        <p>Version: {{ replay.api_game.replay_version }}</p>#}
-{#        <p>Time: {{ replay.api_game.datetime }}</p>#}
-{#            <p>Frames: {{ frame_count }}</p>#}
-{#            <p>Score: {{ replay.teams[0].score }}:{{ replay.api_game.teams[1].score }}</p>#}
-
