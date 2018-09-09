@@ -9,7 +9,7 @@ a {
     overflow: hidden;
     margin: 0px;
     padding: 0px 20px 0px 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--borderColor);
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
@@ -50,7 +50,7 @@ form {
 }
 
 .navbar div in:hover{
-    background-color: #ddd;
+    background-color: var(--borderColor);
 }
 
 .navbar div div.framebox {
@@ -64,7 +64,7 @@ form {
 }
 
 .navbar div box:hover {
-    background-color: #ddd;
+    background-color: var(--borderColor);
 }
 
 @media screen and (max-width : 600px)

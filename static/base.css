@@ -1,3 +1,7 @@
+:root {
+    --borderColor: #dddddd;
+}
+
 html, body {
     font-family: "Lato", "Fira Mono", monospace;
     font-weight: 300;
@@ -34,7 +38,7 @@ a {
 }
 
 .framebox:hover {
-    background-color: #ddd;
+    background-color: var(--borderColor);
 }
 
 .content {
@@ -86,8 +90,8 @@ body {
     font-family: "Lato", "Fira Mono", monospace;
     border: 0px;
     font-weight: 300;
-    border-bottom: 1px solid #ddd;
-    border-left: 1px solid #ddd;
+    border-bottom: 1px solid var(--borderColor);
+    border-left: 1px solid var(--borderColor);
     color: #4b545f;
     text-align: center;
     font-size: 18px;
@@ -102,15 +106,15 @@ body {
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
-input:-webkit-autofill:focus
+input:-webkit-autofill:focus,
 textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover
+textarea:-webkit-autofill:hover,
 textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
     padding-top: 9px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--borderColor);
     -webkit-text-fill-color: #000000;
     transition: background-color 5000s ease-in-out 0s;
 }
@@ -118,7 +122,7 @@ select:-webkit-autofill:focus {
 .header_holder {
     margin-bottom: 5px;
     position: relative;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--borderColor);
 }
 
 .header_holder:after {
