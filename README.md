@@ -16,14 +16,14 @@
 - Run win_run.bat
 - You can optionally kill the python process and start it in an IDE
 - You can log into psql command line with `psql postgresql://postgres:postgres@localhost`
-- If the included redis does not work here is [install directions](https://dingyuliang.me/redis-3-2-install-redis-windows/
-
-The server currently only allows uploads from a single IP address every 4.5 minutes, to prevent abuse.
-This is also in-line with the data generation speed of a typical Rocket League game (~5 minutes).
-Each replay has an IP address attached to it, so blame can be given.
+- If the included redis does not work here is [install directions](https://dingyuliang.me/redis-3-2-install-redis-windows/)
 
 ### Mac
-- python3 You need to run in python3 mac comes with python2 so do not run any commands without the 3
+- Run RLBotServer.py
+- Modify celery2.sh to point to the correct python executable (usually python3). Run it
+- Install and run Redis
+
+**You need to run in `python3`. Mac comes with `python2` by default so do not run any commands without the 3**
 
 
 ## Structure
