@@ -6,7 +6,7 @@ from celery import Celery
 import sys
 
 sys.path.append(os.path.abspath('replayanalysis/'))
-from tasks import celeryconfig
+from backend.tasks import celeryconfig
 from backend.functions import convert_pickle_to_db, add_objs_to_db
 from backend.middleware import DBTask
 from backend.database.objects import Game

@@ -16,7 +16,7 @@ from backend.database import queries
 from backend.database.objects import PlayerGame, Game
 from backend.functions import return_error, get_item_dict, render_with_session, get_rank_batch
 from carball.analysis.utils import proto_manager, pandas_manager
-from tasks import celery_tasks
+from backend.tasks import celery_tasks
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
 #
