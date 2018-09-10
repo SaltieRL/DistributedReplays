@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-<div class="centerbox">
+<div class="mdl-card mdl-shadow--2dp centerbox">
     <div class="logo">
         {#        calculated<span class="logo-small">.gg</span>#}
         <img height="75px" src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>
@@ -30,7 +30,7 @@
     <div class="searchblock">
         <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
             <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" id="sample1">
+                <input class="mdl-textfield__input" type="text" name="name" id="name">
                 <label class="mdl-textfield__label" for="sample1">SteamID or Username</label>
             </div>
         </form>
