@@ -7,6 +7,11 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
 def redirect_url(default='home'):
+    """Redirects the person to the previous url they were at, or a default page
+
+    :param default: default url_id to redirect to if we can't find a referer/next
+    :return: redirect
+    """
     return request.args.get('next') or \
            request.referrer or \
            url_for(default)
@@ -29,6 +34,12 @@ def home():
 
 @bp.route('/addrole/<id>/<role>')
 def addrole(id, role):
+    """Adds a role to a person given an ID and a role id.
+
+    :param id: platformid of the person to add the role to
+    :param role: the id of the role
+    :return: redirect to the previous url
+    """
     s = current_app.config['db']()
     role_id = s.query(Group).filter(Group.name == role).first().id
     print(role, role_id)
@@ -45,6 +56,12 @@ def addrole(id, role):
 
 @bp.route('/delrole/<id>/<role>')
 def delrole(id, role):
+    """Removes a role from a person given an ID and a role id.
+
+    :param id: platformid of the person
+    :param role: the id of the role
+    :return: redirect to the previous url
+    """
     s = current_app.config['db']()
     role_id = s.query(Group).filter(Group.name == role).first().id
     player = s.query(Player).filter(Player.platformid == id).first()

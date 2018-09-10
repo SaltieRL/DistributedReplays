@@ -3,51 +3,32 @@ import datetime
 import json
 import os
 import random
-import time
 
 import redis
 import requests
 from flask import render_template, current_app
-from google.protobuf.descriptor import FieldDescriptor
+
 # Replay stuff
 from database.objects import Game, PlayerGame, Player
 from helpers.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
 from carball.generated.api import game_pb2
 
+fake_data = False
 try:
     from config import RL_API_KEY
 except ImportError:
     RL_API_KEY = None
     fake_data = True
-replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
-if not os.path.isdir(replay_dir):
-    os.mkdir(replay_dir)
-model_dir = os.path.join(os.path.dirname(__file__), 'models')
-if not os.path.isdir(model_dir):
-    os.mkdir(model_dir)
 
-ALLOWED_EXTENSIONS = {'bin', 'gz'}
 json_loc = os.path.join(os.path.dirname(__file__), '..', 'data', 'categorized_items.json')
 with open(json_loc, 'r') as f:
     item_dict = json.load(f)
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 def return_error(msg):
     return render_template('error.html', error=msg)
     # return jsonify({'error': msg})
-
-
-def get_replay_path(uid, add_extension=True):
-    return os.path.join(replay_dir, uid + ('.gz' if add_extension else ''))
-
-
-rank_cache = {}
-
 
 def get_item_name_by_id(id_):
     return item_dict[id_]
@@ -160,12 +141,27 @@ def add_objs_to_db(game, player_games, players, s):
 
 
 def render_with_session(template, session, **kwargs):
+    """
+    Render a template with session objects. Required if there are objs from objects.py being used in the template. Closes session after rendering.
+
+    :param template: template to render
+    :param session: session to use (and close afterwards)
+    :param kwargs: extra arguments to be passed to render_template
+    :return: response object
+    """
     response = render_template(template, **kwargs)
     session.close()
     return response
 
 
 def get_rank_batch(ids, offline_redis=None):
+    """
+    Gets a batch of ranks based on ids. Returns fake data if there is no API key available.
+
+    :param ids: ids to get from RLAPI
+    :param offline_redis: Redis to use if not in the application context
+    :return: rank information
+    """
     return_data = {}
     if fake_data or RL_API_KEY is None:
         return make_fake_data(ids)
@@ -238,10 +234,13 @@ def get_rank_batch(ids, offline_redis=None):
     return return_data
 
 
-fake_data = False
-
-
 def get_rank(steam_id):
+    """
+    Gets a single rank of a given steam id. Just calls get_rank_batch with a single id.
+
+    :param steam_id: steamid to get
+    :return: rank, if it exists
+    """
     rank = get_rank_batch([steam_id])
     if rank is None:
         return None
@@ -249,6 +248,12 @@ def get_rank(steam_id):
 
 
 def make_fake_data(ids):
+    """
+    Makes fake rank information.
+
+    :param ids: ids to make information for
+    :return: fake rank data
+    """
     names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
     base_rank = random.randint(3, 17)
     return_data = {}

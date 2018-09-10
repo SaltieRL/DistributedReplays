@@ -15,12 +15,36 @@ from sqlalchemy.exc import InvalidRequestError
 from werkzeug.utils import secure_filename
 
 from database import queries
-from helpers.functions import allowed_file, model_dir, return_error, replay_dir, get_replay_path
 from database.objects import Model, User, Replay
 
+replay_dir = os.path.join(os.path.dirname(__file__), 'replays')
+ALLOWED_EXTENSIONS = {'bin', 'gz'}
+
+
+def allowed_file(filename):
+    """Check if a given file is allowed to be uploaded (old)
+
+    :param filename:
+    :return:
+    """
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def get_replay_path(uid, add_extension=True):
+    return os.path.join(replay_dir, uid + ('.gz' if add_extension else ''))
+
+
+if not os.path.isdir(replay_dir):
+    os.mkdir(replay_dir)
+model_dir = os.path.join(os.path.dirname(__file__), 'models')
+if not os.path.isdir(model_dir):
+    os.mkdir(model_dir)
 last_upload = {}
 
 bp = Blueprint('saltie', __name__, url_prefix='/saltie')
+
+
 @bp.route('/admin')
 @flask_login.login_required
 def admin():
