@@ -8,6 +8,7 @@ define(['three'], function (THREE) {
         // let camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100000);
         let camera = new THREE.OrthographicCamera(200, -200, 200, -200, 1, 100000);
         camera.position.set(0, 0, 250);
+        // 23, 15, 1
         // camera.rotation.set(Math.PI, 0, 0);
         let renderer = new THREE.WebGLRenderer({antialias: true});
 

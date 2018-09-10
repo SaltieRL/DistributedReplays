@@ -4,6 +4,7 @@ define(['viewerConstants'], function (constants) {
         transparent: true,
         opacity: 0.3
     });
+    let fieldMesh = null;
 
     function createMaterials() {
         return {
@@ -210,7 +211,7 @@ define(['viewerConstants'], function (constants) {
         div.style.left = pos[0].toString() + 'px';
         div.style.color = 'white';
         div.style.borderRadius = '10px';
-        div.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        div.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
         div.style.padding = '0 5px';
         div.style.fontSize = '0.6em';
         container.appendChild(div);
@@ -220,7 +221,14 @@ define(['viewerConstants'], function (constants) {
     function createStaticObjects() {
         let materials = createMaterials();
         let geometry = createGeometry();
-        let field = createField(geometry, materials);
+        if (fieldMesh == null) {
+            fieldMesh = createField(geometry, materials);
+        } else {
+            fieldMesh.wireframe = true;
+            let scale = 10;
+            fieldMesh.scale = {"x":scale, "y":scale, "z":scale};
+        }
+        let field = fieldMesh;
         let ball = createBall(geometry, materials);
         let lights = createLight();
 
@@ -233,6 +241,28 @@ define(['viewerConstants'], function (constants) {
             geometry: geometry,
             materials: materials
         }
+    }
+
+    function loadObjects(callback) {
+        var loader = new THREE.OBJLoader();
+        loader.load('/static/img/field/field.obj', function (loadedFieldMesh) {
+            let material = new THREE.MeshBasicMaterial({color: 0xff0000});
+            material.wireframe = true;
+            fieldMesh = loadedFieldMesh;
+            fieldMesh.traverse( function ( child ) {
+                if ( child instanceof THREE.Mesh ) {
+                    child.material = material;
+                    child.wireframe = true;
+                }
+            } );
+            fieldMesh.wireframe = true;
+            fieldMesh.scale.x = fieldMesh.scale.y = fieldMesh.scale.z = 500;
+            callback();
+        }, function (whoCares) {
+
+        }, function (onError) {
+            console.log(onError);
+        });
     }
 
     function addStaticObjectsToScene(objects, scene) {
@@ -257,6 +287,7 @@ define(['viewerConstants'], function (constants) {
         createField: createField,
         createBall: createBall,
         createLight: createLight,
+        loadObjects: loadObjects,
         createCars: createCars,
         createStaticObjects: createStaticObjects,
         createLabels: createLabels,

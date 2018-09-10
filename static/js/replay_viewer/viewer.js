@@ -41,43 +41,45 @@ define(['server', 'three', 'viewerSetup',
         let core = setup.getCore(containerId);
 
         console.debug('Adding initial objects');
-        let staticObjects = objects.createStaticObjects();
-        objects.addStaticObjectsToScene(staticObjects.objects, core.scene);
+        objects.loadObjects(function () {
+            let staticObjects = objects.createStaticObjects();
+            objects.addStaticObjectsToScene(staticObjects.objects, core.scene);
 
-        console.debug('Setting up the camera');
-        let cameraFunctions = camera.createCameraFunctions(core.camera);
+            console.debug('Setting up the camera');
+            let cameraFunctions = camera.createCameraFunctions(core.camera);
 
-        let debug = createDebugObject(core.container);
-        let state = createStateObject();
+            let debug = createDebugObject(core.container);
+            let state = createStateObject();
 
-        console.debug('loading data');
-        server.asyncJsonGet('/replays/parsed/view/' + replayHash + '/positions', function (data) {
-            console.debug('data has been loaded');
-            let cars = objects.createCars(staticObjects.geometry, staticObjects.materials, data);
-            // Adding cars
-            for (let i = 0; i < cars.cars.length; i++) {
-                core.scene.add(cars.cars[i])
-            }
-            for (let i = 0; i < cars.boosts.length; i++) {
-                core.scene.add(cars.boosts[i])
-            }
+            console.debug('loading data');
+            server.asyncJsonGet('/replays/parsed/view/' + replayHash + '/positions', function (data) {
+                console.debug('data has been loaded');
+                let cars = objects.createCars(staticObjects.geometry, staticObjects.materials, data);
+                // Adding cars
+                for (let i = 0; i < cars.cars.length; i++) {
+                    core.scene.add(cars.cars[i])
+                }
+                for (let i = 0; i < cars.boosts.length; i++) {
+                    core.scene.add(cars.boosts[i])
+                }
 
-            let labels = objects.createLabels(data['names'], core.container);
-            let startFunction = animation.startAnimation({
-                cars: cars.cars,
-                boosts: cars.boosts,
-                names: labels,
-                ball: staticObjects.objects.ball
-            }, core, data, debug, state);
+                let labels = objects.createLabels(data['names'], core.container);
+                let startFunction = animation.startAnimation({
+                    cars: cars.cars,
+                    boosts: cars.boosts,
+                    names: labels,
+                    ball: staticObjects.objects.ball
+                }, core, data, debug, state);
 
-            console.debug('starting the viewer');
-            startFunction();
-        }, debug.isDebugging);
+                console.debug('starting the viewer');
+                startFunction();
+            }, debug.isDebugging);
 
-        console.debug('first render');
-        // Do a first render of just static objects while waiting on server.
-        cameraFunctions.startCamera();
-        core.renderer.render(core.scene, core.camera);
+            console.debug('first render');
+            // Do a first render of just static objects while waiting on server.
+            cameraFunctions.startCamera();
+            core.renderer.render(core.scene, core.camera);
+        });
     }
 
     return {
