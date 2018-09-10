@@ -5,7 +5,7 @@ import traceback
 import requests
 from flask import jsonify, request, redirect, url_for, Blueprint, current_app
 
-from backend.database.wrapper import get_random_player, create_default_player
+from backend.database.wrapper.player_wrapper import get_random_player, create_default_player
 
 try:
     from config import STEAM_API_KEY

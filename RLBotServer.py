@@ -45,7 +45,7 @@ UPLOAD_FOLDER = os.path.join(
         os.path.realpath(__file__)), 'replays')
 UPLOAD_RATE_LIMIT_MINUTES = 4.5
 app = Flask(__name__, template_folder=os.path.join('frontend', 'templates'),
-            static_url_path=os.path.join('frontend', 'static'))
+            static_folder=os.path.join('frontend', 'static'))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True

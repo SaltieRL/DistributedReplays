@@ -4,7 +4,7 @@ from sqlalchemy import func, desc, cast, literal
 
 from data import constants
 from backend.database.objects import PlayerGame, Game
-from backend.database.wrapper import PlayerWrapper
+from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
 
 
