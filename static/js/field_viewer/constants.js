@@ -1,4 +1,4 @@
-define([''], function () {
+define(['static/js/field_viewer/constants'], function () {
     // CONSTANTS
     // Only standard maps here
     const FIELD_WIDTH = 4120.0;
