@@ -2,8 +2,6 @@ import logging
 import os
 import sys
 
-import flask
-import flask_login
 from flask import Flask, render_template, g, current_app, session, request, redirect
 from flask_cors import CORS
 
@@ -82,15 +80,6 @@ with app.app_context():
         app.secret_key = config.SECRET_KEY
     except:
         logger.warning('no secret key has been set')
-    # Login stuff
-    login_manager = flask_login.LoginManager()
-
-    login_manager.init_app(app)
-
-    try:
-        users = config.users
-    except:
-        users = []
 
     app.config['db'] = Session
 
@@ -120,69 +109,6 @@ with app.app_context():
     app.config['groups'] = ids_to_group
     s.commit()
     s.close()
-
-
-# Admin stuff
-class LoginUser(flask_login.UserMixin):
-    pass
-
-
-@login_manager.user_loader
-def user_loader(email):
-    if email not in users:
-        return
-
-    user = LoginUser()
-    user.id = email
-    return user
-
-
-@login_manager.request_loader
-def request_loader(request):
-    email = request.form.get('email')
-    if email not in users:
-        return
-
-    user = LoginUser()
-    user.id = email
-
-    # DO NOT ever store passwords in plaintext and always compare password
-    # hashes using constant-time comparison!
-    user.is_authenticated = request.form['password'] == users[email]
-
-    return user
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if flask.request.method == 'GET':
-        return '''
-               <form action='login' method='POST'>
-                <input type='text' name='email' id='email' placeholder='email'/>
-                <input type='password' name='password' id='password' placeholder='password'/>
-                <input type='submit' name='submit'/>
-               </form>
-               '''
-
-    email = flask.request.form['email']
-    if flask.request.form['password'] == users[email]:
-        user = LoginUser()
-        user.id = email
-        flask_login.login_user(user)
-        return flask.redirect(flask.url_for('admin'))
-
-    return 'Bad login'
-
-
-@app.route('/logout')
-def logout():
-    flask_login.logout_user()
-    return 'Logged out'
-
-
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return 'Unauthorized'
 
 
 @app.before_request
