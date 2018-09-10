@@ -10,7 +10,7 @@ export class App extends React.Component {
             <Router>
                 <div className="App">
                     <Route exact={true} path="/" component={HomePage}/>
-                    <Route exact={true} path="/players/view/:id" component={PlayerPage}/>
+                    <Route exact={true} path="/players/overview/:id" component={PlayerPage}/>
                 </div>
             </Router>
         )

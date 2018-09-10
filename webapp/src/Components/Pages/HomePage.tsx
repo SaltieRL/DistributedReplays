@@ -3,7 +3,7 @@ import {Logo} from "../Shared/Logo/Logo"
 import {Search} from "../Shared/Search"
 
 import {faGlobeAmericas} from "@fortawesome/free-solid-svg-icons"
-import {createStyles, Grid, Theme, WithStyles, withStyles} from "@material-ui/core"
+import {createStyles, Grid, Typography, WithStyles, withStyles} from "@material-ui/core"
 import Divider from "@material-ui/core/Divider/Divider"
 import {GridProps} from "@material-ui/core/Grid"
 import {LinkButton} from "../Shared/LinkButton"
@@ -11,20 +11,42 @@ import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
 
 type Props = WithStyles<typeof styles>
 
-class HomePageComponent extends React.PureComponent<Props> {
+interface State {
+    replayCount?: number
+}
+
+class HomePageComponent extends React.PureComponent<Props, State> {
+    public constructor(props: Props) {
+        super(props)
+        this.state = {}
+    }
+
+    public componentDidMount() {
+        this.getReplayCount()
+            .then((replayCount: number) => this.setState({replayCount}))
+    }
+
     public render() {
         const {classes} = this.props
 
         const alignCenterProps: GridProps = {container: true, justify: "center", alignItems: "center"}
         return (
-            <UploadModalWrapper>
+            <UploadModalWrapper buttonStyle="floating">
                 <div className={classes.root}>
                     <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}>
-                        <Grid item xs={12} {...alignCenterProps} style={{minHeight: "300px"}}>
-                            <Logo/>
+                        <Grid item xs={12} {...alignCenterProps} style={{minHeight: "300px"}} direction="column">
+                            <Logo imgStyle={{maxWidth: "80vw"}}/>
+                            {this.state.replayCount &&
+                            <>
+                                <br/>
+                                <Typography>
+                                    <i>1337 replays and counting...</i>
+                                </Typography>
+                            </>
+                            }
                         </Grid>
                         <Grid item xs={11} {...alignCenterProps} style={{padding: "20px 0 20px 0"}}>
-                            <Search/>
+                            <Search usePaper/>
                         </Grid>
                         <Grid item xs={12}>
                             <Divider/>
@@ -32,22 +54,15 @@ class HomePageComponent extends React.PureComponent<Props> {
                         <Grid item xs={12} sm={8} md={8} lg={6} xl={4}>
                             <HomePageFooter/>
                         </Grid>
-                        {/*<div className="hotlinks">*/}
-                        {/*<FrameBoxLink to="/replay/stats">*/}
-                        {/*global stats*/}
-                        {/*</FrameBoxLink>*/}
-                        {/*<FrameBoxLink to="/replay/upload">*/}
-                        {/*upload replay*/}
-                        {/*</FrameBoxLink>*/}
-                        {/*</div>*/}
-                        {/*<div className="hotlinks">*/}
-                        {/*<span>1337 replays and counting...</span>*/}
-                        {/*/!*TODO: Make call to get number of replays*!/*/}
-                        {/*</div>*/}
                     </Grid>
                 </div>
             </UploadModalWrapper>
         )
+    }
+
+    private readonly getReplayCount = (): Promise<number> => {
+        // TODO: Make call to get number of replays
+        return Promise.resolve(1337)
     }
 }
 
@@ -72,7 +87,7 @@ const HomePageFooter: React.SFC = () => {
 }
 
 
-const styles = (theme: Theme) => createStyles({
+const styles = createStyles({
     root: {
         margin: "auto",
         width: "100%",

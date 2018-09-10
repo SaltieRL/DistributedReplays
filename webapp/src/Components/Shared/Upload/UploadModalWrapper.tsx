@@ -1,14 +1,18 @@
-import {Button, Tooltip} from "@material-ui/core"
-import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
+import {UploadContainedButton} from "./UploadContainedButton"
+import {UploadFloatingButton} from "./UploadFloatingButton"
 import {UploadModal} from "./UploadModal"
+
+interface Props {
+    buttonStyle: "contained" | "floating"
+}
 
 interface State {
     open: boolean
 }
 
-export class UploadModalWrapper extends React.PureComponent<{}, State> {
-    constructor(props: {}) {
+export class UploadModalWrapper extends React.PureComponent<Props, State> {
+    constructor(props: Props) {
         super(props)
         this.state = {
             open: false
@@ -24,19 +28,12 @@ export class UploadModalWrapper extends React.PureComponent<{}, State> {
     }
 
     public render() {
-        const buttonStyle: React.CSSProperties = {
-            position: "fixed",
-            bottom: "40px",
-            right: "40px"
-        }
         return (
             <>
-                <Tooltip title="Upload replay">
-                    <Button variant="fab" color="primary" aria-label="upload" style={buttonStyle}
-                            onClick={this.handleOpen}>
-                        <CloudUpload/>
-                    </Button>
-                </Tooltip>
+                {this.props.buttonStyle === "floating"
+                && <UploadFloatingButton handleOpen={this.handleOpen}/>}
+                {this.props.buttonStyle === "contained"
+                && <UploadContainedButton handleOpen={this.handleOpen}/>}
                 <UploadModal open={this.state.open} handleClickOutside={this.handleClose}/>
                 {this.props.children}
             </>

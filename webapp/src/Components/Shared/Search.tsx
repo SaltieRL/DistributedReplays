@@ -4,23 +4,31 @@ import {IconButton, Paper, TextField} from "@material-ui/core"
 import * as React from "react"
 
 
+interface Props {
+    usePaper: boolean
+}
+
 interface State {
     enteredText: string
 }
 
 
-export class Search extends React.PureComponent<{}, State> {
-    constructor(props: {}) {
+export class Search extends React.PureComponent<Props, State> {
+    constructor(props: Props) {
         super(props)
         this.state = {
             enteredText: ""
         }
     }
 
-
     public render() {
-        return (
-            <Paper style={{display: "flex", justifyContent: "space-between", maxWidth: "500px", width: "100%"}}>
+        const calculatedButton =
+            <IconButton aria-label="Search" onClick={this.onSubmit}>
+                <FontAwesomeIcon icon={faCalculator}/>
+            </IconButton>
+
+        const inputField =
+            <>
                 <form onSubmit={this.onSubmit} style={{margin: "auto 16px", width: "100%"}}>
                     <TextField
                         name="name"
@@ -29,14 +37,32 @@ export class Search extends React.PureComponent<{}, State> {
                         onChange={this.handleChange}
                         value={this.state.enteredText}
                         fullWidth
-                        InputProps={{disableUnderline: true}}
+                        InputProps={{disableUnderline: this.props.usePaper, endAdornment: calculatedButton}}
                         required
                     />
                 </form>
-                <IconButton aria-label="Search" onClick={this.onSubmit}>
-                    <FontAwesomeIcon icon={faCalculator}/>
-                </IconButton>
-            </Paper>
+                {/*{calculatedButton}*/}
+            </>
+
+        const containerStyle: React.CSSProperties = {
+            display: "flex",
+            justifyContent: "space-between",
+            maxWidth: "500px",
+            width: "100%"
+        }
+
+        return (
+            <>
+                {this.props.usePaper ?
+                    <Paper style={containerStyle}>
+                        {inputField}
+                    </Paper>
+                    :
+                    <div style={containerStyle}>
+                        {inputField}
+                    </div>
+                }
+            </>
         )
     }
 

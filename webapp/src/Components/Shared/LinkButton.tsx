@@ -1,34 +1,57 @@
 import {IconDefinition} from "@fortawesome/fontawesome-common-types"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Button, Theme, WithStyles, withStyles} from "@material-ui/core"
+import * as H from "history"
 import * as React from "react"
-import {Link, LinkProps} from "react-router-dom"
+import {Link} from "react-router-dom"
+
+interface InternalLinkProps {
+    isExternalLink?: false
+    to: H.LocationDescriptor
+}
+
+interface ExternalLinkProps {
+    isExternalLink: true
+    to: string
+}
 
 interface OwnProps {
     leftIcon?: IconDefinition
 }
 
-type Props = OwnProps
-    & LinkProps
-    & WithStyles<typeof styles>
+type LinkButtonProps = OwnProps
+    & (InternalLinkProps | ExternalLinkProps)
+    & WithStyles<typeof buttonStyles>
 
-class LinkButtonComponent extends React.PureComponent<Props> {
+
+class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
     public render() {
-        const {classes, children} = this.props
+        const {classes, children, isExternalLink} = this.props
+        const button =
+            <Button variant="outlined">
+                {this.props.leftIcon &&
+                <FontAwesomeIcon icon={this.props.leftIcon} className={classes.leftIcon}/>
+                }
+                {children}
+            </Button>
+
         return (
-            <Link to={this.props.to} style={{textDecoration: "none"}}>
-                <Button variant="outlined">
-                    {this.props.leftIcon &&
-                    <FontAwesomeIcon icon={this.props.leftIcon} className={classes.leftIcon}/>
-                    }
-                    {children}
-                </Button>
-            </Link>
+            <>
+                {isExternalLink === true ?
+                    (<a href={this.props.to as string} style={{textDecoration: "none"}}>
+                        {button}
+                    </a>)
+                    :
+                    (<Link to={this.props.to} style={{textDecoration: "none"}}>
+                        {button}
+                    </Link>)
+                }
+            </>
         )
     }
 }
 
-const styles = (theme: Theme) => ({
+export const buttonStyles = (theme: Theme) => ({
     button: {
         margin: theme.spacing.unit
     },
@@ -40,4 +63,4 @@ const styles = (theme: Theme) => ({
     }
 })
 
-export const LinkButton = withStyles(styles)(LinkButtonComponent)
+export const LinkButton = withStyles(buttonStyles)(LinkButtonComponent)
