@@ -8,7 +8,7 @@ html, body {
     -moz-font-feature-settings: "lnum";
     font-feature-settings: "lnum";
     display: flex;
-    background-image: url(/frontend/static/img/background/splash.png);
+    background-image: url(/static/img/background/splash.png);
     background-size: cover;
 }
 

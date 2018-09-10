@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>calculated</title>
-    <link rel="stylesheet" type="text/css" href="/frontend/static/base.css">
-    <link rel="stylesheet" type="text/css" href="/frontend/static/index.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet"
@@ -23,7 +23,8 @@
             <i class="icono-search"></i>
             <input name=name type="text" class="search " placeholder="enter steamID or username" required>
         </form>
-        <div class="example"><a href="{{ url_for('players.view_player', id_='76561198055442516') }}">or view an example</a></div>
+        <div class="example"><a href="{{ url_for('players.view_player', id_='76561198055442516') }}">or view an
+            example</a></div>
     </div>
     <div class="hotlinks">
         <a href="{{ url_for('replays.replay_stats') }}">
