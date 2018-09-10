@@ -10,7 +10,7 @@ from flask import render_template, current_app
 
 # Replay stuff
 from backend.database.objects import Game, PlayerGame, Player
-from backend.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
+from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
 from carball.generated.api import game_pb2
 
 fake_data = False
