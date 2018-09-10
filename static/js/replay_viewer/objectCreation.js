@@ -245,18 +245,28 @@ define(['viewerConstants'], function (constants) {
 
     function loadObjects(callback) {
         var loader = new THREE.OBJLoader();
-        loader.load('/static/img/field/field.obj', function (loadedFieldMesh) {
+        loader.setPath('/static/img/field/');
+        loader.load('field.obj', function (loadedFieldMesh, materials) {
+            console.log(materials);
             let material = new THREE.MeshBasicMaterial({color: 0xff0000});
             material.wireframe = true;
-            fieldMesh = loadedFieldMesh;
-            fieldMesh.traverse( function ( child ) {
-                if ( child instanceof THREE.Mesh ) {
+            var wireframe;
+
+            loadedFieldMesh.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  //  let geometry = new THREE.Geometry().fromBufferGeometry( child.geometry );
+                  //  child.geometry = new THREE.EdgesGeometry(geometry);
                     child.material = material;
-                    child.wireframe = true;
+                  //  var geometry = new THREE.Geometry().fromBufferGeometry( child.geometry );
+                  //  geometry.mergeVertices();
+                  //  var geo = new THREE.EdgesGeometry( geometry ); // or WireframeGeometry
+                  //  var mat = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 2 } );
+                  //  wireframe = new THREE.LineSegments( geo, mat );
                 }
-            } );
-            fieldMesh.wireframe = true;
+            });
+            fieldMesh = loadedFieldMesh;
             fieldMesh.scale.x = fieldMesh.scale.y = fieldMesh.scale.z = 500;
+            // var wireframe = new THREE.LineSegments(edgeGeometry, material);
             callback();
         }, function (whoCares) {
 
