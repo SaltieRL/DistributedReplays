@@ -95,8 +95,9 @@ def view_replay(id_):
     #         p.id = p.id
     #         print('array online_id', p.id)
     ranks = get_rank_batch(players)
+    ranks_dict = dict({p: v for p, v in zip(game.players, game.ranks)})
     return render_with_session('replay.html', session, replay=game, cars=constants.cars, id=id_, ranks=ranks,
-                               item_dict=get_item_dict())
+                               item_dict=get_item_dict(), ranks_dict=ranks_dict)
 
 
 @bp.route('/parsed/view/<id_>/positions')

@@ -1,4 +1,4 @@
-html, body {
+html, body {color
     margin: 0;
     height: 100%;
     width: 100%;
@@ -8,23 +8,29 @@ html, body {
     -moz-font-feature-settings: "lnum";
     font-feature-settings: "lnum";
     display: flex;
-    background-image: url(/static/img/background/splash.png);
+    background-image: url('/static/img/background/splash.png');
     background-size: cover;
 }
 
 .centerbox {
-    background: white;
+    /*background: white;*/
     padding: 20px;
-    box-shadow: 0px 0px 10px 2px #cccccc;
+    /*box-shadow: 0px 0px 10px 2px #cccccc;*/
     display: flex;
     margin: 12% auto auto auto;
     flex-direction: column;
     text-align: center;
     align-items: center;
+    width: 500px !important;
 }
 
 .searchblock {
     margin: auto;
+    margin-top: 30px;
+    padding: 0 30px;
+}
+
+.searchblock .mdl-textfield {
 }
 
 .search {
@@ -76,4 +82,19 @@ a {
 .example > a {
     font-size: 1em;
     color: rgba(0, 0, 100, 0.5) !important;
+}
+
+.inputfile + label {
+
+    cursor: pointer !important;
+}
+.modal input {
+    cursor: pointer !important;
+    width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	z-index: -1;
+}
+.modal label {
+    cursor: pointer !important;
 }
