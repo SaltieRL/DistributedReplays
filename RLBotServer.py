@@ -28,9 +28,9 @@ except ImportError:
     ALLOWED_STEAM_ACCOUNTS = []
     users = []
 
-from blueprints import auth, api, players, replays, stats, steam, debug, admin
-from database.objects import Game, Player, Group
-from database.startup import startup
+from backend.blueprints import steam, stats, auth, debug, admin, players, api, replays
+from backend.database.objects import Game, Player, Group
+from backend.database.startup import startup
 import redis
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,8 @@ UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
         os.path.realpath(__file__)), 'replays')
 UPLOAD_RATE_LIMIT_MINUTES = 4.5
-app = Flask(__name__)
+app = Flask(__name__, template_folder=os.path.join('frontend', 'templates'),
+            static_url_path=os.path.join('frontend', 'static'))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
 app.config['TEMPLATES_AUTO_RELOAD'] = True

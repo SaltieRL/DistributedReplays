@@ -1,0 +1,16 @@
+section {
+    width: 100%;
+}
+section.positioned {
+    position: absolute;
+    top:100px;
+    left:100px;
+}
+
+.container {
+    overflow-y: auto;
+}
+table {
+    border-spacing: 0;
+    width: calc(100% - 2px);
+}

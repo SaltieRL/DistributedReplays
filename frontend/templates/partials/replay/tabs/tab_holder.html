@@ -1,0 +1,25 @@
+{% set tabs = [
+{
+"header":   "replay viewer",
+"location": "partials/replay/tabs/viewer.html",
+"mode":    "alpha"
+},
+{
+"header":   "basic stats",
+"location": "partials/replay/tabs/basic_stats.html",
+"mode":    "full"
+},
+{
+"header":   "advanced stats",
+"location": "partials/replay/tabs/advanced_stats.html",
+"mode":    "beta"
+},
+] %}
+{% if isAlpha() %}
+{% set tab_list = tabs %}
+{% elif isBeta() %}
+{% set tab_list = tabs|rejectattr('mode', 'equalto', 'alpha')|list %}
+{% else %}
+{% set tab_list = tabs|rejectattr('mode', 'equalto', 'alpha')|rejectattr('mode', 'equalto', 'beta')|list %}
+{% endif %}
+{% include "partials/tabs.html" %}

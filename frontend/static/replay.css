@@ -1,0 +1,18 @@
+.replay-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.replay-header > * {
+    border: 1px solid var(--borderColor);
+}
+
+.player-box {
+    flex-grow: 2;
+    margin-right: 10px;
+}
+
+.score-box {
+    flex-grow: 8;
+    padding: 10px;
+}

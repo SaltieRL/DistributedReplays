@@ -1,8 +1,8 @@
 import glob
 import os
 
-from database.objects import Game
-from database.startup import startup
+from backend.database.objects import Game
+from backend.database.startup import startup
 
 
 def main(sess):
