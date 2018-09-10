@@ -1,5 +1,78 @@
+{% if replay.name != 'None' %}
+    <p>Name: {{ replay.name }}</p>
+{% endif %}
+<p>Match Date: {{ replay.match_date }}</p>
+<p>Upload Date: {{ replay.upload_date }}</p>
 <p>Map: {{ replay.map }}</p>
-{#        <p>Version: {{ replay.api_game.replay_version }}</p>#}
-{#        <p>Time: {{ replay.api_game.datetime }}</p>#}
-{#            <p>Frames: {{ frame_count }}</p>#}
-{#            <p>Score: {{ replay.teams[0].score }}:{{ replay.api_game.teams[1].score }}</p>#}
+<p>Score: <span style="color: blue">{{ replay.team0score }}</span> - <span
+        style="color: orange">{{ replay.team1score }}</span></p>
+<p>Players:
+    {% set columns = ['name', 'score', 'goals', 'assists', 'saves', 'shots', 'usage'] %}
+<table>
+    <thead>
+    {% for c in columns %}
+        <th>{{ c|capitalize }}</th>
+    {% endfor %}
+    </thead>
+    <tbody>
+    {% for p in replay.playergames|sort(attribute='score', reverse=True) %}
+        {% set playerindex = loop.index0 %}
+        <tr>
+            {% for c in columns %}
+                <td>{{ p[c] }} {% if c == 'name' %}
+                    <img src="{{ url_for('static', filename='img/ranks/' + ranks_dict[p.player]|string + '.png') }}"
+                         height="30px">
+                {% endif %}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<sub>Warning: ranks in the past may be inaccurate</sub>
+</p>
+
+{% set charts=['total_hits', 'total_dribbles', 'total_passes', 'total_aerials', 'turnovers', 'average_speed', 'average_hit_distance'] %}
+{% for c in charts %}
+    {% set data = replay.playergames|map(attribute=c)|list %}
+    {% set start_at_zero = (data|max - data|min)/(data|max) > 0.1 %}{# we don't want uninteresting graphs #}
+    <canvas id="canvas{{ c }}"></canvas>
+    <script>
+        var labels = {{ replay.playergames|map(attribute='name')|list|tojson }};
+        var data = {
+            'labels': labels,
+            'datasets': [
+                {
+                    label: 'Count',
+                    data: {{ data|tojson }},
+                    backgroundColor: '#ccc'
+                }
+            ]
+        };
+        var ctx = document.getElementById('canvas{{ c }}').getContext('2d');
+        var myBar = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: '{{ c|replace('_', ' ')|capitalize }}'
+                    },
+                    {% if start_at_zero %}
+                        scales: {
+                            yAxes:
+                                [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                        }
+                    {% endif %}
+                }
+            })
+        ;
+    </script>
+{% endfor %}
