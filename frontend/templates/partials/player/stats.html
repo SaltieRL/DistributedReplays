@@ -12,3 +12,9 @@
         </div>
     </div>
 </div>
+Also known as:
+<ol>
+    {% for name in names %}
+        <li><span title="{{ name[1] }} game{% if name[1]|int > 1 %}s{% endif %}">{{ name[0] }}</span></li>
+    {% endfor %}
+</ol>

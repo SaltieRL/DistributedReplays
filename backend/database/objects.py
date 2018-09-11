@@ -82,6 +82,9 @@ class PlayerGame(DBObjectBase):
     player_object = relationship('Player', foreign_keys=[player])
     game = Column(String(40), ForeignKey('games.hash'), index=True)
     game_object = relationship("Game", foreign_keys=[game])
+    rank = Column(Integer)
+    division = Column(Integer, default=0)
+    mmr = Column(Integer)
 
     # game information
     is_orange = Column(Boolean)
@@ -124,7 +127,7 @@ class PlayerGame(DBObjectBase):
     average_hit_distance = Column(Float)
 
     # boost
-    usage = Column(Float)
+    boost_usage = Column(Float)
     num_small_boosts = Column(Integer)
     num_large_boosts = Column(Integer)
     wasted_collection = Column(Float)

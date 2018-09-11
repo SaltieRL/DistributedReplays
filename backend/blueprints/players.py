@@ -29,7 +29,7 @@ def view_player(id_):
     session = current_app.config['db']()
     rank = get_rank(id_)
     total_games = player_wrapper.get_total_games(session, id_)
-    games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, id_, total_games)
+    games, stats, favorite_car, favorite_car_pctg, names = player_stat_wrapper.get_averaged_stats(session, id_, total_games, rank)
     steam_profile = get_steam_profile_or_random_response(id_, current_app)
     user = session.query(Player).filter(Player.platformid == id_).first()
     if user is not None:
@@ -43,7 +43,7 @@ def view_player(id_):
                                favorite_car_pctg=favorite_car_pctg, stats=stats,
                                total_games=total_games, game_per_page=player_wrapper.limit,
                                id=id_, get_stat_spider_charts=PlayerStatWrapper.get_stat_spider_charts,
-                               groups=groups)
+                               groups=groups, names=names)
 
 
 @bp.route('/overview/<id_>/compare', methods=['POST'])
@@ -66,7 +66,7 @@ def compare_player(ids):
     users = []
     for player_id in ids:
         total_games = player_wrapper.get_total_games(session, player_id)
-        games, stats, favorite_car, favorite_car_pctg = player_stat_wrapper.get_averaged_stats(session, player_id,
+        games, stats, favorite_car, favorite_car_pctg, names = player_stat_wrapper.get_averaged_stats(session, player_id,
                                                                                                total_games)
         steam_profile = get_steam_profile_or_random_response(player_id, current_app)
         if steam_profile is None:

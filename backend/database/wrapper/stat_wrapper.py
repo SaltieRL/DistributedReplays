@@ -26,7 +26,7 @@ class PlayerStatWrapper:
 
         return zipped_stats
 
-    def get_averaged_stats(self, session, id_, total_games, page=0):
+    def get_averaged_stats(self, session, id_, total_games, rank=None, page=0):
         stats_query = self.stats_query
         std_query = self.std_query
         games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
@@ -40,8 +40,15 @@ class PlayerStatWrapper:
             favorite_car_pctg = fav_car_str[1] / total_games
             q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0)
             stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0)
+            if rank is not None:
+                q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
+                    PlayerGame.rank <= rank[3]['tier'] + 1).filter(Game.teamsize == 3)
+                stds = stds.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
+                    PlayerGame.rank <= rank[3]['tier'] + 1).filter(Game.teamsize == 3)
+            else:
+                q_filtered = q
             global_stds = stds.first()
-            global_stats = q.first()
+            global_stats = q_filtered.first()
             stats = list(q.filter(PlayerGame.player == id_).first())
 
             for i, s in enumerate(stats):
@@ -58,11 +65,18 @@ class PlayerStatWrapper:
                     stats[i] = float((player_stat - global_stat) / global_std)
                 else:
                     stats[i] = float(player_stat / global_stat)
+
+            # Name info
+
+            names = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')).filter(
+                PlayerGame.player == id_).group_by(
+                PlayerGame.name).order_by(desc('c'))[:5]
         else:
             favorite_car = "Unknown"
             favorite_car_pctg = 0.0
             stats = [0.0] * len(stats_query)
-        return games, self.get_wrapped_stats(stats), favorite_car, favorite_car_pctg
+            names = []
+        return games, self.get_wrapped_stats(stats), favorite_car, favorite_car_pctg, names
 
     @staticmethod
     def get_stats_query():
@@ -78,18 +92,18 @@ class PlayerStatWrapper:
             stat_list.append(field)
 
         stat_list += [
-            PlayerGame.usage,
+            PlayerGame.boost_usage,
             PlayerGame.average_speed,
             PlayerGame.possession_time,
             PlayerGame.total_hits - PlayerGame.total_dribble_conts,  # hits that are not dribbles
             (100 * PlayerGame.shots) /
-                safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # Shots per non dribble
+            safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # Shots per non dribble
             (100 * PlayerGame.total_passes) /
-                safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # passes per non dribble
+            safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # passes per non dribble
             (100 * PlayerGame.assists) /
-                safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # assists per non dribble
+            safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # assists per non dribble
             (100 * PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
-                safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # useful hit per non dribble
+            safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # useful hit per non dribble
             PlayerGame.turnovers,
             func.sum(PlayerGame.goals) / safe_divide(cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric)),
             PlayerGame.total_aerials,

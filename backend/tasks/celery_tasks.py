@@ -1,17 +1,16 @@
 # Celery workers
 import gzip
 import os
-# from helpers import rewards
-import sys
 
+from carball import analyze_replay_file
 from celery import Celery
 
-sys.path.append(os.path.abspath('replayanalysis/'))
-from backend.tasks import celeryconfig
-from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
-from backend.tasks.middleware import DBTask
 from backend.database.objects import Game
-from carball import analyze_replay_file
+from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
+from backend.tasks import celeryconfig
+from backend.tasks.middleware import DBTask
+
+# from helpers import rewards
 
 # bp = Blueprint('celery', __name__)
 
@@ -50,7 +49,7 @@ celery.config_from_object(celeryconfig)
 @celery.task(base=DBTask, bind=True, priority=5)
 def parse_replay_task(self, fn):
     output = fn + '.json'
-    pickled = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed', os.path.basename(fn))
+    pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
     if os.path.isfile(pickled):
         return
     # try:

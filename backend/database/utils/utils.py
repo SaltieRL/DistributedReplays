@@ -66,16 +66,27 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
         blue_score = game.game_metadata.score.team_0_score
         orange_score = game.game_metadata.score.team_1_score
         is_orange = p.is_orange
+
+        pid = str(p.id.id)
+        rank = None
+        mmr = None
+        division = None
+        if pid in ranks:
+            if gamemode in [0, 1, 2, 3]:
+                rank_obj = ranks[pid][gamemode]
+                rank = rank_obj['tier']
+                division = rank_obj['division']
+                mmr = rank_obj['rank_points']
+
         if is_orange:
             win = orange_score > blue_score
         else:
             win = blue_score > orange_score
-        pid = str(p.id.id)
         pg = PlayerGame(player=pid, name=p.name, game=replay_id, field_of_view=field_of_view,
                         transition_speed=transition_speed, pitch=pitch, swivel_speed=swivel_speed,
                         stiffness=stiffness,
                         height=height, distance=distance, car=-1 if loadout is None else loadout.car,
-                        is_orange=p.is_orange,
+                        is_orange=p.is_orange, rank=rank, division=division, mmr=mmr,
                         win=win, **kwargs)
         player_games.append(pg)
         if len(str(pid)) > 40:
