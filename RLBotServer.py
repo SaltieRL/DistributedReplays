@@ -37,8 +37,6 @@ logger = logging.getLogger(__name__)
 
 # APP SETUP
 
-print("Name:", __name__)
-print(os.path.abspath('replayanalysis/'))
 engine, Session = startup()
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(
@@ -90,9 +88,9 @@ with app.app_context():
             host='localhost',
             port=6379)
         app.config['r'] = r
+        r.get('test')
     except:
         print('Not using redis...')
-        app.config['r'] = None
 
     s = Session()
     groups_to_add = ['admin', 'alpha', 'beta']

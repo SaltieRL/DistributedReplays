@@ -7,70 +7,116 @@
 <p>Score: <span style="color: blue">{{ replay.team0score }}</span> - <span
         style="color: orange">{{ replay.team1score }}</span></p>
 <p>Players:
-    {% set columns = ['name', 'score', 'goals', 'assists', 'saves', 'shots', 'usage'] %}
-<table>
+    {% set columns = ['name', 'score', 'goals', 'assists', 'saves', 'shots'] %}
+<table class="table">
     <thead>
     {% for c in columns %}
-    <th>{{ c|capitalize }}</th>
+        <th>{{ c|capitalize }}</th>
     {% endfor %}
     </thead>
     <tbody>
     {% for p in replay.playergames|sort(attribute='score', reverse=True) %}
-    {% set playerindex = loop.index0 %}
-    <tr>
-        {% for c in columns %}
-        <td>{{ p[c] }} {% if c == 'name' %}
-            <img src="{{ url_for('static', filename='img/ranks/' + ranks_dict[p.player]|string + '.png') }}"
-                 height="30px">
-            {% endif %}</td>
-        {% endfor %}
-    </tr>
+        {% set playerindex = loop.index0 %}
+        <tr>
+            {% for c in columns %}
+                <td>{{ p[c] }} {% if c == 'name' %}
+                    <img src="{{ url_for('static', filename='img/ranks/' + ranks_dict[p.player]|string + '.png') }}"
+                         height="30px">
+                {% endif %}</td>
+            {% endfor %}
+        </tr>
     {% endfor %}
     </tbody>
 </table>
 <sub>Warning: ranks in the past may be inaccurate</sub>
 </p>
-{% set charts=['total_hits', 'total_dribbles', 'total_passes', 'total_aerials', 'turnovers', 'average_speed', 'average_hit_distance'] %}
-{% for c in charts %}
-{% set data = replay.playergames|map(attribute=c)|list %}
-{% set start_at_zero = (data|max - data|min)/(data|max) > 0.1 %}{# we don't want uninteresting graphs #}
-<canvas id="canvas{{ c }}"></canvas>
-<script>
-    var labels = {{ replay.playergames|map(attribute='name')|list|tojson }};
-    var data = {
-        'labels': labels,
-        'datasets': [
-            {
-                label: 'Count',
-                data: {{ data|tojson }},
-                backgroundColor: '#ccc'
-            }
-        ]
-    };
-    var ctx = document.getElementById('canvas{{ c }}').getContext('2d');
-    var myBar = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            legend: {
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: '{{ c|replace('_', ' ')|capitalize }}'
-            },
-            {% if start_at_zero %}
-            scales: {
-                yAxes:
-                    [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-            }
+
+{% set charts=['total_hits', 'total_dribbles', 'total_passes', 'total_aerials', 'turnovers', 'average_speed', 'average_hit_distance', 'ball_hit_forward',
+'time_high_in_air', 'time_low_in_air', 'wasted_collection', 'time_in_attacking_half', 'time_in_defending_half', 'possession_time', 'usage', ] %}
+{% set pie_charts = ['possession_time', 'usage'] %}
+{% set bar_charts = ['total_dribbles', 'total_passes', 'total_aerials', 'ball_hit_forward', 'ball_hit_backward', 'time_high_in_air', 'time_low_in_air', 'wasted_collection',] %}
+<div class="stat-container">
+    {% for c in charts %}
+        {% set pgs = replay.playergames|sort(attribute='is_orange', reverse=True) %}
+        {% set data = pgs|map(attribute=c)|list %}
+        {% if c not in pie_charts and c not in bar_charts %}
+            {% set type = 'radar' %}
+        {% elif c in pie_charts %}
+            {% set type = 'pie' %}
+        {% else %}
+            {% set type = 'bar' %}
+        {% endif %}
+        {% if data|max == 0 and data|min == 0 %}
+        {% else %}
+            {% if data|max > 0 %}
+                {% set start_at_zero = (data|max - data|min)/(data|max) > 0.2 %}{# we don't want uninteresting graphs #}
+            {% else %}
+                {% set start_at_zero = False %}
             {% endif %}
-        }
-    });
-</script>
-{% endfor %}
+            <div class="chart-container" id="{{ c }}">
+                <canvas id="canvas{{ c }}"></canvas>
+                <script>
+                    requirejs(['server', 'colors'], function (server, colors) {
+                        var labels = {{ pgs|map(attribute='name')|list|tojson }};
+                        var data = {
+                            'labels': labels,
+                            'datasets': [
+                                {
+                                    label: 'Count',
+                                    data: {{ data|tojson }},
+                                    {% if type == 'radar' %}
+                                        pointBackgroundColor: colors.getHorizontalColors().map(x => x.backgroundColor),
+                                        pointRadius: 5,
+                                        pointHitRadius: 5,
+                                        {#pointHoverRadius: 6,#}
+                                        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                    {% else %}
+                                        backgroundColor: colors.getHorizontalColors().map(x => x.backgroundColor),
+                                    {% endif %}
+                                }
+                            ]
+                        }
+
+                        var ctx = document.getElementById('canvas{{ c }}').getContext('2d');
+                        var myBar = new Chart(ctx, {
+                            type: '{{ type }}',
+                            data: data,
+                            options: {
+
+                                startAngle: 120,
+                                responsive: false,
+                                legend: {
+                                    position: 'top',
+
+                                    {% if c not in pie_charts %}display: false{% endif %}
+                                },
+                                title: {
+                                    display: true,
+                                    text: '{{ c|replace('_', ' ')|capitalize }}'
+                                },
+                                {% if False and start_at_zero and type == 'bar' %}
+                                    scales: {
+                                        yAxes:
+                                            [{
+                                                ticks: {
+                                                    beginAtZero: true
+                                                }
+                                            }]
+                                    },
+                                {% endif %}
+                                {% if type == 'radar' %}
+                                    scale: {
+                                        ticks: {
+                                            beginAtZero: true
+                                        }
+                                    },
+                                {% endif %}
+
+                            }
+                        })
+                    });
+                </script>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
