@@ -37,7 +37,7 @@
 {% set bar_charts = ['total_dribbles', 'total_passes', 'total_aerials', 'ball_hit_forward', 'ball_hit_backward', 'time_high_in_air', 'time_low_in_air', 'wasted_collection',] %}
 <div class="stat-container">
     {% for c in charts %}
-        {% set pgs = replay.playergames|sort(attribute='is_orange', reverse=True) %}
+        {% set pgs = replay.playergames|sort(attribute='is_orange') %}
         {% set data = pgs|map(attribute=c)|list %}
         {% if c not in pie_charts and c not in bar_charts %}
             {% set type = 'radar' %}
@@ -65,13 +65,13 @@
                                     label: 'Count',
                                     data: {{ data|tojson }},
                                     {% if type == 'radar' %}
-                                        pointBackgroundColor: colors.getHorizontalColors().map(x => x.backgroundColor),
+                                        pointBackgroundColor: [{% for x in pgs %}colors.getHorizontalChartColor({{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }}).backgroundColor,{% endfor %}],
                                         pointRadius: 5,
                                         pointHitRadius: 5,
                                         {#pointHoverRadius: 6,#}
                                         backgroundColor: 'rgba(0, 0, 0, 0.2)',
                                     {% else %}
-                                        backgroundColor: colors.getHorizontalColors().map(x => x.backgroundColor),
+                                        backgroundColor: [{% for x in pgs %}colors.getHorizontalChartColor({{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }}).backgroundColor,{% endfor %}],
                                     {% endif %}
                                 }
                             ]
@@ -83,7 +83,7 @@
                             data: data,
                             options: {
 
-                                startAngle: 120,
+                                {#startAngle: 120,#}
                                 responsive: false,
                                 legend: {
                                     position: 'top',
