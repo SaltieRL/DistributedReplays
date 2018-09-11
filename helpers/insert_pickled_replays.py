@@ -2,7 +2,6 @@ import glob
 import logging
 import os
 import pickle
-import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
@@ -11,16 +10,9 @@ import redis
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
 
-lib_location = os.path.join(os.path.dirname(__file__), '..', 'replayanalysis')
-sys.path.append(lib_location)
-loc = os.path.join(os.path.dirname(__file__), '..')
-sys.path.append(loc)
-
 from backend.database.objects import Game
 from backend.database.startup import startup
-from backend.functions import convert_pickle_to_db, add_objs_to_db
-
-from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame as ReplayGame
+from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 
 logger = logging.getLogger(__name__)
 engine, Session = startup()  # type: (Engine, sessionmaker)

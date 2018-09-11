@@ -2,15 +2,15 @@ import datetime
 import os
 from functools import wraps
 
+from carball.analysis.utils import proto_manager
 from flask import render_template, url_for, redirect, request, jsonify, send_from_directory, Blueprint, current_app, \
     Response
 from google.protobuf.json_format import MessageToJson
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
-from backend.functions import get_rank, tier_div_to_string
 from backend.database.objects import Game
-from carball.analysis.utils import proto_manager
+from backend.psyonix_api_handler import get_rank, tier_div_to_string
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 

@@ -1,11 +1,9 @@
 import glob
-import pickle
 import os
-import sys
+import pickle
 
-replay_lib = os.path.join(os.path.dirname(__file__), '..')
-sys.path.append(replay_lib)
-from replayanalysis.analysis.saltie_game.saltie_game import SaltieGame
+from carball.analysis.saltie_game.saltie_game import SaltieGame
+from carball.analysis.stats.possession.turnovers import TurnoverStat
 
 
 def should_process_file(obj: SaltieGame):
@@ -13,7 +11,6 @@ def should_process_file(obj: SaltieGame):
 
 
 def process_file(obj: SaltieGame):
-    from replayanalysis.analysis.stats.possession.turnovers import TurnoverStat
     turnovers = TurnoverStat.get_player_turnovers(obj)
     obj.stats['turnovers'] = turnovers
     return obj
@@ -28,7 +25,7 @@ if __name__ == '__main__':
             try:
                 pkl = pickle.load(fo)
             except EOFError:
-                print ('error opening', os.path.basename(f))
+                print('error opening', os.path.basename(f))
                 fo.close()
                 continue
         if should_process_file(pkl):
