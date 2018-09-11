@@ -10,18 +10,16 @@ export class UploadFloatingButton extends React.PureComponent<Props> {
     public render() {
         const buttonStyle: React.CSSProperties = {
             position: "fixed",
-            bottom: "40px",
-            right: "40px"
+            bottom: "60px",
+            right: "60px"
         }
         return (
-            <>
-                <Tooltip title="Upload replay">
-                    <Button variant="fab" color="primary" aria-label="upload" style={buttonStyle}
-                            onClick={this.props.handleOpen}>
-                        <CloudUpload/>
-                    </Button>
-                </Tooltip>
-            </>
+            <Tooltip title="Upload replay">
+                <Button variant="fab" color="secondary" aria-label="upload" style={buttonStyle}
+                        onClick={this.props.handleOpen}>
+                    <CloudUpload/>
+                </Button>
+            </Tooltip>
         )
     }
 }
