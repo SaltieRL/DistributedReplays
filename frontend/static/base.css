@@ -140,3 +140,7 @@ select:-webkit-autofill:focus {
     font-weight: 600;
     font-size: 1.2em;
 }
+
+.table th {
+    padding-right: 20px;
+}
