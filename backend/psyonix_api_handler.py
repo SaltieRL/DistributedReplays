@@ -129,38 +129,27 @@ def make_fake_data(ids):
     :param ids: ids to make information for
     :return: fake rank data
     """
-    names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
     base_rank = random.randint(3, 17)
-    return_data = {}
-    for id_ in ids:
-        modes = []
-        for mode in names.values():
-            rank = base_rank + random.randint(-2, 2)
-            div = random.randint(0, 4)
-            s = {'mode': mode, 'rank_points': rank * random.randint(60, 75) + 15 * div,
-                 'tier': rank,
-                 'division': div,
-                 'string': tier_div_to_string(rank, div)}
-            modes.append(s)
-        return_data[id_] = modes
-    return return_data
+    return {
+        id_: get_formatted_rank_data(base_rank + random.randint(-2, 2), random.randint(0, 4))
+        for id_ in ids
+    }
 
 
 def get_empty_data(ids):
-    names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
-    return_data = {}
-    for id_ in ids:
-        modes = []
-        for mode in names.values():
-            rank = 0
-            div = 0
-            s = {'mode': mode, 'rank_points': rank * random.randint(60, 75) + 15 * div,
-                 'tier': rank,
-                 'division': div,
-                 'string': tier_div_to_string(rank, div)}
-            modes.append(s)
-        return_data[id_] = modes
-    return return_data
+    return {id_: get_formatted_rank_data(rank=0, div=0) for id_ in ids}
+
+
+def get_formatted_rank_data(rank, div):
+    modes = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+    return [
+        {'mode': mode,
+         'rank_points': rank * random.randint(60, 75) + 15 * div,
+         'tier': rank,
+         'division': div,
+         'string': tier_div_to_string(rank, div)}
+        for mode in modes.values()
+    ]
 
 
 def tier_div_to_string(rank: int, div: int = -1):
