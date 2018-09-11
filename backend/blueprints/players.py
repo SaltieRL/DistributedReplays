@@ -95,4 +95,4 @@ def render_player_history(id_, page_number):
         return redirect(url_for('players.view_player', id_=id_))
     session = current_app.config['db']()
     games = player_wrapper.get_player_games_paginated(session, id_, page=page_number)
-    return jsonify({'html': render_template('partials/replay/match_history.html', games=games)})
+    return jsonify({'html': render_template('partials/player/match_history.html', games=games)})
