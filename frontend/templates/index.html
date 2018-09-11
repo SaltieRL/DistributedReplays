@@ -5,34 +5,43 @@
     <title>calculated</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Lilita+One|Shrikhand" rel="stylesheet"
           type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900|Raleway" rel="stylesheet">
     <link rel="stylesheet" href="https://icono-49d6.kxcdn.com/icono.min.css">
+    <style>
+        .mdl-button--colored {
+            background: #72d9ff !important;
+        }
+    </style>
 </head>
 <body>
-<div class="centerbox">
+<div class="mdl-card mdl-shadow--2dp centerbox">
     <div class="logo">
         {#        calculated<span class="logo-small">.gg</span>#}
         <img height="75px" src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>
     </div>
     <div class="searchblock">
         <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
-            <i class="icono-search"></i>
-            <input name=name type="text" class="search " placeholder="enter steamID or username" required>
+            <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" name="name" id="name">
+                <label class="mdl-textfield__label" for="sample1">SteamID or Username</label>
+            </div>
         </form>
-        <div class="example"><a href="{{ url_for('players.view_player', id_='76561198055442516') }}">or view an
-            example</a></div>
+        {#        <div class="example"><a href="{{ url_for('players.view_player', id_='76561198055442516') }}">or view an#}
+        {#            example</a></div>#}
     </div>
     <div class="hotlinks">
         <a href="{{ url_for('replays.replay_stats') }}">
-            <div class="framebox">global stats</div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">global stats</button>
         </a>
-        <a class="nav-link" href="{{ url_for('replays.upload') }}">
-            <div class="framebox">upload replays</div>
-        </a>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id="submit">upload replays</button>
     </div>
     <div class="hotlinks">
         <span>{{ game_count }} replays and counting...</span>
@@ -44,7 +53,8 @@
             <p><a href="{{ url_for('auth.logout') }}">Logout</a></p>
         {% else %}
             <a href="{{ url_for('auth.steam_auth') }}">
-                <div class="framebox">Log in with Steam</div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effec">Log in with Steam
+                </button>
             </a>
         {% endif %}
     </div>
@@ -62,5 +72,49 @@
         </a>
     </div>
 </div>
+<dialog class="mdl-dialog modal">
+    <div class="mdl-dialog__content">
+        <form method='post' enctype='multipart/form-data' action='{{ url_for('replays.parse_replay') }}'>
+            <div class="mdl-button">
+                <input name="file" class="fileselect" type="file" data-multiple-caption="{count} files selected"
+                       multiple>
+                <label for="file"><span>Choose files</span></label>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button type="submit" class="mdl-button">Submit</button>
+                <button type="button" class="mdl-button close">Close</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+<script>
+    var button = document.getElementById('submit');
+    console.log(button);
+    var dialog = document.querySelector('dialog');
+    button.addEventListener('click', function () {
+        dialog.showModal();
+        /* Or dialog.show(); to show the dialog without a backdrop. */
+    });
+    dialog.querySelector('.close').addEventListener('click', function () {
+        dialog.close();
+    });
+    var inputs = document.querySelectorAll('.fileselect');
+    Array.prototype.forEach.call(inputs, function (input) {
+        var label = input.nextElementSibling,
+            labelVal = label.innerHTML;
+        input.addEventListener('change', function (e) {
+            var fileName = '';
+            if (this.files && this.files.length > 1)
+                fileName = (this.getAttribute('data-multiple-caption') || '').replace('{count}', this.files.length);
+            else
+                fileName = e.target.value.split('\\').pop();
+            console.log(label);
+            if (fileName)
+                label.querySelector('span').innerHTML = fileName;
+            else
+                label.innerHTML = labelVal;
+        });
+    });
+</script>
 </body>
 </html>
