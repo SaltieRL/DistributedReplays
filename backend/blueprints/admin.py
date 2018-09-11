@@ -1,7 +1,7 @@
 from flask import Blueprint, current_app, redirect, g, request, url_for
 
+from backend.blueprints.shared_renders import render_with_session
 from backend.database.objects import Player, Group
-from backend.functions import render_with_session
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 

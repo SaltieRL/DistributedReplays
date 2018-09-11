@@ -1,13 +1,14 @@
 # Celery workers
 import gzip
 import os
-from celery import Celery
 # from helpers import rewards
 import sys
 
+from celery import Celery
+
 sys.path.append(os.path.abspath('replayanalysis/'))
 from backend.tasks import celeryconfig
-from backend.functions import convert_pickle_to_db, add_objs_to_db
+from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.tasks.middleware import DBTask
 from backend.database.objects import Game
 from carball import analyze_replay_file

@@ -2,12 +2,13 @@ import re
 
 from flask import render_template, Blueprint, current_app, redirect, url_for, jsonify, request
 
+from backend.blueprints.shared_renders import render_with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, \
     get_steam_profile_or_random_response
 from backend.database.objects import Player
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
-from backend.functions import render_with_session, get_rank
+from backend.psyonix_api_handler import get_rank
 
 bp = Blueprint('players', __name__, url_prefix='/players')
 regex = re.compile('[0-9]{17}')
