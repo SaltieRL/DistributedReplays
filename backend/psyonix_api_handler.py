@@ -18,6 +18,7 @@ json_loc = os.path.join(os.path.dirname(__file__), '..', 'data', 'categorized_it
 with open(json_loc, 'r') as f:
     item_dict = json.load(f)
 
+logger = logging.getLogger(__name__)
 
 
 def get_item_name_by_id(id_):
@@ -56,12 +57,12 @@ def get_rank_batch(ids, offline_redis=None):
             try:
                 result = r.get(steam_id)
             except redis.ConnectionError:
-                print('error connecting to redis')
+                logger.error('Error connecting to redis')
                 r = None
                 ids_to_find = ids
                 break
             if result is not None:
-                # print('Rank is cached')
+                # logger.debug('Rank is cached')
                 return_data[steam_id] = json.loads(result.decode("utf-8"))
             elif steam_id != '0':
                 ids_to_find.append(steam_id)
@@ -70,9 +71,9 @@ def get_rank_batch(ids, offline_redis=None):
         if len(ids_to_find) == 0:
             return return_data
         else:
-            print(ids_to_find)
+            logger.debug(ids_to_find)
     url = "https://api.rocketleague.com/api/v1/steam/playerskills/"
-    headers = {'Authorization': 'Token ' + RL_API_KEY, 'Referer': 'http://api.rocketleague.com'}
+    headers = {'Authorization': f'Token {RL_API_KEY}', 'Referer': 'http://api.rocketleague.com'}
 
     ids_dict = list(
         filter(lambda x: x['platformId'] == 'steam',
@@ -80,7 +81,7 @@ def get_rank_batch(ids, offline_redis=None):
     post_data = {'player_ids': [p['uniqueId'] for p in ids_dict]}
     data = requests.post(url, headers=headers, json=post_data)
 
-    print(data.text)
+    logger.debug(data.text)
     try:
         data = data.json()
     except:
@@ -174,7 +175,8 @@ def tier_div_to_string(rank: int, div: int = -1):
              'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
              'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
     if rank is None:
-        print(rank, div)
+        logger.debug(rank)
+        logger.debug(div)
         return 'Unknown'
     if rank < 19 and div > 0:
         return "{}, Division {}".format(ranks[rank], div + 1)
