@@ -114,7 +114,7 @@ def get_redis() -> Optional[Redis]:
 def add_needed_groups_to_db(_session, groups_to_add: List[str]):
     for group_name in groups_to_add:
         group_name_query = _session.query(Group).filter(Group.name == group_name)
-        if not group_name_query.exists():
+        if not _session.query(group_name_query.exists()).scalar():
             group = Group(name=group_name)
             _session.add(group)
 
