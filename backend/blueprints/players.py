@@ -19,7 +19,7 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 @bp.route('/overview/<id_>')  # ID must be always at the end
 def view_player(id_):
-    print(re.match(regex, id_))
+    print(id_, request.remote_addr)
     if len(id_) != 17 or re.match(regex, id_) is None:
         r = get_vanity_to_steam_id_or_random_response(id_, current_app)
         if r is None:

@@ -75,3 +75,16 @@ def delrole(id, role):
             player.groups = grps # we need it to detect that we changed something
     s.commit()
     return redirect(redirect_url())
+
+@bp.route('/users')
+def view_users():
+    """
+    View all users
+
+    :return:
+    """
+    s = current_app.config['db']()
+    users = s.query(Player).filter(Player.avatar != '').all()
+    groups = s.query(Group).all()
+    id_to_groups = {g.id: g.name for g in groups}
+    return render_with_session('users.html', s, users=users, groups=groups, id_to_groups=id_to_groups)
