@@ -22,7 +22,7 @@
             {% endif %}
             </span>
     </div>
-    <div class="matchhistory" style="overflow-y: scroll">
+    <div class="match-history" style="overflow-y: scroll">
         {% if games %}
         {% set max_pages=(total_games/game_per_page)|round(1, 'ceil') %}
         {% include "partials/player/content/accordion_match_history.html" %}

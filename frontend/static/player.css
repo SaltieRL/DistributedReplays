@@ -1,12 +1,5 @@
-
-.matchhistory {
-    display: flex;
-    margin: 5px 0px;
-    padding: 5px 0px;
-}
-
 .mhtable {
-    border-spacing: 0px;
+    border-spacing: 0;
     flex-grow: 1;
 }
 
@@ -300,6 +293,16 @@ ul, li {
 
 /* POST MATERIAL DESIGN CSS */
 
+.match-history {
+    display: flex;
+    margin: 5px 0;
+    padding: 5px 0;
+}
+.match-history::-webkit-scrollbar {
+    display: none;
+}
+
+
 /* profile */
 .playerpanel {
     display: flex;
@@ -366,6 +369,11 @@ ul, li {
     display: flex;
     flex-direction: column;
     max-width: 20%;
+    overflow-y: scroll;
+}
+
+.sidebar::-webkit-scrollbar {
+    display: none;
 }
 
 .main {
