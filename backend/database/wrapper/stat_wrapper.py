@@ -39,13 +39,19 @@ class PlayerStatWrapper:
             # car_arr = [g.car for g in games]
             favorite_car = constants.get_car(int(fav_car_str[0]))
             favorite_car_pctg = fav_car_str[1] / total_games
-            q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0)
-            stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0)
+            q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
+            stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
             if rank is not None and not get_local_dev():
-                q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
-                    PlayerGame.rank <= rank[3]['tier'] + 1).filter(Game.teamsize == 3)
-                stds = stds.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
-                    PlayerGame.rank <= rank[3]['tier'] + 1).filter(Game.teamsize == 3)
+                print('Filtering by rank')
+                # q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
+                #     PlayerGame.rank <= rank[3]['tier'] + 1)
+                # stds = stds.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
+                #     PlayerGame.rank <= rank[3]['tier'] + 1)
+                try:
+                    q_filtered = q.filter(PlayerGame.rank == rank[3]['tier'])
+                    stds = stds.filter(PlayerGame.rank == rank[3]['tier'])
+                except:
+                    q_filtered = q
             else:
                 q_filtered = q
             global_stds = stds.first()
@@ -63,6 +69,7 @@ class PlayerStatWrapper:
                 if global_std is None or global_std == 0:
                     print(self.field_names[i].field_name, 'std is 0')
                 if global_std != 1 and global_std > 0:
+                    # print(self.field_names[i].field_name, player_stat, global_stat, global_std)
                     stats[i] = float((player_stat - global_stat) / global_std)
                 else:
                     stats[i] = float(player_stat / global_stat)
