@@ -49,12 +49,24 @@ html, body {
 
 .links {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     flex-flow: row wrap;
+    margin-top: 25px !important;
+}
+
+#icons a {
+    margin: 0 25px;
 }
 
 .links a.btn, .links a.btn-small  {
     border-radius: 5px;
     border: solid 1px var(--darkBorderColor);
     text-transform: initial;
+}
+.links i {
+    font-size: 2em;
+}
+
+#icons {
+    justify-content: center;
 }

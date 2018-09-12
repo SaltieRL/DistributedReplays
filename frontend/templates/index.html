@@ -36,8 +36,10 @@
                 </p>
             </div>
             <div class="mdc-card row col s12">
-                <form class="search-form" action="{{ url_for('steam.resolve_steam') }}" enctype='multipart/form-data' method="post">
-                    <input id="search-input" name="name" type="text" class="search-input" placeholder="Enter a steamID or username" required>
+                <form class="search-form" action="{{ url_for('steam.resolve_steam') }}" enctype='multipart/form-data'
+                      method="post">
+                    <input id="search-input" name="name" type="text" class="search-input"
+                           placeholder="Enter a steamID or username" required>
                     <button class="search-button mdc-icon-button" tabindex="0" type="submit"
                             aria-label="Search">
                         <i class="search-icon material-icons">search</i>
@@ -52,35 +54,38 @@
             </a>
             {% if g.user %}
                 <div>
-                    <span>
-                        Logged in as
-                        <a href="{{ url_for('players.view_player', id_=g.user.platformid) }}">
-                            <img src="{{ g.user.avatar }}" width="15px"> {{ g.user.platformname }}
-                        </a>
-                    </span>
+                    <a class="waves-effect white btn black-text z-depth-0"
+                       href="{{ url_for('players.view_player', id_=g.user.platformid) }}">
+                        <img src="{{ g.user.avatar }}" width="15px"> {{ g.user.platformname }}
+                    </a>
                     <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.logout') }}">
                         <span>Logout</span>
                     </a>
                 </div>
-            {% else %}
+            {% endif %}
+            {% if not g.user %}
                 <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.steam_auth') }}">
-                    <span>Log in with Steam</span>
+                    <i class="fab fa-steam-symbol button-icon left"></i>
+                    <span>Steam Login</span>
                 </a>
             {% endif %}
-           <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('replays.upload') }}">
-               <i class="material-icons left button-icon">cloud_upload</i>
+            <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('replays.upload') }}">
+                <i class="material-icons left button-icon">cloud_upload</i>
                 Upload Replay
             </a>
         </div>
-        <div class="links container section" style="justify-content:space-around;">
-            <a class="waves-effect white btn-small black-text z-depth-0" href="#">
-                About
+        <div class="links container section" id="icons">
+            <a class="waves-effect" href="#">
+                <i class="fas fa-info-circle button-icon"></i>
+                {#                About#}
             </a>
-            <a class="waves-effect white btn-small black-text z-depth-0" href="https://github.com/SaltieRL/DistributedReplays">
-                Github
+            <a class="waves-effect" href="https://github.com/SaltieRL/DistributedReplays">
+                <i class="fab fa-github button-icon"></i>
+                {#                GitHub#}
             </a>
-            <a class="waves-effect white btn-small black-text z-depth-0" href="https://discord.gg/c8cArY9">
-                Discord
+            <a class="waves-effect" href="https://discord.gg/c8cArY9">
+                <i class="fab fa-discord button-icon"></i>
+                {#                Discord#}
             </a>
         </div>
     </div>
