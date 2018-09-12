@@ -10,7 +10,7 @@ from sqlalchemy import func
 from sqlalchemy.sql import operators
 
 from backend.database.objects import Game
-from backend.psyonix_api_handler import get_rank, tier_div_to_string
+from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 

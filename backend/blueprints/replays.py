@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 from backend.blueprints.shared_renders import render_with_session, return_error
 from backend.database import queries
 from backend.database.objects import PlayerGame, Game
-from backend.psyonix_api_handler import get_item_dict, get_rank_batch
+from backend.utils.psyonix_api_handler import get_item_dict, get_rank_batch
 from backend.tasks import celery_tasks
 from data import constants
 

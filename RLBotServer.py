@@ -9,6 +9,7 @@ from redis import Redis
 from backend.blueprints import steam, stats, auth, debug, admin, players, api, replays
 from backend.database.objects import Game, Player, Group
 from backend.database.startup import startup
+from backend.utils.checks import get_checks
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")
@@ -50,19 +51,6 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
     create_jinja_globals(app)
 
     return app, ids
-
-
-def get_local_dev() -> bool:
-    try:
-        import config
-        try:
-            api_key = config.RL_API_KEY
-            return False
-        except:
-            return True
-    except ImportError:
-        logger.error('No config exists. Using local dev.')
-        return True
 
 
 def create_needed_folders(app: Flask):
@@ -133,28 +121,7 @@ def get_id_group_dicts(_session, groups_to_add: List[str]) -> Tuple[Dict[str, in
 
 
 def create_jinja_globals(app: Flask):
-    local_dev = get_local_dev()
-
-    def is_admin():
-        if local_dev:
-            return True
-        if g.user is None:
-            return False
-        return g.admin
-
-    def is_alpha():
-        if is_admin():
-            return True
-        if g.user is None:
-            return False
-        return g.alpha
-
-    def is_beta():
-        if is_admin():
-            return True
-        if g.user is None:
-            return False
-        return is_alpha() or g.beta
+    is_admin, is_alpha, is_beta = get_checks(g)
 
     app.jinja_env.globals.update(isAdmin=is_admin)
     app.jinja_env.globals.update(isAlpha=is_alpha)

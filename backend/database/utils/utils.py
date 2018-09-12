@@ -4,7 +4,7 @@ from carball.generated.api import game_pb2
 
 from backend.database.objects import Game, PlayerGame, Player
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
-from backend.psyonix_api_handler import get_rank_batch
+from backend.utils.psyonix_api_handler import get_rank_batch
 
 
 def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, list):

@@ -2,6 +2,7 @@ import sqlalchemy
 from carball.generated.api import player_pb2
 from sqlalchemy import func, desc, cast, literal
 
+from backend.utils.checks import get_local_dev
 from data import constants
 from backend.database.objects import PlayerGame, Game
 from backend.database.wrapper.player_wrapper import PlayerWrapper
@@ -40,7 +41,7 @@ class PlayerStatWrapper:
             favorite_car_pctg = fav_car_str[1] / total_games
             q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0)
             stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0)
-            if rank is not None:
+            if rank is not None and not get_local_dev():
                 q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
                     PlayerGame.rank <= rank[3]['tier'] + 1).filter(Game.teamsize == 3)
                 stds = stds.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
@@ -59,7 +60,7 @@ class PlayerStatWrapper:
                 global_std = global_stds[i]
                 if global_stat is None or global_stat == 0:
                     global_stat = 1
-                if global_std == 0:
+                if global_std is None or global_std == 0:
                     print(self.field_names[i].field_name, 'std is 0')
                 if global_std != 1 and global_std > 0:
                     stats[i] = float((player_stat - global_stat) / global_std)
