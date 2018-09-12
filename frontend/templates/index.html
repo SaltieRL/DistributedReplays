@@ -15,56 +15,83 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+
 </head>
 <body>
-<div class="centerbox">
+<div class="homepage">
     <div class="logo">
-        {#        calculated<span class="logo-small">.gg</span>#}
-        <img height="75px" src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>
+        <img class="logo-image" src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>
+        <br/>
+        <p class="logo-caption">
+            <i>{{ game_count }} replays and counting...</i>
+        </p>
     </div>
-    <div class="searchblock">
-        <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">
-            <i class="icono-search"></i>
-            <input name=name type="text" class="search " placeholder="enter steamID or username" required>
-        </form>
-        <div class="example"><a href="{{ url_for('players.view_player', id_='76561198055442516') }}">or view an
-            example</a></div>
-    </div>
-    <div class="hotlinks">
-        <a href="{{ url_for('replays.replay_stats') }}">
-            <div class="framebox">global stats</div>
-        </a>
-        <a class="nav-link" href="{{ url_for('replays.upload') }}">
-            <div class="framebox">upload replays</div>
-        </a>
-    </div>
-    <div class="hotlinks">
-        <span>{{ game_count }} replays and counting...</span>
-    </div>
-    <div class="hotlinks">
-        {% if g.user %}
-            <p>Logged in as <a href="{{ url_for('players.view_player', id_=g.user.platformid) }}"><img
-                    src="{{ g.user.avatar }}" width="15px"> {{ g.user.platformname }}</a></p>
-            <p><a href="{{ url_for('auth.logout') }}">Logout</a></p>
-        {% else %}
-            <a href="{{ url_for('auth.steam_auth') }}">
-                <div class="framebox">Log in with Steam</div>
-            </a>
-        {% endif %}
-    </div>
-    <div class="hotlinks">
-        <a href="#">
-            <in>about</in>
-        </a>
-        <div class="dot">·</div>
-        <a href="https://github.com/SaltieRL/DistributedReplays">
-            <in>github</in>
-        </a>
-        <div class="dot">·</div>
-        <a href="https://discord.gg/c8cArY9">
-            <in>discord</in>
-        </a>
+    <div class="search-bar">
+        <div class="mdc-card search-bar-card">
+            <form class="search-form">
+                <input name="name" type="text" class="search-input" placeholder="Enter a steamID or username" required>
+                <button class="search-button mdc-icon-button material-icons" tabindex="0" type="button"
+                        aria-label="Search">
+                    <i class="fas fa-calculator search-icon"></i>
+
+                </button>
+            </form>
+        </div>
+
     </div>
 </div>
+{##}
+{#<div class="centerbox">#}
+{#    <div class="logo">#}
+{#        calculated<span class="logo-small">.gg</span>#}
+{#        <img height="75px" src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>#}
+{#    </div>#}
+{#    <div class="searchblock">#}
+{#        <form action='{{ url_for('steam.resolve_steam') }}' enctype='multipart/form-data' method="post">#}
+{#            <i class="icono-search"></i>#}
+{#            <input name=name type="text" class="search " placeholder="enter steamID or username" required>#}
+{#        </form>#}
+{#        <div class="example"><a href="{{ url_for('players.view_player', id_='76561198055442516') }}">or view an#}
+{#            example</a></div>#}
+{#    </div>#}
+{#    <div class="hotlinks">#}
+{#        <a href="{{ url_for('replays.replay_stats') }}">#}
+{#            <div class="framebox">global stats</div>#}
+{#        </a>#}
+{#        <a class="nav-link" href="{{ url_for('replays.upload') }}">#}
+{#            <div class="framebox">upload replays</div>#}
+{#        </a>#}
+{#    </div>#}
+{#    <div class="hotlinks">#}
+{#        <span>{{ game_count }} replays and counting...</span>#}
+{#    </div>#}
+{#    <div class="hotlinks">#}
+{#        {% if g.user %}#}
+{#            <p>Logged in as <a href="{{ url_for('players.view_player', id_=g.user.platformid) }}"><img#}
+{#                    src="{{ g.user.avatar }}" width="15px"> {{ g.user.platformname }}</a></p>#}
+{#            <p><a href="{{ url_for('auth.logout') }}">Logout</a></p>#}
+{#        {% else %}#}
+{#            <a href="{{ url_for('auth.steam_auth') }}">#}
+{#                <div class="framebox">Log in with Steam</div>#}
+{#            </a>#}
+{#        {% endif %}#}
+{#    </div>#}
+{#    <div class="hotlinks">#}
+{#        <a href="#">#}
+{#            <in>about</in>#}
+{#        </a>#}
+{#        <div class="dot">·</div>#}
+{#        <a href="https://github.com/SaltieRL/DistributedReplays">#}
+{#            <in>github</in>#}
+{#        </a>#}
+{#        <div class="dot">·</div>#}
+{#        <a href="https://discord.gg/c8cArY9">#}
+{#            <in>discord</in>#}
+{#        </a>#}
+{#    </div>#}
+{#</div>#}
 </body>
 </html>

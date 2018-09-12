@@ -2,7 +2,7 @@ html, body {
     margin: 0;
     height: 100%;
     width: 100%;
-    font-family: "Lato", "Fira Mono", monospace;
+    font-family: "Lato", sans-serif;
     font-weight: 300;
     -webkit-font-feature-settings: "lnum";
     -moz-font-feature-settings: "lnum";
@@ -12,68 +12,79 @@ html, body {
     background-size: cover;
 }
 
-.centerbox {
-    background: white;
+.homepage {
+    width: 100%;
     padding: 20px;
-    box-shadow: 0px 0px 10px 2px #cccccc;
-    display: flex;
-    margin: 12% auto auto auto;
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
-}
-
-.searchblock {
     margin: auto;
-}
-
-.search {
-    border-left: initial;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .logo {
-    padding-left: 10px;
-    font-family: "Shrikhand";
-    font-size: 50px;
-}
-
-.logo-small {
-    font-family: "Fira Mono";
-    font-size: 20px;
-}
-
-.hotlinks {
-    margin: 10px;
-    display: flex;
-    flex-direction: row;
+    min-height: 300px;
+    padding: 20px;
+    justify-content: center;
     align-items: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-basis: 100%;
+    flex-wrap: wrap;
 }
 
-a {
-    color: #333;
-    text-decoration: none;
-    margin: 0px 10px;
+.logo-image {
+    max-width: 80vw;
 }
 
-.in {
-    margin: 0px 10px;
-    padding: 5px;
+.logo-caption {
+    font-size: 0.875rem;
+    line-height: 1.46429em;
+    margin: 0;
+    display: block
 }
 
-.dot {
-    padding: 0px 10px;
+.search-bar {
+    width: 100%;
+    padding: 20px 0;
+    flex-grow: 0;
+    max-width: 500px;
+    flex-basis: 92%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap
 }
 
-.framebox:hover {
-    background-color: var(--borderColor);
+.search-bar-card {
+    width: 100%
 }
 
-.example {
-
-    margin-top: 10px;
+.search-form {
+    margin: auto 16px;
+    display: inline-flex;
+    box-sizing: inherit
 }
 
-.example > a {
-    font-size: 1em;
-    color: rgba(0, 0, 100, 0.5) !important;
+.search-input {
+    border: 0;
+    flex-grow: 1;
+    outline: 0
+}
+
+.search-button {
+    height: 48px;
+    width: 48px;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 1.5rem
+
+}
+
+.search-icon {
+    color: rgba(0, 0, 0, 0.54);
+    height: 1em;
+    font-size: 1.5rem;
+    vertical-align: 4px;
 }

@@ -10,63 +10,6 @@ html, body {
     font-feature-settings: "lnum";
 }
 
-.logo {
-    padding-left: 10px;
-    font-family: "Shrikhand";
-    font-size: 50px;
-}
-
-.logo-small {
-    font-family: "Fira Mono";
-    font-size: 20px;
-}
-
-a {
-    text-decoration: none;
-}
-
-.framebox {
-    overflow: hidden;
-    font-weight: 400;
-    padding: 10px 30px 10px 20px;
-    align-items: center;
-    flex-wrap: nowrap;
-    display: block;
-    min-width: 120px;
-    font-size: 15px;
-    border: 1px solid #333;
-}
-
-.framebox:hover {
-    background-color: var(--borderColor);
-}
-
-.content {
-    display: flex;
-    flex-direction: row;
-    margin: 0 2%;
-    margin-top: 10px;
-}
-
-i.clickable {
-    color: #333;
-}
-
-.pure-button {
-    font-family: "Lato", "Fira Mono", monospace;
-    font-weight: 300;
-}
-
-.button-small {
-    font-size: 85%;
-}
-
-.button-xsmall {
-    transform: scale(0.7);
-    font-size: 70%;
-    padding: .1em 1em;
-}
-
 .table th {
     padding-right: 20px;
 }
