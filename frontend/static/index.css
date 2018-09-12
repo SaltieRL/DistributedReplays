@@ -1,11 +1,7 @@
 html, body {
-    margin: 0;
     height: 100%;
-    width: 100%;
     font-family: "Lato", sans-serif;
     font-weight: 300;
-    -webkit-font-feature-settings: "lnum";
-    -moz-font-feature-settings: "lnum";
     font-feature-settings: "lnum";
     display: flex;
     background-image: url(/static/img/background/splash.png);
@@ -21,13 +17,8 @@ html, body {
     padding: 20px;
 }
 
-.logo-image {
-    max-width: 80vw;
-}
-
 .logo-caption {
     font-size: 0.875rem;
-    line-height: 1.46429em;
     margin-top: 1rem;
 }
 
