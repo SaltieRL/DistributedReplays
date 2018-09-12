@@ -16,28 +16,34 @@
             </form>
         </div>
         {% if player %}
-        <div class="header_holder">
-            <span class="header">/ Profile Information
-                {% if 'admin' in groups %}
-                    <span title="Admin" style="color: red">[A]</span>
-                {% endif %}
-                {% if 'beta' in groups %}
-                    <span title="Beta Tester <3" style="color: blue">[β]</span>
-                {% endif %}
-                {% if 'alpha' in groups %}
-                    <span title="Alpha Tester <3" style="color: green">[α]</span>
-                {% endif %}
-            </span>
-        </div>
+        <div class="mdc-card">
+            <div class="header_holder">
+                <span class="header">Profile Information
+                    {% if 'admin' in groups %}
+                        <span title="Admin" style="color: red">[A]</span>
+                    {% endif %}
+                    {% if 'beta' in groups %}
+                        <span title="Beta Tester <3" style="color: blue">[β]</span>
+                    {% endif %}
+                    {% if 'alpha' in groups %}
+                        <span title="Alpha Tester <3" style="color: green">[α]</span>
+                    {% endif %}
+                </span>
+            </div>
             {% include "partials/player/profile.html" %}
+        </div>
         {% endif %}
-        <div class="header_holder">
-            <span class="header">/ Player Stats</span>
+        <div class="mdc-card">
+            <div class="header_holder">
+                <span class="header">Player Stats</span>
+            </div>
+            {% include "partials/player/stats.html" %}
+            {% include "partials/player/aliases.html" %}
         </div>
-        {% include "partials/player/stats.html" %}
-        <div class="header_holder">
-            <span class="header">/ Rank Information</span>
-        </div>
+        <div class="mdc-card">
+            <div class="header_holder">
+                <span class="header">Rank Information</span>
+            </div>
         <div class="rankpanel">
             {% if rank %}
                 {% include "partials/player/ranks.html" %}
@@ -47,7 +53,9 @@
                 </div>
             {% endif %}
         </div>
+        </div>
         {% if isAdmin() %}
+        <div class="mdc-card">
             <div class="header_holder">
                 <span class="header">/ Admin Tools</span>
             </div>
@@ -65,6 +73,7 @@
                     {% endif %}
                 {% endfor %}
             </div>
+        </div>
         {% endif %}
     </div>
     <div class="main">
@@ -107,7 +116,7 @@
         <div class="matchhistory">
             {% if games %}
                 {% set max_pages=(total_games/game_per_page)|round(1, 'ceil') %}
-                {% include "partials/player/match_history.html" %}
+                {% include "partials/player/accordion_match_history.html" %}
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         console.log('adding history loader');

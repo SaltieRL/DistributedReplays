@@ -1,4 +1,5 @@
 import logging
+import random
 from typing import List
 
 from sqlalchemy import func, cast, String
@@ -14,7 +15,10 @@ def create_default_player():
     player = Player()
     player.platformid = 3678
     player.platformname = 'test user'
-    player.avatar = "https://cdn3-www.dogtime.com/assets/uploads/2014/12/file_19035_square_100_rainy-day-activity-dog-playing-with-food-toy.jpg"
+    if bool(random.getrandbits(1)):
+        player.avatar = "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
+    else:
+        player.avatar = "https://cdn3-www.dogtime.com/assets/uploads/2014/12/file_19035_square_100_rainy-day-activity-dog-playing-with-food-toy.jpg"
 
     return player
 

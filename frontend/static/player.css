@@ -16,10 +16,28 @@ body {
 }
 
 .playerpanel {
-    margin: 5px 0px;
     display: flex;
-    border: 1px solid var(--borderColor);
-    border-top: initial;
+    flex-direction: row;
+}
+
+.mdc-card .playerpanel {
+    padding: 0;
+}
+
+.playerpanel .info {
+    display: flex;
+    margin-left: 10px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.playerpanel .avatar {
+    max-width: 33%;
+}
+
+.playerpanel .avatar * {
+    height: 100%;
+    width: 100%;
 }
 
 .main {
@@ -51,10 +69,6 @@ body {
     outline: none;
     font-size: 15px;
     transition: 0.4s;
-}
-
-.active, .match:hover {
-    background-color: rgb(228, 245, 255);
 }
 
 tr.dropdowndata {
@@ -192,11 +206,6 @@ th {
     text-align: center;
 }
 
-.avatar {
-    max-width: 100px;
-    max-height: 100px;
-}
-
 .rankpic {
     max-width: 150px;
     max-height: 150px;
@@ -225,14 +234,6 @@ th {
 
 .sidebar .t1 {
     font-size: 1.5em;
-}
-
-.playerpanel .info {
-    background-color: white;
-    display: flex;
-    margin-left: 10px;
-    flex-direction: column;
-    justify-content: center;
 }
 
 .detail {

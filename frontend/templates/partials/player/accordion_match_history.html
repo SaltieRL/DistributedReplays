@@ -16,36 +16,33 @@
 </script>
 <section>
     <div class="table-container">
-        <table class="mhtable">
-            <thead>
-            <tr class="header">
-                {% set headers = ["Date", "Name", "Gamemode", "Score", "Outcome"] %}
-                {% for header in headers %}
-                    <th>{{ header }}
-                    </th>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
+        <div class="row">
+            {% set headers = ["Date", "Name", "Gamemode", "Score", "Outcome"] %}
+            {% for header in headers %}
+                <div class="col s2">{{ header }}</div>
+            {% endfor %}
+        </div>
+        <ul class="collapsible">
             {% for game in games|sort(attribute='game_object.match_date') %}
                 {% set name = game.game_object.hash if game.game_object.name == None else game.game_object.name %}
                 {% set replay = game.game_object %}
                 {% set dropdown_id = 'drop_down' + game.game_object.hash %}
                 {% set match_id = 'match_' + game.game_object.hash %}
-                <tr class="match" id="{{ match_id }}">
-                    <td>
-                        <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</a>
-                    </td>
-                    <td>
-                        <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ name }}</a>
-                    </td>
-                    <td>{{ game.game_object.teamsize }}s</td>
-                    <td><span style="color:blue">{{ game.game_object.team0score }}</span> - <span
-                            style="color:orange">{{ game.game_object.team1score }}</span></td>
-                    <td>{% if game.win %}Win{% else %}Loss{% endif %}</td>
-                </tr>
-                <tr class="dropdowndata" id="{{ dropdown_id }}">
-                    <td colspan="5">
+                <li>
+                    <div class="collapsible-header row row-hover" id="{{ match_id }}" style="margin-bottom: 0px;">
+                        <div class="col s2">
+                            <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</a>
+                        </div>
+                        <div class="col s2">
+                            <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ name }}</a>
+                        </div>
+                        <div class="col s2">{{ game.game_object.teamsize }}s</div>
+                        <div class="col s2">
+                            <span style="color:blue">{{ game.game_object.team0score }}</span> - <span style="color:orange">{{ game.game_object.team1score }}</span>
+                        </div>
+                        <div class="col s2">{% if game.win %}Win{% else %}Loss{% endif %}</div>
+                    </div>
+                    <div class="collapsible-body">
                         {# orange #}
                         {% set team_names = ['Blue', 'Orange'] %}
                         {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
@@ -69,10 +66,9 @@
                             })('{{ dropdown_id }}', '{{ match_id }}', {{ graphs|tojson }});
                         </script>
                         {% include "partials/replay/shared/score_graph.html" %}
-                    </td>
-                </tr>
+                    </div>
+                </li>
             {% endfor %}
-            </tbody>
-        </table>
+        </ul>
     </div>
 </section>

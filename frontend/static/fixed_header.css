@@ -7,7 +7,7 @@ section.positioned {
     left:100px;
 }
 
-.container {
+.table-container {
     overflow-y: auto;
 }
 table {
