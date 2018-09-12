@@ -53,7 +53,7 @@ html, body {
     flex-flow: row wrap;
 }
 
-.links > a.btn {
+.links a.btn, .links a.btn-small  {
     border-radius: 5px;
     border: solid 1px var(--darkBorderColor);
     text-transform: initial;

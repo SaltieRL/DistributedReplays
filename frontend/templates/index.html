@@ -23,8 +23,6 @@
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-
 </head>
 <body>
 <div class="valign-wrapper row">
@@ -50,11 +48,39 @@
         <div class="links">
             <a class="waves-effect btn white black-text z-depth-0" href="{{ url_for('replays.replay_stats') }}">
                 <i class="fas fa-globe-americas material-icons left button-icon"></i>
-                <span >Global Stats</span>
+                <span>Global Stats</span>
             </a>
+            {% if g.user %}
+                <div>
+                    <span>
+                        Logged in as
+                        <a href="{{ url_for('players.view_player', id_=g.user.platformid) }}">
+                            <img src="{{ g.user.avatar }}" width="15px"> {{ g.user.platformname }}
+                        </a>
+                    </span>
+                    <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.logout') }}">
+                        <span>Logout</span>
+                    </a>
+                </div>
+            {% else %}
+                <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.steam_auth') }}">
+                    <span>Log in with Steam</span>
+                </a>
+            {% endif %}
            <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('replays.upload') }}">
                <i class="material-icons left button-icon">cloud_upload</i>
                 Upload Replays
+            </a>
+        </div>
+        <div class="links container section" style="justify-content:space-around;">
+            <a class="waves-effect white btn-small black-text z-depth-0" href="#">
+                About
+            </a>
+            <a class="waves-effect white btn-small black-text z-depth-0" href="https://github.com/SaltieRL/DistributedReplays">
+                Github
+            </a>
+            <a class="waves-effect white btn-small black-text z-depth-0" href="https://discord.gg/c8cArY9">
+                Discord
             </a>
         </div>
     </div>
