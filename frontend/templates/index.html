@@ -37,7 +37,7 @@
             </p>
         </div>
         <div class="mdc-card row">
-            <form class="search-form">
+            <form class="search-form" action="{{ url_for('steam.resolve_steam') }}" enctype='multipart/form-data' method="post">
                 <input id="search-input" name="name" type="text" class="search-input" placeholder="Enter a steamID or username" required>
                 <button class="search-button mdc-icon-button material-icons" tabindex="0" type="button"
                         aria-label="Search">
