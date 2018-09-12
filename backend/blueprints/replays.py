@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import redis
 from carball.analysis.utils import proto_manager, pandas_manager
-from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app, jsonify
+from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app, jsonify, g
 from sqlalchemy import func, desc, cast, Numeric
 from werkzeug.utils import secure_filename
 
@@ -66,11 +66,12 @@ def parse_replay():
 
 @bp.route('/parse/all')
 def parse_replays():
-    for f in os.listdir(current_app.config['REPLAY_DIR']):
-        pickled = os.path.join(current_app.config['PARSED_DIR'], os.path.basename(f) + '.pts')
-        if f.endswith('.replay') and not os.path.isfile(pickled):
-            result = celery_tasks.parse_replay_task_low_priority.delay(
-                os.path.abspath(os.path.join(current_app.config['REPLAY_DIR'], f)))
+    if g.user is not None and g.admin:
+        for f in os.listdir(current_app.config['REPLAY_DIR']):
+            pickled = os.path.join(current_app.config['PARSED_DIR'], os.path.basename(f) + '.pts')
+            if f.endswith('.replay') and not os.path.isfile(pickled):
+                result = celery_tasks.parse_replay_task_low_priority.delay(
+                    os.path.abspath(os.path.join(current_app.config['REPLAY_DIR'], f)))
     return redirect('/')
 
 
