@@ -376,3 +376,7 @@ ul, li {
     flex-direction: column;
     max-width: 100%;
 }
+
+.collapsible-header {
+    padding: .5rem 1rem;
+}
