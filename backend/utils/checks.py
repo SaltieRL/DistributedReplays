@@ -36,7 +36,7 @@ def get_checks(global_state):
     def is_beta():
         if is_admin():
             return True
-        if g.user is None:
+        if global_state.user is None:
             return False
         return is_alpha() or global_state.beta
 

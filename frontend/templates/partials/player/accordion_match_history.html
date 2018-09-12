@@ -44,7 +44,7 @@
                         </div>
                         <div class="col s2 center-align">{% if game.win %}Win{% else %}Loss{% endif %}</div>
                     </div>
-                    <div class="collapsible-body">
+                    <div class="collapsible-body" id="{{ dropdown_id }}">
                         {# orange #}
                         {% set team_names = ['Blue', 'Orange'] %}
                         {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
