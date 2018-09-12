@@ -67,9 +67,23 @@ i.clickable {
     padding: .1em 1em;
 }
 
+.table th {
+    padding-right: 20px;
+}
+
+/* MATERIAL DESIGN BASE VALUES */
+
 body {
     width: 100%;
     height: 100%;
+    overflow-y: hidden;
+}
+
+/* search */
+
+form {
+    margin: 0;
+    padding: 0;
 }
 
 .searchblock {
@@ -116,12 +130,6 @@ select:-webkit-autofill:focus {
     transition: background-color 5000s ease-in-out 0s;
 }
 
-.table th {
-    padding-right: 20px;
-}
-
-/* MATERIAL DESIGN BASE VALUES */
-
 .header_holder {
     position: relative;
     padding-bottom: 5px;
@@ -151,4 +159,22 @@ select:-webkit-autofill:focus {
 
 .active .collapsible-header, .row-hover:hover {
     background-color: rgb(228, 245, 255);
+}
+
+.main-content {
+    display: flex;
+    flex-direction: row;
+    margin: 0 2%;
+    margin-top: 10px;
+    height: calc(100vh - 60px - 5rem);
+}
+
+footer {
+    font-size: 1em;
+    border-top: 1px dashed var(--borderColor);
+    height: 5rem;
+}
+
+footer.page-footer {
+    padding-top: 10px;
 }

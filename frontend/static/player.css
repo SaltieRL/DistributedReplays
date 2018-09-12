@@ -347,3 +347,29 @@ ul, li {
 .team {
     position: relative;
 }
+
+/* POST MATERIAL DESIGN CSS */
+.table-container .accordion-header.row {
+    display: flex;
+    padding: 0 1rem;
+    margin-bottom: 0;
+    margin-left: 1px;
+    margin-right: 1px;
+}
+
+.accordion-header div {
+    font-size: 1.2em;
+    font-weight: 400;
+}
+
+.collapsible-header.row {
+    margin-bottom: 0;
+}
+
+.accordion-header i {
+    width: 2rem;
+    font-size: 1.6rem;
+    display: inline-block;
+    text-align: center;
+    margin-right: 1rem;
+}

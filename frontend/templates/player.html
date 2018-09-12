@@ -9,7 +9,7 @@
 {% endblock imports %}
 {% block body %}
     <div class="sidebar">
-        <div class="searchblock" style="margin-bottom: 15px;">
+        <div class="searchblock" style="margin-bottom: .5rem;">
             <form action="{{ url_for('players.compare_player_redir', id_=id) }}" method="post">
                 <i class="icono-sync"></i>
                 <input type="text" name="other" placeholder="Compare to other user" class="search"/>

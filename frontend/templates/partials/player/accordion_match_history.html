@@ -16,10 +16,11 @@
 </script>
 <section>
     <div class="table-container">
-        <div class="row">
+        <div class="row accordion-header">
+            <i class="material-icons">filter_drama</i>
             {% set headers = ["Date", "Name", "Gamemode", "Score", "Outcome"] %}
             {% for header in headers %}
-                <div class="col s2">{{ header }}</div>
+            <div class="col s2 center-align">{{ header }}</div>
             {% endfor %}
         </div>
         <ul class="collapsible">
@@ -29,18 +30,19 @@
                 {% set dropdown_id = 'drop_down' + game.game_object.hash %}
                 {% set match_id = 'match_' + game.game_object.hash %}
                 <li>
-                    <div class="collapsible-header row row-hover" id="{{ match_id }}" style="margin-bottom: 0px;">
-                        <div class="col s2">
-                            <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ game.game_object.match_date.strftime('%Y-%m-%d') }}</a>
+                    <div class="collapsible-header row row-hover" id="{{ match_id }}">
+                        <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}"><i class="material-icons">filter_drama</i></a>
+                        <div class="col s2 center-align">
+                            {{ game.game_object.match_date.strftime('%Y-%m-%d') }}
                         </div>
-                        <div class="col s2">
-                            <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}">{{ name }}</a>
+                        <div class="col s2 center-align">
+                            {{ name }}
                         </div>
-                        <div class="col s2">{{ game.game_object.teamsize }}s</div>
-                        <div class="col s2">
+                        <div class="col s2 center-align">{{ game.game_object.teamsize }}s</div>
+                        <div class="col s2 center-align">
                             <span style="color:blue">{{ game.game_object.team0score }}</span> - <span style="color:orange">{{ game.game_object.team1score }}</span>
                         </div>
-                        <div class="col s2">{% if game.win %}Win{% else %}Loss{% endif %}</div>
+                        <div class="col s2 center-align">{% if game.win %}Win{% else %}Loss{% endif %}</div>
                     </div>
                     <div class="collapsible-body">
                         {# orange #}
