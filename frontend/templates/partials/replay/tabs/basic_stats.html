@@ -33,7 +33,7 @@
 
 {% set charts=['total_hits', 'total_dribbles', 'total_passes', 'total_aerials', 'turnovers', 'average_speed', 'average_hit_distance', 'ball_hit_forward',
 'time_high_in_air', 'time_low_in_air', 'wasted_collection', 'time_in_attacking_half', 'time_in_defending_half', 'possession_time', 'boost_usage', ] %}
-{% set pie_charts = ['possession_time', 'usage'] %}
+{% set pie_charts = ['possession_time', 'boost_usage'] %}
 {% set bar_charts = ['total_dribbles', 'total_passes', 'total_aerials', 'ball_hit_forward', 'ball_hit_backward', 'time_high_in_air', 'time_low_in_air', 'wasted_collection',] %}
 <div class="stat-container">
     {% for c in charts %}
@@ -46,9 +46,8 @@
         {% else %}
             {% set type = 'bar' %}
         {% endif %}
-        {% if data != None %}
-            {% if data|max == 0 and data|min == 0 %}
-            {% else %}
+        {% if data != None and data is defined and data|length > 0 %}
+            {% if data[0] != None and (data|max != 0 or data|min != 0)  %}
                 {% if data|max > 0 %}
                     {% set start_at_zero = (data|max - data|min)/(data|max) > 0.2 %}{# we don't want uninteresting graphs #}
                 {% else %}
