@@ -76,7 +76,7 @@ i.clickable {
 body {
     width: 100%;
     height: 100%;
-    overflow-y: hidden;
+    /*overflow-y: hidden;*/
 }
 
 /* search */
@@ -173,6 +173,9 @@ footer {
     font-size: 1em;
     border-top: 1px dashed var(--borderColor);
     height: 5rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 footer.page-footer {
