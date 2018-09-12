@@ -27,8 +27,8 @@
 
 </head>
 <body>
-<div class="container section valign-wrapper row">
-    <div class="container col s5">
+<div class="valign-wrapper row">
+    <div class="homepage">
         <div class="logo">
             <img src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>
             <br/>
@@ -36,7 +36,7 @@
                 <i>{{ game_count }} replays and counting...</i>
             </p>
         </div>
-        <div class="mdc-card row">
+        <div class="mdc-card row col s12">
             <form class="search-form" action="{{ url_for('steam.resolve_steam') }}" enctype='multipart/form-data' method="post">
                 <input id="search-input" name="name" type="text" class="search-input" placeholder="Enter a steamID or username" required>
                 <button class="search-button mdc-icon-button material-icons" tabindex="0" type="button"
