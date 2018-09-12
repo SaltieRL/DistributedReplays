@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %} | calculated</title>
+    <title>{% block title %}{% endblock %} — calculated.gg</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:title" content="calculated.gg"/>
+    <meta property="og:title" content="{{ self.title() }} — calculated.gg"/>
     <meta property="og:type" content="website"/>
-    <meta property="og:description" content="A Rocket League replay analysis and statistics platform."/>
+    <meta property="og:image" content="https://cdn.discordapp.com/attachments/472459311063498753/489191459866673163/simple-draw.png"/>
+    <meta property="og:description" content="{% block description %}A Rocket League replay analysis and statistics platform.{% endblock description %}"/>
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
           integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js"

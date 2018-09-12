@@ -3,11 +3,14 @@
 
 
 {#{% set frame_count = replay.api_game.frames %}#}
-
-{% block title %}
-    {% if replay != None %}
-        {{ replay.name }} - {{ replay.team0score }}:{{ replay.team1score }}
-    {% else %}
+{% if replay != None %}
+    {%- block description %}
+        {{ replay.teamsize }}s: {{ replay.name }} - {{ replay.team0score }}:{{ replay.team1score }} on {{ replay.map }}
+        at {{ replay.match_date }}
+    {% endblock description %}
+{% endif %}
+{%- block title %}
+    {%- if replay != None %}{{ replay.name }} - {{ replay.team0score }}:{{ replay.team1score }}{% else %}
         Loading...
     {% endif %}
 {% endblock title %}
@@ -33,17 +36,17 @@
             </script>
         </div>
     {% elif replay != None %}
-<div style="width: 100%;">
-        <div>
-            {% include "partials/replay/metadata/header.html" %}
+        <div style="width: 100%;">
+            <div>
+                {% include "partials/replay/metadata/header.html" %}
+            </div>
+            <div>
+                {% include "partials/replay/tabs/tab_holder.html" %}
+            </div>
+            <div>
+                <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
+                <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
+            </div>
         </div>
-        <div>
-            {% include "partials/replay/tabs/tab_holder.html" %}
-        </div>
-        <div>
-            <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
-            <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
-        </div>
-</div>
     {% endif %}
 {% endblock body %}
