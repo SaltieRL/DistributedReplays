@@ -13,26 +13,12 @@ html, body {
 }
 
 .homepage {
-    width: 100%;
-    padding: 20px;
-    margin: auto;
-    justify-content: center;
-    align-items: flex-start;
-    overflow-x: hidden;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
 }
 
 .logo {
-    min-height: 300px;
     padding: 20px;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 0;
-    flex-basis: 100%;
-    flex-wrap: wrap;
 }
 
 .logo-image {
@@ -42,44 +28,19 @@ html, body {
 .logo-caption {
     font-size: 0.875rem;
     line-height: 1.46429em;
-    margin: 0;
-    display: block
-}
-
-.search-bar {
-    width: 100%;
-    padding: 20px 0;
-    flex-grow: 0;
-    max-width: 500px;
-    flex-basis: 92%;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap
-}
-
-.search-bar-card {
-    width: 100%
+    margin-top: 1rem;
 }
 
 .search-form {
     margin: auto 16px;
-    display: inline-flex;
-    box-sizing: inherit
+    display: flex;
 }
 
-.search-input {
+#search-input {
     border: 0;
-    flex-grow: 1;
-    outline: 0
-}
-
-.search-button {
-    height: 48px;
-    width: 48px;
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 1.5rem
-
+    outline: 0;
+    margin: 0;
+    box-shadow: none;
 }
 
 .search-icon {
