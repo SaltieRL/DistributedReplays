@@ -144,6 +144,9 @@ class PlayerGame(DBObjectBase):
     time_in_attacking_third = Column(Float)
     time_behind_ball = Column(Float)
     time_in_front_ball = Column(Float)
+    time_closest_to_ball = Column(Float)
+    time_furthest_from_ball = Column(Float)
+    time_close_to_ball = Column(Float)
 
     # distance
     ball_hit_forward = Column(Float)
