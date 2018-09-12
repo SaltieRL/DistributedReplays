@@ -24,6 +24,14 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.dropdown-trigger');
+            var instances = M.Dropdown.init(elems, {
+                hover: true
+            });
+        });</script>
 </head>
 <body>
 <div class="valign-wrapper row">
@@ -36,35 +44,49 @@
                     <i>{{ game_count }} replays and counting...</i>
                 </p>
             </div>
-            <div class="mdc-card row col s12">
-                <form class="search-form" action="{{ url_for('steam.resolve_steam') }}" enctype='multipart/form-data'
-                      method="post">
-                    <input id="search-input" name="name" type="text" class="search-input"
-                           placeholder="Enter a steamID or username" required>
-                    <button class="search-button mdc-icon-button" tabindex="0" type="submit"
-                            aria-label="Search">
-                        <i class="search-icon material-icons">search</i>
-                    </button>
-                </form>
+
+            <div class="row">
+                <div id="login" class="col m2">
+                    {% if g.user %}
+                        <div>
+                            <a class="dropdown-trigger waves-effect black-text z-depth-0" data-target='dropdown1'
+                               href="{{ url_for('players.view_player', id_=g.user.platformid) }}">
+                                <img style="border-radius: 100px" src="{{ g.user.avatar }}" width="48px">
+                            </a>
+                            <ul id='dropdown1' class='dropdown-content'>
+                                <li><a href="#!">Settings</a></li>
+                                <li>
+                                    <a href="{{ url_for('auth.logout') }}">
+                                        <span>Logout</span>
+                                    </a>
+                                </li>
+                                {#                                <li class="divider" tabindex="-1"></li>#}
+                            </ul>
+
+                        </div>
+                    {% endif %}
+
+                </div>
+                <div class="mdc-card col {% if g.user %}m10{% else %}m12{% endif %}" id="search">
+                    <form class="search-form" action="{{ url_for('steam.resolve_steam') }}"
+                          enctype='multipart/form-data'
+                          method="post">
+                        <input id="search-input" name="name" type="text" class="search-input"
+                               placeholder="Enter a steamID or username" required>
+                        <button class="search-button mdc-icon-button" tabindex="0" type="submit"
+                                aria-label="Search">
+                            <i class="search-icon material-icons">search</i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
         <div class="links">
-            {% if g.user %}
-                <div>
-                    <a class="waves-effect black-text z-depth-0"
-                       href="{{ url_for('players.view_player', id_=g.user.platformid) }}">
-                        <img style="border-radius: 100px" src="{{ g.user.avatar }}" width="25px"> <span>{{ g.user.platformname }}</span>
-                    </a>
-                    <a style="margin-left: 10px" class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.logout') }}">
-                        <span>Logout</span>
-                    </a>
-                </div>
-            {% endif %}
             {% if not g.user %}
-                <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.steam_auth') }}">
-                    <i class="fab fa-steam-symbol button-icon left"></i>
-                    <span>Steam Login</span>
-                </a>
+            <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.steam_auth') }}">
+                <i class="fab fa-steam button-icon left "></i>
+                Log in with Steam
+            </a>
             {% endif %}
             <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('replays.upload') }}">
                 <i class="material-icons left button-icon">cloud_upload</i>
