@@ -8,6 +8,10 @@ html, body {
     background-size: cover;
 }
 
+.logo img {
+    max-width: 80vw;
+}
+
 .homepage {
     display: flex;
     flex-direction: column;
@@ -37,4 +41,20 @@ html, body {
 .search-icon {
     color: rgba(0, 0, 0, 0.54);
     vertical-align: 4px;
+}
+
+.button-icon {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.links {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row wrap;
+}
+
+.links > a.btn {
+    border-radius: 5px;
+    border: solid 1px var(--darkBorderColor);
+    text-transform: initial;
 }

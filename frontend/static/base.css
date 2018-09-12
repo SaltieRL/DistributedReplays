@@ -1,5 +1,6 @@
 :root {
     --borderColor: #dddddd;
+    --darkBorderColor: #bdbdbd;
 }
 
 html, body {

@@ -29,21 +29,33 @@
 <body>
 <div class="valign-wrapper row">
     <div class="homepage">
-        <div class="logo">
-            <img src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>
-            <br/>
-            <p class="logo-caption center-align">
-                <i>{{ game_count }} replays and counting...</i>
-            </p>
+        <div>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>
+                <br/>
+                <p class="logo-caption center-align">
+                    <i>{{ game_count }} replays and counting...</i>
+                </p>
+            </div>
+            <div class="mdc-card row col s12">
+                <form class="search-form" action="{{ url_for('steam.resolve_steam') }}" enctype='multipart/form-data' method="post">
+                    <input id="search-input" name="name" type="text" class="search-input" placeholder="Enter a steamID or username" required>
+                    <button class="search-button mdc-icon-button" tabindex="0" type="submit"
+                            aria-label="Search">
+                        <i class="search-icon material-icons">search</i>
+                    </button>
+                </form>
+            </div>
         </div>
-        <div class="mdc-card row col s12">
-            <form class="search-form" action="{{ url_for('steam.resolve_steam') }}" enctype='multipart/form-data' method="post">
-                <input id="search-input" name="name" type="text" class="search-input" placeholder="Enter a steamID or username" required>
-                <button class="search-button mdc-icon-button" tabindex="0" type="submit"
-                        aria-label="Search">
-                    <i class="fas fa-calculator search-icon"></i>
-                </button>
-            </form>
+        <div class="links">
+            <a class="waves-effect btn white black-text z-depth-0" href="{{ url_for('replays.replay_stats') }}">
+                <i class="fas fa-globe-americas material-icons left button-icon"></i>
+                <span >Global Stats</span>
+            </a>
+           <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('replays.upload') }}">
+               <i class="material-icons left button-icon">cloud_upload</i>
+                Upload Replays
+            </a>
         </div>
     </div>
 </div>
