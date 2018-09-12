@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Optional, Dict, List, Tuple
 
-from flask import Flask, render_template, g, current_app, session, request, redirect
+from flask import Flask, render_template, g, current_app, session, request, redirect, send_from_directory
 from flask_cors import CORS
 from redis import Redis
 
@@ -170,6 +170,12 @@ def home():
 @app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')
+
+
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 
 if __name__ == '__main__':
