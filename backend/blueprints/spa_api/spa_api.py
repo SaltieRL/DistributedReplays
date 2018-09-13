@@ -2,10 +2,11 @@ from flask import jsonify, Blueprint, current_app
 
 from backend.database.objects import Game
 from .errors.errors import CalculatedError
+from .service_layers.match_history import MatchHistory
 from .service_layers.play_style import PlayStyleChartData
 from .service_layers.player import Player
+from .service_layers.player_profile_stats import PlayerProfileStats
 from .service_layers.player_ranks import PlayerRanks
-from .service_layers.player_stats import PlayerProfileStats
 from .service_layers.replay import Replay
 
 bp = Blueprint('api', __name__, url_prefix='/api/')

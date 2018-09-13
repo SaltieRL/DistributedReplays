@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from flask import current_app
 
-from .player_stats import player_stat_wrapper, player_wrapper
+from .player_profile_stats import player_stat_wrapper, player_wrapper
 from ..errors.errors import UserHasNoReplays
 
 
