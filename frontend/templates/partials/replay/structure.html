@@ -1,6 +1,0 @@
-{% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
-<div style="flex: 1 0 auto">
-    {% include "partials/replay/metadata/header.html" %}
-
-    {% include "partials/replays/tabs/tabs.html" %}
-</div>
