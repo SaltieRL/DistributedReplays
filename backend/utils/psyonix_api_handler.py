@@ -167,10 +167,8 @@ def tier_div_to_string(rank: int, div: int = -1):
         logger.debug(rank)
         logger.debug(div)
         return 'Unknown'
-    if rank < 19 and div > 0:
-        return "{}, Division {}".format(ranks[rank], div + 1)
-    else:
-        return ranks[rank]
+    if rank < 19 and div >= 0:
+        return f"{ranks[rank]} (div {div + 1})"
 
 
 def get_platform_id(i):
