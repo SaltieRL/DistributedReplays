@@ -1,12 +1,15 @@
+import logging
+
 import sqlalchemy
 from carball.generated.api import player_pb2
-from sqlalchemy import func, desc, cast, literal
+from sqlalchemy import func, cast, literal
 
-from backend.utils.checks import get_local_dev
-from data import constants
 from backend.database.objects import PlayerGame, Game
-from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
+from backend.database.wrapper.player_wrapper import PlayerWrapper
+from backend.utils.checks import get_local_dev
+
+logger = logging.getLogger(__name__)
 
 
 def safe_divide(sql_value):
@@ -27,64 +30,47 @@ class PlayerStatWrapper:
 
         return zipped_stats
 
-    def get_averaged_stats(self, session, id_, total_games, rank=None, page=0):
+    def get_averaged_stats(self, session, id_, rank=None):
         stats_query = self.stats_query
         std_query = self.std_query
-        games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
-        if len(games) > 0:
-            fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
-                PlayerGame.player == id_).filter(
-                PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
-            print(fav_car_str)
-            # car_arr = [g.car for g in games]
-            favorite_car = constants.get_car(int(fav_car_str[0]))
-            favorite_car_pctg = fav_car_str[1] / total_games
-            q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
-            stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
-            if rank is not None and not get_local_dev():
-                print('Filtering by rank')
-                # q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
-                #     PlayerGame.rank <= rank[3]['tier'] + 1)
-                # stds = stds.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
-                #     PlayerGame.rank <= rank[3]['tier'] + 1)
-                try:
-                    q_filtered = q.filter(PlayerGame.rank == rank[3]['tier'])
-                    stds = stds.filter(PlayerGame.rank == rank[3]['tier'])
-                except:
-                    q_filtered = q
-            else:
+        q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
+        stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
+        if rank is not None and not get_local_dev():
+            logger.debug('Filtering by rank')
+            # q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
+            #     PlayerGame.rank <= rank[3]['tier'] + 1)
+            # stds = stds.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
+            #     PlayerGame.rank <= rank[3]['tier'] + 1)
+            try:
+                q_filtered = q.filter(PlayerGame.rank == rank[3]['tier'])
+                stds = stds.filter(PlayerGame.rank == rank[3]['tier'])
+            except:
                 q_filtered = q
-            global_stds = stds.first()
-            global_stats = q_filtered.first()
-            stats = list(q.filter(PlayerGame.player == id_).first())
-
-            for i, s in enumerate(stats):
-                player_stat = s
-                if player_stat is None:
-                    player_stat = 0
-                global_stat = global_stats[i]
-                global_std = global_stds[i]
-                if global_stat is None or global_stat == 0:
-                    global_stat = 1
-                if global_std is None or global_std == 0:
-                    print(self.field_names[i].field_name, 'std is 0')
-                if global_std != 1 and global_std > 0:
-                    # print(self.field_names[i].field_name, player_stat, global_stat, global_std)
-                    stats[i] = float((player_stat - global_stat) / global_std)
-                else:
-                    stats[i] = float(player_stat / global_stat)
-
-            # Name info
-
-            names = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')).filter(
-                PlayerGame.player == id_).group_by(
-                PlayerGame.name).order_by(desc('c'))[:5]
         else:
-            favorite_car = "Unknown"
-            favorite_car_pctg = 0.0
-            stats = [0.0] * len(stats_query)
-            names = []
-        return games, self.get_wrapped_stats(stats), favorite_car, favorite_car_pctg, names
+            q_filtered = q
+        global_stds = stds.first()
+        global_stats = q_filtered.first()
+        stats = list(q.filter(PlayerGame.player == id_).first())
+
+        for i, s in enumerate(stats):
+            player_stat = s
+            if player_stat is None:
+                player_stat = 0
+            global_stat = global_stats[i]
+            global_std = global_stds[i]
+            if global_stat is None or global_stat == 0:
+                global_stat = 1
+            if global_std is None or global_std == 0:
+                logger.debug(self.field_names[i].field_name, 'std is 0')
+            if global_std != 1 and global_std > 0:
+                # print(self.field_names[i].field_name, player_stat, global_stat, global_std)
+                stats[i] = float((player_stat - global_stat) / global_std)
+            else:
+                stats[i] = float(player_stat / global_stat)
+
+        # else:
+        #     stats = [0.0] * len(stats_query)
+        return self.get_wrapped_stats(stats)
 
     @staticmethod
     def get_stats_query():
