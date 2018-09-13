@@ -42,9 +42,8 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        this.setState({
-            playerStats: getStats(this.props.player.id)
-        })
+        getStats(this.props.player.id)
+            .then((playerStats) => this.setState({playerStats}))
     }
 
     public render() {
@@ -71,7 +70,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                     {this.state.playerStats.car.carName}
                                 </Typography>
                                 <div className={classes.percentage}>
-                                    {this.state.playerStats.car.carPercentage}
+                                    {this.state.playerStats.car.carPercentage.toFixed(1)}
                                 </div>
                             </Grid>
                         </Grid>

@@ -41,9 +41,8 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        this.setState({
-            playerRanks: getRanks(this.props.player.id)
-        })
+        getRanks(this.props.player.id)
+            .then((playerRanks) => this.setState({playerRanks}))
     }
 
     public render() {
