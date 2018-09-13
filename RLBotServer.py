@@ -7,6 +7,7 @@ from flask_cors import CORS
 from redis import Redis
 
 from backend.blueprints import steam, stats, auth, debug, admin, players, api, replays
+from backend.blueprints.spa_api import spa_api
 from backend.database.objects import Game, Player, Group
 from backend.database.startup import startup
 from backend.utils.checks import get_checks
@@ -84,6 +85,7 @@ def register_blueprints(app: Flask):
     # app.register_blueprint(saltie.bp)
     app.register_blueprint(stats.bp)
     app.register_blueprint(api.bp)
+    app.register_blueprint(spa_api.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(debug.bp)
     app.register_blueprint(admin.bp)
