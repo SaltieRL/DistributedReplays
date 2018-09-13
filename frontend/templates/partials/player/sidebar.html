@@ -33,7 +33,7 @@
     <div class="header_holder">
         <span class="header">Rank Information</span>
     </div>
-    <div class="rankpanel">
+    <div class="rank-panel">
         {% if rank %}
         {% include "partials/player/sidebar/ranks.html" %}
         {% else %}
@@ -48,7 +48,7 @@
     <div class="header_holder">
         <span class="header">/ Admin Tools</span>
     </div>
-    <div class="rankpanel">
+    <div class="rank-panel">
         {% set editable_groups = ['alpha', 'beta'] %}
         {% for gp in editable_groups %}
         {% if gp in groups %}

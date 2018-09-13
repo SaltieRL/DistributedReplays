@@ -3,7 +3,7 @@
         <span class="header">/ Tendencies</span>
         <span style="font-size: 0.4em" title="Data is represented as total standard deviations from the mean">* Data is represented as total standard deviations from the mean</span>
     </div>
-    <div class="chartpanel">
+    <div class="chart-panel">
         {% set min_replays = 1 %}
         {% if total_games > min_replays %}
         {% include "partials/player/content/spider_charts.html" %}
@@ -25,7 +25,7 @@
     <div class="match-history" style="overflow-y: scroll">
         {% if games %}
         {% set max_pages=(total_games/game_per_page)|round(1, 'ceil') %}
-        {% include "partials/player/content/accordion_match_history.html" %}
+        {% include "partials/player/content/match_history.html" %}
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 console.log('adding history loader');
