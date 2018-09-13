@@ -37,10 +37,6 @@ class PlayerStatWrapper:
         stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
         if rank is not None and not get_local_dev():
             logger.debug('Filtering by rank')
-            # q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
-            #     PlayerGame.rank <= rank[3]['tier'] + 1)
-            # stds = stds.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
-            #     PlayerGame.rank <= rank[3]['tier'] + 1)
             try:
                 q_filtered = q.filter(PlayerGame.rank == rank[3]['tier'])
                 stds = stds.filter(PlayerGame.rank == rank[3]['tier'])
