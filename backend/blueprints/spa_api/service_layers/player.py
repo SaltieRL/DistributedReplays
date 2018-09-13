@@ -5,11 +5,6 @@ from sqlalchemy import func, desc
 
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.database.objects import PlayerGame
-from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
-
-player_wrapper = PlayerWrapper(limit=10)
-player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
 # TODO: Move to service layer folder

@@ -1,12 +1,16 @@
 from flask import current_app
 from sqlalchemy import func, desc
 
-from backend.blueprints.spa_api.service_layers.player import player_wrapper
+from backend.database.objects import PlayerGame
+from backend.database.wrapper.player_wrapper import PlayerWrapper
+from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
 from data import constants
-from ....database.objects import PlayerGame
+
+player_wrapper = PlayerWrapper(limit=10)
+player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
-class PlayerStats:
+class PlayerProfileStats:
     def __init__(self, favourite_car: str, car_percentage: float):
         self.car = {
             "carName": favourite_car,
@@ -32,4 +36,4 @@ class PlayerStats:
             total_games = player_wrapper.get_total_games(session, id_)
             car_percentage = fav_car_str[1] / total_games
 
-        return PlayerStats(favourite_car=favourite_car, car_percentage=car_percentage)
+        return PlayerProfileStats(favourite_car=favourite_car, car_percentage=car_percentage)

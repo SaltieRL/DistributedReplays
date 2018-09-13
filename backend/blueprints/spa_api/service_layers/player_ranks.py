@@ -1,4 +1,4 @@
-from ....utils.psyonix_api_handler import get_rank
+from backend.utils.psyonix_api_handler import get_rank
 
 
 class PlaylistRank:
