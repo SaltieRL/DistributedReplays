@@ -3,7 +3,7 @@ import {doGet} from "../apiHandler/apiHandler"
 import {PlayStyleChartData} from "../Components/Player/PlayerTendencies"
 import {PlayerRanks} from "../Components/Player/SideBar/PlayerRanksCard"
 import {PlayerStats} from "../Components/Player/SideBar/PlayerStatsCard"
-import {GameMode, Replay} from "../Models/Replay/Replay"
+import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
 export const getPlayer = (id: string): Promise<Player> => {
@@ -91,34 +91,37 @@ export const getRanks = (id: string): Promise<PlayerRanks> => {
 
 
 export const getMatchHistory = (id: string): Promise<Replay[]> => {
-    // TODO: Do actual fetch
-    return Promise.resolve([
-        {
-            name: "Replay1",
-            date: moment(),
-            gameMode: "1's" as GameMode,
-            gameScore: {team0Score: 1, team1Score: 2},
-            players: [
-                {
-                    name: "testplayerblue",
-                    isOrange: false,
-                    score: 1,
-                    goals: 1,
-                    assists: 0,
-                    saves: 4,
-                    shots: 2
+    if (useMockData) {
+        return Promise.resolve([
+            {
+                name: "Replay1",
+                date: moment(),
+                gameMode: "1's" as GameMode,
+                gameScore: {team0Score: 1, team1Score: 2},
+                players: [
+                    {
+                        name: "testplayerblue",
+                        isOrange: false,
+                        score: 1,
+                        goals: 1,
+                        assists: 0,
+                        saves: 4,
+                        shots: 2
 
-                },
-                {
-                    name: "testplayerorange",
-                    isOrange: true,
-                    score: 1,
-                    goals: 2,
-                    assists: 1,
-                    saves: 2,
-                    shots: 6
-                }
-            ]
-        }
-    ])
+                    },
+                    {
+                        name: "testplayerorange",
+                        isOrange: true,
+                        score: 1,
+                        goals: 2,
+                        assists: 1,
+                        saves: 2,
+                        shots: 6
+                    }
+                ]
+            }
+        ])
+    }
+    return doGet(`/player/${id}/match_history`)
+        .then((data) => data.map(parseReplay))
 }

@@ -1,7 +1,7 @@
 import * as moment from "moment"
-import {GameMode, Replay} from "../Models/Replay/Replay"
-import {useMockData} from "./Config"
 import {doGet} from "../apiHandler/apiHandler"
+import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
+import {useMockData} from "./Config"
 
 export const getReplay = (id: string): Promise<Replay> => {
     if (useMockData) {
@@ -69,4 +69,5 @@ export const getReplay = (id: string): Promise<Replay> => {
         })
     }
     return doGet(`/replay/${id}`)
+        .then(parseReplay)
 }

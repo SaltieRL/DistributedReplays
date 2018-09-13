@@ -16,6 +16,14 @@ export interface Replay {
     players: ReplayPlayer[]
 }
 
+export const parseReplay = (data: any) => {
+    return {
+        ...data,
+        date: moment(data.date)
+    }
+}
+
+
 export const getColouredGameScore = (replay: Replay) => {
     return (
         <>
