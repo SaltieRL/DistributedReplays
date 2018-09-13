@@ -385,10 +385,16 @@ ul, li {
     max-width: 100%;
 }
 
-.collapsible-header {
+.match-history .collapsible-header {
     padding: calc(.5rem - 2px) 1rem;
 }
 
-.collapsible-body {
+.match-history .collapsible-body {
     padding: 0;
+}
+
+a i.material-icons:hover {
+    transition-property: transform;
+    transition-duration: 100ms;
+    transform: scale(1.2);
 }

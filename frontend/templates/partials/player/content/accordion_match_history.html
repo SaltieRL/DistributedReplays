@@ -19,6 +19,11 @@
                         });
                     }
                 });
+                document.querySelectorAll('.match-history i.material-icons').forEach((element) => {
+                    element.onclick = function (event) {
+                        event.stopPropagation();
+                    }
+                });
             };
             loader.setHistoryList(matchHistory);
         });
@@ -27,7 +32,7 @@
 <section>
     <div class="table-container">
         <div class="row accordion-header">
-            <i class="material-icons">filter_drama</i>
+            <div>Stats</div>
             {% set headers = ["Date", "Name", "Gamemode", "Score", "Outcome"] %}
             {% for header in headers %}
             <div class="col s2 center-align">{{ header }}</div>
@@ -41,7 +46,7 @@
                 {% set match_id = 'match_' + game.game_object.hash %}
                 <li>
                     <div class="collapsible-header row row-hover" id="{{ match_id }}">
-                        <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}"><i class="material-icons">filter_drama</i></a>
+                        <a href="{{ url_for('replays.view_replay', id_=game.game_object.hash) }}"><i class="material-icons">equalizer</i></a>
                         <div class="col s2 center-align">
                             {{ game.game_object.match_date.strftime('%Y-%m-%d') }}
                         </div>
