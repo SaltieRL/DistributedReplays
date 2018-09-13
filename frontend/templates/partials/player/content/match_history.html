@@ -16,10 +16,8 @@
                         setTimeout(function () {
                             let scrollAmount = openedElement.offsetTop - matchHistoryElement.offsetTop;
                             let currentScrollPosition = matchHistoryElement.scrollTop;
-                            let guess1 = scrollAmount - currentScrollPosition;
-                            console.log('scroll guess', guess1);
                             matchHistoryElement.scrollBy({
-                                top: guess1,
+                                top: scrollAmount - currentScrollPosition,
                                 behavior: 'smooth'
                             });
                         }, 50);
