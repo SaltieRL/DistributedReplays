@@ -39,7 +39,7 @@
     "arrow-parens": true,
     "arrow-return-shorthand": true,
     "class-name": true,
-    "comment-format": [true, "check-space", "check-uppercase"],
+    "comment-format": [true, "check-space"],
     "interface-name": false,
     "no-empty-interface": false,
     "newline-per-chained-call": false,
