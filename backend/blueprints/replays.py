@@ -15,8 +15,8 @@ from werkzeug.utils import secure_filename
 from backend.blueprints.shared_renders import render_with_session, return_error
 from backend.database import queries
 from backend.database.objects import PlayerGame, Game
-from backend.utils.psyonix_api_handler import get_item_dict, get_rank_batch
 from backend.tasks import celery_tasks
+from backend.utils.psyonix_api_handler import get_item_dict, get_rank_batch
 from data import constants
 
 bp = Blueprint('replays', __name__, url_prefix='/replays')
@@ -83,19 +83,6 @@ def view_replay(id_):
         return render_with_session('replay.html', session, replay=game, cars=constants.cars, id=id_,
                                    item_dict=get_item_dict())
     players = game.players
-    # pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pkl')
-    # replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-    # if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-    #     return render_template('replay.html', replay=None, id=id_)
-    # try:
-    #     g = pickle.load(open(pickle_path, 'rb'), encoding='latin1')  # type: Game_pickle
-    # except Exception as e:
-    #     return return_error('Error opening game: ' + str(e))
-    # players = g.api_game.teams[0].players + g.api_game.teams[1].players
-    # for p in players:
-    #     if isinstance(p.id, list):  # some players have array platform-ids
-    #         p.id = p.id
-    #         print('array online_id', p.id)
     ranks = get_rank_batch(players)
     ranks_dict = dict({p: v for p, v in zip(game.players, game.ranks)})
     return render_with_session('replay.html', session, replay=game, cars=constants.cars, id=id_, ranks=ranks,
