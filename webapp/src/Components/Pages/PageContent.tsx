@@ -10,7 +10,7 @@ export class PageContentComponent extends React.PureComponent<Props> {
         return (
             <div className={classes.content}>
                 <Toolbar/>
-                <div style={{padding: 20}}>
+                <div style={{padding: 20, minHeight: "100%"}}>
                     {this.props.children}
                 </div>
             </div>

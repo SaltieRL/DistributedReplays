@@ -13,7 +13,7 @@ class FooterComponent extends React.PureComponent<Props> {
                     <Typography>
                         &copy; 2017-2018 Saltie Group
                     </Typography>
-                    <LinkButton to="https://github.com/SaltieRL" leftIcon={faGithub}>
+                    <LinkButton to="https://github.com/SaltieRL" iconType="fontawesome" icon={faGithub}>
                         Github
                     </LinkButton>
                 </Grid>

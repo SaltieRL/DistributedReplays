@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import {Card, CardContent, CardMedia, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {PlayerNameDropdown} from "./PlayerNameDropdown"
 
 interface OwnProps {
     player: Player
@@ -18,6 +19,7 @@ export class PlayerProfileComponent extends React.PureComponent<Props> {
                 <CardContent className={classes.content}>
                     <Typography variant="headline">
                         {player.name}
+                        {player.pastNames.length > 0 && <PlayerNameDropdown pastNames={player.pastNames}/>}
                     </Typography>
                     <Typography variant="subheading">
                         {player.platform}

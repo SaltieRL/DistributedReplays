@@ -2,10 +2,13 @@ import * as React from "react"
 import {Logo} from "../Shared/Logo/Logo"
 import {Search} from "../Shared/Search"
 
-import {faGlobeAmericas} from "@fortawesome/free-solid-svg-icons"
+import {faDiscord, faGithub, faSteam} from "@fortawesome/free-brands-svg-icons"
+import {faChartBar} from "@fortawesome/free-solid-svg-icons"
 import {createStyles, Grid, Typography, WithStyles, withStyles} from "@material-ui/core"
 import Divider from "@material-ui/core/Divider/Divider"
 import {GridProps} from "@material-ui/core/Grid"
+import {CloudUpload, Info} from "@material-ui/icons"
+import {getReplayCount} from "../../Requests/Global"
 import {LinkButton} from "../Shared/LinkButton"
 import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
 
@@ -22,7 +25,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        this.getReplayCount()
+        getReplayCount()
             .then((replayCount: number) => this.setState({replayCount}))
     }
 
@@ -48,6 +51,19 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                         <Grid item xs={11} {...alignCenterProps} style={{padding: "20px 0 20px 0"}}>
                             <Search usePaper/>
                         </Grid>
+                        <Grid item xs={12} sm={10} md={8} container spacing={16} alignItems="center"
+                              style={{maxWidth: 550}}>
+                            <Grid item xs={6} style={{textAlign: "center"}}>
+                                <LinkButton to="/auth/steam" iconType="fontawesome" icon={faSteam}>
+                                    Log in with Steam
+                                </LinkButton>
+                            </Grid>
+                            <Grid item xs={6} style={{textAlign: "center"}}>
+                                <LinkButton to="/replays/upload" iconType="mui" icon={CloudUpload}>
+                                    Upload replays
+                                </LinkButton>
+                            </Grid>
+                        </Grid>
                         <Grid item xs={12}>
                             <Divider/>
                         </Grid>
@@ -59,28 +75,31 @@ class HomePageComponent extends React.PureComponent<Props, State> {
             </UploadModalWrapper>
         )
     }
-
-    private readonly getReplayCount = (): Promise<number> => {
-        // TODO: Make call to get number of replays
-        return Promise.resolve(1337)
-    }
 }
 
 const HomePageFooter: React.SFC = () => {
-    const linkButtonGridItemProps: GridProps = {item: true, xs: 12, sm: 4, md: 2, style: {textAlign: "center"}}
+    const linkButtonGridItemProps: GridProps = {item: true, xs: 3, sm: 3, md: 2, style: {textAlign: "center"}}
     return (
         <Grid container justify="center" spacing={16}>
-            <Grid item xs={12} sm={12} md={4} style={{textAlign: "center"}}>
-                <LinkButton to="/replay/stats" leftIcon={faGlobeAmericas}> global stats </LinkButton>
+            <Grid {...linkButtonGridItemProps}>
+                <LinkButton to="/replay/stats"
+                            iconType="fontawesome" icon={faChartBar}
+                            tooltip="Global stats"/>
             </Grid>
             <Grid {...linkButtonGridItemProps}>
-                <LinkButton to=""> about </LinkButton>
+                <LinkButton to=""
+                            iconType="mui" icon={Info}
+                            tooltip="About"/>
             </Grid>
             <Grid {...linkButtonGridItemProps}>
-                <LinkButton to="/redirect_to/github"> github </LinkButton>
+                <LinkButton to="/redirect_to/github"
+                            iconType="fontawesome" icon={faGithub}
+                            tooltip="Github"/>
             </Grid>
             <Grid {...linkButtonGridItemProps}>
-                <LinkButton to=""> discord </LinkButton>
+                <LinkButton to=""
+                            iconType="fontawesome" icon={faDiscord}
+                            tooltip="Discord"/>
             </Grid>
         </Grid>
     )

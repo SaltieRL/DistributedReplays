@@ -1,8 +1,9 @@
 import {Card, CardContent, CardHeader, Divider, Grid} from "@material-ui/core"
 import * as React from "react"
+import {getRanks} from "../../../Requests/Player"
 import {PlayerPlaylistRank, PlaylistRank} from "./PlayerPlaylistRank"
 
-interface PlayerRanks {
+export interface PlayerRanks {
     duel: PlaylistRank
     doubles: PlaylistRank
     solo: PlaylistRank
@@ -41,7 +42,7 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
 
     public componentDidMount() {
         this.setState({
-            playerRanks: this.getRanks()
+            playerRanks: getRanks(this.props.player.id)
         })
     }
 
@@ -66,18 +67,4 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly getRanks = (): PlayerRanks => {
-        // TODO: Replace with actual query.
-        const rating = {
-            name: "Eggplant III (div 3)",
-            rating: 2,
-            rank: 5
-        }
-        return {
-            duel: rating,
-            doubles: rating,
-            solo: rating,
-            standard: rating
-        }
-    }
 }

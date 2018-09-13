@@ -12,13 +12,14 @@ import {
     WithStyles
 } from "@material-ui/core"
 import * as React from "react"
+import {getStats} from "../../../Requests/Player"
 
 interface CarStat {
     carName: string
     carPercentage: number
 }
 
-interface PlayerStats {
+export interface PlayerStats {
     car: CarStat
 }
 
@@ -42,7 +43,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
 
     public componentDidMount() {
         this.setState({
-            playerStats: this.getStats()
+            playerStats: getStats(this.props.player.id)
         })
     }
 
@@ -79,16 +80,6 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                 </CardContent>
             </Card>
         )
-    }
-
-    private readonly getStats = (): PlayerStats => {
-        // TODO: Replace with actual query.
-        return {
-            car: {
-                carName: "octane",
-                carPercentage: 0.8
-            }
-        }
     }
 }
 

@@ -1,4 +1,4 @@
-import {faCalculator} from "@fortawesome/free-solid-svg-icons"
+import {faCalculator, faSearch} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {IconButton, Paper, TextField} from "@material-ui/core"
 import * as React from "react"
@@ -6,6 +6,7 @@ import * as React from "react"
 
 interface Props {
     usePaper: boolean
+    useCalculatorIcon?: boolean
 }
 
 interface State {
@@ -22,9 +23,9 @@ export class Search extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const calculatedButton =
+        const searchButton =
             <IconButton aria-label="Search" onClick={this.onSubmit}>
-                <FontAwesomeIcon icon={faCalculator}/>
+                <FontAwesomeIcon icon={this.props.useCalculatorIcon ? faCalculator : faSearch}/>
             </IconButton>
 
         const inputField =
@@ -37,11 +38,11 @@ export class Search extends React.PureComponent<Props, State> {
                         onChange={this.handleChange}
                         value={this.state.enteredText}
                         fullWidth
-                        InputProps={{disableUnderline: this.props.usePaper, endAdornment: calculatedButton}}
+                        InputProps={{disableUnderline: this.props.usePaper, endAdornment: searchButton}}
                         required
                     />
                 </form>
-                {/*{calculatedButton}*/}
+                {/*{searchButton}*/}
             </>
 
         const containerStyle: React.CSSProperties = {
