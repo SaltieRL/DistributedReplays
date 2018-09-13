@@ -14,18 +14,24 @@
         {% endif %}
     </div>
 </div>
+    {% set max_pages=((total_games/game_per_page)|round(0, 'ceil'))|int %}
     <div class="header_holder">
-            <span class="header">/ Match History<span>&nbsp;&nbsp;</span>
-                {% if total_games > game_per_page %}
-                <span id="prevpage" class="pure-button button-xsmall"><i class="icono-caretLeft clickable"></i></span>
-                <span id="nextpage" class="pure-button button-xsmall"><i class="icono-caretRight clickable"></i></span>
-            {% endif %}
-            </span>
+        <span class="header">/ Match History<span>&nbsp;&nbsp;</span>
+        </span>
+        {% if total_games > game_per_page %}
+        <ul id="pagination" class="pagination" style="display:inline;">
+            <li id="prevpage" class="waves-effect"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+            {% for i in range(0, max_pages) %}
+            <li id="page-{{loop.index0}}"
+                class="{% if loop.first %}active{% else %}waves-effect{% endif %} number"
+                data-page="{{loop.index0}}"><a href="#!">{{loop.index}}</a></li>
+            {% endfor %}
+            <li id="nextpage" class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+        </ul>
+        {% endif %}
     </div>
-    <div class="match-history" style="overflow-y: scroll">
+    <div id="dynamic-pages" class="match-history" style="overflow-y: scroll">
         {% if games %}
-        {% set max_pages=(total_games/game_per_page)|round(1, 'ceil') %}
-        {% include "partials/player/content/match_history.html" %}
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 console.log('adding history loader');
@@ -35,6 +41,7 @@
                 })
             });
         </script>
+        {% include "partials/player/content/match_history.html" %}
         {% else %}
         <div class="errmsg">
             no matches recorded for this profile (are you using the auto-uploader?)

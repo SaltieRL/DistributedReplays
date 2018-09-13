@@ -1,4 +1,7 @@
 define(['server'], function (server) {
+    let activeClass = 'active';
+    let nonActiveClass = 'waves-effect';
+    let disabled_class = "pure-button-disabled";
     let page = 0;
     let history = null;
     let playerId = null;
@@ -10,8 +13,16 @@ define(['server'], function (server) {
         server.asyncJsonGet(playerId + '/history/' + page.toString(), callback);
     }
 
+    function setPageActive(allPages) {
+        let activeElement = allPages.querySelector('.' + activeClass);
+        let newElement = allPages.querySelector('#page-' + page);
+        newElement.classList.add(activeClass);
+        newElement.classList.remove(nonActiveClass);
+        activeElement.classList.remove(activeClass);
+        activeElement.classList.add(nonActiveClass)
+    }
+
     function createToggleCallback(elements) {
-        let disabled_class = "pure-button-disabled";
         return function (elementToToggle) {
             for (let i = 0; i < elements.length; i++) {
                 let element = elements[i];
@@ -24,31 +35,55 @@ define(['server'], function (server) {
         }
     }
 
-    function addNextPageListener(element, h, toggleCallback) {
-        history = h;
+    function addNextPageListener(element, toggleCallback, allPages) {
         element.addEventListener('click', function (ev) {
             if (page >= maxPages) {
                 return;
             }
             page += 1;
             loadData(processPage, history);
+            setPageActive(allPages);
             if (page >= maxPages - 1) {
                 toggleCallback(element);
             }
         });
     }
 
-    function addPreviousPageListener(element, h, toggleCallback) {
-        history = h;
+    function addPreviousPageListener(element, toggleCallback, allPages) {
         element.addEventListener('click', function (ev) {
             if (page <= 0) {
                 return;
             }
             page -= 1;
+            setPageActive(allPages);
             loadData(processPage, history);
             if (page <= 0) {
                 toggleCallback(element);
             }
+        });
+    }
+
+    function addPageListener(allPages, previousPage, nextPage) {
+        allPages.querySelectorAll('.number').forEach((element) => {
+            element.addEventListener('click', function () {
+                let elementPage = this.getAttribute('data-page');
+                if (this.classList.contains(activeClass)) {
+                    return;
+                }
+                page = parseInt(elementPage);
+                loadData(processPage, history);
+                setPageActive(allPages);
+                if (page === 0) {
+                    previousPage.classList.add(disabled_class);
+                    nextPage.classList.remove(disabled_class);
+                } else if (page + 1 === maxPages) {
+                    nextPage.classList.add(disabled_class);
+                    previousPage.classList.remove(disabled_class);
+                } else {
+                    nextPage.classList.remove(disabled_class);
+                    previousPage.classList.remove(disabled_class);
+                }
+            });
         });
     }
 
@@ -84,19 +119,21 @@ define(['server'], function (server) {
         playerId = playerPageId;
         maxPages = maxPage;
         console.debug('creating pages', playerPageId, maxPages);
-        let nextpage = document.getElementById('nextpage');
-        let prevpage = document.getElementById('prevpage');
-        if (nextpage === null || prevpage === null) {
+        let allPages = document.getElementById("pagination");
+        let nextPage = document.getElementById('nextpage');
+        let prevPage = document.getElementById('prevpage');
+        if (nextPage === null || prevPage === null) {
             if (historyList != null) {
                 historyList();
             }
             dataCallback();
             return;
         }
-        let history = document.getElementsByClassName('matchhistory')[0];
-        let callbacks = createToggleCallback([nextpage, prevpage]);
-        addNextPageListener(nextpage, history, callbacks);
-        addPreviousPageListener(prevpage, history, callbacks);
+        history = document.getElementById('dynamic-pages');
+        let callbacks = createToggleCallback([nextPage, prevPage]);
+        addNextPageListener(nextPage, callbacks, allPages);
+        addPreviousPageListener(prevPage, callbacks, allPages);
+        addPageListener(allPages, prevPage, nextPage);
         if (dataCallback != null) {
             dataCallback();
             if (historyList != null) {
@@ -106,7 +143,7 @@ define(['server'], function (server) {
             console.debug("Callback is null no data graph data was initialized");
         }
 
-        callbacks(prevpage);
+        callbacks(prevPage);
     }
 
     function addHistoryCallback(callback) {
