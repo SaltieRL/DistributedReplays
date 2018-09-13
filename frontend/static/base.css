@@ -110,13 +110,14 @@ select:-webkit-autofill:focus {
     flex-direction: row;
     margin: 0 2%;
     margin-top: 10px;
-    height: calc(100vh - 60px - 5rem);
+    height: calc(100vh - 60px - 3rem);
+    max-height: calc(100vh - 60px - 3rem);
 }
 
 footer {
     font-size: 1em;
     border-top: 1px dashed var(--borderColor);
-    height: 5rem;
+    height: 3rem;
     position: fixed;
     bottom: 0;
     width: 100%;

@@ -9,6 +9,16 @@
                 requirejs(['matchHistory'], function (matchHistory) {
                     matchHistory.addMatchHandler(matches);
                 });
+                let matchHistoryElement = document.querySelector('.match-history');
+                var elems = document.querySelectorAll('.collapsible');
+                M.Collapsible.init(elems, {
+                    onOpenEnd: function (openedElement) {
+                        matchHistoryElement.scrollBy({
+                            top: openedElement.offsetTop - matchHistoryElement.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             };
             loader.setHistoryList(matchHistory);
         });
