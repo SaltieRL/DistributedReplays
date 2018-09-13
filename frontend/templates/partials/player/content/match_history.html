@@ -13,10 +13,16 @@
                 var elems = document.querySelectorAll('.collapsible');
                 M.Collapsible.init(elems, {
                     onOpenEnd: function (openedElement) {
-                        matchHistoryElement.scrollBy({
-                            top: openedElement.offsetTop - matchHistoryElement.offsetTop,
-                            behavior: 'smooth'
-                        });
+                        setTimeout(function () {
+                            let scrollAmount = openedElement.offsetTop - matchHistoryElement.offsetTop;
+                            let currentScrollPosition = matchHistoryElement.scrollTop;
+                            let guess1 = scrollAmount - currentScrollPosition;
+                            console.log('scroll guess', guess1);
+                            matchHistoryElement.scrollBy({
+                                top: guess1,
+                                behavior: 'smooth'
+                            });
+                        }, 50);
                     }
                 });
                 document.querySelectorAll('.match-history i.material-icons').forEach((element) => {
