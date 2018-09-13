@@ -17,7 +17,7 @@ class PlayerRanks:
         self.standard = standard.__dict__
 
     @staticmethod
-    def create_from_id(id_: str):
+    def create_from_id(id_: str) -> 'PlayerRanks':
         rank_datas = get_rank(id_)
         print(rank_datas)
         player_rank_params = {

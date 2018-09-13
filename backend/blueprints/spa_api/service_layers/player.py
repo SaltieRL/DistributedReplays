@@ -19,7 +19,7 @@ class Player:
         self.avatarLink = avatar_link
 
     @staticmethod
-    def create_from_id(id_: str):
+    def create_from_id(id_: str) -> 'Player':
         session = current_app.config['db']()
         names = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')).filter(
             PlayerGame.player == id_).group_by(

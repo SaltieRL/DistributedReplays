@@ -28,11 +28,15 @@ class Replay:
         self.players = [player.__dict__ for player in players]
 
     @staticmethod
-    def create_from_id(id_: str):
+    def create_from_id(id_: str) -> 'Replay':
         session = current_app.config['db']()
         game = session.query(Game).filter(Game.hash == id_).first()
         if game is None:
             raise ReplayNotFound()
+        return Replay.create_from_game(game)
+
+    @staticmethod
+    def create_from_game(game: Game) -> 'Replay':
         return Replay(
             name=game.name,
             date=game.match_date.isoformat(),

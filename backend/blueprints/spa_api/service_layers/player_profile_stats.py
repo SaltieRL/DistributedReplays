@@ -18,7 +18,7 @@ class PlayerProfileStats:
         }
 
     @staticmethod
-    def create_from_id(id_: str):
+    def create_from_id(id_: str) -> 'PlayerProfileStats':
         session = current_app.config['db']()
 
         fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')) \
