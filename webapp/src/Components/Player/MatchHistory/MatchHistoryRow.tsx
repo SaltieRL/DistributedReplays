@@ -1,7 +1,8 @@
-import {ExpansionPanel, ExpansionPanelSummary, Grid, Typography} from "@material-ui/core"
+import {ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Grid, Typography} from "@material-ui/core"
 import {ExpandMore} from "@material-ui/icons"
 import * as React from "react"
 import {getColouredGameScore, Replay} from "../../../Models/Replay/Replay"
+import {ReplayChart} from "../../Replay/ReplayChart"
 
 interface Props {
     replay: Replay
@@ -13,7 +14,7 @@ export class MatchHistoryRow extends React.PureComponent<Props> {
         const {replay} = this.props
         return (
             <ExpansionPanel>
-                <ExpansionPanelSummary expandIcon={ExpandMore}>
+                <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
                     <Grid container>
                         <Grid item xs={3}>
                             <Typography variant="subheading">
@@ -38,6 +39,9 @@ export class MatchHistoryRow extends React.PureComponent<Props> {
                         </Grid>
                     </Grid>
                 </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <ReplayChart replay={replay}/>
+                </ExpansionPanelDetails>
             </ExpansionPanel>
         )
     }

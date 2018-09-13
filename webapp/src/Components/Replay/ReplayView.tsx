@@ -16,7 +16,7 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import {Replay} from "../../Models/Replay/Replay"
+import {getColouredGameScore, Replay} from "../../Models/Replay/Replay"
 import {ReplayChart} from "./ReplayChart"
 
 interface OwnProps {
@@ -49,7 +49,15 @@ export class ReplayViewComponent extends React.PureComponent<Props> {
                     </Card>
                 </Grid>
                 <Grid item xs={12} lg={6}>
-                    <ReplayChart replay={replay}/>
+                    <Card>
+                        <CardHeader title={replay.name ? replay.name : "Unnamed replay"}
+                                    subheader={getColouredGameScore(replay)}
+                                    titleTypographyProps={{align: "center"}}
+                                    subheaderTypographyProps={{align: "center", variant: "subheading"}}/>
+                        <CardContent>
+                            <ReplayChart replay={replay}/>
+                        </CardContent>
+                    </Card>
                 </Grid>
                 <Grid item xs={12} lg={3}>
                     <Card square style={{minHeight: "100%"}}>

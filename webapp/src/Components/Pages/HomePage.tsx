@@ -43,7 +43,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             <>
                                 <br/>
                                 <Typography>
-                                    <i>1337 replays and counting...</i>
+                                    <i>{this.state.replayCount} replays and counting...</i>
                                 </Typography>
                             </>
                             }
