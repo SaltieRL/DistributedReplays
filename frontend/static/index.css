@@ -85,7 +85,9 @@ input {
     font-size: 1.5em;
     margin-left: 10px;
 }
-
+#user > a {
+    margin-top: 3px
+}
 #search {
     margin: 0;
 }

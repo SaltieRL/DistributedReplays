@@ -31,7 +31,12 @@
             var instances = M.Dropdown.init(elems, {
                 hover: true
             });
-        });</script>
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.tooltipped');
+            var instances = M.Tooltip.init(elems, {});
+        });
+    </script>
 </head>
 <body>
 <div class="valign-wrapper row">
@@ -45,15 +50,17 @@
                 </p>
             </div>
 
-            <div class="row">
-                <div id="login" class="col m2">
+            <div class="mdc-card" id="search">
+                <div class="">
                     {% if g.user %}
-                        <div>
+                        <div class="col s1" id="user">
                             <a class="dropdown-trigger waves-effect black-text z-depth-0" data-target='dropdown1'
                                href="{{ url_for('players.view_player', id_=g.user.platformid) }}">
-                                <img style="border-radius: 100px" src="{{ g.user.avatar }}" width="48px">
+                                <img style="border-radius: 1px" src="{{ g.user.avatar }}" width="40px">
                             </a>
                             <ul id='dropdown1' class='dropdown-content'>
+                                <li><a href="{{ url_for('players.view_player', id_=g.user.platformid) }}">Profile</a>
+                                </li>
                                 <li><a href="#!">Settings</a></li>
                                 <li>
                                     <a href="{{ url_for('auth.logout') }}">
@@ -65,28 +72,27 @@
 
                         </div>
                     {% endif %}
-
-                </div>
-                <div class="mdc-card col {% if g.user %}m10{% else %}m12{% endif %}" id="search">
-                    <form class="search-form" action="{{ url_for('steam.resolve_steam') }}"
-                          enctype='multipart/form-data'
-                          method="post">
-                        <input id="search-input" name="name" type="text" class="search-input"
-                               placeholder="Enter a steamID or username" required>
-                        <button class="search-button mdc-icon-button" tabindex="0" type="submit"
-                                aria-label="Search">
-                            <i class="search-icon material-icons">search</i>
-                        </button>
-                    </form>
+                    <div class="col {% if g.user %}s11{% else %}s12{% endif %}">
+                        <form class="search-form" action="{{ url_for('steam.resolve_steam') }}"
+                              enctype='multipart/form-data'
+                              method="post">
+                            <input id="search-input" name="name" type="text" class="search-input"
+                                   placeholder="Enter a steamID or username" required>
+                            <button class="search-button mdc-icon-button" tabindex="0" type="submit"
+                                    aria-label="Search">
+                                <i class="search-icon material-icons">search</i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="links">
             {% if not g.user %}
-            <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.steam_auth') }}">
-                <i class="fab fa-steam button-icon left "></i>
-                Log in with Steam
-            </a>
+                <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('auth.steam_auth') }}">
+                    <i class="fab fa-steam button-icon left "></i>
+                    Log in with Steam
+                </a>
             {% endif %}
             <a class="waves-effect white btn black-text z-depth-0" href="{{ url_for('replays.upload') }}">
                 <i class="material-icons left button-icon">cloud_upload</i>
@@ -94,18 +100,18 @@
             </a>
         </div>
         <div class="links container section" id="icons">
-            <a title="Global Stats" class="waves-effect" href="{{ url_for('replays.replay_stats') }}">
+            <a title="Global Stats" data-position="left" data-tooltip="Global Stats" class="waves-effect tooltipped pulse" href="{{ url_for('replays.replay_stats') }}">
                 <i class="far fa-chart-bar material-icons button-icon"></i>
             </a>
-            <a title="About" class="waves-effect" href="#">
+            <a title="About" data-position="bottom" data-tooltip="About" class="waves-effect tooltipped" href="#">
                 <i class="fas fa-info-circle material-icons button-icon"></i>
                 {#                About#}
             </a>
-            <a title="GitHub" class="waves-effect" href="https://github.com/SaltieRL/DistributedReplays">
+            <a title="GitHub" data-position="bottom" data-tooltip="GitHub" class="waves-effect tooltipped" href="https://github.com/SaltieRL/DistributedReplays">
                 <i class="fab fa-github material-icons button-icon"></i>
                 {#                GitHub#}
             </a>
-            <a title="Discord" class="waves-effect" href="https://discord.gg/c8cArY9">
+            <a title="Discord" data-position="right" data-tooltip="Discord" class="waves-effect tooltipped" href="https://discord.gg/c8cArY9">
                 <i class="fab fa-discord material-icons button-icon"></i>
                 {#                Discord#}
             </a>
