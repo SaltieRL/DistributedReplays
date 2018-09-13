@@ -13,7 +13,7 @@
         </div>
         {% for p in users %}
             {% set player = p['steam_profile']['response']['players'][0] %}
-            {% include "partials/player/profile.html" %}
+            {% include "partials/player/sidebar/profile.html" %}
         {% endfor %}
     </div>
     <div class="main">
@@ -21,7 +21,7 @@
             <span class="header">/ Tendencies</span>
         </div>
         <div class="rankpanel" style="max-width: 400px;">
-            {% include "partials/player/spider_charts.html" %}
+            {% include "partials/player/content/spider_charts.html" %}
         </div>
         <div class="header_holder">
             <span class="header">/ Match History<span>&nbsp;&nbsp;</span></span>
@@ -37,7 +37,7 @@
                         })
                     });
                 </script>
-                {% include "partials/player/match_history.html" %}
+                {% include "partials/player/content/match_history.html" %}
             {% else %}
                 <div class="errmsg">
                     No matches are shared between these players.
