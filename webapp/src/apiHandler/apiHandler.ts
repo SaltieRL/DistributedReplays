@@ -11,6 +11,7 @@ export const doGet = (destination: string): Promise<any> => {
         if (!response.ok) {
             console.log(response.status)
             console.log(response.statusText)
+            return
         }
         return response.json()
     })

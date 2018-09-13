@@ -39,18 +39,19 @@ export class PlayerTendencies extends React.PureComponent<Props, State> {
             <Card>
                 <CardHeader title="Playstyle"/>
                 <CardContent>
-                    <Grid container justify="space-around">
-                    {this.state.data &&
-                    this.state.data.map((spokeData) => {
-                        return (
-                            <Grid item xs={12} md={6} xl={3} key={spokeData.title}>
-                                <Typography variant="subheading" align="center">
-                                    {spokeData.title}
-                                </Typography>
-                                <PlayerTendenciesChart data={spokeData}/>
-                            </Grid>
-                        )
-                    })}
+                    <Grid container justify="space-around" spacing={32}>
+                        {/*TODO: Handle when fails to load due to error*/}
+                        {this.state.data &&
+                        this.state.data.map((spokeData) => {
+                            return (
+                                <Grid item xs={12} md={5} xl={3} key={spokeData.title} style={{height: 400}}>
+                                    <Typography variant="subheading" align="center">
+                                        {spokeData.title}
+                                    </Typography>
+                                    <PlayerTendenciesChart data={spokeData}/>
+                                </Grid>
+                            )
+                        })}
                     </Grid>
                 </CardContent>
             </Card>

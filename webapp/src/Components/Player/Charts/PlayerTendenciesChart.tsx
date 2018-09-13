@@ -49,7 +49,8 @@ export class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
                     suggestedMax: 1,
                     maxTicksLimit: 5
                 } as LinearTickOptions
-            }
+            },
+            maintainAspectRatio: false
         }
     }
 }
