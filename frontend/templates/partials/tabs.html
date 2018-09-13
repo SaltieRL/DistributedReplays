@@ -14,7 +14,7 @@
 
     /* Make tabs pretty on selected */
     {% for tab in tab_list %}
-    #tab{{loop.index0}}:checked ~ nav .tab{{loop.index0}} label{% if not loop.last %},{%endif %}{% endfor %}
+    #tab{{loop.index0}}:checked ~ div .tab{{loop.index0}} label{% if not loop.last %},{%endif %}{% endfor %}
     {
         background: var(--tabActiveColor);
         &:after {
@@ -33,7 +33,7 @@
     {% for tab in tab_list %}
         <input {% if loop.first %} checked="checked" {%endif %} id="tab{{loop.index0}}" type="radio" name="tab-selector">
     {% endfor %}
-    <nav>
+    <div>
         <ul>
             {% for tab in tab_list %}
             <li class="tab{{loop.index0}}">
@@ -41,7 +41,7 @@
             </li>
             {% endfor %}
         </ul>
-    </nav>
+    </div>
     <section>
         {% for tab in tab_list %}
         <div class="tab{{loop.index0}}">
