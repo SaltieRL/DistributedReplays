@@ -48,6 +48,12 @@ def api_get_player_play_style(id_):
                     for play_style_chart_data in play_style_chart_datas])
 
 
+@bp.route('player/<id_>/match_history')
+def api_get_player_match_history(id_):
+    match_history = MatchHistory.create_from_id(id_)
+    return jsonify(match_history.replays)
+
+
 ### REPLAY
 
 @bp.route('replay/<id_>')
