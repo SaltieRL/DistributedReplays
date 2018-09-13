@@ -1,81 +1,92 @@
 import * as moment from "moment"
+import {doGet} from "../apiHandler/apiHandler"
 import {PlayStyleChartData} from "../Components/Player/PlayerTendencies"
 import {PlayerRanks} from "../Components/Player/SideBar/PlayerRanksCard"
 import {PlayerStats} from "../Components/Player/SideBar/PlayerStatsCard"
 import {GameMode, Replay} from "../Models/Replay/Replay"
+import {useMockData} from "./Config"
 
 export const getPlayer = (id: string): Promise<Player> => {
-    // TODO: Make request to get player
-    // noinspection TsLint
-    return Promise.resolve({
-        name: "LongNameTesting",
-        pastNames: ["PastName1", "PastName 2: Electric Boogaloo"],
-        id,
-        profileLink: `https://steamcommunity.com/id/${id}/`,
-        platform: "Steam",
-        avatarLink: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/a5/a541aa2146a49c396aa9e159fc176c2799ab231e_full.jpg"
-    })
+    if (useMockData) {
+        // noinspection TsLint
+        return Promise.resolve({
+            name: "LongNameTesting",
+            pastNames: ["PastName1", "PastName 2: Electric Boogaloo"],
+            id,
+            profileLink: `https://steamcommunity.com/id/${id}/`,
+            platform: "Steam",
+            avatarLink: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/a5/a541aa2146a49c396aa9e159fc176c2799ab231e_full.jpg"
+        })
+    }
+    return doGet(`/player/${id}/profile`)
 }
 
-export const getStats = (id: string): PlayerStats => {
-    // TODO: Replace with actual query.
-    return {
-        car: {
-            carName: "octane",
-            carPercentage: 0.8
-        }
+export const getStats = (id: string): Promise<PlayerStats> => {
+    if (useMockData) {
+        return Promise.resolve({
+            car: {
+                carName: "octane",
+                carPercentage: 0.8
+            }
+        })
     }
+    return doGet(`/player/${id}/profile_stats`)
 }
 
 
 export const getPlayerTendencies = (id: string): Promise<PlayStyleChartData[]> => {
-    // TODO: Do actual fetch
-    return Promise.resolve([{
-            title: "Aggressiveness",
-            spokeData: [
-                {
-                    name: "Shots",
-                    value: 0.277
-                },
-                {
-                    name: "Possession",
-                    value: -0.117
-                },
-                {
-                    name: "Hits",
-                    value: -0.544
-                },
-                {
-                    name: "Shots/Hit",
-                    value: -0.544
-                },
-                {
-                    name: "Boost usage",
-                    value: 0.357
-                },
-                {
-                    name: "Speed",
-                    value: 0.4827
-                }
-            ]
-        }]
-    )
+    if (useMockData) {// TODO: Do actual fetch
+        return Promise.resolve([{
+                title: "Aggressiveness",
+                spokeData: [
+                    {
+                        name: "Shots",
+                        value: 0.277
+                    },
+                    {
+                        name: "Possession",
+                        value: -0.117
+                    },
+                    {
+                        name: "Hits",
+                        value: -0.544
+                    },
+                    {
+                        name: "Shots/Hit",
+                        value: -0.544
+                    },
+                    {
+                        name: "Boost usage",
+                        value: 0.357
+                    },
+                    {
+                        name: "Speed",
+                        value: 0.4827
+                    }
+                ]
+            }]
+        )
+    }
+    return doGet(`/player/${id}/play_style`)
 }
 
 
-export const getRanks = (id: string): PlayerRanks => {
-    // TODO: Replace with actual query.
-    const rating = {
-        name: "Eggplant III (div 3)",
-        rating: 2,
-        rank: 5
+export const getRanks = (id: string): Promise<PlayerRanks> => {
+    if (useMockData) {
+        // TODO: Replace with actual query.
+        const rating = {
+            name: "Eggplant III (div 3)",
+            rating: 2,
+            rank: 5
+        }
+        return Promise.resolve({
+            duel: rating,
+            doubles: rating,
+            solo: rating,
+            standard: rating
+        })
     }
-    return {
-        duel: rating,
-        doubles: rating,
-        solo: rating,
-        standard: rating
-    }
+    return doGet(`/player/${id}/ranks`)
 }
 
 
