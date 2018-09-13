@@ -4,7 +4,7 @@
     <div class="player-box blue">
         <!-- Player box -->
         {% set team = team_members|rejectattr('is_orange') %}
-        {% include "partials/replay/metadata/players.html" %}
+        {% include "partials/replay/metadata/player_metadata.html" %}
     </div>
     <div class="score-box">
         <!-- SCORE BOX -->
@@ -30,6 +30,6 @@
     <div class="player-box orange">
         <!-- Player box -->
         {% set team = team_members|rejectattr('is_orange', 'equalto', 0) %}
-        {% include "partials/replay/metadata/players.html" %}
+        {% include "partials/replay/metadata/player_metadata.html" %}
     </div>
 </div>
