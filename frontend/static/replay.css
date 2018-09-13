@@ -7,10 +7,37 @@
     border: 1px solid var(--borderColor);
 }
 
-.player-box {
-    flex-grow: 2;
-    margin-right: 10px;
+.team-boxes {
+    width: 96%;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
 }
+
+.player-box {
+    font-size: 0;
+    width: 75px;
+    height: 50px;
+    background-image: url(/static/img/background/Octane.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.player-box:hover {
+    /*flex-grow: 2;*/
+    margin-right: 10px;
+    padding: 15px;
+    z-index: 1000;
+    font-size: 1em;
+    width: 200px;
+    height: 350px;
+    overflow-y: scroll;
+    background-image: none;
+}
+
+/*.team-boxes:last-child {*/
+    /*justify-content: flex-end;*/
+/*}*/
 
 .score-box {
     flex-grow: 8;
