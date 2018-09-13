@@ -97,7 +97,7 @@ export const getMatchHistory = (id: string): Promise<Replay[]> => {
             name: "Replay1",
             date: moment(),
             gameMode: "1's" as GameMode,
-            score: {team0Score: 1, team1Score: 2},
+            gameScore: {team0Score: 1, team1Score: 2},
             players: [
                 {
                     name: "testplayerblue",

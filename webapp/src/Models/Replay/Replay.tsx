@@ -12,16 +12,16 @@ export interface Replay {
     name: string
     date: moment.Moment
     gameMode: GameMode
-    score: GameScore
+    gameScore: GameScore
     players: ReplayPlayer[]
 }
 
 export const getColouredGameScore = (replay: Replay) => {
     return (
         <>
-            <span style={{color: "blue"}}>{replay.score.team0Score}</span>
+            <span style={{color: "blue"}}>{replay.gameScore.team0Score}</span>
             {" - "}
-            <span style={{color: "orange"}}>{replay.score.team1Score}</span>
+            <span style={{color: "orange"}}>{replay.gameScore.team1Score}</span>
         </>
     )
 }
