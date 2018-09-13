@@ -1,6 +1,11 @@
-<div style="position:relative; overflow-x: hidden; width:100%;">
-    <div class="team blue">
-        <h4>{{ team_names[0] }}</h4>
+<div class="score-panel">
+    <div class="team-title">
+        <div class="spacer graph-name"><span>space</span></div>
+        <div class="teams container">
+            <div class="team-name">{{ team_names[0] }}</div>
+            <span>VS</span>
+            <div class="team-name">{{ team_names[1] }}</div>
+        </div>
     </div>
     <div class="graph-labels-container">
         {% for player in team_members %}
@@ -8,7 +13,7 @@
             <div class="label-color"> </div>
             {% set pid = player.player_object.platformid %}
             {% if pid|string|length == 17 %}
-            <a href="{{ url_for('players.view_player', id_=pid) }}" class="name">{{ player.name }}</a>
+            <a class="name" href="{{ url_for('players.view_player', id_=pid) }}">{{ player.name }}</a>
             {% else %}
             <div class="name">{{ player.name }}</div>
             {% endif %}
@@ -24,13 +29,10 @@
     </div>
     <div class="graph-list-container" style="position:relative;">
         {% for graph in graphs %}
-        <div style="position:relative; height={{ 90/graph_length }}%; width:100%;" class="graph-name-container">
+        <div style="height={{ 90/graph_length }}%;" class="graph-name-container">
             <div class="graph-name">{{ graph }}</div>
             <div class="graph-holder {{ graph }}"></div>
         </div>
         {% endfor %}
-    </div>
-    <div class="team orange">
-        <h4>{{ team_names[1] }}</h4>
     </div>
 </div>

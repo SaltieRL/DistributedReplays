@@ -11,7 +11,15 @@
     border-style: solid;
 }
 
+.graph-label .name {
+    margin-left: .2rem;
+    font-weight: 400;
+    font-size: 1.2em;
+}
+
 .graph-name-container {
+    position: relative;
+    width: 100%;
     display: flex;
     flex-direction: row;
 }
@@ -24,5 +32,6 @@
 .graph-name {
     flex-basis: 10%;
     max-width: 10%;
+    font-weight: 400;
+    font-size: 1.2em;
 }
-
