@@ -13,11 +13,13 @@ import {
     ListItemSecondaryAction,
     ListItemText,
     WithStyles,
-    withStyles
+    withStyles, withWidth
 } from "@material-ui/core"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 import {getColouredGameScore, Replay} from "../../Models/Replay/Replay"
 import {ReplayChart} from "./ReplayChart"
+import {ReplayContent} from "./ReplayContent"
 
 interface OwnProps {
     replay: Replay
@@ -25,56 +27,85 @@ interface OwnProps {
 
 type Props = OwnProps
     & WithStyles<typeof styles>
+    & WithWidth
 
 export class ReplayViewComponent extends React.PureComponent<Props> {
     public render() {
         const replay = this.props.replay
+        const blueCard =
+            <Card square style={{minHeight: "100%"}}>
+                <CardHeader
+                    title="Blue"
+                    titleTypographyProps={{align: "center"}}
+                    className={this.props.classes.blueCard}/>
+                <Divider/>
+                <CardContent>
+                    <List>
+                        {replay.players
+                            .filter((player) => !player.isOrange)
+                            .map(this.createListItem)
+                        }
+                    </List>
+                </CardContent>
+            </Card>
+        const orangeCard =
+            <Card square style={{minHeight: "100%"}}>
+                <CardHeader title="Orange" titleTypographyProps={{align: "center"}}
+                            style={{backgroundColor: "bisque"}}/>
+                <Divider/>
+                <CardContent>
+                    <List>
+                        {replay.players
+                            .filter((player) => player.isOrange)
+                            .map(this.createListItem)
+                        }
+                    </List>
+                </CardContent>
+            </Card>
+
+        const replayChartCard =
+            <Card>
+                <CardHeader title={replay.name ? replay.name : "Unnamed replay"}
+                            subheader={getColouredGameScore(replay)}
+                            titleTypographyProps={{align: "center"}}
+                            subheaderTypographyProps={{align: "center", variant: "subheading"}}/>
+                <CardContent>
+                    <ReplayChart replay={replay}/>
+                </CardContent>
+            </Card>
+
+        const blueGridItem =
+            <Grid item xs={6} lg={3}>
+                {blueCard}
+            </Grid>
+        const replayChartGridItem =
+            <Grid item xs={12} lg={6}>
+                {replayChartCard}
+            </Grid>
+        const orangeGridItem =
+            <Grid item xs={6} lg={3}>
+                {orangeCard}
+            </Grid>
+
         return (
             <>
                 {replay &&
                 <Grid container spacing={24}>
-                    <Grid item xs={12} lg={3}>
-                        <Card square style={{minHeight: "100%"}}>
-                            <CardHeader
-                                title="Blue"
-                                titleTypographyProps={{align: "center"}}
-                                className={this.props.classes.blueCard}/>
-                            <Divider/>
-                            <CardContent>
-                                <List>
-                                    {replay.players
-                                        .filter((player) => !player.isOrange)
-                                        .map(this.createListItem)
-                                    }
-                                </List>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} lg={6}>
-                        <Card>
-                            <CardHeader title={replay.name ? replay.name : "Unnamed replay"}
-                                        subheader={getColouredGameScore(replay)}
-                                        titleTypographyProps={{align: "center"}}
-                                        subheaderTypographyProps={{align: "center", variant: "subheading"}}/>
-                            <CardContent>
-                                <ReplayChart replay={replay}/>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} lg={3}>
-                        <Card square style={{minHeight: "100%"}}>
-                            <CardHeader title="Orange" titleTypographyProps={{align: "center"}}
-                                        style={{backgroundColor: "bisque"}}/>
-                            <Divider/>
-                            <CardContent>
-                                <List>
-                                    {replay.players
-                                        .filter((player) => player.isOrange)
-                                        .map(this.createListItem)
-                                    }
-                                </List>
-                            </CardContent>
-                        </Card>
+                    {isWidthUp("lg", this.props.width) ?
+                        <>
+                            {blueGridItem}
+                            {replayChartGridItem}
+                            {orangeGridItem}
+                        </>
+                        :
+                        <>
+                            {blueGridItem}
+                            {orangeGridItem}
+                            {replayChartGridItem}
+                        </>
+                    }
+                    <Grid item xs={12}>
+                        <ReplayContent replay={replay}/>
                     </Grid>
                 </Grid>
                 }
@@ -107,4 +138,4 @@ const styles = createStyles({
     }
 })
 
-export const ReplayView = withStyles(styles)(ReplayViewComponent)
+export const ReplayView = withWidth()(withStyles(styles)(ReplayViewComponent))
