@@ -7,11 +7,12 @@
 .tabs-holder ul li label {
     float: left;
     padding: 15px 25px;
-    border: 1px solid var(--borderColor);
     border-bottom: 0;
     background: var(--tabUnactiveColor);
     color: #444;
     position: relative;
+    cursor: pointer;
+    margin-bottom: 2px;
 }
 
 .tabs-holder ul li label:hover {

@@ -22,7 +22,7 @@
     </ul>
     <div class="material-tabs-content row">
         {% for tab in tab_list %}
-        <div id="tab{{tab_name}}{{loop.index0}}" class="col s12">
+        <div id="tab{{tab_name}}{{loop.index0}}" class="col s12 grey lighten-4">
             <!--{{ temp_tab_name.append(tab_name) }}-->
             {% include tab.location %}
             {% set tab_name = pop(temp_tab_name) %}

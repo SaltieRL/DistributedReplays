@@ -1,4 +1,8 @@
-<div class="red">
+<div style="height: 90vh;">
+    <div>
+        <p><a href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">Download</a></p>
+        <p><a href="{{ url_for('apiv1.api_v1_get_replay_info', id_=id, key=1234) }}">API</a></p>
+    </div>
     {% if replay.name != 'None' %}
     <p>Name: {{ replay.name }}</p>
     {% endif %}

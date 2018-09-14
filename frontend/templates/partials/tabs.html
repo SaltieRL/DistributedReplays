@@ -31,16 +31,19 @@
     #tab{{tab_name}}{{loop.index0}}:checked ~ div .tab{{tab_name}}{{loop.index0}} label{% if not loop.last %},{%endif %}{% endfor %}
     {
         background: var(--tabActiveColor);
-        &:after {
-             content: '';
-             display: block;
-             position: absolute;
-             height: 2px;
-             width: 100%;
-             background: var(--tabActiveColor);
-             left: 0;
-             bottom: -1px;
-        }
+        cursor: default;
+    }
+    {% for tab in tab_list %}
+    #tab{{tab_name}}{{loop.index0}}:checked ~ div .tab{{tab_name}}{{loop.index0}} label:after {% if not loop.last %},{%endif %}{% endfor %}
+    {
+        content: '';
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: #F5B1B6;
+        left: 0;
+        bottom: -1px;
     }
 </style>
 <div class="tabs-holder">
@@ -51,7 +54,7 @@
         <ul>
             {% for tab in tab_list %}
             <li class="tab{{tab_name}}{{loop.index0}}">
-                <label for="tab{{tab_name}}{{loop.index0}}">{{tab.header}}</label>
+                <label for="tab{{tab_name}}{{loop.index0}}" class="z-depth-1">{{tab.header}}</label>
             </li>
             {% endfor %}
         </ul>
