@@ -112,6 +112,11 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
+    color: white;
+}
+
+footer a {
+    color: rgba(225, 225, 225, 1);
 }
 
 footer.page-footer {
@@ -124,3 +129,4 @@ footer.page-footer {
     padding: 2% 5%;
     border: 1px solid var(--borderColor);
 }
+
