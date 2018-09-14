@@ -1,5 +1,5 @@
 import {
-    Button,
+    Button, ButtonBase,
     Card,
     CardActions,
     CardContent,
@@ -34,35 +34,37 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
             <Card>
                 <CardHeader title={"Upload Replays"}/>
                 <CardContent>
-                    <Dropzone
-                        accept=".replay" onDrop={this.handleDrop}
-                        className={classes.default}
-                        activeClassName={classes.active}
-                        disablePreview
-                    >
-                        <div className={classes.dropzoneContent}>
-                            {hasFilesSelected ?
-                                <>
-                                    <Typography variant="subheading">
-                                        Selected files:
-                                    </Typography>
-                                    <Typography>
-                                        {this.state.files
-                                            .map((file) => file.name)
-                                            .join(",\n")}
-                                    </Typography>
-                                </>
-                                :
-                                <>
-                                    <Typography align="center">
-                                        Drop your .replay files here, or click to select files to upload.
-                                    </Typography>
-                                    <br/>
-                                    <ArrowDownward/>
-                                </>
-                            }
-                        </div>
-                    </Dropzone>
+                    <ButtonBase>
+                        <Dropzone
+                            accept=".replay" onDrop={this.handleDrop}
+                            className={classes.default}
+                            activeClassName={classes.active}
+                            disablePreview
+                        >
+                            <div className={classes.dropzoneContent}>
+                                {hasFilesSelected ?
+                                    <>
+                                        <Typography variant="subheading">
+                                            Selected files:
+                                        </Typography>
+                                        <Typography>
+                                            {this.state.files
+                                                .map((file) => file.name)
+                                                .join(",\n")}
+                                        </Typography>
+                                    </>
+                                    :
+                                    <>
+                                        <Typography align="center" variant="subheading">
+                                            Drop your .replay files here, or click to select files to upload.
+                                        </Typography>
+                                        <br/>
+                                        <ArrowDownward/>
+                                    </>
+                                }
+                            </div>
+                        </Dropzone>
+                    </ButtonBase>
                     {this.state.rejected.length !== 0 &&
                     <Typography color="error">
                         {this.state.rejected.length} file(s) were not selected as they do not end in ".replay".
@@ -96,7 +98,7 @@ const styles = (theme: Theme) => createStyles({
     active: {
         borderStyle: "solid",
         borderColor: "#6c6",
-        backgroundColor: "#eee"
+        backgroundColor: "#ccc"
     },
     default: {
         width: "550px",
@@ -106,7 +108,12 @@ const styles = (theme: Theme) => createStyles({
         borderWidth: 2,
         borderColor: "#666",
         borderStyle: "dashed",
-        borderRadius: 5
+        borderRadius: 5,
+        cursor: "pointer",
+        backgroundColor: "#eee",
+        "&:hover": {
+            backgroundColor: "#ddd"
+        }
     },
     dropzoneContent: {
         position: "absolute",

@@ -60,7 +60,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                 </LinkButton>
                             </Grid>
                             <Grid item xs={6} style={{textAlign: "center"}}>
-                                <LinkButton to="/replays/upload" iconType="mui" icon={CloudUpload}>
+                                <LinkButton to="/upload" iconType="mui" icon={CloudUpload}>
                                     Upload replays
                                 </LinkButton>
                             </Grid>
