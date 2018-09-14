@@ -6,6 +6,10 @@
     {{chart|debug}}
     {% set data = pgs|map(attribute=chart_name)|list %}
     {% set type = chart.type %}
+    {% set num_players = pgs|map(attribute='name')|list|length %}
+    {% if num_players == 2 and type == 'radar' %}
+        {% set type = 'bar' %}
+    {% endif %}
     {% if data != None and data is defined and data|length > 0 %}
     {% if data[0] != None and (data|max != 0 or data|min != 0)  %}
     {% if data|max > 0 %}
@@ -26,59 +30,69 @@
                             {
                                 label: 'Count',
                                 data: {{ data|tojson }},
-                    {% if chart.type == 'radar' %}
-                    pointBackgroundColor: [{% for x in pgs %}colors
-                        .getHorizontalChartColor({{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }})
-                .backgroundColor,{% endfor %}],
-                    pointRadius: 5,
-                        pointHitRadius: 5,
-                        {#pointHoverRadius: 6,#}
-                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                    {% else %}
-                    backgroundColor: [{% for x in pgs %}colors
-                        .getHorizontalChartColor({{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }}).backgroundColor,{% endfor %}],
-                    {% endif %}
-                }
-                ]
-                }
+                                /*{% if chart.type == 'radar' %}*/
+                                    pointBackgroundColor: [
+                                        /*{% for x in pgs %}*/
+                                    colors.getHorizontalChartColor(
+                                        {{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }}).backgroundColor,
+                                /*{% endfor %}*/],
+                                pointRadius: 5,
+                                    pointHitRadius: 5,
+                                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                /*{% else %}*/
+                                backgroundColor: [
+                                    /*{% for x in pgs %}*/
+                                    colors.getHorizontalChartColor(
+                                        {{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }}).backgroundColor,
+                                    /*{% endfor %}*/],
+                                /*{% endif %}*/
+                            }
+                        ]
+                    }
 
                     var ctx = document.getElementById('canvas{{ chart.data }}').getContext('2d');
                     var myBar = new Chart(ctx, {
                         type: '{{ chart.type }}',
                         data: data,
                         options: {
+                            /*{% if type=='radar' and num_players == 6 %}*/
+                            startAngle: 210,
+                            /*{% endif %}*/
+                            /*{% if type=='pie' and num_players == 6 %}*/
+                            rotation: (Math.PI/2),
+                            /*{% endif %}*/
+                            responsive: true,
+                                legend: {
+                                position: 'top',
 
-                    {#startAngle: 120,#}
-                    responsive: true,
-                        legend: {
-                        position: 'top',
-
-                        {% if type != 'pie' %}display: false{% endif %}
-                    },
-                    title: {
-                        display: true,
-                            text: '{{ chart.data|replace('_', ' ')|capitalize }}'
-                    },
-                    {% if False and start_at_zero and type == 'bar' %}
-                    scales: {
-                        yAxes:
-                            [{
+                                /*{% if type != 'pie' %}*/
+                                display: false
+                                /*{% endif %}*/
+                            },
+                            title: {
+                                display: true,
+                                    text: '{{ chart.data|replace('_', ' ')|capitalize }}'
+                            },
+                           /*{% if False and start_at_zero and type == 'bar' %}*/
+                            scales: {
+                                yAxes:
+                                    [{
+                                        ticks: {
+                                            beginAtZero: true
+                                        }
+                                    }]
+                            },
+                            /*{% endif %}*/
+                            /*{% if type == 'radar' %}*/
+                            scale: {
                                 ticks: {
                                     beginAtZero: true
                                 }
-                            }]
-                    },
-                    {% endif %}
-                    {% if type == 'radar' %}
-                    scale: {
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    },
-                    {% endif %}
+                            },
+                            /*{% endif %}*/
 
-                }
-                })
+                        }
+                    })
                 });
             </script>
         </div>

@@ -19,6 +19,7 @@
     {% include "partials/imports/graph.html" %}
     {% include "partials/imports/require.html" %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='replay.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/player/score_panel.css') }}">
 {% endblock imports %}
 {% block body %}
     {% if replay == None %}
