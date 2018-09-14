@@ -13,7 +13,7 @@ from backend.utils.psyonix_api_handler import get_rank
 bp = Blueprint('players', __name__, url_prefix='/players')
 regex = re.compile('[0-9]{17}')
 
-player_wrapper = PlayerWrapper(limit=10)
+player_wrapper = PlayerWrapper(limit=1)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 

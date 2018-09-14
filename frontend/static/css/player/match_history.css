@@ -49,3 +49,24 @@
     text-align: center;
     margin-right: 1rem;
 }
+
+.scrollable-numbers {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    max-width: 80%;
+    overflow-x: scroll;
+}
+
+.scrollable-numbers li {
+    flex-shrink:0;
+}
+
+.scrollable-numbers::-webkit-scrollbar {
+    display: none;
+}
+
+.number-holder {
+    display: inline-flex;
+    flex-direction: row;
+}

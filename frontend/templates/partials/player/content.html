@@ -15,19 +15,25 @@
     </div>
 </div>
     {% set max_pages=((total_games/game_per_page)|round(0, 'ceil'))|int %}
-    <div class="header_holder">
+    <div class="header_holder" style="position:relative;">
         <span class="header">/ Match History<span>&nbsp;&nbsp;</span>
         </span>
         {% if total_games > game_per_page %}
-        <ul id="pagination" class="pagination" style="display:inline;">
-            <li id="prevpage" class="waves-effect"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
-            {% for i in range(0, max_pages) %}
-            <li id="page-{{loop.index0}}"
-                class="{% if loop.first %}active{% else %}waves-effect{% endif %} number"
-                data-page="{{loop.index0}}"><a href="#!">{{loop.index}}</a></li>
-            {% endfor %}
-            <li id="nextpage" class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
-        </ul>
+        <div class="number-holder">
+            <ul class="pagination" style="display: inline;">
+                <li id="prevpage" class="waves-effect"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+            </ul>
+            <ul id="pagination" class="pagination scrollable-numbers">
+                {% for i in range(0, max_pages) %}
+                <li id="page-{{loop.index0}}"
+                    class="{% if loop.first %}active{% else %}waves-effect{% endif %} number"
+                    data-page="{{loop.index0}}"><a href="#!">{{loop.index}}</a></li>
+                {% endfor %}
+            </ul>
+            <ul class="pagination" style="display:inline;">
+                <li id="nextpage" class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+            </ul>
+        </div>
         {% endif %}
     </div>
     <div id="dynamic-pages" class="match-history" style="overflow-y: scroll">
@@ -37,6 +43,16 @@
                 console.log('adding history loader');
                 requirejs(['match/matchHistoryLoader'], function (loader) {
                     console.log('creating history loader');
+                    loader.onSetActive(function (scrollContainer, activeElement) {
+                        setTimeout(function () {
+                            let scrollAmount = activeElement.offsetLeft - scrollContainer.offsetLeft;
+                            let currentScrollPosition = scrollContainer.scrollLeft;
+                            scrollContainer.scrollBy({
+                                left: scrollAmount - currentScrollPosition,
+                                behavior: 'smooth'
+                            });
+                        }, 50);
+                    });
                     loader.initializeMatchHistory('{{ id }}', {{ max_pages }});
                 })
             });

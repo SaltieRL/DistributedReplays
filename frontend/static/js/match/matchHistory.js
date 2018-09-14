@@ -3,6 +3,7 @@ define(['overallReplayGraph'], function (replayGraphs) {
     const graphClass = '.graph-list-container';
     let lastClickedElement = null;
 
+
     function addAction(actionElementId, hostId, labelData, replayData) {
         let touched = false;
         document.getElementById(actionElementId).addEventListener("click", (ev) => {

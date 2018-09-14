@@ -8,58 +8,54 @@ define(['server'], function (server) {
     let dataCallback = null;
     let maxPages = null;
     let historyList = null;
+    let activeListener = null;
 
     function loadData(callback) {
         server.asyncJsonGet(playerId + '/history/' + page.toString(), callback);
     }
 
-    function setPageActive(allPages) {
+    function setPageActive(allPages, previousPage, nextPage) {
         let activeElement = allPages.querySelector('.' + activeClass);
         let newElement = allPages.querySelector('#page-' + page);
-        newElement.classList.add(activeClass);
-        newElement.classList.remove(nonActiveClass);
-        activeElement.classList.remove(activeClass);
-        activeElement.classList.add(nonActiveClass)
-    }
-
-    function createToggleCallback(elements) {
-        return function (elementToToggle) {
-            for (let i = 0; i < elements.length; i++) {
-                let element = elements[i];
-                if (element.classList.contains(disabled_class)) {
-                    element.classList.remove(disabled_class);
-                } else if (elementToToggle === element){
-                    element.classList.add(disabled_class);
-                }
-            }
+        if (newElement !== activeElement) {
+            newElement.classList.add(activeClass);
+            newElement.classList.remove(nonActiveClass);
+            activeElement.classList.remove(activeClass);
+            activeElement.classList.add(nonActiveClass);
         }
+
+        if (page === 0) {
+            previousPage.classList.add(disabled_class);
+            nextPage.classList.remove(disabled_class);
+        } else if (page + 1 === maxPages) {
+            nextPage.classList.add(disabled_class);
+            previousPage.classList.remove(disabled_class);
+        } else {
+            nextPage.classList.remove(disabled_class);
+            previousPage.classList.remove(disabled_class);
+        }
+        activeListener(allPages, newElement);
     }
 
-    function addNextPageListener(element, toggleCallback, allPages) {
+    function addNextPageListener(element, allPages, previousPage, nextPage) {
         element.addEventListener('click', function (ev) {
             if (page >= maxPages) {
                 return;
             }
             page += 1;
             loadData(processPage, history);
-            setPageActive(allPages);
-            if (page >= maxPages - 1) {
-                toggleCallback(element);
-            }
+            setPageActive(allPages, previousPage, nextPage);
         });
     }
 
-    function addPreviousPageListener(element, toggleCallback, allPages) {
+    function addPreviousPageListener(element, allPages, previousPage, nextPage) {
         element.addEventListener('click', function (ev) {
             if (page <= 0) {
                 return;
             }
             page -= 1;
-            setPageActive(allPages);
             loadData(processPage, history);
-            if (page <= 0) {
-                toggleCallback(element);
-            }
+            setPageActive(allPages, previousPage, nextPage);
         });
     }
 
@@ -72,17 +68,7 @@ define(['server'], function (server) {
                 }
                 page = parseInt(elementPage);
                 loadData(processPage, history);
-                setPageActive(allPages);
-                if (page === 0) {
-                    previousPage.classList.add(disabled_class);
-                    nextPage.classList.remove(disabled_class);
-                } else if (page + 1 === maxPages) {
-                    nextPage.classList.add(disabled_class);
-                    previousPage.classList.remove(disabled_class);
-                } else {
-                    nextPage.classList.remove(disabled_class);
-                    previousPage.classList.remove(disabled_class);
-                }
+                setPageActive(allPages, previousPage, nextPage);
             });
         });
     }
@@ -130,9 +116,8 @@ define(['server'], function (server) {
             return;
         }
         history = document.getElementById('dynamic-pages');
-        let callbacks = createToggleCallback([nextPage, prevPage]);
-        addNextPageListener(nextPage, callbacks, allPages);
-        addPreviousPageListener(prevPage, callbacks, allPages);
+        addNextPageListener(nextPage, allPages, prevPage, nextPage);
+        addPreviousPageListener(prevPage, allPages, prevPage, nextPage);
         addPageListener(allPages, prevPage, nextPage);
         if (dataCallback != null) {
             dataCallback();
@@ -142,8 +127,38 @@ define(['server'], function (server) {
         } else {
             console.debug("Callback is null no data graph data was initialized");
         }
+        allPages.querySelectorAll('*').forEach((element) => {
+            element.draggable = false;
+        });
+        addMouseScroll(allPages);
+        setPageActive(allPages, prevPage, nextPage);
+    }
 
-        callbacks(prevPage);
+    function addMouseScroll(allPages) {
+        let clicked = false, clickX;
+        let updateScrollPos = function(e) {
+            allPages.scrollBy({
+                left: clickX - e.pageX
+            });
+        };
+        allPages.addEventListener('mousemove', function(e) {
+            if (clicked) {
+                updateScrollPos(e);
+                clickX = e.pageX;
+            }
+        });
+        allPages.addEventListener('mousedown', function(e) {
+            clicked = true;
+            clickX = e.pageX;
+            e.preventDefault();
+        });
+        allPages.addEventListener('mouseup', function(e) {
+            clicked = false;
+        });
+        allPages.addEventListener('mouseout', function(e) {
+            clicked = false;
+            e.preventDefault();
+        });
     }
 
     function addHistoryCallback(callback) {
@@ -168,10 +183,14 @@ define(['server'], function (server) {
         historyList = callback;
     }
 
+    function onSetActive(listener) {
+        activeListener = listener
+    }
+
     return {
         initializeMatchHistory: initializePage,
         setHistoryCallback: addHistoryCallback,
         setHistoryList: setHistoryList,
-        clearHistoryCallback: clearHistoryCallback
+        onSetActive: onSetActive
     }
 });
