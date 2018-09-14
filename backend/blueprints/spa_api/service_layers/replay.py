@@ -18,9 +18,10 @@ class GameScore:
 
 
 class Replay:
-    def __init__(self, name: str, date: str,
+    def __init__(self, id_: str, name: str, date: str,
                  game_mode: str, game_score: GameScore,
                  players: List[ReplayPlayer]):
+        self.id = id_
         self.name = name
         self.date = date
         self.gameMode = game_mode
@@ -38,10 +39,13 @@ class Replay:
     @staticmethod
     def create_from_game(game: Game) -> 'Replay':
         return Replay(
+            id_=game.hash,
             name=game.name,
             date=game.match_date.isoformat(),
             game_mode=f"{game.teamsize}'s",
             game_score=GameScore.create_from_game(game),
-            players=sorted(ReplayPlayer.create_from_game(game),
-                           key=lambda player: player.isOrange)
+            players=sorted(
+                sorted(ReplayPlayer.create_from_game(game),
+                       key=lambda player: player.name),
+                key=lambda player: player.isOrange)
         )

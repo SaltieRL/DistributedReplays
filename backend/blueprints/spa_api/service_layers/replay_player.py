@@ -4,8 +4,9 @@ from backend.database.objects import Game, PlayerGame
 
 
 class ReplayPlayer:
-    def __init__(self, name: str, is_orange: bool,
+    def __init__(self, id_: str, name: str, is_orange: bool,
                  score: int, goals: int, assists: int, saves: int, shots: int):
+        self.id = id_
         self.name = name
         self.isOrange = is_orange
         self.score = score
@@ -18,6 +19,7 @@ class ReplayPlayer:
     def create_from_game(game: Game) -> List['ReplayPlayer']:
         return [
             ReplayPlayer(
+                id_=player.player,
                 name=player.name,
                 is_orange=player.is_orange,
                 score=player.score,
