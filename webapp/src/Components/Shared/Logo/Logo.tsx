@@ -1,4 +1,5 @@
 import * as React from "react"
+import {Link} from "react-router-dom"
 import LogoImage from "./calculated-logo.png"
 
 interface Props {
@@ -8,7 +9,9 @@ interface Props {
 export class Logo extends React.PureComponent<Props> {
     public render() {
         return (
-            <img src={LogoImage} style={this.props.imgStyle}/>
+            <Link to="/">
+                <img src={LogoImage} style={this.props.imgStyle}/>
+            </Link>
         )
     }
 }
