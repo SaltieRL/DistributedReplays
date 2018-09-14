@@ -5,7 +5,7 @@
     </div>
     <div class="chart-panel">
         {% set min_replays = 1 %}
-        {% if total_games > min_replays %}
+        {% if total_games >= min_replays %}
         {% include "partials/player/content/spider_charts.html" %}
         {% else %}
         <div class="errmsg">
