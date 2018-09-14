@@ -21,8 +21,13 @@ export class PlayerTendencies extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        getPlayerTendencies(this.props.player.id)
-            .then((data) => this.setState({data}))
+        this.getPlayerTendencies()
+    }
+
+    public componentDidUpdate(prevProps: Readonly<Props>) {
+        if (prevProps.player.id !== this.props.player.id) {
+            this.getPlayerTendencies()
+        }
     }
 
     public render() {
@@ -47,5 +52,10 @@ export class PlayerTendencies extends React.PureComponent<Props, State> {
                 </CardContent>
             </Card>
         )
+    }
+
+    private readonly getPlayerTendencies = () => {
+        getPlayerTendencies(this.props.player.id)
+            .then((data) => this.setState({data}))
     }
 }

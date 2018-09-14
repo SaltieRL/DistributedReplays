@@ -20,8 +20,13 @@ export class PlayerMatchHistory extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        getMatchHistory(this.props.player.id)
-            .then((matchHistory) => this.setState({matchHistory}))
+        this.getPlayerMatchHistory()
+    }
+
+    public componentDidUpdate(prevProps: Readonly<Props>) {
+        if (prevProps.player.id !== this.props.player.id) {
+            this.getPlayerMatchHistory()
+        }
     }
 
     public render() {
@@ -36,5 +41,10 @@ export class PlayerMatchHistory extends React.PureComponent<Props, State> {
                 </CardContent>
             </Card>
         )
+    }
+
+    private readonly getPlayerMatchHistory = () => {
+        getMatchHistory(this.props.player.id)
+            .then((matchHistory) => this.setState({matchHistory}))
     }
 }

@@ -41,8 +41,13 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        getRanks(this.props.player.id)
-            .then((playerRanks) => this.setState({playerRanks}))
+        this.getPlayerRanks()
+    }
+
+    public componentDidUpdate(prevProps: Readonly<Props>) {
+        if (prevProps.player.id !== this.props.player.id) {
+            this.getPlayerRanks()
+        }
     }
 
     public render() {
@@ -66,4 +71,8 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
         )
     }
 
+    private readonly getPlayerRanks = () => {
+        getRanks(this.props.player.id)
+            .then((playerRanks) => this.setState({playerRanks}))
+    }
 }

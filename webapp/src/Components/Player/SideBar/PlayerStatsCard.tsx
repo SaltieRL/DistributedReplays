@@ -35,15 +35,19 @@ interface State {
 }
 
 class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
-
     constructor(props: Props) {
         super(props)
         this.state = {}
     }
 
     public componentDidMount() {
-        getStats(this.props.player.id)
-            .then((playerStats) => this.setState({playerStats}))
+        this.getPlayerProfileStats()
+    }
+
+    public componentDidUpdate(prevProps: Readonly<Props>): void {
+        if (prevProps.player.id !== this.props.player.id) {
+            this.getPlayerProfileStats()
+        }
     }
 
     public render() {
@@ -79,6 +83,11 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                 </CardContent>
             </Card>
         )
+    }
+
+    private readonly getPlayerProfileStats = () => {
+        getStats(this.props.player.id)
+            .then((playerStats) => this.setState({playerStats}))
     }
 }
 

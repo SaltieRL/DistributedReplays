@@ -2,6 +2,8 @@ import {faCalculator, faSearch} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {IconButton, Paper, TextField} from "@material-ui/core"
 import * as React from "react"
+import {Redirect} from "react-router-dom"
+import {getPlayerFromName} from "../../Requests/Player"
 
 
 interface Props {
@@ -11,6 +13,7 @@ interface Props {
 
 interface State {
     enteredText: string
+    resolvedId?: string
 }
 
 
@@ -42,7 +45,6 @@ export class Search extends React.PureComponent<Props, State> {
                         required
                     />
                 </form>
-                {/*{searchButton}*/}
             </>
 
         const containerStyle: React.CSSProperties = {
@@ -63,6 +65,9 @@ export class Search extends React.PureComponent<Props, State> {
                         {inputField}
                     </div>
                 }
+                {this.state.resolvedId &&
+                <Redirect to={`/players/overview/${this.state.resolvedId}`}/>
+                }
             </>
         )
     }
@@ -74,7 +79,7 @@ export class Search extends React.PureComponent<Props, State> {
     private readonly onSubmit: React.FormEventHandler = (e) => {
         e.preventDefault()
         // TODO: Make call
-        console.log(this.state.enteredText)
-        return
+        getPlayerFromName(this.state.enteredText)
+            .then((resolvedId) => this.setState({resolvedId}))
     }
 }

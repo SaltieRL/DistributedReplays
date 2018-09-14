@@ -25,8 +25,13 @@ export class PlayerPage extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        getPlayer(this.props.match.params.id)
-            .then((player) => this.setState({player}))
+        this.getPlayerForPage()
+    }
+
+    public componentDidUpdate(prevProps: Readonly<Props>) {
+        if (prevProps.match.params.id !== this.props.match.params.id) {
+            this.getPlayerForPage()
+        }
     }
 
     public render() {
@@ -38,7 +43,7 @@ export class PlayerPage extends React.PureComponent<Props, State> {
                         <Grid item xs={12} sm={5} md={3} style={{maxWidth: 400}}>
                             <PlayerSideBar player={this.state.player}/>
                         </Grid>
-                        < Grid item xs={12} sm={7} md={9}>
+                        <Grid item xs={12} sm={7} md={9}>
                             <PlayerView player={this.state.player}/>
                         </Grid>
                     </>
@@ -46,5 +51,10 @@ export class PlayerPage extends React.PureComponent<Props, State> {
                 </Grid>
             </BasePage>
         )
+    }
+
+    private getPlayerForPage() {
+        getPlayer(this.props.match.params.id)
+            .then((player) => this.setState({player}))
     }
 }
