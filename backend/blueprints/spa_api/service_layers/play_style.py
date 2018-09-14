@@ -1,23 +1,13 @@
-from typing import Optional, List
+from typing import List
 
 from flask import current_app
 
+from backend.blueprints.spa_api.service_layers.chart_data import ChartData, ChartDataPoint
 from .player_profile_stats import player_stat_wrapper, player_wrapper
 from ..errors.errors import UserHasNoReplays
 
 
-class PlayStyleChartSpokeData:
-    def __init__(self, name: str, value: float, average: Optional[float] = None):
-        self.name = name
-        self.value = value
-        if average is not None:
-            self.average = average
-
-
-class PlayStyleChartData:
-    def __init__(self, title: str, spoke_datas: List[PlayStyleChartSpokeData]):
-        self.title = title
-        self.spokeData = [spoke_data.__dict__ for spoke_data in spoke_datas]
+class PlayStyleChartData(ChartData):
 
     @staticmethod
     def create_from_id(id_: str) -> List['PlayStyleChartData']:
@@ -31,10 +21,10 @@ class PlayStyleChartData:
         play_style_chart_datas = []
         for spider_chart_group in spider_charts_groups:
             title = spider_chart_group['title']
-            spoke_datas = [
-                PlayStyleChartSpokeData(name=name, value=averaged_stats[name])
+            chart_data_points = [
+                ChartDataPoint(name=name, value=averaged_stats[name])
                 for name in spider_chart_group['group']
             ]
-            play_style_chart_datas.append(PlayStyleChartData(title, spoke_datas))
+            play_style_chart_datas.append(PlayStyleChartData(title, chart_data_points))
 
         return play_style_chart_datas
