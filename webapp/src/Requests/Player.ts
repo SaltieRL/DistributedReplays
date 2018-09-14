@@ -1,8 +1,8 @@
 import * as moment from "moment"
 import {doGet} from "../apiHandler/apiHandler"
-import {PlayStyleChartData} from "../Components/Player/PlayerTendencies"
 import {PlayerRanks} from "../Components/Player/SideBar/PlayerRanksCard"
 import {PlayerStats} from "../Components/Player/SideBar/PlayerStatsCard"
+import {ChartDataResponse} from "../Models/ChartData"
 import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
@@ -34,11 +34,11 @@ export const getStats = (id: string): Promise<PlayerStats> => {
 }
 
 
-export const getPlayerTendencies = (id: string): Promise<PlayStyleChartData[]> => {
+export const getPlayerTendencies = (id: string): Promise<ChartDataResponse[]> => {
     if (useMockData) {// TODO: Do actual fetch
         return Promise.resolve([{
                 title: "Aggressiveness",
-                spokeData: [
+                chartDataPoints: [
                     {
                         name: "Shots",
                         value: 0.277
@@ -94,12 +94,14 @@ export const getMatchHistory = (id: string): Promise<Replay[]> => {
     if (useMockData) {
         return Promise.resolve([
             {
+                id: "215989AB4EF314212",
                 name: "Replay1",
                 date: moment(),
                 gameMode: "1's" as GameMode,
                 gameScore: {team0Score: 1, team1Score: 2},
                 players: [
                     {
+                        id: "519021",
                         name: "testplayerblue",
                         isOrange: false,
                         score: 1,
@@ -110,6 +112,7 @@ export const getMatchHistory = (id: string): Promise<Replay[]> => {
 
                     },
                     {
+                        id: "31155",
                         name: "testplayerorange",
                         isOrange: true,
                         score: 1,

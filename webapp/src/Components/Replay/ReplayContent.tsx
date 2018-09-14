@@ -1,6 +1,7 @@
 import {Card, CardContent, Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
 import {Replay} from "../../Models/Replay/Replay"
+import {BasicStatsGrid} from "./BasicStats/BasicStatsGrid"
 
 interface Props {
     replay: Replay
@@ -30,6 +31,9 @@ export class ReplayContent extends React.PureComponent<Props, State> {
                     <Tab label="Replay Viewer" value="replayViewer"/>
                 </Tabs>
                 <CardContent>
+                    {this.state.selectedTab === "basicStats" &&
+                    <BasicStatsGrid replay={this.props.replay}/>
+                    }
                     Placeholder
                 </CardContent>
             </Card>

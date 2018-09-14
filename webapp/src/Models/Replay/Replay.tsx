@@ -9,6 +9,7 @@ interface GameScore {
 }
 
 export interface Replay {
+    id: string
     name: string
     date: moment.Moment
     gameMode: GameMode

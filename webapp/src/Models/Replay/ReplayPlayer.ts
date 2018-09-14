@@ -1,4 +1,5 @@
 interface ReplayPlayer {
+    id: string
     name: string
     isOrange: boolean
     score: number

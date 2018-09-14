@@ -2,11 +2,11 @@ import {WithTheme, withTheme} from "@material-ui/core"
 import {ChartData, LinearTickOptions, RadialChartOptions} from "chart.js"
 import * as React from "react"
 import {Radar} from "react-chartjs-2"
+import {ChartDataResponse} from "../../../Models/ChartData"
 import {convertHexToRgba} from "../../../Utils/Color"
-import {PlayStyleChartData} from "../PlayerTendencies"
 
 interface OwnProps {
-    data: PlayStyleChartData
+    data: ChartDataResponse
 }
 
 type Props = OwnProps
@@ -20,22 +20,23 @@ export class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
     }
 
     private readonly getChartData = (): ChartData => {
-        const chartData = this.props.data.spokeData
+        const chartDataPoints = this.props.data.chartDataPoints
         const themeColors = this.props.theme.palette.secondary
 
         return {
-            labels: chartData.map((spokeData) => spokeData.name),
+            labels: chartDataPoints.map((chartDataPoint) => chartDataPoint.name),
             datasets: [
                 {
                     label: "Player",
-                    data: chartData.map((spokeData) => spokeData.value),
+                    data: chartDataPoints.map((chartDataPoint) => chartDataPoint.value),
                     backgroundColor: convertHexToRgba(themeColors.light, 0.4),
                     pointBackgroundColor: convertHexToRgba(themeColors.dark),
                     borderColor: convertHexToRgba(themeColors.main, 0.5)
                 },
                 {
                     label: "Average",
-                    data: chartData.map((spokeData) => spokeData.average === undefined ? 0 : spokeData.average)
+                    data: chartDataPoints.map((chartDataPoint) =>
+                        chartDataPoint.average === undefined ? 0 : chartDataPoint.average)
                 }
             ]
         }

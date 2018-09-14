@@ -1,17 +1,20 @@
 import * as moment from "moment"
 import {doGet} from "../apiHandler/apiHandler"
+import {BasicStat} from "../Models/ChartData"
 import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
 export const getReplay = (id: string): Promise<Replay> => {
     if (useMockData) {
         return Promise.resolve({
+            id: "21312512515FAB213",
             name: "Name",
             date: moment(),
             gameMode: "1's" as GameMode,
             gameScore: {team0Score: 5, team1Score: 6},
             players: [
                 {
+                    id: "214214124",
                     name: "[MOCK] Kaydop",
                     isOrange: false,
                     score: 210,
@@ -21,6 +24,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                     shots: 1
                 },
                 {
+                    id: "149019024",
                     name: "[MOCK] Fairy Peak!",
                     isOrange: false,
                     score: 310,
@@ -30,6 +34,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                     shots: 4
                 },
                 {
+                    id: "1248921984",
                     name: "[MOCK] miztik",
                     isOrange: false,
                     score: 460,
@@ -39,6 +44,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                     shots: 8
                 },
                 {
+                    id: "248129841",
                     name: "kuxir97",
                     isOrange: true,
                     score: 485,
@@ -48,6 +54,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                     shots: 3
                 },
                 {
+                    id: "8132482941",
                     name: "gReazymeister",
                     isOrange: true,
                     score: 285,
@@ -57,6 +64,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                     shots: 1
                 },
                 {
+                    id: "189489124",
                     name: "Markydooda",
                     isOrange: true,
                     score: 410,
@@ -70,4 +78,9 @@ export const getReplay = (id: string): Promise<Replay> => {
     }
     return doGet(`/replay/${id}`)
         .then(parseReplay)
+}
+
+
+export const getReplayBasicStats = (id: string): Promise<BasicStat[]> => {
+    return doGet(`/replay/${id}/basic_stats`)
 }

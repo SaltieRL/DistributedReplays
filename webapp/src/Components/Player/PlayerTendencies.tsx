@@ -1,25 +1,16 @@
 import {Card, CardContent, CardHeader, Grid, Typography} from "@material-ui/core"
 import * as React from "react"
+import {ChartDataResponse} from "../../Models/ChartData"
 import {getPlayerTendencies} from "../../Requests/Player"
 import {PlayerTendenciesChart} from "./Charts/PlayerTendenciesChart"
 
-interface PlayStyleChartSpokeData {
-    name: string
-    value: number
-    average?: number
-}
-
-export interface PlayStyleChartData {
-    title: string
-    spokeData: PlayStyleChartSpokeData[]
-}
 
 interface Props {
     player: Player
 }
 
 interface State {
-    data?: PlayStyleChartData[]
+    data?: ChartDataResponse[]
 }
 
 

@@ -12,7 +12,30 @@ export const convertHexToRgba = (hex: string, alpha: number = 1) => {
     }
 }
 
+const bluePrimaryColors =
+    ["rgba(29, 53, 224, 0.4)", "rgba(1, 115, 214, 0.4)", "rgba(0, 222, 121, 0.4)", "rgba(0, 211, 204, 0.4)"]
 
+const orangePrimaryColors =
+    ["rgba(221, 240, 41, 0.4)", "rgba(255, 108, 0, 0.4)", "rgba(255, 0, 128, 0.4)", "rgba(251, 50, 60, 0.4)"]
+
+export const getPrimaryColorsForPlayers = (teams: boolean[]): string[] => {
+    let blueIndex = 0
+    let orangeIndex = 0
+
+    return teams.map((isOrange) => {
+        if (isOrange) {
+            const playerColor = orangePrimaryColors[orangeIndex]
+            orangeIndex = orangeIndex + 1
+            return playerColor
+        } else {
+            const playerColor = bluePrimaryColors[blueIndex]
+            blueIndex = blueIndex + 1
+            return playerColor
+        }
+    })
+}
+
+// TODO: Remove this function
 export const getChartColors = (isOrange: boolean, colorNumber: number): ChartDataSets => {
     const teamColor: teamColors = isOrange ? "orange" : "blue"
     return chartColors[teamColor][colorNumber % 4]
