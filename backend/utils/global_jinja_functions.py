@@ -1,7 +1,8 @@
-from flask import Flask, logging
+import logging
+
+from flask import Flask
 
 from backend.utils.checks import get_checks
-
 
 logger = logging.getLogger(__name__)
 
