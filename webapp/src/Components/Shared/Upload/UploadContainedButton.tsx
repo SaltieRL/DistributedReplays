@@ -10,7 +10,7 @@ interface OwnProps {
 type Props = OwnProps
     & WithStyles<typeof buttonStyles>
 
-export class UploadContainedButtonComponent extends React.PureComponent<Props> {
+class UploadContainedButtonComponent extends React.PureComponent<Props> {
     public render() {
         return (
             <>

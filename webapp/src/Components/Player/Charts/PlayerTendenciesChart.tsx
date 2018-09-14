@@ -12,7 +12,7 @@ interface OwnProps {
 type Props = OwnProps
     & WithTheme
 
-export class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
+class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
     public render() {
         return (
             <Radar data={this.getChartData()} options={this.getChartOptions()}/>

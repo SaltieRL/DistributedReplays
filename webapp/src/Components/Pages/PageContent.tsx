@@ -4,7 +4,7 @@ import {createStyles, Toolbar, WithStyles, withStyles} from "@material-ui/core"
 
 type Props = WithStyles<typeof styles>
 
-export class PageContentComponent extends React.PureComponent<Props> {
+class PageContentComponent extends React.PureComponent<Props> {
     public render() {
         const {classes} = this.props
         return (

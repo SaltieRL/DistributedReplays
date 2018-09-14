@@ -10,7 +10,7 @@ interface OwnProps {
 type Props = OwnProps
     & WithStyles<typeof styles>
 
-export class PlayerProfileComponent extends React.PureComponent<Props> {
+class PlayerProfileComponent extends React.PureComponent<Props> {
     public render() {
         const {player, classes} = this.props
         return (

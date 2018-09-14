@@ -8,7 +8,7 @@ import {UploadModalWrapper} from "./Upload/UploadModalWrapper"
 
 type Props = WithWidth
 
-export class NavBarComponent extends React.PureComponent<Props> {
+class NavBarComponent extends React.PureComponent<Props> {
     public render() {
         const searchStyle = {
             flexGrow: 1,

@@ -29,7 +29,7 @@ type Props = OwnProps
     & WithStyles<typeof styles>
     & WithWidth
 
-export class ReplayViewComponent extends React.PureComponent<Props> {
+class ReplayViewComponent extends React.PureComponent<Props> {
     public render() {
         const replay = this.props.replay
         const blueCard =

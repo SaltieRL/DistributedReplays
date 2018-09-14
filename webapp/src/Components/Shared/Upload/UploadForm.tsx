@@ -21,7 +21,7 @@ interface State {
 
 type Props = WithStyles<typeof styles>
 
-export class UploadFormComponent extends React.PureComponent<Props, State> {
+class UploadFormComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {files: [], rejected: []}
