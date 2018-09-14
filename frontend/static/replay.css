@@ -21,6 +21,7 @@
     background-image: url(/static/img/background/Octane.png);
     background-repeat: no-repeat;
     background-size: contain;
+    z-index: 1000;
 }
 
 .player-box:hover {
@@ -29,8 +30,8 @@
     padding: 15px;
     z-index: 1000;
     font-size: 1em;
-    width: 200px;
-    height: 350px;
+    width: 400px;
+    height: 450px;
     overflow-y: scroll;
     background-image: none;
 }
