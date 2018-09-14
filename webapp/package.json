@@ -35,5 +35,13 @@
     "@types/react-dom": "^16.0.7",
     "@types/react-router-dom": "^4.3.0",
     "typescript": "^3.0.3"
+  },
+  "proxy": {
+    "/api": {
+      "target": "http://localhost:5000"
+    },
+    "/auth": {
+      "target": "http://localhost:5000"
+    }
   }
 }

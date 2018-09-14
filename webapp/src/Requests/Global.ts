@@ -14,5 +14,5 @@ export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Spec
         formData.append("replays", file)
     })
 
-    return doPost('/replay/upload', formData)
+    return doPost("/upload", formData)
 }
