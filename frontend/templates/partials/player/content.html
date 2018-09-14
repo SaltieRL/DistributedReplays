@@ -3,9 +3,15 @@
         <span class="header">/ Tendencies</span>
         <span style="font-size: 0.4em" title="Data is represented as total standard deviations from the mean">* Data is represented as total standard deviations from the mean</span>
     </div>
+
+    {% set min_replays = 1 %}
+    {% set warning_minimum = 10 %}
+    {% if total_games >= min_replays and total_games <= warning_minimum %}
+        <div style="background-color:darkred; color:white; font-size:1.5em">
+            Not enough replays to get accurate stats! Please submit at least 10 replays.
+        </div>
+    {% endif %}
     <div class="chart-panel">
-        {% set min_replays = 1 %}
-        {% set warning_minimum = 10 %}
         {% if total_games >= min_replays %}
             {% include "partials/player/content/spider_charts.html" %}
         {% else %}
@@ -14,11 +20,6 @@
             </div>
         {% endif %}
     </div>
-    {% if total_games >= min_replays and total_games <= warning_minimum %}
-        <div style="background-color:darkred; color:white; font-size:1.5em">
-            Not enough replays to get accurate stats! Please submit at least 10 replays.
-        </div>
-    {% endif %}
 </div>
 {% set max_pages=((total_games/game_per_page)|round(0, 'ceil'))|int %}
 <div class="header_holder history-holder valign-wrapper" style="position:relative;">
