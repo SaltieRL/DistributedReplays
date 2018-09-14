@@ -7,8 +7,6 @@ from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.database.objects import PlayerGame
 
 
-# TODO: Move to service layer folder
-
 class Player:
     def __init__(self, id_: str, name: str, past_names: List[str], avatar_link: str):
         self.name = name

@@ -2,13 +2,13 @@ from flask import jsonify, Blueprint, current_app
 
 from backend.database.objects import Game
 from .errors.errors import CalculatedError
-from .service_layers.basic_stats import BasicStat
-from .service_layers.match_history import MatchHistory
-from .service_layers.play_style import PlayStyleChartData
-from .service_layers.player import Player
-from .service_layers.player_profile_stats import PlayerProfileStats
-from .service_layers.player_ranks import PlayerRanks
-from .service_layers.replay import Replay
+from .service_layers.player.play_style import PlayStyleChartData
+from .service_layers.player.player import Player
+from .service_layers.player.player_profile_stats import PlayerProfileStats
+from .service_layers.player.player_ranks import PlayerRanks
+from .service_layers.replay.basic_stats import BasicStatChartData
+from .service_layers.replay.match_history import MatchHistory
+from .service_layers.replay.replay import Replay
 
 bp = Blueprint('api', __name__, url_prefix='/api/')
 
@@ -69,8 +69,8 @@ def api_get_replay_data(id_):
 
 @bp.route('replay/<id_>/basic_stats')
 def api_get_replay_basic_stats(id_):
-    basic_stats = BasicStat.create_from_id(id_)
-    return jsonify(basic_stats)
+    basic_stats = BasicStatChartData.create_from_id(id_)
+    return jsonify([basic_stat.__dict__ for basic_stat in basic_stats])
 
 
 @bp.errorhandler(CalculatedError)

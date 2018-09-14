@@ -2,9 +2,9 @@ from typing import List
 
 from flask import current_app
 
-from backend.blueprints.spa_api.service_layers.chart_data import ChartData, ChartDataPoint
+from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
 from .player_profile_stats import player_stat_wrapper, player_wrapper
-from ..errors.errors import UserHasNoReplays
+from ..chart_data import ChartData, ChartDataPoint
 
 
 class PlayStyleChartData(ChartData):

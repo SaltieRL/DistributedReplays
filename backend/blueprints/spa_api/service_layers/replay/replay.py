@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, cast
 
 from flask import current_app
 
-from backend.database.objects import Game
+from backend.database.objects import Game, PlayerGame
 from .replay_player import ReplayPlayer
-from ..errors.errors import ReplayNotFound
+from ..utils import sort_player_games_by_team_then_id
+from ...errors.errors import ReplayNotFound
 
 
 class GameScore:
@@ -44,8 +45,9 @@ class Replay:
             date=game.match_date.isoformat(),
             game_mode=f"{game.teamsize}'s",
             game_score=GameScore.create_from_game(game),
-            players=sorted(
-                sorted(ReplayPlayer.create_from_game(game),
-                       key=lambda player: player.name),
-                key=lambda player: player.isOrange)
+            players=[
+                ReplayPlayer.create_from_player_game(player_game)
+                for player_game in sort_player_games_by_team_then_id(
+                    cast(List[PlayerGame], game.playergames))
+            ]
         )

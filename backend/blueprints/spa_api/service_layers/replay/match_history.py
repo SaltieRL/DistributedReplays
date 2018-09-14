@@ -2,8 +2,8 @@ from typing import List
 
 from flask import current_app
 
-from .player_profile_stats import player_wrapper
 from .replay import Replay
+from ..player.player_profile_stats import player_wrapper
 
 
 class MatchHistory:
