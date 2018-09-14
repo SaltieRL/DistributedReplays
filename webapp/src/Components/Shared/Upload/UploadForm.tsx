@@ -29,7 +29,7 @@ export class UploadFormComponent extends React.PureComponent<Props, State> {
 
     public render() {
         const {classes} = this.props
-        const hasFilesSelected = this.state.files.length === 0
+        const hasFilesSelected = this.state.files.length !== 0
         return (
             <Card>
                 <CardHeader title={"Upload Replays"}/>
@@ -43,15 +43,6 @@ export class UploadFormComponent extends React.PureComponent<Props, State> {
                         <div className={classes.dropzoneContent}>
                             {hasFilesSelected ?
                                 <>
-                                    <Typography align="center">
-                                        Drop your .replay files here, or click to select files to upload.
-                                    </Typography>
-                                    <br/>
-                                    <ArrowDownward/>
-                                </>
-                                :
-                                <>
-
                                     <Typography variant="subheading">
                                         Selected files:
                                     </Typography>
@@ -60,6 +51,14 @@ export class UploadFormComponent extends React.PureComponent<Props, State> {
                                             .map((file) => file.name)
                                             .join(",\n")}
                                     </Typography>
+                                </>
+                                :
+                                <>
+                                    <Typography align="center">
+                                        Drop your .replay files here, or click to select files to upload.
+                                    </Typography>
+                                    <br/>
+                                    <ArrowDownward/>
                                 </>
                             }
                         </div>
