@@ -2,6 +2,7 @@ import {faGithub} from "@fortawesome/free-brands-svg-icons"
 import {createStyles, Grid, Typography, withStyles, WithStyles} from "@material-ui/core"
 import * as React from "react"
 import {LinkButton} from "./LinkButton"
+import {GITHUB_LINK} from "../../Globals"
 
 type Props = WithStyles<typeof styles>
 
@@ -13,7 +14,7 @@ class FooterComponent extends React.PureComponent<Props> {
                     <Typography>
                         &copy; 2017-2018 Saltie Group
                     </Typography>
-                    <LinkButton to="https://github.com/SaltieRL" isExternalLink
+                    <LinkButton to={GITHUB_LINK} isExternalLink
                                 iconType="fontawesome" icon={faGithub}>
                         Github
                     </LinkButton>

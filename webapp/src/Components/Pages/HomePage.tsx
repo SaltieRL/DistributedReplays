@@ -8,6 +8,7 @@ import {createStyles, Grid, Typography, WithStyles, withStyles} from "@material-
 import Divider from "@material-ui/core/Divider/Divider"
 import {GridProps} from "@material-ui/core/Grid"
 import {CloudUpload, Info} from "@material-ui/icons"
+import {DISCORD_LINK, GITHUB_LINK} from "../../Globals"
 import {getReplayCount} from "../../Requests/Global"
 import {LinkButton} from "../Shared/LinkButton"
 import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
@@ -87,17 +88,17 @@ const HomePageFooter: React.SFC = () => {
                             tooltip="Global stats"/>
             </Grid>
             <Grid {...linkButtonGridItemProps}>
-                <LinkButton to=""
+                <LinkButton to="/about"
                             iconType="mui" icon={Info}
                             tooltip="About"/>
             </Grid>
             <Grid {...linkButtonGridItemProps}>
-                <LinkButton to="/redirect_to/github"
+                <LinkButton to={GITHUB_LINK} isExternalLink
                             iconType="fontawesome" icon={faGithub}
                             tooltip="Github"/>
             </Grid>
             <Grid {...linkButtonGridItemProps}>
-                <LinkButton to=""
+                <LinkButton to={DISCORD_LINK} isExternalLink
                             iconType="fontawesome" icon={faDiscord}
                             tooltip="Discord"/>
             </Grid>
