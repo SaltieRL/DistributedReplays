@@ -21,7 +21,19 @@ export const getReplay = (id: string): Promise<Replay> => {
                     goals: 1,
                     assists: 0,
                     saves: 0,
-                    shots: 1
+                    shots: 1,
+                    cameraSettings: {
+                        distance: 260,
+                        fieldOfView: 110,
+                        height: 110,
+                        pitch: -3,
+                        stiffness: 0.699999988079071,
+                        swivelSpeed: 3,
+                        transitionSpeed: 1
+                    },
+                    loadout: {
+                        car: 23
+                    }
                 },
                 {
                     id: "149019024",
@@ -31,7 +43,19 @@ export const getReplay = (id: string): Promise<Replay> => {
                     goals: 1,
                     assists: 1,
                     saves: 2,
-                    shots: 4
+                    shots: 4,
+                    cameraSettings: {
+                        distance: 260,
+                        fieldOfView: 110,
+                        height: 110,
+                        pitch: -3,
+                        stiffness: 0.449999988079071,
+                        swivelSpeed: 5,
+                        transitionSpeed: 1
+                    },
+                    loadout: {
+                        car: 23
+                    }
                 },
                 {
                     id: "1248921984",
@@ -41,7 +65,19 @@ export const getReplay = (id: string): Promise<Replay> => {
                     goals: 3,
                     assists: 2,
                     saves: 0,
-                    shots: 8
+                    shots: 8,
+                    cameraSettings: {
+                        distance: 250,
+                        fieldOfView: 107,
+                        height: 100,
+                        pitch: -3,
+                        stiffness: 0.5,
+                        swivelSpeed: 9,
+                        transitionSpeed: 1
+                    },
+                    loadout: {
+                        car: 23
+                    }
                 },
                 {
                     id: "248129841",
@@ -51,7 +87,19 @@ export const getReplay = (id: string): Promise<Replay> => {
                     goals: 1,
                     assists: 3,
                     saves: 3,
-                    shots: 3
+                    shots: 3,
+                    cameraSettings: {
+                        distance: 250,
+                        fieldOfView: 110,
+                        height: 110,
+                        pitch: -4,
+                        stiffness: 0.449999988079071,
+                        swivelSpeed: 6,
+                        transitionSpeed: 2
+                    },
+                    loadout: {
+                        car: 22
+                    }
                 },
                 {
                     id: "8132482941",
@@ -61,7 +109,19 @@ export const getReplay = (id: string): Promise<Replay> => {
                     goals: 2,
                     assists: 1,
                     saves: 1,
-                    shots: 1
+                    shots: 1,
+                    cameraSettings: {
+                        distance: 280,
+                        fieldOfView: 110,
+                        height: 110,
+                        pitch: -3,
+                        stiffness: 0.449999988079071,
+                        swivelSpeed: 5,
+                        transitionSpeed: 1
+                    },
+                    loadout: {
+                        car: 23
+                    }
                 },
                 {
                     id: "189489124",
@@ -71,7 +131,19 @@ export const getReplay = (id: string): Promise<Replay> => {
                     goals: 3,
                     assists: 0,
                     saves: 1,
-                    shots: 4
+                    shots: 4,
+                    cameraSettings: {
+                        distance: 280,
+                        fieldOfView: 110,
+                        height: 110,
+                        pitch: -3,
+                        stiffness: 0.449999988079071,
+                        swivelSpeed: 4,
+                        transitionSpeed: 1
+                    },
+                    loadout: {
+                        car: 23
+                    }
                 }
             ]
         })

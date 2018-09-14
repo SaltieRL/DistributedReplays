@@ -7,6 +7,8 @@ interface ReplayPlayer {
     assists: number
     saves: number
     shots: number
+    cameraSettings: CameraSettings
+    loadout: Loadout
 }
 
 

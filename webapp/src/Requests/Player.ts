@@ -6,6 +6,15 @@ import {ChartDataResponse} from "../Models/ChartData"
 import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
+
+export const getPlayerFromName = (name: string): Promise<string> => {
+    if (useMockData) {
+        return Promise.resolve("testUserId")
+    }
+    return doGet(`/steam/resolve/${name}`)
+}
+
+
 export const getPlayer = (id: string): Promise<Player> => {
     if (useMockData) {
         // noinspection TsLint
@@ -108,8 +117,19 @@ export const getMatchHistory = (id: string): Promise<Replay[]> => {
                         goals: 1,
                         assists: 0,
                         saves: 4,
-                        shots: 2
-
+                        shots: 2,
+                        cameraSettings: {
+                            distance: 280,
+                            fieldOfView: 110,
+                            height: 110,
+                            pitch: -3,
+                            stiffness: 0.449999988079071,
+                            swivelSpeed: 4,
+                            transitionSpeed: 1
+                        },
+                        loadout: {
+                            car: 23
+                        }
                     },
                     {
                         id: "31155",
@@ -119,7 +139,19 @@ export const getMatchHistory = (id: string): Promise<Replay[]> => {
                         goals: 2,
                         assists: 1,
                         saves: 2,
-                        shots: 6
+                        shots: 6,
+                        cameraSettings: {
+                            distance: 280,
+                            fieldOfView: 110,
+                            height: 110,
+                            pitch: -3,
+                            stiffness: 0.449999988079071,
+                            swivelSpeed: 5,
+                            transitionSpeed: 1
+                        },
+                        loadout: {
+                            car: 23
+                        }
                     }
                 ]
             }
