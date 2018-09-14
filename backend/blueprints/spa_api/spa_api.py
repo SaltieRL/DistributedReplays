@@ -2,6 +2,7 @@ from flask import jsonify, Blueprint, current_app
 
 from backend.database.objects import Game
 from .errors.errors import CalculatedError
+from .service_layers.basic_stats import BasicStat
 from .service_layers.match_history import MatchHistory
 from .service_layers.play_style import PlayStyleChartData
 from .service_layers.player import Player
@@ -64,6 +65,12 @@ def api_get_replay_data(id_):
         error.status_code = 404
         return error
     return jsonify(replay.__dict__)
+
+
+@bp.route('replay/<id_>/basic_stats')
+def api_get_replay_basic_stats(id_):
+    basic_stats = BasicStat.create_from_id(id_)
+    return jsonify(basic_stats)
 
 
 @bp.errorhandler(CalculatedError)
