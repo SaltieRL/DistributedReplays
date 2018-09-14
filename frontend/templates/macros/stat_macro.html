@@ -1,25 +1,22 @@
-{% macro create_stats(charts, pie_charts, bar_charts, replay) -%}
+{% macro create_stats(charts, replay) -%}
 <div class="stat-container">
-    {% for c in charts %}
+    {% for chart in charts %}
     {% set pgs = replay.playergames|sort(attribute='is_orange') %}
-    {% set data = pgs|map(attribute=c)|list %}
-    {% if c not in pie_charts and c not in bar_charts %}
-    {% set type = 'radar' %}
-    {% elif c in pie_charts %}
-    {% set type = 'pie' %}
-    {% else %}
-    {% set type = 'bar' %}
-    {% endif %}
+    {% set chart_name = chart.data %}
+    {{chart|debug}}
+    {% set data = pgs|map(attribute=chart_name)|list %}
+    {% set type = chart.type %}
     {% if data != None and data is defined and data|length > 0 %}
     {% if data[0] != None and (data|max != 0 or data|min != 0)  %}
     {% if data|max > 0 %}
     {% set start_at_zero = (data|max - data|min)/(data|max) > 0.2 %}{# we don't want uninteresting graphs #}
+    {{chart.type|debug}}
     {% else %}
     {% set start_at_zero = False %}
     {% endif %}
-    <div class="chart-container valign-wrapper" id="{{ c }}">
+    <div class="chart-container valign-wrapper" id="{{ chart.data }}">
         <div class="container">
-        <canvas id="canvas{{ c }}"></canvas>
+        <canvas id="canvas{{ chart.data }}"></canvas>
             <script>
                 requirejs(['server', 'colors'], function (server, colors) {
                     var labels = {{ pgs|map(attribute='name')|list|tojson }};
@@ -29,7 +26,7 @@
                             {
                                 label: 'Count',
                                 data: {{ data|tojson }},
-                    {% if type == 'radar' %}
+                    {% if chart.type == 'radar' %}
                     pointBackgroundColor: [{% for x in pgs %}colors
                         .getHorizontalChartColor({{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }})
                 .backgroundColor,{% endfor %}],
@@ -39,16 +36,15 @@
                     backgroundColor: 'rgba(0, 0, 0, 0.2)',
                     {% else %}
                     backgroundColor: [{% for x in pgs %}colors
-                        .getHorizontalChartColor({{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }})
-                .backgroundColor,{% endfor %}],
+                        .getHorizontalChartColor({{ (loop.index0 % (pgs|length / 2))|int }}, {{ x.is_orange|tojson }}).backgroundColor,{% endfor %}],
                     {% endif %}
                 }
                 ]
                 }
 
-                    var ctx = document.getElementById('canvas{{ c }}').getContext('2d');
+                    var ctx = document.getElementById('canvas{{ chart.data }}').getContext('2d');
                     var myBar = new Chart(ctx, {
-                        type: '{{ type }}',
+                        type: '{{ chart.type }}',
                         data: data,
                         options: {
 
@@ -57,11 +53,11 @@
                         legend: {
                         position: 'top',
 
-                        {% if c not in pie_charts %}display: false{% endif %}
+                        {% if type != 'pie' %}display: false{% endif %}
                     },
                     title: {
                         display: true,
-                            text: '{{ c|replace('_', ' ')|capitalize }}'
+                            text: '{{ chart.data|replace('_', ' ')|capitalize }}'
                     },
                     {% if False and start_at_zero and type == 'bar' %}
                     scales: {

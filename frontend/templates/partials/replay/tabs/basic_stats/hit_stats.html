@@ -2,8 +2,28 @@
 
 
 {% set charts=[
-'total_hits', 'turnovers', 'average_hit_distance',
-'total_dribbles', 'total_passes', 'total_aerials',
-'ball_hit_forward'] %}
-
-{{ create_stats(charts, pie_charts, bar_charts, replay) }}
+    {
+        "data": 'total_hits',
+        "type": 'radar'
+    },
+    {
+        "data": 'average_hit_distance',
+        "type": 'radar'
+    },
+    {
+        "data": 'ball_hit_forward',
+        "type": 'bar'
+    },
+    {
+        "data": 'total_dribbles',
+        "type": 'bar'
+    },
+    {
+        "data": 'total_passes',
+        "type": 'bar'
+    },
+    {
+        "data": 'total_aerials',
+        "type": 'bar'
+    },] %}
+{{ create_stats(charts, replay) }}
