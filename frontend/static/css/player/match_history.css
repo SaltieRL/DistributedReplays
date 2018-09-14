@@ -54,7 +54,7 @@
     display: inline-flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    max-width: 80%;
+    max-width: 50vw;
     overflow-x: scroll;
 }
 
