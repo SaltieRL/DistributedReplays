@@ -8,7 +8,7 @@ import {createStyles, Grid, Typography, WithStyles, withStyles} from "@material-
 import Divider from "@material-ui/core/Divider/Divider"
 import {GridProps} from "@material-ui/core/Grid"
 import {CloudUpload, Info} from "@material-ui/icons"
-import {DISCORD_LINK, GITHUB_LINK} from "../../Globals"
+import {DISCORD_LINK, GITHUB_LINK, LOCAL_LINK} from "../../Globals"
 import {getReplayCount} from "../../Requests/Global"
 import {LinkButton} from "../Shared/LinkButton"
 import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
@@ -55,7 +55,8 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                         <Grid item xs={12} sm={10} md={8} container spacing={16} alignItems="center"
                               style={{maxWidth: 550}}>
                             <Grid item xs={6} style={{textAlign: "center"}}>
-                                <LinkButton to="/auth/steam" iconType="fontawesome" icon={faSteam}>
+                                <LinkButton to={LOCAL_LINK + "/auth/steam"} isExternalLink
+                                            iconType="fontawesome" icon={faSteam}>
                                     Log in with Steam
                                 </LinkButton>
                             </Grid>
