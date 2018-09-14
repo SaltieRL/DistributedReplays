@@ -45,14 +45,19 @@
 }
 
 .stat-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-row-gap: 10px;
     max-width: 100vw;
     width: 100% !important;
-    flex-wrap: wrap;
+    margin-bottom: 1rem;
 }
 
 .chart-container {
+    border-bottom: solid var(--borderColor);
 }
 
 .chart-container canvas {
+    max-height: 350px;
+    max-width: 350px;
 }

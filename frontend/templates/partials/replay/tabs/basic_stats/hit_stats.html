@@ -1,6 +1,9 @@
 {% from "macros/stat_macro.html" import create_stats %}
 
 
-{% set charts=['total_hits', 'total_dribbles', 'total_passes', 'total_aerials', 'turnovers', 'average_hit_distance', 'ball_hit_forward'] %}
+{% set charts=[
+'total_hits', 'turnovers', 'average_hit_distance',
+'total_dribbles', 'total_passes', 'total_aerials',
+'ball_hit_forward'] %}
 
 {{ create_stats(charts, pie_charts, bar_charts, replay) }}

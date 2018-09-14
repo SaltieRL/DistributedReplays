@@ -1,7 +1,8 @@
 {% from "macros/stat_macro.html" import create_stats %}
 
 
-{% set charts=['average_speed', 'time_high_in_air', 'time_low_in_air', 'wasted_collection', 'time_in_attacking_half',
-'time_in_defending_half', 'possession_time', 'boost_usage', ] %}
+{% set charts=[
+'average_speed', 'time_in_attacking_half', 'time_in_defending_half',
+'time_high_in_air', 'time_low_in_air', 'wasted_collection',  'boost_usage', 'possession_time'] %}
 
 {{ create_stats(charts, pie_charts, bar_charts, replay) }}
