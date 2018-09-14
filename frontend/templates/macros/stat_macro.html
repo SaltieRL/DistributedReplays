@@ -3,13 +3,13 @@
     {% for chart in charts %}
     {% set pgs = replay.playergames|sort(attribute='is_orange') %}
     {% set chart_name = chart.data %}
-    {{chart|debug}}
     {% set data = pgs|map(attribute=chart_name)|list %}
     {% set type = chart.type %}
     {% set num_players = pgs|map(attribute='name')|list|length %}
     {% if num_players == 2 and type == 'radar' %}
         {% set type = 'bar' %}
     {% endif %}
+    {{data|debug}}
     {% if data != None and data is defined and data|length > 0 %}
     {% if data[0] != None and (data|max != 0 or data|min != 0)  %}
     {% if data|max > 0 %}

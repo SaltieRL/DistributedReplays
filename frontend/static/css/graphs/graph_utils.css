@@ -27,6 +27,7 @@
 .graph-holder {
     flex-basis: 90%;
     min-height: 50px;
+    max-height: 300px;
 }
 
 .graph-name {
