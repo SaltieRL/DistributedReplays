@@ -7,4 +7,21 @@ interface ReplayPlayer {
     assists: number
     saves: number
     shots: number
+    cameraSettings: CameraSettings
+    loadout
+}
+
+
+interface CameraSettings {
+    distance : number
+    fieldOfView : number
+    transitionSpeed : number
+    pitch : number
+    swivelSpeed : number
+    stiffness : number
+    height : number
+}
+
+interface Loadout {
+    car: number
 }
