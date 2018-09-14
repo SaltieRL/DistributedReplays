@@ -41,8 +41,8 @@ class UploadModalWrapperComponent extends React.PureComponent<Props, State> {
                     && <UploadFloatingButton handleOpen={this.handleOpen}/>}
                     {this.props.buttonStyle === "contained"
                     && <UploadContainedButton handleOpen={this.handleOpen}/>}
-                    <UploadModal open={this.state.open} handleClickOutside={this.handleClose}/>
                 </>}
+                <UploadModal open={this.state.open} handleClickOutside={this.handleClose}/>
                 {this.props.children}
             </>
         )

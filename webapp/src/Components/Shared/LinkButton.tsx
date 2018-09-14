@@ -1,6 +1,6 @@
 import {IconDefinition} from "@fortawesome/fontawesome-common-types"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Button, Theme, Tooltip, WithStyles, withStyles} from "@material-ui/core"
+import {Button, createStyles, Theme, Tooltip, WithStyles, withStyles} from "@material-ui/core"
 import {SvgIconProps} from "@material-ui/core/SvgIcon"
 import * as H from "history"
 import * as React from "react"
@@ -77,7 +77,7 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
     }
 }
 
-export const buttonStyles = (theme: Theme) => ({
+export const buttonStyles = (theme: Theme) => createStyles({
     button: {
         margin: theme.spacing.unit
     },
