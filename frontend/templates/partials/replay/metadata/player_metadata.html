@@ -1,39 +1,41 @@
 <b>Player List:</b>
 <ol>
     {% for p in team %}
-    <li><b><span title="Actor ID: {{ p.actor_id }}">{{ p.name }}
+        <li><b><span title="Actor ID: {{ p.actor_id }}">{{ p.name }}
 
                         </span></b>
-        {% if p.platformid | string | length == 17 %}
-        | <a href="https://steamcommunity.com/profiles/{{ p.platformid }}">Steam</a>
-        {% endif %}
-        <ul>
-            <li>Loadout
-
-                {% if p.loadout|length > 0 %}
+            {% if p.platformid | string | length == 17 %}
+                | <a href="https://steamcommunity.com/profiles/{{ p.platformid }}">Steam</a>
+            {% endif %}
+            <ul>
+                <li><b>Car:</b> {{ cars[p.car] }} </li>
+                {#            <li>Loadout#}
+                {##}
+                {#                {% if p.loadout|length > 0 %}#}
+                {#                    <ul>#}
+                {#                            {% for k in p.loadout[0].keys()|sort() %}#}
+                {#                                {% if k != 'version' %}#}
+                {#                                    {% set item_id = p.loadout[0][k] %}#}
+                {#                                    {% set item_props = item_dict[item_id|string] %}#}
+                {#                                    {% if 'LongLabel' in item_props %}#}
+                {#                                        <li>{{ k }}: {{ item_props['LongLabel'] }}</li>#}
+                {#                                    {% elif item_id != 0 and item_id != None %}#}
+                {#                                        <li>{{ k }}: {{ item_id }}</li>#}
+                {#                                    {% endif %}#}
+                {#                                {% endif %}#}
+                {#                            {% endfor %}#}
+                {#                    </ul>#}
+                {#                {% endif %}#}
+                {#            </li>#}
+                <li><b>Camera settings</b>
                     <ul>
-                            {% for k in p.loadout[0].keys()|sort() %}
-                                {% if k != 'version' %}
-                                    {% set item_id = p.loadout[0][k] %}
-                                    {% set item_props = item_dict[item_id|string] %}
-                                    {% if 'LongLabel' in item_props %}
-                                        <li>{{ k }}: {{ item_props['LongLabel'] }}</li>
-                                    {% elif item_id != 0 and item_id != None %}
-                                        <li>{{ k }}: {{ item_id }}</li>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
+                        {% set keys = ['field_of_view','transition_speed','pitch','swivel_speed','stiffness','height','distance'] %}
+                        {% for k in keys %}
+                            <li>{{ k }}: {{ p[k] }}</li>
+                        {% endfor %}
                     </ul>
-                {% endif %}
-            </li>
-            <li>Camera settings
-                <ul>
-                    {# {% for k in p.camera_settings.keys() %} #}
-                    {# <li>{{ k }}: {{ p.camera_settings[k] }}</li> #}
-                    {# {% endfor %} #}
-                    </ul>
-            </li>
-        </ul>
-    </li>
+                </li>
+            </ul>
+        </li>
     {% endfor %}
 </ol>
