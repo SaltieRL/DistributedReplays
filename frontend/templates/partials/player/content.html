@@ -15,7 +15,7 @@
     </div>
 </div>
     {% set max_pages=((total_games/game_per_page)|round(0, 'ceil'))|int %}
-    <div class="header_holder" style="position:relative;">
+    <div class="header_holder history-holder valign-wrapper" style="position:relative;">
         <span class="header">/ Match History<span>&nbsp;&nbsp;</span>
         </span>
         {% if total_games > game_per_page %}
