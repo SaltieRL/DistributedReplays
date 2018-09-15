@@ -1,6 +1,11 @@
-from flask import jsonify, Blueprint, current_app
+import os
 
+from flask import jsonify, Blueprint, current_app, request
+from werkzeug.utils import secure_filename
+
+from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
+from backend.tasks import celery_tasks
 from .errors.errors import CalculatedError
 from .service_layers.player.play_style import PlayStyleChartData
 from .service_layers.player.player import Player
@@ -20,6 +25,15 @@ def api_get_replay_count():
     s = current_app.config['db']()
     count = s.query(Game.hash).count()
     return jsonify(count)
+
+
+@bp.route('/steam/resolve/<id_>')
+def api_resolve_steam(id_):
+    response = get_vanity_to_steam_id_or_random_response(id_, current_app)
+    if response is None:
+        raise CalculatedError(404, "User not found")
+    steam_id = response['response']['steamid']
+    return jsonify(steam_id)
 
 
 ### PLAYER
@@ -71,6 +85,22 @@ def api_get_replay_data(id_):
 def api_get_replay_basic_stats(id_):
     basic_stats = BasicStatChartData.create_from_id(id_)
     return jsonify([basic_stat.__dict__ for basic_stat in basic_stats])
+
+
+@bp.route('/upload', methods=['POST'])
+def api_upload_replays():
+    uploaded_files = request.files.getlist("replays")
+    print(uploaded_files)
+    if uploaded_files is None or 'file' not in request.files or len(uploaded_files) == 0:
+        raise CalculatedError(400, 'No files uploaded')
+
+    for file in uploaded_files:
+        if not file.filename.endswith('replay'):
+            continue
+        filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
+        file.save(filename)
+        celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+    return
 
 
 @bp.errorhandler(CalculatedError)
