@@ -23,5 +23,5 @@ interface CameraSettings {
 }
 
 interface Loadout {
-    car: number
+    car: string
 }

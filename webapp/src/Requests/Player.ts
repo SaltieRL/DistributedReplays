@@ -128,7 +128,7 @@ export const getMatchHistory = (id: string): Promise<Replay[]> => {
                             transitionSpeed: 1
                         },
                         loadout: {
-                            car: 23
+                            car: "Octane"
                         }
                     },
                     {
@@ -150,7 +150,7 @@ export const getMatchHistory = (id: string): Promise<Replay[]> => {
                             transitionSpeed: 1
                         },
                         loadout: {
-                            car: 23
+                            car: "Octane"
                         }
                     }
                 ]

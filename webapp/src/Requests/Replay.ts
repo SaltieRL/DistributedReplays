@@ -32,7 +32,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         transitionSpeed: 1
                     },
                     loadout: {
-                        car: 23
+                        car: "Road Hog"
                     }
                 },
                 {
@@ -54,7 +54,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         transitionSpeed: 1
                     },
                     loadout: {
-                        car: 23
+                        car: "Octane"
                     }
                 },
                 {
@@ -76,7 +76,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         transitionSpeed: 1
                     },
                     loadout: {
-                        car: 23
+                        car: "Octane"
                     }
                 },
                 {
@@ -98,7 +98,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         transitionSpeed: 2
                     },
                     loadout: {
-                        car: 22
+                        car: "Batmobile '16"
                     }
                 },
                 {
@@ -120,7 +120,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         transitionSpeed: 1
                     },
                     loadout: {
-                        car: 23
+                        car: "Octane"
                     }
                 },
                 {
@@ -142,7 +142,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         transitionSpeed: 1
                     },
                     loadout: {
-                        car: 23
+                        car: "Octane"
                     }
                 }
             ]
