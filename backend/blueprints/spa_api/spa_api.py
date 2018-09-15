@@ -1,8 +1,10 @@
+import logging
 import os
 
 from flask import jsonify, Blueprint, current_app, request
 from werkzeug.utils import secure_filename
 
+from backend.blueprints.spa_api.service_layers.global_stats import GlobalStats
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
@@ -15,6 +17,8 @@ from .service_layers.replay.basic_stats import BasicStatChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 
+logger = logging.getLogger(__name__)
+
 bp = Blueprint('api', __name__, url_prefix='/api/')
 
 
@@ -25,6 +29,11 @@ def api_get_replay_count():
     s = current_app.config['db']()
     count = s.query(Game.hash).count()
     return jsonify(count)
+
+
+@bp.route('/global/stats')
+def api_get_global_stats():
+    return jsonify(GlobalStats.create())
 
 
 @bp.route('/steam/resolve/<id_>')
@@ -90,7 +99,7 @@ def api_get_replay_basic_stats(id_):
 @bp.route('/upload', methods=['POST'])
 def api_upload_replays():
     uploaded_files = request.files.getlist("replays")
-    print(uploaded_files)
+    logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'file' not in request.files or len(uploaded_files) == 0:
         raise CalculatedError(400, 'No files uploaded')
 
