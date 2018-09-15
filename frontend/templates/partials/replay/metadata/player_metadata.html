@@ -9,24 +9,6 @@
             {% endif %}
             <ul>
                 <li><b>Car:</b> {{ cars[p.car] }} </li>
-                {#            <li>Loadout#}
-                {##}
-                {#                {% if p.loadout|length > 0 %}#}
-                {#                    <ul>#}
-                {#                            {% for k in p.loadout[0].keys()|sort() %}#}
-                {#                                {% if k != 'version' %}#}
-                {#                                    {% set item_id = p.loadout[0][k] %}#}
-                {#                                    {% set item_props = item_dict[item_id|string] %}#}
-                {#                                    {% if 'LongLabel' in item_props %}#}
-                {#                                        <li>{{ k }}: {{ item_props['LongLabel'] }}</li>#}
-                {#                                    {% elif item_id != 0 and item_id != None %}#}
-                {#                                        <li>{{ k }}: {{ item_id }}</li>#}
-                {#                                    {% endif %}#}
-                {#                                {% endif %}#}
-                {#                            {% endfor %}#}
-                {#                    </ul>#}
-                {#                {% endif %}#}
-                {#            </li>#}
                 <li><b>Camera settings</b>
                     <ul>
                         {% set keys = ['field_of_view','transition_speed','pitch','swivel_speed','stiffness','height','distance'] %}
