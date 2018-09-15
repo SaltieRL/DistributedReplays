@@ -1,7 +1,7 @@
 import {Grid, TextField} from "@material-ui/core"
 import * as _ from "lodash"
 import * as React from "react"
-import {convertCamelCaseToReadable} from "../../../Utils/String"
+import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
 
 interface Props {
     loadout: Loadout
@@ -17,7 +17,7 @@ export class LoadoutDisplay extends React.PureComponent<Props> {
                             <Grid item xs={12} key={key}>
                                 <TextField
                                     id={key}
-                                    label={convertCamelCaseToReadable(key)}
+                                    label={convertSnakeAndCamelCaseToReadable(key)}
                                     value={value}
                                     InputProps={{readOnly: true}}
                                     fullWidth

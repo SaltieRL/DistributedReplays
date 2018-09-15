@@ -3,6 +3,7 @@ import * as React from "react"
 import {BasicStat} from "../../../Models/ChartData"
 import {Replay} from "../../../Models/Replay/Replay"
 import {getReplayBasicStats} from "../../../Requests/Replay"
+import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
 import {StatChart} from "../../Shared/Charts/StatChart"
 
 interface Props {
@@ -33,7 +34,7 @@ export class BasicStatsGrid extends React.PureComponent<Props, State> {
                         return (
                             <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
                                 <Typography variant="subheading" align="center">
-                                    {basicStat.title}
+                                    {convertSnakeAndCamelCaseToReadable(basicStat.title)}
                                 </Typography>
                                 <StatChart basicStat={basicStat}/>
                             </Grid>

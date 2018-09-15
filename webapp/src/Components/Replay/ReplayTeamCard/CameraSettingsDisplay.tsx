@@ -1,7 +1,7 @@
 import {Grid, TextField} from "@material-ui/core"
 import * as _ from "lodash"
 import * as React from "react"
-import {convertCamelCaseToReadable, convertNumberToMaxTwoDP} from "../../../Utils/String"
+import {convertNumberToMaxTwoDP, convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
 
 interface Props {
     cameraSettings: CameraSettings
@@ -17,7 +17,7 @@ export class CameraSettingsDisplay extends React.PureComponent<Props> {
                             <Grid item xs={12} sm={6} md={4} key={key}>
                                 <TextField
                                     id={key}
-                                    label={convertCamelCaseToReadable(key)}
+                                    label={convertSnakeAndCamelCaseToReadable(key)}
                                     value={convertNumberToMaxTwoDP(value)}
                                     InputProps={{readOnly: true}}
                                 />
