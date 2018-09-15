@@ -4,7 +4,7 @@ import os
 from flask import jsonify, Blueprint, current_app, request
 from werkzeug.utils import secure_filename
 
-from backend.blueprints.spa_api.service_layers.global_stats import GlobalStats
+from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
@@ -22,6 +22,22 @@ logger = logging.getLogger(__name__)
 bp = Blueprint('api', __name__, url_prefix='/api/')
 
 
+def better_jsonify(response: object):
+    """
+    Improvement on flask.jsonify (that depends on flask.jsonify) that calls the .__dict__ method on objects
+    and also handles lists of such objects.
+    :param response: The object/list of objects to be jsonified.
+    :return: The return value of jsonify.
+    """
+    try:
+        return jsonify(response)
+    except TypeError:
+        if isinstance(response, list):
+            return jsonify([value.__dict__ for value in response])
+        else:
+            return jsonify(response.__dict__)
+
+
 ### GLOBAL
 
 @bp.route('/global/replay_count')
@@ -33,7 +49,8 @@ def api_get_replay_count():
 
 @bp.route('/global/stats')
 def api_get_global_stats():
-    return jsonify(GlobalStats.create())
+    global_stats_graphs = GlobalStatsGraph.create()
+    return better_jsonify(global_stats_graphs)
 
 
 @bp.route('/steam/resolve/<id_>')
@@ -50,26 +67,25 @@ def api_resolve_steam(id_):
 @bp.route('player/<id_>/profile')
 def api_get_player_profile(id_):
     player = Player.create_from_id(id_)
-    return jsonify(player.__dict__)
+    return better_jsonify(player)
 
 
 @bp.route('player/<id_>/profile_stats')
 def api_get_player_profile_stats(id_):
     player_stats = PlayerProfileStats.create_from_id(id_)
-    return jsonify(player_stats.__dict__)
+    return better_jsonify(player_stats)
 
 
 @bp.route('player/<id_>/ranks')
 def api_get_player_ranks(id_):
     player_ranks = PlayerRanks.create_from_id(id_)
-    return jsonify(player_ranks.__dict__)
+    return better_jsonify(player_ranks)
 
 
 @bp.route('player/<id_>/play_style')
 def api_get_player_play_style(id_):
     play_style_chart_datas = PlayStyleChartData.create_from_id(id_)
-    return jsonify([play_style_chart_data.__dict__
-                    for play_style_chart_data in play_style_chart_datas])
+    return better_jsonify(play_style_chart_datas)
 
 
 @bp.route('player/<id_>/match_history')
@@ -87,13 +103,13 @@ def api_get_replay_data(id_):
         error = jsonify({"message": "Replay not found."})
         error.status_code = 404
         return error
-    return jsonify(replay.__dict__)
+    return better_jsonify(replay)
 
 
 @bp.route('replay/<id_>/basic_stats')
 def api_get_replay_basic_stats(id_):
     basic_stats = BasicStatChartData.create_from_id(id_)
-    return jsonify([basic_stat.__dict__ for basic_stat in basic_stats])
+    return better_jsonify(basic_stats)
 
 
 @bp.route('/upload', methods=['POST'])
