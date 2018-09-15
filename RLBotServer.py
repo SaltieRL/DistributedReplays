@@ -1,73 +1,83 @@
 import logging
 import os
-import sys
+from typing import Optional, Dict, List, Tuple
 
-import flask
-import flask_login
-from flask import Flask, render_template, g, current_app, session, request, redirect
+from flask import Flask, render_template, g, current_app, session, request, redirect, send_from_directory
 from flask_cors import CORS
+from redis import Redis
 
-local_dev = False
-try:
-    import config
-except ImportError:
-    print('No config exists', file=sys.stderr)
-    config = None
-    local_dev = True
-
-if config is not None:
-    try:
-        api_key = config.RL_API_KEY
-        local_dev = False
-    except:
-        local_dev = True
-
-sys.path.append(os.path.abspath('replayanalysis/'))
-
-try:
-    from config import ALLOWED_STEAM_ACCOUNTS
-except ImportError:
-    ALLOWED_STEAM_ACCOUNTS = []
-    users = []
-
-from blueprints import auth, api, players, replays, stats, steam, debug, admin
-from database.objects import Game, Player, Group
-from database.startup import startup
-import redis
+from backend.blueprints import steam, stats, auth, debug, admin, players, api, replays
+from backend.database.objects import Game, Player, Group
+from backend.database.startup import startup
+from backend.utils.checks import get_checks
+from backend.utils.global_jinja_functions import create_jinja_globals
 
 logger = logging.getLogger(__name__)
+logger.info("Setting up server.")
 
-# APP SETUP
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'replays')
+UPLOAD_RATE_LIMIT_MINUTES = 4.5  # TODO: Make use of this.
 
-print("Name:", __name__)
-print(os.path.abspath('replayanalysis/'))
-engine, Session = startup()
-UPLOAD_FOLDER = os.path.join(
-    os.path.dirname(
-        os.path.realpath(__file__)), 'replays')
-UPLOAD_RATE_LIMIT_MINUTES = 4.5
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
-app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['BASE_URL'] = 'https://calculated.gg'
-app.config['REPLAY_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'rlreplays')
-app.config['PARSED_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'parsed')
-app.config.update(
-    broker_url='redis://localhost:6379/0',
-    result_backend='redis://',
-    worker_max_tasks_per_child=100,
-    broker_transport_options={'fanout_prefix': True}
-)
-CORS(app)
-folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
-for f in folders_to_make:
-    abspath = os.path.join(os.path.dirname(__file__), f)
-    if not os.path.isdir(abspath):
-        os.makedirs(abspath)
-# Import modules AFTER app is initialized
-#
-with app.app_context():
+
+def start_app() -> Tuple[Flask, Dict[str, int]]:
+    # APP SETUP
+    app = Flask(__name__, template_folder=os.path.join('frontend', 'templates'),
+                static_folder=os.path.join('frontend', 'static'))
+    set_up_app_config(app)
+    CORS(app)
+    create_needed_folders(app)
+
+    engine, Session = startup()
+
+    with app.app_context():
+        register_blueprints(app)
+
+        try:
+            import config
+            app.secret_key = config.SECRET_KEY
+        except:  # TODO: Specify necessary excepts here.
+            logger.warning('No secret key has been set')
+
+        app.config['db'] = Session
+        app.config['r'] = get_redis()
+
+        _session = Session()
+        groups_to_add = ['admin', 'alpha', 'beta']
+        add_needed_groups_to_db(_session, groups_to_add)
+        ids, ids_to_group = get_id_group_dicts(_session, groups_to_add)
+        app.config['groups'] = ids_to_group
+        _session.commit()
+        _session.close()
+
+    create_jinja_globals(app, g)
+
+    return app, ids
+
+
+def create_needed_folders(app: Flask):
+    folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
+    for f in folders_to_make:
+        abspath = os.path.join(os.path.dirname(__file__), f)
+        if not os.path.isdir(abspath):
+            os.makedirs(abspath)
+
+
+def set_up_app_config(app: Flask):
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    app.config['BASE_URL'] = 'https://calculated.gg'
+    app.config['REPLAY_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'rlreplays')
+    app.config['PARSED_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'parsed')
+    app.config.update(
+        broker_url='redis://localhost:6379/0',
+        result_backend='redis://',
+        worker_max_tasks_per_child=100,
+        broker_transport_options={'fanout_prefix': True}
+    )
+
+
+def register_blueprints(app: Flask):
     # app.register_blueprint(celery_tasks.bp)
     app.register_blueprint(players.bp)
     app.register_blueprint(steam.bp)
@@ -78,111 +88,47 @@ with app.app_context():
     app.register_blueprint(auth.bp)
     app.register_blueprint(debug.bp)
     app.register_blueprint(admin.bp)
+
+
+def get_redis() -> Optional[Redis]:
     try:
-        app.secret_key = config.SECRET_KEY
-    except:
-        logger.warning('no secret key has been set')
-    # Login stuff
-    login_manager = flask_login.LoginManager()
-
-    login_manager.init_app(app)
-
-    try:
-        users = config.users
-    except:
-        users = []
-
-    app.config['db'] = Session
-
-    # REDIS STUFF
-    try:
-        r = redis.Redis(
+        _redis = Redis(
             host='localhost',
             port=6379)
-        app.config['r'] = r
-    except:
-        print('Not using redis...')
-        app.config['r'] = None
+        _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
+        return _redis
+    except:  # TODO: Investigate and specify this except.
+        logger.error("Not using redis.")
+        return None
 
-    s = Session()
-    groups_to_add = ['admin', 'alpha', 'beta']
+
+def add_needed_groups_to_db(_session, groups_to_add: List[str]):
     for group_name in groups_to_add:
-        num = s.query(Group).filter(Group.name == group_name).count()
-        if num == 0:
-            grp = Group(name=group_name)
-            s.add(grp)
-    ids = {}
-    ids_to_group = {}
+        group_name_query = _session.query(Group).filter(Group.name == group_name)
+        if not _session.query(group_name_query.exists()).scalar():
+            group = Group(name=group_name)
+            _session.add(group)
+
+
+def get_id_group_dicts(_session, groups_to_add: List[str]) -> Tuple[Dict[str, int], Dict[int, str]]:
+    ids: Dict[str, int] = {}
+    ids_to_group: Dict[int, str] = {}
     for group_name in groups_to_add:
-        i = s.query(Group).filter(Group.name == group_name).first().id
+        i = _session.query(Group).filter(Group.name == group_name).first().id
         ids[group_name] = i
         ids_to_group[i] = group_name
-    app.config['groups'] = ids_to_group
-    s.commit()
-    s.close()
+
+    return ids, ids_to_group
 
 
-# Admin stuff
-class LoginUser(flask_login.UserMixin):
-    pass
+app, ids = start_app()
 
 
-@login_manager.user_loader
-def user_loader(email):
-    if email not in users:
-        return
-
-    user = LoginUser()
-    user.id = email
-    return user
-
-
-@login_manager.request_loader
-def request_loader(request):
-    email = request.form.get('email')
-    if email not in users:
-        return
-
-    user = LoginUser()
-    user.id = email
-
-    # DO NOT ever store passwords in plaintext and always compare password
-    # hashes using constant-time comparison!
-    user.is_authenticated = request.form['password'] == users[email]
-
-    return user
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if flask.request.method == 'GET':
-        return '''
-               <form action='login' method='POST'>
-                <input type='text' name='email' id='email' placeholder='email'/>
-                <input type='password' name='password' id='password' placeholder='password'/>
-                <input type='submit' name='submit'/>
-               </form>
-               '''
-
-    email = flask.request.form['email']
-    if flask.request.form['password'] == users[email]:
-        user = LoginUser()
-        user.id = email
-        flask_login.login_user(user)
-        return flask.redirect(flask.url_for('admin'))
-
-    return 'Bad login'
-
-
-@app.route('/logout')
-def logout():
-    flask_login.logout_user()
-    return 'Logged out'
-
-
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return 'Unauthorized'
+try:
+    from config import ALLOWED_STEAM_ACCOUNTS
+except ImportError:
+    ALLOWED_STEAM_ACCOUNTS = []
+    users = []
 
 
 @app.before_request
@@ -208,36 +154,6 @@ def lookup_current_user():
     s.close()
 
 
-def is_admin():
-    if local_dev:
-        return True
-    if g.user is None:
-        return False
-    return g.admin
-
-
-def is_alpha():
-    if is_admin():
-        return True
-    if g.user is None:
-        return False
-    return g.alpha
-
-
-def is_beta():
-    if is_admin():
-        return True
-    if g.user is None:
-        return False
-    return is_alpha() or g.beta
-
-
-app.jinja_env.globals.update(isAdmin=is_admin)
-app.jinja_env.globals.update(isAlpha=is_alpha)
-app.jinja_env.globals.update(isBeta=is_beta)
-
-
-# Main stuff
 @app.route('/', methods=['GET', 'POST'])
 def home():
     s = current_app.config['db']()
@@ -248,6 +164,12 @@ def home():
 @app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')
+
+
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 
 if __name__ == '__main__':

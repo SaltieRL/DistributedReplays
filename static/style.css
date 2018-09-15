@@ -1,7 +1,0 @@
-/* Move down content because we have a fixed navbar that is 3.5rem tall */
-
-footer {
-    font-size: 1em;
-    margin: 15px 0;
-    border-top: 1px dashed #ddd;
-}
