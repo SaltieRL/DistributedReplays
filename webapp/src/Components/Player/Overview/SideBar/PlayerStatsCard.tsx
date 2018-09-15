@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import {getStats} from "../../../../Requests/Player"
+import {convertNumberToMaxDP} from "../../../../Utils/String"
 
 interface CarStat {
     carName: string
@@ -73,9 +74,9 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                 <Typography>
                                     {this.state.playerStats.car.carName}
                                 </Typography>
-                                <div className={classes.percentage}>
-                                    {(this.state.playerStats.car.carPercentage * 100).toFixed(1)} %
-                                </div>
+                                <Typography className={classes.percentage}>
+                                    {convertNumberToMaxDP(this.state.playerStats.car.carPercentage * 100, 1)}%
+                                </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
