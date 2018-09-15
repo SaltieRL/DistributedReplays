@@ -75,6 +75,7 @@ fabric.properties
 /config.py
 /config.cfg
 config.cfg
+.DS_Store
 *.iml
 
 parsed/
