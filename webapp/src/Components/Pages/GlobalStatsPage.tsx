@@ -54,7 +54,7 @@ const styles = (theme: Theme) => createStyles({
     infoIcon: {
         verticalAlign: "middle",
         marginLeft: theme.spacing.unit,
-        marginTop: theme.spacing.unit
+        marginTop: -4
     }
 })
 
