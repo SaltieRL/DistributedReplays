@@ -156,3 +156,8 @@ export const getReplay = (id: string): Promise<Replay> => {
 export const getReplayBasicStats = (id: string): Promise<BasicStat[]> => {
     return doGet(`/replay/${id}/basic_stats`)
 }
+
+export const getReplayViewerData = (id: string): Promise<any> => {
+    // TODO: Implement this.
+    return doGet(`replay/${id}/positions`)
+}

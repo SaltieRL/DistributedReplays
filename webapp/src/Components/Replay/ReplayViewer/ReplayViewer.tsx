@@ -2,6 +2,7 @@ import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {ThreeScene} from "./ThreeScene"
+import {getReplayViewerData} from "../../../Requests/Replay"
 
 interface OwnProps {
     id: string
@@ -40,11 +41,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     }
 
     public getReplayPositions = () => {
-        fetch(`https://calculated.gg/replays/parsed/view/${this.props.match.params.id}/positions`)
-            .then((data) => {
-                this.setState({
-                    replayData: data.json()
-                })
-            })
+        getReplayViewerData(this.props.match.params.id)
+            .then((data: any) => this.setState({replayData: data.json()}))
     }
 }

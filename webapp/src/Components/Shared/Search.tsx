@@ -4,6 +4,7 @@ import {IconButton, Paper, TextField} from "@material-ui/core"
 import * as React from "react"
 import {Redirect} from "react-router-dom"
 import {getPlayerFromName} from "../../Requests/Player"
+import {PLAYER_PAGE_LINK} from "../../Globals"
 
 
 interface Props {
@@ -66,7 +67,7 @@ export class Search extends React.PureComponent<Props, State> {
                     </div>
                 }
                 {this.state.resolvedId &&
-                <Redirect to={`/players/overview/${this.state.resolvedId}`}/>
+                <Redirect to={PLAYER_PAGE_LINK(this.state.resolvedId)}/>
                 }
             </>
         )
