@@ -97,3 +97,5 @@ const chartColors: ChartColors = {
         }
     ]
 }
+
+export const colorsForPlaylists = ["#F9A782", "#71EFAF", "#88C6F9", "#E888F7"]

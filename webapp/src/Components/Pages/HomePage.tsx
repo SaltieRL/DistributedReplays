@@ -9,7 +9,7 @@ import Divider from "@material-ui/core/Divider/Divider"
 import {GridProps} from "@material-ui/core/Grid"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import {CloudUpload, Info} from "@material-ui/icons"
-import {DISCORD_LINK, GITHUB_LINK, LOCAL_LINK} from "../../Globals"
+import {DISCORD_LINK, GITHUB_LINK, GLOBAL_STATS_LINK, LOCAL_LINK, STEAM_LOGIN_LINK} from "../../Globals"
 import {getReplayCount} from "../../Requests/Global"
 import {LinkButton} from "../Shared/LinkButton"
 import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
@@ -57,7 +57,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                         <Grid item xs={12} sm={10} md={8} container spacing={16} alignItems="center"
                               style={{maxWidth: 550}}>
                             <Grid item xs={6} style={{textAlign: "center"}}>
-                                <LinkButton to={LOCAL_LINK + "/auth/steam"} isExternalLink
+                                <LinkButton to={LOCAL_LINK + STEAM_LOGIN_LINK} isExternalLink
                                             iconType="fontawesome" icon={faSteam}>
                                     {isWidthUp("sm", width) ? "Log in with Steam" : "Log in"}
                                 </LinkButton>
@@ -86,7 +86,7 @@ const HomePageFooter: React.SFC = () => {
     return (
         <Grid container justify="center" spacing={16}>
             <Grid {...linkButtonGridItemProps}>
-                <LinkButton to="/replay/stats"
+                <LinkButton to={GLOBAL_STATS_LINK}
                             iconType="fontawesome" icon={faChartBar}
                             tooltip="Global stats"/>
             </Grid>
