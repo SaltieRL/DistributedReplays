@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader} from "@material-ui/core"
 import * as React from "react"
-import {Replay} from "../../../Models/Replay/Replay"
-import {getMatchHistory} from "../../../Requests/Player"
+import {Replay} from "../../../../Models/Replay/Replay"
+import {getMatchHistory} from "../../../../Requests/Player"
 import {MatchHistoryRow} from "./MatchHistoryRow"
 
 
@@ -36,7 +36,7 @@ export class PlayerMatchHistory extends React.PureComponent<Props, State> {
                 <CardContent>
                     {this.state.matchHistory &&
                     this.state.matchHistory.map((replay) =>
-                        <MatchHistoryRow replay={replay} key={replay.name}/>)
+                        <MatchHistoryRow replay={replay} player={this.props.player} key={replay.name}/>)
                     }
                 </CardContent>
             </Card>

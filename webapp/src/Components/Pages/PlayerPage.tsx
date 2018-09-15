@@ -3,7 +3,7 @@ import * as React from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {getPlayer} from "../../Requests/Player"
 import {PlayerView} from "../Player/PlayerView"
-import {PlayerSideBar} from "../Player/SideBar/PlayerSideBar"
+import {PlayerSideBar} from "../Player/Overview/SideBar/PlayerSideBar"
 import {BasePage} from "./BasePage"
 
 

@@ -12,7 +12,7 @@ import {
     WithStyles
 } from "@material-ui/core"
 import * as React from "react"
-import {getStats} from "../../../Requests/Player"
+import {getStats} from "../../../../Requests/Player"
 
 interface CarStat {
     carName: string
@@ -74,7 +74,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                     {this.state.playerStats.car.carName}
                                 </Typography>
                                 <div className={classes.percentage}>
-                                    {this.state.playerStats.car.carPercentage.toFixed(1)}
+                                    {(this.state.playerStats.car.carPercentage * 100).toFixed(1)} %
                                 </div>
                             </Grid>
                         </Grid>

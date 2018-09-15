@@ -2,8 +2,8 @@ import {WithTheme, withTheme} from "@material-ui/core"
 import {ChartData, LinearTickOptions, RadialChartOptions} from "chart.js"
 import * as React from "react"
 import {Radar} from "react-chartjs-2"
-import {ChartDataResponse} from "../../../Models/ChartData"
-import {convertHexToRgba} from "../../../Utils/Color"
+import {ChartDataResponse} from "../../../../Models/ChartData"
+import {convertHexToRgba} from "../../../../Utils/Color"
 
 interface OwnProps {
     data: ChartDataResponse

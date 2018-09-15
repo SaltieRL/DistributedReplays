@@ -9,12 +9,13 @@ import {
 } from "@material-ui/core"
 import {ExpandMore, InsertChart} from "@material-ui/icons"
 import * as React from "react"
-import {REPLAY_PAGE_LINK} from "../../../Globals"
-import {getColouredGameScore, Replay} from "../../../Models/Replay/Replay"
-import {ReplayChart} from "../../Replay/ReplayChart"
+import {REPLAY_PAGE_LINK} from "../../../../Globals"
+import {getColouredGameScore, getReplayResult, Replay} from "../../../../Models/Replay/Replay"
+import {ReplayChart} from "../../../Replay/ReplayChart"
 
 interface OwnProps {
     replay: Replay
+    player: Player
 }
 
 type Props = OwnProps
@@ -22,7 +23,7 @@ type Props = OwnProps
 
 class MatchHistoryRowComponent extends React.PureComponent<Props> {
     public render() {
-        const {replay, classes} = this.props
+        const {replay, player, classes} = this.props
         return (
             <ExpansionPanel>
                 <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
@@ -48,6 +49,11 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                             </Typography>
                         </Grid>
                         <Grid item xs={2}>
+                            <Typography variant="subheading">
+                                {getReplayResult(replay, player)}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={1}>
                             <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
                                 <InsertChart/>
                             </IconButton>

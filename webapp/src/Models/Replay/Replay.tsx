@@ -34,3 +34,11 @@ export const getColouredGameScore = (replay: Replay) => {
         </>
     )
 }
+
+type GameResult = "Win" | "Loss"
+
+export const getReplayResult = (replay: Replay, player: Player): GameResult => {
+    const playerIsOrange = replay.players.find((replayPlayer) => replayPlayer.id === player.id)!.isOrange
+    return replay.gameScore.team1Score > replay.gameScore.team0Score === playerIsOrange ?
+        "Win" : "Loss"
+}
