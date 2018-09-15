@@ -1,4 +1,14 @@
-import {createStyles, Grid, Theme, Tooltip, Typography, withStyles, WithStyles} from "@material-ui/core"
+import {
+    Card, CardContent,
+    CardHeader,
+    createStyles,
+    Grid,
+    Theme,
+    Tooltip,
+    Typography,
+    withStyles,
+    WithStyles
+} from "@material-ui/core"
 import Info from "@material-ui/icons/Info"
 import * as React from "react"
 import {getGlobalStats} from "../../Requests/Global"
@@ -37,10 +47,12 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
                     {this.state.globalStats && this.state.globalStats.map((globalStatsGraph) => {
                         return (
                             <Grid item xs={12} sm={6} md={4} key={globalStatsGraph.name}>
-                                <Typography variant="subheading">
-                                    {globalStatsGraph.name}
-                                </Typography>
-                                <GlobalStatsChart graph={globalStatsGraph}/>
+                                <Card>
+                                    <CardHeader title={globalStatsGraph.name} titleTypographyProps={{align: "center"}}/>
+                                    <CardContent>
+                                        <GlobalStatsChart graph={globalStatsGraph}/>
+                                    </CardContent>
+                                </Card>
                             </Grid>
                         )
                     })}

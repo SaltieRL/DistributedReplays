@@ -52,7 +52,9 @@ export class GlobalStatsChart extends React.PureComponent<Props> {
                 yAxes: [{
                     stacked: false,
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        autoSkip: true,
+                        maxTicksLimit: 8
                     }
                 }]
             }
