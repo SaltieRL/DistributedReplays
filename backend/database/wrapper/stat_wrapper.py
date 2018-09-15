@@ -115,12 +115,12 @@ class PlayerStatWrapper:
             PlayerGame.turnovers,
             func.sum(PlayerGame.goals) / safe_divide(cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric)),
             PlayerGame.total_aerials,
-            PlayerGame.time_in_attacking_half / safe_divide(Game.frames),
-            PlayerGame.time_in_attacking_third / safe_divide(Game.frames),
-            PlayerGame.time_in_defending_half / safe_divide(Game.frames),
-            PlayerGame.time_in_defending_third / safe_divide(Game.frames),
-            PlayerGame.time_behind_ball / safe_divide(Game.frames),
-            PlayerGame.time_in_front_ball / safe_divide(Game.frames),
+            PlayerGame.time_in_attacking_half,
+            PlayerGame.time_in_attacking_third,
+            PlayerGame.time_in_defending_half,
+            PlayerGame.time_in_defending_third,
+            PlayerGame.time_behind_ball,
+            PlayerGame.time_in_front_ball,
             func.random(), func.random(), func.random(), func.random()]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
