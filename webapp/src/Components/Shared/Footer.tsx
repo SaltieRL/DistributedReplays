@@ -1,8 +1,8 @@
 import {faGithub} from "@fortawesome/free-brands-svg-icons"
 import {createStyles, Grid, Typography, withStyles, WithStyles} from "@material-ui/core"
 import * as React from "react"
-import {LinkButton} from "./LinkButton"
 import {GITHUB_LINK} from "../../Globals"
+import {LinkButton} from "./LinkButton"
 
 type Props = WithStyles<typeof styles>
 

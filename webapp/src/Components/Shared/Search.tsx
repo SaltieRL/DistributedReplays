@@ -3,8 +3,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {IconButton, Paper, TextField} from "@material-ui/core"
 import * as React from "react"
 import {Redirect} from "react-router-dom"
-import {getPlayerFromName} from "../../Requests/Player"
 import {PLAYER_PAGE_LINK} from "../../Globals"
+import {getPlayerFromName} from "../../Requests/Player"
 
 
 interface Props {
