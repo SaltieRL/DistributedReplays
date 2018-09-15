@@ -52,50 +52,16 @@ const blueBorderColour = "rgba(100, 100, 255, 0.8)"
 const orangeBorderColour = "rgba(255, 150, 0, 0.8)"
 
 const chartColors: ChartColors = {
-    "blue": [
-        {
-            backgroundColor: "rgba(29, 53, 224, 0.4)",
-            borderColor: blueBorderColour,
-            borderWidth: 1
-        },
-        {
-            backgroundColor: "rgba(1, 115, 214, 0.4)",
-            borderColor: blueBorderColour,
-            borderWidth: 1
-        },
-        {
-            backgroundColor: "rgba(0, 222, 121, 0.4)",
-            borderColor: blueBorderColour,
-            borderWidth: 1
-        },
-        {
-            backgroundColor: "rgba(0, 211, 204, 0.4)",
-            borderColor: blueBorderColour,
-            borderWidth: 1
-        }
-    ],
-    "orange": [
-        {
-            backgroundColor: "rgba(221, 240, 41, 0.4)",
-            borderColor: orangeBorderColour,
-            borderWidth: 1
-        },
-        {
-            backgroundColor: "rgba(255, 108, 0, 0.4)",
-            borderColor: orangeBorderColour,
-            borderWidth: 1
-        },
-        {
-            backgroundColor: "rgba(255, 0, 128, 0.4)",
-            borderColor: orangeBorderColour,
-            borderWidth: 1
-        },
-        {
-            backgroundColor: "rgba(251, 50, 60, 0.4)",
-            borderColor: orangeBorderColour,
-            borderWidth: 1
-        }
-    ]
+    blue: bluePrimaryColors.map((primaryColor) => ({
+        backgroundColor: primaryColor,
+        borderColor: blueBorderColour,
+        borderWidth: 1
+    })),
+    orange: orangePrimaryColors.map((primaryColor) => ({
+        backgroundColor: primaryColor,
+        borderColor: orangeBorderColour,
+        borderWidth: 1
+    }))
 }
 
 export const colorsForPlaylists = ["#F9A782", "#71EFAF", "#88C6F9", "#E888F7"]

@@ -79,7 +79,6 @@ export class Search extends React.PureComponent<Props, State> {
 
     private readonly onSubmit: React.FormEventHandler = (e) => {
         e.preventDefault()
-        // TODO: Make call
         getPlayerFromName(this.state.enteredText)
             .then((resolvedId) => this.setState({resolvedId}))
     }

@@ -17,14 +17,14 @@ export const getPlayerFromName = (name: string): Promise<string> => {
 
 export const getPlayer = (id: string): Promise<Player> => {
     if (useMockData) {
-        // noinspection TsLint
         return Promise.resolve({
             name: "LongNameTesting",
             pastNames: ["PastName1", "PastName 2: Electric Boogaloo"],
             id,
             profileLink: `https://steamcommunity.com/id/${id}/`,
             platform: "Steam",
-            avatarLink: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/a5/a541aa2146a49c396aa9e159fc176c2799ab231e_full.jpg"
+            avatarLink: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/a5/" +
+                "a541aa2146a49c396aa9e159fc176c2799ab231e_full.jpg"
         })
     }
     return doGet(`/player/${id}/profile`)
@@ -44,7 +44,7 @@ export const getStats = (id: string): Promise<PlayerStats> => {
 
 
 export const getPlayerTendencies = (id: string): Promise<ChartDataResponse[]> => {
-    if (useMockData) {// TODO: Do actual fetch
+    if (useMockData) {
         return Promise.resolve([{
                 title: "Aggressiveness",
                 chartDataPoints: [
@@ -82,7 +82,6 @@ export const getPlayerTendencies = (id: string): Promise<ChartDataResponse[]> =>
 
 export const getRanks = (id: string): Promise<PlayerRanks> => {
     if (useMockData) {
-        // TODO: Replace with actual query.
         const rating = {
             name: "Eggplant III (div 3)",
             rating: 2,
