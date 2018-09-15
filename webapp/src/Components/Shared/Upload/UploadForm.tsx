@@ -1,15 +1,18 @@
 import {
-    Button, ButtonBase,
+    Button,
+    ButtonBase,
     Card,
     CardActions,
     CardContent,
-    CardHeader, createStyles,
+    CardHeader,
+    createStyles,
     Theme,
     Typography,
     WithStyles,
     withStyles
 } from "@material-ui/core"
-import {ArrowDownward, CloudUpload} from "@material-ui/icons"
+import ArrowDownward from "@material-ui/icons/ArrowDownward"
+import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
 import Dropzone, {DropFilesEventHandler} from "react-dropzone"
 import {uploadReplays} from "../../../Requests/Global"

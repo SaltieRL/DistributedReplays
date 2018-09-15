@@ -1,5 +1,5 @@
 import {createStyles, Grid, Theme, Tooltip, Typography, withStyles, WithStyles} from "@material-ui/core"
-import {Info} from "@material-ui/icons"
+import Info from "@material-ui/icons/Info"
 import * as React from "react"
 import {getGlobalStats} from "../../Requests/Global"
 import {GlobalStatsChart} from "../GlobalStatsChart"

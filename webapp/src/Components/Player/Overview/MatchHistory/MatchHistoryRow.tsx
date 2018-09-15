@@ -7,7 +7,8 @@ import {
     IconButton, Theme,
     Typography, WithStyles, withStyles
 } from "@material-ui/core"
-import {ExpandMore, InsertChart} from "@material-ui/icons"
+import ExpandMore from "@material-ui/icons/ExpandMore"
+import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
 import {REPLAY_PAGE_LINK} from "../../../../Globals"
 import {getColouredGameScore, getReplayResult, Replay} from "../../../../Models/Replay/Replay"

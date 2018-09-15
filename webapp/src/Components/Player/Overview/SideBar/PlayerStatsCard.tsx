@@ -9,7 +9,7 @@ import {
     withStyles,
     WithStyles
 } from "@material-ui/core"
-import {DirectionsCar} from "@material-ui/icons"
+import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import * as React from "react"
 import {getStats} from "../../../../Requests/Player"
 import {convertNumberToMaxDP} from "../../../../Utils/String"
