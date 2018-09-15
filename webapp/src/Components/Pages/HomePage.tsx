@@ -4,9 +4,10 @@ import {Search} from "../Shared/Search"
 
 import {faDiscord, faGithub, faSteam} from "@fortawesome/free-brands-svg-icons"
 import {faChartBar} from "@fortawesome/free-solid-svg-icons"
-import {createStyles, Grid, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {createStyles, Grid, Typography, WithStyles, withStyles, withWidth} from "@material-ui/core"
 import Divider from "@material-ui/core/Divider/Divider"
 import {GridProps} from "@material-ui/core/Grid"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import {CloudUpload, Info} from "@material-ui/icons"
 import {DISCORD_LINK, GITHUB_LINK, LOCAL_LINK} from "../../Globals"
 import {getReplayCount} from "../../Requests/Global"
@@ -14,6 +15,7 @@ import {LinkButton} from "../Shared/LinkButton"
 import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
 
 type Props = WithStyles<typeof styles>
+    & WithWidth
 
 interface State {
     replayCount?: number
@@ -31,7 +33,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {classes} = this.props
+        const {classes, width} = this.props
 
         const alignCenterProps: GridProps = {container: true, justify: "center", alignItems: "center"}
         return (
@@ -57,7 +59,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             <Grid item xs={6} style={{textAlign: "center"}}>
                                 <LinkButton to={LOCAL_LINK + "/auth/steam"} isExternalLink
                                             iconType="fontawesome" icon={faSteam}>
-                                    Log in with Steam
+                                    {isWidthUp("sm", width) ? "Log in with Steam" : "Log in"}
                                 </LinkButton>
                             </Grid>
                             <Grid item xs={6} style={{textAlign: "center"}}>
@@ -122,4 +124,4 @@ const styles = createStyles({
     }
 })
 
-export const HomePage = (withStyles(styles)(HomePageComponent))
+export const HomePage = withWidth()(withStyles(styles)(HomePageComponent))
