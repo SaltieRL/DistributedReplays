@@ -1,17 +1,28 @@
-import {ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Grid, Typography} from "@material-ui/core"
-import {ExpandMore} from "@material-ui/icons"
+import {
+    createStyles,
+    ExpansionPanel,
+    ExpansionPanelDetails,
+    ExpansionPanelSummary,
+    Grid,
+    IconButton, Theme,
+    Typography, WithStyles, withStyles
+} from "@material-ui/core"
+import {ExpandMore, InsertChart} from "@material-ui/icons"
 import * as React from "react"
 import {getColouredGameScore, Replay} from "../../../Models/Replay/Replay"
 import {ReplayChart} from "../../Replay/ReplayChart"
+import {REPLAY_PAGE_LINK} from "../../../Globals"
 
-interface Props {
+interface OwnProps {
     replay: Replay
 }
 
+type Props = OwnProps
+    & WithStyles<typeof styles>
 
-export class MatchHistoryRow extends React.PureComponent<Props> {
+class MatchHistoryRowComponent extends React.PureComponent<Props> {
     public render() {
-        const {replay} = this.props
+        const {replay, classes} = this.props
         return (
             <ExpansionPanel>
                 <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
@@ -34,8 +45,12 @@ export class MatchHistoryRow extends React.PureComponent<Props> {
                         <Grid item xs={2}>
                             <Typography variant="subheading">
                                 {getColouredGameScore(replay)}
-                                {/*{`${replay.score.team0Score} - ${replay.score.team1Score}`}*/}
                             </Typography>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
+                                <InsertChart/>
+                            </IconButton>
                         </Grid>
                     </Grid>
                 </ExpansionPanelSummary>
@@ -46,3 +61,19 @@ export class MatchHistoryRow extends React.PureComponent<Props> {
         )
     }
 }
+
+const styles = (theme: Theme) => createStyles({
+    iconButton: {
+        height: 20,
+        width: 20,
+        color: theme.palette.secondary.main,
+        "&:hover": {
+            transitionProperty: "transform",
+            transitionDuration: "100ms",
+            transform: "scale(1.2)",
+            color: theme.palette.secondary.dark
+        }
+    }
+})
+
+export const MatchHistoryRow = withStyles(styles)(MatchHistoryRowComponent)
