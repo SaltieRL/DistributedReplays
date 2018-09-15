@@ -1,5 +1,3 @@
-import {faChartBar} from "@fortawesome/free-solid-svg-icons"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {
     Card,
     CardContent,
@@ -11,6 +9,7 @@ import {
     withStyles,
     WithStyles
 } from "@material-ui/core"
+import {DirectionsCar} from "@material-ui/icons"
 import * as React from "react"
 import {getStats} from "../../../../Requests/Player"
 import {convertNumberToMaxDP} from "../../../../Utils/String"
@@ -62,7 +61,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                     {this.state.playerStats &&
                     <Grid container alignItems="center" justify="space-around" spacing={16}>
                         <Grid item xs="auto">
-                            <FontAwesomeIcon icon={faChartBar}/>
+                            <DirectionsCar/>
                         </Grid>
                         <Grid item xs="auto">
                             <Typography variant="subheading">
@@ -71,7 +70,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={3} container direction="column" alignItems="center">
                             <Grid item>
-                                <Typography>
+                                <Typography align="center">
                                     {this.state.playerStats.car.carName}
                                 </Typography>
                                 <Typography className={classes.percentage}>
