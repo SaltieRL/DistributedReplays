@@ -10,8 +10,6 @@ class ChartDataPoint:
 
 
 class ChartData:
-    def __init__(self, title: str, chart_data_points: List[ChartDataPoint], type_: Optional[str]):
+    def __init__(self, title: str, chart_data_points: List[ChartDataPoint]):
         self.title = title
         self.chartDataPoints = [chart_data_point.__dict__ for chart_data_point in chart_data_points]
-        if type_:
-            self.type = type_

@@ -8,9 +8,9 @@ from ..utils import sort_player_games_by_team_then_id
 from ...errors.errors import ReplayNotFound
 
 chart_types = {
-    'spider': ['total_hits', 'total_dribbles', 'total_passes', 'total_aerials', 'turnovers', 'average_speed',
-               'average_hit_distance', 'ball_hit_forward', 'time_high_in_air', 'time_low_in_air', 'wasted_collection',
-               'time_in_attacking_half', 'time_in_defending_half', 'possession_time', 'boost_usage'],
+    'radar': ['total_hits', 'total_dribbles', 'total_passes', 'total_aerials', 'turnovers', 'average_speed',
+              'average_hit_distance', 'ball_hit_forward', 'time_high_in_air', 'time_low_in_air', 'wasted_collection',
+              'time_in_attacking_half', 'time_in_defending_half', 'possession_time', 'boost_usage'],
     'pie': ['possession_time', 'boost_usage'],
     'bar': ['total_dribbles', 'total_passes', 'total_aerials', 'ball_hit_forward', 'ball_hit_backward',
             'time_high_in_air', 'time_low_in_air', 'wasted_collection']
@@ -29,6 +29,9 @@ class StatDataPoint(ChartDataPoint):
 
 
 class BasicStatChartData(ChartData):
+    def __init__(self, title: str, chart_data_points: List[ChartDataPoint], type_: str):
+        super().__init__(title, chart_data_points)
+        self.type = type_
 
     @staticmethod
     def create_from_id(id_: str) -> List['BasicStatChartData']:

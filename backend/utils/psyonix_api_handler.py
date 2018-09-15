@@ -21,8 +21,13 @@ with open(json_loc, 'r') as f:
 logger = logging.getLogger(__name__)
 
 
-def get_item_name_by_id(id_):
-    return item_dict[id_]
+def get_item_name_by_id(id_: str):
+    try:
+        return item_dict[id_]["LongLabel"]
+    except KeyError:
+        logger.error(f'Cannot find item for id {id_}.')
+        logger.error(item_dict)
+        return "Unknown"
 
 
 def get_item_dict():
