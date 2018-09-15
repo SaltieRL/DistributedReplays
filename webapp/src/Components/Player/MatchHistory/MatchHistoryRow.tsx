@@ -9,9 +9,9 @@ import {
 } from "@material-ui/core"
 import {ExpandMore, InsertChart} from "@material-ui/icons"
 import * as React from "react"
+import {REPLAY_PAGE_LINK} from "../../../Globals"
 import {getColouredGameScore, Replay} from "../../../Models/Replay/Replay"
 import {ReplayChart} from "../../Replay/ReplayChart"
-import {REPLAY_PAGE_LINK} from "../../../Globals"
 
 interface OwnProps {
     replay: Replay
