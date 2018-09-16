@@ -116,7 +116,7 @@ def api_get_replay_basic_stats(id_):
 def api_upload_replays():
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
-    if uploaded_files is None or 'file' not in request.files or len(uploaded_files) == 0:
+    if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:
         raise CalculatedError(400, 'No files uploaded')
 
     for file in uploaded_files:
@@ -125,7 +125,7 @@ def api_upload_replays():
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
         file.save(filename)
         celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-    return
+    return 'Replay uploaded and queued for processing...', 202
 
 
 @bp.errorhandler(CalculatedError)
