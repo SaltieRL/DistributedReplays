@@ -21,6 +21,10 @@ export class BasicStatsGrid extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
+        this.getBasicStats()
+    }
+
+    private getBasicStats() {
         getReplayBasicStats(this.props.replay.id)
             .then((basicStats) => this.setState({basicStats}))
     }

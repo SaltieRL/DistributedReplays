@@ -14,6 +14,7 @@ import * as React from "react"
 import {getGlobalStats} from "../../Requests/Global"
 import {GlobalStatsChart} from "../GlobalStatsChart"
 import {BasePage} from "./BasePage"
+import {LoadableComponent} from "../Shared/LoadableComponent"
 
 type Props = WithStyles<typeof styles>
 
@@ -25,11 +26,6 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {}
-    }
-
-    public componentDidMount() {
-        getGlobalStats()
-            .then((globalStats) => this.setState({globalStats}))
     }
 
     public render() {
@@ -44,21 +40,29 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
                             </Tooltip>
                         </Typography>
                     </Grid>
-                    {this.state.globalStats && this.state.globalStats.map((globalStatsGraph) => {
-                        return (
-                            <Grid item xs={12} sm={6} md={4} key={globalStatsGraph.name}>
-                                <Card>
-                                    <CardHeader title={globalStatsGraph.name} titleTypographyProps={{align: "center"}}/>
-                                    <CardContent>
-                                        <GlobalStatsChart graph={globalStatsGraph}/>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        )
-                    })}
+                    <LoadableComponent load={this.getStats}>
+                        {this.state.globalStats && this.state.globalStats.map((globalStatsGraph) => {
+                            return (
+                                <Grid item xs={12} sm={6} md={4} key={globalStatsGraph.name}>
+                                    <Card>
+                                        <CardHeader title={globalStatsGraph.name}
+                                                    titleTypographyProps={{align: "center"}}/>
+                                        <CardContent>
+                                            <GlobalStatsChart graph={globalStatsGraph}/>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+                            )
+                        })}
+                    </LoadableComponent>
                 </Grid>
             </BasePage>
         )
+    }
+
+    private readonly getStats = (): Promise<void> => {
+        return getGlobalStats()
+            .then((globalStats) => this.setState({globalStats}))
     }
 }
 
