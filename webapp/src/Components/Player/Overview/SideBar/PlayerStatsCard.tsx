@@ -13,6 +13,7 @@ import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import * as React from "react"
 import {getStats} from "../../../../Requests/Player"
 import {convertNumberToMaxDP} from "../../../../Utils/String"
+import {LoadableComponent} from "../../../Shared/LoadableComponent"
 
 interface CarStat {
     carName: string
@@ -32,21 +33,18 @@ type Props = OwnProps
 
 interface State {
     playerStats?: PlayerStats
+    reloadSignal: boolean
 }
 
 class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {}
-    }
-
-    public componentDidMount() {
-        this.getPlayerProfileStats()
+        this.state = {reloadSignal: false}
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>): void {
         if (prevProps.player.id !== this.props.player.id) {
-            this.getPlayerProfileStats()
+            this.triggerReload()
         }
     }
 
@@ -58,36 +56,42 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                 <CardHeader title="Stats"/>
                 <Divider/>
                 <CardContent>
-                    {this.state.playerStats &&
-                    <Grid container alignItems="center" justify="space-around" spacing={16}>
-                        <Grid item xs="auto">
-                            <DirectionsCar/>
-                        </Grid>
-                        <Grid item xs="auto">
-                            <Typography variant="subheading">
-                                favourite car
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={3} container direction="column" alignItems="center">
-                            <Grid item>
-                                <Typography align="center">
-                                    {this.state.playerStats.car.carName}
-                                </Typography>
-                                <Typography className={classes.percentage}>
-                                    {convertNumberToMaxDP(this.state.playerStats.car.carPercentage * 100, 1)}%
+                    <LoadableComponent load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
+                        {this.state.playerStats &&
+                        <Grid container alignItems="center" justify="space-around" spacing={16}>
+                            <Grid item xs="auto">
+                                <DirectionsCar/>
+                            </Grid>
+                            <Grid item xs="auto">
+                                <Typography variant="subheading">
+                                    favourite car
                                 </Typography>
                             </Grid>
+                            <Grid item xs={3} container direction="column" alignItems="center">
+                                <Grid item>
+                                    <Typography align="center">
+                                        {this.state.playerStats.car.carName}
+                                    </Typography>
+                                    <Typography className={classes.percentage}>
+                                        {convertNumberToMaxDP(this.state.playerStats.car.carPercentage * 100, 1)}%
+                                    </Typography>
+                                </Grid>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    }
+                        }
+                    </LoadableComponent>
                 </CardContent>
             </Card>
         )
     }
 
-    private readonly getPlayerProfileStats = () => {
-        getStats(this.props.player.id)
+    private readonly getPlayerProfileStats = (): Promise<void> => {
+        return getStats(this.props.player.id)
             .then((playerStats) => this.setState({playerStats}))
+    }
+
+    private readonly triggerReload = () => {
+        this.setState({reloadSignal: !this.state.reloadSignal})
     }
 }
 

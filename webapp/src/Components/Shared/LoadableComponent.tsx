@@ -61,7 +61,7 @@ export class LoadableComponent extends React.PureComponent<Props, State> {
         )
     }
 
-    private attemptToLoad = () => {
+    private readonly attemptToLoad = () => {
         this.setState({loadingState: "loading", notificationOpen: false})
         this.props.load()
             .then(() => this.setState({loadingState: "loaded"}))

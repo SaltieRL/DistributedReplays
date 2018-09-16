@@ -2,6 +2,7 @@ import {Card, CardContent, CardHeader} from "@material-ui/core"
 import * as React from "react"
 import {Replay} from "../../../../Models/Replay/Replay"
 import {getMatchHistory} from "../../../../Requests/Player"
+import {LoadableComponent} from "../../../Shared/LoadableComponent"
 import {MatchHistoryRow} from "./MatchHistoryRow"
 
 
@@ -11,21 +12,18 @@ interface Props {
 
 interface State {
     matchHistory?: Replay[]
+    reloadSignal: boolean
 }
 
 export class PlayerMatchHistory extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {}
-    }
-
-    public componentDidMount() {
-        this.getPlayerMatchHistory()
+        this.state = {reloadSignal: false}
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>) {
         if (prevProps.player.id !== this.props.player.id) {
-            this.getPlayerMatchHistory()
+            this.triggerReload()
         }
     }
 
@@ -34,17 +32,23 @@ export class PlayerMatchHistory extends React.PureComponent<Props, State> {
             <Card>
                 <CardHeader title="Match History"/>
                 <CardContent>
-                    {this.state.matchHistory &&
-                    this.state.matchHistory.map((replay) =>
-                        <MatchHistoryRow replay={replay} player={this.props.player} key={replay.name}/>)
-                    }
+                    <LoadableComponent load={this.getPlayerMatchHistory} reloadSignal={this.state.reloadSignal}>
+                        {this.state.matchHistory &&
+                        this.state.matchHistory.map((replay) =>
+                            <MatchHistoryRow replay={replay} player={this.props.player} key={replay.name}/>)
+                        }
+                    </LoadableComponent>
                 </CardContent>
             </Card>
         )
     }
 
-    private readonly getPlayerMatchHistory = () => {
-        getMatchHistory(this.props.player.id)
+    private readonly getPlayerMatchHistory = (): Promise<void> => {
+        return getMatchHistory(this.props.player.id)
             .then((matchHistory) => this.setState({matchHistory}))
+    }
+
+    private readonly triggerReload = () => {
+        this.setState({reloadSignal: !this.state.reloadSignal})
     }
 }
