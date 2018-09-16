@@ -67,11 +67,11 @@ class NavBarComponent extends React.PureComponent<Props, State> {
                         <>
                             <Grid item className={classes.grow}/>
                             <Grid item>
-                                <Tooltip title="Global stats">
-                                    <Link to={GLOBAL_STATS_LINK}>
+                                <Link to={GLOBAL_STATS_LINK}>
+                                    <Tooltip title="Global stats">
                                         <IconButton><FontAwesomeIcon icon={faGlobeAmericas}/></IconButton>
-                                    </Link>
-                                </Tooltip>
+                                    </Tooltip>
+                                </Link>
                             </Grid>
                             <Grid item>
                                 <UploadModalWrapper buttonStyle="icon"/>
