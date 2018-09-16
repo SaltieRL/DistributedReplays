@@ -18,3 +18,5 @@ export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Spec
 
     return doPost("/upload", formData)
 }
+
+export const getLoggedInUser = () : Promise<LoggedInUser> => doGet("/me")
