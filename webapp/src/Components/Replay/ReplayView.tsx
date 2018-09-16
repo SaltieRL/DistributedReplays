@@ -46,7 +46,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
         return (
             <>
                 {replay &&
-                <Grid container spacing={24}>
+                <Grid container spacing={24} alignItems="center">
                     {isWidthUp("lg", this.props.width) ?
                         <>
                             {blueGridItem}

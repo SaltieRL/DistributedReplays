@@ -1,3 +1,5 @@
+import {faGlobeAmericas} from "@fortawesome/free-solid-svg-icons"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {
     AppBar,
     createStyles,
@@ -11,15 +13,13 @@ import {
 } from "@material-ui/core"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
+import {Link} from "react-router-dom"
+import {GLOBAL_STATS_LINK} from "../../../Globals"
 import {getLoggedInUser} from "../../../Requests/Global"
 import {Logo} from "../Logo/Logo"
 import {Search} from "../Search"
 import {UploadModalWrapper} from "../Upload/UploadModalWrapper"
 import {AccountMenu} from "./AccountMenu"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {faGlobeAmericas} from "@fortawesome/free-solid-svg-icons"
-import {Link} from "react-router-dom"
-import {GLOBAL_STATS_LINK} from "../../../Globals"
 
 type Props = WithWidth
     & WithStyles<typeof styles>
@@ -67,11 +67,11 @@ class NavBarComponent extends React.PureComponent<Props, State> {
                         <>
                             <Grid item className={classes.grow}/>
                             <Grid item>
-                                <Tooltip title="Global stats">
-                                    <Link to={GLOBAL_STATS_LINK}>
+                                <Link to={GLOBAL_STATS_LINK}>
+                                    <Tooltip title="Global stats">
                                         <IconButton><FontAwesomeIcon icon={faGlobeAmericas}/></IconButton>
-                                    </Link>
-                                </Tooltip>
+                                    </Tooltip>
+                                </Link>
                             </Grid>
                             <Grid item>
                                 <UploadModalWrapper buttonStyle="icon"/>

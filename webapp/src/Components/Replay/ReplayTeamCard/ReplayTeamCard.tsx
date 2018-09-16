@@ -19,7 +19,7 @@ class ReplayTeamCardComponent extends React.PureComponent<Props> {
         const headerClassName = isOrange ? classes.orangeCard : classes.blueCard
 
         return (
-            <Card square style={{minHeight: "100%"}}>
+            <Card square>
                 <CardHeader
                     title={title}
                     titleTypographyProps={{align: "center"}}

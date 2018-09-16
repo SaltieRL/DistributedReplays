@@ -13,10 +13,29 @@ export const convertHexToRgba = (hex: string, alpha: number = 1) => {
 }
 
 const bluePrimaryColors =
-    ["rgba(29, 53, 224, 0.4)", "rgba(1, 115, 214, 0.4)", "rgba(0, 222, 121, 0.4)", "rgba(0, 211, 204, 0.4)"]
+    // [  // Mine
+    //     "rgba(29, 53, 224, 0.4)",
+    //     "rgba(1, 115, 214, 0.4)",
+    //     "rgba(0, 222, 121, 0.4)",
+    //     "rgba(0, 211, 204, 0.4)"
+    // ]
+    // [  // Gander's
+    //     "rgba(51, 184, 165, 0.4)",
+    //     "rgba(50, 118, 181, 0.4)",
+    //     "rgb(184, 104, 173, 0.4)",
+    //     "rgba(0, 211, 204, 0.4)"
+    // ]
+    [  // dtracers's
+        "rgba(5,17,245,0.55)",
+        "rgba(16,142,245,0.55)",
+        "rgba(5,224,204, 0.55)",
+        "rgba(0, 211, 204, 0.55)"
+    ]
 
 const orangePrimaryColors =
-    ["rgba(221, 240, 41, 0.4)", "rgba(255, 108, 0, 0.4)", "rgba(255, 0, 128, 0.4)", "rgba(251, 50, 60, 0.4)"]
+    // ["rgba(221, 240, 41, 0.4)", "rgba(255, 108, 0, 0.4)", "rgba(255, 0, 128, 0.4)", "rgba(251, 50, 60, 0.4)"]
+    // ["rgba(240, 73, 80, 0.4)", "rgba(245, 141, 78, 0.4)", "rgba(254, 206, 62, 0.4)", "rgba(251, 50, 60, 0.4)"]
+    ["rgba(235,16,0,0.55)", "rgba(245,81,5,0.55)", "rgba(255,156,18,0.55)", "rgba(251, 50, 60, 0.55)"]
 
 export const getPrimaryColorsForPlayers = (teams: boolean[]): string[] => {
     let blueIndex = 0

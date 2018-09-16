@@ -11,16 +11,8 @@ interface Props {
 
 export class ColoredBarChart extends React.PureComponent<Props> {
     public render() {
-        const options: ChartOptions = {
-            legend: {display: false},
-            scales: {
-                yAxes: [
-                    {ticks: {maxTicksLimit: 5, beginAtZero: true}}
-                ]
-            }
-        }
         return (
-            <Bar data={this.getChartData} options={options}/>
+            <Bar data={this.getChartData()} options={this.getChartOptions()}/>
         )
     }
 
@@ -38,5 +30,16 @@ export class ColoredBarChart extends React.PureComponent<Props> {
                     }
                 ]
         }
+    }
+
+    private readonly getChartOptions = (): ChartOptions => {
+        return {
+            legend: {display: false},
+            scales: {
+                yAxes: [
+                    {ticks: {maxTicksLimit: 5, beginAtZero: true}}
+                ]
+            }
+        } as ChartOptions
     }
 }
