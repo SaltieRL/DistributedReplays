@@ -1,6 +1,14 @@
 import {faCamera, faCarSide} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Dialog, DialogTitle, IconButton, ListItem, ListItemSecondaryAction, ListItemText} from "@material-ui/core"
+import {
+    Dialog,
+    DialogTitle,
+    IconButton,
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText,
+    Tooltip
+} from "@material-ui/core"
 import * as React from "react"
 import {Link} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../../Globals"
@@ -26,14 +34,18 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
         const {player} = this.props
 
         const carButton =
-            <IconButton onClick={this.handleShowLoadout}>
-                <FontAwesomeIcon icon={faCarSide}/>
-            </IconButton>
+            <Tooltip title="Loadout">
+                <IconButton onClick={this.handleShowLoadout}>
+                    <FontAwesomeIcon icon={faCarSide}/>
+                </IconButton>
+            </Tooltip>
 
         const cameraButton =
-            <IconButton onClick={this.handleShowCamera}>
-                <FontAwesomeIcon icon={faCamera}/>
-            </IconButton>
+            <Tooltip title="Camera settings">
+                <IconButton onClick={this.handleShowCamera}>
+                    <FontAwesomeIcon icon={faCamera}/>
+                </IconButton>
+            </Tooltip>
 
         return (
             <>

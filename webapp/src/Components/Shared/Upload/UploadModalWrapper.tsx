@@ -1,12 +1,13 @@
-import {withWidth} from "@material-ui/core"
+import {IconButton, withWidth} from "@material-ui/core"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import {CloudUpload} from "@material-ui/icons"
 import * as React from "react"
 import {UploadContainedButton} from "./UploadContainedButton"
 import {UploadFloatingButton} from "./UploadFloatingButton"
 import {UploadModal} from "./UploadModal"
 
 interface OwnProps {
-    buttonStyle: "contained" | "floating"
+    buttonStyle: "contained" | "floating" | "icon"
 }
 
 type Props = OwnProps
@@ -33,14 +34,19 @@ class UploadModalWrapperComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const Icon = CloudUpload
         return (
             <>
                 {isWidthUp("md", this.props.width) &&
                 <>
-                    {this.props.buttonStyle === "floating"
-                    && <UploadFloatingButton handleOpen={this.handleOpen}/>}
-                    {this.props.buttonStyle === "contained"
-                    && <UploadContainedButton handleOpen={this.handleOpen}/>}
+                    {this.props.buttonStyle === "floating" &&
+                    <UploadFloatingButton handleOpen={this.handleOpen} Icon={Icon}/>}
+                    {this.props.buttonStyle === "contained" &&
+                    <UploadContainedButton handleOpen={this.handleOpen} Icon={Icon}/>}
+                    {this.props.buttonStyle === "icon" &&
+                    <IconButton onClick={this.handleOpen}>
+                        <Icon/>
+                    </IconButton>}
                 </>}
                 <UploadModal open={this.state.open} handleClickOutside={this.handleClose}/>
                 {this.props.children}

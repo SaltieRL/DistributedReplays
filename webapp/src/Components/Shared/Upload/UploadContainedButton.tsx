@@ -1,10 +1,11 @@
 import {Button, WithStyles, withStyles} from "@material-ui/core"
-import CloudUpload from "@material-ui/icons/CloudUpload"
+import {SvgIconProps} from "@material-ui/core/SvgIcon"
 import * as React from "react"
 import {buttonStyles} from "../LinkButton"
 
 interface OwnProps {
     handleOpen: () => void
+    Icon: React.ComponentType<SvgIconProps>
 }
 
 type Props = OwnProps
@@ -12,10 +13,11 @@ type Props = OwnProps
 
 class UploadContainedButtonComponent extends React.PureComponent<Props> {
     public render() {
+        const {Icon, handleOpen} = this.props
         return (
             <>
-                <Button variant="contained" color="primary" aria-label="upload" onClick={this.props.handleOpen}>
-                    <CloudUpload className={this.props.classes.leftIcon}/>
+                <Button variant="contained" color="primary" aria-label="upload" onClick={handleOpen}>
+                    <Icon className={this.props.classes.leftIcon}/>
                     Upload replay
                 </Button>
             </>

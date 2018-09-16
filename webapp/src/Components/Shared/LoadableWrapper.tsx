@@ -9,7 +9,7 @@ interface OwnProps {
 }
 
 type Props = OwnProps
- & WithStyles<typeof styles>
+    & WithStyles<typeof styles>
 
 interface State {
     loadingState: "not loaded" | "loading" | "loaded" | "failed"
@@ -46,7 +46,7 @@ export class LoadableWrapperComponent extends React.PureComponent<Props, State> 
 
                 {loadingState === "loaded" && this.props.children}
 
-                {loadingState === "failed" && appError &&
+                {loadingState === "failed" &&
                 <>
                     <div className={classes.loadableWrapper}>
                         <Typography variant="subheading">
@@ -59,9 +59,10 @@ export class LoadableWrapperComponent extends React.PureComponent<Props, State> 
 
                 </>
                 }
-                {appError && <NotificationSnackbar variant="appError" appError={appError}
-                                                   open={notificationOpen}
-                                                   handleClose={this.handleNotificationClose}/>
+                {appError &&
+                <NotificationSnackbar variant="appError" appError={appError}
+                                      open={notificationOpen}
+                                      handleClose={this.handleNotificationClose}/>
                 }
             </>
         )

@@ -8,7 +8,7 @@ interface Props {
 
 interface State {
     open: boolean
-    anchorElement?: Element
+    anchorElement?: HTMLElement
 }
 
 export class PlayerNameDropdown extends React.PureComponent<Props, State> {
@@ -26,7 +26,7 @@ export class PlayerNameDropdown extends React.PureComponent<Props, State> {
                 </IconButton>
                 <Menu open={this.state.open}
                       onClose={this.handleClose}
-                      anchorEl={this.state.anchorElement as HTMLElement}
+                      anchorEl={this.state.anchorElement}
                 >
                     {this.props.pastNames.map((name) =>
                         <MenuItem key={name} onClick={this.handleClose}>
@@ -38,7 +38,7 @@ export class PlayerNameDropdown extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleOpen: React.MouseEventHandler = (event) => {
+    private readonly handleOpen: React.MouseEventHandler<HTMLElement> = (event) => {
         this.setState({
             open: true,
             anchorElement: event.currentTarget
@@ -47,7 +47,8 @@ export class PlayerNameDropdown extends React.PureComponent<Props, State> {
 
     private readonly handleClose = () => {
         this.setState({
-            open: false
+            open: false,
+            anchorElement: undefined
         })
     }
 }
