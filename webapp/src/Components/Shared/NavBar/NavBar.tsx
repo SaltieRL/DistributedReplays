@@ -1,4 +1,14 @@
-import {AppBar, Grid, Toolbar, Typography, withWidth} from "@material-ui/core"
+import {
+    AppBar,
+    createStyles,
+    Grid,
+    IconButton,
+    Toolbar, Tooltip,
+    Typography,
+    withStyles,
+    WithStyles,
+    withWidth
+} from "@material-ui/core"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 import {getLoggedInUser} from "../../../Requests/Global"
@@ -6,8 +16,13 @@ import {Logo} from "../Logo/Logo"
 import {Search} from "../Search"
 import {UploadModalWrapper} from "../Upload/UploadModalWrapper"
 import {AccountMenu} from "./AccountMenu"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {faGlobeAmericas} from "@fortawesome/free-solid-svg-icons"
+import {Link} from "react-router-dom"
+import {GLOBAL_STATS_LINK} from "../../../Globals"
 
 type Props = WithWidth
+    & WithStyles<typeof styles>
 
 interface State {
     loggedInUser?: LoggedInUser
@@ -26,21 +41,17 @@ class NavBarComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const searchStyle = {
-            flexGrow: 1,
-            minWidth: 300,
-            maxWidth: 400
-        }
+        const {classes, width} = this.props
         return (
             <AppBar color="default">
                 <Toolbar>
                     <Grid container>
-                        {isWidthUp("md", this.props.width) &&
+                        {isWidthUp("md", width) &&
                         <>
                             <Grid item xs="auto">
                                 <Logo imgStyle={{maxHeight: 40}}/>
                             </Grid>
-                            <Grid item xs="auto" style={{margin: "auto 0 auto 0"}}>
+                            <Grid item xs="auto" className={classes.motto}>
                                 <Typography align="center" style={{fontSize: 10, width: 100}}>
                                     a Rocket League statistics platform
                                 </Typography>
@@ -48,19 +59,26 @@ class NavBarComponent extends React.PureComponent<Props, State> {
                         </>
                         }
 
-                        <Grid item xs="auto" style={searchStyle}>
+                        <Grid item xs="auto" className={classes.search}>
                             <Search usePaper={false}/>
                         </Grid>
 
-                        {isWidthUp("sm", this.props.width) &&
+                        {isWidthUp("sm", width) &&
                         <>
-                            <Grid item style={{flexGrow: 1}}/>
+                            <Grid item className={classes.grow}/>
+                            <Grid item>
+                                <Tooltip title="Global stats">
+                                    <Link to={GLOBAL_STATS_LINK}>
+                                        <IconButton><FontAwesomeIcon icon={faGlobeAmericas}/></IconButton>
+                                    </Link>
+                                </Tooltip>
+                            </Grid>
                             <Grid item>
                                 <UploadModalWrapper buttonStyle="icon"/>
                             </Grid>
                         </>
                         }
-                        <Grid item xs="auto" style={{margin: "auto", marginLeft: "10px"}}>
+                        <Grid item xs="auto" className={classes.accountMenuGridItem}>
                             <AccountMenu loggedInUser={this.state.loggedInUser}/>
                         </Grid>
                     </Grid>
@@ -70,4 +88,22 @@ class NavBarComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const NavBar = withWidth()(NavBarComponent)
+const styles = createStyles({
+    grow: {
+        flexGrow: 1
+    },
+    motto: {
+        margin: "auto 0 auto 0"
+    },
+    search: {
+        flexGrow: 1,
+        minWidth: 200,
+        maxWidth: 400
+    },
+    accountMenuGridItem: {
+        margin: "auto",
+        marginLeft: "10px"
+    }
+})
+
+export const NavBar = withWidth()(withStyles(styles)(NavBarComponent))

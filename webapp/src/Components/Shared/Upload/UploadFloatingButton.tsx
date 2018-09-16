@@ -16,7 +16,7 @@ export class UploadFloatingButton extends React.PureComponent<Props> {
             right: "60px"
         }
         return (
-            <Tooltip title="Upload replay">
+            <Tooltip title="Upload replays">
                 <Button variant="fab" color="secondary" aria-label="upload" style={buttonStyle}
                         onClick={handleOpen}>
                     <Icon/>
