@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Analyse" type="js.build_tools.npm" factoryName="npm">
+    <package-json value="$PROJECT_DIR$/webapp/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="analyze" />
+    </scripts>
+    <node-interpreter value="project" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

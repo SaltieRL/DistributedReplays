@@ -22,6 +22,7 @@
     "three": "^0.96.0"
   },
   "scripts": {
+    "analyze": "source-map-explorer build/static/js/main.*",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
@@ -36,6 +37,7 @@
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
     "@types/react-router-dom": "^4.3.0",
+    "source-map-explorer": "^1.6.0",
     "typescript": "^3.0.3"
   },
   "proxy": {

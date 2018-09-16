@@ -1,8 +1,8 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {RouteComponentProps} from "react-router-dom"
-import {ThreeScene} from "./ThreeScene"
 import {getReplayViewerData} from "../../../Requests/Replay"
+import {ThreeScene} from "./ThreeScene"
 
 interface OwnProps {
     id: string

@@ -8,6 +8,8 @@ export const getReplayCount = (): Promise<number> => {
     return doGet("/global/replay_count")
 }
 
+export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
+
 export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Specify any
     const formData = new FormData()
     replays.forEach((file) => {

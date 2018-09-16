@@ -1,7 +1,7 @@
 import {Grid} from "@material-ui/core"
 import * as React from "react"
-import {PlayerMatchHistory} from "./MatchHistory/PlayerMatchHistory"
-import {PlayerTendencies} from "./PlayerTendencies"
+import {PlayerMatchHistory} from "./Overview/MatchHistory/PlayerMatchHistory"
+import {PlayerTendencies} from "./Overview/PlayerTendencies"
 
 interface Props {
     player: Player

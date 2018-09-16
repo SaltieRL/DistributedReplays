@@ -5,6 +5,7 @@ import {Replay} from "../../Models/Replay/Replay"
 import {getReplay} from "../../Requests/Replay"
 import {ReplayView} from "../Replay/ReplayView"
 import {BasePage} from "./BasePage"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
 
 
 interface RouteParams {
@@ -24,25 +25,25 @@ export class ReplayPage extends React.PureComponent<Props, State> {
         this.state = {}
     }
 
-    public componentDidMount() {
-        getReplay(this.props.match.params.id)
-            .then((replay) => this.setState({replay}))
-    }
-
     public render() {
         const {replay} = this.state
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
-                    {replay &&
-                    <>
+                    <LoadableWrapper load={this.getReplay}>
+                        {replay &&
                         <Grid item xs={12}>
                             <ReplayView replay={replay}/>
                         </Grid>
-                    </>
-                    }
+                        }
+                    </LoadableWrapper>
                 </Grid>
             </BasePage>
         )
+    }
+
+    private readonly getReplay = (): Promise<void> => {
+        return getReplay(this.props.match.params.id)
+            .then((replay) => this.setState({replay}))
     }
 }
