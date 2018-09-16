@@ -13,7 +13,7 @@ import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import * as React from "react"
 import {getStats} from "../../../../Requests/Player"
 import {convertNumberToMaxDP} from "../../../../Utils/String"
-import {LoadableComponent} from "../../../Shared/LoadableComponent"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 
 interface CarStat {
     carName: string
@@ -56,7 +56,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                 <CardHeader title="Stats"/>
                 <Divider/>
                 <CardContent>
-                    <LoadableComponent load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
+                    <LoadableWrapper load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
                         {this.state.playerStats &&
                         <Grid container alignItems="center" justify="space-around" spacing={16}>
                             <Grid item xs="auto">
@@ -79,7 +79,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         </Grid>
                         }
-                    </LoadableComponent>
+                    </LoadableWrapper>
                 </CardContent>
             </Card>
         )

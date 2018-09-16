@@ -2,7 +2,7 @@ import {Card, CardContent, CardHeader, Grid, Typography} from "@material-ui/core
 import * as React from "react"
 import {ChartDataResponse} from "../../../Models/ChartData"
 import {getPlayerTendencies} from "../../../Requests/Player"
-import {LoadableComponent} from "../../Shared/LoadableComponent"
+import {LoadableWrapper} from "../../Shared/LoadableWrapper"
 import {PlayerTendenciesChart} from "./Charts/PlayerTendenciesChart"
 
 
@@ -34,7 +34,7 @@ export class PlayerTendencies extends React.PureComponent<Props, State> {
                 <CardHeader title="Playstyle"/>
                 <CardContent>
                     <Grid container justify="space-around" spacing={32}>
-                        <LoadableComponent load={this.getPlayerTendencies} reloadSignal={this.state.reloadSignal}>
+                        <LoadableWrapper load={this.getPlayerTendencies} reloadSignal={this.state.reloadSignal}>
                             {this.state.data &&
                             this.state.data.map((spokeData) => {
                                 return (
@@ -46,7 +46,7 @@ export class PlayerTendencies extends React.PureComponent<Props, State> {
                                     </Grid>
                                 )
                             })}
-                        </LoadableComponent>
+                        </LoadableWrapper>
                     </Grid>
                 </CardContent>
             </Card>

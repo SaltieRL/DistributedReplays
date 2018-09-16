@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, Divider, Grid} from "@material-ui/core"
 import * as React from "react"
 import {getRanks} from "../../../../Requests/Player"
-import {LoadableComponent} from "../../../Shared/LoadableComponent"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {PlayerPlaylistRank, PlaylistRank} from "./PlayerPlaylistRank"
 
 export interface PlayerRanks {
@@ -56,7 +56,7 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
                 <Divider/>
                 <CardContent>
                     <Grid container alignItems="center" justify="space-around" spacing={16}>
-                        <LoadableComponent load={this.getPlayerRanks} reloadSignal={this.state.reloadSignal}>
+                        <LoadableWrapper load={this.getPlayerRanks} reloadSignal={this.state.reloadSignal}>
                             {playlists.map((playlist: string) => {
                                 return (
                                     <Grid item xs={6} key={playlist}>
@@ -65,7 +65,7 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
                                     </Grid>
                                 )
                             })}
-                        </LoadableComponent>
+                        </LoadableWrapper>
                     </Grid>
                 </CardContent>
             </Card>

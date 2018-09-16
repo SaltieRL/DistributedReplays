@@ -1,12 +1,15 @@
-import {Button, CircularProgress, Typography} from "@material-ui/core"
+import {Button, CircularProgress, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
 import {AppError} from "../../Models/Error"
 import {NotificationSnackbar} from "./Notification/NotificationSnackbar"
 
-interface Props {
+interface OwnProps {
     load: () => Promise<any>
     reloadSignal?: boolean
 }
+
+type Props = OwnProps
+ & WithStyles<typeof styles>
 
 interface State {
     loadingState: "not loaded" | "loading" | "loaded" | "failed"
@@ -14,7 +17,7 @@ interface State {
     notificationOpen: boolean
 }
 
-export class LoadableComponent extends React.PureComponent<Props, State> {
+export class LoadableWrapperComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {loadingState: "not loaded", notificationOpen: false}
@@ -31,20 +34,23 @@ export class LoadableComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const {classes} = this.props
         const {loadingState, appError, notificationOpen} = this.state
         return (
             <>
                 {loadingState === "loading" &&
-                <CircularProgress/>
+                <div className={classes.loadableWrapper}>
+                    <CircularProgress/>
+                </div>
                 }
 
                 {loadingState === "loaded" && this.props.children}
 
                 {loadingState === "failed" && appError &&
                 <>
-                    <div style={{margin: "auto", textAlign: "center"}}>
+                    <div className={classes.loadableWrapper}>
                         <Typography variant="subheading">
-                            This component failed to load.
+                            Failed to load the required data.
                         </Typography>
                         <Button variant="outlined" onClick={this.attemptToLoad}>
                             Reload
@@ -79,3 +85,14 @@ export class LoadableComponent extends React.PureComponent<Props, State> {
         this.setState({notificationOpen: false})
     }
 }
+
+const styles = createStyles({
+    loadableWrapper: {
+        margin: "auto",
+        textAlign: "center",
+        padding: 20
+    }
+})
+
+
+export const LoadableWrapper = withStyles(styles)(LoadableWrapperComponent)

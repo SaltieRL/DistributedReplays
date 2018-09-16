@@ -13,8 +13,8 @@ import Info from "@material-ui/icons/Info"
 import * as React from "react"
 import {getGlobalStats} from "../../Requests/Global"
 import {GlobalStatsChart} from "../GlobalStatsChart"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
 import {BasePage} from "./BasePage"
-import {LoadableComponent} from "../Shared/LoadableComponent"
 
 type Props = WithStyles<typeof styles>
 
@@ -40,7 +40,7 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
                             </Tooltip>
                         </Typography>
                     </Grid>
-                    <LoadableComponent load={this.getStats}>
+                    <LoadableWrapper load={this.getStats}>
                         {this.state.globalStats && this.state.globalStats.map((globalStatsGraph) => {
                             return (
                                 <Grid item xs={12} sm={6} md={4} key={globalStatsGraph.name}>
@@ -54,7 +54,7 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
                                 </Grid>
                             )
                         })}
-                    </LoadableComponent>
+                    </LoadableWrapper>
                 </Grid>
             </BasePage>
         )

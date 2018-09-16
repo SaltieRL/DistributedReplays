@@ -5,6 +5,7 @@ import {Replay} from "../../../Models/Replay/Replay"
 import {getReplayBasicStats} from "../../../Requests/Replay"
 import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
 import {StatChart} from "../../Shared/Charts/StatChart"
+import {LoadableWrapper} from "../../Shared/LoadableWrapper"
 
 interface Props {
     replay: Replay
@@ -20,21 +21,12 @@ export class BasicStatsGrid extends React.PureComponent<Props, State> {
         this.state = {}
     }
 
-    public componentDidMount() {
-        this.getBasicStats()
-    }
-
-    private getBasicStats() {
-        getReplayBasicStats(this.props.replay.id)
-            .then((basicStats) => this.setState({basicStats}))
-    }
-
     public render() {
         return (
-            <>
-                {this.state.basicStats &&
-                <Grid container spacing={32}>
-                    {this.state.basicStats.map((basicStat) => {
+            <Grid container spacing={32}>
+                <LoadableWrapper load={this.getBasicStats}>
+                    {this.state.basicStats &&
+                    this.state.basicStats.map((basicStat) => {
                         return (
                             <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
                                 <Typography variant="subheading" align="center">
@@ -44,9 +36,13 @@ export class BasicStatsGrid extends React.PureComponent<Props, State> {
                             </Grid>
                         )
                     })}
-                </Grid>
-                }
-            </>
+                </LoadableWrapper>
+            </Grid>
         )
+    }
+
+    private readonly getBasicStats = (): Promise<any> => {
+        return getReplayBasicStats(this.props.replay.id)
+            .then((basicStats) => this.setState({basicStats}))
     }
 }
