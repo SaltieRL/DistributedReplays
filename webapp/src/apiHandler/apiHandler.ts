@@ -1,3 +1,4 @@
+import {AppError} from "../Models/Error"
 import {baseUrl} from "../Requests/Config"
 
 export const doGet = (destination: string): Promise<any> => {
@@ -9,10 +10,7 @@ export const doGet = (destination: string): Promise<any> => {
         }
     }).then((response) => {
         if (!response.ok) {
-            // TODO: Improve error handling
-            console.log(response.status)
-            console.log(response.statusText)
-            return
+            throw {code: response.status, message: response.statusText} as AppError
         }
         return response.json()
     })
@@ -24,10 +22,7 @@ export const doPost = (destination: string, body: BodyInit): Promise<any> => {
         body
     }).then((response) => {
         if (!response.ok) {
-            // TODO: Improve error handling
-            console.log(response.status)
-            console.log(response.statusText)
-            return
+            throw {code: response.status, message: response.statusText} as AppError
         }
         return response.json()
     })
