@@ -38,7 +38,7 @@ export const getPrimaryColorsForPlayers = (teams: boolean[]): string[] => {
 // TODO: Remove this function
 export const getChartColors = (isOrange: boolean, colorNumber: number): ChartDataSets => {
     const teamColor: teamColors = isOrange ? "orange" : "blue"
-    return chartColors[teamColor][colorNumber % 4]
+    return chartColors[teamColor][colorNumber % 3]
 }
 
 type teamColors = "blue" | "orange"

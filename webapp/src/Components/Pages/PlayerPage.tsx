@@ -2,8 +2,8 @@ import {Grid} from "@material-ui/core"
 import * as React from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {getPlayer} from "../../Requests/Player"
-import {PlayerView} from "../Player/PlayerView"
 import {PlayerSideBar} from "../Player/Overview/SideBar/PlayerSideBar"
+import {PlayerView} from "../Player/PlayerView"
 import {BasePage} from "./BasePage"
 
 

@@ -1,7 +1,3 @@
-import * as React from "react"
-import {Logo} from "../Shared/Logo/Logo"
-import {Search} from "../Shared/Search"
-
 import {faDiscord, faGithub, faSteam} from "@fortawesome/free-brands-svg-icons"
 import {faChartBar} from "@fortawesome/free-solid-svg-icons"
 import {createStyles, Grid, Typography, WithStyles, withStyles, withWidth} from "@material-ui/core"
@@ -10,9 +6,12 @@ import {GridProps} from "@material-ui/core/Grid"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import Info from "@material-ui/icons/Info"
+import * as React from "react"
 import {DISCORD_LINK, GITHUB_LINK, GLOBAL_STATS_LINK, LOCAL_LINK, STEAM_LOGIN_LINK} from "../../Globals"
 import {getReplayCount} from "../../Requests/Global"
 import {LinkButton} from "../Shared/LinkButton"
+import {Logo} from "../Shared/Logo/Logo"
+import {Search} from "../Shared/Search"
 import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
 
 type Props = WithStyles<typeof styles>
