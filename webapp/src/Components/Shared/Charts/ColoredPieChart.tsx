@@ -1,4 +1,4 @@
-import {ChartData} from "chart.js"
+import {ChartData, ChartOptions} from "chart.js"
 import * as React from "react"
 import {Pie} from "react-chartjs-2"
 import {BasicStat} from "../../../Models/ChartData"
@@ -11,11 +11,8 @@ interface Props {
 
 export class ColoredPieChart extends React.PureComponent<Props> {
     public render() {
-        const options = {
-            legend: {display: false}
-        }
         return (
-            <Pie data={this.getChartData} options={options}/>
+            <Pie data={this.getChartData()} options={this.getChartOptions()}/>
         )
     }
 
@@ -32,6 +29,24 @@ export class ColoredPieChart extends React.PureComponent<Props> {
                         )
                     }
                 ]
+        }
+    }
+
+    private readonly getChartOptions = (): ChartOptions => {
+        return {
+            legend: {display: false},
+            rotation: this.getStartAngle()
+        } as ChartOptions  // startAngle is not typed in ChartOptions
+    }
+
+    private readonly getStartAngle = (): number => {
+        const numberOfPlayers = this.props.basicStat.chartDataPoints.length
+        switch (numberOfPlayers) {
+            case 6:
+            case 4:
+                return Math.PI / 2
+            default:
+                return 0
         }
     }
 }
