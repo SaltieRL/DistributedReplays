@@ -1,4 +1,4 @@
-import {IconButton, withWidth} from "@material-ui/core"
+import {IconButton, Tooltip, withWidth} from "@material-ui/core"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import {CloudUpload} from "@material-ui/icons"
 import * as React from "react"
@@ -44,9 +44,11 @@ class UploadModalWrapperComponent extends React.PureComponent<Props, State> {
                     {this.props.buttonStyle === "contained" &&
                     <UploadContainedButton handleOpen={this.handleOpen} Icon={Icon}/>}
                     {this.props.buttonStyle === "icon" &&
-                    <IconButton onClick={this.handleOpen}>
-                        <Icon/>
-                    </IconButton>}
+                    <Tooltip title="Upload replays">
+                        <IconButton onClick={this.handleOpen}>
+                            <Icon/>
+                        </IconButton>
+                    </Tooltip>}
                 </>}
                 <UploadModal open={this.state.open} handleClickOutside={this.handleClose}/>
                 {this.props.children}

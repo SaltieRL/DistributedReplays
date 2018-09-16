@@ -18,7 +18,7 @@ class UploadContainedButtonComponent extends React.PureComponent<Props> {
             <>
                 <Button variant="contained" color="primary" aria-label="upload" onClick={handleOpen}>
                     <Icon className={this.props.classes.leftIcon}/>
-                    Upload replay
+                    Upload replays
                 </Button>
             </>
         )
