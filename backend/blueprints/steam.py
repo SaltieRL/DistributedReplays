@@ -29,7 +29,7 @@ def resolve_steam():
     return redirect(url_for('players.view_player', id_=steamid))
 
 
-def get_steam_profile_or_random_response(steam_id, current_app):
+def get_steam_profile_or_random_response(steam_id):
     try:
         return steam_id_to_profile(steam_id)
     except BaseException as e:

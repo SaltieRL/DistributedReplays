@@ -4,11 +4,12 @@ import os
 from flask import jsonify, Blueprint, current_app, request
 from werkzeug.utils import secure_filename
 
-from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
 from .errors.errors import CalculatedError
+from .service_layers.global_stats import GlobalStatsGraph
+from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleChartData
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
@@ -60,6 +61,11 @@ def api_resolve_steam(id_):
         raise CalculatedError(404, "User not found")
     steam_id = response['response']['steamid']
     return jsonify(steam_id)
+
+
+@bp.route('/me')
+def api_get_current_user():
+    return better_jsonify(LoggedInUser.create())
 
 
 ### PLAYER
