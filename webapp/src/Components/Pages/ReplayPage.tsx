@@ -4,8 +4,8 @@ import {RouteComponentProps} from "react-router-dom"
 import {Replay} from "../../Models/Replay/Replay"
 import {getReplay} from "../../Requests/Replay"
 import {ReplayView} from "../Replay/ReplayView"
-import {BasePage} from "./BasePage"
 import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {BasePage} from "./BasePage"
 
 
 interface RouteParams {
