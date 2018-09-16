@@ -33,6 +33,7 @@ export class ColoredRadarChart extends React.PureComponent<Props> {
                 [
                     {
                         data: chartDataPoints.map((chartDataPoint) => chartDataPoint.value),
+                        pointRadius: 5,
                         pointBackgroundColor: getPrimaryColorsForPlayers(
                             chartDataPoints.map((chartDataPoint) => chartDataPoint.isOrange)
                         )
