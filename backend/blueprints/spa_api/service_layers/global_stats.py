@@ -36,21 +36,17 @@ global_stats_metadatas = [
 ]
 
 
-class GlobalStatsGraphData:
-    def __init__(self, keys: List[float], values: List[float]):
+class GlobalStatsGraphDataset:
+    def __init__(self, name: str, keys: List[float], values: List[float]):
+        self.name = name
         self.keys = keys
         self.values = values
 
 
 class GlobalStatsGraph:
-    def __init__(self, name: str,
-                 _1: GlobalStatsGraphData, _2: GlobalStatsGraphData,
-                 _3: GlobalStatsGraphData, _4: GlobalStatsGraphData):
+    def __init__(self, name: str, datasets: List[GlobalStatsGraphDataset]):
         self.name = name
-        self._1 = _1.__dict__
-        self._2 = _2.__dict__
-        self._3 = _3.__dict__
-        self._4 = _4.__dict__
+        self.data = [dataset.__dict__ for dataset in datasets]
 
     @staticmethod
     def create() -> List['GlobalStatsGraph']:
@@ -73,7 +69,7 @@ class GlobalStatsGraph:
 
         for game_mode in game_modes:
             numbers.append(
-                session.query(func.count(PlayerGame.id)).join(Game).filter(Game.teamsize == (game_mode + 1)).scalar())
+                session.query(func.count(PlayerGame.id)).join(Game).filter(Game.teamsize == (game_mode)).scalar())
 
         for global_stats_metadata in global_stats_metadatas:
             stats_field = global_stats_metadata.field
@@ -88,26 +84,25 @@ class GlobalStatsGraph:
                 _query = session.query(getattr(PlayerGame, stats_field), func.count(PlayerGame.id)).group_by(
                     getattr(PlayerGame, stats_field)).order_by(getattr(PlayerGame, stats_field))
 
-            data = {}
+            datasets = []
             if stats_field == 'score':
                 _query = _query.filter(PlayerGame.score % 10 == 0)
-            for game_mode in game_modes:
+            for i, game_mode in enumerate(game_modes):
                 # print(g)
                 data_query = _query.join(Game).filter(Game.teamsize == game_mode).all()
-                data[game_mode] = {
+                datasets.append({
+                    'name': f"{game_mode}'s",
                     'keys': [],
                     'values': []
-                }
+                })
                 for k, v in data_query:
                     if k is not None:
-                        data[game_mode]['keys'].append(float(k))
-                        data[game_mode]['values'].append(float(v) / max(float(numbers[game_mode - 1]), 1))
+                        datasets[-1]['keys'].append(float(k))
+                        datasets[-1]['values'].append(float(v) / float(numbers[i]))
             overall_data.append(GlobalStatsGraph(
                 name=global_stats_metadata.name,
-                _1=GlobalStatsGraphData(**data[1]),
-                _2=GlobalStatsGraphData(**data[2]),
-                _3=GlobalStatsGraphData(**data[3]),
-                _4=GlobalStatsGraphData(**data[4])
+                datasets=[GlobalStatsGraphDataset(**dataset) for dataset in datasets]
             ))
 
+        session.close()
         return overall_data

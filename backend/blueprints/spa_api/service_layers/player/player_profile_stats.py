@@ -36,4 +36,5 @@ class PlayerProfileStats:
             total_games = player_wrapper.get_total_games(session, id_)
             car_percentage = fav_car_str[1] / total_games
 
+        session.close()
         return PlayerProfileStats(favourite_car=favourite_car, car_percentage=car_percentage)

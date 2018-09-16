@@ -26,5 +26,5 @@ class PlayStyleChartData(ChartData):
                 for name in spider_chart_group['group']
             ]
             play_style_chart_datas.append(PlayStyleChartData(title, chart_data_points))
-
+        session.close()
         return play_style_chart_datas

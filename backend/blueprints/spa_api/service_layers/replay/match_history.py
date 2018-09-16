@@ -14,4 +14,6 @@ class MatchHistory:
     def create_from_id(id_: str) -> 'MatchHistory':
         session = current_app.config['db']()
         games = [player_game.game_object for player_game in player_wrapper.get_player_games_paginated(session, id_)]
-        return MatchHistory([Replay.create_from_game(game) for game in games])
+        match_history = MatchHistory([Replay.create_from_game(game) for game in games])
+        session.close()
+        return match_history

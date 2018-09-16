@@ -35,7 +35,9 @@ class Replay:
         game = session.query(Game).filter(Game.hash == id_).first()
         if game is None:
             raise ReplayNotFound()
-        return Replay.create_from_game(game)
+        replay = Replay.create_from_game(game)
+        session.close()
+        return replay
 
     @staticmethod
     def create_from_game(game: Game) -> 'Replay':

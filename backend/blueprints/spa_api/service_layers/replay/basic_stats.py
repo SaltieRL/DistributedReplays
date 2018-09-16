@@ -56,4 +56,5 @@ class BasicStatChartData(ChartData):
                 type_=chart_type
             )
             all_chart_data.append(chart_data)
+        session.close()
         return all_chart_data
