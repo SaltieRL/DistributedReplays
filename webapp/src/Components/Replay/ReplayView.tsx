@@ -31,7 +31,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
             </Card>
 
         const blueGridItem =
-            <Grid item xs={6} lg={3}>
+            <Grid item xs={12} sm={6} lg={3}>
                 {blueCard}
             </Grid>
         const replayChartGridItem =
@@ -39,7 +39,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                 {replayChartCard}
             </Grid>
         const orangeGridItem =
-            <Grid item xs={6} lg={3}>
+            <Grid item xs={12} sm={6} lg={3}>
                 {orangeCard}
             </Grid>
 

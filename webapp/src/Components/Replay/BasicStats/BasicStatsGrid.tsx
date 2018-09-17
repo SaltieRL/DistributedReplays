@@ -1,6 +1,6 @@
 import {faBraille, faBullseye, faCarSide, faCircle, faFutbol, IconDefinition} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Divider, Grid, Tab, Tabs, Typography, withWidth} from "@material-ui/core"
+import {CardContent, Divider, Grid, Tab, Tabs, Typography, withWidth} from "@material-ui/core"
 import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 import {BasicStat, BasicStatsSubcategory, basicStatsSubcategoryValues} from "../../../Models/ChartData"
@@ -36,7 +36,6 @@ class BasicStatsGridComponent extends React.PureComponent<Props, State> {
             Playstyles: faCarSide,
             Possession: faCircle,
             Positioning: faBraille
-
         }
         return (
             <>
@@ -44,8 +43,8 @@ class BasicStatsGridComponent extends React.PureComponent<Props, State> {
                 <Tabs value={this.state.selectedTab}
                       onChange={this.handleSelectTab}
                       centered
-                      scrollable={isWidthDown("sm", this.props.width)}
-                      scrollButtons={isWidthDown("sm", this.props.width) ? "on" : undefined}
+                      scrollable={isWidthDown("xs", this.props.width)}
+                      scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
                 >
                     {basicStatsSubcategoryValues
                         .map((subcategory: BasicStatsSubcategory) =>
@@ -55,25 +54,26 @@ class BasicStatsGridComponent extends React.PureComponent<Props, State> {
                         )
                     }
                 </Tabs>
-                <Grid container spacing={32}>
-                    <LoadableWrapper load={this.getBasicStats}>
-                        {this.state.basicStats &&
-                        this.state.basicStats
-                            .filter((basicStat) => basicStat.subcategory === this.state.selectedTab)
-                            .map((basicStat) => {
-                                return (
-                                    <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
-                                        <Typography variant="subheading" align="center">
-                                            {convertSnakeAndCamelCaseToReadable(basicStat.title)}
-                                        </Typography>
-                                        <StatChart basicStat={basicStat}/>
-                                    </Grid>
-                                )
-                            })}
-                    </LoadableWrapper>
-                </Grid>
+                <CardContent>
+                    <Grid container spacing={32}>
+                        <LoadableWrapper load={this.getBasicStats}>
+                            {this.state.basicStats &&
+                            this.state.basicStats
+                                .filter((basicStat) => basicStat.subcategory === this.state.selectedTab)
+                                .map((basicStat) => {
+                                    return (
+                                        <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
+                                            <Typography variant="subheading" align="center">
+                                                {convertSnakeAndCamelCaseToReadable(basicStat.title)}
+                                            </Typography>
+                                            <StatChart basicStat={basicStat}/>
+                                        </Grid>
+                                    )
+                                })}
+                        </LoadableWrapper>
+                    </Grid>
+                </CardContent>
             </>
-
         )
     }
 
