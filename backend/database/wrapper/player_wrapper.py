@@ -2,7 +2,7 @@ import logging
 import random
 from typing import List
 
-from sqlalchemy import func, cast, String
+from sqlalchemy import func, cast, String, desc, asc
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
@@ -58,7 +58,7 @@ class PlayerWrapper:
     def get_paginated_match_history(self, existing_query, page=0, id_list=False) -> List[PlayerGame]:
         if not id_list:
             existing_query = existing_query.join(Game)
-        return existing_query.order_by(Game.match_date)[page * self.limit: (page + 1) * self.limit]
+        return existing_query.order_by(desc(Game.match_date))[page * self.limit: (page + 1) * self.limit]
 
     def get_total_games(self, session, id):
         return self.get_player_games(session, id).count()
