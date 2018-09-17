@@ -1,4 +1,4 @@
-import {Card, CardContent, CardHeader, Grid, Typography} from "@material-ui/core"
+import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {ChartDataResponse} from "../../../Models/ChartData"
 import {getPlayerPlayStyles} from "../../../Requests/Player"
@@ -30,26 +30,21 @@ export class PlayerPlayStyle extends React.PureComponent<Props, State> {
 
     public render() {
         return (
-            <Card>
-                <CardHeader title="Playstyle"/>
-                <CardContent>
-                    <Grid container justify="space-around" spacing={32}>
-                        <LoadableWrapper load={this.getPlayStyles} reloadSignal={this.state.reloadSignal}>
-                            {this.state.data &&
-                            this.state.data.map((spokeData) => {
-                                return (
-                                    <Grid item xs={12} md={5} xl={3} key={spokeData.title} style={{height: 400}}>
-                                        <Typography variant="subheading" align="center">
-                                            {spokeData.title}
-                                        </Typography>
-                                        <PlayerTendenciesChart data={spokeData}/>
-                                    </Grid>
-                                )
-                            })}
-                        </LoadableWrapper>
-                    </Grid>
-                </CardContent>
-            </Card>
+            <Grid container justify="space-around" spacing={32}>
+                <LoadableWrapper load={this.getPlayStyles} reloadSignal={this.state.reloadSignal}>
+                    {this.state.data &&
+                    this.state.data.map((spokeData) => {
+                        return (
+                            <Grid item xs={12} md={5} xl={3} key={spokeData.title} style={{height: 400}}>
+                                <Typography variant="subheading" align="center">
+                                    {spokeData.title}
+                                </Typography>
+                                <PlayerTendenciesChart data={spokeData}/>
+                            </Grid>
+                        )
+                    })}
+                </LoadableWrapper>
+            </Grid>
         )
     }
 

@@ -5,8 +5,9 @@ import {
     ExpansionPanelSummary,
     Grid,
     IconButton, Theme,
-    Typography, WithStyles, withStyles
+    Typography, WithStyles, withStyles, withWidth
 } from "@material-ui/core"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
@@ -21,29 +22,34 @@ interface OwnProps {
 
 type Props = OwnProps
     & WithStyles<typeof styles>
+    & WithWidth
 
 class MatchHistoryRowComponent extends React.PureComponent<Props> {
     public render() {
-        const {replay, player, classes} = this.props
+        const {replay, player, classes, width} = this.props
+        const notOnMobile = isWidthUp("sm", width)
+        const dateFormat = notOnMobile ? "DD/MM/YYYY" : "DD/MM"
         return (
             <ExpansionPanel>
                 <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
                     <Grid container>
-                        <Grid item xs={3}>
+                        <Grid item xs={notOnMobile ? 3 : 4}>
                             <Typography variant="subheading">
                                 {replay.name}
                             </Typography>
                         </Grid>
                         <Grid item xs={3}>
                             <Typography variant="subheading">
-                                {replay.date.format("DD/MM/YYYY")}
+                                {replay.date.format(dateFormat)}
                             </Typography>
                         </Grid>
+                        {notOnMobile &&
                         <Grid item xs={1}>
                             <Typography variant="subheading">
                                 {replay.gameMode}
                             </Typography>
                         </Grid>
+                        }
                         <Grid item xs={2}>
                             <Typography variant="subheading">
                                 {getColouredGameScore(replay)}
@@ -61,7 +67,7 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                         </Grid>
                     </Grid>
                 </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
+                <ExpansionPanelDetails className={classes.panelDetails}>
                     <ReplayChart replay={replay}/>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -80,7 +86,10 @@ const styles = (theme: Theme) => createStyles({
             transform: "scale(1.2)",
             color: theme.palette.secondary.dark
         }
+    },
+    panelDetails: {
+        overflowX: "auto"
     }
 })
 
-export const MatchHistoryRow = withStyles(styles)(MatchHistoryRowComponent)
+export const MatchHistoryRow = withWidth()(withStyles(styles)(MatchHistoryRowComponent))
