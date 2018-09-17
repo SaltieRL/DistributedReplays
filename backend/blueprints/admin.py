@@ -1,7 +1,8 @@
-from flask import Blueprint, current_app, redirect, g, request, url_for
+from flask import Blueprint, current_app, redirect, g, request, url_for, jsonify
 
 from backend.blueprints.shared_renders import render_with_session
 from backend.database.objects import Player, Group
+from backend.tasks.celery_tasks import calc_global_stats
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -72,9 +73,10 @@ def delrole(id, role):
         if role_id in player.groups:
             grps = player.groups.copy()
             grps.remove(role_id)
-            player.groups = grps # we need it to detect that we changed something
+            player.groups = grps  # we need it to detect that we changed something
     s.commit()
     return redirect(redirect_url())
+
 
 @bp.route('/users')
 def view_users():
@@ -88,3 +90,9 @@ def view_users():
     groups = s.query(Group).all()
     id_to_groups = {g.id: g.name for g in groups}
     return render_with_session('users.html', s, users=users, groups=groups, id_to_groups=id_to_groups)
+
+
+@bp.route('/globalstats')
+def ping():
+    result = calc_global_stats.delay()
+    return jsonify({'result': result.get()})

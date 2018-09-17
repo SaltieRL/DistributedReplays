@@ -2,11 +2,11 @@ import sqlalchemy
 from carball.generated.api import player_pb2
 from sqlalchemy import func, desc, cast, literal
 
+from backend.database.objects import PlayerGame, Game
+from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
+from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.utils.checks import get_local_dev
 from data import constants
-from backend.database.objects import PlayerGame, Game
-from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
 
 
 def safe_divide(sql_value):
@@ -151,3 +151,18 @@ class PlayerStatWrapper:
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
+
+    def get_global_stats(self, sess):
+        results = {}
+        ranks = list(range(20))
+        for column, q in zip(self.field_names, self.stats_query):
+            column_results = []
+            for rank in ranks:
+                iq = sess.query(PlayerGame.player,
+                                q.label('avg')).filter(
+                    PlayerGame.rank == rank).group_by(PlayerGame.player).having(
+                    func.count(PlayerGame.player) > 5).subquery()
+                result = sess.query(func.avg(iq.c.avg), func.stddev_samp(iq.c.avg)).first()
+                column_results.append({'mean': result[0], 'std': result[1]})
+            results[column.field_name] = column_results
+        return results
