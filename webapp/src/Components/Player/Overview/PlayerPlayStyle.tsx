@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {ChartDataResponse} from "../../../Models/ChartData"
-import {getPlayerTendencies} from "../../../Requests/Player"
+import {getPlayerPlayStyles} from "../../../Requests/Player"
 import {LoadableWrapper} from "../../Shared/LoadableWrapper"
 import {PlayerTendenciesChart} from "./Charts/PlayerTendenciesChart"
 
@@ -16,7 +16,7 @@ interface State {
 }
 
 
-export class PlayerTendencies extends React.PureComponent<Props, State> {
+export class PlayerPlayStyle extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {reloadSignal: false}
@@ -34,7 +34,7 @@ export class PlayerTendencies extends React.PureComponent<Props, State> {
                 <CardHeader title="Playstyle"/>
                 <CardContent>
                     <Grid container justify="space-around" spacing={32}>
-                        <LoadableWrapper load={this.getPlayerTendencies} reloadSignal={this.state.reloadSignal}>
+                        <LoadableWrapper load={this.getPlayStyles} reloadSignal={this.state.reloadSignal}>
                             {this.state.data &&
                             this.state.data.map((spokeData) => {
                                 return (
@@ -53,8 +53,8 @@ export class PlayerTendencies extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly getPlayerTendencies = (): Promise<void> => {
-        return getPlayerTendencies(this.props.player.id)
+    private readonly getPlayStyles = (): Promise<void> => {
+        return getPlayerPlayStyles(this.props.player.id)
             .then((data) => this.setState({data}))
     }
 

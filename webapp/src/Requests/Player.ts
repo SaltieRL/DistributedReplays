@@ -43,7 +43,7 @@ export const getStats = (id: string): Promise<PlayerStats> => {
 }
 
 
-export const getPlayerTendencies = (id: string): Promise<ChartDataResponse[]> => {
+export const getPlayerPlayStyles = (id: string): Promise<ChartDataResponse[]> => {
     if (useMockData) {
         return Promise.resolve([{
                 title: "Aggressiveness",
