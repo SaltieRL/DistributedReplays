@@ -42,7 +42,7 @@
         {% endfor %}
     </div>
     <ul class="collapsible">
-        {% for game in games|sort(attribute='game_object.match_date') %}
+        {% for game in games %}
             {% set name = game.game_object.hash if game.game_object.name == None else game.game_object.name %}
             {% set replay = game.game_object %}
             {% set dropdown_id = 'drop_down' + game.game_object.hash %}
