@@ -1,12 +1,17 @@
 # Celery workers
 import gzip
+import json
 import os
 
 from carball import analyze_replay_file
 from celery import Celery
+from celery.task import periodic_task
+from redis import Redis
 
 from backend.database.objects import Game
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
+from backend.database.wrapper.player_wrapper import PlayerWrapper
+from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.middleware import DBTask
 
@@ -34,7 +39,16 @@ from backend.tasks.middleware import DBTask
 celery = Celery()
 celery.config_from_object(celeryconfig)
 
+player_wrapper = PlayerWrapper(limit=10)
+player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
+try:
+    _redis = Redis(
+        host='localhost',
+        port=6379)
+    _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
+except:  # TODO: Investigate and specify this except.
+    _redis = None
 #
 # @celery.task(bind=True)
 # def calculate_reward(self, uid):
@@ -44,6 +58,10 @@ celery.config_from_object(celeryconfig)
 #     r = session.query(Replay).filter(Replay.uuid == uid).first()
 #     # TODO: Update replay reward in db
 #     print(reward)
+
+@celery.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    sender.add_periodic_task(10 * 60, calc_global_stats.s(), name='calculate global stats every 10 min')
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
@@ -82,6 +100,18 @@ def parse_replay_task(self, fn):
 @celery.task(base=DBTask, bind=True, priority=9)
 def parse_replay_task_low_priority(self, fn):
     parse_replay_task(fn)
+
+
+@periodic_task(run_every=30.0, base=DBTask, bind=True, priority=0)
+def calc_global_stats(self):
+    sess = self.session()
+    result = player_stat_wrapper.get_global_stats(sess)
+    sess.close()
+    if _redis is not None:
+        _redis.set('global_stats', json.dumps(result))
+        _redis.set('global_stats_expire', json.dumps(True), ex=60 * 10)
+    print('Done')
+    return result
 
 
 if __name__ == '__main__':
