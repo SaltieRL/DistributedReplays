@@ -11,11 +11,12 @@ import {
     WithStyles,
     withStyles
 } from "@material-ui/core"
-import ArrowDownward from "@material-ui/icons/ArrowDownward"
+import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
-import Dropzone, {DropFilesEventHandler} from "react-dropzone"
+import {DropFilesEventHandler} from "react-dropzone"
 import {uploadReplays} from "../../../Requests/Global"
+import {UploadDropzone} from "./UploadDropzone"
 
 interface State {
     files: File[],
@@ -23,6 +24,7 @@ interface State {
 }
 
 type Props = WithStyles<typeof styles>
+
 
 class UploadFormComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
@@ -38,35 +40,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                 <CardHeader title={"Upload Replays"}/>
                 <CardContent>
                     <ButtonBase>
-                        <Dropzone
-                            accept=".replay" onDrop={this.handleDrop}
-                            className={classes.default}
-                            activeClassName={classes.active}
-                            disablePreview
-                        >
-                            <div className={classes.dropzoneContent}>
-                                {hasFilesSelected ?
-                                    <>
-                                        <Typography variant="subheading">
-                                            Selected files:
-                                        </Typography>
-                                        <Typography>
-                                            {this.state.files
-                                                .map((file) => file.name)
-                                                .join(",\n")}
-                                        </Typography>
-                                    </>
-                                    :
-                                    <>
-                                        <Typography align="center" variant="subheading">
-                                            Drop your .replay files here, or click to select files to upload.
-                                        </Typography>
-                                        <br/>
-                                        <ArrowDownward/>
-                                    </>
-                                }
-                            </div>
-                        </Dropzone>
+                        <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
                     </ButtonBase>
                     {this.state.rejected.length !== 0 &&
                     <Typography color="error">
@@ -75,7 +49,20 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                     }
                 </CardContent>
                 <CardActions>
-                    <Button onClick={this.handleUpload} disabled={!hasFilesSelected}>
+                    <Button variant="outlined"
+                            onClick={this.clearFiles}
+                            disabled={!hasFilesSelected}
+                    >
+                        <Clear className={classes.leftIcon}/>
+                        Clear
+                    </Button>
+
+                    <Button variant="contained"
+                            color="secondary"
+                            onClick={this.handleUpload}
+                            disabled={!hasFilesSelected}
+                            className={classes.uploadButton}
+                    >
                         <CloudUpload className={classes.leftIcon}/>
                         Upload
                     </Button>
@@ -93,39 +80,21 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
     private readonly handleUpload = () => {
         uploadReplays(this.state.files)
+            .then(this.clearFiles)
         // TODO: Handle success/failure
+    }
+
+    private readonly clearFiles = () => {
+        this.setState({files: [], rejected: []})
     }
 }
 
 const styles = (theme: Theme) => createStyles({
-    active: {
-        borderStyle: "solid",
-        borderColor: "#6c6",
-        backgroundColor: "#ccc"
-    },
-    default: {
-        width: "550px",
-        height: "430px",
-        maxWidth: "90vw",
-        maxHeight: "90vh",
-        borderWidth: 2,
-        borderColor: "#666",
-        borderStyle: "dashed",
-        borderRadius: 5,
-        cursor: "pointer",
-        backgroundColor: "#eee",
-        "&:hover": {
-            backgroundColor: "#ddd"
-        }
-    },
-    dropzoneContent: {
-        position: "absolute",
-        bottom: "50%",
-        width: "100%",
-        textAlign: "center"
-    },
     leftIcon: {
         marginRight: theme.spacing.unit
+    },
+    uploadButton: {
+        marginLeft: "auto"
     }
 })
 
