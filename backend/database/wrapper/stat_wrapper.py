@@ -1,3 +1,5 @@
+import json
+
 import sqlalchemy
 from carball.generated.api import player_pb2
 from sqlalchemy import func, desc, cast, literal
@@ -27,20 +29,25 @@ class PlayerStatWrapper:
 
         return zipped_stats
 
-    def get_averaged_stats(self, session, id_, total_games, rank=None, page=0):
-        stats_query = self.stats_query
-        std_query = self.std_query
-        games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
-        if len(games) > 0:
-            fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
-                PlayerGame.player == id_).filter(
-                PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
-            print(fav_car_str)
-            # car_arr = [g.car for g in games]
-            favorite_car = constants.get_car(int(fav_car_str[0]))
-            favorite_car_pctg = fav_car_str[1] / total_games
-            q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
-            stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
+    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None):
+        global_stats = None
+        global_stds = None
+        if redis is not None:
+            stat_string = redis.get('global_stats')
+            if stat_string is not None:
+                stats_dict = json.loads(stat_string)
+                if rank is not None:
+                    rank = rank[3]['tier']
+                else:
+                    rank = 0
+                global_stats = [stats_dict[s.field_name][rank]['mean'] for s in self.field_names]
+                global_stds = [stats_dict[s.field_name][rank]['std'] for s in self.field_names]
+            else:
+                redis = None
+        q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
+        stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
+        stats = list(q.filter(PlayerGame.player == id_).first())
+        if redis is None:
             if rank is not None and not get_local_dev():
                 print('Filtering by rank')
                 # q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
@@ -56,24 +63,46 @@ class PlayerStatWrapper:
                 q_filtered = q
             global_stds = stds.first()
             global_stats = q_filtered.first()
-            stats = list(q.filter(PlayerGame.player == id_).first())
 
-            for i, s in enumerate(stats):
-                player_stat = s
-                if player_stat is None:
-                    player_stat = 0
-                global_stat = global_stats[i]
-                global_std = global_stds[i]
-                if global_stat is None or global_stat == 0:
-                    global_stat = 1
-                if global_std is None or global_std == 0:
-                    print(self.field_names[i].field_name, 'std is 0')
-                if global_std != 1 and global_std > 0:
-                    # print(self.field_names[i].field_name, player_stat, global_stat, global_std)
-                    stats[i] = float((player_stat - global_stat) / global_std)
-                else:
-                    stats[i] = float(player_stat / global_stat)
+        for i, s in enumerate(stats):
+            player_stat = s
+            if player_stat is None:
+                player_stat = 0
+            else:
+                player_stat = float(player_stat)
+            global_stat = global_stats[i]
+            global_std = global_stds[i]
+            if global_stat is None or global_stat == 0:
+                global_stat = 1
+            else:
+                global_stat = float(global_stat)
+            if global_std is None or global_std == 0:
+                print(self.field_names[i].field_name, 'std is 0')
+            else:
+                global_std = float(global_std)
+            if global_std != 1 and global_std > 0:
+                print(self.field_names[i].field_name, player_stat, global_stat, global_std,
+                      float((player_stat - global_stat) / global_std))
+                # print(seplayer_stat, global_stat, global_std)
+                stats[i] = float((player_stat - global_stat) / global_std)
+            else:
+                stats[i] = float(player_stat / global_stat)
+        return stats
 
+    def get_averaged_stats(self, session, id_, total_games, rank=None, page=0, redis=None):
+        stats_query = self.stats_query
+        std_query = self.std_query
+        games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
+        if len(games) > 0:
+            fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
+                PlayerGame.player == id_).filter(
+                PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
+            print(fav_car_str)
+            # car_arr = [g.car for g in games]
+
+            favorite_car = constants.get_car(int(fav_car_str[0]))
+            favorite_car_pctg = fav_car_str[1] / total_games
+            stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis)
             # Name info
 
             names = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')).filter(
@@ -155,11 +184,13 @@ class PlayerStatWrapper:
     def get_global_stats(self, sess):
         results = {}
         ranks = list(range(20))
+
         def float_maybe(f):
             if f is None:
                 return None
             else:
                 return float(f)
+
         for column, q in zip(self.field_names, self.stats_query):
             column_results = []
             for rank in ranks:
