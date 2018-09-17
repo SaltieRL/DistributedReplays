@@ -16,6 +16,7 @@ import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
 import {DropFilesEventHandler} from "react-dropzone"
 import {uploadReplays} from "../../../Requests/Global"
+import {BakkesModAd} from "./BakkesModAd"
 import {UploadDropzone} from "./UploadDropzone"
 
 interface State {
@@ -39,6 +40,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
             <Card>
                 <CardHeader title={"Upload Replays"}/>
                 <CardContent>
+                    <BakkesModAd/>
                     <ButtonBase>
                         <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
                     </ButtonBase>
