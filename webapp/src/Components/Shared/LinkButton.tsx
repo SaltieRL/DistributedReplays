@@ -64,7 +64,7 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
         return (
             <>
                 {isExternalLink === true ?
-                    (<a href={this.props.to as string} style={{textDecoration: "none"}}>
+                    (<a href={this.props.to as string} target="_blank" style={{textDecoration: "none"}}>
                         {button}
                     </a>)
                     :

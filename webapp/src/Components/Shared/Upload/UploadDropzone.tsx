@@ -1,5 +1,5 @@
 import {createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
-import ArrowDownward from "@material-ui/core/SvgIcon/SvgIcon"
+import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import * as React from "react"
 import Dropzone, {DropFilesEventHandler} from "react-dropzone"
 
