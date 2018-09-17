@@ -1,54 +1,75 @@
 define(['server'], function (server) {
+    let activeClass = 'active';
+    let nonActiveClass = 'waves-effect';
+    let disabled_class = "pure-button-disabled";
     let page = 0;
     let history = null;
     let playerId = null;
     let dataCallback = null;
     let maxPages = null;
     let historyList = null;
+    let activeListener = null;
 
     function loadData(callback) {
         server.asyncJsonGet(playerId + '/history/' + page.toString(), callback);
     }
 
-    function createToggleCallback(elements) {
-        let disabled_class = "pure-button-disabled";
-        return function (elementToToggle) {
-            for (let i = 0; i < elements.length; i++) {
-                let element = elements[i];
-                if (element.classList.contains(disabled_class)) {
-                    element.classList.remove(disabled_class);
-                } else if (elementToToggle === element){
-                    element.classList.add(disabled_class);
-                }
-            }
+    function setPageActive(allPages, previousPage, nextPage) {
+        let activeElement = allPages.querySelector('.' + activeClass);
+        let newElement = allPages.querySelector('#page-' + page);
+        if (newElement !== activeElement) {
+            newElement.classList.add(activeClass);
+            newElement.classList.remove(nonActiveClass);
+            activeElement.classList.remove(activeClass);
+            activeElement.classList.add(nonActiveClass);
         }
+
+        if (page === 0) {
+            previousPage.classList.add(disabled_class);
+            nextPage.classList.remove(disabled_class);
+        } else if (page + 1 === maxPages) {
+            nextPage.classList.add(disabled_class);
+            previousPage.classList.remove(disabled_class);
+        } else {
+            nextPage.classList.remove(disabled_class);
+            previousPage.classList.remove(disabled_class);
+        }
+        activeListener(allPages, newElement);
     }
 
-    function addNextPageListener(element, h, toggleCallback) {
-        history = h;
+    function addNextPageListener(element, allPages, previousPage, nextPage) {
         element.addEventListener('click', function (ev) {
             if (page >= maxPages) {
                 return;
             }
             page += 1;
             loadData(processPage, history);
-            if (page >= maxPages - 1) {
-                toggleCallback(element);
-            }
+            setPageActive(allPages, previousPage, nextPage);
         });
     }
 
-    function addPreviousPageListener(element, h, toggleCallback) {
-        history = h;
+    function addPreviousPageListener(element, allPages, previousPage, nextPage) {
         element.addEventListener('click', function (ev) {
             if (page <= 0) {
                 return;
             }
             page -= 1;
             loadData(processPage, history);
-            if (page <= 0) {
-                toggleCallback(element);
-            }
+            setPageActive(allPages, previousPage, nextPage);
+        });
+    }
+
+    function addPageListener(allPages, previousPage, nextPage) {
+        allPages.querySelectorAll('.number').forEach((element) => {
+            element.addEventListener('click', function () {
+                let elementPage = this.getAttribute('data-page');
+                if (this.classList.contains(activeClass)) {
+                    return;
+                }
+                page = parseInt(elementPage);
+                loadData(processPage, history);
+                setPageActive(allPages, previousPage, nextPage);
+            });
         });
     }
 
@@ -84,19 +105,20 @@ define(['server'], function (server) {
         playerId = playerPageId;
         maxPages = maxPage;
         console.debug('creating pages', playerPageId, maxPages);
-        let nextpage = document.getElementById('nextpage');
-        let prevpage = document.getElementById('prevpage');
-        if (nextpage === null || prevpage === null) {
+        let allPages = document.getElementById("pagination");
+        let nextPage = document.getElementById('nextpage');
+        let prevPage = document.getElementById('prevpage');
+        if (nextPage === null || prevPage === null) {
             if (historyList != null) {
                 historyList();
             }
             dataCallback();
             return;
         }
-        let history = document.getElementsByClassName('matchhistory')[0];
-        let callbacks = createToggleCallback([nextpage, prevpage]);
-        addNextPageListener(nextpage, history, callbacks);
-        addPreviousPageListener(prevpage, history, callbacks);
+        history = document.getElementById('dynamic-pages');
+        addNextPageListener(nextPage, allPages, prevPage, nextPage);
+        addPreviousPageListener(prevPage, allPages, prevPage, nextPage);
+        addPageListener(allPages, prevPage, nextPage);
         if (dataCallback != null) {
             dataCallback();
             if (historyList != null) {
@@ -105,8 +127,38 @@ define(['server'], function (server) {
         } else {
             console.debug("Callback is null no data graph data was initialized");
         }
+        allPages.querySelectorAll('*').forEach((element) => {
+            element.draggable = false;
+        });
+        addMouseScroll(allPages);
+        setPageActive(allPages, prevPage, nextPage);
+    }
 
-        callbacks(prevpage);
+    function addMouseScroll(allPages) {
+        let clicked = false, clickX;
+        let updateScrollPos = function(e) {
+            allPages.scrollBy({
+                left: clickX - e.pageX
+            });
+        };
+        allPages.addEventListener('mousemove', function(e) {
+            if (clicked) {
+                updateScrollPos(e);
+                clickX = e.pageX;
+            }
+        });
+        allPages.addEventListener('mousedown', function(e) {
+            clicked = true;
+            clickX = e.pageX;
+            e.preventDefault();
+        });
+        allPages.addEventListener('mouseup', function(e) {
+            clicked = false;
+        });
+        allPages.addEventListener('mouseout', function(e) {
+            clicked = false;
+            e.preventDefault();
+        });
     }
 
     function addHistoryCallback(callback) {
@@ -131,10 +183,14 @@ define(['server'], function (server) {
         historyList = callback;
     }
 
+    function onSetActive(listener) {
+        activeListener = listener
+    }
+
     return {
         initializeMatchHistory: initializePage,
         setHistoryCallback: addHistoryCallback,
         setHistoryList: setHistoryList,
-        clearHistoryCallback: clearHistoryCallback
+        onSetActive: onSetActive
     }
 });

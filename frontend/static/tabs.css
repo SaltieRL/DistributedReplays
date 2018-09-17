@@ -7,11 +7,19 @@
 .tabs-holder ul li label {
     float: left;
     padding: 15px 25px;
-    border: 1px solid var(--borderColor);
     border-bottom: 0;
     background: var(--tabUnactiveColor);
     color: #444;
     position: relative;
+    cursor: pointer;
+    margin-bottom: 2px;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
 }
 
 .tabs-holder ul li label:hover {

@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:title" content="{{ self.title() }} — calculated.gg"/>
     <meta property="og:type" content="website"/>
-    <meta property="og:image" content="https://cdn.discordapp.com/attachments/472459311063498753/489191459866673163/simple-draw.png"/>
-    <meta property="og:description" content="{% block description %}A Rocket League replay analysis and statistics platform.{% endblock description %}"/>
+    <meta property="og:image"
+          content="https://cdn.discordapp.com/attachments/472459311063498753/489191459866673163/simple-draw.png"/>
+    <meta property="og:description"
+          content="{% block description %}A Rocket League replay analysis and statistics platform.{% endblock description %}"/>
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
           integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js"
@@ -38,7 +40,7 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}"/>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='partials.css') }}">
-
+    <link rel="icon" href="{{ url_for('static', filename='img/icons/calculated-icon.png') }}">
     {% block imports %}
     {% endblock %}
     {% include "partials/imports/require.html" %}
@@ -83,11 +85,16 @@
 <footer class="page-footer font-small blue pt-4">
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col m4">
                 &copy; 2017-2018 Saltie Group
             </div>
-            <div class="col-md-6">
+            <div class="col m2">
                 <a href="https://github.com/SaltieRL">GitHub</a>
+            </div>
+            <div class="col m2">
+                <a title="Discord" href="https://discord.gg/c8cArY9">
+                    Discord
+                </a>
             </div>
         </div>
     </div>

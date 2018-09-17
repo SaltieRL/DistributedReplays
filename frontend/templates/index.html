@@ -24,6 +24,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/icons/calculated-icon.png') }}">
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -43,7 +44,7 @@
     <div class="homepage">
         <div>
             <div class="logo">
-                <img src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}"/>
+                <img src="{{ url_for('static', filename='img/logos/calculated-logo.png') }}" width="447px"/>
                 <br/>
                 <p class="logo-caption center-align">
                     <i>{{ game_count }} replays and counting...</i>

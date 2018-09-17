@@ -11,6 +11,7 @@ from backend.blueprints.spa_api import spa_api
 from backend.database.objects import Game, Player, Group
 from backend.database.startup import startup
 from backend.utils.checks import get_checks
+from backend.utils.global_jinja_functions import create_jinja_globals
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")
@@ -49,7 +50,7 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
         _session.commit()
         _session.close()
 
-    create_jinja_globals(app)
+    create_jinja_globals(app, g)
 
     return app, ids
 
@@ -122,15 +123,8 @@ def get_id_group_dicts(_session, groups_to_add: List[str]) -> Tuple[Dict[str, in
     return ids, ids_to_group
 
 
-def create_jinja_globals(app: Flask):
-    is_admin, is_alpha, is_beta = get_checks(g)
-
-    app.jinja_env.globals.update(isAdmin=is_admin)
-    app.jinja_env.globals.update(isAlpha=is_alpha)
-    app.jinja_env.globals.update(isBeta=is_beta)
-
-
 app, ids = start_app()
+
 
 try:
     from config import ALLOWED_STEAM_ACCOUNTS
