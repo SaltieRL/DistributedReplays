@@ -155,6 +155,11 @@ class PlayerStatWrapper:
     def get_global_stats(self, sess):
         results = {}
         ranks = list(range(20))
+        def float_maybe(f):
+            if f is None:
+                return None
+            else:
+                return float(f)
         for column, q in zip(self.field_names, self.stats_query):
             column_results = []
             for rank in ranks:
@@ -163,6 +168,6 @@ class PlayerStatWrapper:
                     PlayerGame.rank == rank).group_by(PlayerGame.player).having(
                     func.count(PlayerGame.player) > 5).subquery()
                 result = sess.query(func.avg(iq.c.avg), func.stddev_samp(iq.c.avg)).first()
-                column_results.append({'mean': result[0], 'std': result[1]})
+                column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
             results[column.field_name] = column_results
         return results

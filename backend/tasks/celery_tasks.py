@@ -5,6 +5,7 @@ import os
 
 from carball import analyze_replay_file
 from celery import Celery
+from celery.task import periodic_task
 from redis import Redis
 
 from backend.database.objects import Game
@@ -60,7 +61,7 @@ except:  # TODO: Investigate and specify this except.
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 10.0, calc_global_stats.s(), name='calculate global stats every 10 min')
+    sender.add_periodic_task(10 * 60, calc_global_stats.s(), name='calculate global stats every 10 min')
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
@@ -101,7 +102,7 @@ def parse_replay_task_low_priority(self, fn):
     parse_replay_task(fn)
 
 
-@celery.task(base=DBTask, bind=True, priority=0)
+@periodic_task(run_every=30.0, base=DBTask, bind=True, priority=0)
 def calc_global_stats(self):
     sess = self.session()
     result = player_stat_wrapper.get_global_stats(sess)
@@ -109,6 +110,7 @@ def calc_global_stats(self):
     if _redis is not None:
         _redis.set('global_stats', json.dumps(result))
         _redis.set('global_stats_expire', json.dumps(True), ex=60 * 10)
+    print('Done')
     return result
 
 

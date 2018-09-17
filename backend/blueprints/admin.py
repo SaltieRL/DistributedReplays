@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, current_app, redirect, g, request, url_for, jsonify
 
 from backend.blueprints.shared_renders import render_with_session
@@ -95,4 +97,4 @@ def view_users():
 @bp.route('/globalstats')
 def ping():
     r = current_app.config['r']
-    return jsonify({'result': r.get('global_stats')})
+    return jsonify({'result': json.loads(r.get('global_stats'))})
