@@ -6,11 +6,10 @@ from flask import Flask, render_template, g, current_app, session, request, redi
 from flask_cors import CORS
 from redis import Redis
 
-from backend.blueprints import steam, stats, auth, debug, admin, players, api, replays
+from backend.blueprints import steam, auth, debug, admin
 from backend.blueprints.spa_api import spa_api
 from backend.database.objects import Game, Player, Group
 from backend.database.startup import startup
-from backend.utils.checks import get_checks
 from backend.utils.global_jinja_functions import create_jinja_globals
 
 logger = logging.getLogger(__name__)
@@ -80,12 +79,12 @@ def set_up_app_config(app: Flask):
 
 def register_blueprints(app: Flask):
     # app.register_blueprint(celery_tasks.bp)
-    app.register_blueprint(players.bp)
+    # app.register_blueprint(players.bp)
     app.register_blueprint(steam.bp)
-    app.register_blueprint(replays.bp)
+    # app.register_blueprint(replays.bp)
     # app.register_blueprint(saltie.bp)
-    app.register_blueprint(stats.bp)
-    app.register_blueprint(api.bp)
+    # app.register_blueprint(stats.bp)
+    # app.register_blueprint(api.bp)
     app.register_blueprint(spa_api.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(debug.bp)
