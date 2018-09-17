@@ -22,7 +22,7 @@ class Player:
         names = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')).filter(
             PlayerGame.player == id_).group_by(
             PlayerGame.name).order_by(desc('c'))[:5]
-        steam_profile = get_steam_profile_or_random_response(id_)['response']
+        steam_profile = get_steam_profile_or_random_response(id_)['response']['players'][0]
         session.close()
         return Player(id_=id_, name=steam_profile['personaname'], past_names=names,
                       avatar_link=steam_profile['avatarfull'])
