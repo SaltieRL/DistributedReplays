@@ -1,11 +1,15 @@
-import {Card, CardContent, Tab, Tabs} from "@material-ui/core"
+import {Card, CardContent, Tab, Tabs, withWidth} from "@material-ui/core"
+import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 import {Replay} from "../../Models/Replay/Replay"
 import {BasicStatsGrid} from "./BasicStats/BasicStatsGrid"
 
-interface Props {
+interface OwnProps {
     replay: Replay
 }
+
+type Props = OwnProps
+    & WithWidth
 
 type tabValue = "basicStats" | "advancedStats" | "replayViewer"
 
@@ -13,7 +17,7 @@ interface State {
     selectedTab: tabValue
 }
 
-export class ReplayContent extends React.PureComponent<Props, State> {
+class ReplayContentComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedTab: "basicStats"}
@@ -25,6 +29,7 @@ export class ReplayContent extends React.PureComponent<Props, State> {
                 <Tabs value={this.state.selectedTab}
                       onChange={this.handleSelectTab}
                       centered
+                      scrollable={isWidthDown("sm", this.props.width)}
                 >
                     <Tab label="Basic Stats" value="basicStats"/>
                     <Tab label="Advanced Stats" value="advancedStats"/>
@@ -44,3 +49,6 @@ export class ReplayContent extends React.PureComponent<Props, State> {
         this.setState({selectedTab})
     }
 }
+
+
+export const ReplayContent = withWidth()(ReplayContentComponent)

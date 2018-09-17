@@ -1,5 +1,7 @@
 import {faBraille, faBullseye, faCarSide, faCircle, faFutbol, IconDefinition} from "@fortawesome/free-solid-svg-icons"
-import {Divider, Grid, Tab, Tabs, Typography} from "@material-ui/core"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {Divider, Grid, Tab, Tabs, Typography, withWidth} from "@material-ui/core"
+import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 import {BasicStat, BasicStatsSubcategory, basicStatsSubcategoryValues} from "../../../Models/ChartData"
 import {Replay} from "../../../Models/Replay/Replay"
@@ -7,19 +9,21 @@ import {getReplayBasicStats} from "../../../Requests/Replay"
 import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
 import {StatChart} from "../../Shared/Charts/StatChart"
 import {LoadableWrapper} from "../../Shared/LoadableWrapper"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 
 
-interface Props {
+interface OwnProps {
     replay: Replay
 }
+
+type Props = OwnProps
+    & WithWidth
 
 interface State {
     basicStats?: BasicStat[]
     selectedTab: BasicStatsSubcategory
 }
 
-export class BasicStatsGrid extends React.PureComponent<Props, State> {
+class BasicStatsGridComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedTab: "Hits"}
@@ -40,6 +44,8 @@ export class BasicStatsGrid extends React.PureComponent<Props, State> {
                 <Tabs value={this.state.selectedTab}
                       onChange={this.handleSelectTab}
                       centered
+                      scrollable={isWidthDown("sm", this.props.width)}
+                      scrollButtons={isWidthDown("sm", this.props.width) ? "on" : undefined}
                 >
                     {basicStatsSubcategoryValues
                         .map((subcategory: BasicStatsSubcategory) =>
@@ -80,3 +86,5 @@ export class BasicStatsGrid extends React.PureComponent<Props, State> {
         this.setState({selectedTab})
     }
 }
+
+export const BasicStatsGrid = withWidth()(BasicStatsGridComponent)
