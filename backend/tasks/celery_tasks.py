@@ -5,6 +5,7 @@ import os
 
 from carball import analyze_replay_file
 from celery import Celery
+from redis import Redis
 
 from backend.database.objects import Game
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
@@ -40,7 +41,13 @@ celery.config_from_object(celeryconfig)
 player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
-
+try:
+    _redis = Redis(
+        host='localhost',
+        port=6379)
+    _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
+except:  # TODO: Investigate and specify this except.
+    _redis = None
 #
 # @celery.task(bind=True)
 # def calculate_reward(self, uid):
@@ -95,13 +102,13 @@ def parse_replay_task_low_priority(self, fn):
 
 
 @celery.task(base=DBTask, bind=True, priority=0)
-def calc_global_stats(self, redis=None):
+def calc_global_stats(self):
     sess = self.session()
     result = player_stat_wrapper.get_global_stats(sess)
     sess.close()
-    if redis is not None:
-        redis.set('global_stats', json.dumps(result))
-        redis.set('global_stats_expire', json.dumps(True), ex=60 * 10)
+    if _redis is not None:
+        _redis.set('global_stats', json.dumps(result))
+        _redis.set('global_stats_expire', json.dumps(True), ex=60 * 10)
     return result
 
 

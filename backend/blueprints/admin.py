@@ -94,5 +94,5 @@ def view_users():
 
 @bp.route('/globalstats')
 def ping():
-    result = calc_global_stats.delay()
-    return jsonify({'result': result.get()})
+    r = current_app.config['r']
+    return jsonify({'result': r.get('global_stats')})
