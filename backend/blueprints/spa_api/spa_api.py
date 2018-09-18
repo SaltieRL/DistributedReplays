@@ -107,7 +107,7 @@ def api_get_player_match_history(id_):
             missing_params.append('limit')
         raise MissingQueryParams(missing_params)
     match_history = MatchHistory.create_from_id(id_, int(page), int(limit))
-    return jsonify(match_history.replays)
+    return better_jsonify(match_history)
 
 
 ### REPLAY
