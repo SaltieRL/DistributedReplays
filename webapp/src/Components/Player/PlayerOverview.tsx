@@ -33,19 +33,24 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
             "Playstyle": faCarSide,
             "Match History": faHistory
         }
+
+        const playerSideBar = <PlayerSideBar player={this.props.player}/>
+        const playerPlayStyle = <PlayerPlayStyle player={this.props.player}/>
+        const playerMatchHistory = <PlayerMatchHistory player={this.props.player} useBoxScore={false}/>
+
         return (
             <>
                 {isWidthUp("sm", this.props.width) ?
                     <>
                         <Grid item xs={12} sm={5} md={3} style={{maxWidth: 400}}>
-                            <PlayerSideBar player={this.props.player}/>
+                            {playerSideBar}
                         </Grid>
                         <Grid item xs={12} sm={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
                                 <Card>
                                     <CardHeader title="Playstyle"/>
                                     <CardContent>
-                                        <PlayerPlayStyle player={this.props.player}/>
+                                        {playerPlayStyle}
                                     </CardContent>
                                 </Card>
                             </Grid>
@@ -53,7 +58,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 <Card>
                                     <CardHeader title="Match History"/>
                                     <CardContent>
-                                        <PlayerMatchHistory player={this.props.player}/>
+                                        {playerMatchHistory}
                                     </CardContent>
                                 </Card>
                             </Grid>
@@ -74,13 +79,13 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                             <Divider/>
                             <CardContent>
                                 {this.state.selectedMobileTab === "Profile" &&
-                                <PlayerSideBar player={this.props.player}/>
+                                playerSideBar
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
-                                <PlayerPlayStyle player={this.props.player}/>
+                                playerPlayStyle
                                 }
                                 {this.state.selectedMobileTab === "Match History" &&
-                                <PlayerMatchHistory player={this.props.player}/>
+                                playerMatchHistory
                                 }
                             </CardContent>
                         </Card>
