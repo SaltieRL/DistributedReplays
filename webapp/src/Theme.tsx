@@ -34,7 +34,6 @@ const theme = createMuiTheme({
     }
 })
 
-
 export class Theme extends React.Component {
     public render() {
         return (

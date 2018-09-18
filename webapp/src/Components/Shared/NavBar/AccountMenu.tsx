@@ -38,7 +38,6 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
     public render() {
         const {classes, loggedInUser} = this.props
 
-
         return (
             <>
                 {loggedInUser ?
@@ -106,7 +105,6 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
         })
     }
 }
-
 
 const styles = createStyles({
     avatar: {

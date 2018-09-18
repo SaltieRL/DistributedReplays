@@ -11,7 +11,6 @@ interface ReplayPlayer {
     loadout: Loadout
 }
 
-
 interface CameraSettings {
     distance : number
     fieldOfView : number

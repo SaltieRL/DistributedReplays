@@ -119,4 +119,3 @@ export class ReplayChart extends React.PureComponent<Props> {
         }
     }
 }
-

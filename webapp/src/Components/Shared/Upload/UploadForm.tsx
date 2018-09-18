@@ -26,7 +26,6 @@ interface State {
 
 type Props = WithStyles<typeof styles>
 
-
 class UploadFormComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
@@ -99,6 +98,5 @@ const styles = (theme: Theme) => createStyles({
         marginLeft: "auto"
     }
 })
-
 
 export const UploadForm = withStyles(styles)(UploadFormComponent)

@@ -95,5 +95,4 @@ const styles = createStyles({
     }
 })
 
-
 export const LoadableWrapper = withStyles(styles)(LoadableWrapperComponent)

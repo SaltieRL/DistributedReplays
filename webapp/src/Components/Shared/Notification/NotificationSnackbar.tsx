@@ -87,8 +87,6 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
             </Snackbar>
         )
     }
-
-
 }
 
 const variantIcon = {

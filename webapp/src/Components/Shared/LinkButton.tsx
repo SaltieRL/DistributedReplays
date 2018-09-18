@@ -38,7 +38,6 @@ type LinkButtonProps = OwnProps
     & (InternalLinkProps | ExternalLinkProps)
     & WithStyles<typeof buttonStyles>
 
-
 class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
     public render() {
         const {classes, children, isExternalLink, tooltip} = this.props

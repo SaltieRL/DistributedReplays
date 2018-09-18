@@ -152,7 +152,6 @@ export const getReplay = (id: string): Promise<Replay> => {
         .then(parseReplay)
 }
 
-
 export const getReplayBasicStats = (id: string): Promise<BasicStat[]> => {
     return doGet(`/replay/${id}/basic_stats`)
 }

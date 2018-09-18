@@ -3,7 +3,6 @@ import * as React from "react"
 import {UploadForm} from "../Shared/Upload/UploadForm"
 import {BasePage} from "./BasePage"
 
-
 export class UploadPage extends React.PureComponent {
     public render() {
         return (

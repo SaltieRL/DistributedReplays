@@ -24,7 +24,6 @@ export const parseReplay = (data: any) => {
     }
 }
 
-
 export const getColouredGameScore = (replay: Replay) => {
     return (
         <>

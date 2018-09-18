@@ -6,14 +6,12 @@ import {ChartDataResponse} from "../Models/ChartData"
 import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
-
 export const getPlayerFromName = (name: string): Promise<string> => {
     if (useMockData) {
         return Promise.resolve("testUserId")
     }
     return doGet(`/steam/resolve/${name}`)
 }
-
 
 export const getPlayer = (id: string): Promise<Player> => {
     if (useMockData) {
@@ -41,7 +39,6 @@ export const getStats = (id: string): Promise<PlayerStats> => {
     }
     return doGet(`/player/${id}/profile_stats`)
 }
-
 
 export const getPlayerPlayStyles = (id: string): Promise<ChartDataResponse[]> => {
     if (useMockData) {
@@ -79,7 +76,6 @@ export const getPlayerPlayStyles = (id: string): Promise<ChartDataResponse[]> =>
     return doGet(`/player/${id}/play_style`)
 }
 
-
 export const getRanks = (id: string): Promise<PlayerRanks> => {
     if (useMockData) {
         const rating = {
@@ -96,7 +92,6 @@ export const getRanks = (id: string): Promise<PlayerRanks> => {
     }
     return doGet(`/player/${id}/ranks`)
 }
-
 
 export const getMatchHistory = (id: string): Promise<Replay[]> => {
     if (useMockData) {

@@ -5,7 +5,6 @@ import {getPlayerPlayStyles} from "../../../Requests/Player"
 import {LoadableWrapper} from "../../Shared/LoadableWrapper"
 import {PlayerTendenciesChart} from "./Charts/PlayerTendenciesChart"
 
-
 interface Props {
     player: Player
 }
@@ -14,7 +13,6 @@ interface State {
     data?: ChartDataResponse[]
     reloadSignal: boolean
 }
-
 
 export class PlayerPlayStyle extends React.PureComponent<Props, State> {
     constructor(props: Props) {
