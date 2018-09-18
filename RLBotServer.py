@@ -8,7 +8,7 @@ from redis import Redis
 
 from backend.blueprints import steam, auth, debug, admin
 from backend.blueprints.spa_api import spa_api
-from backend.database.objects import Game, Player, Group
+from backend.database.objects import Player, Group
 from backend.database.startup import startup
 from backend.utils.global_jinja_functions import create_jinja_globals
 
@@ -155,16 +155,14 @@ def lookup_current_user():
     s.close()
 
 
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    s = current_app.config['db']()
-    count = s.query(Game.hash).count()
-    return render_template('index.html', game_count=count)
-
-
-@app.route('/about', methods=['GET'])
-def about():
-    return render_template('about.html')
+# Serve React App
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists("webapp/build/" + path):
+        return send_from_directory('webapp/build', path)
+    else:
+        return send_from_directory('webapp/build', 'index.html')
 
 
 @app.route('/robots.txt')
