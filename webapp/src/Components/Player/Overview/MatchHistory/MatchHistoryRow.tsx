@@ -15,10 +15,17 @@ import {REPLAY_PAGE_LINK} from "../../../../Globals"
 import {getColouredGameScore, getReplayResult, Replay} from "../../../../Models/Replay/Replay"
 import {ReplayChart} from "../../../Replay/ReplayChart"
 
-interface OwnProps {
+interface DataProps {
     replay: Replay
     player: Player
+    header?: false
 }
+
+interface HeaderProps {
+    header: true
+}
+
+type OwnProps = DataProps | HeaderProps
 
 type Props = OwnProps
     & WithStyles<typeof styles>
@@ -26,51 +33,83 @@ type Props = OwnProps
 
 class MatchHistoryRowComponent extends React.PureComponent<Props> {
     public render() {
-        const {replay, player, classes, width} = this.props
+        const {classes, width} = this.props
         const notOnMobile = isWidthUp("sm", width)
-        const dateFormat = notOnMobile ? "DD/MM/YYYY" : "DD/MM"
-        return (
-            <ExpansionPanel>
-                <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
-                    <Grid container>
-                        <Grid item xs={notOnMobile ? 3 : 4}>
-                            <Typography variant="subheading">
-                                {replay.name}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Typography variant="subheading">
-                                {replay.date.format(dateFormat)}
-                            </Typography>
-                        </Grid>
-                        {notOnMobile &&
-                        <Grid item xs={1}>
-                            <Typography variant="subheading">
-                                {replay.gameMode}
-                            </Typography>
-                        </Grid>
-                        }
-                        <Grid item xs={2}>
-                            <Typography variant="subheading">
-                                {getColouredGameScore(replay)}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Typography variant="subheading">
-                                {getReplayResult(replay, player)}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={1}>
-                            <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
-                                <InsertChart/>
-                            </IconButton>
-                        </Grid>
+
+        // These default values appear as the header
+        let replayName: string = "Name"
+        let replayDate: string = "Date"
+        let replayGameMode: string = "Mode"
+        let replayScore: JSX.Element = <>Score</>
+        let replayResult: string = "Result"
+        let dropdownIcon = <></>
+
+        if (!this.props.header) {
+            const {replay, player} = this.props
+            const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
+            replayName = replay.name
+            replayDate = replay.date.format(dateFormat)
+            replayGameMode = replay.gameMode
+            replayScore = getColouredGameScore(replay)
+            replayResult = getReplayResult(replay, player)
+            dropdownIcon =
+                <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
+                    <InsertChart/>
+                </IconButton>
+        }
+
+        const expansionPanelSummary =
+            <ExpansionPanelSummary
+                expandIcon={!this.props.header ? <ExpandMore/> : undefined}
+                className={!this.props.header ? undefined : classes.notButton}
+            >
+                <Grid container>
+                    <Grid item xs={notOnMobile ? 3 : 4}>
+                        <Typography variant="subheading">
+                            {replayName}
+                        </Typography>
                     </Grid>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.panelDetails}>
-                    <ReplayChart replay={replay}/>
-                </ExpansionPanelDetails>
-            </ExpansionPanel>
+                    <Grid item xs={3}>
+                        <Typography variant="subheading">
+                            {replayDate}
+                        </Typography>
+                    </Grid>
+                    {notOnMobile &&
+                    <Grid item xs={1}>
+                        <Typography variant="subheading">
+                            {replayGameMode}
+                        </Typography>
+                    </Grid>
+                    }
+                    <Grid item xs={2}>
+                        <Typography variant="subheading">
+                            {replayScore}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Typography variant="subheading">
+                            {replayResult}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                        {dropdownIcon}
+                    </Grid>
+                </Grid>
+            </ExpansionPanelSummary>
+
+        return (
+            <>
+                {!this.props.header ?
+                    <ExpansionPanel>
+                        {expansionPanelSummary}
+                        <ExpansionPanelDetails className={classes.panelDetails}>
+                            <ReplayChart replay={this.props.replay}/>
+                        </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                    :
+                    expansionPanelSummary
+                }
+            </>
         )
     }
 }
@@ -87,8 +126,13 @@ const styles = (theme: Theme) => createStyles({
             color: theme.palette.secondary.dark
         }
     },
+    notButton: {
+        cursor: "unset"
+    },
     panelDetails: {
-        overflowX: "auto"
+        overflowX: "auto",
+        maxWidth: "95vw",
+        margin: "auto"
     }
 })
 

@@ -1,9 +1,9 @@
+import {Grid} from "@material-ui/core"
 import * as React from "react"
 import {Replay} from "../../../../Models/Replay/Replay"
 import {getMatchHistory} from "../../../../Requests/Player"
 import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {MatchHistoryRow} from "./MatchHistoryRow"
-
 
 interface Props {
     player: Player
@@ -28,12 +28,19 @@ export class PlayerMatchHistory extends React.PureComponent<Props, State> {
 
     public render() {
         return (
-            <LoadableWrapper load={this.getPlayerMatchHistory} reloadSignal={this.state.reloadSignal}>
-                {this.state.matchHistory &&
-                this.state.matchHistory.map((replay) =>
-                    <MatchHistoryRow replay={replay} player={this.props.player} key={replay.name}/>)
-                }
-            </LoadableWrapper>
+            <Grid container>
+                <Grid item xs={12}>
+                    <MatchHistoryRow header/>
+                </Grid>
+                <Grid item xs={12}>
+                    <LoadableWrapper load={this.getPlayerMatchHistory} reloadSignal={this.state.reloadSignal}>
+                        {this.state.matchHistory &&
+                        this.state.matchHistory.map((replay) =>
+                            <MatchHistoryRow replay={replay} player={this.props.player} key={replay.name}/>)
+                        }
+                    </LoadableWrapper>
+                </Grid>
+            </Grid>
         )
     }
 
