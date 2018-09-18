@@ -6,7 +6,6 @@ import {PlayerView} from "../Player/PlayerView"
 import {LoadableWrapper} from "../Shared/LoadableWrapper"
 import {BasePage} from "./BasePage"
 
-
 interface RouteParams {
     id: string
 }
@@ -17,7 +16,6 @@ interface State {
     player?: Player
     reloadSignal: boolean
 }
-
 
 export class PlayerPage extends React.PureComponent<Props, State> {
     constructor(props: Props) {
@@ -34,6 +32,7 @@ export class PlayerPage extends React.PureComponent<Props, State> {
     public render() {
         const matchUrl = this.props.match.url
         const overviewPath = matchUrl + "/overview"
+        const matchHistoryPath = matchUrl + "/match_history"
 
         return (
             <BasePage>
@@ -44,7 +43,9 @@ export class PlayerPage extends React.PureComponent<Props, State> {
                             <Route exact path={this.props.match.url}
                                    component={() => <Redirect to={overviewPath}/>}/>
                             <Route path={overviewPath}
-                                   render={() => <PlayerView player={this.state.player as Player}/>}/>
+                                   render={() => <PlayerOverview player={this.state.player as Player}/>}/>
+                            <Route path={matchHistoryPath}
+                                   render={() => <PlayerMatchHistoryView player={this.state.player as Player}/>}/>
                         </>
                         }
                     </LoadableWrapper>

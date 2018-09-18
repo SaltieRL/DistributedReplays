@@ -21,7 +21,7 @@ interface State {
     selectedMobileTab?: PlayerViewTab
 }
 
-class PlayerViewComponent extends React.PureComponent<Props, State> {
+class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedMobileTab: "Profile"}
@@ -90,10 +90,9 @@ class PlayerViewComponent extends React.PureComponent<Props, State> {
         )
     }
 
-
     private readonly handleSelectMobileTab = (event: React.ChangeEvent, selectedMobileTab: PlayerViewTab) => {
         this.setState({selectedMobileTab})
     }
 }
 
-export const PlayerView = withWidth()(PlayerViewComponent)
+export const PlayerOverview = withWidth()(PlayerOverviewComponent)
