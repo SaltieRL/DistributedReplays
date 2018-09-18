@@ -7,6 +7,7 @@ import {MatchHistoryRow} from "./MatchHistoryRow"
 
 interface Props {
     player: Player
+    useBoxScore: boolean
     useHeader?: boolean
 }
 
@@ -39,7 +40,8 @@ export class PlayerMatchHistory extends React.PureComponent<Props, State> {
                     <LoadableWrapper load={this.getPlayerMatchHistory} reloadSignal={this.state.reloadSignal}>
                         {this.state.matchHistory &&
                         this.state.matchHistory.map((replay) =>
-                            <MatchHistoryRow replay={replay} player={this.props.player} key={replay.name}/>)
+                            <MatchHistoryRow replay={replay} player={this.props.player} key={replay.name}
+                                             useBoxScore={this.props.useBoxScore}/>)
                         }
                     </LoadableWrapper>
                 </Grid>

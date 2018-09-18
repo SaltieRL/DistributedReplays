@@ -14,12 +14,14 @@ import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
 import {REPLAY_PAGE_LINK} from "../../../../Globals"
 import {getColouredGameScore, getReplayResult, Replay} from "../../../../Models/Replay/Replay"
+import {ReplayBoxScore} from "../../../Replay/ReplayBoxScore"
 import {ReplayChart} from "../../../Replay/ReplayChart"
 
 interface DataProps {
     replay: Replay
     player: Player
     header?: false
+    useBoxScore?: boolean
 }
 
 interface HeaderProps {
@@ -106,7 +108,11 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                     <ExpansionPanel>
                         {expansionPanelSummary}
                         <ExpansionPanelDetails className={classes.panelDetails}>
-                            <ReplayChart replay={this.props.replay}/>
+                            {!this.props.useBoxScore ?
+                                <ReplayChart replay={this.props.replay}/>
+                                :
+                                <ReplayBoxScore replay={this.props.replay} player={this.props.player}/>
+                            }
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
                     :
