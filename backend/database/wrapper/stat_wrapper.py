@@ -140,13 +140,13 @@ class PlayerStatWrapper:
             PlayerGame.average_speed,
             PlayerGame.possession_time,
             PlayerGame.total_hits - PlayerGame.total_dribble_conts,  # hits that are not dribbles
-            (PlayerGame.shots) /
+            (100 * PlayerGame.shots) /
             safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # Shots per non dribble
-            (PlayerGame.total_passes) /
+            (100 * PlayerGame.total_passes) /
             safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # passes per non dribble
-            (PlayerGame.assists) /
+            (100 * PlayerGame.assists) /
             safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # assists per non dribble
-            (PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
+            100 * (PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
             safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # useful hit per non dribble
             PlayerGame.turnovers,
             func.sum(PlayerGame.goals) / safe_divide(cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric)),
