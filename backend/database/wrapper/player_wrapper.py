@@ -46,7 +46,7 @@ class PlayerWrapper:
                 PlayerGame.player == id_[0])
         else:
             return session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
-                PlayerGame.game is not None)
+                PlayerGame.game != None)
 
     def get_player_games_paginated(self, session, id_, page: int = 0, limit: int = None):
         query = self.get_player_games(session, id_)
@@ -54,11 +54,11 @@ class PlayerWrapper:
 
     def get_paginated_match_history(self, existing_query, page: int,
                                     id_list: bool, limit: int) -> List[PlayerGame]:
-        limit = limit if limit is not None else self.limit
         if not id_list:
             existing_query = existing_query.join(Game)
-        return existing_query.order_by(desc(Game.match_date))[
-               page * limit: (page + 1) * limit]
+        limit = limit if limit is not None else self.limit
+
+        return existing_query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
 
     def get_total_games(self, session, id_):
         return self.get_player_games(session, id_).count()
