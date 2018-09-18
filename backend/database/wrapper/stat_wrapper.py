@@ -37,7 +37,10 @@ class PlayerStatWrapper:
             if stat_string is not None:
                 stats_dict = json.loads(stat_string)
                 if rank is not None:
-                    rank = rank[3]['tier']
+                    try:
+                        rank = rank[3]['tier']
+                    except IndexError:
+                        rank = rank[1]['tier']
                 else:
                     rank = 0
                 global_stats = [stats_dict[s.field_name][rank]['mean'] for s in self.field_names]
