@@ -2,6 +2,7 @@
 import gzip
 import json
 import os
+import shutil
 
 from carball import analyze_replay_file
 from celery import Celery
@@ -49,6 +50,8 @@ try:
     _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
 except:  # TODO: Investigate and specify this except.
     _redis = None
+
+
 #
 # @celery.task(bind=True)
 # def calculate_reward(self, uid):
@@ -95,6 +98,7 @@ def parse_replay_task(self, fn):
     add_objs_to_db(game, player_games, players, sess)
     sess.commit()
     sess.close()
+    shutil.move(fn, os.path.join(os.path.dirname(fn), g.game_metadata.id + '.replay'))
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
