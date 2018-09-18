@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 
@@ -39,15 +40,21 @@ class PlayerStatWrapper:
             if stat_string is not None:
                 stats_dict = json.loads(stat_string)
                 if rank is not None:
-                    rank = rank[3]['tier']
+                    try:
+                        rank = rank[3]['tier']
+                    except IndexError:
+                        rank = rank[1]['tier']
                 else:
                     rank = 0
                 global_stats = [stats_dict[s.field_name][rank]['mean'] for s in self.field_names]
                 global_stds = [stats_dict[s.field_name][rank]['std'] for s in self.field_names]
             else:
                 redis = None
-        q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
-        stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
+        ago = datetime.datetime.now() - datetime.timedelta(days=30 * 6)  # 6 months in the past
+        q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3).filter(
+            Game.match_date > ago)
+        stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3).filter(
+            Game.match_date > ago)
         stats = list(q.filter(PlayerGame.player == id_).first())
         if redis is None:
             if rank is not None and not get_local_dev():
@@ -120,7 +127,7 @@ class PlayerStatWrapper:
             safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # passes per non dribble
             (100 * PlayerGame.assists) /
             safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # assists per non dribble
-            (100 * PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
+            100 * (PlayerGame.shots + PlayerGame.total_passes + PlayerGame.total_saves + PlayerGame.total_goals) /
             safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),  # useful hit per non dribble
             PlayerGame.turnovers,
             func.sum(PlayerGame.goals) / safe_divide(cast(func.sum(PlayerGame.shots), sqlalchemy.Numeric)),
@@ -165,6 +172,11 @@ class PlayerStatWrapper:
     def get_global_stats(self, sess):
         results = {}
         ranks = list(range(20))
+        try:
+            from flask import current_app
+            ago = datetime.datetime.now() - datetime.timedelta(days=current_app.config['STAT_DAY_LIMIT'])
+        except:
+            ago = datetime.datetime.now() - datetime.timedelta(days=30 * 6)  # 60 days in the past
 
         def float_maybe(f):
             if f is None:
@@ -176,7 +188,7 @@ class PlayerStatWrapper:
             column_results = []
             for rank in ranks:
                 iq = sess.query(PlayerGame.player,
-                                q.label('avg')).filter(
+                                q.label('avg')).join(Game).filter(Game.match_date > ago).filter(
                     PlayerGame.rank == rank).group_by(PlayerGame.player).having(
                     func.count(PlayerGame.player) > 5).subquery()
                 result = sess.query(func.avg(iq.c.avg), func.stddev_samp(iq.c.avg)).first()
