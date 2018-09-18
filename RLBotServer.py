@@ -21,8 +21,10 @@ UPLOAD_RATE_LIMIT_MINUTES = 4.5  # TODO: Make use of this.
 
 def start_app() -> Tuple[Flask, Dict[str, int]]:
     # APP SETUP
-    app = Flask(__name__, template_folder=os.path.join('frontend', 'templates'),
-                static_folder=os.path.join('frontend', 'static'))
+    app = Flask(__name__,
+                template_folder=os.path.join('frontend', 'templates'),
+                static_folder=os.path.join('frontend', 'static'),
+                static_url_path='/static2')
     set_up_app_config(app)
     CORS(app)
     create_needed_folders(app)
@@ -172,4 +174,4 @@ def static_from_root():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8000)
