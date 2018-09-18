@@ -39,6 +39,11 @@ export class PlayerMatchHistoryComponent extends React.PureComponent<Props, Stat
         }
     }
 
+    public componentDidMount() {
+        this.readQueryParams()
+        this.setQueryParams()
+    }
+
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
         if (prevProps.player.id !== this.props.player.id) {
             this.triggerReload()
@@ -46,6 +51,7 @@ export class PlayerMatchHistoryComponent extends React.PureComponent<Props, Stat
         }
         if ((prevState.page !== this.state.page) || (prevState.limit !== this.state.limit)) {
             this.triggerReload()
+            this.setQueryParams()
             return
         }
         if (prevProps.location.search !== this.props.location.search) {
@@ -97,8 +103,22 @@ export class PlayerMatchHistoryComponent extends React.PureComponent<Props, Stat
                 this.props.location.search,
                 {ignoreQueryPrefix: true}
             )
-            this.setState({page: Number(queryParams.page) - 1, limit: Number(queryParams.limit)})
+            const page = Number(queryParams.page) - 1
+            const limit = Number(queryParams.limit)
+
+            if (!isNaN(page) && !isNaN(limit)) {
+                this.setState({page, limit})
+            }
         }
+    }
+
+    private readonly setQueryParams = () => {
+        const queryString = qs.stringify(
+            {page: this.state.page + 1, limit: this.state.limit},
+            {addQueryPrefix: true}
+        )
+        this.props.history.replace({search: queryString})
+
     }
 
     private readonly triggerReload = () => {
