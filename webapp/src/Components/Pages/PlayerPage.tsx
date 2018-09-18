@@ -1,11 +1,11 @@
 import {Grid} from "@material-ui/core"
 import * as React from "react"
-import {RouteComponentProps} from "react-router-dom"
+import {Redirect, Route, RouteComponentProps} from "react-router-dom"
 import {getPlayer} from "../../Requests/Player"
-import {PlayerView} from "../Player/PlayerView"
+import {PlayerMatchHistoryView} from "../Player/PlayerMatchHistoryView"
+import {PlayerOverview} from "../Player/PlayerOverview"
 import {LoadableWrapper} from "../Shared/LoadableWrapper"
 import {BasePage} from "./BasePage"
-
 
 interface RouteParams {
     id: string
@@ -17,7 +17,6 @@ interface State {
     player?: Player
     reloadSignal: boolean
 }
-
 
 export class PlayerPage extends React.PureComponent<Props, State> {
     constructor(props: Props) {
@@ -32,12 +31,23 @@ export class PlayerPage extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const matchUrl = this.props.match.url
+        const overviewPath = matchUrl + "/overview"
+        const matchHistoryPath = matchUrl + "/match_history"
+
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center">
                     <LoadableWrapper load={this.getPlayerForPage} reloadSignal={this.state.reloadSignal}>
                         {this.state.player &&
-                        <PlayerView player={this.state.player}/>
+                        <>
+                            <Route exact path={this.props.match.url}
+                                   component={() => <Redirect to={overviewPath}/>}/>
+                            <Route path={overviewPath}
+                                   render={() => <PlayerOverview player={this.state.player as Player}/>}/>
+                            <Route path={matchHistoryPath}
+                                   render={() => <PlayerMatchHistoryView player={this.state.player as Player}/>}/>
+                        </>
                         }
                     </LoadableWrapper>
                 </Grid>

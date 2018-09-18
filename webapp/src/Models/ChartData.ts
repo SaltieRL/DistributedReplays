@@ -18,7 +18,6 @@ export const basicStatsSubcategoryValues = [
     "Hits", "Ball", "Positioning", "Playstyles", "Possession"
 ]  // Needed as these values cannot be gotten from the type at runtime (TypeScript is a lie)
 
-
 export interface BasicStat extends ChartDataResponse {
     chartDataPoints: StatDataPoint[]
     type: "radar" | "bar" | "pie"

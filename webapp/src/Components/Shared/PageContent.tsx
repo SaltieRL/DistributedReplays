@@ -28,4 +28,3 @@ const styles = createStyles({
 })
 
 export const PageContent = withStyles(styles)(PageContentComponent)
-

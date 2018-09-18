@@ -24,6 +24,6 @@ export const doPost = (destination: string, body: BodyInit): Promise<any> => {
         if (!response.ok) {
             throw {code: response.status, message: response.statusText} as AppError
         }
-        return response.json()
+        return response
     })
 }

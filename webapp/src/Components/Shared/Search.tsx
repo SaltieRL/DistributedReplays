@@ -6,7 +6,6 @@ import {Redirect} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../Globals"
 import {getPlayerFromName} from "../../Requests/Player"
 
-
 interface Props {
     usePaper: boolean
     useCalculatorIcon?: boolean
@@ -16,7 +15,6 @@ interface State {
     enteredText: string
     resolvedId?: string
 }
-
 
 export class Search extends React.PureComponent<Props, State> {
     constructor(props: Props) {

@@ -7,7 +7,6 @@ import {ReplayView} from "../Replay/ReplayView"
 import {LoadableWrapper} from "../Shared/LoadableWrapper"
 import {BasePage} from "./BasePage"
 
-
 interface RouteParams {
     id: string
 }
@@ -17,7 +16,6 @@ type Props = RouteComponentProps<RouteParams>
 interface State {
     replay?: Replay
 }
-
 
 export class ReplayPage extends React.PureComponent<Props, State> {
     constructor(props: Props) {

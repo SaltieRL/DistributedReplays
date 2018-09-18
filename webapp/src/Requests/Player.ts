@@ -3,9 +3,9 @@ import {doGet} from "../apiHandler/apiHandler"
 import {PlayerRanks} from "../Components/Player/Overview/SideBar/PlayerRanksCard"
 import {PlayerStats} from "../Components/Player/Overview/SideBar/PlayerStatsCard"
 import {ChartDataResponse} from "../Models/ChartData"
-import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
+import {MatchHistoryResponse} from "../Models/MatchHistory"
+import {GameMode, parseReplay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
-
 
 export const getPlayerFromName = (name: string): Promise<string> => {
     if (useMockData) {
@@ -13,7 +13,6 @@ export const getPlayerFromName = (name: string): Promise<string> => {
     }
     return doGet(`/steam/resolve/${name}`)
 }
-
 
 export const getPlayer = (id: string): Promise<Player> => {
     if (useMockData) {
@@ -41,7 +40,6 @@ export const getStats = (id: string): Promise<PlayerStats> => {
     }
     return doGet(`/player/${id}/profile_stats`)
 }
-
 
 export const getPlayerPlayStyles = (id: string): Promise<ChartDataResponse[]> => {
     if (useMockData) {
@@ -79,7 +77,6 @@ export const getPlayerPlayStyles = (id: string): Promise<ChartDataResponse[]> =>
     return doGet(`/player/${id}/play_style`)
 }
 
-
 export const getRanks = (id: string): Promise<PlayerRanks> => {
     if (useMockData) {
         const rating = {
@@ -97,65 +94,67 @@ export const getRanks = (id: string): Promise<PlayerRanks> => {
     return doGet(`/player/${id}/ranks`)
 }
 
-
-export const getMatchHistory = (id: string): Promise<Replay[]> => {
+export const getMatchHistory = (id: string, page: number, limit: number): Promise<MatchHistoryResponse> => {
     if (useMockData) {
-        return Promise.resolve([
-            {
-                id: "215989AB4EF314212",
-                name: "Replay1",
-                date: moment(),
-                gameMode: "1's" as GameMode,
-                gameScore: {team0Score: 1, team1Score: 2},
-                players: [
-                    {
-                        id: "519021",
-                        name: "testplayerblue",
-                        isOrange: false,
-                        score: 1,
-                        goals: 1,
-                        assists: 0,
-                        saves: 4,
-                        shots: 2,
-                        cameraSettings: {
-                            distance: 280,
-                            fieldOfView: 110,
-                            height: 110,
-                            pitch: -3,
-                            stiffness: 0.449999988079071,
-                            swivelSpeed: 4,
-                            transitionSpeed: 1
+        return Promise.resolve({
+            totalCount: 5,
+            replays: [
+                {
+                    id: "215989AB4EF314212",
+                    name: "Replay1",
+                    date: moment(),
+                    gameMode: "1's" as GameMode,
+                    gameScore: {team0Score: 1, team1Score: 2},
+                    players: [
+                        {
+                            id: "519021",
+                            name: "testplayerblue",
+                            isOrange: false,
+                            score: 1,
+                            goals: 1,
+                            assists: 0,
+                            saves: 4,
+                            shots: 2,
+                            cameraSettings: {
+                                distance: 280,
+                                fieldOfView: 110,
+                                height: 110,
+                                pitch: -3,
+                                stiffness: 0.449999988079071,
+                                swivelSpeed: 4,
+                                transitionSpeed: 1
+                            },
+                            loadout: {
+                                car: "Octane"
+                            }
                         },
-                        loadout: {
-                            car: "Octane"
+                        {
+                            id: "31155",
+                            name: "testplayerorange",
+                            isOrange: true,
+                            score: 1,
+                            goals: 2,
+                            assists: 1,
+                            saves: 2,
+                            shots: 6,
+                            cameraSettings: {
+                                distance: 280,
+                                fieldOfView: 110,
+                                height: 110,
+                                pitch: -3,
+                                stiffness: 0.449999988079071,
+                                swivelSpeed: 5,
+                                transitionSpeed: 1
+                            },
+                            loadout: {
+                                car: "Octane"
+                            }
                         }
-                    },
-                    {
-                        id: "31155",
-                        name: "testplayerorange",
-                        isOrange: true,
-                        score: 1,
-                        goals: 2,
-                        assists: 1,
-                        saves: 2,
-                        shots: 6,
-                        cameraSettings: {
-                            distance: 280,
-                            fieldOfView: 110,
-                            height: 110,
-                            pitch: -3,
-                            stiffness: 0.449999988079071,
-                            swivelSpeed: 5,
-                            transitionSpeed: 1
-                        },
-                        loadout: {
-                            car: "Octane"
-                        }
-                    }
-                ]
-            }
-        ])
+                    ]
+                }
+            ]
+        })
     }
-    return doGet(`/player/${id}/match_history`)
-        .then((data) => data.map(parseReplay))
+    return doGet(`/player/${id}/match_history?page=${page}&limit=${limit}`)
+        .then((data) => ({...data, replays: data.replays.map(parseReplay)}))
 }

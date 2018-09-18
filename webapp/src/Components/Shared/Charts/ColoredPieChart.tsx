@@ -4,7 +4,6 @@ import {Pie} from "react-chartjs-2"
 import {BasicStat} from "../../../Models/ChartData"
 import {getPrimaryColorsForPlayers} from "../../../Utils/Color"
 
-
 interface Props {
     basicStat: BasicStat
 }

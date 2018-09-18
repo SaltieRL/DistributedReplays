@@ -55,6 +55,7 @@
     "member-ordering": false,
     "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
     "jsx-boolean-value": false,
-    "jsx-no-lambdas": false
+    "jsx-no-lambda": false,
+    "no-consecutive-blank-lines": true
   }
 }

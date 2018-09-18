@@ -47,5 +47,4 @@ class ReplayContentComponent extends React.PureComponent<Props, State> {
     }
 }
 
-
 export const ReplayContent = withWidth()(ReplayContentComponent)

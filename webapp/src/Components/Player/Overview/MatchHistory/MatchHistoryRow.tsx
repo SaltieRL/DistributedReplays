@@ -7,18 +7,28 @@ import {
     IconButton, Theme,
     Typography, WithStyles, withStyles, withWidth
 } from "@material-ui/core"
+import {TextStyle} from "@material-ui/core/styles/createTypography"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
 import {REPLAY_PAGE_LINK} from "../../../../Globals"
 import {getColouredGameScore, getReplayResult, Replay} from "../../../../Models/Replay/Replay"
+import {ReplayBoxScore} from "../../../Replay/ReplayBoxScore"
 import {ReplayChart} from "../../../Replay/ReplayChart"
 
-interface OwnProps {
+interface DataProps {
     replay: Replay
     player: Player
+    header?: false
+    useBoxScore?: boolean
 }
+
+interface HeaderProps {
+    header: true
+}
+
+type OwnProps = DataProps | HeaderProps
 
 type Props = OwnProps
     & WithStyles<typeof styles>
@@ -26,51 +36,89 @@ type Props = OwnProps
 
 class MatchHistoryRowComponent extends React.PureComponent<Props> {
     public render() {
-        const {replay, player, classes, width} = this.props
+        const {classes, width} = this.props
         const notOnMobile = isWidthUp("sm", width)
-        const dateFormat = notOnMobile ? "DD/MM/YYYY" : "DD/MM"
-        return (
-            <ExpansionPanel>
-                <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
-                    <Grid container>
-                        <Grid item xs={notOnMobile ? 3 : 4}>
-                            <Typography variant="subheading">
-                                {replay.name}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Typography variant="subheading">
-                                {replay.date.format(dateFormat)}
-                            </Typography>
-                        </Grid>
-                        {notOnMobile &&
-                        <Grid item xs={1}>
-                            <Typography variant="subheading">
-                                {replay.gameMode}
-                            </Typography>
-                        </Grid>
-                        }
-                        <Grid item xs={2}>
-                            <Typography variant="subheading">
-                                {getColouredGameScore(replay)}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <Typography variant="subheading">
-                                {getReplayResult(replay, player)}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={1}>
-                            <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
-                                <InsertChart/>
-                            </IconButton>
-                        </Grid>
+
+        // These default values appear as the header
+        let replayName: string = "Name"
+        let replayDate: string = "Date"
+        let replayGameMode: string = "Mode"
+        let replayScore: JSX.Element = <>Score</>
+        let replayResult: string = "Result"
+        let dropdownIcon = <></>
+
+        if (!this.props.header) {
+            const {replay, player} = this.props
+            const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
+            replayName = replay.name
+            replayDate = replay.date.format(dateFormat)
+            replayGameMode = replay.gameMode
+            replayScore = getColouredGameScore(replay)
+            replayResult = getReplayResult(replay, player)
+            dropdownIcon =
+                <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
+                    <InsertChart/>
+                </IconButton>
+        }
+
+        const typographyVariant: TextStyle = !this.props.header ? "subheading" : "title"
+
+        const expansionPanelSummary =
+            <ExpansionPanelSummary
+                expandIcon={!this.props.header ? <ExpandMore/> : undefined}
+                className={!this.props.header ? undefined : classes.notButton}
+            >
+                <Grid container>
+                    <Grid item xs={notOnMobile ? 3 : 4}>
+                        <Typography variant={typographyVariant}>
+                            {replayName}
+                        </Typography>
                     </Grid>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.panelDetails}>
-                    <ReplayChart replay={replay}/>
-                </ExpansionPanelDetails>
-            </ExpansionPanel>
+                    <Grid item xs={3}>
+                        <Typography variant={typographyVariant}>
+                            {replayDate}
+                        </Typography>
+                    </Grid>
+                    {notOnMobile &&
+                    <Grid item xs={1}>
+                        <Typography variant={typographyVariant}>
+                            {replayGameMode}
+                        </Typography>
+                    </Grid>
+                    }
+                    <Grid item xs={2}>
+                        <Typography variant={typographyVariant}>
+                            {replayScore}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Typography variant={typographyVariant}>
+                            {replayResult}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                        {dropdownIcon}
+                    </Grid>
+                </Grid>
+            </ExpansionPanelSummary>
+
+        return (
+            <>
+                {!this.props.header ?
+                    <ExpansionPanel>
+                        {expansionPanelSummary}
+                        <ExpansionPanelDetails className={classes.panelDetails}>
+                            {!this.props.useBoxScore ?
+                                <ReplayChart replay={this.props.replay}/>
+                                :
+                                <ReplayBoxScore replay={this.props.replay} player={this.props.player}/>
+                            }
+                        </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                    :
+                    expansionPanelSummary
+                }
+            </>
         )
     }
 }
@@ -87,8 +135,13 @@ const styles = (theme: Theme) => createStyles({
             color: theme.palette.secondary.dark
         }
     },
+    notButton: {
+        cursor: "unset"
+    },
     panelDetails: {
-        overflowX: "auto"
+        overflowX: "auto",
+        maxWidth: "95vw",
+        margin: "auto"
     }
 })
 

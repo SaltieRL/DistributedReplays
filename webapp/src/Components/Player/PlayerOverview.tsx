@@ -1,8 +1,11 @@
 import {faCarSide, faHistory, faUserCircle, IconDefinition} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Card, CardContent, CardHeader, Divider, Grid, Tab, Tabs, withWidth} from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import {isWidthDown, isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import {ViewList} from "@material-ui/icons"
 import * as React from "react"
+import {PLAYER_MATCH_HISTORY_PAGE} from "../../Globals"
+import {LinkButton} from "../Shared/LinkButton"
 import {PlayerMatchHistory} from "./Overview/MatchHistory/PlayerMatchHistory"
 import {PlayerPlayStyle} from "./Overview/PlayerPlayStyle"
 import {PlayerSideBar} from "./Overview/SideBar/PlayerSideBar"
@@ -21,7 +24,7 @@ interface State {
     selectedMobileTab?: PlayerViewTab
 }
 
-class PlayerViewComponent extends React.PureComponent<Props, State> {
+class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedMobileTab: "Profile"}
@@ -33,28 +36,43 @@ class PlayerViewComponent extends React.PureComponent<Props, State> {
             "Playstyle": faCarSide,
             "Match History": faHistory
         }
+
+        const playerSideBar = <PlayerSideBar player={this.props.player}/>
+        const playerPlayStyle = <PlayerPlayStyle player={this.props.player}/>
+        const playerMatchHistory = <PlayerMatchHistory player={this.props.player}
+                                                       useBoxScore={isWidthDown("sm", this.props.width)}/>
+
         return (
             <>
                 {isWidthUp("sm", this.props.width) ?
                     <>
                         <Grid item xs={12} sm={5} md={3} style={{maxWidth: 400}}>
-                            <PlayerSideBar player={this.props.player}/>
+                            {playerSideBar}
                         </Grid>
                         <Grid item xs={12} sm={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
                                 <Card>
                                     <CardHeader title="Playstyle"/>
                                     <CardContent>
-                                        <PlayerPlayStyle player={this.props.player}/>
+                                        {playerPlayStyle}
                                     </CardContent>
                                 </Card>
                             </Grid>
                             <Grid item xs={12}>
                                 <Card>
-                                    <CardHeader title="Match History"/>
-                                    <CardContent>
-                                        <PlayerMatchHistory player={this.props.player}/>
-                                    </CardContent>
+                                    <CardHeader title="Match History"
+                                                action={
+                                                    <div style={{marginRight: 8}}>
+                                                        <LinkButton to={PLAYER_MATCH_HISTORY_PAGE(this.props.player.id)}
+                                                                    tooltip="View full match history"
+                                                                    icon={ViewList} iconType="mui"
+                                                        >
+                                                            View full
+                                                        </LinkButton>
+                                                    </div>
+                                                }
+                                    />
+                                    {playerMatchHistory}
                                 </Card>
                             </Grid>
                         </Grid>
@@ -74,13 +92,13 @@ class PlayerViewComponent extends React.PureComponent<Props, State> {
                             <Divider/>
                             <CardContent>
                                 {this.state.selectedMobileTab === "Profile" &&
-                                <PlayerSideBar player={this.props.player}/>
+                                playerSideBar
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
-                                <PlayerPlayStyle player={this.props.player}/>
+                                playerPlayStyle
                                 }
                                 {this.state.selectedMobileTab === "Match History" &&
-                                <PlayerMatchHistory player={this.props.player}/>
+                                playerMatchHistory
                                 }
                             </CardContent>
                         </Card>
@@ -90,10 +108,9 @@ class PlayerViewComponent extends React.PureComponent<Props, State> {
         )
     }
 
-
     private readonly handleSelectMobileTab = (event: React.ChangeEvent, selectedMobileTab: PlayerViewTab) => {
         this.setState({selectedMobileTab})
     }
 }
 
-export const PlayerView = withWidth()(PlayerViewComponent)
+export const PlayerOverview = withWidth()(PlayerOverviewComponent)

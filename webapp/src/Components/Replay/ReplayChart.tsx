@@ -7,7 +7,6 @@ import {getChartColors} from "../../Utils/Color"
 
 interface Props {
     replay: Replay
-    wrapInPaper?: boolean
 }
 
 export class ReplayChart extends React.PureComponent<Props> {
@@ -20,7 +19,7 @@ export class ReplayChart extends React.PureComponent<Props> {
     }
 
     private readonly getBars = () => {
-        const labelToKeys = new Map<string, string>()
+        const labelToKeys = new Map<string, keyof ReplayPlayer>()
             .set("Score", "score")
             .set("Goals", "goals")
             .set("Assists", "assists")
@@ -119,4 +118,3 @@ export class ReplayChart extends React.PureComponent<Props> {
         }
     }
 }
-

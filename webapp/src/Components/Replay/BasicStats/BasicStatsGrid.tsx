@@ -10,7 +10,6 @@ import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
 import {StatChart} from "../../Shared/Charts/StatChart"
 import {LoadableWrapper} from "../../Shared/LoadableWrapper"
 
-
 interface OwnProps {
     replay: Replay
 }

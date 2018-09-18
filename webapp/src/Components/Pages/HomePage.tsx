@@ -109,7 +109,6 @@ const HomePageFooter: React.SFC = () => {
     )
 }
 
-
 const styles = createStyles({
     root: {
         margin: "auto",
