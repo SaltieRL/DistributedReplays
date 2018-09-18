@@ -1,5 +1,11 @@
 {% set team_members = ((replay.playergames|sort(attribute='score', reverse=False)))|sort(attribute='is_orange', reverse=False) %}
-<h2 style="margin-top: 0;">{{ replay.name|e }}</h2>
+{% set replay_name = replay.name|e %}
+{% if replay_name == 'None' %}
+    {% set replay_name = "No name" %}
+{% endif %}
+<a title="Download .replay file" href="{{ url_for('replays.download_replay', id_=id + '.replay') }}">
+    <h3 style="margin-top: 0;">{{ replay_name }}</h3>
+</a>
 <div class="team-boxes">
     <div class="player-box blue">
         <!-- Player box -->

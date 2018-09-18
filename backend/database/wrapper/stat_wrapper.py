@@ -1,5 +1,7 @@
 import logging
 
+import json
+
 import sqlalchemy
 from carball.generated.api import player_pb2
 from sqlalchemy import func, cast, literal
@@ -30,42 +32,69 @@ class PlayerStatWrapper:
 
         return zipped_stats
 
-    def get_averaged_stats(self, session, id_, rank=None):
-        stats_query = self.stats_query
-        std_query = self.std_query
+    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None):
+        global_stats = None
+        global_stds = None
+        if redis is not None:
+            stat_string = redis.get('global_stats')
+            if stat_string is not None:
+                stats_dict = json.loads(stat_string)
+                if rank is not None:
+                    rank = rank[3]['tier']
+                else:
+                    rank = 0
+                global_stats = [stats_dict[s.field_name][rank]['mean'] for s in self.field_names]
+                global_stds = [stats_dict[s.field_name][rank]['std'] for s in self.field_names]
+            else:
+                redis = None
         q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
         stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3)
-        if rank is not None and not get_local_dev():
-            logger.debug('Filtering by rank')
-            try:
-                q_filtered = q.filter(PlayerGame.rank == rank[3]['tier'])
-                stds = stds.filter(PlayerGame.rank == rank[3]['tier'])
-            except:
-                q_filtered = q
-        else:
-            q_filtered = q
-        global_stds = stds.first()
-        global_stats = q_filtered.first()
         stats = list(q.filter(PlayerGame.player == id_).first())
+        if redis is None:
+            if rank is not None and not get_local_dev():
+                logger.debug('Filtering by rank')
+                try:
+                    q_filtered = q.filter(PlayerGame.rank == rank[3]['tier'])
+                    stds = stds.filter(PlayerGame.rank == rank[3]['tier'])
+                except:
+                    q_filtered = q
+            else:
+                q_filtered = q
+            global_stds = stds.first()
+            global_stats = q_filtered.first()
 
         for i, s in enumerate(stats):
             player_stat = s
             if player_stat is None:
                 player_stat = 0
+            else:
+                player_stat = float(player_stat)
             global_stat = global_stats[i]
             global_std = global_stds[i]
             if global_stat is None or global_stat == 0:
                 global_stat = 1
+            else:
+                global_stat = float(global_stat)
             if global_std is None or global_std == 0:
                 logger.debug(self.field_names[i].field_name, 'std is 0')
+            else:
+                global_std = float(global_std)
             if global_std != 1 and global_std > 0:
-                # print(self.field_names[i].field_name, player_stat, global_stat, global_std)
+                logger.debug(self.field_names[i].field_name, player_stat, global_stat, global_std,
+                      float((player_stat - global_stat) / global_std))
                 stats[i] = float((player_stat - global_stat) / global_std)
             else:
                 stats[i] = float(player_stat / global_stat)
+        return stats
 
-        # else:
-        #     stats = [0.0] * len(stats_query)
+    def get_averaged_stats(self, session, id_, rank=None, page=0, redis=None):
+        stats_query = self.stats_query
+        std_query = self.std_query
+        games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
+        if len(games) > 0:
+            stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis)
+        else:
+            stats = [0.0] * len(stats_query)
         return self.get_wrapped_stats(stats)
 
     @staticmethod
@@ -133,3 +162,25 @@ class PlayerStatWrapper:
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
+
+    def get_global_stats(self, sess):
+        results = {}
+        ranks = list(range(20))
+
+        def float_maybe(f):
+            if f is None:
+                return None
+            else:
+                return float(f)
+
+        for column, q in zip(self.field_names, self.stats_query):
+            column_results = []
+            for rank in ranks:
+                iq = sess.query(PlayerGame.player,
+                                q.label('avg')).filter(
+                    PlayerGame.rank == rank).group_by(PlayerGame.player).having(
+                    func.count(PlayerGame.player) > 5).subquery()
+                result = sess.query(func.avg(iq.c.avg), func.stddev_samp(iq.c.avg)).first()
+                column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
+            results[column.field_name] = column_results
+        return results

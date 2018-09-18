@@ -29,7 +29,7 @@ def view_player(id_):
     session = current_app.config['db']()
     rank = get_rank(id_)
     total_games = player_wrapper.get_total_games(session, id_)
-    games, stats, favorite_car, favorite_car_pctg, names = player_stat_wrapper.get_averaged_stats(session, id_, total_games, rank)
+    games, stats, favorite_car, favorite_car_pctg, names = player_stat_wrapper.get_averaged_stats(session, id_, total_games, rank, redis=current_app.config['r'])
     steam_profile = get_steam_profile_or_random_response(id_, current_app)
     user = session.query(Player).filter(Player.platformid == id_).first()
     if user is not None:
