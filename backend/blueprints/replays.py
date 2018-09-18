@@ -3,6 +3,7 @@ import gzip
 import json
 import os
 import random
+import uuid
 
 import numpy as np
 import pandas as pd
@@ -56,7 +57,8 @@ def parse_replay():
     for file in uploaded_files:
         if not file.filename.endswith('replay'):
             continue
-        filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
+        ud = uuid.uuid4()
+        filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
         celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return redirect(url_for('replays.view_replay', id_=f.filename.split('.')[0]))
