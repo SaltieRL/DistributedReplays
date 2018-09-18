@@ -1,5 +1,5 @@
 import * as React from "react"
-import {BrowserRouter as Router, Route} from "react-router-dom"
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
 import "./App.css"
 import {AboutPage} from "./Components/Pages/AboutPage"
 import {GlobalStatsPage} from "./Components/Pages/GlobalStatsPage"
@@ -13,17 +13,21 @@ import {GLOBAL_STATS_LINK, PLAYER_PAGE_LINK, REPLAY_PAGE_LINK} from "./Globals"
 export class App extends React.Component {
     public render() {
         return (
-            <Router>
-                <div className="App">
-                    <Route exact={true} path="/" component={HomePage}/>
-                    <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
-                    <Route exact={true} path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
-                    <Route exact={true} path="/replay_viewer" component={ReplayViewer}/>
-                    <Route exact={true} path="/about" component={AboutPage}/>
-                    <Route exact={true} path="/upload" component={UploadPage}/>
-                    <Route exact={true} path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
-                </div>
-            </Router>
+            <div className="App">
+                <BrowserRouter>
+                    <Switch>
+                        <Route exact path="/" component={HomePage}/>
+                        <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
+                        <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
+                        <Route exact path="/replay_viewer" component={ReplayViewer}/>
+                        <Route exact path="/about" component={AboutPage}/>
+                        <Route exact path="/upload" component={UploadPage}/>
+                        <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
+                        <Redirect from="*" to="/"/>
+                    </Switch>
+                </BrowserRouter>
+            </div>
+
         )
     }
 }

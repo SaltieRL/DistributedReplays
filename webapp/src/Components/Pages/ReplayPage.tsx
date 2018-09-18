@@ -1,6 +1,6 @@
 import {Grid} from "@material-ui/core"
 import * as React from "react"
-import {RouteComponentProps} from "react-router-dom"
+import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
 import {Replay} from "../../Models/Replay/Replay"
 import {getReplay} from "../../Requests/Replay"
 import {ReplayView} from "../Replay/ReplayView"
@@ -24,15 +24,19 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const matchUrl = this.props.match.url
         const {replay} = this.state
+
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
                     <LoadableWrapper load={this.getReplay}>
                         {replay &&
-                        <Grid item xs={12}>
-                            <ReplayView replay={replay}/>
-                        </Grid>
+                        <Switch>
+                            <Route exact path={matchUrl}
+                                   component={() => <ReplayView replay={replay}/>}/>
+                            <Redirect from="*" to={matchUrl}/>
+                        </Switch>
                         }
                     </LoadableWrapper>
                 </Grid>

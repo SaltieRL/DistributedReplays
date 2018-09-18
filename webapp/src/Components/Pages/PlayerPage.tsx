@@ -1,6 +1,6 @@
 import {Grid} from "@material-ui/core"
 import * as React from "react"
-import {Redirect, Route, RouteComponentProps} from "react-router-dom"
+import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
 import {getPlayer} from "../../Requests/Player"
 import {PlayerMatchHistoryView} from "../Player/PlayerMatchHistoryView"
 import {PlayerOverview} from "../Player/PlayerOverview"
@@ -40,14 +40,13 @@ export class PlayerPage extends React.PureComponent<Props, State> {
                 <Grid container spacing={24} justify="center">
                     <LoadableWrapper load={this.getPlayerForPage} reloadSignal={this.state.reloadSignal}>
                         {this.state.player &&
-                        <>
-                            <Route exact path={this.props.match.url}
-                                   component={() => <Redirect to={overviewPath}/>}/>
+                        <Switch>
                             <Route path={overviewPath}
                                    render={() => <PlayerOverview player={this.state.player as Player}/>}/>
                             <Route path={matchHistoryPath}
                                    render={() => <PlayerMatchHistoryView player={this.state.player as Player}/>}/>
-                        </>
+                            <Redirect from="*" to={overviewPath}/>
+                        </Switch>
                         }
                     </LoadableWrapper>
                 </Grid>
