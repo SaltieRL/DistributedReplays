@@ -80,7 +80,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         return (
             <TableHead className={boxScoreData.name === "Blue" ? classes.blueTableHead : classes.orangeTableHead}>
                 <TableRow>
-                    <TableCell style={{width: "30%"}}>
+                    <TableCell style={{width: "30%"}} padding="dense">
                         <Typography variant="title" className={classes.teamName}>
                             {boxScoreData.score} {boxScoreData.name}
                         </Typography>
@@ -88,7 +88,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                     {Array.from(labelToKeys, ([label, key]) => {
                         if (key !== "name") {
                             return (
-                                <TableCell numeric key={key}>
+                                <TableCell numeric key={key} padding="dense">
                                     <Typography variant="subheading">
                                         {label}
                                     </Typography>
@@ -114,6 +114,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                                 <TableCell key={key}
                                            numeric={key !== "name"}
                                            className={this.props.classes.tableData}
+                                           padding="dense"
                                 >
                                     {(this.props.player && player.id === this.props.player.id) ?
                                         <b>{player[key]}</b>
