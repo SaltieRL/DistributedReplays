@@ -37,7 +37,7 @@ class NavBarComponent extends React.PureComponent<Props, State> {
     public componentDidMount() {
         getLoggedInUser()
             .then((loggedInUser) => this.setState({loggedInUser}))
-            .catch()
+            .catch(() => undefined)
     }
 
     public render() {
