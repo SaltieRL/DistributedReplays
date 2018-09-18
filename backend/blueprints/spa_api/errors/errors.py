@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 
 class CalculatedError(Exception):
@@ -25,3 +25,13 @@ class UserHasNoReplays(CalculatedError):
 class ReplayNotFound(CalculatedError):
     status_code = 404
     message = "This replay does not exist."
+
+
+class MissingQueryParams(CalculatedError):
+    status_code = 400
+
+    def __init__(self, missing_params: List[str]):
+        conditional_s = "" if len(missing_params) == 1 else "s"
+        joined_missing_params = " and ".join(missing_params)
+        message = f'Query parameter{conditional_s} {joined_missing_params} are required.'
+        super().__init__(self.status_code, message)

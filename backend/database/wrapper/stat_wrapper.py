@@ -1,6 +1,5 @@
-import logging
-
 import json
+import logging
 
 import sqlalchemy
 from carball.generated.api import player_pb2
@@ -87,11 +86,11 @@ class PlayerStatWrapper:
                 stats[i] = float(player_stat / global_stat)
         return stats
 
-    def get_averaged_stats(self, session, id_, rank=None, page=0, redis=None):
+    def get_averaged_stats(self, session, id_, rank=None, redis=None):
         stats_query = self.stats_query
         std_query = self.std_query
-        games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
-        if len(games) > 0:
+        total_games = self.player_wrapper.get_total_games(session, id_)
+        if len(total_games) > 0:
             stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis)
         else:
             stats = [0.0] * len(stats_query)

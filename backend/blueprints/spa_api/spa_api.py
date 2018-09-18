@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
-from .errors.errors import CalculatedError
+from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleChartData
@@ -96,7 +96,17 @@ def api_get_player_play_style(id_):
 
 @bp.route('player/<id_>/match_history')
 def api_get_player_match_history(id_):
-    match_history = MatchHistory.create_from_id(id_)
+    page = request.args.get('page')
+    limit = request.args.get('limit')
+
+    if page is None or limit is None:
+        missing_params = []
+        if page is None:
+            missing_params.append('page')
+        if limit is None:
+            missing_params.append('limit')
+        raise MissingQueryParams(missing_params)
+    match_history = MatchHistory.create_from_id(id_, int(page), int(limit))
     return jsonify(match_history.replays)
 
 
@@ -105,10 +115,6 @@ def api_get_player_match_history(id_):
 @bp.route('replay/<id_>')
 def api_get_replay_data(id_):
     replay = Replay.create_from_id(id_)
-    if replay is None:
-        error = jsonify({"message": "Replay not found."})
-        error.status_code = 404
-        return error
     return better_jsonify(replay)
 
 

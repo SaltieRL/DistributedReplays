@@ -11,9 +11,10 @@ class MatchHistory:
         self.replays = [replay.__dict__ for replay in replays]
 
     @staticmethod
-    def create_from_id(id_: str) -> 'MatchHistory':
+    def create_from_id(id_: str, page: int, limit: int) -> 'MatchHistory':
         session = current_app.config['db']()
-        games = [player_game.game_object for player_game in player_wrapper.get_player_games_paginated(session, id_)]
+        games = [player_game.game_object
+                 for player_game in player_wrapper.get_player_games_paginated(session, id_, page, limit)]
         match_history = MatchHistory([Replay.create_from_game(game) for game in games])
         session.close()
         return match_history

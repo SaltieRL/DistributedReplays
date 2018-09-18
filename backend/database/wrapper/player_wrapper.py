@@ -2,7 +2,7 @@ import logging
 import random
 from typing import List
 
-from sqlalchemy import func, cast, String, desc, asc
+from sqlalchemy import func, cast, String, desc
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
@@ -36,7 +36,7 @@ def get_random_player(session):
 
 
 class PlayerWrapper:
-    def __init__(self, limit=20):
+    def __init__(self, limit=None):
         self.limit = limit
 
     def get_player_games(self, session, id_):
@@ -48,16 +48,17 @@ class PlayerWrapper:
             return session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
                 PlayerGame.game is not None)
 
-    def get_player_games_paginated(self, session, id_, page=0):
+    def get_player_games_paginated(self, session, id_, page: int = 0, limit: int = None):
         query = self.get_player_games(session, id_)
-        return self.get_paginated_match_history(query, page=page, id_list=isinstance(id_, list))
+        return self.get_paginated_match_history(query, page=page, id_list=isinstance(id_, list), limit=limit)
 
-    def get_paginated_match_history(self, existing_query, page=0,
-                                    id_list=False) -> List[PlayerGame]:
+    def get_paginated_match_history(self, existing_query, page: int,
+                                    id_list: bool, limit: int) -> List[PlayerGame]:
+        limit = limit if limit is not None else self.limit
         if not id_list:
             existing_query = existing_query.join(Game)
         return existing_query.order_by(desc(Game.match_date))[
-               page * self.limit: (page + 1) * self.limit]
+               page * limit: (page + 1) * limit]
 
     def get_total_games(self, session, id_):
         return self.get_player_games(session, id_).count()
