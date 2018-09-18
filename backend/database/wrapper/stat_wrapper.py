@@ -90,7 +90,7 @@ class PlayerStatWrapper:
         stats_query = self.stats_query
         std_query = self.std_query
         total_games = self.player_wrapper.get_total_games(session, id_)
-        if len(total_games) > 0:
+        if total_games > 0:
             stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis)
         else:
             stats = [0.0] * len(stats_query)
