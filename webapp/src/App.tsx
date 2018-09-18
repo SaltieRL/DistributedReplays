@@ -16,7 +16,7 @@ export class App extends React.Component {
             <Router>
                 <div className="App">
                     <Route exact={true} path="/" component={HomePage}/>
-                    <Route exact={true} path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
+                    <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                     <Route exact={true} path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
                     <Route exact={true} path="/replay_viewer" component={ReplayViewer}/>
                     <Route exact={true} path="/about" component={AboutPage}/>
