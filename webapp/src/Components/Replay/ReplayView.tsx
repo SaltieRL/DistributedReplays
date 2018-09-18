@@ -44,28 +44,24 @@ class ReplayViewComponent extends React.PureComponent<Props> {
             </Grid>
 
         return (
-            <>
-                {replay &&
-                <Grid container spacing={24} alignItems="center">
-                    {isWidthUp("lg", this.props.width) ?
-                        <>
-                            {blueGridItem}
-                            {replayChartGridItem}
-                            {orangeGridItem}
-                        </>
-                        :
-                        <>
-                            {blueGridItem}
-                            {orangeGridItem}
-                            {replayChartGridItem}
-                        </>
-                    }
-                    <Grid item xs={12}>
-                        <ReplayContent replay={replay}/>
-                    </Grid>
-                </Grid>
+            <Grid item xs={12} container spacing={24} alignItems="center">
+                {isWidthUp("lg", this.props.width) ?
+                    <>
+                        {blueGridItem}
+                        {replayChartGridItem}
+                        {orangeGridItem}
+                    </>
+                    :
+                    <>
+                        {blueGridItem}
+                        {orangeGridItem}
+                        {replayChartGridItem}
+                    </>
                 }
-            </>
+                <Grid item xs={12}>
+                    <ReplayContent replay={replay}/>
+                </Grid>
+            </Grid>
         )
     }
 }

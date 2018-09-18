@@ -1,4 +1,4 @@
-import {ChartData, ChartOptions} from "chart.js"
+import {ChartData, ChartDataSets, ChartOptions} from "chart.js"
 import * as React from "react"
 import {Radar} from "react-chartjs-2"
 import {BasicStat} from "../../../Models/ChartData"
@@ -32,11 +32,16 @@ export class ColoredRadarChart extends React.PureComponent<Props> {
                 [
                     {
                         data: chartDataPoints.map((chartDataPoint) => chartDataPoint.value),
+                        radius: 5,
                         pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointHitRadius: 5,
                         pointBackgroundColor: getPrimaryColorsForPlayers(
                             chartDataPoints.map((chartDataPoint) => chartDataPoint.isOrange)
                         )
-                    }
+                    } as ChartDataSets
+                    // Types don't know about the radius property
+                    // https://stackoverflow.com/questions/39636043/chart-js-data-points-get-smaller-after-hover
                 ]
         }
     }
