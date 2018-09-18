@@ -7,6 +7,7 @@ import {
     IconButton, Theme,
     Typography, WithStyles, withStyles, withWidth
 } from "@material-ui/core"
+import {TextStyle} from "@material-ui/core/styles/createTypography"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
@@ -58,6 +59,8 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                 </IconButton>
         }
 
+        const typographyVariant: TextStyle = !this.props.header ? "subheading" : "title"
+
         const expansionPanelSummary =
             <ExpansionPanelSummary
                 expandIcon={!this.props.header ? <ExpandMore/> : undefined}
@@ -65,29 +68,29 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
             >
                 <Grid container>
                     <Grid item xs={notOnMobile ? 3 : 4}>
-                        <Typography variant="subheading">
+                        <Typography variant={typographyVariant}>
                             {replayName}
                         </Typography>
                     </Grid>
                     <Grid item xs={3}>
-                        <Typography variant="subheading">
+                        <Typography variant={typographyVariant}>
                             {replayDate}
                         </Typography>
                     </Grid>
                     {notOnMobile &&
                     <Grid item xs={1}>
-                        <Typography variant="subheading">
+                        <Typography variant={typographyVariant}>
                             {replayGameMode}
                         </Typography>
                     </Grid>
                     }
                     <Grid item xs={2}>
-                        <Typography variant="subheading">
+                        <Typography variant={typographyVariant}>
                             {replayScore}
                         </Typography>
                     </Grid>
                     <Grid item xs={2}>
-                        <Typography variant="subheading">
+                        <Typography variant={typographyVariant}>
                             {replayResult}
                         </Typography>
                     </Grid>
