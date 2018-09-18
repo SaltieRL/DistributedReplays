@@ -2,7 +2,7 @@ import logging
 import random
 from typing import List
 
-from sqlalchemy import func, cast, String, desc, asc
+from sqlalchemy import func, cast, String, desc
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
@@ -48,7 +48,7 @@ class PlayerWrapper:
                 PlayerGame.player == id[0])
         else:
             return session.query(PlayerGame).filter(PlayerGame.player == id).filter(
-                PlayerGame.game is not None)
+                PlayerGame.game != None)
 
     def get_player_games_paginated(self, session, id, page=0):
         query = self.get_player_games(session, id)
