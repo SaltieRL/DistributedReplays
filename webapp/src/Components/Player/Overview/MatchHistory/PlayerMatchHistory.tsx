@@ -7,6 +7,7 @@ import {MatchHistoryRow} from "./MatchHistoryRow"
 
 interface Props {
     player: Player
+    useHeader?: boolean
 }
 
 interface State {
@@ -29,9 +30,11 @@ export class PlayerMatchHistory extends React.PureComponent<Props, State> {
     public render() {
         return (
             <Grid container>
+                {this.props.useHeader &&
                 <Grid item xs={12}>
                     <MatchHistoryRow header/>
                 </Grid>
+                }
                 <Grid item xs={12}>
                     <LoadableWrapper load={this.getPlayerMatchHistory} reloadSignal={this.state.reloadSignal}>
                         {this.state.matchHistory &&

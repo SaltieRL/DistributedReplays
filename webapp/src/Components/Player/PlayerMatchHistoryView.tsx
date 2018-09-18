@@ -20,7 +20,7 @@ class PlayerMatchHistoryViewComponent extends React.PureComponent<Props> {
                     </Typography>
                 </Toolbar>
                 <div className={classes.tableWrapper}>
-                    <PlayerMatchHistory player={player}/>
+                    <PlayerMatchHistory player={player} useHeader/>
                 </div>
             </Paper>
         )
