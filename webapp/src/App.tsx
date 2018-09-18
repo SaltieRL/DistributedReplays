@@ -16,6 +16,10 @@ export class App extends React.Component {
             <div className="App">
                 <BrowserRouter>
                     <Switch>
+                        {/*Migrate old paths*/}
+                        <Redirect exact from={"/players/overview/:id"} to={PLAYER_PAGE_LINK(":id")}/>
+                        <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")}/>
+
                         <Route exact path="/" component={HomePage}/>
                         <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                         <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
@@ -23,6 +27,8 @@ export class App extends React.Component {
                         <Route exact path="/about" component={AboutPage}/>
                         <Route exact path="/upload" component={UploadPage}/>
                         <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
+
+                        {/*Redirect unknowns to root*/}
                         <Redirect from="*" to="/"/>
                     </Switch>
                 </BrowserRouter>
