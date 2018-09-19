@@ -3,7 +3,7 @@ import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 import {getColouredGameScore, Replay} from "../../Models/Replay/Replay"
 import {ReplayChart} from "./ReplayChart"
-import {ReplayContent} from "./ReplayContent"
+import {ReplayTabs} from "./ReplayTabs"
 import {ReplayTeamCard} from "./ReplayTeamCard/ReplayTeamCard"
 
 interface OwnProps {
@@ -59,7 +59,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                     </>
                 }
                 <Grid item xs={12}>
-                    <ReplayContent replay={replay}/>
+                    <ReplayTabs replay={replay}/>
                 </Grid>
             </Grid>
         )
