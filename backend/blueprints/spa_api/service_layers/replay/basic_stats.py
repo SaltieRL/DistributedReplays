@@ -72,7 +72,7 @@ class StatDataPoint(ChartDataPoint):
 
 
 class BasicStatChartData(ChartData):
-    def __init__(self, title: str, chart_data_points: List[ChartDataPoint], type_: str, subcategory: str):
+    def __init__(self, title: str, chart_data_points: List[StatDataPoint], type_: str, subcategory: str):
         super().__init__(title, chart_data_points)
         self.type = type_
         self.subcategory = subcategory
