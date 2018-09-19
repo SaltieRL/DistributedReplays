@@ -76,11 +76,11 @@ class NavBarComponent extends React.PureComponent<Props, State> {
                             <Grid item>
                                 <UploadModalWrapper buttonStyle="icon"/>
                             </Grid>
+                            <Grid item xs="auto" className={classes.accountMenuGridItem}>
+                                <AccountMenu loggedInUser={this.state.loggedInUser}/>
+                            </Grid>
                         </>
                         }
-                        <Grid item xs="auto" className={classes.accountMenuGridItem}>
-                            <AccountMenu loggedInUser={this.state.loggedInUser}/>
-                        </Grid>
                     </Grid>
                 </Toolbar>
             </AppBar>
