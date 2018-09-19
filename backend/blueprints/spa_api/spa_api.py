@@ -4,6 +4,7 @@ import os
 from flask import jsonify, Blueprint, current_app, request
 from werkzeug.utils import secure_filename
 
+from backend.blueprints.spa_api.service_layers.replay.group import Group
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
@@ -122,6 +123,14 @@ def api_get_replay_data(id_):
 def api_get_replay_basic_stats(id_):
     basic_stats = BasicStatChartData.create_from_id(id_)
     return better_jsonify(basic_stats)
+
+
+@bp.route('replay/group')
+def api_get_replay_group():
+    ids = request.args.getlist('id[]')
+    group = Group.create_from_ids(ids)
+    stats = group.get_stats()
+    return better_jsonify(stats)
 
 
 @bp.route('/upload', methods=['POST'])
