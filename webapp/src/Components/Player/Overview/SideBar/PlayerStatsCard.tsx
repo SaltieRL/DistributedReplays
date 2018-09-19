@@ -72,6 +72,8 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                     <Typography align="center">
                                         {this.state.playerStats.car.carName}
                                     </Typography>
+                                </Grid>
+                                <Grid item>
                                     <Typography className={classes.percentage}>
                                         {convertNumberToMaxDP(this.state.playerStats.car.carPercentage * 100, 1)}%
                                     </Typography>
