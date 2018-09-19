@@ -52,7 +52,7 @@ class PlayerStatWrapper:
                 redis = None
         ago = datetime.datetime.now() - datetime.timedelta(days=30 * 6)  # 6 months in the past
         q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3).filter(
-            Game.match_date > ago) # TODO: convert this madness into a reusable function
+            Game.match_date > ago)  # TODO: convert this madness into a reusable function
         stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3).filter(
             Game.match_date > ago)
         stats = list(q.filter(PlayerGame.player == id_).first())
@@ -199,14 +199,21 @@ class PlayerStatWrapper:
     def _create_stats(self, session, query_filter=None, ids=None):
         if query_filter is not None and ids is not None:
             query_filter = and_(query_filter, PlayerGame.game.in_(ids))
-        average = session.query(*self.stats_query).filter(query_filter).first()
-        std_devs = session.query(*self.std_query).filter(query_filter).first()
-        average = {n.field_name: float(s) for n, s in zip(self.field_names, average) if s is not None}
-        std_devs = {n.field_name: float(s) for n, s in zip(self.field_names, std_devs) if s is not None}
+        elif ids is not None:
+            query_filter = PlayerGame.game.in_(ids)
+        average = session.query(*self.stats_query)
+        std_devs = session.query(*self.std_query)
+        if query_filter is not None:
+            average = average.filter(query_filter)
+            std_devs = std_devs.filter(query_filter)
+        average = average.first()
+        std_devs = std_devs.first()
+
+        average = {n.field_name: round(float(s), 2) for n, s in zip(self.field_names, average) if s is not None}
+        std_devs = {n.field_name: round(float(s), 2) for n, s in zip(self.field_names, std_devs) if s is not None}
         return {'average': average, 'std_dev': std_devs}
 
     def get_group_stats(self, session, ids):
-
         return_obj = {}
         # Players
         player_tuples = session.query(PlayerGame.player, func.count(PlayerGame.player)).filter(
@@ -220,9 +227,9 @@ class PlayerStatWrapper:
                 return_obj['playerStats'][player] = player_stats
             else:
                 ensemble.append(player)
-        ensemble_stats = self._create_stats(session, PlayerGame.player.in_(ensemble), ids=ids)
-        return_obj['ensembleStats'] = ensemble_stats
-
+        if len(ensemble) > 0:
+            ensemble_stats = self._create_stats(session, PlayerGame.player.in_(ensemble), ids=ids)
+            return_obj['ensembleStats'] = ensemble_stats
         # STATS
         # Global
         global_stats = self._create_stats(session, ids=ids)
