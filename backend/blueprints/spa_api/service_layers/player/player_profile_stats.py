@@ -1,7 +1,8 @@
 from flask import current_app
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, cast, String, and_, distinct
+from sqlalchemy.dialects import postgresql
 
-from backend.database.objects import PlayerGame
+from backend.database.objects import PlayerGame, Game, Player
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
 from data import constants
@@ -11,11 +12,12 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
 class PlayerProfileStats:
-    def __init__(self, favourite_car: str, car_percentage: float):
+    def __init__(self, favourite_car: str, car_percentage: float, players_in_common: list):
         self.car = {
             "carName": favourite_car,
             "carPercentage": car_percentage
         }
+        self.playersInCommon = players_in_common
 
     @staticmethod
     def create_from_id(id_: str) -> 'PlayerProfileStats':
@@ -35,6 +37,21 @@ class PlayerProfileStats:
             favourite_car = constants.get_car(int(fav_car_str[0]))
             total_games = player_wrapper.get_total_games(session, id_)
             car_percentage = fav_car_str[1] / total_games
-
+        p = func.unnest(Game.players).label('player')
+        players_in_common = []
+        result = session.query(p,
+                               func.count(Game.players).label('count')).filter(
+            Game.players.contains(cast([id_],
+                                       postgresql.ARRAY(String)))).group_by('player').order_by(desc('count')).subquery(
+            't')
+        result = session.query(result, Player.platformname).join(Player,
+                                                                 Player.platformid == result.c.player)[1:10]
+        for p in result:
+            players_in_common.append({
+                'name': p[2],
+                'count': p[1],
+                'id': p[0]
+            })
         session.close()
-        return PlayerProfileStats(favourite_car=favourite_car, car_percentage=car_percentage)
+        return PlayerProfileStats(favourite_car=favourite_car, car_percentage=car_percentage,
+                                  players_in_common=players_in_common)
