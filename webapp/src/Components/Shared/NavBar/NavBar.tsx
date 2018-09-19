@@ -5,7 +5,8 @@ import {
     createStyles,
     Grid,
     IconButton,
-    Toolbar, Tooltip,
+    Toolbar,
+    Tooltip,
     Typography,
     withStyles,
     WithStyles,
@@ -13,30 +14,27 @@ import {
 } from "@material-ui/core"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
+import {connect} from "react-redux"
 import {Link} from "react-router-dom"
+import {Dispatch} from "redux"
 import {GLOBAL_STATS_LINK} from "../../../Globals"
+import {StoreState} from "../../../Redux"
+import {setLoggedInUserAction} from "../../../Redux/loggedInUser/actions"
 import {getLoggedInUser} from "../../../Requests/Global"
 import {Logo} from "../Logo/Logo"
 import {Search} from "../Search"
 import {UploadModalWrapper} from "../Upload/UploadModalWrapper"
 import {AccountMenu} from "./AccountMenu"
 
-type Props = WithWidth
+type Props = ReturnType<typeof mapStateToProps>
+    & ReturnType<typeof mapDispatchToProps>
+    & WithWidth
     & WithStyles<typeof styles>
 
-interface State {
-    loggedInUser?: LoggedInUser
-}
-
-class NavBarComponent extends React.PureComponent<Props, State> {
-    constructor(props: Props) {
-        super(props)
-        this.state = {}
-    }
-
+class NavBarComponent extends React.PureComponent<Props> {
     public componentDidMount() {
         getLoggedInUser()
-            .then((loggedInUser) => this.setState({loggedInUser}))
+            .then((loggedInUser) => this.props.setLoggedInUser(loggedInUser))
             .catch(() => undefined)
     }
 
@@ -77,7 +75,7 @@ class NavBarComponent extends React.PureComponent<Props, State> {
                                 <UploadModalWrapper buttonStyle="icon"/>
                             </Grid>
                             <Grid item xs="auto" className={classes.accountMenuGridItem}>
-                                <AccountMenu loggedInUser={this.state.loggedInUser}/>
+                                <AccountMenu loggedInUser={this.props.loggedInUser}/>
                             </Grid>
                         </>
                         }
@@ -106,4 +104,14 @@ const styles = createStyles({
     }
 })
 
-export const NavBar = withWidth()(withStyles(styles)(NavBarComponent))
+export const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
+export const mapDispatchToProps = (dispatch: Dispatch) => ({
+    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(setLoggedInUserAction(loggedInUser))
+})
+
+export const NavBar = withWidth()(withStyles(styles)(
+    connect(mapStateToProps, mapDispatchToProps)(NavBarComponent)
+))
