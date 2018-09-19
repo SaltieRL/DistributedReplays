@@ -25,7 +25,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                             subheader={getColouredGameScore(replay)}
                             titleTypographyProps={{align: "center"}}
                             subheaderTypographyProps={{align: "center", variant: "subheading"}}/>
-                <CardContent>
+                <CardContent style={{overflowX: "auto"}}>
                     <ReplayChart replay={replay}/>
                 </CardContent>
             </Card>
