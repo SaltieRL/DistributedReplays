@@ -15,10 +15,11 @@ import {
 import * as React from "react"
 import {Link} from "react-router-dom"
 import {LOCAL_LINK, LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK} from "../../../Globals"
+import {LoggedInUserState} from "../../../Redux/loggedInUser/actions"
 import {LinkButton} from "../LinkButton"
 
 interface OwnProps {
-    loggedInUser?: LoggedInUser
+    loggedInUser: LoggedInUserState
 }
 
 type Props = OwnProps

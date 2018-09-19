@@ -30,8 +30,11 @@ class FooterComponent extends React.PureComponent<Props> {
 const styles = createStyles({
     footer: {
         fontSize: "1em",
-        margin: "15px 0",
-        padding: 12
+        borderWidth: "15px 0",
+        borderStyle: "solid",
+        borderColor: "rgba(0, 0, 0, 0)",
+        padding: 12,
+        backgroundColor: "rgba(255, 255, 255, 0.4)"
     }
 })
 
