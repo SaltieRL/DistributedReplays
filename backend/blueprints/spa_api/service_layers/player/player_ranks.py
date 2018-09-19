@@ -19,7 +19,7 @@ class PlayerRanks:
     @staticmethod
     def create_from_id(id_: str) -> 'PlayerRanks':
         rank_datas = get_rank(id_)
-        print(rank_datas)
+        # print(rank_datas)
         player_rank_params = {
             rank_data['mode']: PlaylistRank(
                 rank_data['string'],
