@@ -136,7 +136,7 @@ const styles = (theme: Theme) => createStyles({
         }
     },
     notButton: {
-        cursor: "unset"
+        cursor: "auto !important"
     },
     panelDetails: {
         overflowX: "auto",

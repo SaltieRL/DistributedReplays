@@ -62,6 +62,7 @@ class PlayerMatchHistoryViewComponent extends React.PureComponent<Props, State> 
 const styles = (theme: Theme) => createStyles({
     root: {
         width: "100%",
+        maxWidth: 1000,
         marginTop: theme.spacing.unit * 3
     }
 })
