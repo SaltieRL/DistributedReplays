@@ -17,10 +17,12 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
             <Card className={classes.card}>
                 <CardMedia className={classes.avatar} image={player.avatarLink}/>
                 <CardContent className={classes.content}>
-                    <Typography variant="headline">
+                    <div className={classes.nameWrapper}>
+                    <Typography variant="headline" noWrap>
                         {player.name}
-                        {player.pastNames.length > 0 && <PlayerNameDropdown pastNames={player.pastNames}/>}
                     </Typography>
+                    {player.pastNames.length > 0 && <PlayerNameDropdown pastNames={player.pastNames}/>}
+                    </div>
                     <Typography variant="subheading">
                         {player.platform}
                     </Typography>
@@ -42,7 +44,12 @@ const styles = createStyles({
         width: 128
     },
     content: {
-        flex: "1 0 auto"
+        flex: "1 0 auto",
+        width: "100%"
+    },
+    nameWrapper: {
+        whiteSpace: "nowrap",
+        display: "flex"
     }
 })
 
