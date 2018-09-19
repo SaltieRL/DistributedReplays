@@ -58,7 +58,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                 <CardContent>
                     <LoadableWrapper load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
                         {this.state.playerStats &&
-                        <Grid container alignItems="center" justify="space-around" spacing={16}>
+                        <Grid container alignItems="center" justify="space-around" spacing={8}>
                             <Grid item xs="auto">
                                 <DirectionsCar/>
                             </Grid>
