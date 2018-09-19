@@ -4,7 +4,7 @@ import logging
 
 import sqlalchemy
 from carball.generated.api import player_pb2
-from sqlalchemy import func, cast, literal
+from sqlalchemy import func, cast, literal, and_
 
 from backend.database.objects import PlayerGame, Game
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
@@ -52,7 +52,7 @@ class PlayerStatWrapper:
                 redis = None
         ago = datetime.datetime.now() - datetime.timedelta(days=30 * 6)  # 6 months in the past
         q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3).filter(
-            Game.match_date > ago)
+            Game.match_date > ago) # TODO: convert this madness into a reusable function
         stds = session.query(*std_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3).filter(
             Game.match_date > ago)
         stats = list(q.filter(PlayerGame.player == id_).first())
@@ -87,7 +87,7 @@ class PlayerStatWrapper:
                 global_std = float(global_std)
             if global_std != 1 and global_std > 0:
                 logger.debug(self.field_names[i].field_name, player_stat, global_stat, global_std,
-                      float((player_stat - global_stat) / global_std))
+                             float((player_stat - global_stat) / global_std))
                 stats[i] = float((player_stat - global_stat) / global_std)
             else:
                 stats[i] = float(player_stat / global_stat)
@@ -195,3 +195,36 @@ class PlayerStatWrapper:
                 column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
             results[column.field_name] = column_results
         return results
+
+    def _create_stats(self, session, query_filter=None, ids=None):
+        if query_filter is not None and ids is not None:
+            query_filter = and_(query_filter, PlayerGame.game.in_(ids))
+        average = session.query(*self.stats_query).filter(query_filter).first()
+        std_devs = session.query(*self.std_query).filter(query_filter).first()
+        average = {n.field_name: float(s) for n, s in zip(self.field_names, average) if s is not None}
+        std_devs = {n.field_name: float(s) for n, s in zip(self.field_names, std_devs) if s is not None}
+        return {'average': average, 'std_dev': std_devs}
+
+    def get_group_stats(self, session, ids):
+
+        return_obj = {}
+        # Players
+        player_tuples = session.query(PlayerGame.player, func.count(PlayerGame.player)).filter(
+            PlayerGame.game.in_(ids)).group_by(PlayerGame.player).all()
+        return_obj['playerStats'] = {}
+        ensemble = []
+        for player_tuple in player_tuples:
+            player, count = player_tuple
+            if count > 1:
+                player_stats = self._create_stats(session, PlayerGame.player == player, ids=ids)
+                return_obj['playerStats'][player] = player_stats
+            else:
+                ensemble.append(player)
+        ensemble_stats = self._create_stats(session, PlayerGame.player.in_(ensemble), ids=ids)
+        return_obj['ensembleStats'] = ensemble_stats
+
+        # STATS
+        # Global
+        global_stats = self._create_stats(session, ids=ids)
+        return_obj['globalStats'] = global_stats
+        return return_obj
