@@ -133,8 +133,13 @@ def api_upload_replays():
         raise CalculatedError(400, 'No files uploaded')
 
     for file in uploaded_files:
+        file.seek(0, os.SEEK_END)
+        file_length = file.tell()
+        if file_length > 5000000:
+            continue
         if not file.filename.endswith('replay'):
             continue
+        file.seek(0)
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
         file.save(filename)
         celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
