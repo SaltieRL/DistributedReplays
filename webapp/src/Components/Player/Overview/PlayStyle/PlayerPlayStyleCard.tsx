@@ -56,11 +56,13 @@ export class PlayerPlayStyleCard extends React.PureComponent<{}, State> {
     }
 
     public render() {
+        /* tslint:disable */
         const playStyleTitle =
             <Typography variant="headline">
                 Playstyle
-                <IconTooltip tooltip="Data is presented as standard deviations from the mean"/>
+                <IconTooltip tooltip="Data is presented as standard deviations from the mean, and only includes games from the past 6 months"/>
             </Typography>
+        /* tslint:enable */
 
         const playStyleAction =
             <>
