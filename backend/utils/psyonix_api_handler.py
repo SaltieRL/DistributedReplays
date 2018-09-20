@@ -25,7 +25,7 @@ def get_item_name_by_id(id_: str):
     try:
         return item_dict[id_]["LongLabel"]
     except KeyError:
-        logger.error(f'Cannot find item for id {id_}.')
+        logger.warning(f'Cannot find item for id {id_}. Returning "Unknown"')
         return "Unknown"
 
 

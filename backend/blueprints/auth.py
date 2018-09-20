@@ -4,8 +4,8 @@ from urllib.parse import urlencode
 import requests
 from flask import Blueprint, current_app, redirect, request, url_for, jsonify, session
 
-from backend.database.objects import Player
 from backend.blueprints.steam import get_steam_profile_or_random_response
+from backend.database.objects import Player
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 STEAM_OPEN_ID_URL = 'https://steamcommunity.com/openid/login'
