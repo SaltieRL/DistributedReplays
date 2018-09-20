@@ -4,8 +4,8 @@ from urllib.parse import urlencode
 import requests
 from flask import Blueprint, current_app, redirect, request, url_for, jsonify, session
 
-from backend.database.objects import Player
 from backend.blueprints.steam import get_steam_profile_or_random_response
+from backend.database.objects import Player
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 STEAM_OPEN_ID_URL = 'https://steamcommunity.com/openid/login'
@@ -75,7 +75,7 @@ def steam_auth():
 def steam_process():
     if validate_openid(request.args):
         user_id = request.args['openid.claimed_id'].split('/')[-1]
-        profile = get_steam_profile_or_random_response(user_id, current_app)['response']['players'][0]
+        profile = get_steam_profile_or_random_response(user_id)['response']['players'][0]
         s = current_app.config['db']()
         match = s.query(Player).filter(Player.platformid == user_id).first()
         if match:
