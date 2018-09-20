@@ -75,7 +75,7 @@ def steam_auth():
 def steam_process():
     if validate_openid(request.args):
         user_id = request.args['openid.claimed_id'].split('/')[-1]
-        profile = get_steam_profile_or_random_response(user_id, current_app)['response']['players'][0]
+        profile = get_steam_profile_or_random_response(user_id)['response']['players'][0]
         s = current_app.config['db']()
         match = s.query(Player).filter(Player.platformid == user_id).first()
         if match:
