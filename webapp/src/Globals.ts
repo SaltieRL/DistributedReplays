@@ -9,3 +9,4 @@ export const REPLAY_PAGE_LINK = (id: string) => `/replays/${id}`
 export const GLOBAL_STATS_LINK = "/global/stats"
 export const STEAM_LOGIN_LINK = "/auth/steam"
 export const LOGOUT_LINK = "/logout"
+export const ABOUT_LINK = "/about"
