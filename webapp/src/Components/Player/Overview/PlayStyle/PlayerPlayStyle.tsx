@@ -1,9 +1,9 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
-import {ChartDataResponse} from "../../../Models/ChartData"
-import {getPlayerPlayStyles} from "../../../Requests/Player"
-import {LoadableWrapper} from "../../Shared/LoadableWrapper"
-import {PlayerTendenciesChart} from "./Charts/PlayerTendenciesChart"
+import {ChartDataResponse} from "../../../../Models/ChartData"
+import {getPlayerPlayStyles} from "../../../../Requests/Player"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
+import {PlayerPlayStyleChart} from "./PlayerPlayStyleChart"
 
 interface Props {
     player: Player
@@ -31,13 +31,13 @@ export class PlayerPlayStyle extends React.PureComponent<Props, State> {
             <Grid container justify="space-around" spacing={32}>
                 <LoadableWrapper load={this.getPlayStyles} reloadSignal={this.state.reloadSignal}>
                     {this.state.data &&
-                    this.state.data.map((spokeData) => {
+                    this.state.data.map((chartDataResponse) => {
                         return (
-                            <Grid item xs={12} md={5} xl={3} key={spokeData.title} style={{height: 400}}>
+                            <Grid item xs={12} md={5} xl={3} key={chartDataResponse.title} style={{height: 400}}>
                                 <Typography variant="subheading" align="center">
-                                    {spokeData.title}
+                                    {chartDataResponse.title}
                                 </Typography>
-                                <PlayerTendenciesChart data={spokeData}/>
+                                <PlayerPlayStyleChart data={chartDataResponse}/>
                             </Grid>
                         )
                     })}

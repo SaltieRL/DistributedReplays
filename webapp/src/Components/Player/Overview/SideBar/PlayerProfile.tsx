@@ -40,12 +40,10 @@ const styles = createStyles({
         display: "flex"
     },
     avatar: {
-        height: 128,
-        width: 128
+        flex: "0 0 128px"
     },
     content: {
-        flex: "1 0 auto",
-        width: "100%"
+        width: "calc(100% - 128px)"
     },
     nameWrapper: {
         whiteSpace: "nowrap",
