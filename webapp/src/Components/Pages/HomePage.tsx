@@ -11,6 +11,7 @@ import {connect} from "react-redux"
 import {Link} from "react-router-dom"
 import {Dispatch} from "redux"
 import {
+    ABOUT_LINK,
     DISCORD_LINK,
     GITHUB_LINK,
     GLOBAL_STATS_LINK,
@@ -118,7 +119,7 @@ const HomePageFooter: React.SFC = () => {
                             tooltip="Global stats"/>
             </Grid>
             <Grid {...linkButtonGridItemProps}>
-                <LinkButton to="/about"
+                <LinkButton to={ABOUT_LINK}
                             iconType="mui" icon={Info}
                             tooltip="About"/>
             </Grid>

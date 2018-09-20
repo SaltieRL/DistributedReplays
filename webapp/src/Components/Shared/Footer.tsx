@@ -1,10 +1,21 @@
 import {faDiscord, faGithub, faTwitter, IconDefinition} from "@fortawesome/free-brands-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {createStyles, Divider, Grid, IconButton, Typography, withStyles, WithStyles, withWidth} from "@material-ui/core"
+import {
+    ButtonBase,
+    createStyles,
+    Divider,
+    Grid,
+    IconButton,
+    Theme,
+    Typography,
+    withStyles,
+    WithStyles,
+    withWidth
+} from "@material-ui/core"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
-import {DISCORD_LINK, GITHUB_LINK, TWITTER_LINK} from "../../Globals"
-import {LinkButton} from "./LinkButton"
+import {Link} from "react-router-dom"
+import {ABOUT_LINK, DISCORD_LINK, GITHUB_LINK, GLOBAL_STATS_LINK, TWITTER_LINK} from "../../Globals"
 
 interface ButtonData {
     to: string
@@ -36,12 +47,11 @@ class FooterComponent extends React.PureComponent<Props> {
         ]
 
         const {classes, width} = this.props
-        const isWidthUpSM = isWidthUp("sm", width)
-        const buttonCreator = isWidthUpSM ? this.createLinkButton : this.createIconButton
+        const isWidthUpMd = isWidthUp("md", width)
 
         const buttons: JSX.Element[] = buttonDatas.map((buttonData: ButtonData) => (
             <Grid item xs="auto" key={buttonData.text}>
-                {buttonCreator(buttonData)}
+                {this.createIconButton(buttonData)}
             </Grid>
         ))
         return (
@@ -49,10 +59,43 @@ class FooterComponent extends React.PureComponent<Props> {
                 <Divider/>
                 <footer className={classes.footer}>
                     <Grid container spacing={24} justify="center" alignItems="center">
-                        <Grid item xs={isWidthUpSM ? "auto" : 12}>
-                            <Typography align={isWidthUpSM ? "left" : "center"}>
+                        <Grid item xs={12} md={3}>
+                            <Typography align={isWidthUpMd ? "left" : "center"}>
                                 &copy; 2017-2018 Saltie Group
                             </Typography>
+                        </Grid>
+                        <Grid item xs={12} md={5}
+                              container justify={isWidthUpMd ? "flex-start" : "center"} spacing={16}
+                        >
+                            <Grid item>
+                                <Link to={"/"} style={{textDecoration: "none"}}>
+                                    <ButtonBase>
+                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                            Home
+                                        </Typography>
+                                    </ButtonBase>
+                                </Link>
+                            </Grid>
+                            <Grid item> | </Grid>
+                            <Grid item>
+                                <Link to={GLOBAL_STATS_LINK} style={{textDecoration: "none"}}>
+                                    <ButtonBase>
+                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                            Global Stats
+                                        </Typography>
+                                    </ButtonBase>
+                                </Link>
+                            </Grid>
+                            <Grid item> | </Grid>
+                            <Grid item>
+                                <Link to={ABOUT_LINK} style={{textDecoration: "none"}}>
+                                    <ButtonBase>
+                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                            About Us
+                                        </Typography>
+                                    </ButtonBase>
+                                </Link>
+                            </Grid>
                         </Grid>
                         <div className={classes.grow}/>
                         {buttons}
@@ -61,13 +104,6 @@ class FooterComponent extends React.PureComponent<Props> {
             </>
         )
     }
-
-    private readonly createLinkButton = (buttonData: ButtonData) => (
-        <LinkButton to={buttonData.to} isExternalLink
-                    iconType="fontawesome" icon={buttonData.icon}>
-            {buttonData.text}
-        </LinkButton>
-    )
 
     private readonly createIconButton = (buttonData: ButtonData) => (
         <a href={buttonData.to} target="_blank" style={{textDecoration: "none"}}>
@@ -78,14 +114,14 @@ class FooterComponent extends React.PureComponent<Props> {
     )
 }
 
-const styles = createStyles({
+const styles = (theme: Theme) => createStyles({
     footer: {
         fontSize: "1em",
-        borderWidth: "15px 0",
+        borderWidth: "8px 0",
         borderStyle: "solid",
         borderColor: "rgba(0, 0, 0, 0)",
         padding: "0 12px",
-        backgroundColor: "rgba(255, 255, 255, 0.4)"
+        backgroundColor: theme.palette.primary.light
     },
     grow: {
         flexGrow: 1

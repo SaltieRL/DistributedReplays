@@ -1,9 +1,9 @@
-import {ChartData, ChartOptions} from "chart.js"
+import {ChartData, ChartOptions, ChartTooltipItem} from "chart.js"
 import * as React from "react"
 import {Pie} from "react-chartjs-2"
 import {BasicStat} from "../../../Models/ChartData"
-import {roundLabelToMaxDPCallback} from "../../../Utils/Chart"
 import {getPrimaryColorsForPlayers} from "../../../Utils/Color"
+import {roundNumberToMaxDP} from "../../../Utils/String"
 
 interface Props {
     basicStat: BasicStat
@@ -38,7 +38,13 @@ export class ColoredPieChart extends React.PureComponent<Props> {
             rotation: this.getStartAngle(),
             tooltips: {
                 callbacks: {
-                    label: roundLabelToMaxDPCallback
+                    beforeLabel: (tooltipItem: ChartTooltipItem, data: ChartData) => {
+                        return data.labels![tooltipItem.index!]
+                    },
+                    label: (tooltipItem: ChartTooltipItem, data: ChartData) => {
+                        const value = data.datasets![tooltipItem.datasetIndex!].data![tooltipItem.index!] as number
+                        return roundNumberToMaxDP(value)
+                    }
                 }
             }
         } as ChartOptions  // startAngle is not typed in ChartOptions
