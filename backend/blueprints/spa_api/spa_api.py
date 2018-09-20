@@ -45,6 +45,7 @@ def better_jsonify(response: object):
 def api_get_replay_count():
     s = current_app.config['db']()
     count = s.query(Game.hash).count()
+    s.close()
     return jsonify(count)
 
 
