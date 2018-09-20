@@ -160,7 +160,7 @@ def lookup_current_user():
 # Serve React App
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-def serve(path):
+def home(path):
     if path != "" and os.path.exists("webapp/build/" + path):
         return send_from_directory('webapp/build', path)
     else:
