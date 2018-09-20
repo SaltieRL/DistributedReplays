@@ -87,7 +87,7 @@ class PlayerStatWrapper:
                 global_std = float(global_std)
             if global_std != 1 and global_std > 0:
                 logger.debug(self.field_names[i].field_name, player_stat, global_stat, global_std,
-                      float((player_stat - global_stat) / global_std))
+                             float((player_stat - global_stat) / global_std))
                 stats[i] = float((player_stat - global_stat) / global_std)
             else:
                 stats[i] = float(player_stat / global_stat)
@@ -138,13 +138,19 @@ class PlayerStatWrapper:
             PlayerGame.time_in_defending_third,
             PlayerGame.time_behind_ball,
             PlayerGame.time_in_front_ball,
-            func.random(), func.random(), func.random(), func.random()]
+            func.random(), func.random(), func.random(), func.random(),
+            PlayerGame.won_turnovers,
+            PlayerGame.average_hit_distance,
+            PlayerGame.total_passes,
+            PlayerGame.wasted_collection,
+        ]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
                                           'shots/hit', 'passes/hit', 'assists/hit', 'useful/hits',
                                           'turnovers', 'shot %', 'aerials',
                                           'att 1/2', 'att 1/3', 'def 1/2', 'def 1/3', '< ball', '> ball',
-                                          'luck1', 'luck2', 'luck3', 'luck4'])
+                                          'luck1', 'luck2', 'luck3', 'luck4', 'won turnovers', 'avg hit dist', 'passes',
+                                          'boost wasted'])
         avg_list = []
         std_list = []
         for i, s in enumerate(stat_list):
@@ -162,8 +168,8 @@ class PlayerStatWrapper:
             'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
         groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
             ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
-            ['assists', 'passes/hit', 'assists/hit'],  # chemistry
-            ['turnovers', 'useful/hits', 'aerials'],  # skill
+            ['boost wasted', 'assists', 'passes/hit', 'passes', 'assists/hit'],  # chemistry
+            ['turnovers', 'useful/hits', 'aerials', 'won turnovers', 'avg hit dist'],  # skill
             ['att 1/3', 'att 1/2', 'def 1/2', 'def 1/3', '< ball', '> ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
