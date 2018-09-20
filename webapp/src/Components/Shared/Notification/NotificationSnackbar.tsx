@@ -80,7 +80,7 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                             color="inherit"
                             onClick={handleClose}
                         >
-                            <Close className={classes.icon}/>
+                            <Close/>
                         </IconButton>
                     ]}
                 />
