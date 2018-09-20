@@ -11,15 +11,6 @@ interface Props {
 
 export class ColoredRadarChart extends React.PureComponent<Props> {
     public render() {
-        // const options = {
-        //     legend: {display: false},
-        //     scale: {
-        //         ticks: {
-        //             maxTicksLimit: 5,
-        //             beginAtZero: true
-        //         }
-        //     }
-        // }
         return (
             <Radar data={this.getChartData} options={this.getChartOptions()}/>
         )
