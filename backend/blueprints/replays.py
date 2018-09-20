@@ -276,7 +276,7 @@ def distribution():
 
     if r is not None:
         try:
-            r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
+            r.set('stats_cache', json.dumps(overall_data), ex=60 * 60 * 24 * 7)
         except redis.exceptions.ConnectionError as e:
             print('connection error')
 
