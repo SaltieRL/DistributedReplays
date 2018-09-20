@@ -1,18 +1,18 @@
 import {
-    Card, CardContent,
+    Card,
+    CardContent,
     CardHeader,
     createStyles,
     Grid,
     Theme,
-    Tooltip,
     Typography,
     withStyles,
     WithStyles
 } from "@material-ui/core"
-import Info from "@material-ui/icons/Info"
 import * as React from "react"
 import {getGlobalStats} from "../../Requests/Global"
 import {GlobalStatsChart} from "../GlobalStatsChart"
+import {IconTooltip} from "../Shared/IconTooltip"
 import {LoadableWrapper} from "../Shared/LoadableWrapper"
 import {BasePage} from "./BasePage"
 
@@ -35,9 +35,7 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
                     <Grid item xs={12}>
                         <Typography variant="title" align="center">
                             Distributions
-                            <Tooltip title="Click legend items to toggle visibility of that playlist">
-                                <Info className={this.props.classes.infoIcon}/>
-                            </Tooltip>
+                            <IconTooltip tooltip="Click legend items to toggle visibility of that playlist"/>
                         </Typography>
                     </Grid>
                     <LoadableWrapper load={this.getStats}>
