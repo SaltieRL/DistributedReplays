@@ -1,10 +1,10 @@
 import {WithTheme, withTheme} from "@material-ui/core"
-import {ChartData, ChartDataSets, ChartTooltipItem, LinearTickOptions, RadialChartOptions} from "chart.js"
+import {ChartData, ChartDataSets, LinearTickOptions, RadialChartOptions} from "chart.js"
 import * as React from "react"
 import {Radar} from "react-chartjs-2"
 import {ChartDataResponse} from "../../../../Models/ChartData"
+import {roundLabelToMaxDPCallback} from "../../../../Utils/Chart"
 import {convertHexToRgba} from "../../../../Utils/Color"
-import {convertNumberToMaxDP} from "../../../../Utils/String"
 
 interface OwnProps {
     data: ChartDataResponse
@@ -58,14 +58,7 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
             },
             tooltips: {
               callbacks: {
-                  label: (tooltipItem: ChartTooltipItem, data: ChartData) => {
-                      let label = data.datasets![tooltipItem.datasetIndex!].label || ""
-                      if (label !== "") {
-                          label += ": "
-                      }
-                      label += convertNumberToMaxDP(Number(tooltipItem.yLabel!))
-                      return label
-                  }
+                  label: roundLabelToMaxDPCallback
               }
             },
             maintainAspectRatio: false
