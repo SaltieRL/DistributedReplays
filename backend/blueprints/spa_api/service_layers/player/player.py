@@ -9,11 +9,11 @@ from ...errors.errors import PlayerNotFound
 
 
 class Player:
-    def __init__(self, id_: str, name: str, past_names: List[str], avatar_link: str):
+    def __init__(self, id_: str, name: str, past_names: List[str], profile_link: str, avatar_link: str):
+        self.id = id_
         self.name = name
         self.pastNames = past_names
-        self.id = id_
-        self.profileLink = f"https://steamcommunity.com/id/{id_}/"
+        self.profileLink = profile_link
         self.platform = "Steam"
         self.avatarLink = avatar_link
 
@@ -29,4 +29,5 @@ class Player:
             raise PlayerNotFound
         session.close()
         return Player(id_=id_, name=steam_profile['personaname'], past_names=names,
+                      profile_link=steam_profile['profileurl'],
                       avatar_link=steam_profile['avatarfull'])

@@ -1,102 +1,153 @@
 import {
+    ButtonBase,
     Card,
     CardContent,
-    CardHeader,
+    CardHeader, Divider,
     Grid,
     List,
-    ListItem, Typography
+    ListItem,
+    ListItemText,
+    ListSubheader,
+    Typography
 } from "@material-ui/core"
 import * as React from "react"
 import {BasePage} from "./BasePage"
 
+interface ListItemInfo {
+    name: string
+    link: string
+    message: string
+}
+
+const coreDevelopers: ListItemInfo[] = [
+    {
+        name: "Sciguymjm",
+        link: "https://steamcommunity.com/id/Sciguymjm",
+        message: "Backend and replay parsing"
+    },
+    {
+        name: "dtracers",
+        link: "https://steamcommunity.com/id/dtracers",
+        message: "Frontend and replay parsing"
+    },
+    {
+        name: "twobackfromtheend",
+        link: "https://steamcommunity.com/id/twobackfromtheend",
+        message: "Frontend and replay parsing"
+    }
+]
+
+const specialThanks: ListItemInfo[] = [
+    {
+        name: "Redox",
+        link: "https://steamcommunity.com/id/theblocks_",
+        message: "AutoReplays uploader"
+    },
+    {
+        name: "jb",
+        link: "https://steamcommunity.com/id/jb44",
+        message: "Initial design and prototyping"
+    }
+]
+
+const sourceCode: ListItemInfo[] = [
+    {
+        name: "DistributedReplays",
+        link: "https://github.com/SaltieRL/DistributedReplays",
+        message: "Powers the entire site - Built with React, TypeScript, Material UI, Flask, Gunicorn, PostgreSQL"
+    },
+    {
+        name: "carball",
+        link: "https://github.com/SaltieRL/carball",
+        message: "Replay parsing and analysis library - Built in Python with Rattletrap, pandas, protobuf"
+    }
+]
+
+const friends: ListItemInfo[] = [
+    {
+        name: "RLBot",
+        link: "https://www.rlbot.org/",
+        message: "A framework for building and creating AIs for Rocket League. They are a wonderful community and " +
+            "there is support for many languages - from Python to .NET, to Scratch, to Microsoft Excel!"
+    },
+    {
+        name: "BakkesMod",
+        link: "http://bakkesmod.com/",
+        message: "A full-featured mod for Rocket League with plenty of plugins and features."
+    },
+    {
+        name: "GIF Your Game",
+        link: "https://www.gifyourgame.com/",
+        message: "An addon that enables you to create gifs of your gameplay at the push of a button!"
+    }
+]
+
 export class AboutPage extends React.PureComponent {
     public render() {
-        // TODO: Complete about page
         return (
             <BasePage>
-                <Grid container spacing={16} justify="center">
-                    <Grid item xs={12} md={6}>
-                        <Card>
-                            <CardHeader title="About" subheader="calculated.gg"/>
-                            <CardContent>
-                                <Typography>Core Developers:
+                <Grid container justify="center">
+                    <Grid item xs={12} md={8} lg={7} xl={6}>
+                        <Grid container spacing={16} justify="center">
+                            <Grid item xs={12}>
+                                <Card>
+                                    <CardHeader title="About us" subheader="Saltie"/>
+                                    <Divider/>
+                                    <CardContent>
+                                        <Typography>
+                                            The Saltie group was founded in 2017 as a deep reinforcement research group
+                                            for
+                                            Rocket League. It was created by
+                                            {" "}
+                                            <ExternalLink name={"Sciguymjm"}
+                                                          link={"https://steamcommunity.com/id/Sciguymjm"}/>
+                                            {" and "}
+                                            <ExternalLink name={"dtracers"}
+                                                          link={"https://steamcommunity.com/id/dtracers"}/>
+                                            .
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Card>
+                                    <CardHeader title="About" subheader="calculated.gg"/>
+                                    <Divider/>
                                     <List>
-                                        <ListItem>
-                                            <a href="https://steamcommunity.com/id/Sciguymjm">Sciguymjm</a> - backend
-                                            and
-                                            replay parsing
-                                        </ListItem>
-                                        <ListItem>
-                                            <a href="https://steamcommunity.com/id/dtracers">dtracers</a> - frontend and
-                                            replay parsing
-                                        </ListItem>
-                                        <ListItem>
-                                            <a href="https://steamcommunity.com/id/twobackfromtheend">twobackfromtheend</a> -
-                                            frontend and replay parsing
-                                        </ListItem>
-                                    </List>
+                                        <ListSubheader>Core Developers</ListSubheader>
+                                        {coreDevelopers.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
 
-                                    Special thanks to:
-                                    <List>
-                                        <ListItem>
-                                            <a href="https://steamcommunity.com/id/theblocks_">Redox</a> - AutoReplays
-                                            uploader
-                                        </ListItem>
-                                        <ListItem>
-                                            <a href="https://steamcommunity.com/id/jb44">jb</a> - initial design and
-                                            prototyping
-                                        </ListItem>
-                                    </List>
+                                        <Divider/>
 
-                                    Source code:
-                                    <List>
-                                        <ListItem>
-                                            <a href="https://github.com/SaltieRL/DistributedReplays">DistributedReplays</a> -
-                                            powers the entire site
-                                        </ListItem>
-                                        <ListItem>
-                                            <a href="https://github.com/SaltieRL/carball">carball</a> - replay parsing
-                                            and analysis library used to parse replays
-                                        </ListItem>
+                                        <ListSubheader>Special thanks to</ListSubheader>
+                                        {specialThanks.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+
+                                        <Divider/>
+
+                                        <ListSubheader>Source code</ListSubheader>
+                                        {sourceCode.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
                                     </List>
-                                    Built with: React, Flask, gunicorn, postgreSQL, celery</Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} md={6} container>
-                        <Grid item xs={12}>
-                            <Card>
-                                <CardHeader title="Friends" subheader="of calculated.gg"/>
-                                <CardContent>
-                                    <Typography>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Card>
+                                    <CardHeader title="Friends" subheader="of calculated.gg"/>
+                                    <Divider/>
+                                    <CardContent>
                                         <List>
-                                            <ListItem>
-                                                <a href="http://www.rlbot.org/">RLBot</a>
-                                            </ListItem>
-                                            <ListItem>
-                                                <a href="http://bakkesmod.com/">BakkesMod</a>
-                                            </ListItem>
-                                            <ListItem>
-                                                <a href="https://www.gifyourgame.com/">GifYourGame</a>
-                                            </ListItem>
+                                            {friends.map((listItemInfo) => (
+                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                            ))}
                                         </List>
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Card>
-                                <CardHeader title="About us" subheader="Saltie"/>
-                                <CardContent>
-                                    <Typography>
-                                        The Saltie group was founded in 2017 as a deep reinforcement research group for
-                                        Rocket
-                                        League. It was created by <a
-                                        href="https://steamcommunity.com/id/Sciguymjm">Sciguymjm</a> and <a
-                                        href="https://steamcommunity.com/id/dtracers">dtracers</a>.
-                                    </Typography>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -104,3 +155,29 @@ export class AboutPage extends React.PureComponent {
         )
     }
 }
+
+const PersonListItem: React.SFC<ListItemInfo> = (props) => (
+    <ListItem>
+        <ListItemText
+            primary={
+                <ExternalLink name={props.name} link={props.link}/>
+            }
+            secondary={props.message}
+        />
+    </ListItem>
+)
+
+type ExternalLinkProps = Pick<ListItemInfo, "link" | "name">
+
+const ExternalLink: React.SFC<ExternalLinkProps> = (props) => (
+    <a href={props.link}
+       target="_blank"
+       style={{textDecoration: "none", display: "inline-flex"}}
+    >
+        <ButtonBase>
+            <Typography>
+                {props.name}
+            </Typography>
+        </ButtonBase>
+    </a>
+)

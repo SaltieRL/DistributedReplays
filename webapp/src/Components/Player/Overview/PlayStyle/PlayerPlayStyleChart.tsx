@@ -1,9 +1,10 @@
 import {WithTheme, withTheme} from "@material-ui/core"
-import {ChartData, LinearTickOptions, RadialChartOptions} from "chart.js"
+import {ChartData, ChartDataSets, ChartTooltipItem, LinearTickOptions, RadialChartOptions} from "chart.js"
 import * as React from "react"
 import {Radar} from "react-chartjs-2"
 import {ChartDataResponse} from "../../../../Models/ChartData"
 import {convertHexToRgba} from "../../../../Utils/Color"
+import {convertNumberToMaxDP} from "../../../../Utils/String"
 
 interface OwnProps {
     data: ChartDataResponse
@@ -12,7 +13,7 @@ interface OwnProps {
 type Props = OwnProps
     & WithTheme
 
-class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
+class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
     public render() {
         return (
             <Radar data={this.getChartData()} options={this.getChartOptions()}/>
@@ -31,8 +32,12 @@ class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
                     data: chartDataPoints.map((chartDataPoint) => chartDataPoint.value),
                     backgroundColor: convertHexToRgba(themeColors.light, 0.4),
                     pointBackgroundColor: convertHexToRgba(themeColors.dark),
-                    borderColor: convertHexToRgba(themeColors.main, 0.5)
-                },
+                    borderColor: convertHexToRgba(themeColors.main, 0.5),
+                    radius: 5,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointHitRadius: 5
+                } as ChartDataSets,
                 {
                     label: "Average",
                     data: chartDataPoints.map((chartDataPoint) =>
@@ -51,9 +56,21 @@ class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
                     maxTicksLimit: 5
                 } as LinearTickOptions
             },
+            tooltips: {
+              callbacks: {
+                  label: (tooltipItem: ChartTooltipItem, data: ChartData) => {
+                      let label = data.datasets![tooltipItem.datasetIndex!].label || ""
+                      if (label !== "") {
+                          label += ": "
+                      }
+                      label += convertNumberToMaxDP(Number(tooltipItem.yLabel!))
+                      return label
+                  }
+              }
+            },
             maintainAspectRatio: false
         }
     }
 }
 
-export const PlayerTendenciesChart = withTheme()(PlayerTendenciesChartComponent)
+export const PlayerPlayStyleChart = withTheme()(PlayerPlayStyleChartComponent)
