@@ -26,8 +26,8 @@ class AppComponent extends React.Component<Props> {
                         <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                         <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
                         <Route exact path="/replay_viewer" component={ReplayViewer}/>
-                        <Route exact path="/about" component={AboutPage}/>
-                        <Route exact path="/upload" component={UploadPage}/>
+                        <Route exact path={ABOUT_LINK} component={AboutPage}/>
+                        <Route exact path={UPLOAD_LINK} component={UploadPage}/>
                         <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
 
                         {/*Redirect unknowns to root*/}
