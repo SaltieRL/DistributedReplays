@@ -1,5 +1,5 @@
 celery[redis]
-flask
+flask==1.0.2
 flask_login
 pandas
 psycopg2
