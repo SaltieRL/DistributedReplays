@@ -1,5 +1,5 @@
 import {Card, CardHeader} from "@material-ui/core"
-import {ViewList} from "@material-ui/icons"
+import ViewList from "@material-ui/icons/ViewList"
 import * as React from "react"
 import {PLAYER_MATCH_HISTORY_PAGE} from "../../../../Globals"
 import {LinkButton} from "../../../Shared/LinkButton"

@@ -1,6 +1,6 @@
 import {IconButton, Tooltip, withWidth} from "@material-ui/core"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
-import {CloudUpload} from "@material-ui/icons"
+import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
 import {UploadContainedButton} from "./UploadContainedButton"
 import {UploadFloatingButton} from "./UploadFloatingButton"

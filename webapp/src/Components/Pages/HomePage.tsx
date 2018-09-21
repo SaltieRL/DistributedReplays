@@ -17,7 +17,8 @@ import {
     GLOBAL_STATS_LINK,
     LOCAL_LINK,
     PLAYER_PAGE_LINK,
-    STEAM_LOGIN_LINK
+    STEAM_LOGIN_LINK,
+    UPLOAD_LINK
 } from "../../Globals"
 import {StoreState} from "../../Redux"
 import {setLoggedInUserAction} from "../../Redux/loggedInUser/actions"
@@ -92,7 +93,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                     }
                                 </Grid>
                                 <Grid item xs={6} style={{textAlign: "center"}}>
-                                    <LinkButton to="/upload" iconType="mui" icon={CloudUpload}>
+                                    <LinkButton to={UPLOAD_LINK} iconType="mui" icon={CloudUpload}>
                                         Upload replays
                                     </LinkButton>
                                 </Grid>

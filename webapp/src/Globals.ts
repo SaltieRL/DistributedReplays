@@ -10,3 +10,7 @@ export const GLOBAL_STATS_LINK = "/global/stats"
 export const STEAM_LOGIN_LINK = "/auth/steam"
 export const LOGOUT_LINK = "/logout"
 export const ABOUT_LINK = "/about"
+export const UPLOAD_LINK = "/upload"
+export const PLUGINS_LINK = "/plugins"
+
+export const BAKKES_MOD_PLUGIN_LINK = "https://cdn.discordapp.com/attachments/481637428143194112/492745525838217221/bakkesmod_replayuploader.zip"  // tslint:disable-line

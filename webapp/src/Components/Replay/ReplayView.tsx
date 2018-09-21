@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, Grid, IconButton, Tooltip, withWidth} from "@material-ui/core"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
-import {CloudDownload} from "@material-ui/icons"
+import CloudDownload from "@material-ui/icons/CloudDownload"
 import * as React from "react"
 import {LOCAL_LINK} from "../../Globals"
 import {getColouredGameScore, Replay} from "../../Models/Replay/Replay"
