@@ -1,7 +1,7 @@
 import logging
 import os
 
-from flask import jsonify, Blueprint, current_app, request
+from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
@@ -123,6 +123,11 @@ def api_get_replay_data(id_):
 def api_get_replay_basic_stats(id_):
     basic_stats = BasicStatChartData.create_from_id(id_)
     return better_jsonify(basic_stats)
+
+
+@bp.route('/replay/<id_>/download')
+def download_replay(id_):
+    return send_from_directory(current_app.config['REPLAY_DIR'], id_ + ".replay", as_attachment=True)
 
 
 @bp.route('/upload', methods=['POST'])
