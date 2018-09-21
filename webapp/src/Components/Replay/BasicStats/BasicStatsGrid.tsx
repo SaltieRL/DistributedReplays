@@ -9,6 +9,7 @@ import {getReplayBasicStats} from "../../../Requests/Replay"
 import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
 import {StatChart} from "../../Shared/Charts/StatChart"
 import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
 
 interface OwnProps {
     replay: Replay
@@ -34,7 +35,8 @@ class BasicStatsGridComponent extends React.PureComponent<Props, State> {
             Ball: faFutbol,
             Playstyles: faCarSide,
             Possession: faCircle,
-            Positioning: faBraille
+            Positioning: faBraille,
+            Boosts: faRocket
         }
         return (
             <>
