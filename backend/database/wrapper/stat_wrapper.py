@@ -154,7 +154,7 @@ class PlayerStatWrapper:
         avg_list = []
         std_list = []
         for i, s in enumerate(stat_list):
-            if field_list[i].field_name in ['shot %']:
+            if field_list[i].field_name in ['shot %', 'is_keyboard']:
                 std_list.append(literal(1))
                 avg_list.append(s)
             else:
