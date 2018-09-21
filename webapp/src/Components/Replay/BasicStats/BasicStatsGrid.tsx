@@ -1,4 +1,5 @@
 import {faBraille, faBullseye, faCarSide, faCircle, faFutbol, IconDefinition} from "@fortawesome/free-solid-svg-icons"
+import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {CardContent, Divider, Grid, Tab, Tabs, Typography, withWidth} from "@material-ui/core"
 import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
@@ -34,8 +35,15 @@ class BasicStatsGridComponent extends React.PureComponent<Props, State> {
             Ball: faFutbol,
             Playstyles: faCarSide,
             Possession: faCircle,
-            Positioning: faBraille
+            Positioning: faBraille,
+            Boosts: faRocket
         }
+
+        const basicTabsForSelectedTab: BasicStat[] = this.state.basicStats ?
+            this.state.basicStats
+                .filter((basicStat) => basicStat.subcategory === this.state.selectedTab)
+            : []
+
         return (
             <>
                 <Divider/>
@@ -56,19 +64,25 @@ class BasicStatsGridComponent extends React.PureComponent<Props, State> {
                 <CardContent>
                     <Grid container spacing={32}>
                         <LoadableWrapper load={this.getBasicStats}>
-                            {this.state.basicStats &&
-                            this.state.basicStats
-                                .filter((basicStat) => basicStat.subcategory === this.state.selectedTab)
-                                .map((basicStat) => {
-                                    return (
-                                        <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
-                                            <Typography variant="subheading" align="center">
-                                                {convertSnakeAndCamelCaseToReadable(basicStat.title)}
-                                            </Typography>
-                                            <StatChart basicStat={basicStat}/>
-                                        </Grid>
-                                    )
-                                })}
+                            {basicTabsForSelectedTab.length > 0 ?
+                                basicTabsForSelectedTab
+                                    .map((basicStat) => {
+                                        return (
+                                            <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
+                                                <Typography variant="subheading" align="center">
+                                                    {convertSnakeAndCamelCaseToReadable(basicStat.title)}
+                                                </Typography>
+                                                <StatChart basicStat={basicStat}/>
+                                            </Grid>
+                                        )
+                                    })
+                                :
+                                <Grid item xs={12}>
+                                    <Typography align="center" style={{width: "100%"}}>
+                                        These stats have not yet been calculated for this replay
+                                    </Typography>
+                                </Grid>
+                            }
                         </LoadableWrapper>
                     </Grid>
                 </CardContent>
