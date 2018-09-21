@@ -1,6 +1,6 @@
+import {createStyles, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
-import "./App.css"
 import {AboutPage} from "./Components/Pages/AboutPage"
 import {GlobalStatsPage} from "./Components/Pages/GlobalStatsPage"
 import {HomePage} from "./Components/Pages/HomePage"
@@ -10,10 +10,12 @@ import {UploadPage} from "./Components/Pages/UploadPage"
 import {ReplayViewer} from "./Components/Replay/ReplayViewer/ReplayViewer"
 import {GLOBAL_STATS_LINK, PLAYER_PAGE_LINK, REPLAY_PAGE_LINK} from "./Globals"
 
-export class App extends React.Component {
+type Props = WithStyles<typeof styles>
+
+class AppComponent extends React.Component<Props> {
     public render() {
         return (
-            <div className="App">
+            <div className={this.props.classes.App}>
                 <BrowserRouter>
                     <Switch>
                         {/*Migrate old paths*/}
@@ -33,7 +35,17 @@ export class App extends React.Component {
                     </Switch>
                 </BrowserRouter>
             </div>
-
         )
     }
 }
+
+const styles = createStyles({
+    App: {
+        margin: "0",
+        minHeight: "100vh",
+        width: "100%",
+        display: "flex"
+    }
+})
+
+export const App = withStyles(styles)(AppComponent)
