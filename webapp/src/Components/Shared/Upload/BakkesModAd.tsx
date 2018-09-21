@@ -12,9 +12,8 @@ export class BakkesModAd extends React.PureComponent {
                     A shoutout for BakkesMod
                 </Typography>
                 <Typography style={{marginBottom: 7}}>
-                    We highly recommend you try out BakkesMod! Not only is it super amazing in general,
-                    they have a replay autosave and autouploader so you don't have to do any manual work to get these
-                    amazing stats!
+                    Finding the upload process a bit tedious? BakkesMod can save and upload your replays automatically
+                    so you don't have to do any manual work to get these amazing stats!
                 </Typography>
                 <LinkButton icon={Info} iconType="mui" to={PLUGINS_LINK}>
                     More info
