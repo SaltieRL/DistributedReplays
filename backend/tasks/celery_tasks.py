@@ -8,8 +8,9 @@ from carball import analyze_replay_file
 from celery import Celery
 from celery.task import periodic_task
 from redis import Redis
+from sqlalchemy import func, Numeric, cast
 
-from backend.database.objects import Game
+from backend.database.objects import Game, PlayerGame
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
@@ -65,6 +66,7 @@ except:  # TODO: Investigate and specify this except.
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(10 * 60, calc_global_stats.s(), name='calculate global stats every 10 min')
+    sender.add_periodic_task(60 * 60 * 24, calc_global_stats.s(), name='calculate global stats every 10 min')
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
@@ -116,6 +118,50 @@ def calc_global_stats(self):
         _redis.set('global_stats_expire', json.dumps(True), ex=60 * 10)
     print('Done')
     return result
+
+
+@periodic_task(run_every=60 * 10, base=DBTask, bind=True, priority=0)
+def calc_global_dists(self):
+    stats = ['score', 'goals', 'assists', 'saves', 'shots', 'total_hits', 'turnovers', 'total_passes', 'total_dribbles',
+             'assistsph',
+             'savesph', 'shotsph', 'turnoversph', 'total_dribblesph']
+
+    session = self.session()
+    overall_data = {}
+    numbers = []
+    for n in range(4):
+        numbers.append(session.query(func.count(PlayerGame.id)).join(Game).filter(Game.teamsize == (n + 1)).first()[0])
+    print(numbers)
+    for id_ in stats:
+        gamemodes = range(1, 5)
+        print(id_)
+        if id_.endswith('ph'):
+            q = session.query(
+                func.round(cast(getattr(PlayerGame, id_.replace('ph', '')), Numeric) / PlayerGame.total_hits, 2).label(
+                    'n'),
+                func.count(PlayerGame.id)).filter(PlayerGame.total_hits > 0).group_by('n').order_by('n')
+        else:
+            q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
+                getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
+        if id_ == 'score':
+            q = q.filter(PlayerGame.score % 10 == 0)
+        data = {}
+        for g in gamemodes:
+            # print(g)
+            d = q.join(Game).filter(Game.teamsize == g).all()
+            data[g] = {
+                'keys': [],
+                'values': []
+            }
+            for k, v in d:
+                if k is not None:
+                    data[g]['keys'].append(float(k))
+                    data[g]['values'].append(float(v) / float(numbers[g - 1]))
+        overall_data[id_] = data
+    session.close()
+    if _redis is not None:
+        _redis.set('global_distributions', json.dumps(overall_data))
+    return overall_data
 
 
 if __name__ == '__main__':
