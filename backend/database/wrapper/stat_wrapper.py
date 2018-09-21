@@ -83,6 +83,7 @@ class PlayerStatWrapper:
                 global_stat = float(global_stat)
             if global_std is None or global_std == 0:
                 logger.debug(self.field_names[i].field_name, 'std is 0')
+                global_std = 1
             else:
                 global_std = float(global_std)
             if global_std != 1 and global_std > 0:
