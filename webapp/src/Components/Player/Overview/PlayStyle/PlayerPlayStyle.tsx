@@ -33,7 +33,7 @@ export class PlayerPlayStyle extends React.PureComponent<Props, State> {
                     {this.state.data &&
                     this.state.data.map((chartDataResponse) => {
                         return (
-                            <Grid item xs={12} md={5} xl={3} key={chartDataResponse.title} style={{height: 400}}>
+                            <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title} style={{height: 400}}>
                                 <Typography variant="subheading" align="center">
                                     {chartDataResponse.title}
                                 </Typography>
