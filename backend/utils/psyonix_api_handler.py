@@ -134,7 +134,7 @@ def get_rank(steam_id):
     :return: rank, if it exists
     """
     rank = get_rank_batch([steam_id])
-    if rank is None and len(rank) > 0:
+    if rank is None or len(rank) <= 0:
         return None
     return rank[list(rank.keys())[0]]
 
