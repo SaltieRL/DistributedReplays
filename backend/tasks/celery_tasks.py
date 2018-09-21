@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 
+import flask
 from carball import analyze_replay_file
 from celery import Celery
 from celery.task import periodic_task
@@ -188,7 +189,7 @@ def calc_global_dists(self):
         ))
     session.close()
     if _redis is not None:
-        _redis.set('global_distributions', json.dumps(overall_data))
+        _redis.set('global_distributions', flask.json.dumps(overall_data))
     return overall_data
 
 
