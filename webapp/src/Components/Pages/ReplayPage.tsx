@@ -28,7 +28,7 @@ export class ReplayPage extends React.PureComponent<Props, State> {
         const {replay} = this.state
 
         return (
-            <BasePage>
+            <BasePage backgroundImage={"/replay_page_background.png"}>
                 <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
                     <LoadableWrapper load={this.getReplay}>
                         {replay &&
