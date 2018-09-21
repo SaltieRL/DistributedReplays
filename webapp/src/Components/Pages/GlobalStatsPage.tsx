@@ -30,7 +30,7 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
 
     public render() {
         return (
-            <BasePage>
+            <BasePage backgroundImage={"/splash.png"}>
                 <Grid container spacing={16} alignItems="center" justify="center">
                     <Grid item xs={12}>
                         <Typography variant="title" align="center">

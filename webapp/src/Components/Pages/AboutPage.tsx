@@ -85,7 +85,7 @@ const friends: ListItemInfo[] = [
 export class AboutPage extends React.PureComponent {
     public render() {
         return (
-            <BasePage>
+            <BasePage backgroundImage={"/splash.png"}>
                 <Grid container justify="center">
                     <Grid item xs={12} md={8} lg={7} xl={6}>
                         <Grid container spacing={16} justify="center">
