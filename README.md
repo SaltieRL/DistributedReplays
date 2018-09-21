@@ -11,12 +11,9 @@
 
 ## Running
 
-### Frontend
-- `cd webapp`, `npm start`
-
-### Backend
 #### Ubuntu
 - Run RLBotServer.py.
+- `cd webapp`, `npm start`
 
 #### Windows
 - Run win_run.bat
@@ -25,11 +22,11 @@
 - If the included redis does not work here is [install directions](https://dingyuliang.me/redis-3-2-install-redis-windows/)
 
 #### Mac
-- Run RLBotServer.py
-- Modify celery2.sh to point to the correct python executable (usually python3). Run it
-- Install and run Redis
+- Run mac_run.sh
 
 **You need to run in `python3`. Mac comes with `python2` by default so do not run any commands without the 3**
+
+
 
 
 ## Structure
