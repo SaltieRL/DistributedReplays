@@ -10,7 +10,6 @@ import {getReplayBasicStats} from "../../../Requests/Replay"
 import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
 import {StatChart} from "../../Shared/Charts/StatChart"
 import {LoadableWrapper} from "../../Shared/LoadableWrapper"
-import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
 
 interface OwnProps {
     replay: Replay
