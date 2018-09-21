@@ -1,4 +1,5 @@
 import {faBraille, faBullseye, faCarSide, faCircle, faFutbol, IconDefinition} from "@fortawesome/free-solid-svg-icons"
+import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {CardContent, Divider, Grid, Tab, Tabs, Typography, withWidth} from "@material-ui/core"
 import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
@@ -34,7 +35,8 @@ class BasicStatsGridComponent extends React.PureComponent<Props, State> {
             Ball: faFutbol,
             Playstyles: faCarSide,
             Possession: faCircle,
-            Positioning: faBraille
+            Positioning: faBraille,
+            Boosts: faRocket
         }
         return (
             <>
