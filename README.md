@@ -39,3 +39,74 @@ The structure of the server is split into different directories:
 - `static` - Static website files (JS/CSS/images)
 - `tasks` - Contains celery code user for processing the queue of replays
 - `templates` - Dynamic website files (rendered HTML templates)
+
+---
+
+## Setup and Running with Docker (Docs WIP)
+
+### Basic Dependencies
+
+- Install Python 3.6/pip
+- (Recommended) Create a virtual environment. todo(kcolton): finish + Pipfile
+- [Docker Community Edition (Stable)](https://docs.docker.com/install/)
+  
+  Docker will run Postgres and Redis inside linux based "Containers" on most platforms. 
+  Download and install Docker for your platform:    
+  - [Mac/Windows: Docker Desktop](https://www.docker.com/products/docker-desktop)
+  - [Ubuntu/Debian-ish: Docker CLI](https://docs.docker.com/install/linux/docker-ce/debian/#install-docker-ce)
+- Start Postgres and Redis containers:
+
+    ```bash
+    # Start Postgres and Redis. Anytime ran will automatically download latest versions.
+    # Should be in project root directory (where docker-compose.yml is)
+    docker-compose up
+    
+    # See your containers running
+    docker ps
+    ```
+    
+    todo(kcolton): extended Docker docs
+- Install [NodeJS](https://nodejs.org/en/) todo(anyone): Min Version?
+
+### Python Requirements
+
+- (Recommended) Activate virtual environment. todo(kcolton): finish 
+- Install python requirements
+
+    ```bash
+    pip3 install -r requirements.txt
+    ```
+    
+### React Webapp requirements via `npm` (Node Package Manager)
+
+```bash
+cd webapp
+# if not found, upgrade npm or use: npm install
+npm ci
+```
+
+### Start Application
+
+todo(kcolton): alternative start methods
+
+- Flask (Web framework for Backend API)
+
+    ```bash
+    # inside activated virtual environment if cerated
+    python3 RLBotServer.py
+    ```
+    
+- Celery (Background workers required for parsing replays and other tasks)
+
+    ```bash
+    # inside activated virtual environment if created
+    celery -A backend.tasks.celery_tasks.celery worker --loglevel=INFO
+    ```
+    
+- React Web Frontend (Run on separate port, make calls to Backend API for data)
+
+    ```bash
+    cd webapp
+    npm run start
+    ```
+
