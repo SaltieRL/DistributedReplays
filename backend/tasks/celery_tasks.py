@@ -56,6 +56,22 @@ except:  # TODO: Investigate and specify this except.
     _redis = None
 
 
+def better_json_dumps(response: object):
+    """
+    Improvement on flask.jsonify (that depends on flask.jsonify) that calls the .__dict__ method on objects
+    and also handles lists of such objects.
+    :param response: The object/list of objects to be jsonified.
+    :return: The return value of jsonify.
+    """
+    try:
+        return flask.json.dumps(response)
+    except TypeError:
+        if isinstance(response, list):
+            return flask.json.dumps([value.__dict__ for value in response])
+        else:
+            return flask.json.dumps(response.__dict__)
+
+
 #
 # @celery.task(bind=True)
 # def calculate_reward(self, uid):
@@ -140,6 +156,7 @@ global_stats_metadatas = [
     GlobalStatsMetadata('Dribbles per Hit', 'total_dribblesph')
 ]
 
+
 @periodic_task(run_every=60 * 10, base=DBTask, bind=True, priority=0)
 def calc_global_dists(self):
     stats = ['score', 'goals', 'assists', 'saves', 'shots', 'total_hits', 'turnovers', 'total_passes', 'total_dribbles',
@@ -189,7 +206,7 @@ def calc_global_dists(self):
         ))
     session.close()
     if _redis is not None:
-        _redis.set('global_distributions', flask.json.dumps(overall_data))
+        _redis.set('global_distributions', better_json_dumps(overall_data))
     return overall_data
 
 
