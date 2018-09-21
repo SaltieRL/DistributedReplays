@@ -4,7 +4,7 @@ from flask import Blueprint, current_app, redirect, g, request, url_for, jsonify
 
 from backend.blueprints.shared_renders import render_with_session
 from backend.database.objects import Player, Group
-from backend.tasks.celery_tasks import calc_global_stats
+from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -98,3 +98,8 @@ def view_users():
 def ping():
     r = current_app.config['r']
     return jsonify({'result': json.loads(r.get('global_stats'))})
+
+@bp.route('/calcdists')
+def calc_dists():
+    calc_global_dists.delay()
+    return jsonify({'result': 'Success'})

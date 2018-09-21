@@ -1,15 +1,17 @@
 import datetime
 import json
+import logging
 
 import sqlalchemy
 from carball.generated.api import player_pb2
-from sqlalchemy import func, desc, cast, literal
+from sqlalchemy import func, cast, literal
 
 from backend.database.objects import PlayerGame, Game
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.utils.checks import get_local_dev
-from data import constants
+
+logger = logging.getLogger(__name__)
 
 
 def safe_divide(sql_value):
@@ -56,11 +58,7 @@ class PlayerStatWrapper:
         stats = list(q.filter(PlayerGame.player == id_).first())
         if redis is None:
             if rank is not None and not get_local_dev():
-                print('Filtering by rank')
-                # q_filtered = q.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
-                #     PlayerGame.rank <= rank[3]['tier'] + 1)
-                # stds = stds.filter(PlayerGame.rank >= rank[3]['tier'] - 1).filter(
-                #     PlayerGame.rank <= rank[3]['tier'] + 1)
+                logger.debug('Filtering by rank')
                 try:
                     q_filtered = q.filter(PlayerGame.rank == rank[3]['tier'])
                     stds = stds.filter(PlayerGame.rank == rank[3]['tier'])
@@ -84,43 +82,27 @@ class PlayerStatWrapper:
             else:
                 global_stat = float(global_stat)
             if global_std is None or global_std == 0:
-                print(self.field_names[i].field_name, 'std is 0')
+                logger.debug(self.field_names[i].field_name, 'std is 0')
+                global_std = 1
             else:
                 global_std = float(global_std)
             if global_std != 1 and global_std > 0:
-                print(self.field_names[i].field_name, player_stat, global_stat, global_std,
-                      float((player_stat - global_stat) / global_std))
-                # print(seplayer_stat, global_stat, global_std)
+                logger.debug(self.field_names[i].field_name, player_stat, global_stat, global_std,
+                             float((player_stat - global_stat) / global_std))
                 stats[i] = float((player_stat - global_stat) / global_std)
             else:
                 stats[i] = float(player_stat / global_stat)
         return stats
 
-    def get_averaged_stats(self, session, id_, total_games, rank=None, page=0, redis=None):
+    def get_averaged_stats(self, session, id_, rank=None, redis=None):
         stats_query = self.stats_query
         std_query = self.std_query
-        games = self.player_wrapper.get_player_games_paginated(session, id_, page=page)
-        if len(games) > 0:
-            fav_car_str = session.query(PlayerGame.car, func.count(PlayerGame.car).label('c')).filter(
-                PlayerGame.player == id_).filter(
-                PlayerGame.game != None).group_by(PlayerGame.car).order_by(desc('c')).first()
-            print(fav_car_str)
-            # car_arr = [g.car for g in games]
-
-            favorite_car = constants.get_car(int(fav_car_str[0]))
-            favorite_car_pctg = fav_car_str[1] / total_games
+        total_games = self.player_wrapper.get_total_games(session, id_)
+        if total_games > 0:
             stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis)
-            # Name info
-
-            names = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')).filter(
-                PlayerGame.player == id_).group_by(
-                PlayerGame.name).order_by(desc('c'))[:5]
         else:
-            favorite_car = "Unknown"
-            favorite_car_pctg = 0.0
             stats = [0.0] * len(stats_query)
-            names = []
-        return games, self.get_wrapped_stats(stats), favorite_car, favorite_car_pctg, names
+        return self.get_wrapped_stats(stats)
 
     @staticmethod
     def get_stats_query():
@@ -157,19 +139,28 @@ class PlayerStatWrapper:
             PlayerGame.time_in_defending_third,
             PlayerGame.time_behind_ball,
             PlayerGame.time_in_front_ball,
-            func.random(), func.random(), func.random(), func.random()]
+            func.random(), func.random(), func.random(), func.random(),
+            PlayerGame.won_turnovers,
+            PlayerGame.average_hit_distance,
+            PlayerGame.total_passes,
+            PlayerGame.wasted_collection,
+        ]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
                                           'shots/hit', 'passes/hit', 'assists/hit', 'useful/hits',
                                           'turnovers', 'shot %', 'aerials',
                                           'att 1/2', 'att 1/3', 'def 1/2', 'def 1/3', '< ball', '> ball',
-                                          'luck1', 'luck2', 'luck3', 'luck4'])
+                                          'luck1', 'luck2', 'luck3', 'luck4', 'won turnovers', 'avg hit dist', 'passes',
+                                          'boost wasted'])
         avg_list = []
         std_list = []
         for i, s in enumerate(stat_list):
             if field_list[i].field_name in ['shot %']:
                 std_list.append(literal(1))
                 avg_list.append(s)
+            elif field_list[i].field_name in ['is_keyboard']:
+                std_list.append(func.count(s))
+                avg_list.append(func.count(s))
             else:
                 std_list.append(func.stddev_samp(s))
                 avg_list.append(func.avg(s))
@@ -181,8 +172,8 @@ class PlayerStatWrapper:
             'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
         groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
             ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
-            ['assists', 'passes/hit', 'assists/hit'],  # chemistry
-            ['turnovers', 'useful/hits', 'aerials'],  # skill
+            ['boost wasted', 'assists', 'passes/hit', 'passes', 'assists/hit'],  # chemistry
+            ['turnovers', 'useful/hits', 'aerials', 'won turnovers', 'avg hit dist'],  # skill
             ['att 1/3', 'att 1/2', 'def 1/2', 'def 1/3', '< ball', '> ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
