@@ -51,6 +51,7 @@ cars = {
   2313: "Mario NSR",
   2665: "TDK Tumbler",
   2666: "'89 Batmobile",
+  2070: "Werewolf",
 }
 
 
