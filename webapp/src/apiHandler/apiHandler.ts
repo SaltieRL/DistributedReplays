@@ -13,6 +13,9 @@ export const doGet = (destination: string): Promise<any> => {
             const code = response.status
             let message: string = response.statusText
             return response.json()
+                .catch(() => {
+                    throw {code, message} as AppError
+                })
                 .then((responseJson: any) => {
                     if (responseJson.message) {
                         message = responseJson.message
