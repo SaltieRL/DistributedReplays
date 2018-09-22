@@ -120,6 +120,8 @@ def parse_replay_task(self, fn):
     sess.commit()
     sess.close()
     shutil.move(fn, os.path.join(os.path.dirname(fn), g.game_metadata.id + '.replay'))
+    shutil.move(pickled + '.pts', os.path.join(os.path.dirname(pickled), g.game_metadata.id + '.replay.pts'))
+    shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), g.game_metadata.id + '.replay.gzip'))
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
