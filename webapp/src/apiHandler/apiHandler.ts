@@ -10,9 +10,20 @@ export const doGet = (destination: string): Promise<any> => {
         }
     }).then((response) => {
         if (!response.ok) {
-            throw {code: response.status, message: response.statusText} as AppError
+            const code = response.status
+            let message: string = response.statusText
+            return response.json()
+                .then((responseJson: any) => {
+                    if (responseJson.message) {
+                        message = responseJson.message
+                    }
+                })
+                .then(() => {
+                    throw {code, message} as AppError
+                })
+        } else {
+            return response.json()
         }
-        return response.json()
     })
 }
 
