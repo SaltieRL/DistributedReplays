@@ -1,10 +1,10 @@
 import {
     Button,
-    ButtonBase,
     Card,
     CardActions,
     CardContent,
-    CardHeader, CircularProgress,
+    CardHeader,
+    CircularProgress,
     createStyles,
     Theme,
     Typography,
@@ -46,9 +46,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                         <>
                             <CardContent>
                                 <BakkesModAd/>
-                                <ButtonBase>
-                                    <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
-                                </ButtonBase>
+                                <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
                                 {this.state.rejected.length !== 0 &&
                                 <Typography color="error">
                                     {this.state.rejected.length} file(s) were not selected as they do not end in

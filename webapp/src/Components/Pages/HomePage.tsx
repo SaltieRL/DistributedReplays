@@ -1,7 +1,6 @@
 import {faDiscord, faGithub, faSteam} from "@fortawesome/free-brands-svg-icons"
 import {faChartBar} from "@fortawesome/free-solid-svg-icons"
-import {Button, createStyles, Grid, Typography, WithStyles, withStyles, withWidth} from "@material-ui/core"
-import Divider from "@material-ui/core/Divider/Divider"
+import {Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth} from "@material-ui/core"
 import {GridProps} from "@material-ui/core/Grid"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import CloudUpload from "@material-ui/icons/CloudUpload"
