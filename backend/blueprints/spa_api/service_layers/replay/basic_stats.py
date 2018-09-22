@@ -121,7 +121,8 @@ class BasicStatChartData(ChartData):
                 type_=basic_stats_metadata.type,
                 subcategory=basic_stats_metadata.subcategory
             )
-            if all(chart_data_point['value'] is None for chart_data_point in chart_data.chartDataPoints):
+            if all(chart_data_point['value'] is None or chart_data_point['value'] == 0 for chart_data_point in
+                   chart_data.chartDataPoints):
                 continue
             all_chart_data.append(chart_data)
         session.close()
