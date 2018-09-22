@@ -1,4 +1,4 @@
-import {createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {ButtonBase, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import * as React from "react"
 import Dropzone, {DropFilesEventHandler} from "react-dropzone"
@@ -23,37 +23,39 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
                 activeClassName={classes.active}
                 disablePreview
             >
-                <div className={classes.dropzoneContent}>
-                    {hasFilesSelected ?
-                        <>
-                            <Typography variant="subheading">
-                                Selected {files.length} files:
-                            </Typography>
-                            <br/>
-                            <Typography>
-                                {files.slice(0, maxShownReplays)
-                                    .map((file: File) => file.name)
-                                    .join(",\n")}
-                            </Typography>
-                            {files.length > maxShownReplays &&
-                            <Typography>
-                                and {files.length - maxShownReplays} more...
-                            </Typography>
-                            }
-                        </>
-                        :
-                        <>
-                            <Typography align="center" variant="subheading">
-                                Drop your .replay files here, or click to select files to upload.
-                            </Typography>
-                            <Typography align="center">
-                                Replays can be found in your Documents/My Games/TAGame/Demos/ folder
-                            </Typography>
-                            <br/>
-                            <ArrowDownward/>
-                        </>
-                    }
-                </div>
+                <ButtonBase style={{width: "100%", height: "100%"}} focusRipple>
+                    <div className={classes.dropzoneContent}>
+                        {hasFilesSelected ?
+                            <>
+                                <Typography variant="subheading">
+                                    Selected {files.length} files:
+                                </Typography>
+                                <br/>
+                                <Typography>
+                                    {files.slice(0, maxShownReplays)
+                                        .map((file: File) => file.name)
+                                        .join(",\n")}
+                                </Typography>
+                                {files.length > maxShownReplays &&
+                                <Typography>
+                                    and {files.length - maxShownReplays} more...
+                                </Typography>
+                                }
+                            </>
+                            :
+                            <>
+                                <Typography align="center" variant="subheading">
+                                    Drop your .replay files here, or click to select files to upload.
+                                </Typography>
+                                <Typography align="center">
+                                    Replays can be found in your Documents/My Games/TAGame/Demos/ folder
+                                </Typography>
+                                <br/>
+                                <ArrowDownward/>
+                            </>
+                        }
+                    </div>
+                </ButtonBase>
             </Dropzone>
         )
     }
