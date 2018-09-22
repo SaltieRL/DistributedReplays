@@ -1,20 +1,24 @@
-import {Grid, Typography} from "@material-ui/core"
+import {createStyles, Grid, Theme, Typography, withStyles, WithStyles} from "@material-ui/core"
+import Warning from "@material-ui/icons/Warning"
 import * as React from "react"
-import {ChartDataResponse} from "../../../../Models/ChartData"
+import {PlayStyleResponse} from "../../../../Models/Player/PlayStyle"
 import {getPlayerPlayStyles} from "../../../../Requests/Player"
 import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {PlayerPlayStyleChart} from "./PlayerPlayStyleChart"
 
-interface Props {
+interface OwnProps {
     player: Player
 }
 
+type Props = OwnProps
+    & WithStyles<typeof styles>
+
 interface State {
-    data?: ChartDataResponse[]
+    data?: PlayStyleResponse
     reloadSignal: boolean
 }
 
-export class PlayerPlayStyle extends React.PureComponent<Props, State> {
+class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {reloadSignal: false}
@@ -27,20 +31,42 @@ export class PlayerPlayStyle extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const {classes} = this.props
+        const notEnoughDataWarning =
+            "This may not be a good representation of the player as there are too few replays. " +
+            "Upload more replays to get more accurate stats."
         return (
             <Grid container justify="space-around" spacing={32}>
                 <LoadableWrapper load={this.getPlayStyles} reloadSignal={this.state.reloadSignal}>
                     {this.state.data &&
-                    this.state.data.map((chartDataResponse) => {
-                        return (
-                            <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title} style={{height: 400}}>
-                                <Typography variant="subheading" align="center">
-                                    {chartDataResponse.title}
+                    <>
+                        {this.state.data.showWarning &&
+                        <Grid item xs={12} container justify="center">
+                            <Grid item xs={11} sm={10} md={9} lg={7} xl={5}
+                                  style={{textAlign: "center", display: "flex"}}
+                                  className={classes.warningContainer}
+                            >
+                                <Warning className={classes.inlineWarning}/>
+                                <Typography>
+                                    {notEnoughDataWarning}
                                 </Typography>
-                                <PlayerPlayStyleChart data={chartDataResponse}/>
                             </Grid>
-                        )
-                    })}
+                        </Grid>
+                        }
+                        {this.state.data.chartDatas.map((chartDataResponse) => {
+                            return (
+                                <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
+                                      style={{height: 400}}>
+                                    <Typography variant="subheading" align="center">
+                                        {chartDataResponse.title}
+                                    </Typography>
+                                    <PlayerPlayStyleChart data={chartDataResponse}/>
+                                </Grid>
+                            )
+                        })}
+
+                    </>
+                    }
                 </LoadableWrapper>
             </Grid>
         )
@@ -55,3 +81,18 @@ export class PlayerPlayStyle extends React.PureComponent<Props, State> {
         this.setState({reloadSignal: !this.state.reloadSignal})
     }
 }
+
+const styles = (theme: Theme) => createStyles({
+    inlineWarning: {
+        color: theme.palette.error.main,
+        margin: "auto",
+        marginRight: theme.spacing.unit
+    },
+    warningContainer: {
+        border: "1px rgba(0, 0, 0, 0.4) solid",
+        borderRadius: 8,
+        padding: 8
+    }
+})
+
+export const PlayerPlayStyle = withStyles(styles)(PlayerPlayStyleComponent)
