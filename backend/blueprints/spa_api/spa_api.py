@@ -10,7 +10,7 @@ from backend.tasks import celery_tasks
 from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
-from .service_layers.player.play_style import PlayStyleChartData
+from .service_layers.player.play_style import PlayStyleResponse
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
@@ -91,8 +91,8 @@ def api_get_player_ranks(id_):
 
 @bp.route('player/<id_>/play_style')
 def api_get_player_play_style(id_):
-    play_style_chart_datas = PlayStyleChartData.create_from_id(id_)
-    return better_jsonify(play_style_chart_datas)
+    play_style_response = PlayStyleResponse.create_from_id(id_)
+    return better_jsonify(play_style_response)
 
 
 @bp.route('player/<id_>/match_history')
