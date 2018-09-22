@@ -66,7 +66,8 @@ The structure of the server is split into different directories:
     ```
     
     todo(kcolton): extended Docker docs
-- Install [NodeJS](https://nodejs.org/en/) todo(anyone): Min Version?
+- Install [NodeJS](https://nodejs.org/en/) - 8 LTS Recommended (10 likely works as well).
+
 
 ### Python Requirements
 
