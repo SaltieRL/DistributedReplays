@@ -34,15 +34,9 @@ class ReplayPositions:
         if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
             raise ReplayNotFound()
 
-        print(pickle_path)
-
-        def process_tuple_str(s):
-            return ast.literal_eval(s)
-
         try:
             with gzip.open(gzip_path, 'rb') as f:
-                df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f).set_index('index')
-                df.columns = pd.MultiIndex.from_tuples([process_tuple_str(s) for s in df.columns])
+                df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
             with open(pickle_path, 'rb') as f:
                 g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
         except Exception as e:
@@ -74,7 +68,6 @@ class ReplayPositions:
 
         players_data = process_player_df(g)
         frame_data = df['game'][['delta', 'seconds_remaining', 'time']].fillna(-100).values.tolist()
-        # goal_data = [[gl.frame_number, gl.player_team] for gl in g.goals]
 
         return ReplayPositions(
             id_=id_,
@@ -83,5 +76,4 @@ class ReplayPositions:
             colors=[p.is_orange for p in players],
             names=[p.name for p in players],
             frames=frame_data
-            #, goals=[[gl.frame_number, gl.player_team] for gl in g.goals]
         )
