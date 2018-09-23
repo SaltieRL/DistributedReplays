@@ -5,6 +5,7 @@ import {connect} from "react-redux"
 import {Replay} from "../../Models/Replay/Replay"
 import {StoreState} from "../../Redux"
 import {BasicStatsGrid} from "./BasicStats/BasicStatsGrid"
+import {ReplayViewer} from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay
@@ -43,7 +44,10 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     }
                 </Tabs>
                 {this.state.selectedTab === "basicStats" &&
-                <BasicStatsGrid replay={this.props.replay}/>
+                    <BasicStatsGrid replay={this.props.replay} />
+                }
+                {this.state.selectedTab === "replayViewer" &&
+                    <ReplayViewer replay={this.props.replay} />
                 }
             </Card>
         )

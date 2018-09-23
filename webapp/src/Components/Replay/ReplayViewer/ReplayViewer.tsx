@@ -1,14 +1,14 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
-import {RouteComponentProps} from "react-router-dom"
 import {getReplayViewerData} from "../../../Requests/Replay"
 import {ThreeScene} from "./ThreeScene"
+import {Replay} from "../../../Models/Replay/Replay";
 
 interface OwnProps {
-    id: string
+    replay: Replay
 }
 
-type Props = RouteComponentProps<OwnProps>
+type Props = OwnProps
 
 interface State {
     replayData?: any
@@ -41,7 +41,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     }
 
     public getReplayPositions = () => {
-        getReplayViewerData(this.props.match.params.id)
+        getReplayViewerData(this.props.replay.id)
             .then((data: any) => this.setState({replayData: data.json()}))
     }
 }
