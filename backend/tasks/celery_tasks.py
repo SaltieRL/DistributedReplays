@@ -1,11 +1,16 @@
 # Celery workers
+import base64
 import gzip
+import io
 import json
 import os
 import shutil
 
 import flask
+import requests
 from carball import analyze_replay_file
+from carball.analysis.utils.pandas_manager import PandasManager
+from carball.analysis.utils.proto_manager import ProtobufManager
 from celery import Celery
 from celery.task import periodic_task
 from redis import Redis
@@ -20,6 +25,13 @@ from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.middleware import DBTask
 
+try:
+    import config
+
+    GCP_URL = config.GCP_URL
+except:
+    print('Not using GCP')
+    GCP_URL = ''
 # from helpers import rewards
 
 # bp = Blueprint('celery', __name__)
@@ -129,6 +141,20 @@ def parse_replay_task_low_priority(self, fn):
     parse_replay_task(fn)
 
 
+@celery.task(base=DBTask, bind=True, priority=9)
+def parse_replay_gcp(self, fn):
+    with open(fn, 'rb') as f:
+        encoded_file = base64.b64encode(f.read())
+    r = requests.post(GCP_URL, data=encoded_file)
+    response = r.json()
+    i = io.BytesIO(base64.b64decode(response['proto']))
+    protobuf_game = ProtobufManager.read_proto_out_from_file(i)
+    i2 = io.BytesIO(base64.b64decode(response['pandas']))
+    pandas_game = PandasManager.read_numpy_from_memory(i2)
+
+    return protobuf_game, pandas_game
+
+
 @periodic_task(run_every=30.0, base=DBTask, bind=True, priority=0)
 def calc_global_stats(self):
     sess = self.session()
@@ -213,11 +239,12 @@ def calc_global_dists(self):
 
 
 if __name__ == '__main__':
-    fn = '/home/matthew/PycharmProjects/Distributed-Replays/replays/88E7A7BE41717522C30040AA4B187E9E.replay'
-    output = fn + '.json'
-    pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
-    # try:
-
-    g = analyze_replay_file(fn, output)  # type: ReplayGame
-    game, player_games, players = convert_pickle_to_db(g)
-    pass
+    parse_replay_gcp('')
+    # fn = '/home/matthew/PycharmProjects/Distributed-Replays/replays/88E7A7BE41717522C30040AA4B187E9E.replay'
+    # output = fn + '.json'
+    # pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')
+    # # try:
+    #
+    # g = analyze_replay_file(fn, output)  # type: ReplayGame
+    # game, player_games, players = convert_pickle_to_db(g)
+    # pass
