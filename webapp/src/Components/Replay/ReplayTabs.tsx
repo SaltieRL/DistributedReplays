@@ -34,12 +34,12 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                       centered
                       scrollable={isWidthDown("sm", this.props.width)}
                 >
-                    <Tab label="Basic Stats" value="basicStats"/>
+                    <Tab key="basicStats" label="Basic Stats" value="basicStats"/>
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
-                    <>
-                        <Tab label="Advanced Stats" value="advancedStats"/>
-                        < Tab label="Replay Viewer" value="replayViewer"/>
-                    </>
+                        [
+                            <Tab key="advancedStats" label="Advanced Stats" value="advancedStats" />,
+                            <Tab key="replayViewer" label="Replay Viewer" value="replayViewer" />
+                        ]
                     }
                 </Tabs>
                 {this.state.selectedTab === "basicStats" &&
