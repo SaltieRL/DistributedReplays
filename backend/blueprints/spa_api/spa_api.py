@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
+from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
@@ -47,6 +48,12 @@ def api_get_replay_count():
     count = s.query(Game.hash).count()
     s.close()
     return jsonify(count)
+
+
+@bp.route('/global/queue/count')
+def api_get_queue_length():
+    steps = [0, 3, 6, 9]
+    return jsonify({'priority ' + str(k): v for k, v in zip(steps, get_queue_length())})
 
 
 @bp.route('/global/stats')
