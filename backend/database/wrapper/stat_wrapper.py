@@ -9,13 +9,10 @@ from sqlalchemy import func, cast, literal
 from backend.database.objects import PlayerGame, Game
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
 from backend.database.wrapper.player_wrapper import PlayerWrapper
+from backend.database.wrapper.stat_math import get_boost_efficiency, safe_divide
 from backend.utils.checks import get_local_dev
 
 logger = logging.getLogger(__name__)
-
-
-def safe_divide(sql_value):
-    return func.greatest(sql_value, 1)
 
 
 class PlayerStatWrapper:
@@ -144,6 +141,7 @@ class PlayerStatWrapper:
             PlayerGame.average_hit_distance,
             PlayerGame.total_passes,
             PlayerGame.wasted_collection,
+            get_boost_efficiency()
         ]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
@@ -151,7 +149,7 @@ class PlayerStatWrapper:
                                           'turnovers', 'shot %', 'aerials',
                                           'att 1/2', 'att 1/3', 'def 1/2', 'def 1/3', '< ball', '> ball',
                                           'luck1', 'luck2', 'luck3', 'luck4', 'won turnovers', 'avg hit dist', 'passes',
-                                          'boost wasted'])
+                                          'boost wasted', 'boost efficiency'])
         avg_list = []
         std_list = []
         for i, s in enumerate(stat_list):
@@ -172,7 +170,7 @@ class PlayerStatWrapper:
             'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
         groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
             ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
-            ['boost wasted', 'assists', 'passes/hit', 'passes', 'assists/hit'],  # chemistry
+            ['boost efficiency', 'assists', 'passes/hit', 'passes', 'assists/hit'],  # chemistry
             ['turnovers', 'useful/hits', 'aerials', 'won turnovers', 'avg hit dist'],  # skill
             ['att 1/3', 'att 1/2', 'def 1/2', 'def 1/3', '< ball', '> ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
