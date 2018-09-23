@@ -36,7 +36,7 @@ class ReplayPositions:
 
         try:
             with gzip.open(gzip_path, 'rb') as f:
-                df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
+                data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
             with open(pickle_path, 'rb') as f:
                 g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
         except Exception as e:
@@ -48,7 +48,7 @@ class ReplayPositions:
         z_mult = 100.0 / 2000
         cs = ['pos_x', 'pos_y', 'pos_z']
         rot_cs = ['rot_x', 'rot_y', 'rot_z']
-        ball = df['ball']
+        ball = data_frame['ball']
         # ball['pos_x'] = ball['pos_x'] * x_mult
         # ball['pos_y'] = ball['pos_y'] * y_mult
         # ball['pos_z'] = ball['pos_z'] * z_mult
@@ -59,15 +59,15 @@ class ReplayPositions:
         def process_player_df(game):
             d = []
             for p in names:
-                df[p].loc[:, rot_cs] = df[p][rot_cs] / 65536.0 * 2 * 3.14159265
-                df[p].loc[:, 'pos_x'] = df[p]['pos_x'] * x_mult
-                df[p].loc[:, 'pos_y'] = df[p]['pos_y'] * y_mult
-                df[p].loc[:, 'pos_z'] = df[p]['pos_z'] * z_mult
-                d.append(df[p][cs + rot_cs + ['boost_active']].fillna(-100).values.tolist())
+                data_frame[p].loc[:, rot_cs] = data_frame[p][rot_cs] / 65536.0 * 2 * 3.14159265
+                data_frame[p].loc[:, 'pos_x'] = data_frame[p]['pos_x'] * x_mult
+                data_frame[p].loc[:, 'pos_y'] = data_frame[p]['pos_y'] * y_mult
+                data_frame[p].loc[:, 'pos_z'] = data_frame[p]['pos_z'] * z_mult
+                d.append(data_frame[p][cs + rot_cs + ['boost_active']].fillna(-100).values.tolist())
             return d
 
         players_data = process_player_df(g)
-        frame_data = df['game'][['delta', 'seconds_remaining', 'time']].fillna(-100).values.tolist()
+        frame_data = data_frame['game'][['delta', 'seconds_remaining', 'time']].fillna(-100).values.tolist()
 
         return ReplayPositions(
             id_=id_,
