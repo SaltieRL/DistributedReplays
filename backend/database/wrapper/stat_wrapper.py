@@ -107,7 +107,7 @@ class PlayerStatWrapper:
     @staticmethod
     def get_stats_query():
         field_list = create_and_filter_proto_field(proto_message=player_pb2.Player,
-                                                   blacklist_field_names=['name', 'title_id', 'is_orange'],
+                                                   blacklist_field_names=['name', 'title_id', 'is_orange', 'is_bot'],
                                                    blacklist_message_types=['api.metadata.CameraSettings',
                                                                             'api.metadata.PlayerLoadout',
                                                                             'api.PlayerId'],
