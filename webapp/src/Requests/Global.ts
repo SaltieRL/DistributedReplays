@@ -16,7 +16,7 @@ export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Spec
         formData.append("replays", file)
     })
 
-    return doPost("/upload", formData)
+    return doPost("/upload", formData) //TODO: receive the parse_status object
 }
 
 export const getLoggedInUser = () : Promise<LoggedInUser> => doGet("/me")
