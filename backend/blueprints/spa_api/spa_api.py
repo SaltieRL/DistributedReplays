@@ -159,10 +159,21 @@ def api_upload_replays():
         result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
         parse_status.append(
             { 'task_id': result.id,
-            'filename': filename}
+            'filename': os.path.basename(filename)}
         )
     return better_jsonify(parse_status), 202
 
+@bp.route('/status', methods=['POST'])
+def api_get_parse_status():
+    queued_tasks = request.getlist("task_id")
+    if queued_tasks is None or 'task_id' not in request or len(queued_tasks) == 0:
+        raise CalculatedError(400, 'No task ID provided')
+    status = []
+    
+    for task in queued_tasks:
+        state = celery_tasks.get_task_state(task)
+        status.append(state)
+    return better_jsonify(status)
 
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):

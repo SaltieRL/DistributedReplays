@@ -211,6 +211,8 @@ def calc_global_dists(self):
         _redis.set('global_distributions', better_json_dumps(overall_data))
     return overall_data
 
+def get_task_state(_id):
+    return celery.result.AsyncResult(_id).state
 
 if __name__ == '__main__':
     fn = '/home/matthew/PycharmProjects/Distributed-Replays/replays/88E7A7BE41717522C30040AA4B187E9E.replay'
