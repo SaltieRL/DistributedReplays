@@ -143,8 +143,7 @@ def api_upload_replays():
     logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:
         raise CalculatedError(400, 'No files uploaded')
-    else:
-        parse_status = []
+    task_ids = []
 
     for file in uploaded_files:
         file.seek(0, os.SEEK_END)
@@ -157,11 +156,8 @@ def api_upload_replays():
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
         file.save(filename)
         result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-        parse_status.append(
-            { 'task_id': result.id,
-            'filename': os.path.basename(filename)}
-        )
-    return better_jsonify(parse_status), 202
+        task_ids.append(result.id)    
+    return jsonify(task_ids), 202
 
 @bp.route('/status', methods=['POST'])
 def api_get_parse_status():
@@ -173,7 +169,7 @@ def api_get_parse_status():
     for task in queued_tasks:
         state = celery_tasks.get_task_state(task)
         status.append(state)
-    return better_jsonify(status)
+    return jsonify(status)
 
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):
