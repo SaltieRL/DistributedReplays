@@ -1,5 +1,6 @@
 import logging
 import os
+import uuid
 
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
@@ -145,7 +146,8 @@ def api_upload_replays():
         if not file.filename.endswith('replay'):
             continue
         file.seek(0)
-        filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
+        ud = uuid.uuid4()
+        filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
         celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return 'Replay uploaded and queued for processing...', 202
