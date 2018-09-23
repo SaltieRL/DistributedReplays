@@ -165,6 +165,12 @@ class PlayerGame(DBObjectBase):
     time_at_slow_speed = Column(Float)
     time_at_super_sonic = Column(Float)
 
+    # metadata
+    is_bot = Column(Boolean)
+    first_frame_in_game = Column(Integer)
+    time_in_game = Column(Float)
+
+
 class Game(DBObjectBase):
     __tablename__ = 'games'
     hash = Column(String(40), primary_key=True)  # replayid
@@ -183,6 +189,9 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
+
+    # metadata
+    version = Column(Integer)
 
 
 class Player(DBObjectBase):
