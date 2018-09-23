@@ -167,7 +167,6 @@ class PlayerGame(DBObjectBase):
 
     # metadata
     is_bot = Column(Boolean)
-    version = Column(Integer)
     first_frame_in_game = Column(Integer)
     time_in_game = Column(Float)
 
@@ -190,6 +189,9 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
+
+    # metadata
+    version = Column(Integer)
 
 
 class Player(DBObjectBase):
