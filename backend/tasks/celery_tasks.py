@@ -3,10 +3,12 @@ import gzip
 import json
 import os
 import shutil
+from enum import Enum, auto
 
 import flask
 from carball import analyze_replay_file
 from celery import Celery
+from celery.result import AsyncResult
 from celery.task import periodic_task
 from redis import Redis
 from sqlalchemy import func, Numeric, cast
@@ -211,8 +213,19 @@ def calc_global_dists(self):
         _redis.set('global_distributions', better_json_dumps(overall_data))
     return overall_data
 
-def get_task_state(_id):
-    return celery.result.AsyncResult(_id).state
+
+class ResultState(Enum):
+    PENDING = auto()
+    STARTED = auto()
+    RETRY = auto()
+    FAILURE = auto()
+    SUCCESS = auto()
+
+
+def get_task_state(id_) -> ResultState:
+    # NB: State will be PENDING for unknown ids.
+    return ResultState[AsyncResult(id_, app=celery).state]
+
 
 if __name__ == '__main__':
     fn = '/home/matthew/PycharmProjects/Distributed-Replays/replays/88E7A7BE41717522C30040AA4B187E9E.replay'
