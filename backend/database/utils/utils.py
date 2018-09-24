@@ -1,5 +1,6 @@
 import datetime
 import math
+from typing import List
 
 from carball.generated.api import game_pb2
 
@@ -105,27 +106,30 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
     return g, player_games, players
 
 
-def add_objs_to_db(game, player_games, players, s):
+def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], session,
+                   preserve_upload_date=False):
     try:
-        match = s.query(Game).filter(Game.hash == game.hash).first()
+        match = session.query(Game).filter(Game.hash == game.hash).first()
         if match is not None:
-            s.delete(match)
+            if preserve_upload_date:
+                game.upload_date = match.upload_date
+            session.delete(match)
             print('deleting {}'.format(match.hash))
-        s.add(game)
+        session.add(game)
     except TypeError as e:
         print('Error object: ', e)
         pass
     for pl in players:  # type: Player
         try:
-            match = s.query(Player).filter(Player.platformid == str(pl.platformid)).first()
+            match = session.query(Player).filter(Player.platformid == str(pl.platformid)).first()
         except TypeError:
             print('platform id', pl.platformid)
             match = None
         if not match:  # we don't need to add duplicate players
-            s.add(pl)
+            session.add(pl)
     for pg in player_games:
-        match = s.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
+        match = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
             PlayerGame.game == pg.game).first()
         if match is not None:
-            s.delete(match)
-        s.add(pg)
+            session.delete(match)
+        session.add(pg)

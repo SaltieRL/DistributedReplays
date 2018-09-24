@@ -89,7 +89,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
-def parse_replay_task(self, fn):
+def parse_replay_task(self, fn, preserve_upload_date=False):
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
     if os.path.isfile(pickled):
@@ -116,7 +116,7 @@ def parse_replay_task(self, fn):
         for p in possible_duplicates:
             sess.delete(p)
     game, player_games, players = convert_pickle_to_db(g)
-    add_objs_to_db(game, player_games, players, sess)
+    add_objs_to_db(game, player_games, players, sess, preserve_upload_date=preserve_upload_date)
     sess.commit()
     sess.close()
     shutil.move(fn, os.path.join(os.path.dirname(fn), g.game_metadata.id + '.replay'))
@@ -126,7 +126,7 @@ def parse_replay_task(self, fn):
 
 @celery.task(base=DBTask, bind=True, priority=9)
 def parse_replay_task_low_priority(self, fn):
-    parse_replay_task(fn)
+    parse_replay_task(fn, preserve_upload_date=True)
 
 
 @periodic_task(run_every=30.0, base=DBTask, bind=True, priority=0)
