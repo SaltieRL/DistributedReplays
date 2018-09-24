@@ -173,11 +173,15 @@ class QueryFilterBuilder:
 
         return self
 
-    def handle_list(self, field, list):
-        if len(self.players) == 1:
-            return field == list[0]
+    @staticmethod
+    def handle_list(field, lst):
+        if isinstance(lst, list):
+            if len(lst) == 1:
+                return field == lst[0]
+            else:
+                return field.in_(lst)
         else:
-            return field.in_(list)
+            return field == lst
 
     def get_stored_query(self):
         return self.initial_query
