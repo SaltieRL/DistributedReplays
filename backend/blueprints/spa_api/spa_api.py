@@ -7,7 +7,8 @@ from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
-from backend.database.wrapper import player_stat_wrapper, player_wrapper
+from backend.database.wrapper import player_wrapper
+from backend.database.wrapper.stats import player_stat_wrapper
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams

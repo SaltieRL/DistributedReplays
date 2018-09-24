@@ -16,7 +16,7 @@ from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsMe
 from backend.database.objects import Game, PlayerGame
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.database.wrapper.player_stat_wrapper import PlayerStatWrapper
+from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.middleware import DBTask
 

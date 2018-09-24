@@ -20,6 +20,7 @@ class QueryFilterBuilder:
         self.replay_id = None
         self.is_game = False
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
+        self.safe_checking = False
         self.sticky_values = dict()  # a list of values that survive a clean
 
     def reset(self):
@@ -34,6 +35,7 @@ class QueryFilterBuilder:
         self.replay_id = None
         self.is_game = False
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
+        self.safe_checking = False # checks to make sure the replay has good data for the player
         self.sticky_values = dict()
 
     def clean(self):
@@ -84,6 +86,14 @@ class QueryFilterBuilder:
         self.replay_ids = replay_ids
         return self
 
+    def with_team_size(self, team_size)-> QueryFilterBuilder:
+        self.team_size = team_size
+        return self
+
+    def with_safe_checking(self)-> QueryFilterBuilder:
+        self.safe_checking = True
+        return self
+
     def as_game(self)-> QueryFilterBuilder:
         self.is_game = True
         return self
@@ -118,6 +128,9 @@ class QueryFilterBuilder:
 
         if self.team_size is not None:
             filtered_query = filtered_query.filter(Game.teamsize == self.team_size)
+
+        if self.safe_checking:
+            filtered_query = filtered_query.filter(PlayerGame.total_hits > 0)
 
         if self.players is not None and len(self.players) > 0:
             filtered_query = filtered_query.filter(self.handle_list(PlayerGame.player, self.players))
@@ -160,6 +173,7 @@ class QueryFilterBuilder:
                 self.sticky_values[key] = value
 
         return self
+
 
     def handle_list(self, field, list):
         if len(self.players) == 1:
