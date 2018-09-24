@@ -50,7 +50,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
-                                <PlayerPlayStyleCard>
+                                <PlayerPlayStyleCard player={this.props.player}>
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
                             </Grid>

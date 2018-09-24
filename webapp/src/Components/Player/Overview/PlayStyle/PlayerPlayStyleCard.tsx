@@ -6,47 +6,27 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Table, TableBody, TableCell, TableHead, TableRow,
+    IconButton,
+    Tooltip,
     Typography
 } from "@material-ui/core"
+import CompareArrows from "@material-ui/icons/CompareArrows"
 import * as React from "react"
+import {Link} from "react-router-dom"
+import {PLAYER_COMPARE_WITH_LINK} from "../../../../Globals"
 import {IconTooltip} from "../../../Shared/IconTooltip"
 import {PlayStyleExplanationTable} from "./PlayStyleExplanationTable"
 
-const explanations: Explanation[] = [
-    {
-        statName: "Possession",
-        message: "Duration the ball was last touched by player"
-    },
-    {
-        statName: "Useful",
-        message: "Short for \"Useful Hit\", refers to hits that are passes, shots, or dribbles - " +
-            "basically anything that's not giving the ball away."
-    },
-    {
-        statName: "Turnovers",
-        message: "Giving the ball away to the opponent"
-    },
-    {
-        statName: "Att & Def 1/2 & 1/3",
-        message: "Short for Attacking & Defensive, Half & Third respectively."
-    },
-    {
-        statName: "< ball",
-        message: "Duration spent behind the ball"
-    },
-    {
-        statName: "> ball",
-        message: "Duration spent ahead of the ball"
-    }
-]
+interface Props {
+    player: Player
+}
 
 interface State {
     dialogOpen: boolean
 }
 
-export class PlayerPlayStyleCard extends React.PureComponent<{}, State> {
-    constructor(props: {}) {
+export class PlayerPlayStyleCard extends React.PureComponent<Props, State> {
+    constructor(props: Props) {
         super(props)
         this.state = {dialogOpen: false}
     }
@@ -56,12 +36,20 @@ export class PlayerPlayStyleCard extends React.PureComponent<{}, State> {
         const playStyleTitle =
             <Typography variant="headline">
                 Playstyle
-                <IconTooltip tooltip="Data is presented as standard deviations from the mean, and only includes games from the past 6 months"/>
+                <IconTooltip
+                    tooltip="Data is presented as standard deviations from the mean, and only includes games from the past 6 months"/>
             </Typography>
         /* tslint:enable */
 
         const playStyleAction =
             <>
+                <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
+                    <Tooltip title="Compare with...">
+                        <IconButton style={{marginRight: 8}}>
+                            <CompareArrows/>
+                        </IconButton>
+                    </Tooltip>
+                </Link>
                 <Button variant="outlined"
                         onClick={this.handleOpen}
                         style={{marginRight: 8}}
