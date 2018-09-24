@@ -138,10 +138,6 @@ except ImportError:
 def lookup_current_user():
     s = current_app.config['db']()
     g.user = None
-    allowed_routes = ['/auth', '/api', '/replays/stats']
-    allowed = any([request.path.startswith(a) for a in allowed_routes])
-    if allowed:
-        return
     if 'openid' in session:
         openid = session['openid']
         if len(ALLOWED_STEAM_ACCOUNTS) > 0 and openid not in ALLOWED_STEAM_ACCOUNTS:
@@ -160,7 +156,7 @@ def lookup_current_user():
 # Serve React App
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-def serve(path):
+def home(path):
     if path != "" and os.path.exists("webapp/build/" + path):
         return send_from_directory('webapp/build', path)
     else:

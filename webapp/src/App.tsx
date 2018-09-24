@@ -1,19 +1,22 @@
+import {createStyles, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
-import "./App.css"
 import {AboutPage} from "./Components/Pages/AboutPage"
 import {GlobalStatsPage} from "./Components/Pages/GlobalStatsPage"
 import {HomePage} from "./Components/Pages/HomePage"
 import {PlayerPage} from "./Components/Pages/PlayerPage"
+import {PluginsPage} from "./Components/Pages/PluginsPage"
 import {ReplayPage} from "./Components/Pages/ReplayPage"
 import {UploadPage} from "./Components/Pages/UploadPage"
 import {ReplayViewer} from "./Components/Replay/ReplayViewer/ReplayViewer"
-import {GLOBAL_STATS_LINK, PLAYER_PAGE_LINK, REPLAY_PAGE_LINK} from "./Globals"
+import {ABOUT_LINK, GLOBAL_STATS_LINK, PLAYER_PAGE_LINK, PLUGINS_LINK, REPLAY_PAGE_LINK, UPLOAD_LINK} from "./Globals"
 
-export class App extends React.Component {
+type Props = WithStyles<typeof styles>
+
+class AppComponent extends React.Component<Props> {
     public render() {
         return (
-            <div className="App">
+            <div className={this.props.classes.App}>
                 <BrowserRouter>
                     <Switch>
                         {/*Migrate old paths*/}
@@ -24,16 +27,27 @@ export class App extends React.Component {
                         <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                         <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
                         <Route exact path="/replay_viewer" component={ReplayViewer}/>
-                        <Route exact path="/about" component={AboutPage}/>
-                        <Route exact path="/upload" component={UploadPage}/>
+                        <Route exact path={ABOUT_LINK} component={AboutPage}/>
+                        <Route exact path={UPLOAD_LINK} component={UploadPage}/>
                         <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
+                        <Route exact path={PLUGINS_LINK} component={PluginsPage}/>
 
                         {/*Redirect unknowns to root*/}
                         <Redirect from="*" to="/"/>
                     </Switch>
                 </BrowserRouter>
             </div>
-
         )
     }
 }
+
+const styles = createStyles({
+    App: {
+        margin: "0",
+        minHeight: "100vh",
+        width: "100%",
+        display: "flex"
+    }
+})
+
+export const App = withStyles(styles)(AppComponent)

@@ -1,13 +1,12 @@
 import {faCarSide, faHistory, faUserCircle, IconDefinition} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Card, CardContent, CardHeader, Divider, Grid, Tab, Tabs, withWidth} from "@material-ui/core"
+import {Card, CardContent, Divider, Grid, Tab, Tabs, withWidth} from "@material-ui/core"
 import {isWidthDown, isWidthUp, WithWidth} from "@material-ui/core/withWidth"
-import {ViewList} from "@material-ui/icons"
 import * as React from "react"
-import {PLAYER_MATCH_HISTORY_PAGE} from "../../Globals"
-import {LinkButton} from "../Shared/LinkButton"
 import {PlayerMatchHistory} from "./Overview/MatchHistory/PlayerMatchHistory"
-import {PlayerPlayStyle} from "./Overview/PlayerPlayStyle"
+import {PlayerMatchHistoryCard} from "./Overview/MatchHistory/PlayerMatchHistoryCard"
+import {PlayerPlayStyle} from "./Overview/PlayStyle/PlayerPlayStyle"
+import {PlayerPlayStyleCard} from "./Overview/PlayStyle/PlayerPlayStyleCard"
 import {PlayerSideBar} from "./Overview/SideBar/PlayerSideBar"
 
 interface OwnProps {
@@ -46,34 +45,19 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
             <>
                 {isWidthUp("sm", this.props.width) ?
                     <>
-                        <Grid item xs={12} sm={5} md={3} style={{maxWidth: 400}}>
+                        <Grid item xs={5} md={3}>
                             {playerSideBar}
                         </Grid>
-                        <Grid item xs={12} sm={7} md={9} container spacing={24}>
+                        <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
-                                <Card>
-                                    <CardHeader title="Playstyle"/>
-                                    <CardContent>
-                                        {playerPlayStyle}
-                                    </CardContent>
-                                </Card>
+                                <PlayerPlayStyleCard>
+                                    {playerPlayStyle}
+                                </PlayerPlayStyleCard>
                             </Grid>
                             <Grid item xs={12}>
-                                <Card>
-                                    <CardHeader title="Match History"
-                                                action={
-                                                    <div style={{marginRight: 8}}>
-                                                        <LinkButton to={PLAYER_MATCH_HISTORY_PAGE(this.props.player.id)}
-                                                                    tooltip="View full match history"
-                                                                    icon={ViewList} iconType="mui"
-                                                        >
-                                                            View full
-                                                        </LinkButton>
-                                                    </div>
-                                                }
-                                    />
+                                <PlayerMatchHistoryCard player={this.props.player}>
                                     {playerMatchHistory}
-                                </Card>
+                                </PlayerMatchHistoryCard>
                             </Grid>
                         </Grid>
                     </>

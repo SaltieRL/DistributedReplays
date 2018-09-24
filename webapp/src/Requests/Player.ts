@@ -2,8 +2,8 @@ import * as moment from "moment"
 import {doGet} from "../apiHandler/apiHandler"
 import {PlayerRanks} from "../Components/Player/Overview/SideBar/PlayerRanksCard"
 import {PlayerStats} from "../Components/Player/Overview/SideBar/PlayerStatsCard"
-import {ChartDataResponse} from "../Models/ChartData"
-import {MatchHistoryResponse} from "../Models/MatchHistory"
+import {MatchHistoryResponse} from "../Models/Player/MatchHistory"
+import {PlayStyleResponse} from "../Models/Player/PlayStyle"
 import {GameMode, parseReplay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
@@ -41,37 +41,40 @@ export const getStats = (id: string): Promise<PlayerStats> => {
     return doGet(`/player/${id}/profile_stats`)
 }
 
-export const getPlayerPlayStyles = (id: string): Promise<ChartDataResponse[]> => {
+export const getPlayerPlayStyles = (id: string): Promise<PlayStyleResponse> => {
     if (useMockData) {
-        return Promise.resolve([{
-                title: "Aggressiveness",
-                chartDataPoints: [
-                    {
-                        name: "Shots",
-                        value: 0.277
-                    },
-                    {
-                        name: "Possession",
-                        value: -0.117
-                    },
-                    {
-                        name: "Hits",
-                        value: -0.544
-                    },
-                    {
-                        name: "Shots/Hit",
-                        value: -0.544
-                    },
-                    {
-                        name: "Boost usage",
-                        value: 0.357
-                    },
-                    {
-                        name: "Speed",
-                        value: 0.4827
-                    }
-                ]
-            }]
+        return Promise.resolve({
+                showWarning: false,
+                chartDatas: [{
+                    title: "Aggressiveness",
+                    chartDataPoints: [
+                        {
+                            name: "Shots",
+                            value: 0.277
+                        },
+                        {
+                            name: "Possession",
+                            value: -0.117
+                        },
+                        {
+                            name: "Hits",
+                            value: -0.544
+                        },
+                        {
+                            name: "Shots/Hit",
+                            value: -0.544
+                        },
+                        {
+                            name: "Boost usage",
+                            value: 0.357
+                        },
+                        {
+                            name: "Speed",
+                            value: 0.4827
+                        }
+                    ]
+                }]
+            }
         )
     }
     return doGet(`/player/${id}/play_style`)

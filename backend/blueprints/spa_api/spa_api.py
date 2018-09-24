@@ -1,17 +1,19 @@
 import logging
 import os
+import uuid
 
-from flask import jsonify, Blueprint, current_app, request
+from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
 from backend.database.wrapper import stat_wrapper, player_wrapper
 from backend.tasks import celery_tasks
+from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
-from .service_layers.player.play_style import PlayStyleChartData
+from .service_layers.player.play_style import PlayStyleResponse
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
@@ -49,7 +51,14 @@ def better_jsonify(response: object):
 def api_get_replay_count():
     s = current_app.config['db']()
     count = s.query(Game.hash).count()
+    s.close()
     return jsonify(count)
+
+
+@bp.route('/global/queue/count')
+def api_get_queue_length():
+    steps = [0, 3, 6, 9]
+    return jsonify({'priority ' + str(k): v for k, v in zip(steps, get_queue_length())})
 
 
 @bp.route('/global/stats')
@@ -94,8 +103,8 @@ def api_get_player_ranks(id_):
 
 @bp.route('player/<id_>/play_style')
 def api_get_player_play_style(id_):
-    play_style_chart_datas = PlayStyleChartData.create_from_id(id_)
-    return better_jsonify(play_style_chart_datas)
+    play_style_response = PlayStyleResponse.create_from_id(id_)
+    return better_jsonify(play_style_response)
 
 
 @bp.route('player/<id_>/match_history')
@@ -127,7 +136,6 @@ def api_get_replay_basic_stats(id_):
     basic_stats = BasicStatChartData.create_from_id(id_)
     return better_jsonify(basic_stats)
 
-
 @bp.route('replay/group')
 def api_get_replay_group():
     ids = request.args.getlist('id[]')
@@ -135,6 +143,10 @@ def api_get_replay_group():
     stats = wrapper.get_group_stats(session, ids)
     session.close()
     return better_jsonify(stats)
+
+@bp.route('/replay/<id_>/download')
+def download_replay(id_):
+    return send_from_directory(current_app.config['REPLAY_DIR'], id_ + ".replay", as_attachment=True)
 
 
 @bp.route('/upload', methods=['POST'])
@@ -145,9 +157,15 @@ def api_upload_replays():
         raise CalculatedError(400, 'No files uploaded')
 
     for file in uploaded_files:
+        file.seek(0, os.SEEK_END)
+        file_length = file.tell()
+        if file_length > 5000000:
+            continue
         if not file.filename.endswith('replay'):
             continue
-        filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
+        file.seek(0)
+        ud = uuid.uuid4()
+        filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
         celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return 'Replay uploaded and queued for processing...', 202

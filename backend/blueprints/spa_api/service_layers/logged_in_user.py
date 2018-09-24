@@ -16,7 +16,7 @@ class LoggedInUser:
 
     @staticmethod
     def create() -> 'LoggedInUser':
-        if get_local_dev() and False:
+        if get_local_dev():
             mock_steam_profile = get_steam_profile_or_random_response("TESTLOCALUSER")['response']['players'][0]
             name = mock_steam_profile['personaname']
             id_ = mock_steam_profile['steamid']

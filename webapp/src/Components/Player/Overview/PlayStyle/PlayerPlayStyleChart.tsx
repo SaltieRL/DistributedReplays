@@ -1,8 +1,9 @@
 import {WithTheme, withTheme} from "@material-ui/core"
-import {ChartData, LinearTickOptions, RadialChartOptions} from "chart.js"
+import {ChartData, ChartDataSets, LinearTickOptions, RadialChartOptions} from "chart.js"
 import * as React from "react"
 import {Radar} from "react-chartjs-2"
 import {ChartDataResponse} from "../../../../Models/ChartData"
+import {roundLabelToMaxDPCallback} from "../../../../Utils/Chart"
 import {convertHexToRgba} from "../../../../Utils/Color"
 
 interface OwnProps {
@@ -12,7 +13,7 @@ interface OwnProps {
 type Props = OwnProps
     & WithTheme
 
-class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
+class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
     public render() {
         return (
             <Radar data={this.getChartData()} options={this.getChartOptions()}/>
@@ -31,8 +32,12 @@ class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
                     data: chartDataPoints.map((chartDataPoint) => chartDataPoint.value),
                     backgroundColor: convertHexToRgba(themeColors.light, 0.4),
                     pointBackgroundColor: convertHexToRgba(themeColors.dark),
-                    borderColor: convertHexToRgba(themeColors.main, 0.5)
-                },
+                    borderColor: convertHexToRgba(themeColors.main, 0.5),
+                    radius: 5,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointHitRadius: 5
+                } as ChartDataSets,
                 {
                     label: "Average",
                     data: chartDataPoints.map((chartDataPoint) =>
@@ -51,9 +56,14 @@ class PlayerTendenciesChartComponent extends React.PureComponent<Props> {
                     maxTicksLimit: 5
                 } as LinearTickOptions
             },
+            tooltips: {
+              callbacks: {
+                  label: roundLabelToMaxDPCallback
+              }
+            },
             maintainAspectRatio: false
         }
     }
 }
 
-export const PlayerTendenciesChart = withTheme()(PlayerTendenciesChartComponent)
+export const PlayerPlayStyleChart = withTheme()(PlayerPlayStyleChartComponent)

@@ -5,7 +5,7 @@ import {Provider} from "react-redux"
 import {App} from "./App"
 import "./index.css"
 import {store} from "./Redux"
-import registerServiceWorker from "./registerServiceWorker"
+import {unregister} from "./registerServiceWorker"
 import {Theme} from "./Theme"
 
 ReactDOM.render(
@@ -17,4 +17,6 @@ ReactDOM.render(
     </Provider>,
     document.getElementById("root") as HTMLElement
 )
-registerServiceWorker()
+
+// registerServiceWorker()
+unregister()

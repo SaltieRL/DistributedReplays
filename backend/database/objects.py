@@ -1,6 +1,7 @@
 # ORM objects
 import datetime
 import enum
+
 from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
@@ -130,8 +131,12 @@ class PlayerGame(DBObjectBase):
     boost_usage = Column(Float)
     num_small_boosts = Column(Integer)
     num_large_boosts = Column(Integer)
+    num_stolen_boosts = Column(Integer)
     wasted_collection = Column(Float)
     wasted_usage = Column(Float)
+    time_full_boost = Column(Float)
+    time_low_boost = Column(Float)
+    time_no_boost = Column(Float)
 
     # tendencies
     time_on_ground = Column(Float)
@@ -152,6 +157,19 @@ class PlayerGame(DBObjectBase):
     ball_hit_forward = Column(Float)
     ball_hit_backward = Column(Float)
 
+    # controller
+    is_keyboard = Column(Boolean)
+
+    # speed
+    time_at_boost_speed = Column(Float)
+    time_at_slow_speed = Column(Float)
+    time_at_super_sonic = Column(Float)
+
+    # metadata
+    is_bot = Column(Boolean)
+    first_frame_in_game = Column(Integer)
+    time_in_game = Column(Float)
+
 
 class Game(DBObjectBase):
     __tablename__ = 'games'
@@ -171,6 +189,9 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
+
+    # metadata
+    version = Column(Integer)
 
 
 class Player(DBObjectBase):

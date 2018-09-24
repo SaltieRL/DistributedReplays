@@ -75,6 +75,7 @@ class NavBarComponent extends React.PureComponent<Props> {
                                 <UploadModalWrapper buttonStyle="icon"/>
                             </Grid>
                             <Grid item xs="auto" className={classes.accountMenuGridItem}>
+                                {/*TODO: Show AccountMenu even on mobile, but as a 3 dots icon.*/}
                                 <AccountMenu loggedInUser={this.props.loggedInUser}/>
                             </Grid>
                         </>

@@ -12,7 +12,7 @@ import {
 import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import * as React from "react"
 import {getStats} from "../../../../Requests/Player"
-import {convertNumberToMaxDP} from "../../../../Utils/String"
+import {roundNumberToMaxDP} from "../../../../Utils/String"
 import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 
 interface CarStat {
@@ -58,7 +58,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                 <CardContent>
                     <LoadableWrapper load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
                         {this.state.playerStats &&
-                        <Grid container alignItems="center" justify="space-around" spacing={16}>
+                        <Grid container alignItems="center" justify="space-around" spacing={8}>
                             <Grid item xs="auto">
                                 <DirectionsCar/>
                             </Grid>
@@ -72,8 +72,10 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                     <Typography align="center">
                                         {this.state.playerStats.car.carName}
                                     </Typography>
+                                </Grid>
+                                <Grid item>
                                     <Typography className={classes.percentage}>
-                                        {convertNumberToMaxDP(this.state.playerStats.car.carPercentage * 100, 1)}%
+                                        {roundNumberToMaxDP(this.state.playerStats.car.carPercentage * 100, 1)}%
                                     </Typography>
                                 </Grid>
                             </Grid>

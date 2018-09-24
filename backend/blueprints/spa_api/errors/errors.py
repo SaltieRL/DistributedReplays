@@ -24,7 +24,12 @@ class UserHasNoReplays(CalculatedError):
 
 class ReplayNotFound(CalculatedError):
     status_code = 404
-    message = "This replay does not exist."
+    message = "Replay not found."
+
+
+class PlayerNotFound(CalculatedError):
+    status_code = 404
+    message = "Player not found"
 
 
 class MissingQueryParams(CalculatedError):

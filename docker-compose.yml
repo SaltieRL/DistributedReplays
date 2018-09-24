@@ -1,0 +1,31 @@
+version: "3"
+services:
+
+  postgres:
+    image: postgres:10-alpine
+    container_name: ccgg-postgres10
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - "./data/postgres:/var/lib/postgresql/data"
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:4-alpine
+    container_name: ccgg-redis4
+    restart: always
+    volumes:
+      - "./.data/redis:/data"
+    ports:
+      - 6379:6379
+
+#  rabbitmq:
+#    image: rabbitmq:3-alpine
+#    container_name: ccgg-rabbitmq
+#    restart: always
+#    volumes:
+#      - "./.data/rabbitmq:/data"
+#    ports:
+#      - 5672:5672
