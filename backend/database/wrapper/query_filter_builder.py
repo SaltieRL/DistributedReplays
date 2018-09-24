@@ -17,7 +17,7 @@ class QueryFilterBuilder:
         self.rank = None
         self.initial_query = None  # This is a query that is created with initial values
         self.team_size = None
-        self.replay_id = None
+        self.replay_ids = None
         self.is_game = False
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
         self.safe_checking = False
@@ -32,7 +32,7 @@ class QueryFilterBuilder:
         self.rank = None
         self.initial_query = None  # This is a query that is created with initial values
         self.team_size = None
-        self.replay_id = None
+        self.replay_ids = None
         self.is_game = False
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
         self.safe_checking = False # checks to make sure the replay has good data for the player
@@ -57,44 +57,44 @@ class QueryFilterBuilder:
 
         return self
 
-    def with_relative_start_time(self, days_ago=0, hours_ago=0)-> QueryFilterBuilder:
+    def with_relative_start_time(self, days_ago=0, hours_ago=0) -> 'QueryFilterBuilder':
         ago = datetime.datetime.now() - datetime.timedelta(days=days_ago, hours=hours_ago)
         return self.with_timeframe(start_time=ago)
 
-    def with_timeframe(self, start_time=None, end_time=None)-> QueryFilterBuilder:
+    def with_timeframe(self, start_time=None, end_time=None)-> 'QueryFilterBuilder':
         self.start_time = start_time
         self.end_time = end_time
         return self
 
-    def with_players(self, player_ids)-> QueryFilterBuilder:
+    def with_players(self, player_ids)-> 'QueryFilterBuilder':
         self.players = player_ids
         return self
 
-    def with_tags(self, tags)-> QueryFilterBuilder:
+    def with_tags(self, tags)-> 'QueryFilterBuilder':
         self.tags = tags
         return self
 
-    def with_stat_query(self, stats_query)-> QueryFilterBuilder:
+    def with_stat_query(self, stats_query)-> 'QueryFilterBuilder':
         self.stats_query = stats_query
         return self
 
-    def with_rank(self, rank)-> QueryFilterBuilder:
+    def with_rank(self, rank)-> 'QueryFilterBuilder':
         self.rank = rank
         return self
 
-    def with_replay_ids(self, replay_ids)-> QueryFilterBuilder:
+    def with_replay_ids(self, replay_ids)-> 'QueryFilterBuilder':
         self.replay_ids = replay_ids
         return self
 
-    def with_team_size(self, team_size)-> QueryFilterBuilder:
+    def with_team_size(self, team_size)-> 'QueryFilterBuilder':
         self.team_size = team_size
         return self
 
-    def with_safe_checking(self)-> QueryFilterBuilder:
+    def with_safe_checking(self)-> 'QueryFilterBuilder':
         self.safe_checking = True
         return self
 
-    def as_game(self)-> QueryFilterBuilder:
+    def as_game(self)-> 'QueryFilterBuilder':
         self.is_game = True
         return self
 
@@ -145,7 +145,7 @@ class QueryFilterBuilder:
 
         return filtered_query
 
-    def create_stored_query(self, session)-> QueryFilterBuilder:
+    def create_stored_query(self, session)-> 'QueryFilterBuilder':
         """
         Creates a query then stores it locally in this object.
         Useful if we want lots of different queries built off of a central object.
@@ -164,16 +164,14 @@ class QueryFilterBuilder:
         self.initial_query = query
         return self
 
-    def sticky(self)-> QueryFilterBuilder:
+    def sticky(self)-> 'QueryFilterBuilder':
         """Creates a list of values that should be saved from a clean"""
-        set_values = vars(self)
         self.sticky_values = dict()
         for key, value in vars(self).items():
             if value is not None and key != "sticky_values":
                 self.sticky_values[key] = value
 
         return self
-
 
     def handle_list(self, field, list):
         if len(self.players) == 1:
