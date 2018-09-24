@@ -35,7 +35,7 @@ class QueryFilterBuilder:
         self.replay_ids = None
         self.is_game = False
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
-        self.safe_checking = False # checks to make sure the replay has good data for the player
+        self.safe_checking = False  # checks to make sure the replay has good data for the player
         self.sticky_values = dict()
 
     def clean(self):
@@ -61,40 +61,40 @@ class QueryFilterBuilder:
         ago = datetime.datetime.now() - datetime.timedelta(days=days_ago, hours=hours_ago)
         return self.with_timeframe(start_time=ago)
 
-    def with_timeframe(self, start_time=None, end_time=None)-> 'QueryFilterBuilder':
+    def with_timeframe(self, start_time=None, end_time=None) -> 'QueryFilterBuilder':
         self.start_time = start_time
         self.end_time = end_time
         return self
 
-    def with_players(self, player_ids)-> 'QueryFilterBuilder':
+    def with_players(self, player_ids) -> 'QueryFilterBuilder':
         self.players = player_ids
         return self
 
-    def with_tags(self, tags)-> 'QueryFilterBuilder':
+    def with_tags(self, tags) -> 'QueryFilterBuilder':
         self.tags = tags
         return self
 
-    def with_stat_query(self, stats_query)-> 'QueryFilterBuilder':
+    def with_stat_query(self, stats_query) -> 'QueryFilterBuilder':
         self.stats_query = stats_query
         return self
 
-    def with_rank(self, rank)-> 'QueryFilterBuilder':
+    def with_rank(self, rank) -> 'QueryFilterBuilder':
         self.rank = rank
         return self
 
-    def with_replay_ids(self, replay_ids)-> 'QueryFilterBuilder':
+    def with_replay_ids(self, replay_ids) -> 'QueryFilterBuilder':
         self.replay_ids = replay_ids
         return self
 
-    def with_team_size(self, team_size)-> 'QueryFilterBuilder':
+    def with_team_size(self, team_size) -> 'QueryFilterBuilder':
         self.team_size = team_size
         return self
 
-    def with_safe_checking(self)-> 'QueryFilterBuilder':
+    def with_safe_checking(self) -> 'QueryFilterBuilder':
         self.safe_checking = True
         return self
 
-    def as_game(self)-> 'QueryFilterBuilder':
+    def as_game(self) -> 'QueryFilterBuilder':
         self.is_game = True
         return self
 
@@ -104,16 +104,17 @@ class QueryFilterBuilder:
         This method does not modify state of this object at all
         :return: A filtered query.
         """
+        has_joined_game = False
         if self.initial_query is None:
             filtered_query = session.query(*self.stats_query)
         else:
             filtered_query = self.initial_query
 
-        if (not self.has_joined_game) and (self.start_time is not None or
-                                           self.end_time is not None or
-                                           self.team_size is not None):
+        if (self.start_time is not None or
+                self.end_time is not None or
+                self.team_size is not None):
             filtered_query = filtered_query.join(Game)
-            self.has_joined_game = True
+            has_joined_game = True
 
         if self.start_time is not None:
             filtered_query = filtered_query.filter(
@@ -136,16 +137,15 @@ class QueryFilterBuilder:
             filtered_query = filtered_query.filter(self.handle_list(PlayerGame.player, self.players))
 
         if self.replay_ids is not None and len(self.replay_ids) > 0:
-            if self.is_game or self.has_joined_game:
+            if self.is_game or has_joined_game:
                 filtered_query = filtered_query.filter(self.handle_list(Game.hash, self.replay_ids))
             else:
                 filtered_query = filtered_query.filter(self.handle_list(PlayerGame.game, self.replay_ids))
-
         # Todo: implement tags remember to handle table joins correctly
 
         return filtered_query
 
-    def create_stored_query(self, session)-> 'QueryFilterBuilder':
+    def create_stored_query(self, session) -> 'QueryFilterBuilder':
         """
         Creates a query then stores it locally in this object.
         Useful if we want lots of different queries built off of a central object.
@@ -164,7 +164,7 @@ class QueryFilterBuilder:
         self.initial_query = query
         return self
 
-    def sticky(self)-> 'QueryFilterBuilder':
+    def sticky(self) -> 'QueryFilterBuilder':
         """Creates a list of values that should be saved from a clean"""
         self.sticky_values = dict()
         for key, value in vars(self).items():

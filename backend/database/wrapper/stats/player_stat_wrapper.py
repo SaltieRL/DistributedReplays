@@ -28,25 +28,28 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         return zipped_stats
 
-    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None):
+    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False):
         global_stats, global_stds = self.get_global_stats_by_rank(session, self.player_stats_filter,
                                                                   stats_query, std_query, player_rank=rank, redis=redis)
 
         self.player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
+        query = self.player_stats_filter.build_query(session)
+        stats = list(query.first())
+        if raw:
+            return [float(s) for s in stats], [float(s) for s in global_stats]
+        else:
+            return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
 
-        stats = list(self.player_stats_filter.build_query(session).first())
-
-        return self.compare_to_global(stats, global_stats, global_stds)
-
-    def get_averaged_stats(self, session, id_, rank=None, redis=None):
+    def get_averaged_stats(self, session, id_, rank=None, redis=None, raw=False):
         stats_query = self.stats_query
         std_query = self.std_query
         total_games = self.player_wrapper.get_total_games(session, id_)
         if total_games > 0:
-            stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis)
+            stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw)
         else:
             stats = [0.0] * len(stats_query)
-        return self.get_wrapped_stats(stats)
+            global_stats = [0.0] * len(stats_query)
+        return self.get_wrapped_stats(stats), self.get_wrapped_stats(global_stats)
 
     @staticmethod
     def get_stat_spider_charts():
