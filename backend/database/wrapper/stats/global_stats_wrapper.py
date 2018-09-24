@@ -63,7 +63,14 @@ class GlobalStatWrapper(SharedStatsWrapper):
         :param redis: The local cache
         :return:
         """
-        rank_index = get_rank_number(player_rank)
+        if player_rank is not None:
+            if isinstance(player_rank, list):
+                rank_index = get_rank_number(player_rank)
+            else:
+                rank_index = player_rank
+        else:
+            rank_index = 0
+        print(rank_index)
         if redis is not None:
             stat_string = redis.get('global_stats')
             if stat_string is not None:

@@ -3,6 +3,7 @@ from typing import List
 from flask import current_app
 
 from backend.blueprints.spa_api.errors.errors import UserHasNoReplays, CalculatedError
+from backend.utils.psyonix_api_handler import get_rank
 from .player_profile_stats import player_stat_wrapper, player_wrapper
 from ..chart_data import ChartData, ChartDataPoint
 
@@ -19,12 +20,15 @@ class PlayStyleResponse:
         self.showWarning = show_warning
 
     @classmethod
-    def create_from_id(cls, id_: str, raw=False):
+    def create_from_id(cls, id_: str, raw=False, rank=None):
+        print('Raw', raw)
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
             raise UserHasNoReplays()
-        averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_, raw=raw)
+        if rank is None:
+            rank = get_rank(id_)
+        averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_, raw=raw, rank=rank)
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
 
         play_style_chart_datas: List[PlayStyleChartData] = []

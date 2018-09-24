@@ -103,7 +103,12 @@ def api_get_player_ranks(id_):
 
 @bp.route('player/<id_>/play_style')
 def api_get_player_play_style(id_):
-    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args)
+    if 'rank' in request.args:
+        rank = int(request.args['rank'])
+    else:
+        rank = None
+    print(rank)
+    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank)
     return better_jsonify(play_style_response)
 
 
