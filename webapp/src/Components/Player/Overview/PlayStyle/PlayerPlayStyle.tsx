@@ -60,7 +60,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                     <Typography variant="subheading" align="center">
                                         {chartDataResponse.title}
                                     </Typography>
-                                    <PlayerPlayStyleChart data={chartDataResponse}/>
+                                    <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>
                                 </Grid>
                             )
                         })}
