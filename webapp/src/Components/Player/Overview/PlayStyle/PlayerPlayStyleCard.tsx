@@ -11,11 +11,7 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import {IconTooltip} from "../../../Shared/IconTooltip"
-
-interface Explanation {
-    statName: string
-    message: string
-}
+import {PlayStyleExplanationTable} from "./PlayStyleExplanationTable"
 
 const explanations: Explanation[] = [
     {
@@ -78,22 +74,7 @@ export class PlayerPlayStyleCard extends React.PureComponent<{}, State> {
                 >
                     <DialogTitle>Explanation of terms</DialogTitle>
                     <DialogContent>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Stat</TableCell>
-                                    <TableCell>Explanation</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {explanations.map((explanation) => (
-                                    <TableRow>
-                                        <TableCell>{explanation.statName}</TableCell>
-                                        <TableCell>{explanation.message}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                        <PlayStyleExplanationTable/>
                     </DialogContent>
                 </Dialog>
             </>
