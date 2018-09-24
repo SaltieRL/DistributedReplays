@@ -17,7 +17,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         # this Object needs to be pooled per a session so only one is used at a time
         self.player_stats_filter = QueryFilterBuilder()
-        self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(3).with_safe_checking().sticky()
+        self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
+            3).with_safe_checking().sticky()
 
     def get_wrapped_stats(self, stats):
         zipped_stats = dict()
@@ -60,44 +61,47 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
 
+    def _create_stats(self, session, player_filter=None, ids=None):
 
-
-    def _create_stats(self, session, query_filter=None, ids=None):
-        if query_filter is not None and ids is not None:
-            query_filter = and_(query_filter, PlayerGame.game.in_(ids))
-        elif ids is not None:
-            query_filter = PlayerGame.game.in_(ids)
-        average = session.query(*self.stats_query)
-        std_devs = session.query(*self.std_query)
-        if query_filter is not None:
-            average = average.filter(query_filter)
-            std_devs = std_devs.filter(query_filter)
-        average = average.first()
-        std_devs = std_devs.first()
+        average = QueryFilterBuilder().with_stat_query(self.stats_query)
+        std_devs = QueryFilterBuilder().with_stat_query(self.std_query)
+        if player_filter is not None:
+            average.with_players(player_filter)
+            std_devs.with_players(player_filter)
+        if ids is not None:
+            average.with_replay_ids(ids)
+            std_devs.with_replay_ids(ids)
+        average = average.build_query(session).first()
+        std_devs = std_devs.build_query(session).first()
 
         average = {n.field_name: round(float(s), 2) for n, s in zip(self.field_names, average) if s is not None}
         std_devs = {n.field_name: round(float(s), 2) for n, s in zip(self.field_names, std_devs) if s is not None}
         return {'average': average, 'std_dev': std_devs}
 
-    def get_group_stats(self, session, ids):
+    def get_group_stats(self, session, replay_ids):
         return_obj = {}
         # Players
-        player_tuples = session.query(PlayerGame.player, func.count(PlayerGame.player)).filter(
-            PlayerGame.game.in_(ids)).group_by(PlayerGame.player).all()
+        player_tuples = session.query(PlayerGame.player, func.min(PlayerGame.name), func.count(PlayerGame.player)).filter(
+            PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.player).all()
         return_obj['playerStats'] = {}
+        # ensemble are the players that do not have enough replays to make an individual analysis for them
         ensemble = []
         for player_tuple in player_tuples:
-            player, count = player_tuple
+            player, name, count = player_tuple
             if count > 1:
-                player_stats = self._create_stats(session, PlayerGame.player == player, ids=ids)
+                player_stats = self._create_stats(session, player_filter=player, ids=replay_ids)
+                print (name)
+                player_stats['name'] = name
                 return_obj['playerStats'][player] = player_stats
             else:
                 ensemble.append(player)
         if len(ensemble) > 0:
-            ensemble_stats = self._create_stats(session, PlayerGame.player.in_(ensemble), ids=ids)
+            # create stats that only includes the ensemble
+            ensemble_stats = self._create_stats(session, player_filter=ensemble, ids=replay_ids)
             return_obj['ensembleStats'] = ensemble_stats
         # STATS
         # Global
-        global_stats = self._create_stats(session, ids=ids)
-        return_obj['globalStats'] = global_stats
+        # create stats that include all the players in the game
+        # global_stats = self._create_stats(session, ids=replay_ids)
+        # return_obj['globalStats'] = global_stats
         return return_obj
