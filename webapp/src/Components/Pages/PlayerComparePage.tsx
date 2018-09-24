@@ -89,7 +89,8 @@ export class PlayerComparePage extends React.PureComponent<Props, State> {
                 {ignoreQueryPrefix: true}
             )
             if (queryParams.ids) {
-                this.setState({ids: _.uniq(queryParams.ids)})
+                const ids = Array.isArray(queryParams.ids) ? queryParams.ids : [queryParams.ids]
+                this.setState({ids: _.uniq(ids)})
             }
         }
     }
