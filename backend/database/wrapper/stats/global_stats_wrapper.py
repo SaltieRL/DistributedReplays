@@ -70,7 +70,6 @@ class GlobalStatWrapper(SharedStatsWrapper):
                 rank_index = player_rank
         else:
             rank_index = 0
-        print(rank_index)
         if redis is not None:
             stat_string = redis.get('global_stats')
             if stat_string is not None:

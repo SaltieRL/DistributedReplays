@@ -107,7 +107,6 @@ def api_get_player_play_style(id_):
         rank = int(request.args['rank'])
     else:
         rank = None
-    print(rank)
     play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank)
     return better_jsonify(play_style_response)
 

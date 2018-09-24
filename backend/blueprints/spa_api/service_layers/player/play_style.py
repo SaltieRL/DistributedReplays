@@ -21,7 +21,6 @@ class PlayStyleResponse:
 
     @classmethod
     def create_from_id(cls, id_: str, raw=False, rank=None):
-        print('Raw', raw)
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
