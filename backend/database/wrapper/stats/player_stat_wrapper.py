@@ -1,8 +1,9 @@
+import datetime
 import logging
 
-from sqlalchemy import func, and_
+from sqlalchemy import func
 
-from backend.database.objects import PlayerGame
+from backend.database.objects import PlayerGame, Game
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.stats.global_stats_wrapper import GlobalStatWrapper
@@ -50,6 +51,21 @@ class PlayerStatWrapper(GlobalStatWrapper):
             global_stats = [0.0] * len(stats_query)
         return self.get_wrapped_stats(stats), self.get_wrapped_stats(global_stats)
 
+    def get_progression_stats(self, session, id_):
+        mean_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
+                                   *self.stats_query).join(PlayerGame).group_by('date').order_by('date').all()
+        std_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
+                                  *self.std_query).join(PlayerGame).group_by('date').order_by('date').all()
+        mean_query = [list(q) for q in mean_query]
+        std_query = [list(q) for q in std_query]
+        results = []
+        for q, s in zip(mean_query, std_query):
+            result = {'name': datetime.datetime.strptime(q[0], '%y-%m').isoformat(),
+                      'average': self.get_wrapped_stats([float(qn) for qn in q[1:]]),
+                      'std_dev': self.get_wrapped_stats([float(qn) for qn in s[1:]])}
+            results.append(result)
+        return results
+
     @staticmethod
     def get_stat_spider_charts():
         titles = [  # 'Basic',
@@ -83,7 +99,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
     def get_group_stats(self, session, replay_ids):
         return_obj = {}
         # Players
-        player_tuples = session.query(PlayerGame.player, func.min(PlayerGame.name), func.count(PlayerGame.player)).filter(
+        player_tuples = session.query(PlayerGame.player, func.min(PlayerGame.name),
+                                      func.count(PlayerGame.player)).filter(
             PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.player).all()
         return_obj['playerStats'] = {}
         # ensemble are the players that do not have enough replays to make an individual analysis for them
@@ -92,7 +109,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
             player, name, count = player_tuple
             if count > 1:
                 player_stats = self._create_stats(session, player_filter=player, ids=replay_ids)
-                print (name)
+                print(name)
                 player_stats['name'] = name
                 return_obj['playerStats'][player] = player_stats
             else:

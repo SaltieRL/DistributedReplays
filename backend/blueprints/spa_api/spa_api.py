@@ -8,8 +8,6 @@ from werkzeug.utils import secure_filename
 from backend.blueprints.spa_api.service_layers.replay.groups import GroupChartData
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
 from backend.database.objects import Game
-from backend.database.wrapper import player_wrapper
-from backend.database.wrapper.stats import player_stat_wrapper
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
@@ -26,7 +24,6 @@ from .service_layers.replay.replay import Replay
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('api', __name__, url_prefix='/api/')
-
 
 
 def better_jsonify(response: object):
@@ -111,6 +108,13 @@ def api_get_player_play_style(id_):
     return better_jsonify(play_style_response)
 
 
+@bp.route('player/<id_>/play_style/progression')
+def api_get_player_play_style_progress(id_):
+    psr = PlayStyleResponse.create_progression(id_)
+    print(psr)
+    return better_jsonify(psr)
+
+
 @bp.route('player/<id_>/match_history')
 def api_get_player_match_history(id_):
     page = request.args.get('page')
@@ -140,11 +144,13 @@ def api_get_replay_basic_stats(id_):
     basic_stats = BasicStatChartData.create_from_id(id_)
     return better_jsonify(basic_stats)
 
+
 @bp.route('replay/group')
 def api_get_replay_group():
     ids = request.args.getlist('id[]')
     chart_data = GroupChartData.create_from_ids(ids)
     return better_jsonify(chart_data)
+
 
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):

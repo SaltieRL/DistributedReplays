@@ -2,7 +2,7 @@ from typing import List
 
 from flask import current_app
 
-from backend.blueprints.spa_api.errors.errors import UserHasNoReplays, CalculatedError
+from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
 from backend.utils.psyonix_api_handler import get_rank
 from .player_profile_stats import player_stat_wrapper, player_wrapper
 from ..chart_data import ChartData, ChartDataPoint
@@ -44,3 +44,13 @@ class PlayStyleResponse:
             chart_datas=play_style_chart_datas,
             show_warning=game_count <= cls.showWarningThreshold
         )
+
+    @classmethod
+    def create_progression(cls, id_: str):
+        session = current_app.config['db']()
+        game_count = player_wrapper.get_total_games(session, id_)
+        if game_count == 0:
+            raise UserHasNoReplays()
+        data = player_stat_wrapper.get_progression_stats(session, id_)
+        session.close()
+        return data
