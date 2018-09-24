@@ -156,19 +156,15 @@ def api_upload_replays():
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(file.filename))
         file.save(filename)
         result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-        task_ids.append(result.id)    
+        task_ids.append(result.id)
     return jsonify(task_ids), 202
 
 
 @bp.route('/upload', methods=['GET'])
 def api_get_parse_status():
-    queued_tasks = request.args.getlist("ids")
-    status = []
-    
-    for task in queued_tasks:
-        state = celery_tasks.get_task_state(task)
-        status.append(state.name)
-    return jsonify(status)
+    ids = request.args.getlist("ids")
+    states = [celery_tasks.get_task_state(id_).name for id_ in ids]
+    return jsonify(states)
 
 
 @bp.errorhandler(CalculatedError)
