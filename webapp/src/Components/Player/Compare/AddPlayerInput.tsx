@@ -1,4 +1,4 @@
-import {IconButton, TextField} from "@material-ui/core"
+import {IconButton, TextField, Tooltip} from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import * as React from "react"
 
@@ -18,7 +18,9 @@ export class AddPlayerInput extends React.PureComponent<Props> {
                            fullWidth
                            InputProps={{
                                endAdornment: (
-                                   <IconButton type="submit"><Add/></IconButton>
+                                   <Tooltip title="Add player" placement="left">
+                                       <IconButton type="submit"><Add/></IconButton>
+                                   </Tooltip>
                                )
                            }}
                 />
