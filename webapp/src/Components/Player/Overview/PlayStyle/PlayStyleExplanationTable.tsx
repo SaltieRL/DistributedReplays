@@ -40,14 +40,14 @@ export class PlayStyleExplanationTable extends React.PureComponent {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Stat</TableCell>
+                        <TableCell padding="dense">Stat</TableCell>
                         <TableCell>Explanation</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {explanations.map((explanation) => (
                         <TableRow>
-                            <TableCell>{explanation.statName}</TableCell>
+                            <TableCell padding="dense">{explanation.statName}</TableCell>
                             <TableCell>{explanation.message}</TableCell>
                         </TableRow>
                     ))}
