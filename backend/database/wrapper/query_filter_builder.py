@@ -20,8 +20,9 @@ class QueryFilterBuilder:
         self.replay_id = None
         self.is_game = False
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
+        self.sticky_values = dict()  # a list of values that survive a clean
 
-    def clear(self):
+    def reset(self):
         self.start_time = None
         self.end_time = None
         self.players = None
@@ -33,33 +34,59 @@ class QueryFilterBuilder:
         self.replay_id = None
         self.is_game = False
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
+        self.sticky_values = dict()
 
-    def with_relative_timeframe(self, days_ago, hours_ago):
+    def clean(self):
+        """
+        Clears the filter but maintains the initial query and other stateful values that are required.
+        """
+        query = self.initial_query
+        has_joined = self.has_joined_game
+        is_game = self.is_game
+        sticky_values = self.sticky_values
+        self.reset()
+        self.has_joined_game = has_joined
+        self.is_game = is_game
+        self.sticky_values = sticky_values
+        self.initial_query = query
+
+        for key, value in self.sticky_values.items():
+            setattr(self, key, value)
+
+        return self
+
+    def with_relative_start_time(self, days_ago=0, hours_ago=0)-> QueryFilterBuilder:
         ago = datetime.datetime.now() - datetime.timedelta(days=days_ago, hours=hours_ago)
         return self.with_timeframe(start_time=ago)
 
-    def with_timeframe(self, start_time=None, end_time=None):
+    def with_timeframe(self, start_time=None, end_time=None)-> QueryFilterBuilder:
         self.start_time = start_time
         self.end_time = end_time
         return self
 
-    def with_players(self, player_ids):
+    def with_players(self, player_ids)-> QueryFilterBuilder:
         self.players = player_ids
+        return self
 
-    def with_tags(self, tags):
+    def with_tags(self, tags)-> QueryFilterBuilder:
         self.tags = tags
+        return self
 
-    def with_stat_group(self, stats_query):
+    def with_stat_query(self, stats_query)-> QueryFilterBuilder:
         self.stats_query = stats_query
+        return self
 
-    def with_rank(self, rank):
+    def with_rank(self, rank)-> QueryFilterBuilder:
         self.rank = rank
+        return self
 
-    def with_replay_ids(self, replay_ids):
+    def with_replay_ids(self, replay_ids)-> QueryFilterBuilder:
         self.replay_ids = replay_ids
+        return self
 
-    def as_game(self):
+    def as_game(self)-> QueryFilterBuilder:
         self.is_game = True
+        return self
 
     def build_query(self, session):
         """
@@ -105,7 +132,7 @@ class QueryFilterBuilder:
 
         return filtered_query
 
-    def create_stored_query(self, session):
+    def create_stored_query(self, session)-> QueryFilterBuilder:
         """
         Creates a query then stores it locally in this object.
         Useful if we want lots of different queries built off of a central object.
@@ -116,15 +143,29 @@ class QueryFilterBuilder:
         # maintain state
         has_joined = self.has_joined_game
         is_game = self.is_game
-        self.clear()
+        self.reset()
         self.has_joined_game = has_joined
         self.is_game = is_game
 
         # reassign query
         self.initial_query = query
+        return self
+
+    def sticky(self)-> QueryFilterBuilder:
+        """Creates a list of values that should be saved from a clean"""
+        set_values = vars(self)
+        self.sticky_values = dict()
+        for key, value in vars(self).items():
+            if value is not None and key != "sticky_values":
+                self.sticky_values[key] = value
+
+        return self
 
     def handle_list(self, field, list):
         if len(self.players) == 1:
             return field == list[0]
         else:
             return field.in_(list)
+
+    def get_stored_query(self):
+        return self.initial_query

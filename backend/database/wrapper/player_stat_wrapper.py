@@ -9,6 +9,7 @@ from sqlalchemy import func, cast, literal, and_
 from backend.database.objects import PlayerGame, Game
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
 from backend.database.wrapper.player_wrapper import PlayerWrapper
+from backend.database.wrapper.rank_wrapper import get_rank_number
 from backend.utils.checks import get_local_dev
 
 logger = logging.getLogger(__name__)
@@ -32,24 +33,40 @@ class PlayerStatWrapper:
 
         return zipped_stats
 
-    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None):
-        global_stats = None
-        global_stds = None
+    def get_global_stats_by_rank(self, session, stats_filter: QueryFilterBuilder, stds_filter: QueryFilterBuilder,
+                                 player_rank=None, redis=None):
+        """
+        Returns the global stats based on the rank of a player
+        :param session: Session
+        :param stats_filter: a query filter for the stats.
+        :param stds_filter: A query filter for standard derivative
+        :param player_rank: The player that stats are associated with.  Uses unranked if rank is not found
+        :param redis: The local cache
+        :return:
+        """
+        rank_index = get_rank_number(player_rank)
         if redis is not None:
             stat_string = redis.get('global_stats')
             if stat_string is not None:
                 stats_dict = json.loads(stat_string)
-                if rank is not None:
-                    try:
-                        rank = rank[3]['tier']
-                    except IndexError:
-                        rank = rank[1]['tier']
-                else:
-                    rank = 0
-                global_stats = [stats_dict[s.field_name][rank]['mean'] for s in self.field_names]
-                global_stds = [stats_dict[s.field_name][rank]['std'] for s in self.field_names]
-            else:
-                redis = None
+                global_stats = [stats_dict[s.field_name][rank_index]['mean'] for s in self.field_names]
+                global_stds = [stats_dict[s.field_name][rank_index]['std'] for s in self.field_names]
+                return global_stats, global_stds
+
+        if player_rank is not None and not get_local_dev():
+            logger.debug('Filtering by rank')
+            global_stats = stats_filter.clean().with_rank(rank_index)
+            global_stds = stds_filter.clean().with_rank(rank_index)
+        else:
+            global_stats = stats_filter.clean()
+            global_stds = stds_filter.clean()
+
+        return global_stats.build_query(session).first(), global_stds.build_query(session).first()
+
+    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None):
+        global_stats = None
+        global_stds = None
+
         ago = datetime.datetime.now() - datetime.timedelta(days=30 * 6)  # 6 months in the past
         q = session.query(*stats_query).join(Game).filter(PlayerGame.total_hits > 0).filter(Game.teamsize == 3).filter(
             Game.match_date > ago)  # TODO: convert this madness into a reusable function
@@ -57,17 +74,7 @@ class PlayerStatWrapper:
             Game.match_date > ago)
         stats = list(q.filter(PlayerGame.player == id_).first())
         if redis is None:
-            if rank is not None and not get_local_dev():
-                logger.debug('Filtering by rank')
-                try:
-                    q_filtered = q.filter(PlayerGame.rank == rank[3]['tier'])
-                    stds = stds.filter(PlayerGame.rank == rank[3]['tier'])
-                except:
-                    q_filtered = q
-            else:
-                q_filtered = q
-            global_stds = stds.first()
-            global_stats = q_filtered.first()
+
 
         for i, s in enumerate(stats):
             player_stat = s
@@ -179,32 +186,7 @@ class PlayerStatWrapper:
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
 
-    def get_global_stats(self, sess):
-        results = {}
-        ranks = list(range(20))
-        try:
-            from flask import current_app
-            ago = datetime.datetime.now() - datetime.timedelta(days=current_app.config['STAT_DAY_LIMIT'])
-        except:
-            ago = datetime.datetime.now() - datetime.timedelta(days=30 * 6)  # 60 days in the past
 
-        def float_maybe(f):
-            if f is None:
-                return None
-            else:
-                return float(f)
-
-        for column, q in zip(self.field_names, self.stats_query):
-            column_results = []
-            for rank in ranks:
-                iq = sess.query(PlayerGame.player,
-                                q.label('avg')).join(Game).filter(Game.match_date > ago).filter(
-                    PlayerGame.rank == rank).group_by(PlayerGame.player).having(
-                    func.count(PlayerGame.player) > 5).subquery()
-                result = sess.query(func.avg(iq.c.avg), func.stddev_samp(iq.c.avg)).first()
-                column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
-            results[column.field_name] = column_results
-        return results
 
     def _create_stats(self, session, query_filter=None, ids=None):
         if query_filter is not None and ids is not None:
