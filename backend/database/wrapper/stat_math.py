@@ -7,6 +7,6 @@ def safe_divide(sql_value):
 
 
 def get_boost_efficiency():
-    wasted_collection = PlayerGame.wasted_collection - PlayerGame.num_stolen_boosts * 100
+    wasted_collection = PlayerGame.wasted_collection - PlayerGame.num_stolen_boosts * 50
     wasted_total = wasted_collection + PlayerGame.wasted_usage
     return wasted_total / safe_divide(PlayerGame.boost_usage)
