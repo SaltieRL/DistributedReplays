@@ -100,7 +100,7 @@ def get_rank_batch(ids, offline_redis=None):
         if 'player_skills' in player:
             found_modes = []
             for playlist in player['player_skills']:
-                if 'tier' in playlist:  # excludes unranked
+                if 'tier' in playlist and playlist['playlist'] in names:  # excludes unranked
                     mode = names[str(playlist['playlist'])]
                     found_modes.append(mode)
                     rank_data = {'mode': mode, 'rank_points': playlist['skill'],
