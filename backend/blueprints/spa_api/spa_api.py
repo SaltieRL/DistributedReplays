@@ -1,12 +1,13 @@
 import logging
 import os
+import re
 import uuid
 
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.spa_api.service_layers.replay.groups import GroupChartData
-from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
+from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
@@ -64,21 +65,29 @@ def api_get_global_stats():
     return better_jsonify(global_stats_graphs)
 
 
-@bp.route('/steam/resolve/<id_>')
-def api_resolve_steam(id_):
-    response = get_vanity_to_steam_id_or_random_response(id_, current_app)
-    if response is None:
-        raise CalculatedError(404, "User not found")
-    steam_id = response['response']['steamid']
-    return jsonify(steam_id)
-
-
 @bp.route('/me')
 def api_get_current_user():
     return better_jsonify(LoggedInUser.create())
 
 
 ### PLAYER
+
+@bp.route('player/<id_or_name>')
+def api_get_player(id_or_name):
+    if len(id_or_name) != 17 or re.match(re.compile('\d{17}'), id_or_name) is None:
+        # Treat as name
+        response = get_vanity_to_steam_id_or_random_response(id_or_name, current_app)
+        if response is None:
+            raise CalculatedError(404, "User not found")
+        steam_id = response['response']['steamid']
+        return jsonify(steam_id)
+    else:
+        # Treat as id
+        result = steam_id_to_profile(id_or_name)
+        if result is None:
+            raise CalculatedError(404, "User not found")
+        return jsonify(id_or_name)
+
 
 @bp.route('player/<id_>/profile')
 def api_get_player_profile(id_):
