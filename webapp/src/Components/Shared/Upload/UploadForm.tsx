@@ -30,22 +30,9 @@ interface State {
 }
 
 class UploadFormComponent extends React.PureComponent<Props, State> {
-    private readonly handleUpload = () => {
-        this.setState({uploadingStage: "pressedUpload"})
-        uploadReplays(this.state.files)
-            .then(this.clearFiles)
-            .then(() => {
-                this.setState({uploadingStage: "uploaded"})
-                this.props.showNotification({
-                    variant: "success",
-                    message: "Successfully uploaded replays",
-                    timeout: 5000
-                })
-            })
-            .catch(() => this.props.showNotification({
-                variant: "error",
-                message: "Could not upload replays."
-            }))
+    constructor(props: Props) {
+        super(props)
+        this.state = {files: [], rejected: []}
     }
 
     public render() {
@@ -96,10 +83,22 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
             </>
         )
     }
-
-    constructor(props: Props) {
-        super(props)
-        this.state = {files: [], rejected: []}
+    private readonly handleUpload = () => {
+        this.setState({uploadingStage: "pressedUpload"})
+        uploadReplays(this.state.files)
+            .then(this.clearFiles)
+            .then(() => {
+                this.setState({uploadingStage: "uploaded"})
+                this.props.showNotification({
+                    variant: "success",
+                    message: "Successfully uploaded replays",
+                    timeout: 5000
+                })
+            })
+            .catch(() => this.props.showNotification({
+                variant: "error",
+                message: "Could not upload replays."
+            }))
     }
 
     private readonly handleDrop: DropFilesEventHandler = (accepted, rejected) => {

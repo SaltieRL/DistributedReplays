@@ -17,16 +17,9 @@ interface State {
 }
 
 export class LoadableWrapperComponent extends React.PureComponent<Props, State> {
-    private readonly attemptToLoad = () => {
-        this.setState({loadingState: "loading"})
-        this.props.load()
-            .then(() => this.setState({loadingState: "loaded"}))
-            .catch((appError: AppError) => {
-                this.setState({
-                    loadingState: "failed"
-                })
-                this.props.showNotification({variant: "appError", appError})
-            })
+    constructor(props: Props) {
+        super(props)
+        this.state = {loadingState: "not loaded"}
     }
 
     public componentDidMount() {
@@ -69,9 +62,16 @@ export class LoadableWrapperComponent extends React.PureComponent<Props, State> 
         )
     }
 
-    constructor(props: Props) {
-        super(props)
-        this.state = {loadingState: "not loaded"}
+    private readonly attemptToLoad = () => {
+        this.setState({loadingState: "loading"})
+        this.props.load()
+            .then(() => this.setState({loadingState: "loaded"}))
+            .catch((appError: AppError) => {
+                this.setState({
+                    loadingState: "failed"
+                })
+                this.props.showNotification({variant: "appError", appError})
+            })
     }
 }
 
