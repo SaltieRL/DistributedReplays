@@ -10,6 +10,7 @@ import {PluginsPage} from "./Components/Pages/PluginsPage"
 import {ReplayPage} from "./Components/Pages/ReplayPage"
 import {UploadPage} from "./Components/Pages/UploadPage"
 import {ReplayViewer} from "./Components/Replay/ReplayViewer/ReplayViewer"
+import {Notifications} from "./Components/Shared/Notification/Notifications"
 import {
     ABOUT_LINK,
     GLOBAL_STATS_LINK,
@@ -46,6 +47,7 @@ class AppComponent extends React.Component<Props> {
                         <Redirect from="*" to="/"/>
                     </Switch>
                 </BrowserRouter>
+                <Notifications/>
             </div>
         )
     }
