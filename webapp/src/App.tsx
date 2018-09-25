@@ -19,6 +19,7 @@ import {
     REPLAY_PAGE_LINK,
     UPLOAD_LINK
 } from "./Globals"
+import {Notifications} from "./Components/Shared/Notification/Notifications"
 
 type Props = WithStyles<typeof styles>
 
@@ -46,6 +47,7 @@ class AppComponent extends React.Component<Props> {
                         <Redirect from="*" to="/"/>
                     </Switch>
                 </BrowserRouter>
+                <Notifications/>
             </div>
         )
     }
