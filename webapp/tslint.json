@@ -52,7 +52,6 @@
     "quotemark": [true, "double", "avoid-escape", "jsx-double"],
     "space-before-function-paren": [true, "never"],
     "whitespace": true,
-    "member-ordering": false,
     "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
     "jsx-boolean-value": false,
     "jsx-no-lambda": false,
