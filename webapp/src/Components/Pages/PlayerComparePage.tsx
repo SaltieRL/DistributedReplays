@@ -4,7 +4,7 @@ import * as qs from "qs"
 import * as React from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {PlayStyleResponse} from "../../Models/Player/PlayStyle"
-import {getPlayer, getPlayerFromName, getPlayerPlayStyles} from "../../Requests/Player"
+import {getPlayer, getPlayerFromNameOrId, getPlayerPlayStyles} from "../../Requests/Player"
 import {AddPlayerInput} from "../Player/Compare/AddPlayerInput"
 import {PlayerChip} from "../Player/Compare/PlayerChip"
 import {PlayerCompareCharts} from "../Player/Compare/PlayerCompareCharts"
@@ -160,7 +160,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
         }
 
         if (ids.indexOf(inputId) === -1) {
-            const playerId = inputId.match(/\d{17}/) ? Promise.resolve(inputId) : getPlayerFromName(inputId)
+            const playerId = getPlayerFromNameOrId(inputId)
 
             playerId
                 .then(getPlayer)

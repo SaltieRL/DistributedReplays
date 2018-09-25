@@ -7,11 +7,12 @@ import {PlayStyleResponse} from "../Models/Player/PlayStyle"
 import {GameMode, parseReplay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
-export const getPlayerFromName = (name: string): Promise<string> => {
+// Checks if nameOrId exists by querying backend. Resolves name to Id.
+export const getPlayerFromNameOrId = (nameOrId: string): Promise<string> => {
     if (useMockData) {
         return Promise.resolve("testUserId")
     }
-    return doGet(`/steam/resolve/${name}`)
+    return doGet(`/player/${nameOrId}`)
 }
 
 export const getPlayer = (id: string): Promise<Player> => {

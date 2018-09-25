@@ -30,7 +30,6 @@ bp = Blueprint('api', __name__, url_prefix='/api/')
 wrapper = player_stat_wrapper.PlayerStatWrapper(player_wrapper.PlayerWrapper(limit=10))
 avg_list, field_list, std_list = wrapper.get_stats_query()
 
-regex = re.compile('\d{17}')
 
 def better_jsonify(response: object):
     """
@@ -70,26 +69,29 @@ def api_get_global_stats():
     return better_jsonify(global_stats_graphs)
 
 
-@bp.route('/steam/resolve/<id_>')
-def api_resolve_steam(id_):
-    if len(id_) != 17 or re.match(regex, id_) is None:
-        response = get_vanity_to_steam_id_or_random_response(id_, current_app)
-        if response is None:
-            raise CalculatedError(404, "User not found")
-        steam_id = response['response']['steamid']
-        return jsonify(steam_id)
-    result = steam_id_to_profile(id_)
-    if result is None:
-        raise CalculatedError(404, "User not found")
-    return jsonify(id_)
-
-
 @bp.route('/me')
 def api_get_current_user():
     return better_jsonify(LoggedInUser.create())
 
 
 ### PLAYER
+
+@bp.route('player/<id_or_name>')
+def api_get_player(id_or_name):
+    if len(id_or_name) != 17 or re.match(re.compile('\d{17}'), id_or_name) is None:
+        # Treat as name
+        response = get_vanity_to_steam_id_or_random_response(id_or_name, current_app)
+        if response is None:
+            raise CalculatedError(404, "User not found")
+        steam_id = response['response']['steamid']
+        return jsonify(steam_id)
+    else:
+        # Treat as id
+        result = steam_id_to_profile(id_or_name)
+        if result is None:
+            raise CalculatedError(404, "User not found")
+        return jsonify(id_or_name)
+
 
 @bp.route('player/<id_>/profile')
 def api_get_player_profile(id_):
@@ -144,6 +146,7 @@ def api_get_replay_basic_stats(id_):
     basic_stats = BasicStatChartData.create_from_id(id_)
     return better_jsonify(basic_stats)
 
+
 @bp.route('replay/group')
 def api_get_replay_group():
     ids = request.args.getlist('id[]')
@@ -151,6 +154,7 @@ def api_get_replay_group():
     stats = wrapper.get_group_stats(session, ids)
     session.close()
     return better_jsonify(stats)
+
 
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
