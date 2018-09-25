@@ -61,7 +61,6 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
     private readonly getStats = (): Promise<void> => {
         return getGlobalStats()
             .then((globalStats) => this.setState({globalStats}))
-        // TODO: Set notification on load failure.
     }
 }
 

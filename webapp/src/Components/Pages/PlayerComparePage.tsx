@@ -8,6 +8,7 @@ import {getPlayer, getPlayerFromName, getPlayerPlayStyles} from "../../Requests/
 import {AddPlayerInput} from "../Player/Compare/AddPlayerInput"
 import {PlayerChip} from "../Player/Compare/PlayerChip"
 import {PlayerCompareCharts} from "../Player/Compare/PlayerCompareCharts"
+import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
 import {BasePage} from "./BasePage"
 
 interface PlayerCompareQueryParams {
@@ -15,6 +16,7 @@ interface PlayerCompareQueryParams {
 }
 
 type Props = RouteComponentProps<{}>
+    & WithNotifications
 
 interface State {
     ids: string[]
@@ -23,7 +25,7 @@ interface State {
     inputId: string
 }
 
-export class PlayerComparePage extends React.PureComponent<Props, State> {
+class PlayerComparePageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {ids: [], players: [], playerPlayStyles: [], inputId: ""}
@@ -127,8 +129,7 @@ export class PlayerComparePage extends React.PureComponent<Props, State> {
                 playerPlayStyles: removeIndexFromArray(this.state.playerPlayStyles!, index)
             })
         } catch {
-            console.log("Error removing player")
-            // TODO: Handle errors w/ notification
+            this.props.showNotification({variant: "error", message: "Error removing player", timeout: 2000})
         }
     }
 
@@ -143,8 +144,7 @@ export class PlayerComparePage extends React.PureComponent<Props, State> {
                 })
             })
             .catch(() => {
-                console.log("Error removing player")
-                // TODO: handle catch and display notification
+                this.props.showNotification({variant: "error", message: "Error adding player", timeout: 2000})
             })
     }
 
@@ -165,20 +165,29 @@ export class PlayerComparePage extends React.PureComponent<Props, State> {
             playerId
                 .then(getPlayer)
                 .catch(() => {
-                    console.log("Entered id is not a known player")
-                    // TODO: handle catch and display notification
+                    this.props.showNotification({
+                        variant: "error",
+                        message: "Entered id is not a known player",
+                        timeout: 3000
+                    })
                 })
                 .then(this.handleAddPlayer)
                 .then(() => this.setState({inputId: ""}))
                 .catch((e) => {
                     console.log(e) // TypeError expected here when above .catch catches something.
+                    // TODO: Figure out what the right thing to do here is.
                 })
         } else {
-            console.log("Entered id has already been added")
-            // TODO: add notification
+            this.props.showNotification({
+                variant: "info",
+                message: "Entered id has already been added",
+                timeout: 2000
+            })
         }
     }
 }
+
+export const PlayerComparePage = withNotifications()(PlayerComparePageComponent)
 
 const removeIndexFromArray = <T extends {}>(array: T[], index: number): T[] => {
     return array.filter((__, i) => i !== index)
