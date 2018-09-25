@@ -6,6 +6,8 @@ export const notificationsReducer: Reducer<NotificationsState, NotificationsActi
     switch (action.type) {
         case "SHOW_NOTIFICATION":
             return [...state, action.notification]
+        case "DISMISS_NOTIFICATION":
+            return state.slice(1)
         default:
             return state
     }
