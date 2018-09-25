@@ -160,7 +160,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
         }
 
         if (ids.indexOf(inputId) === -1) {
-            const playerId = inputId.match(/\d{17}/) ? getPlayerFromName(inputId) : Promise.resolve(inputId)
+            const playerId = inputId.match(/\d{17}/) ? Promise.resolve(inputId) : getPlayerFromName(inputId)
 
             playerId
                 .then(getPlayer)
