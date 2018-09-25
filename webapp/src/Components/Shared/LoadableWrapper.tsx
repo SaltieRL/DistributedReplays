@@ -39,11 +39,6 @@ export class LoadableWrapperComponent extends React.PureComponent<Props, State> 
         }
     }
 
-    constructor(props: Props) {
-        super(props)
-        this.state = {loadingState: "not loaded"}
-    }
-
     public render() {
         const {classes} = this.props
         const {loadingState} = this.state
@@ -72,6 +67,11 @@ export class LoadableWrapperComponent extends React.PureComponent<Props, State> 
                 }
             </>
         )
+    }
+
+    constructor(props: Props) {
+        super(props)
+        this.state = {loadingState: "not loaded"}
     }
 }
 

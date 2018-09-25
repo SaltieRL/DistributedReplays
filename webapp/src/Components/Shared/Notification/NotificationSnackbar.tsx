@@ -23,7 +23,7 @@ type NotificationVariant = "success" | "info" | "warning" | "error"
 interface DefaultNotificationProps {
     variant: NotificationVariant
     message: string
-    timeout: number
+    timeout?: number
 }
 
 interface AppErrorProps {
@@ -46,8 +46,7 @@ type Props = NotificationProps
 class NotificationSnackbarComponent extends React.PureComponent<Props> {
 
     public render() {
-        // const {classes, variant, message} = this.props
-        const {classes, variant, message, timeout} = this.props.variant !== "appError" ? this.props
+        const {variant, message, timeout} = this.props.variant !== "appError" ? this.props
             : {
                 ...this.props,
                 variant: "error",
@@ -55,7 +54,7 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                 timeout: undefined
             }
 
-        const {open, handleClose, count} = this.props
+        const {classes, open, handleClose, count} = this.props
 
         const Icon = variantIcon[variant]
         const closeButton = <IconButton
@@ -73,7 +72,7 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                     horizontal: "left"
                 }}
                 open={open}
-                autoHideDuration={variant === "error" ? undefined : timeout}
+                autoHideDuration={timeout}
                 onClose={handleClose}
             >
                 <SnackbarContent

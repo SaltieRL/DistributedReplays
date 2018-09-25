@@ -15,24 +15,38 @@ import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
 import {DropFilesEventHandler} from "react-dropzone"
+import {AppError} from "../../../Models/Error"
 import {uploadReplays} from "../../../Requests/Global"
-import {NotificationSnackbar} from "../Notification/NotificationSnackbar"
+import {WithNotifications, withNotifications} from "../Notification/NotificationUtils"
 import {BakkesModAd} from "./BakkesModAd"
 import {UploadDropzone} from "./UploadDropzone"
 
 type Props = WithStyles<typeof styles>
+    & WithNotifications
 
 interface State {
     files: File[]
     rejected: File[]
     uploadingStage?: "pressedUpload" | "uploaded"
-    notificationOpen: boolean
 }
 
 class UploadFormComponent extends React.PureComponent<Props, State> {
-    constructor(props: Props) {
-        super(props)
-        this.state = {files: [], rejected: [], notificationOpen: false}
+    private readonly handleUpload = () => {
+        this.setState({uploadingStage: "pressedUpload"})
+        uploadReplays(this.state.files)
+            .then(this.clearFiles)
+            .then(() => {
+                this.setState({uploadingStage: "uploaded"})
+                this.props.showNotification({
+                    variant: "success",
+                    message: "Successfully uploaded replays",
+                    timeout: 5000
+                })
+            })
+            .catch((appError: AppError) => this.props.showNotification({
+                variant: "appError",
+                appError
+            }))
     }
 
     public render() {
@@ -80,11 +94,6 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                         </div>
                     }
                 </Card>
-                <NotificationSnackbar open={this.state.notificationOpen}
-                                      variant="success"
-                                      handleClose={this.handleNotificationClose}
-                                      message="Successfully uploaded replays."
-                                      timeout={5000}/>
             </>
         )
     }
@@ -96,22 +105,13 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         })
     }
 
-    private readonly handleUpload = () => {
-        this.setState({uploadingStage: "pressedUpload"})
-        uploadReplays(this.state.files)
-            .then(this.clearFiles)
-            .then(() => this.setState({uploadingStage: "uploaded", notificationOpen: true}))
-    } // TODO: Move Notification to redux.
+    constructor(props: Props) {
+        super(props)
+        this.state = {files: [], rejected: []}
+    }
 
     private readonly clearFiles = () => {
         this.setState({files: [], rejected: []})
-    }
-
-    private readonly handleNotificationClose = (event: any, reason?: string) => {
-        if (reason === "clickaway") {
-            return
-        }
-        this.setState({notificationOpen: false})
     }
 }
 
@@ -124,4 +124,4 @@ const styles = (theme: Theme) => createStyles({
     }
 })
 
-export const UploadForm = withStyles(styles)(UploadFormComponent)
+export const UploadForm = withStyles(styles)(withNotifications()(UploadFormComponent))
