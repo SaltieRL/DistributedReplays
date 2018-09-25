@@ -1,10 +1,9 @@
 import * as React from "react"
-import {NotificationProps, NotificationSnackbar} from "./NotificationSnackbar"
-import {StoreState} from "../../../Redux"
 import {connect} from "react-redux"
 import {Dispatch} from "redux"
+import {StoreState} from "../../../Redux"
 import {dismissNotificationAction} from "../../../Redux/notifications/actions"
-
+import {NotificationProps, NotificationSnackbar} from "./NotificationSnackbar"
 
 type Props = ReturnType<typeof mapStateToProps>
     & ReturnType<typeof mapDispatchToProps>
@@ -48,7 +47,6 @@ class NotificationsComponent extends React.PureComponent<Props, State> {
         )
     }
 }
-
 
 export const mapStateToProps = (state: StoreState) => ({
     notifications: state.notifications

@@ -10,6 +10,7 @@ import {PluginsPage} from "./Components/Pages/PluginsPage"
 import {ReplayPage} from "./Components/Pages/ReplayPage"
 import {UploadPage} from "./Components/Pages/UploadPage"
 import {ReplayViewer} from "./Components/Replay/ReplayViewer/ReplayViewer"
+import {Notifications} from "./Components/Shared/Notification/Notifications"
 import {
     ABOUT_LINK,
     GLOBAL_STATS_LINK,
@@ -19,7 +20,6 @@ import {
     REPLAY_PAGE_LINK,
     UPLOAD_LINK
 } from "./Globals"
-import {Notifications} from "./Components/Shared/Notification/Notifications"
 
 type Props = WithStyles<typeof styles>
 
