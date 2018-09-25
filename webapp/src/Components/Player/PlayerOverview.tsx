@@ -7,6 +7,7 @@ import {PlayerMatchHistory} from "./Overview/MatchHistory/PlayerMatchHistory"
 import {PlayerMatchHistoryCard} from "./Overview/MatchHistory/PlayerMatchHistoryCard"
 import {PlayerPlayStyle} from "./Overview/PlayStyle/PlayerPlayStyle"
 import {PlayerPlayStyleCard} from "./Overview/PlayStyle/PlayerPlayStyleCard"
+import {PlayStyleActions} from "./Overview/PlayStyle/PlayStyleActions"
 import {PlayerSideBar} from "./Overview/SideBar/PlayerSideBar"
 
 interface OwnProps {
@@ -50,7 +51,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
-                                <PlayerPlayStyleCard>
+                                <PlayerPlayStyleCard player={this.props.player}>
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
                             </Grid>
@@ -79,7 +80,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 playerSideBar
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
-                                playerPlayStyle
+                                <>
+                                    <PlayStyleActions player={this.props.player} useFullSizeCompareButton/>
+                                    {playerPlayStyle}
+                                </>
                                 }
                                 {this.state.selectedMobileTab === "Match History" &&
                                 playerMatchHistory
