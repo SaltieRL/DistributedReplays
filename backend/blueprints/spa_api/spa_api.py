@@ -6,7 +6,7 @@ import uuid
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response
+from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.wrapper import player_wrapper
 from backend.database.wrapper.stats import player_stat_wrapper
@@ -78,6 +78,9 @@ def api_resolve_steam(id_):
             raise CalculatedError(404, "User not found")
         steam_id = response['response']['steamid']
         return jsonify(steam_id)
+    result = steam_id_to_profile(id_)
+    if result is None:
+        raise CalculatedError(404, "User not found")
     return jsonify(id_)
 
 
