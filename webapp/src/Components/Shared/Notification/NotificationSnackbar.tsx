@@ -1,4 +1,5 @@
 import {
+    Badge,
     createStyles,
     IconButton,
     Snackbar,
@@ -33,6 +34,7 @@ interface AppErrorProps {
 interface NotificationSnackbarProps {
     open: boolean
     handleClose: (event: any, reason?: string) => void
+    count?: number
 }
 
 export type NotificationProps = DefaultNotificationProps | AppErrorProps
@@ -45,16 +47,25 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
 
     public render() {
         // const {classes, variant, message} = this.props
-        const {classes, variant, message} = this.props.variant !== "appError" ? this.props
+        const {classes, variant, message, timeout} = this.props.variant !== "appError" ? this.props
             : {
                 ...this.props,
                 variant: "error",
-                message: `${this.props.appError.code} Error: ${this.props.appError.message}`
+                message: `${this.props.appError.code} Error: ${this.props.appError.message}`,
+                timeout: undefined
             }
 
-        const {open, handleClose} = this.props
+        const {open, handleClose, count} = this.props
 
         const Icon = variantIcon[variant]
+        let closeButton = <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={handleClose}
+        >
+            <Close/>
+        </IconButton>
         return (
             <Snackbar
                 anchorOrigin={{
@@ -62,7 +73,7 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                     horizontal: "left"
                 }}
                 open={open}
-                autoHideDuration={variant === "error" ? undefined : 6000}
+                autoHideDuration={variant === "error" ? undefined : timeout}
                 onClose={handleClose}
             >
                 <SnackbarContent
@@ -73,16 +84,13 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                             {message}
                         </Typography>
                     }
-                    action={[
-                        <IconButton
-                            key="close"
-                            aria-label="Close"
-                            color="inherit"
-                            onClick={handleClose}
-                        >
-                            <Close/>
-                        </IconButton>
-                    ]}
+                    action={count ?
+                        <Badge badgeContent={count} color="primary">
+                            {closeButton}
+                        </Badge>
+                        :
+                        closeButton
+                    }
                 />
             </Snackbar>
         )
