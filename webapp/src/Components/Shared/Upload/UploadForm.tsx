@@ -15,7 +15,6 @@ import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
 import {DropFilesEventHandler} from "react-dropzone"
-import {AppError} from "../../../Models/Error"
 import {uploadReplays} from "../../../Requests/Global"
 import {WithNotifications, withNotifications} from "../Notification/NotificationUtils"
 import {BakkesModAd} from "./BakkesModAd"
@@ -43,9 +42,9 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                     timeout: 5000
                 })
             })
-            .catch((appError: AppError) => this.props.showNotification({
-                variant: "appError",
-                appError
+            .catch(() => this.props.showNotification({
+                variant: "error",
+                message: "Could not upload replays."
             }))
     }
 
@@ -98,16 +97,16 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         )
     }
 
+    constructor(props: Props) {
+        super(props)
+        this.state = {files: [], rejected: []}
+    }
+
     private readonly handleDrop: DropFilesEventHandler = (accepted, rejected) => {
         this.setState({
             files: accepted,
             rejected
         })
-    }
-
-    constructor(props: Props) {
-        super(props)
-        this.state = {files: [], rejected: []}
     }
 
     private readonly clearFiles = () => {

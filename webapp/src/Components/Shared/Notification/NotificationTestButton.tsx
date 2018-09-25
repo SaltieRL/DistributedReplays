@@ -12,18 +12,6 @@ interface State {
 }
 
 class NotificationTestButtonComponent extends React.PureComponent<Props, State> {
-    private readonly showNotification = () => {
-        this.props.showNotification(this.createNotification())
-        this.setState({count: this.state.count + 1})
-    }
-    private readonly createNotification = (): NotificationProps => {
-        return {
-            variant: "success",
-            message: `Success notification ${this.state.count}`,
-            timeout: 1000
-        }
-    }
-
     constructor(props: Props) {
         super(props)
         this.state = {count: 0}
@@ -35,6 +23,19 @@ class NotificationTestButtonComponent extends React.PureComponent<Props, State> 
                 TEST NOTIFICATION
             </Button>
         )
+    }
+
+    private readonly showNotification = () => {
+        this.props.showNotification(this.createNotification())
+        this.setState({count: this.state.count + 1})
+    }
+
+    private readonly createNotification = (): NotificationProps => {
+        return {
+            variant: "success",
+            message: `Success notification ${this.state.count}`,
+            timeout: 1000
+        }
     }
 }
 

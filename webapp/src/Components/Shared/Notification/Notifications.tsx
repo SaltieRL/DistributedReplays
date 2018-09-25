@@ -14,14 +14,6 @@ interface State {
 }
 
 class NotificationsComponent extends React.PureComponent<Props, State> {
-    private readonly handleClose = (event: unknown, reason?: string): void => {
-        if (reason === "clickaway") {
-            return
-        }
-        this.setState({open: false})
-        this.props.dismissNotification()
-    }
-
     constructor(props: Props) {
         super(props)
         this.state = {
@@ -45,6 +37,14 @@ class NotificationsComponent extends React.PureComponent<Props, State> {
                                   count={notificationsCount > 1 ? notificationsCount : undefined}
             />
         )
+    }
+
+    private readonly handleClose = (event: unknown, reason?: string): void => {
+        if (reason === "clickaway") {
+            return
+        }
+        this.setState({open: false})
+        this.props.dismissNotification()
     }
 }
 
