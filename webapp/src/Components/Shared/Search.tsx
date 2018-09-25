@@ -4,7 +4,7 @@ import {IconButton, Paper, TextField} from "@material-ui/core"
 import * as React from "react"
 import {Redirect} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../Globals"
-import {getPlayerFromNameOrId} from "../../Requests/Player"
+import {resolvePlayerNameOrId} from "../../Requests/Player"
 
 interface Props {
     usePaper: boolean
@@ -77,7 +77,7 @@ export class Search extends React.PureComponent<Props, State> {
 
     private readonly onSubmit: React.FormEventHandler = (e) => {
         e.preventDefault()
-        getPlayerFromNameOrId(this.state.enteredText)
+        resolvePlayerNameOrId(this.state.enteredText)
             .then((resolvedId) => this.setState({resolvedId}))
     }
 }

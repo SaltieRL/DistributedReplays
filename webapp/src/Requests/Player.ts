@@ -8,7 +8,7 @@ import {GameMode, parseReplay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
 // Checks if nameOrId exists by querying backend. Resolves name to Id.
-export const getPlayerFromNameOrId = (nameOrId: string): Promise<string> => {
+export const resolvePlayerNameOrId = (nameOrId: string): Promise<string> => {
     if (useMockData) {
         return Promise.resolve("testUserId")
     }
