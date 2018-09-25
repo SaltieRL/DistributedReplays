@@ -10,7 +10,6 @@ export const showNotifictionAction = (notification: NotificationProps): ShowNoti
     type: "SHOW_NOTIFICATION"
 })
 
-
 type DismissNotificationAction = Action<"DISMISS_NOTIFICATION">
 
 export const dismissNotificationAction = (): DismissNotificationAction => ({

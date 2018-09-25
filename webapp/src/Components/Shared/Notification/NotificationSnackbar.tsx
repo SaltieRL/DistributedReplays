@@ -58,7 +58,7 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
         const {open, handleClose, count} = this.props
 
         const Icon = variantIcon[variant]
-        let closeButton = <IconButton
+        const closeButton = <IconButton
             key="close"
             aria-label="Close"
             color="inherit"
