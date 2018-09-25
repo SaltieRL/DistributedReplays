@@ -30,15 +30,15 @@ interface AppErrorProps {
     appError: AppError
 }
 
-interface SnackbarProps {
+interface NotificationSnackbarProps {
     open: boolean
     handleClose: (event: any, reason?: string) => void
 }
 
-type OwnProps = DefaultNotificationProps | AppErrorProps
+export type NotificationProps = DefaultNotificationProps | AppErrorProps
 
-type Props = OwnProps
-    & SnackbarProps
+type Props = NotificationProps
+    & NotificationSnackbarProps
     & WithStyles<typeof styles>
 
 class NotificationSnackbarComponent extends React.PureComponent<Props> {
