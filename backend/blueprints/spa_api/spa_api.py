@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import uuid
 
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
@@ -29,6 +30,7 @@ bp = Blueprint('api', __name__, url_prefix='/api/')
 wrapper = player_stat_wrapper.PlayerStatWrapper(player_wrapper.PlayerWrapper(limit=10))
 avg_list, field_list, std_list = wrapper.get_stats_query()
 
+regex = re.compile('\d{17}')
 
 def better_jsonify(response: object):
     """
@@ -70,11 +72,13 @@ def api_get_global_stats():
 
 @bp.route('/steam/resolve/<id_>')
 def api_resolve_steam(id_):
-    response = get_vanity_to_steam_id_or_random_response(id_, current_app)
-    if response is None:
-        raise CalculatedError(404, "User not found")
-    steam_id = response['response']['steamid']
-    return jsonify(steam_id)
+    if len(id_) != 17 or re.match(regex, id_) is None:
+        response = get_vanity_to_steam_id_or_random_response(id_, current_app)
+        if response is None:
+            raise CalculatedError(404, "User not found")
+        steam_id = response['response']['steamid']
+        return jsonify(steam_id)
+    return jsonify(id_)
 
 
 @bp.route('/me')
