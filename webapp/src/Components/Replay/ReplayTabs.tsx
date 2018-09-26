@@ -14,10 +14,10 @@ type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type tabValue = "basicStats" | "advancedStats" | "replayViewer"
+type ReplayTab = "basicStats" | "advancedStats" | "replayViewer"
 
 interface State {
-    selectedTab: tabValue
+    selectedTab: ReplayTab
 }
 
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
@@ -49,7 +49,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: tabValue) => {
+    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: ReplayTab) => {
         this.setState({selectedTab})
     }
 }
