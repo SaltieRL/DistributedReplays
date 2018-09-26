@@ -53,9 +53,11 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
     def get_progression_stats(self, session, id_):
         mean_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
-                                   *self.stats_query).join(PlayerGame).group_by('date').order_by('date').all()
+                                   *self.stats_query).join(PlayerGame).filter(PlayerGame.player == id_).group_by(
+            'date').order_by('date').all()
         std_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
-                                  *self.std_query).join(PlayerGame).group_by('date').order_by('date').all()
+                                  *self.std_query).join(PlayerGame).filter(PlayerGame.player == id_).group_by(
+            'date').order_by('date').all()
         mean_query = [list(q) for q in mean_query]
         std_query = [list(q) for q in std_query]
         results = []
