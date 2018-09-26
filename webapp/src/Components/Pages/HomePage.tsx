@@ -16,7 +16,8 @@ import {
     GLOBAL_STATS_LINK,
     LOCAL_LINK,
     PLAYER_PAGE_LINK,
-    STEAM_LOGIN_LINK, TWITTER_LINK,
+    STEAM_LOGIN_LINK,
+    TWITTER_LINK,
     UPLOAD_LINK
 } from "../../Globals"
 import {StoreState} from "../../Redux"
