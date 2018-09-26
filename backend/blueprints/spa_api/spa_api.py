@@ -117,6 +117,16 @@ def api_get_player_play_style(id_):
     return better_jsonify(play_style_response)
 
 
+@bp.route('player/<id_>/play_style/all')
+def api_get_player_play_style_all(id_):
+    if 'rank' in request.args:
+        rank = int(request.args['rank'])
+    else:
+        rank = None
+    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank)
+    return better_jsonify(play_style_response)
+
+
 @bp.route('player/<id_>/play_style/progression')
 def api_get_player_play_style_progress(id_):
     psr = PlayStyleResponse.create_progression(id_)
@@ -159,7 +169,6 @@ def api_get_replay_group():
     ids = request.args.getlist('id[]')
     chart_data = GroupChartData.create_from_ids(ids)
     return better_jsonify(chart_data)
-
 
 
 @bp.route('/replay/<id_>/download')
