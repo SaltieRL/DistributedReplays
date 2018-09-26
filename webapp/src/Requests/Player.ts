@@ -46,7 +46,7 @@ export const getStats = (id: string): Promise<PlayerStats> => {
     return doGet(`/player/${id}/profile_stats`)
 }
 
-export const getPlayerPlayStyles = (id: string): Promise<PlayStyleResponse> => {
+export const getPlayerPlayStyles = (id: string, rank?: number): Promise<PlayStyleResponse> => {
     if (useMockData) {
         return Promise.resolve({
                 showWarning: false,
@@ -82,7 +82,7 @@ export const getPlayerPlayStyles = (id: string): Promise<PlayStyleResponse> => {
             }
         )
     }
-    return doGet(`/player/${id}/play_style`)
+    return doGet(`/player/${id}/play_style` + (rank === undefined ? "" : `?rank=${rank}`))
 }
 
 export const getPlayerProgression = (id: string): Promise<PlayStyleProgressionPoint[]> => {

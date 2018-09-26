@@ -1,6 +1,6 @@
 import {Divider, Grid, Paper, Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
-import {PlayerComparePlayStyleCharts} from "./PlayerComparePlayStyleCharts"
+import {PlayerComparePlayStyleCharts} from "./PlayStyle/PlayerComparePlayStyleCharts"
 import {PlayerProgressionCharts} from "./Progression/PlayerProgressionCharts"
 
 interface Props {
