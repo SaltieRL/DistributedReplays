@@ -6,16 +6,16 @@ class DataPoint:
         self.name = name
         self.average = average
         if std_dev is not None:
-            self.std_dev = std_dev
+            self.stdDev = std_dev
 
 
 class ProgressionDataPoint:
-    def __init__(self, date: str, points: List[DataPoint]):
+    def __init__(self, date: str, data_points: List[DataPoint]):
         self.date = date
-        self.points = [point.__dict__ for point in points]
+        self.dataPoints = [data_point.__dict__ for data_point in data_points]
 
 
 class PlayerDataPoint:
-    def __init__(self, name: str, points: List[DataPoint]):
+    def __init__(self, name: str, data_points: List[DataPoint]):
         self.name = name
-        self.points = [point.__dict__ for point in points]
+        self.dataPoints = [data_point.__dict__ for data_point in data_points]
