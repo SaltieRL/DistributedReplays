@@ -1,6 +1,7 @@
 import {Divider, Grid, Paper, Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
-import {PlayerCompareCharts} from "./PlayerCompareCharts"
+import {PlayerComparePlayStyleCharts} from "./PlayerComparePlayStyleCharts"
+import {PlayerProgressionCharts} from "./Progression/PlayerProgressionCharts"
 
 interface Props {
     players: Player[]
@@ -32,12 +33,15 @@ export class PlayerCompareContent extends React.PureComponent<Props, State> {
                 {this.state.selectedTab === "Current" ?
                     <div style={{padding: 16, paddingBottom: 48}}>
                         <Grid container spacing={32}>
-                            <PlayerCompareCharts players={this.props.players}/>
+                            <PlayerComparePlayStyleCharts players={this.props.players}/>
                         </Grid>
                     </div>
                     :
-                    <>
-                    </>
+                    <div style={{padding: 16, paddingBottom: 48}}>
+                        <Grid container spacing={32} justify="center">
+                            <PlayerProgressionCharts players={this.props.players}/>
+                        </Grid>
+                    </div>
                 }
             </Paper>
         )

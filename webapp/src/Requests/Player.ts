@@ -3,7 +3,11 @@ import {doGet} from "../apiHandler/apiHandler"
 import {PlayerRanks} from "../Components/Player/Overview/SideBar/PlayerRanksCard"
 import {PlayerStats} from "../Components/Player/Overview/SideBar/PlayerStatsCard"
 import {MatchHistoryResponse} from "../Models/Player/MatchHistory"
-import {PlayStyleResponse} from "../Models/Player/PlayStyle"
+import {
+    parsePlayStyleProgression,
+    PlayStyleProgressionPoint,
+    PlayStyleResponse
+} from "../Models/Player/PlayStyle"
 import {GameMode, parseReplay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
@@ -79,6 +83,11 @@ export const getPlayerPlayStyles = (id: string): Promise<PlayStyleResponse> => {
         )
     }
     return doGet(`/player/${id}/play_style`)
+}
+
+export const getPlayerProgression = (id: string): Promise<PlayStyleProgressionPoint[]> => {
+    return doGet(`/player/${id}/play_style/progression`)
+        .then((data: any[]) => data.map(parsePlayStyleProgression))
 }
 
 export const getRanks = (id: string): Promise<PlayerRanks> => {

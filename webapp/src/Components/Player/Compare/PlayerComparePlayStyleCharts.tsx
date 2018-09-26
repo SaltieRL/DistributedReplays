@@ -12,7 +12,7 @@ interface State {
     playerPlayStyles: PlayStyleResponse[]
 }
 
-export class PlayerCompareCharts extends React.PureComponent<Props, State> {
+export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {playerPlayStyles: []}
