@@ -10,6 +10,7 @@ interface Props {
 
 interface State {
     playerPlayStyles: PlayStyleResponse[]
+    rank?: number
 }
 
 export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, State> {

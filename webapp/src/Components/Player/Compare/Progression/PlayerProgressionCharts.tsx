@@ -77,7 +77,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
                 </Grid>
                 {this.state.selectedFields.map((field) => {
                     return (
-                        <Grid item xs={12} md={5} lg={3} key={field}
+                        <Grid item xs={12} md={6} lg={5} key={field}
                               style={{height: 400}}>
                             <Typography variant="subheading" align="center">
                                 {convertSnakeAndCamelCaseToReadable(field)}

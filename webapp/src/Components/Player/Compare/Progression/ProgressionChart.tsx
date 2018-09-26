@@ -18,9 +18,7 @@ interface Props {
 export class ProgressionChart extends React.PureComponent<Props> {
     public render() {
         return (
-            <>
-                <Line data={this.getChartData()} options={this.getChartOptions()}/>
-            </>
+            <Line data={this.getChartData()} options={this.getChartOptions()}/>
         )
     }
 
@@ -29,7 +27,7 @@ export class ProgressionChart extends React.PureComponent<Props> {
             datasets: this.props.playerPlayStyleProgressions
                 .map((playerPlayStyleProgression, i) => {
                     return {
-                        label: playerPlayStyleProgression.player.name + ` ${i}`,
+                        label: playerPlayStyleProgression.player.name,
                         data: playerPlayStyleProgression.playStyleProgressionPoints.map(
                             (playStyleProgressionPoint) => {
                                 return {
@@ -43,6 +41,7 @@ export class ProgressionChart extends React.PureComponent<Props> {
                         pointBackgroundColor: colorsForPlaylists[i % 4] + "bb",
                         borderColor: colorsForPlaylists[i % 4] + "88",
                         pointHoverBackgroundColor: colorsForPlaylists[i % 4] + "dd"
+                        // TODO: Make this and PlayerPlayStyleChart use some specifically-made colours
                     }
                 })
         }
@@ -50,11 +49,20 @@ export class ProgressionChart extends React.PureComponent<Props> {
 
     private readonly getChartOptions = (): ChartOptions => {
         return {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 xAxes: [{
                     type: "time",
                     time: {
-                        unit: "month"
+                        displayFormats: {
+                            month: "MMM 'YY",
+                            quarter: "MMM 'YY",
+                            year: "YYYY"
+                        }
+                    },
+                    ticks: {
+                        autoSkip: true
                     }
                 }]
             },

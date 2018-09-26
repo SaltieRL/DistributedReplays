@@ -38,7 +38,7 @@ class FieldSelectComponent extends React.PureComponent<Props> {
                         return (
                             <div className={classes.chipWrapper}>
                                 {selectedFieldsToRender.map((field) => (
-                                    <Chip key={field} label={field}
+                                    <Chip key={field} label={convertSnakeAndCamelCaseToReadable(field)}
                                           onDelete={this.handleChipDelete(field)}
                                           className={classes.chip}
                                     />
