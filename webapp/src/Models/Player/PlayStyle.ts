@@ -9,7 +9,7 @@ export interface PlayStyleResponse {
 interface DataPoint {
     average: number
     name: string
-    stdDev: number
+    stdDev: number | null
 }
 
 export interface PlayStyleProgressionPoint {

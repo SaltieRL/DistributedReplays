@@ -91,6 +91,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
     }
 
     private readonly updateFields = () => {
+        // TODO: Check if this is necessary, or if it can just be gotten from the first guy.
         const fields = _.uniq(
             _.flatMap(this.state.playStyleProgressions,
                 ((playStyleProgression) =>
