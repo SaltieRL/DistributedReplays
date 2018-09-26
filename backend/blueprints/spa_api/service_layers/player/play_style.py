@@ -21,7 +21,7 @@ class PlayStyleResponse:
         self.showWarning = show_warning
 
     @classmethod
-    def create_from_id(cls, id_: str, raw=False, rank=None):
+    def create_from_id(cls, id_: str, raw=False, rank=None, ids=None):
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
@@ -30,7 +30,7 @@ class PlayStyleResponse:
             rank = get_rank(id_)
         averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                               redis=current_app.config['r'], raw=raw,
-                                                                              rank=rank)
+                                                                              rank=rank, ids=ids)
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
 
         play_style_chart_datas: List[PlayStyleChartData] = []
@@ -49,7 +49,7 @@ class PlayStyleResponse:
         )
 
     @classmethod
-    def create_progression(cls, id_: str):
+    def create_progression(cls, id_: str) -> List[ProgressionDataPoint]:
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
@@ -65,7 +65,7 @@ class PlayStyleResponse:
         return progression_data
 
     @classmethod
-    def create_all_stats_from_id(cls, id_: str, rank=None):
+    def create_all_stats_from_id(cls, id_: str, rank=None, ids=None) -> PlayerDataPoint:
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
@@ -74,8 +74,8 @@ class PlayStyleResponse:
             rank = get_rank(id_)
         averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                               redis=current_app.config['r'], raw=True,
-                                                                              rank=rank)
+                                                                              rank=rank, ids=ids)
         playstyle_data_raw: PlayerDataPoint = PlayerDataPoint(name=id_, points=[DataPoint(k, averaged_stats[k]) for k in
-                                                                               averaged_stats])
+                                                                                averaged_stats])
 
         return playstyle_data_raw

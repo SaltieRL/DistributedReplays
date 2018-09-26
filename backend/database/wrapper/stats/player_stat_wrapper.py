@@ -29,10 +29,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         return zipped_stats
 
-    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False):
+    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, ids=None):
         global_stats, global_stds = self.get_global_stats_by_rank(session, self.player_stats_filter,
-                                                                  stats_query, std_query, player_rank=rank, redis=redis)
+                                                                  stats_query, std_query, player_rank=rank, redis=redis,
+                                                                  ids=ids)
         self.player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
+        if ids is not None:
+            self.player_stats_filter.with_replay_ids(ids)
         query = self.player_stats_filter.build_query(session)
         stats = list(query.first())
         if raw:
@@ -40,12 +43,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
         else:
             return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
 
-    def get_averaged_stats(self, session, id_, rank=None, redis=None, raw=False):
+    def get_averaged_stats(self, session, id_, rank=None, redis=None, raw=False, ids=None):
         stats_query = self.stats_query
         std_query = self.std_query
-        total_games = self.player_wrapper.get_total_games(session, id_)
+        total_games = self.player_wrapper.get_total_games(session, id_, ids=ids)
         if total_games > 0:
-            stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw)
+            stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
+                                                 ids=ids)
         else:
             stats = [0.0] * len(stats_query)
             global_stats = [0.0] * len(stats_query)
