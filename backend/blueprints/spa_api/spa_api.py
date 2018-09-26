@@ -6,7 +6,6 @@ import uuid
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-from backend.blueprints.spa_api.service_layers.replay.groups import GroupChartData
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
@@ -15,10 +14,12 @@ from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
+from .service_layers.player.play_style_progression import PlayStyleProgression
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.replay.basic_stats import BasicStatChartData
+from .service_layers.replay.groups import GroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 
@@ -129,8 +130,7 @@ def api_get_player_play_style_all(id_):
 
 @bp.route('player/<id_>/play_style/progression')
 def api_get_player_play_style_progress(id_):
-    psr = PlayStyleResponse.create_progression(id_)
-    print(psr)
+    psr = PlayStyleProgression.create_progression(id_)
     return better_jsonify(psr)
 
 

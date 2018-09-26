@@ -49,22 +49,6 @@ class PlayStyleResponse:
         )
 
     @classmethod
-    def create_progression(cls, id_: str):
-        session = current_app.config['db']()
-        game_count = player_wrapper.get_total_games(session, id_)
-        if game_count == 0:
-            raise UserHasNoReplays()
-        data = player_stat_wrapper.get_progression_stats(session, id_)
-        progression_data: List[ProgressionDataPoint] = []
-        for data_point in data:
-            progression_data.append(ProgressionDataPoint(data_point['name'],
-                                                         [DataPoint(k, data_point['average'][k],
-                                                                    data_point['std_dev'][k])
-                                                          for k in data_point['average']]))
-        session.close()
-        return progression_data
-
-    @classmethod
     def create_all_stats_from_id(cls, id_: str, rank=None):
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
