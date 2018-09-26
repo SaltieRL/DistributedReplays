@@ -33,7 +33,6 @@ class FieldSelectComponent extends React.PureComponent<Props> {
                     value={selectedFields}
                     onChange={handleChange}
                     autoWidth
-                    inputProps={{}}
                     renderValue={(selectedFieldsToRender: string[]) => {
                         return (
                             <div className={classes.chipWrapper}>
