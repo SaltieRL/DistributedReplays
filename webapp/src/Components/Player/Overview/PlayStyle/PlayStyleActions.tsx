@@ -1,9 +1,8 @@
 import {Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, Tooltip} from "@material-ui/core"
 import CompareArrows from "@material-ui/icons/CompareArrows"
-import ZoomOutMap from "@material-ui/icons/ZoomOutMap"
 import * as React from "react"
 import {Link} from "react-router-dom"
-import {PLAYER_COMPARE_WITH_LINK, PLAYER_DETAILS_PAGE_LINK} from "../../../../Globals"
+import {PLAYER_COMPARE_WITH_LINK} from "../../../../Globals"
 import {LinkButton} from "../../../Shared/LinkButton"
 import {PlayStyleExplanationTable} from "./PlayStyleExplanationTable"
 
@@ -41,24 +40,12 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
             </Link>
             </div>
 
-        const detailedViewButton =
-            <LinkButton to={PLAYER_DETAILS_PAGE_LINK(this.props.player.id)}
-                        tooltip="Detailed view"
-                        icon={ZoomOutMap} iconType="mui"
-            >
-                View full
-            </LinkButton>
-
         return (
             <Grid container justify="center" spacing={8}>
-                <Grid item xs={6} sm="auto" style={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs="auto" style={{display: "flex", justifyContent: "center"}}>
                     {compareButton}
                 </Grid>
-                <Grid item xs={6} sm="auto" style={{display: "flex", justifyContent: "center"}}>
-                    {detailedViewButton}
-                </Grid>
-
-                <Grid item xs={6} sm="auto" style={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs="auto" style={{display: "flex", justifyContent: "center"}}>
                     <Button variant="outlined"
                             onClick={this.handleOpen}
                             style={{marginRight: 8, height: "100%"}}

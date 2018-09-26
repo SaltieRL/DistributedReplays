@@ -5,9 +5,9 @@ export const LOCAL_LINK = process.env.NODE_ENV === "development" ? "http://local
 
 export const PLAYER_PAGE_LINK = (id: string) => `/players/${id}`
 export const PLAYER_MATCH_HISTORY_PAGE_LINK = (id: string) => `/players/${id}/match_history`
-export const PLAYER_DETAILS_PAGE_LINK = (id: string) => `/players/${id}/details`
 export const PLAYER_COMPARE_PAGE_LINK = "/compare/"
-export const PLAYER_COMPARE_WITH_LINK = (id: string) => `/compare/?ids=${id}`
+export const PLAYER_COMPARE_WITH_LINK = (id: string) => `/compare/?ids=${id}`  // TODO: Make link generation less manual
+
 export const REPLAY_PAGE_LINK = (id: string) => `/replays/${id}`
 export const GLOBAL_STATS_LINK = "/global/stats"
 export const STEAM_LOGIN_LINK = "/auth/steam"
