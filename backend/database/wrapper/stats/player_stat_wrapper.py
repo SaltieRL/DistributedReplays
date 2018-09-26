@@ -52,6 +52,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
         return self.get_wrapped_stats(stats), self.get_wrapped_stats(global_stats)
 
     def get_progression_stats(self, session, id_):
+
+        def float_maybe(f):
+            if f is None:
+                return None
+            else:
+                return float(f)
+
         mean_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
                                    *self.stats_query).join(PlayerGame).filter(PlayerGame.player == id_).group_by(
             'date').order_by('date').all()
@@ -63,8 +70,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
         results = []
         for q, s in zip(mean_query, std_query):
             result = {'name': datetime.datetime.strptime(q[0], '%y-%m').isoformat(),
-                      'average': self.get_wrapped_stats([float(qn) for qn in q[1:]]),
-                      'std_dev': self.get_wrapped_stats([float(qn) for qn in s[1:]])}
+                      'average': self.get_wrapped_stats([float_maybe(qn) for qn in q[1:]]),
+                      'std_dev': self.get_wrapped_stats([float_maybe(qn) for qn in s[1:]])}
             results.append(result)
         return results
 
