@@ -7,7 +7,7 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
     get_steam_profile_or_random_response
 from backend.database.objects import Player
 from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
+from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.utils.psyonix_api_handler import get_rank
 
 bp = Blueprint('players', __name__, url_prefix='/players')

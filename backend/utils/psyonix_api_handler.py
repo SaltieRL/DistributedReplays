@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import random
+from typing import Union
 
 import redis
 import requests
@@ -21,8 +22,12 @@ with open(json_loc, 'r') as f:
 logger = logging.getLogger(__name__)
 
 
-def get_item_name_by_id(id_):
-    return item_dict[id_]
+def get_item_name_by_id(id_: str):
+    try:
+        return item_dict[id_]["LongLabel"]
+    except KeyError:
+        logger.warning(f'Cannot find item for id {id_}. Returning "Unknown"')
+        return "Unknown"
 
 
 def get_item_dict():
@@ -37,7 +42,7 @@ def get_rank_batch(ids, offline_redis=None):
     :param offline_redis: Redis to use if not in the application context
     :return: rank information
     """
-    return_data = {}
+    rank_datas_for_players = {}
     if fake_data or RL_API_KEY is None:
         return make_fake_data(ids)
     try:
@@ -63,13 +68,13 @@ def get_rank_batch(ids, offline_redis=None):
                 break
             if result is not None:
                 # logger.debug('Rank is cached')
-                return_data[steam_id] = json.loads(result.decode("utf-8"))
+                rank_datas_for_players[steam_id] = json.loads(result.decode("utf-8"))
             elif steam_id != '0':
                 ids_to_find.append(steam_id)
             else:
-                return_data['0'] = {}
+                rank_datas_for_players['0'] = {}
         if len(ids_to_find) == 0:
-            return return_data
+            return rank_datas_for_players
         else:
             logger.debug(ids_to_find)
     url = "https://api.rocketleague.com/api/v1/steam/playerskills/"
@@ -82,31 +87,47 @@ def get_rank_batch(ids, offline_redis=None):
     data = requests.post(url, headers=headers, json=post_data)
 
     logger.debug(data.text)
+    if data.status_code >= 300:
+        return {**rank_datas_for_players, **get_empty_data(ids_to_find)}
     try:
         data = data.json()
-    except:
+    except Exception as e:
+        print(e)
         return get_empty_data(ids)
     if 'detail' in data:
         return {str(i): {} for i in ids}
     for player in data:
-        modes = []
+        rank_datas = []
         unique_id = player['user_id']
         names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
         if 'player_skills' in player:
-
+            found_modes = []
             for playlist in player['player_skills']:
-                if 'tier' in playlist:  # excludes unranked
-                    s = {'mode': names[str(playlist['playlist'])], 'rank_points': playlist['skill'],
+                print(playlist, str(playlist['playlist']), str(playlist['playlist']) in names)
+                if 'tier' in playlist and str(playlist['playlist']) in names:  # excludes unranked
+                    mode = names[str(playlist['playlist'])]
+                    found_modes.append(mode)
+                    rank_data = {'mode': mode, 'rank_points': playlist['skill'],
                          'tier': playlist['tier'],
                          'division': playlist['division'],
                          'string': tier_div_to_string(playlist['tier'], playlist['division'])}
-                    modes.append(s)
+                    rank_datas.append(rank_data)
+
+            for mode in names.values():
+                if mode not in found_modes:
+                    rank_datas.append({
+                        'mode': mode, 'rank_points': 0,
+                        'tier': 0,
+                        'division': 0,
+                        'string': tier_div_to_string(None)
+                    })
+
             if r is not None:
-                r.set(unique_id, json.dumps(modes), ex=24 * 60 * 60)
-            return_data[unique_id] = modes
+                r.set(unique_id, json.dumps(rank_datas), ex=24 * 60 * 60)
+            rank_datas_for_players[unique_id] = rank_datas
         else:
-            return_data[unique_id] = {}
-    return return_data
+            rank_datas_for_players[unique_id] = {}
+    return rank_datas_for_players
 
 
 def get_rank(steam_id):
@@ -117,7 +138,7 @@ def get_rank(steam_id):
     :return: rank, if it exists
     """
     rank = get_rank_batch([steam_id])
-    if rank is None:
+    if rank is None or len(rank) <= 0:
         return None
     return rank[list(rank.keys())[0]]
 
@@ -152,7 +173,7 @@ def get_formatted_rank_data(rank, div):
     ]
 
 
-def tier_div_to_string(rank: int, div: int = -1):
+def tier_div_to_string(rank: Union[int, None], div: int = -1):
     """
     Converts rank and division to a fancy string.
 
@@ -167,10 +188,10 @@ def tier_div_to_string(rank: int, div: int = -1):
         logger.debug(rank)
         logger.debug(div)
         return 'Unknown'
-    if rank < 19 and div > 0:
-        return "{}, Division {}".format(ranks[rank], div + 1)
-    else:
-        return ranks[rank]
+    if rank == 19:
+        return f"{ranks[rank]}"
+    if rank < 19 and div >= 0:
+        return f"{ranks[rank]} (div {div + 1})"
 
 
 def get_platform_id(i):
@@ -178,3 +199,6 @@ def get_platform_id(i):
         return 'steam'  # steam
     else:
         return '-1'
+
+if __name__ == '__main__':
+    print(get_rank('76561198374703623'))

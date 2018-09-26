@@ -1,4 +1,5 @@
 import datetime
+import math
 
 from carball.generated.api import game_pb2
 
@@ -54,6 +55,9 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                                                 'api.PlayerId'], PlayerGame)
         values = get_proto_values(p, fields)
         kwargs = {k.field_name: v for k, v in zip(fields, values)}
+        for k in kwargs:
+            if kwargs[k] == 'NaN' or math.isnan(kwargs[k]):
+                kwargs[k] = 0.0
         camera = p.camera_settings
         loadout = p.loadout
         field_of_view = camera.field_of_view
