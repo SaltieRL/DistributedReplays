@@ -17,7 +17,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         # this Object needs to be pooled per a session so only one is used at a time
         self.player_stats_filter = QueryFilterBuilder()
-        self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(3).with_safe_checking().sticky()
+        self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
+            3).with_safe_checking().sticky()
 
     def get_wrapped_stats(self, stats):
         zipped_stats = dict()
@@ -59,8 +60,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
-
-
 
     def _create_stats(self, session, query_filter=None, ids=None):
         if query_filter is not None and ids is not None:

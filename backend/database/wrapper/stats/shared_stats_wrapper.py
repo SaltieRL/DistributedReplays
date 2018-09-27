@@ -62,7 +62,7 @@ class SharedStatsWrapper:
             PlayerGame.average_hit_distance,
             PlayerGame.total_passes,
             PlayerGame.wasted_collection,
-            ]
+        ]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
                                           'shots/hit', 'passes/hit', 'assists/hit', 'useful/hits',
@@ -81,7 +81,7 @@ class SharedStatsWrapper:
                 avg_list.append(func.count(s))
             else:
                 std_list.append(func.stddev_samp(s))
-                avg_list.append(func.avg(s))
+                avg_list.append(func.sum(s) / safe_divide(func.sum(PlayerGame.time_in_game)) * 300)
         return avg_list, field_list, std_list
 
     def compare_to_global(self, stats, global_stats, global_stds):
