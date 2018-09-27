@@ -4,19 +4,24 @@ import {IconButton, Paper, TextField} from "@material-ui/core"
 import * as React from "react"
 import {Redirect} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../Globals"
-import {getPlayerFromName} from "../../Requests/Player"
+import {AppError} from "../../Models/Error"
+import {resolvePlayerNameOrId} from "../../Requests/Player"
+import {WithNotifications, withNotifications} from "./Notification/NotificationUtils"
 
-interface Props {
+interface OwnProps {
     usePaper: boolean
     useCalculatorIcon?: boolean
 }
+
+type Props = OwnProps
+    & WithNotifications
 
 interface State {
     enteredText: string
     resolvedId?: string
 }
 
-export class Search extends React.PureComponent<Props, State> {
+class SearchComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
@@ -77,7 +82,13 @@ export class Search extends React.PureComponent<Props, State> {
 
     private readonly onSubmit: React.FormEventHandler = (e) => {
         e.preventDefault()
-        getPlayerFromName(this.state.enteredText)
+        resolvePlayerNameOrId(this.state.enteredText)
             .then((resolvedId) => this.setState({resolvedId}))
+            .catch((appError: AppError) => this.props.showNotification({
+                variant: "appError",
+                appError
+            }))
     }
 }
+
+export const Search = withNotifications()(SearchComponent)

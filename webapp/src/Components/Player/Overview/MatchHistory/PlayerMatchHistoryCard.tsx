@@ -1,7 +1,7 @@
 import {Card, CardHeader} from "@material-ui/core"
 import ViewList from "@material-ui/icons/ViewList"
 import * as React from "react"
-import {PLAYER_MATCH_HISTORY_PAGE} from "../../../../Globals"
+import {PLAYER_MATCH_HISTORY_PAGE_LINK} from "../../../../Globals"
 import {LinkButton} from "../../../Shared/LinkButton"
 
 interface Props {
@@ -15,7 +15,7 @@ export class PlayerMatchHistoryCard extends React.PureComponent<Props> {
                 <CardHeader title="Match History"
                             action={
                                 <div style={{marginRight: 8}}>
-                                    <LinkButton to={PLAYER_MATCH_HISTORY_PAGE(this.props.player.id)}
+                                    <LinkButton to={PLAYER_MATCH_HISTORY_PAGE_LINK(this.props.player.id)}
                                                 tooltip="View full match history"
                                                 icon={ViewList} iconType="mui"
                                     >
