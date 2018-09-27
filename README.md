@@ -20,6 +20,7 @@
 - You can optionally kill the python process and start it in an IDE
 - You can log into psql command line with `psql postgresql://postgres:postgres@localhost`
 - If the included redis does not work here is [install directions](https://dingyuliang.me/redis-3-2-install-redis-windows/)
+- DO NOT USE IDLE, either use command line or pycharm (pycharm is recommended for development of backend)
 
 #### Mac
 - Run mac_run.sh
