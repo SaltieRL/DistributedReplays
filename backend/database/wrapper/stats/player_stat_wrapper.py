@@ -29,13 +29,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         return zipped_stats
 
-    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, ids=None):
+    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None):
         global_stats, global_stds = self.get_global_stats_by_rank(session, self.player_stats_filter,
                                                                   stats_query, std_query, player_rank=rank, redis=redis,
-                                                                  ids=ids)
+                                                                  ids=replay_ids)
         self.player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
-        if ids is not None:
-            self.player_stats_filter.with_replay_ids(ids)
+        if replay_ids is not None:
+            self.player_stats_filter.with_replay_ids(replay_ids)
         query = self.player_stats_filter.build_query(session)
         stats = list(query.first())
         if raw:
@@ -43,13 +43,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
         else:
             return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
 
-    def get_averaged_stats(self, session, id_, rank=None, redis=None, raw=False, ids=None):
+    def get_averaged_stats(self, session, id_, rank=None, redis=None, raw=False, replay_ids=None):
         stats_query = self.stats_query
         std_query = self.std_query
-        total_games = self.player_wrapper.get_total_games(session, id_, ids=ids)
+        total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
         if total_games > 0:
             stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
-                                                 ids=ids)
+                                                 replay_ids=replay_ids)
         else:
             stats = [0.0] * len(stats_query)
             global_stats = [0.0] * len(stats_query)
@@ -92,16 +92,16 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
 
-    def _create_stats(self, session, player_filter=None, ids=None):
+    def _create_stats(self, session, player_filter=None, replay_ids=None):
 
         average = QueryFilterBuilder().with_stat_query(self.stats_query)
         std_devs = QueryFilterBuilder().with_stat_query(self.std_query)
         if player_filter is not None:
             average.with_players(player_filter)
             std_devs.with_players(player_filter)
-        if ids is not None:
-            average.with_replay_ids(ids)
-            std_devs.with_replay_ids(ids)
+        if replay_ids is not None:
+            average.with_replay_ids(replay_ids)
+            std_devs.with_replay_ids(replay_ids)
         average = average.build_query(session).first()
         std_devs = std_devs.build_query(session).first()
 
@@ -121,7 +121,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         for player_tuple in player_tuples:
             player, name, count = player_tuple
             if count > 1:
-                player_stats = self._create_stats(session, player_filter=player, ids=replay_ids)
+                player_stats = self._create_stats(session, player_filter=player, replay_ids=replay_ids)
                 print(name)
                 player_stats['name'] = name
                 return_obj['playerStats'][player] = player_stats
@@ -129,7 +129,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
                 ensemble.append(player)
         if len(ensemble) > 0:
             # create stats that only includes the ensemble
-            ensemble_stats = self._create_stats(session, player_filter=ensemble, ids=replay_ids)
+            ensemble_stats = self._create_stats(session, player_filter=ensemble, replay_ids=replay_ids)
             return_obj['ensembleStats'] = ensemble_stats
         # STATS
         # Global

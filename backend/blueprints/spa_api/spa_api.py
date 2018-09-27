@@ -124,19 +124,18 @@ def api_get_player_play_style_all(id_):
         rank = int(request.args['rank'])
     else:
         rank = None
-    if 'ids' in request.args:
-        ids = request.args.getlist('ids')
-        print(ids)
+    if 'replay_ids' in request.args:
+        replay_ids = request.args.getlist('replay_ids')
     else:
-        ids = None
-    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank, ids=ids)
+        replay_ids = None
+    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank, replay_ids=replay_ids)
     return better_jsonify(play_style_response)
 
 
 @bp.route('player/<id_>/play_style/progression')
 def api_get_player_play_style_progress(id_):
-    psr = PlayStyleProgression.create_progression(id_)
-    return better_jsonify(psr)
+    play_style_progression = PlayStyleProgression.create_progression(id_)
+    return better_jsonify(play_style_progression)
 
 
 @bp.route('player/<id_>/match_history')

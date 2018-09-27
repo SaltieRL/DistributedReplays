@@ -3,7 +3,7 @@ from typing import List
 from flask import current_app
 
 from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
-from backend.blueprints.spa_api.service_layers.stat import ProgressionDataPoint, DataPoint, PlayerDataPoint
+from backend.blueprints.spa_api.service_layers.stat import DataPoint, PlayerDataPoint
 from backend.utils.psyonix_api_handler import get_rank
 from .player_profile_stats import player_stat_wrapper, player_wrapper
 from ..chart_data import ChartData, ChartDataPoint
@@ -48,8 +48,8 @@ class PlayStyleResponse:
             show_warning=game_count <= cls.showWarningThreshold
         )
 
-    @classmethod
-    def create_all_stats_from_id(cls, id_: str, rank=None, replay_ids=None) -> PlayerDataPoint:
+    @staticmethod
+    def create_all_stats_from_id(id_: str, rank=None, replay_ids=None) -> PlayerDataPoint:
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
@@ -59,7 +59,10 @@ class PlayStyleResponse:
         averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                               redis=current_app.config['r'], raw=True,
                                                                               rank=rank, replay_ids=replay_ids)
-        playstyle_data_raw: PlayerDataPoint = PlayerDataPoint(name=id_, points=[DataPoint(k, averaged_stats[k]) for k in
-                                                                               averaged_stats])
+        playstyle_data_raw: PlayerDataPoint = PlayerDataPoint(name=id_,
+                                                              data_points=[
+                                                                  DataPoint(k, averaged_stats[k])
+                                                                  for k in averaged_stats
+                                                              ])
 
         return playstyle_data_raw
