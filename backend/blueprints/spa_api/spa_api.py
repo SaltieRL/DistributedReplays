@@ -124,7 +124,12 @@ def api_get_player_play_style_all(id_):
         rank = int(request.args['rank'])
     else:
         rank = None
-    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank)
+    if 'ids' in request.args:
+        ids = request.args.getlist('ids')
+        print(ids)
+    else:
+        ids = None
+    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank, ids=ids)
     return better_jsonify(play_style_response)
 
 
