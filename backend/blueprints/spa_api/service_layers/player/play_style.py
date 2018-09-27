@@ -59,7 +59,7 @@ class PlayStyleResponse:
         averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                               redis=current_app.config['r'], raw=True,
                                                                               rank=rank)
-        playstyle_data_raw: PlayerDataPoint = PlayerDataPoint(name=id_, points=[DataPoint(k, averaged_stats[k]) for k in
+        playstyle_data_raw: PlayerDataPoint = PlayerDataPoint(name=id_, data_points=[DataPoint(k, averaged_stats[k]) for k in
                                                                                averaged_stats])
 
         return playstyle_data_raw
