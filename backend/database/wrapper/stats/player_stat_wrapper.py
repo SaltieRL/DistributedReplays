@@ -1,5 +1,6 @@
 import datetime
 import logging
+from typing import Tuple, List
 
 from sqlalchemy import func
 
@@ -112,7 +113,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
     def get_group_stats(self, session, replay_ids):
         return_obj = {}
         # Players
-        player_tuples = session.query(PlayerGame.player, func.min(PlayerGame.name),
+        player_tuples: List[Tuple[str, str, int]] = session.query(PlayerGame.player, func.min(PlayerGame.name),
                                       func.count(PlayerGame.player)).filter(
             PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.player).all()
         return_obj['playerStats'] = {}
@@ -122,7 +123,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
             player, name, count = player_tuple
             if count > 1:
                 player_stats = self._create_stats(session, player_filter=player, replay_ids=replay_ids)
-                print(name)
                 player_stats['name'] = name
                 return_obj['playerStats'][player] = player_stats
             else:

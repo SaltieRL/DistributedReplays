@@ -19,7 +19,7 @@ from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.replay.basic_stats import BasicStatChartData
-from .service_layers.replay.groups import GroupChartData
+from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 
@@ -170,8 +170,8 @@ def api_get_replay_basic_stats(id_):
 
 @bp.route('replay/group')
 def api_get_replay_group():
-    ids = request.args.getlist('id[]')
-    chart_data = GroupChartData.create_from_ids(ids)
+    ids = request.args.getlist('ids')
+    chart_data = ReplayGroupChartData.create_from_ids(ids)
     return better_jsonify(chart_data)
 
 
