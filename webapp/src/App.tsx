@@ -9,6 +9,9 @@ import {PlayerPage} from "./Components/Pages/PlayerPage"
 import {PluginsPage} from "./Components/Pages/PluginsPage"
 import {ReplayPage} from "./Components/Pages/ReplayPage"
 import {UploadPage} from "./Components/Pages/UploadPage"
+
+import {ABOUT_LINK, GLOBAL_STATS_LINK, PLAYER_PAGE_LINK, PLUGINS_LINK, REPLAY_PAGE_LINK, UPLOAD_LINK} from "./Globals"
+
 import {ReplayViewer} from "./Components/Replay/ReplayViewer/ReplayViewer"
 import {Notifications} from "./Components/Shared/Notification/Notifications"
 import {
@@ -37,7 +40,6 @@ class AppComponent extends React.Component<Props> {
                         <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                         <Route path={PLAYER_COMPARE_PAGE_LINK} component={PlayerComparePage}/>
                         <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
-                        <Route exact path="/replay_viewer" component={ReplayViewer}/>
                         <Route exact path={ABOUT_LINK} component={AboutPage}/>
                         <Route exact path={UPLOAD_LINK} component={UploadPage}/>
                         <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
