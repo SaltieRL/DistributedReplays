@@ -15,7 +15,7 @@ export class ThreeScene extends Component {
 
         // Add camera
         this.camera = new THREE.PerspectiveCamera(
-            110,
+            95,
             width / height,
             0.1,
             20000,
@@ -78,6 +78,17 @@ export class ThreeScene extends Component {
         this.cube = new THREE.Mesh(geometry, material);
         this.cube.rotation.x = -Math.PI / 2;
         this.scene.add(this.cube);
+
+        const goalPlane = new THREE.PlaneBufferGeometry( 1786, 642.775, 1, 1 );
+        const blueGoalMaterial = new THREE.MeshBasicMaterial({color: '#2196f3'});
+        const orangeGoalMaterial = new THREE.MeshBasicMaterial({color: '#ff9800'});
+        const blueGoal = new THREE.Mesh(goalPlane, blueGoalMaterial);
+        blueGoal.position.z = -5120;
+        this.scene.add(blueGoal);
+        const orangeGoal = new THREE.Mesh(goalPlane, orangeGoalMaterial);
+        orangeGoal.position.z = 5120;
+        orangeGoal.rotation.y = Math.PI;
+        this.scene.add(orangeGoal);
 
         // Ambient light
         this.scene.add(new THREE.AmbientLight(0x444444));
