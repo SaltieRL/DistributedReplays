@@ -3,7 +3,7 @@ from sqlalchemy import func, desc
 
 from backend.database.objects import PlayerGame
 from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
+from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from data import constants
 
 player_wrapper = PlayerWrapper(limit=10)

@@ -24,7 +24,7 @@ class PlayStyleResponse:
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
             raise UserHasNoReplays()
-        averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_)
+        averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_, redis=current_app.config['r'])
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
 
         play_style_chart_datas: List[PlayStyleChartData] = []

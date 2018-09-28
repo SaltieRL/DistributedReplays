@@ -2,12 +2,7 @@ import json
 import logging
 from typing import List
 
-import redis
 from flask import current_app
-from sqlalchemy import func, cast, Numeric
-
-from backend.blueprints.spa_api.errors.errors import CalculatedError
-from backend.database.objects import PlayerGame, Game
 
 logger = logging.getLogger(__name__)
 
