@@ -10,22 +10,22 @@ export class ThreeScene extends Component {
         const width = this.mount.clientWidth;
         const height = this.mount.clientHeight;
 
-        //ADD SCENE
+        // Add scene
         this.scene = new THREE.Scene();
 
-        //ADD CAMERA
+        // Add camera
         this.camera = new THREE.PerspectiveCamera(
             110,
             width / height,
             0.1,
-            20000
+            20000,
         );
         this.camera.position.z = 3840;
         this.camera.position.y = 125;
 
         this.camera.rotation.x -= 7 * Math.PI / 180;
 
-        //ADD RENDERER
+        // Add renderer
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setClearColor('#000000');
         this.renderer.setSize(width, height);

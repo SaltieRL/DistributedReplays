@@ -1,9 +1,8 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
+import {Replay} from "../../../Models/Replay/Replay"
 import {getReplayViewerData} from "../../../Requests/Replay"
 import {ThreeScene} from "./ThreeScene"
-import {Replay} from "../../../Models/Replay/Replay"
-import {ChangeEvent} from "react"
 
 interface OwnProps {
     replay: Replay
@@ -20,7 +19,6 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
-            replayData: null,
             currentFrame: 0
         }
     }
@@ -78,9 +76,8 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         this.setState({replayData: data})
     }
 
-    private readonly setCurrentFrame = (event: ChangeEvent) => {
-        const target = event.target as HTMLInputElement
-        const value: number = parseInt(target.value, 10)
+    private readonly setCurrentFrame: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+        const value: number = parseInt(event.target.value, 10)
         this.setState({currentFrame: value})
     }
 }
