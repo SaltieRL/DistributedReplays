@@ -60,10 +60,7 @@ export class ThreeScene extends Component {
     };
 
     animate = () => {
-        this.ball.position.x = this.props.replayData.ball[this.props.frame][0];
-        this.ball.position.y = this.props.replayData.ball[this.props.frame][2];
-        this.ball.position.z = this.props.replayData.ball[this.props.frame][1];
-
+        this.updateBall();
         this.updatePlayers();
 
         this.camera.lookAt(this.ball.position);
@@ -77,10 +74,11 @@ export class ThreeScene extends Component {
     };
 
     generatePlayfield = () => {
-        const geometry = new THREE.BoxBufferGeometry( 8192, 1, 10240 );
-        // const geometry = THREE.PlaneGeometry( 8192, 10240, 1 );;
+        // const geometry = new THREE.BoxBufferGeometry( 8192, 1, 10240 );
+        const geometry = new THREE.PlaneBufferGeometry( 8192, 10240, 1, 1 );
         const material = new THREE.MeshBasicMaterial({color: '#4CAF50'});
         this.cube = new THREE.Mesh(geometry, material);
+        this.cube.rotation.x = -Math.PI / 2;
         this.scene.add(this.cube);
     };
 
@@ -101,6 +99,13 @@ export class ThreeScene extends Component {
             this.scene.add(player);
             this.players.push(player);
         }
+    };
+
+    updateBall = () => {
+        const ballPosition = this.props.replayData.ball[this.props.frame];
+        this.ball.position.x = ballPosition[0];
+        this.ball.position.y = ballPosition[2];
+        this.ball.position.z = ballPosition[1];
     };
 
     updatePlayers = () => {
