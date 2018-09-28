@@ -97,7 +97,7 @@ export class ThreeScene extends Component {
     generatePlayers = (numberOfPlayers) => {
         this.players = [];
         for (let i = 0; i < numberOfPlayers; i++) {
-            const carGeometry = new THREE.BoxBufferGeometry( 80, 80, 80);
+            const carGeometry = new THREE.BoxBufferGeometry( 84.2, 117, 36.16);
             const carMaterial = new THREE.MeshBasicMaterial({color: '#ff9800'});
 
             const player = new THREE.Mesh(carGeometry, carMaterial);
@@ -119,6 +119,10 @@ export class ThreeScene extends Component {
             this.players[i].position.x = playerPosition[0];
             this.players[i].position.y = playerPosition[2];
             this.players[i].position.z = playerPosition[1];
+
+            this.players[i].rotation.x = playerPosition[3];
+            this.players[i].rotation.y = playerPosition[4];
+            this.players[i].rotation.z = playerPosition[5];
         }
     };
 

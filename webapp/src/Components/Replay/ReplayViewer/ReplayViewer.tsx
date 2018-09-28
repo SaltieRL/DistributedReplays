@@ -118,6 +118,9 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
 
     private playLoop = () => {
         if (this.state.play) {
+            if (this.state.currentFrame === this.state.replayData.frames.length) {
+                this.setState({play: false})
+            }
             this.setState({currentFrame: this.state.currentFrame + 1})
             this.updateeGameTime()
             const frame = this.state.replayData.frames[this.state.currentFrame]
