@@ -13,6 +13,7 @@ type Props = OwnProps
 interface State {
     replayData?: any,
     currentFrame: number,
+    gameTime: number,
     play: boolean
 }
 
@@ -21,6 +22,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         super(props)
         this.state = {
             currentFrame: 0,
+            gameTime: 300,
             play: false
         }
     }
@@ -55,6 +57,10 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                     <Typography>Playback Controls</Typography>
                     <button onClick={this.startPlayback}>Play</button>
                     <button onClick={this.stopPlayback}>Pause</button>
+                    <Typography>
+                        {/*We should use padStart on seconds, but that is in es2017, not es6*/}
+                        Game Time: {(this.state.gameTime / 60).toFixed(0)}:{(this.state.gameTime % 60).toString()}
+                    </Typography>
                 </Grid>
                 <Grid item xs={6}>
                     <label>Frame:</label>
@@ -89,6 +95,14 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     private readonly setCurrentFrame: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const value: number = parseInt(event.target.value, 10)
         this.setState({currentFrame: value})
+        this.updateeGameTime()
+    }
+
+    private updateeGameTime = () => {
+        // Update game time
+        const frame = this.state.replayData.frames[this.state.currentFrame]
+        const time: number = parseFloat(frame[1])
+        this.setState({gameTime: time})
     }
 
     private startPlayback = () => {
@@ -105,7 +119,10 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     private playLoop = () => {
         if (this.state.play) {
             this.setState({currentFrame: this.state.currentFrame + 1})
-            setTimeout(() => this.playLoop(), 1000 / 30)
+            this.updateeGameTime()
+            const frame = this.state.replayData.frames[this.state.currentFrame]
+            const delta: number = parseFloat(frame[0])
+            setTimeout(() => this.playLoop(), delta * 1000)
         }
     }
 }
