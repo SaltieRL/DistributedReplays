@@ -83,25 +83,17 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
-                        {stats.map((stat) => {
-                            // if (this.state.currentSort) {
-                            //     console.log(stat.name)
-                            //     console.log(this.state.currentSort.statName)
-                            //     console.log(this.state.currentSort && stat.name === this.state.currentSort.statName)
-                            //     console.log("hi")
-                            // }
-                            return (
-                                <TableCell key={stat.name} numeric>
-                                    <TableSortLabel
-                                        active={this.state.currentSort && stat.name === this.state.currentSort.statName}
-                                        direction={this.state.currentSort && this.state.currentSort.direction}
-                                        onClick={this.handleSortChange(stat.name)}
-                                    >
-                                        {convertSnakeAndCamelCaseToReadable(stat.name)}
-                                    </TableSortLabel>
-                                </TableCell>
-                            )
-                        })}
+                        {stats.map((stat) => (
+                            <TableCell key={stat.name} numeric>
+                                <TableSortLabel
+                                    active={this.state.currentSort && stat.name === this.state.currentSort.statName}
+                                    direction={this.state.currentSort && this.state.currentSort.direction}
+                                    onClick={this.handleSortChange(stat.name)}
+                                >
+                                    {convertSnakeAndCamelCaseToReadable(stat.name)}
+                                </TableSortLabel>
+                            </TableCell>
+                        ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
