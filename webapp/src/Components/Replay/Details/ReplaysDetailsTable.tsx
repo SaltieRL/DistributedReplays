@@ -31,6 +31,8 @@ export class ReplaysDetailsTable extends React.PureComponent<Props, State> {
         return (
             <>
                 {this.props.replays.length !== 0 ?
+                    // TODO: Make LoadableWrapper be shared with BasicStatsTable.
+                    // It currently reloads on tab-change.
                     <LoadableWrapper load={this.getStatsForReplays} reloadSignal={this.state.reloadSignal}>
                         {this.state.basicStats.length > 0 ?
                             <div style={{overflowX: "auto"}}>
