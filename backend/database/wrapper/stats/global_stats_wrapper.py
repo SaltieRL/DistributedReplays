@@ -1,11 +1,10 @@
-import datetime
-import logging
 import json
+import logging
+
 from sqlalchemy import func
-from sqlalchemy.dialects import postgresql
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
-from backend.database.objects import PlayerGame, Game
+from backend.database.objects import PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.rank_wrapper import get_rank_number
 from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
@@ -90,6 +89,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
                     global_stds = [stats_dict[s.field_name][rank_index]['std'] for s in self.field_names]
                     return global_stats, global_stds
             if get_local_dev():
+                print('Calculating global stats now')
                 rank_index = 0
                 stats = self.get_global_stats(session, with_rank=False)
                 global_stats = [stats[s.field_name][rank_index]['mean'] for s in self.field_names]
