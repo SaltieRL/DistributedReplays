@@ -50,7 +50,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                 </Grid>
                 <Grid item xs={6}>
                     <label>Frame:</label>
-                    <input type="number" value={this.state.currentFrame} onChange={this.setCurrentFrame} />
+                    <input type="number" value={this.state.currentFrame} onChange={this.setCurrentFrame}/>
                 </Grid>
                 <Grid item xs={6}>
                     <Typography>
