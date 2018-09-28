@@ -109,9 +109,16 @@ export class ThreeScene extends Component {
         this.players = [];
         for (let i = 0; i < numberOfPlayers; i++) {
             const carGeometry = new THREE.BoxBufferGeometry( 84.2, 117, 36.16);
-            const carMaterial = new THREE.MeshBasicMaterial({color: '#ff9800'});
+
+            let carMaterial;
+            if (this.props.replayData.colors[i]) {
+                carMaterial = new THREE.MeshBasicMaterial({color: '#ff9800'});
+            } else {
+                carMaterial = new THREE.MeshBasicMaterial({color: '#2196f3'});
+            }
 
             const player = new THREE.Mesh(carGeometry, carMaterial);
+
             this.scene.add(player);
             this.players.push(player);
         }
