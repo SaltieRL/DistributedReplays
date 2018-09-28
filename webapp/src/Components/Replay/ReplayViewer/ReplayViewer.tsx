@@ -2,7 +2,8 @@ import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {getReplayViewerData} from "../../../Requests/Replay"
 import {ThreeScene} from "./ThreeScene"
-import {Replay} from "../../../Models/Replay/Replay";
+import {Replay} from "../../../Models/Replay/Replay"
+import {ChangeEvent} from "react"
 
 interface OwnProps {
     replay: Replay
@@ -11,17 +12,22 @@ interface OwnProps {
 type Props = OwnProps
 
 interface State {
-    replayData?: any
+    replayData?: any,
+    currentFrame: number,
 }
 
 export class ReplayViewer extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {}
+        this.state = {
+            replayData: null,
+            currentFrame: 0
+        }
     }
 
-    public componentDidMount() {
-        this.getReplayPositions()
+    public async componentDidMount() {
+        await this.getReplayPositions()
+        console.log(this.state.replayData)
     }
 
     public render() {
@@ -33,15 +39,44 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    {this.state.replayData &&
-                    <ThreeScene replayData={this.state.replayData}/>}
+                    {
+                        this.state.replayData &&
+                        <ThreeScene replayData={this.state.replayData} frame={this.state.currentFrame}/>
+                    }
+                </Grid>
+                <Grid item xs={6}>
+                    <label>Frame:</label>
+                    <input type="number" value={this.state.currentFrame} onChange={this.setCurrentFrame} />
+                </Grid>
+                <Grid item xs={6}>
+                    <span>
+                        Ball Position:
+                        {
+                            this.state.replayData &&
+                            this.state.replayData.ball[this.state.currentFrame][0]
+                        },
+                        {
+                            this.state.replayData &&
+                            this.state.replayData.ball[this.state.currentFrame][1]
+                        },
+                        {
+                            this.state.replayData &&
+                            this.state.replayData.ball[this.state.currentFrame][2]
+                        }
+                    </span>
                 </Grid>
             </Grid>
         )
     }
 
-    public getReplayPositions = () => {
-        getReplayViewerData(this.props.replay.id)
-            .then((data: any) => this.setState({replayData: data}))
+    public getReplayPositions = async() => {
+        const data: any = await getReplayViewerData(this.props.replay.id)
+        this.setState({replayData: data})
+    }
+
+    public setCurrentFrame = (event: ChangeEvent) => {
+        const target = event.target as any // Hacky way to fix type casting
+        const value: number = parseInt(target.value)
+        this.setState({currentFrame: value})
     }
 }
