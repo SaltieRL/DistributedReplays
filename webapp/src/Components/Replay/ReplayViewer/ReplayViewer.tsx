@@ -40,6 +40,10 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                 </Grid>
                 <Grid item xs={12}>
                     {
+                        !this.state.replayData &&
+                        <span>Loading...</span>
+                    }
+                    {
                         this.state.replayData &&
                         <ThreeScene replayData={this.state.replayData} frame={this.state.currentFrame}/>
                     }
