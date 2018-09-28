@@ -26,7 +26,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
         self.base_query = QueryFilterBuilder().with_relative_start_time(days_ago=self.get_timeframe()).with_team_size(
             3).sticky()
 
-    def get_global_stats(self, sess):
+    def get_global_stats(self, sess, with_rank=True):
         """
         :return: A list of stats by rank for every field.
         """
@@ -44,7 +44,10 @@ class GlobalStatWrapper(SharedStatsWrapper):
             # set the column result
             self.base_query.clean().with_stat_query([PlayerGame.player, q.label('avg')])
             for rank in ranks:
-                query = self.base_query.with_rank(rank).build_query(sess)
+                query = self.base_query
+                if with_rank:
+                    query = query.with_rank(rank)
+                query = query.build_query(sess)
                 query = query.group_by(PlayerGame.player).having(func.count(PlayerGame.player) > 5).subquery()
 
                 result = sess.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
@@ -87,7 +90,8 @@ class GlobalStatWrapper(SharedStatsWrapper):
                     global_stds = [stats_dict[s.field_name][rank_index]['std'] for s in self.field_names]
                     return global_stats, global_stds
             if get_local_dev():
-                stats = self.get_global_stats(session)
+                rank_index = 0
+                stats = self.get_global_stats(session, with_rank=False)
                 global_stats = [stats[s.field_name][rank_index]['mean'] for s in self.field_names]
                 global_stds = [stats[s.field_name][rank_index]['std'] for s in self.field_names]
                 return global_stats, global_stds
