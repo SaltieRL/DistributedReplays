@@ -31,18 +31,14 @@ export class ThreeScene extends Component {
         this.renderer.setSize(width, height);
         this.mount.appendChild(this.renderer.domElement);
 
-        //ADD CUBE
-        const geometry = new THREE.BoxGeometry(8192, 1, 10240);
-        // const geometry = THREE.PlaneGeometry( 8192, 10240, 1 );;
-        const material = new THREE.MeshBasicMaterial({color: '#4CAF50'});
-        this.cube = new THREE.Mesh(geometry, material);
-        this.scene.add(this.cube);
+        // Add field
+        this.generatePlayfield();
 
-        // ADD BALL
-        const ballGeometry = new THREE.SphereBufferGeometry( 92.75, 32, 32 );
-        const ballMaterial = new THREE.MeshBasicMaterial({color: '#2196f3'});
-        this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
-        this.scene.add(this.ball);
+        // Add ball
+        this.generateBall();
+
+        // Add players
+        this.generatePlayers(this.props.replayData.players.length);
 
         this.start();
         console.log(this);
@@ -68,12 +64,52 @@ export class ThreeScene extends Component {
         this.ball.position.y = this.props.replayData.ball[this.props.frame][2];
         this.ball.position.z = this.props.replayData.ball[this.props.frame][1];
 
+        this.updatePlayers();
+
+        this.camera.lookAt(this.ball.position);
+
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate)
     };
 
     renderScene = () => {
         this.renderer.render(this.scene, this.camera)
+    };
+
+    generatePlayfield = () => {
+        const geometry = new THREE.BoxBufferGeometry( 8192, 1, 10240 );
+        // const geometry = THREE.PlaneGeometry( 8192, 10240, 1 );;
+        const material = new THREE.MeshBasicMaterial({color: '#4CAF50'});
+        this.cube = new THREE.Mesh(geometry, material);
+        this.scene.add(this.cube);
+    };
+
+    generateBall = () => {
+        const ballGeometry = new THREE.SphereBufferGeometry( 92.75, 32, 32 );
+        const ballMaterial = new THREE.MeshBasicMaterial({color: '#2196f3'});
+        this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
+        this.scene.add(this.ball);
+    };
+
+    generatePlayers = (numberOfPlayers) => {
+        this.players = [];
+        for (let i = 0; i < numberOfPlayers; i++) {
+            const carGeometry = new THREE.BoxBufferGeometry( 80, 80, 80);
+            const carMaterial = new THREE.MeshBasicMaterial({color: '#ff9800'});
+
+            const player = new THREE.Mesh(carGeometry, carMaterial);
+            this.scene.add(player);
+            this.players.push(player);
+        }
+    };
+
+    updatePlayers = () => {
+        for (let i = 0, j = this.players.length; i<j; i++) {
+            const playerPosition = this.props.replayData.players[i][this.props.frame];
+            this.players[i].position.x = playerPosition[0];
+            this.players[i].position.y = playerPosition[2];
+            this.players[i].position.z = playerPosition[1];
+        }
     };
 
     render() {
