@@ -73,14 +73,14 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         )
     }
 
-    public getReplayPositions = async() => {
+    private readonly getReplayPositions = async() => {
         const data: any = await getReplayViewerData(this.props.replay.id)
         this.setState({replayData: data})
     }
 
-    public setCurrentFrame = (event: ChangeEvent) => {
-        const target = event.target as any // Hacky way to fix type casting
-        const value: number = parseInt(target.value)
+    private readonly setCurrentFrame = (event: ChangeEvent) => {
+        const target = event.target as HTMLInputElement
+        const value: number = parseInt(target.value, 10)
         this.setState({currentFrame: value})
     }
 }
