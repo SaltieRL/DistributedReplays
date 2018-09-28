@@ -45,7 +45,7 @@ export class ReplaysDetailsTable extends React.PureComponent<Props, State> {
                         }
                     </LoadableWrapper>
                     :
-                    <Typography>
+                    <Typography align="center" gutterBottom>
                         No replay selected
                     </Typography>
                 }
