@@ -15,8 +15,8 @@ from ...errors.errors import ReplayNotFound, ErrorOpeningGame
 
 class ReplayPositions:
     def __init__(self, id_: str,
-                 ball, players, colors, names,
-                 frames):
+                 ball: List[float], players: List[ReplayPlayer], colors: List[int], names: List[str],
+                 frames: List[float]):
         self.id = id_
 
         self.ball = ball

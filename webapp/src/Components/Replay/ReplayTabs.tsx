@@ -28,12 +28,14 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const isWidthSm = isWidthDown("sm", this.props.width)
+
         return (
             <Card square style={{width: "100%"}}>
                 <Tabs value={this.state.selectedTab}
                       onChange={this.handleSelectTab}
-                      centered
-                      scrollable={isWidthDown("sm", this.props.width)}
+                      centered={!isWidthSm}
+                      scrollable={isWidthSm}
                 >
                     <Tab key="basicStats" label="Basic Stats" value="basicStats"/>
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&

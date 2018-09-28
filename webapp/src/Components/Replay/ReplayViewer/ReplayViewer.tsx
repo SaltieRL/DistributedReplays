@@ -40,8 +40,8 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         )
     }
 
-    public getReplayPositions = () => {
-        getReplayViewerData(this.props.replay.id)
+    private readonly getReplayPositions = (): Promise<any> => {
+        return getReplayViewerData(this.props.replay.id)
             .then((data: any) => this.setState({replayData: data}))
     }
 }

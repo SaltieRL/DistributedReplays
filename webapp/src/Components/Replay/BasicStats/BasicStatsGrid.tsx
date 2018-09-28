@@ -44,14 +44,16 @@ class BasicStatsGridComponent extends React.PureComponent<Props, State> {
                 .filter((basicStat) => basicStat.subcategory === this.state.selectedTab)
             : []
 
+        const isWidthXs = isWidthDown("xs", this.props.width)
+
         return (
             <>
                 <Divider/>
                 <Tabs value={this.state.selectedTab}
                       onChange={this.handleSelectTab}
-                      centered
-                      scrollable={isWidthDown("xs", this.props.width)}
-                      scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
+                      centered={!isWidthXs}
+                      scrollable={isWidthXs}
+                      scrollButtons={isWidthXs ? "on" : undefined}
                 >
                     {basicStatsSubcategoryValues
                         .map((subcategory: BasicStatsSubcategory) =>
