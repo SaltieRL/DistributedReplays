@@ -62,8 +62,7 @@ export class ThreeScene extends Component {
     animate = () => {
         this.updateBall();
         this.updatePlayers();
-
-        this.camera.lookAt(this.ball.position);
+        this.updateCamera();
 
         this.renderScene();
         this.frameId = window.requestAnimationFrame(this.animate)
@@ -74,7 +73,6 @@ export class ThreeScene extends Component {
     };
 
     generatePlayfield = () => {
-        // const geometry = new THREE.BoxBufferGeometry( 8192, 1, 10240 );
         const geometry = new THREE.PlaneBufferGeometry( 8192, 10240, 1, 1 );
         const material = new THREE.MeshBasicMaterial({color: '#4CAF50'});
         this.cube = new THREE.Mesh(geometry, material);
@@ -115,6 +113,10 @@ export class ThreeScene extends Component {
             this.players[i].position.y = playerPosition[2];
             this.players[i].position.z = playerPosition[1];
         }
+    };
+
+    updateCamera = () => {
+        this.camera.lookAt(this.ball.position);
     };
 
     render() {
