@@ -4,6 +4,7 @@ import json
 from sqlalchemy import func
 from sqlalchemy.dialects import postgresql
 
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.database.objects import PlayerGame, Game
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.rank_wrapper import get_rank_number
@@ -65,7 +66,9 @@ class GlobalStatWrapper(SharedStatsWrapper):
         :param redis: The local cache
         :return:
         """
+
         if ids is None:
+            # Set the correct rank index
             if player_rank is not None:
                 if isinstance(player_rank, list):
                     rank_index = get_rank_number(player_rank)
@@ -73,23 +76,26 @@ class GlobalStatWrapper(SharedStatsWrapper):
                     rank_index = player_rank
             else:
                 rank_index = 0
+
+            # Check to see if we have redis available (it usually is)
             if redis is not None:
                 stat_string = redis.get('global_stats')
+                # Check to see if the key exists and if so load it
                 if stat_string is not None:
                     stats_dict = json.loads(stat_string)
                     global_stats = [stats_dict[s.field_name][rank_index]['mean'] for s in self.field_names]
                     global_stds = [stats_dict[s.field_name][rank_index]['std'] for s in self.field_names]
                     return global_stats, global_stds
-
-            if player_rank is not None and not get_local_dev():
-                logger.debug('Filtering by rank')
-                query_filter.clean().with_rank(rank_index)
-            else:
-                query_filter.clean()
+            if get_local_dev():
+                stats = self.get_global_stats(session)
+                global_stats = [stats[s.field_name][rank_index]['mean'] for s in self.field_names]
+                global_stds = [stats[s.field_name][rank_index]['std'] for s in self.field_names]
+                return global_stats, global_stds
+            raise CalculatedError(500, "Global stats unavailable or have not been calculated yet.")
         else:
             query_filter.clean().with_replay_ids(ids)
-        return (query_filter.with_stat_query(stats_query).build_query(session).first(),
-                query_filter.with_stat_query(stds_query).build_query(session).first())
+            return (query_filter.with_stat_query(stats_query).build_query(session).first(),
+                    query_filter.with_stat_query(stds_query).build_query(session).first())
 
     @staticmethod
     def get_timeframe():
@@ -111,5 +117,5 @@ if __name__ == '__main__':
         print(result)
     except KeyboardInterrupt:
         sess.close()
-    finally:    # result = engine.execute()
+    finally:  # result = engine.execute()
         sess.close()

@@ -31,7 +31,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         return zipped_stats
 
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None):
-        global_stats, global_stds = self.get_global_stats_by_rank(session, self.player_stats_filter,
+        global_stats, global_stds = self.get_global_stats_by_rank(session, self.player_stats_filter.clean(),
                                                                   stats_query, std_query, player_rank=rank, redis=redis,
                                                                   ids=replay_ids)
         self.player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
