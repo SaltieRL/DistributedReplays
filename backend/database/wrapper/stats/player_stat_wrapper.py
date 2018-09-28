@@ -94,7 +94,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
 
     def _create_stats(self, session, player_filter=None, replay_ids=None):
-
         average = QueryFilterBuilder().with_stat_query(self.stats_query)
         std_devs = QueryFilterBuilder().with_stat_query(self.std_query)
         if player_filter is not None:

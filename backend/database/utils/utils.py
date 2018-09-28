@@ -46,7 +46,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
              team1score=game.game_metadata.score.team_1_score, teamsize=teamsize,
              match_date=match_date, team0possession=team0poss.possession_time,
              team1possession=team1poss.possession_time, name='' if match_name is None else match_name,
-             frames=game.game_metadata.frames)
+             frames=game.game_metadata.frames, length=game.game_metadata.length)
     player_games = []
     players = []
     # print('iterating over players')

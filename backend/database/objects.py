@@ -198,7 +198,8 @@ class Game(DBObjectBase):
 
     # metadata
     version = Column(Integer)
-    
+    length = Column(Float, default=300.0)
+
     @validates('name')
     def validate_code(self, key, value):
         max_len = getattr(self.__class__, key).prop.columns[0].type.length
