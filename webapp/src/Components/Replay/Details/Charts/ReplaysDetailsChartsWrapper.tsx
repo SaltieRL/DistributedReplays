@@ -1,8 +1,8 @@
-import {CardContent, Divider, Grid} from "@material-ui/core"
+import {CardContent, Grid} from "@material-ui/core"
 import * as React from "react"
-import {BasicStat, BasicStatsSubcategory} from "../../../Models/ChartData"
-import {Replay} from "../../../Models/Replay/Replay"
-import {BasicStatsTabs} from "../BasicStats/BasicStatsTabs"
+import {BasicStat, BasicStatsSubcategory} from "../../../../Models/ChartData"
+import {Replay} from "../../../../Models/Replay/Replay"
+import {BasicStatsTabs} from "../../BasicStats/BasicStatsTabs"
 import {ReplayDetailsCharts} from "./ReplayDetailsCharts"
 
 interface OwnProps {
@@ -26,9 +26,8 @@ export class ReplaysDetailsChartsWrapper extends React.PureComponent<Props, Stat
         return (
             <>
                 <BasicStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
-                <Divider/>
                 <CardContent>
-                    <Grid container spacing={32}>
+                    <Grid container spacing={32} justify="center">
                         <ReplayDetailsCharts replays={this.props.replays} selectedTab={this.state.selectedTab}/>
                     </Grid>
                 </CardContent>
