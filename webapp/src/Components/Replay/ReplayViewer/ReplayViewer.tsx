@@ -13,13 +13,15 @@ type Props = OwnProps
 interface State {
     replayData?: any,
     currentFrame: number,
+    play: boolean
 }
 
 export class ReplayViewer extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
-            currentFrame: 0
+            currentFrame: 0,
+            play: false
         }
     }
 
@@ -36,15 +38,23 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                         Replay Viewer
                     </Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={8}>
                     {
                         !this.state.replayData &&
                         <Typography>Loading...</Typography>
                     }
                     {
                         this.state.replayData &&
-                        <ThreeScene replayData={this.state.replayData} frame={this.state.currentFrame}/>
+                        <ThreeScene
+                            replayData={this.state.replayData}
+                            frame={this.state.currentFrame}
+                        />
                     }
+                </Grid>
+                <Grid item xs={4}>
+                    <Typography>Playback Controls</Typography>
+                    <button onClick={this.startPlayback}>Play</button>
+                    <button onClick={this.stopPlayback}>Pause</button>
                 </Grid>
                 <Grid item xs={6}>
                     <label>Frame:</label>
@@ -79,5 +89,23 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     private readonly setCurrentFrame: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const value: number = parseInt(event.target.value, 10)
         this.setState({currentFrame: value})
+    }
+
+    private startPlayback = () => {
+        if (!this.state.play) {
+            this.setState({play: true})
+            setTimeout(() => this.playLoop(), 0)
+        }
+    }
+
+    private stopPlayback = () => {
+        this.setState({play: false})
+    }
+
+    private playLoop = () => {
+        if (this.state.play) {
+            this.setState({currentFrame: this.state.currentFrame + 1})
+            setTimeout(() => this.playLoop(), 1000 / 30)
+        }
     }
 }

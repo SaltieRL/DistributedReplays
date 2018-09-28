@@ -78,11 +78,18 @@ export class ThreeScene extends Component {
         this.cube = new THREE.Mesh(geometry, material);
         this.cube.rotation.x = -Math.PI / 2;
         this.scene.add(this.cube);
+
+        // Ambient light
+        this.scene.add(new THREE.AmbientLight(0x444444));
+
+        // Hemisphere light
+        this.scene.add( new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 ) );
     };
 
     generateBall = () => {
         const ballGeometry = new THREE.SphereBufferGeometry( 92.75, 32, 32 );
-        const ballMaterial = new THREE.MeshBasicMaterial({color: '#2196f3'});
+        // const ballMaterial = new THREE.MeshBasicMaterial({color: '#2196f3'});
+        const ballMaterial = new THREE.MeshToonMaterial({color: '#2196f3'});
         this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
         this.scene.add(this.ball);
     };
@@ -119,14 +126,34 @@ export class ThreeScene extends Component {
         this.camera.lookAt(this.ball.position);
     };
 
+    setCameraView = (viewId) => {
+        if (viewId === 0) {
+            this.camera.position.z = 3840;
+            this.camera.position.y = 125;
+        } else if (viewId === 1) {
+            this.camera.position.z = -3840;
+            this.camera.position.y = 125;
+        } else if (viewId === 2) {
+            this.camera.position.z = 0;
+            this.camera.position.y = 750;
+        }
+    };
+
     render() {
         return (
-            <div
-                style={{width: '800px', height: '400px', margin: 'auto'}}
-                ref={(mount) => {
-                    this.mount = mount
-                }}
-            />
+            <div style={{position: 'relative'}}>
+                <div
+                    style={{width: '100%', height: '400px', margin: 'auto'}}
+                    ref={(mount) => {
+                        this.mount = mount
+                    }}
+                />
+                <div style={{position: 'absolute', top: '0', left: '0', margin: '.5rem'}}>
+                    <button onClick={() => this.setCameraView(0)}>Orange Goal</button>
+                    <button onClick={() => this.setCameraView(2)}>Mid Field</button>
+                    <button onClick={() => this.setCameraView(1)}>Blue Goal</button>
+                </div>
+            </div>
         )
     }
 }
