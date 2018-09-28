@@ -41,7 +41,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                 <Grid item xs={12}>
                     {
                         !this.state.replayData &&
-                        <span>Loading...</span>
+                        <Typography>Loading...</Typography>
                     }
                     {
                         this.state.replayData &&
@@ -53,7 +53,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                     <input type="number" value={this.state.currentFrame} onChange={this.setCurrentFrame} />
                 </Grid>
                 <Grid item xs={6}>
-                    <span>
+                    <Typography>
                         Ball Position:
                         {
                             this.state.replayData &&
@@ -67,7 +67,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                             this.state.replayData &&
                             this.state.replayData.ball[this.state.currentFrame][2]
                         }
-                    </span>
+                    </Typography>
                 </Grid>
             </Grid>
         )
