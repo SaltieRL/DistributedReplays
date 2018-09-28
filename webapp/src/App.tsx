@@ -9,10 +9,6 @@ import {PlayerPage} from "./Components/Pages/PlayerPage"
 import {PluginsPage} from "./Components/Pages/PluginsPage"
 import {ReplayPage} from "./Components/Pages/ReplayPage"
 import {UploadPage} from "./Components/Pages/UploadPage"
-
-import {ABOUT_LINK, GLOBAL_STATS_LINK, PLAYER_PAGE_LINK, PLUGINS_LINK, REPLAY_PAGE_LINK, UPLOAD_LINK} from "./Globals"
-
-import {ReplayViewer} from "./Components/Replay/ReplayViewer/ReplayViewer"
 import {Notifications} from "./Components/Shared/Notification/Notifications"
 import {
     ABOUT_LINK,
