@@ -1,7 +1,8 @@
-import {Card, Divider, Grid, Tab, Tabs} from "@material-ui/core"
+import {Card, Divider, Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
 import {Replay} from "../../../Models/Replay/Replay"
 import {ReplaysDetailsChartsWrapper} from "./Charts/ReplaysDetailsChartsWrapper"
+import {ReplaysDetailsTable} from "./ReplaysDetailsTable"
 
 interface Props {
     replays: Replay[]
@@ -31,11 +32,7 @@ export class ReplaysDetailsContent extends React.PureComponent<Props, State> {
                 </Tabs>
                 <Divider/>
                 {this.state.selectedTab === "Table" ?
-                    <div style={{padding: 16, paddingBottom: 48}}>
-                        <Grid container spacing={32}>
-                            Table
-                        </Grid>
-                    </div>
+                    <ReplaysDetailsTable replays={this.props.replays}/>
                     :
                     <ReplaysDetailsChartsWrapper replays={this.props.replays}/>
                 }
