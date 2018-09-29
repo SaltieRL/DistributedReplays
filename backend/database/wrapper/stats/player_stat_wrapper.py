@@ -8,6 +8,7 @@ from backend.database.objects import PlayerGame, Game
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.stats.global_stats_wrapper import GlobalStatWrapper
+from backend.utils.checks import ignore_filtering
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         # this Object needs to be pooled per a session so only one is used at a time
         self.player_stats_filter = QueryFilterBuilder()
-        self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
+        if ignore_filtering():
+            self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
             3).with_safe_checking().sticky()
 
     def get_wrapped_stats(self, stats):
@@ -31,14 +33,16 @@ class PlayerStatWrapper(GlobalStatWrapper):
         return zipped_stats
 
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None):
-        global_stats, global_stds = self.get_global_stats_by_rank(session, self.player_stats_filter.clean(),
+        player_stats_filter = self.player_stats_filter.clean().clone()
+        global_stats, global_stds = self.get_global_stats_by_rank(session, player_stats_filter,
                                                                   stats_query, std_query, player_rank=rank, redis=redis,
                                                                   ids=replay_ids)
-        self.player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
+        player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
         if replay_ids is not None:
-            self.player_stats_filter.with_replay_ids(replay_ids)
-        query = self.player_stats_filter.build_query(session)
+            player_stats_filter.with_replay_ids(replay_ids)
+        query = player_stats_filter.build_query(session)
         stats = list(query.first())
+        stats = [0 if s is None else s for s in stats]
         if raw:
             return [float(s) for s in stats], [float(s) for s in global_stats]
         else:

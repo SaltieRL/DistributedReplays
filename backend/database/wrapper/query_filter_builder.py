@@ -173,6 +173,15 @@ class QueryFilterBuilder:
 
         return self
 
+    def clone(self) -> 'QueryFilterBuilder':
+        """Returns a copy of this object"""
+        copy = QueryFilterBuilder()
+        copy.initial_query = self.initial_query
+        copy.has_joined_game = self.has_joined_game
+        copy.is_game = self.is_game
+        copy.sticky_values = self.sticky_values.copy()
+        return copy
+
     @staticmethod
     def handle_list(field, lst):
         if isinstance(lst, list):

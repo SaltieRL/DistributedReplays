@@ -6,7 +6,7 @@ from backend.blueprints.shared_renders import render_with_session
 from backend.database.objects import Player, Group
 from backend.database.wrapper.stats import global_stats_wrapper
 from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists
-from backend.utils.checks import get_local_dev
+from backend.utils.checks import is_local_dev
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -102,7 +102,7 @@ def ping():
     result = r.get('global_stats')
     if result is not None:
         return jsonify({'result': json.loads(result)})
-    elif get_local_dev():
+    elif is_local_dev():
         wrapper = global_stats_wrapper.GlobalStatWrapper()
         session = current_app.config['db']()
         result = wrapper.get_global_stats(sess=session, with_rank=False)

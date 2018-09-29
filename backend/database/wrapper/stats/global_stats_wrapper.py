@@ -8,7 +8,7 @@ from backend.database.objects import PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.rank_wrapper import get_rank_number
 from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
-from backend.utils.checks import get_local_dev
+from backend.utils.checks import ignore_filtering, is_local_dev
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,10 @@ class GlobalStatWrapper(SharedStatsWrapper):
         :return: A list of stats by rank for every field.
         """
         results = {}
-        ranks = list(range(20))
+        if with_rank:
+            ranks = list(range(20))
+        else:
+            ranks = [0]
 
         def float_maybe(f):
             if f is None:
@@ -47,7 +50,11 @@ class GlobalStatWrapper(SharedStatsWrapper):
                 if with_rank:
                     query = query.with_rank(rank)
                 query = query.build_query(sess)
-                query = query.group_by(PlayerGame.player).having(func.count(PlayerGame.player) > 5).subquery()
+                query = query.group_by(PlayerGame.player)
+                if ignore_filtering():
+                    query = query.subquery()
+                else:
+                    query = query.having(func.count(PlayerGame.player) > 5).subquery()
 
                 result = sess.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
                 column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
@@ -88,8 +95,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
                     global_stats = [stats_dict[s.field_name][rank_index]['mean'] for s in self.field_names]
                     global_stds = [stats_dict[s.field_name][rank_index]['std'] for s in self.field_names]
                     return global_stats, global_stds
-            if get_local_dev():
-                print('Calculating global stats now')
+            if is_local_dev():
                 rank_index = 0
                 stats = self.get_global_stats(session, with_rank=False)
                 global_stats = [stats[s.field_name][rank_index]['mean'] for s in self.field_names]

@@ -11,7 +11,7 @@ from backend.blueprints.spa_api import spa_api
 from backend.database.objects import Player, Group
 from backend.database.startup import startup
 from backend.database.wrapper.player_wrapper import create_default_player
-from backend.utils.checks import get_local_dev
+from backend.utils.checks import is_local_dev
 from backend.utils.global_jinja_functions import create_jinja_globals
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,6 @@ logger.info("Setting up server.")
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'replays')
 UPLOAD_RATE_LIMIT_MINUTES = 4.5  # TODO: Make use of this.
-IS_LOCAL_DEV = get_local_dev()
 
 
 def start_app() -> Tuple[Flask, Dict[str, int]]:
@@ -152,7 +151,7 @@ def lookup_current_user():
         g.admin = ids['admin'] in g.user.groups
         g.alpha = ids['alpha'] in g.user.groups
         g.beta = ids['beta'] in g.user.groups
-    elif IS_LOCAL_DEV:
+    elif is_local_dev():
         g.user = create_default_player()
         g.admin = True
     s.close()
