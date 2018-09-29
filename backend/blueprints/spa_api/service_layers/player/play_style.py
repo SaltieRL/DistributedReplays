@@ -37,7 +37,7 @@ class PlayStyleResponse:
         for spider_chart_group in spider_charts_groups:
             title = spider_chart_group['title']
             chart_data_points = [
-                ChartDataPoint(name=name, value=averaged_stats[name], average=global_stats[name])
+                ChartDataPoint(name=name.title(), value=averaged_stats[name], average=global_stats[name])
                 for name in spider_chart_group['group']
             ]
             play_style_chart_datas.append(PlayStyleChartData(title, chart_data_points))
