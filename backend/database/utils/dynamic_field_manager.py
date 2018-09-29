@@ -112,7 +112,7 @@ def add_dynamic_fields(names):
 if __name__ == "__main__":
     test_list = get_proto_fields_as_flatten_list(player_pb2.Player)
     test_list = filter_proto_fields(test_list, ['name', 'title_id', 'is_orange', 'load_out_id'],
-                               ['api.metadata.CameraSettings', 'api.PlayerId'])
+                                    ['api.metadata.CameraSettings', 'api.PlayerId'])
 
     test_list = get_db_proto_union(test_list, PlayerGame)
     print(test_list)

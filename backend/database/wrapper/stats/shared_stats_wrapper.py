@@ -5,13 +5,12 @@ from carball.generated.api import player_pb2
 
 from backend.database.objects import PlayerGame
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
+from backend.database.wrapper.stats import stat_math
+
+from backend.database.wrapper.stats.stat_math import safe_divide
 from sqlalchemy import func, cast, literal
 
 logger = logging.getLogger(__name__)
-
-
-def safe_divide(sql_value):
-    return func.greatest(sql_value, 1)
 
 
 class SharedStatsWrapper:
@@ -62,6 +61,9 @@ class SharedStatsWrapper:
             PlayerGame.average_hit_distance,
             PlayerGame.total_passes,
             PlayerGame.wasted_collection,
+            stat_math.get_total_boost_efficiency(),
+            stat_math.get_collection_boost_efficiency(),
+            stat_math.get_used_boost_efficiency()
         ]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
@@ -69,7 +71,8 @@ class SharedStatsWrapper:
                                           'turnovers', 'shot %', 'aerials',
                                           'att 1/2', 'att 1/3', 'def 1/2', 'def 1/3', '< ball', '> ball',
                                           'luck1', 'luck2', 'luck3', 'luck4', 'won turnovers', 'avg hit dist', 'passes',
-                                          'boost wasted'])
+                                          'boost wasted', 'total boost efficiency', 'collection boost efficiency',
+                                          'used boost efficiency'])
         avg_list = []
         std_list = []
         for i, s in enumerate(stat_list):
