@@ -20,6 +20,7 @@ from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.replay.basic_stats import BasicStatChartData
+from .service_layers.replay.replay_positions import ReplayPositions
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 
@@ -146,6 +147,12 @@ def api_get_replay_basic_stats(id_):
     basic_stats = BasicStatChartData.create_from_id(id_)
     return better_jsonify(basic_stats)
 
+
+
+@bp.route('replay/<id_>/positions')
+def api_get_replay_positions(id_):
+    positions = ReplayPositions.create_from_id(id_)
+    return better_jsonify(positions)
 
 @bp.route('replay/group')
 def api_get_replay_group():
