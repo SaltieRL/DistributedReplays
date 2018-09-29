@@ -2,7 +2,7 @@ import {ChartData, ChartOptions} from "chart.js"
 import * as React from "react"
 import {Bar} from "react-chartjs-2"
 import {BasicStat} from "../../../Models/ChartData"
-import {getPrimaryColorsForPlayers} from "../../../Utils/Color"
+import {convertHexToRgba, getPrimaryColorsForPlayers, primaryColours} from "../../../Utils/Color"
 
 interface Props {
     basicStat: BasicStat
@@ -17,15 +17,20 @@ export class ColoredBarChart extends React.PureComponent<Props> {
 
     private readonly getChartData = (): ChartData => {
         const chartDataPoints = this.props.basicStat.chartDataPoints
+        const backgroundColors = chartDataPoints[0].isOrange !== undefined ?
+            getPrimaryColorsForPlayers(
+                chartDataPoints.map((chartDataPoint) => chartDataPoint.isOrange)
+            )
+            :
+            primaryColours.slice(0, chartDataPoints.length).map((hexColor) => convertHexToRgba(hexColor, 0.7))
+
         return {
             labels: chartDataPoints.map((chartDataPoint) => chartDataPoint.name),
             datasets:
                 [
                     {
                         data: chartDataPoints.map((chartDataPoint) => chartDataPoint.value),
-                        backgroundColor: getPrimaryColorsForPlayers(
-                            chartDataPoints.map((chartDataPoint) => chartDataPoint.isOrange)
-                        )
+                        backgroundColor: backgroundColors
                     }
                 ]
         }

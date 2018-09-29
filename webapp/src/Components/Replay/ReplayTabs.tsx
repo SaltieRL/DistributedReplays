@@ -4,7 +4,7 @@ import * as React from "react"
 import {connect} from "react-redux"
 import {Replay} from "../../Models/Replay/Replay"
 import {StoreState} from "../../Redux"
-import {BasicStatsGrid} from "./BasicStats/BasicStatsGrid"
+import {BasicStatsContent} from "./BasicStats/BasicStatsContent"
 
 interface OwnProps {
     replay: Replay
@@ -14,10 +14,10 @@ type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type tabValue = "basicStats" | "advancedStats" | "replayViewer"
+type ReplayTab = "basicStats" | "advancedStats" | "replayViewer"
 
 interface State {
-    selectedTab: tabValue
+    selectedTab: ReplayTab
 }
 
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
@@ -43,13 +43,13 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     }
                 </Tabs>
                 {this.state.selectedTab === "basicStats" &&
-                <BasicStatsGrid replay={this.props.replay}/>
+                <BasicStatsContent replay={this.props.replay}/>
                 }
             </Card>
         )
     }
 
-    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: tabValue) => {
+    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: ReplayTab) => {
         this.setState({selectedTab})
     }
 }

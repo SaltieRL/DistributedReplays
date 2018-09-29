@@ -26,11 +26,15 @@ const explanations: Explanation[] = [
     },
     {
         statName: "< ball",
-        message: "Duration spent behind the ball"
+        message: "Duration spent between your goal and the ball"
     },
     {
         statName: "> ball",
-        message: "Duration spent ahead of the ball"
+        message: "Duration spent between the enemy goal and the ball"
+    },
+    {
+        statName: "total boost efficiency",
+        message: "(Wasted collected boost + wasted boost at speed) / (boost used + boost collected)"
     }
 ]
 

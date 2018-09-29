@@ -44,7 +44,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
         return (
             <>
-                {isWidthUp("sm", this.props.width) ?
+                {isWidthUp("md", this.props.width) ?
                     <>
                         <Grid item xs={5} md={3}>
                             {playerSideBar}
