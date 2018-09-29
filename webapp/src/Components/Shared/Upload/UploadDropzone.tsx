@@ -48,7 +48,7 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
                                     Drop your .replay files here, or click to select files to upload.
                                 </Typography>
                                 <Typography align="center">
-                                    Replays can be found in your Documents/My Games/TAGame/Demos/ folder
+                                    Replays can be found in your Documents/My Games/Rocket League/TAGame/Demos/ folder
                                 </Typography>
                                 <br/>
                                 <ArrowDownward/>
