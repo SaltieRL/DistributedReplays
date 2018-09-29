@@ -8,6 +8,13 @@ export const getReplayCount = (): Promise<number> => {
     return doGet("/global/replay_count")
 }
 
+export const getQueueLength = (): Promise<QueueLengths> => { //TODO: should this only grab default queue?
+    // if (useMockData) {
+    //     return Promise.resolve(queueLength: QueueLengths)
+    // }
+    return doGet("/global/queue/count")
+}
+
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
 
 export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Specify any
