@@ -6,7 +6,6 @@ import uuid
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-from backend.blueprints.spa_api.service_layers.replay.groups import GroupChartData
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.tasks import celery_tasks
@@ -15,10 +14,12 @@ from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
+from .service_layers.player.play_style_progression import PlayStyleProgression
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.replay.basic_stats import BasicStatChartData
+from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 
@@ -123,20 +124,18 @@ def api_get_player_play_style_all(id_):
         rank = int(request.args['rank'])
     else:
         rank = None
-    if 'ids' in request.args:
-        ids = request.args.getlist('ids')
-        print(ids)
+    if 'replay_ids' in request.args:
+        replay_ids = request.args.getlist('replay_ids')
     else:
-        ids = None
-    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank, ids=ids)
+        replay_ids = None
+    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank, replay_ids=replay_ids)
     return better_jsonify(play_style_response)
 
 
 @bp.route('player/<id_>/play_style/progression')
 def api_get_player_play_style_progress(id_):
-    psr = PlayStyleResponse.create_progression(id_)
-    print(psr)
-    return better_jsonify(psr)
+    play_style_progression = PlayStyleProgression.create_progression(id_)
+    return better_jsonify(play_style_progression)
 
 
 @bp.route('player/<id_>/match_history')
@@ -171,8 +170,8 @@ def api_get_replay_basic_stats(id_):
 
 @bp.route('replay/group')
 def api_get_replay_group():
-    ids = request.args.getlist('id[]')
-    chart_data = GroupChartData.create_from_ids(ids)
+    ids = request.args.getlist('ids')
+    chart_data = ReplayGroupChartData.create_from_ids(ids)
     return better_jsonify(chart_data)
 
 

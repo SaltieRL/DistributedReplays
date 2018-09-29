@@ -1,7 +1,9 @@
-import logging
 import json
+import logging
+
 from sqlalchemy import func
 
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.database.objects import PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.rank_wrapper import get_rank_number
@@ -20,9 +22,10 @@ class GlobalStatWrapper(SharedStatsWrapper):
         super().__init__()
 
         # this Object needs to be pooled per a session so only one is used at a time
-        self.base_query = QueryFilterBuilder().with_relative_start_time(days_ago=self.get_timeframe()).sticky()
+        self.base_query = QueryFilterBuilder().with_relative_start_time(days_ago=self.get_timeframe()).with_team_size(
+            3).sticky()
 
-    def get_global_stats(self, sess):
+    def get_global_stats(self, sess, with_rank=True):
         """
         :return: A list of stats by rank for every field.
         """
@@ -38,10 +41,12 @@ class GlobalStatWrapper(SharedStatsWrapper):
         for column, q in zip(self.field_names, self.stats_query):
             column_results = []
             # set the column result
-            self.base_query.clean().with_stat_query([PlayerGame.player,
-                                                     q.label('avg')])
+            self.base_query.clean().with_stat_query([PlayerGame.player, q.label('avg')])
             for rank in ranks:
-                query = self.base_query.with_rank(rank).build_query(sess)
+                query = self.base_query
+                if with_rank:
+                    query = query.with_rank(rank)
+                query = query.build_query(sess)
                 query = query.group_by(PlayerGame.player).having(func.count(PlayerGame.player) > 5).subquery()
 
                 result = sess.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
@@ -63,7 +68,9 @@ class GlobalStatWrapper(SharedStatsWrapper):
         :param redis: The local cache
         :return:
         """
+
         if ids is None:
+            # Set the correct rank index
             if player_rank is not None:
                 if isinstance(player_rank, list):
                     rank_index = get_rank_number(player_rank)
@@ -71,23 +78,28 @@ class GlobalStatWrapper(SharedStatsWrapper):
                     rank_index = player_rank
             else:
                 rank_index = 0
+
+            # Check to see if we have redis available (it usually is)
             if redis is not None:
                 stat_string = redis.get('global_stats')
+                # Check to see if the key exists and if so load it
                 if stat_string is not None:
                     stats_dict = json.loads(stat_string)
                     global_stats = [stats_dict[s.field_name][rank_index]['mean'] for s in self.field_names]
                     global_stds = [stats_dict[s.field_name][rank_index]['std'] for s in self.field_names]
                     return global_stats, global_stds
-
-            if player_rank is not None and not get_local_dev():
-                logger.debug('Filtering by rank')
-                query_filter.clean().with_rank(rank_index)
-            else:
-                query_filter.clean()
+            if get_local_dev():
+                print('Calculating global stats now')
+                rank_index = 0
+                stats = self.get_global_stats(session, with_rank=False)
+                global_stats = [stats[s.field_name][rank_index]['mean'] for s in self.field_names]
+                global_stds = [stats[s.field_name][rank_index]['std'] for s in self.field_names]
+                return global_stats, global_stds
+            raise CalculatedError(500, "Global stats unavailable or have not been calculated yet.")
         else:
             query_filter.clean().with_replay_ids(ids)
-        return (query_filter.with_stat_query(stats_query).build_query(session).first(),
-                query_filter.with_stat_query(stds_query).build_query(session).first())
+            return (query_filter.with_stat_query(stats_query).build_query(session).first(),
+                    query_filter.with_stat_query(stds_query).build_query(session).first())
 
     @staticmethod
     def get_timeframe():
@@ -97,3 +109,17 @@ class GlobalStatWrapper(SharedStatsWrapper):
             return current_app.config['STAT_DAY_LIMIT']
         except:
             return 30 * 6
+
+
+if __name__ == '__main__':
+    from backend.database.startup import startup
+
+    engine, Session = startup()
+    sess = Session()
+    try:
+        result = GlobalStatWrapper().get_global_stats(sess)
+        print(result)
+    except KeyboardInterrupt:
+        sess.close()
+    finally:  # result = engine.execute()
+        sess.close()

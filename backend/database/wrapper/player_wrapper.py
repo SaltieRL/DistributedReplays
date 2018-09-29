@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def create_default_player():
     player = Player()
-    player.platformid = 3678
+    player.platformid = "3678"
     player.platformname = 'test user with a really long name but even longer'
     if bool(random.getrandbits(1)):
         player.avatar = "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
@@ -39,10 +39,10 @@ class PlayerWrapper:
     def __init__(self, limit=None):
         self.limit = limit
 
-    def get_player_games(self, session, id_, ids=None):
+    def get_player_games(self, session, id_, replay_ids=None):
         query = session.query(PlayerGame)
-        if ids is not None:
-            query = query.filter(PlayerGame.game.in_(ids))
+        if replay_ids is not None:
+            query = query.filter(PlayerGame.game.in_(replay_ids))
         if isinstance(id_, list):
             return query.join(Game).filter(
                 Game.players.contains(cast(id_, postgresql.ARRAY(String)))).filter(
@@ -63,5 +63,5 @@ class PlayerWrapper:
 
         return existing_query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
 
-    def get_total_games(self, session, id_, ids=None):
-        return self.get_player_games(session, id_, ids=ids).count()
+    def get_total_games(self, session, id_, replay_ids=None):
+        return self.get_player_games(session, id_, replay_ids=replay_ids).count()

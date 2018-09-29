@@ -111,8 +111,7 @@ class BasicStatChartData(ChartData):
                 chart_data_points=[
                     StatDataPoint(
                         name=player_game.name,
-                        value=player_game.__getattribute__(basic_stats_metadata.stat_name),
-                        # TODO: Investigate proper way to get attribute
+                        value=getattr(player_game, basic_stats_metadata.stat_name),
                         is_orange=player_game.is_orange
                     )
                     for player_game in sort_player_games_by_team_then_id(
