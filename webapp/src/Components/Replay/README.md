@@ -30,7 +30,7 @@ Data about the current replay should be emitted up from `ThreeScene` to `ReplayV
 `UI/Overlay` should then delegate it's data between it's children, in order to display data in various ways.     
 `UI/Overlay` should also emit events up to ReplayViewer which should be relayed to `ThreeScene` through it's props.
 
-In this manner, `ReplayViewer` should known about all data and interfaces for *both* the 3D Viewer *and* the UI Overlay.
+In this manner, `ReplayViewer` should know about all data and interfaces for *both* the 3D Viewer *and* the UI Overlay.
 
 If possible, `ReplayViewer` should avoid directly modifying or changing data.
 
