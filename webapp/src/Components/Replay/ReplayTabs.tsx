@@ -5,6 +5,7 @@ import {connect} from "react-redux"
 import {Replay} from "../../Models/Replay/Replay"
 import {StoreState} from "../../Redux"
 import {BasicStatsGrid} from "./BasicStats/BasicStatsGrid"
+import {ReplayViewer} from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay
@@ -27,23 +28,28 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const isWidthSm = isWidthDown("sm", this.props.width)
+
         return (
             <Card square style={{width: "100%"}}>
                 <Tabs value={this.state.selectedTab}
                       onChange={this.handleSelectTab}
-                      centered
-                      scrollable={isWidthDown("sm", this.props.width)}
+                      centered={!isWidthSm}
+                      scrollable={isWidthSm}
                 >
-                    <Tab label="Basic Stats" value="basicStats"/>
+                    <Tab key="basicStats" label="Basic Stats" value="basicStats"/>
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
-                    <>
-                        <Tab label="Advanced Stats" value="advancedStats"/>
-                        < Tab label="Replay Viewer" value="replayViewer"/>
-                    </>
+                        [
+                            <Tab key="advancedStats" label="Advanced Stats" value="advancedStats"/>,
+                            <Tab key="replayViewer" label="Replay Viewer" value="replayViewer"/>
+                        ]
                     }
                 </Tabs>
                 {this.state.selectedTab === "basicStats" &&
-                <BasicStatsGrid replay={this.props.replay}/>
+                    <BasicStatsGrid replay={this.props.replay} />
+                }
+                {this.state.selectedTab === "replayViewer" &&
+                    <ReplayViewer replay={this.props.replay} />
                 }
             </Card>
         )
