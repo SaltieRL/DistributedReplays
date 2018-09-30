@@ -123,7 +123,7 @@ def get_rank_batch(ids, offline_redis=None):
                     })
 
             if r is not None:
-                r.set(unique_id, json.dumps(rank_datas), ex=24 * 60 * 60)
+                r.set(unique_id, json.dumps(rank_datas), ex=30 * 60)
             rank_datas_for_players[unique_id] = rank_datas
         else:
             rank_datas_for_players[unique_id] = {}

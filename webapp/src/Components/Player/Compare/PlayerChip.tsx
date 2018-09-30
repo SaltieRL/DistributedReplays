@@ -10,7 +10,7 @@ interface OwnProps extends Player {
 type Props = OwnProps
     & RouteComponentProps<{}>
 
-export class PlayerChipComponent extends React.PureComponent<Props> {
+class PlayerChipComponent extends React.PureComponent<Props> {
     public render() {
         return (
             <Chip

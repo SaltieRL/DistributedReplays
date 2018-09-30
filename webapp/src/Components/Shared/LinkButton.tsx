@@ -43,7 +43,7 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
         const {classes, children, isExternalLink, tooltip} = this.props
         const className = children ? `${classes.icon} ${classes.leftIcon}` : classes.icon
         let button =
-            <Button variant="outlined">
+            <Button variant="outlined" style={{height: "100%"}}>
                 {this.props.iconType === "fontawesome" &&
                 <FontAwesomeIcon icon={this.props.icon} className={className}/>
                 }

@@ -84,3 +84,14 @@ const chartColors: ChartColors = {
 }
 
 export const colorsForPlaylists = ["#F9A782", "#71EFAF", "#88C6F9", "#E888F7"]
+
+export const primaryColours = [
+    "#33B8A5",
+    "#F04950",
+    "#3276B5",
+    "#F58D4E",
+    "#B868AD",
+    "#FECE3E",
+    "#A2C334",
+    "#f0447c"
+]

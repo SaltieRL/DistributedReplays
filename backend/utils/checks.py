@@ -12,7 +12,6 @@ def get_local_dev() -> bool:
         except:
             return True
     except ImportError:
-        logger.error('No config exists. Using local dev.')
         return True
 
 
@@ -41,3 +40,14 @@ def get_checks(global_state):
         return is_alpha() or global_state.beta
 
     return is_admin, is_alpha, is_beta
+
+
+IS_LOCAL_DEV = get_local_dev()
+
+
+def is_local_dev():
+    return IS_LOCAL_DEV
+
+
+def ignore_filtering():
+    return False
