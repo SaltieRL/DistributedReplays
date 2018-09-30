@@ -157,6 +157,7 @@ def api_upload_replays():
 
 @bp.route('/upload/proto', methods=['POST'])
 def api_upload_replays():
+    print('Proto uploaded')
     response = request.get_json()
     i = io.BytesIO(base64.b64decode(response['proto']))
     protobuf_game = ProtobufManager.read_proto_out_from_file(i)
