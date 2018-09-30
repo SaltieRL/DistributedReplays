@@ -156,7 +156,7 @@ def api_upload_replays():
 
 
 @bp.route('/upload/proto', methods=['POST'])
-def api_upload_replays():
+def api_upload_proto():
     print('Proto uploaded')
     response = request.get_json()
     i = io.BytesIO(base64.b64decode(response['proto']))
