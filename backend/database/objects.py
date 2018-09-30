@@ -5,7 +5,7 @@ import enum
 from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 DBObjectBase = declarative_base()
 
@@ -165,6 +165,18 @@ class PlayerGame(DBObjectBase):
     time_at_slow_speed = Column(Float)
     time_at_super_sonic = Column(Float)
 
+    # metadata
+    is_bot = Column(Boolean)
+    first_frame_in_game = Column(Integer)
+    time_in_game = Column(Float)
+
+    @validates('player')
+    def validate_code(self, key, value):
+        max_len = getattr(self.__class__, key).prop.columns[0].type.length
+        if value and len(value) > max_len:
+            return value[:max_len]
+        return value
+
 class Game(DBObjectBase):
     __tablename__ = 'games'
     hash = Column(String(40), primary_key=True)  # replayid
@@ -184,6 +196,17 @@ class Game(DBObjectBase):
     team1possession = Column(Float)
     frames = Column(Integer)
 
+    # metadata
+    version = Column(Integer)
+    length = Column(Float, default=300.0)
+
+    @validates('name')
+    def validate_code(self, key, value):
+        max_len = getattr(self.__class__, key).prop.columns[0].type.length
+        if value and len(value) > max_len:
+            return value[:max_len]
+        return value
+
 
 class Player(DBObjectBase):
     __tablename__ = 'players'
@@ -193,6 +216,13 @@ class Player(DBObjectBase):
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
     groups = Column(postgresql.ARRAY(Integer, dimensions=1), default=[])
+
+    @validates('platformid')
+    def validate_code(self, key, value):
+        max_len = getattr(self.__class__, key).prop.columns[0].type.length
+        if value and len(value) > max_len:
+            return value[:max_len]
+        return value
 
 
 class CameraSettings(DBObjectBase):

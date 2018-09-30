@@ -4,12 +4,22 @@ import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
 import {AboutPage} from "./Components/Pages/AboutPage"
 import {GlobalStatsPage} from "./Components/Pages/GlobalStatsPage"
 import {HomePage} from "./Components/Pages/HomePage"
+import {PlayerComparePage} from "./Components/Pages/PlayerComparePage"
 import {PlayerPage} from "./Components/Pages/PlayerPage"
 import {PluginsPage} from "./Components/Pages/PluginsPage"
 import {ReplayPage} from "./Components/Pages/ReplayPage"
 import {UploadPage} from "./Components/Pages/UploadPage"
 import {ReplayViewer} from "./Components/Replay/ReplayViewer/ReplayViewer"
-import {ABOUT_LINK, GLOBAL_STATS_LINK, PLAYER_PAGE_LINK, PLUGINS_LINK, REPLAY_PAGE_LINK, UPLOAD_LINK} from "./Globals"
+import {Notifications} from "./Components/Shared/Notification/Notifications"
+import {
+    ABOUT_LINK,
+    GLOBAL_STATS_LINK,
+    PLAYER_COMPARE_PAGE_LINK,
+    PLAYER_PAGE_LINK,
+    PLUGINS_LINK,
+    REPLAY_PAGE_LINK,
+    UPLOAD_LINK
+} from "./Globals"
 
 type Props = WithStyles<typeof styles>
 
@@ -25,6 +35,7 @@ class AppComponent extends React.Component<Props> {
 
                         <Route exact path="/" component={HomePage}/>
                         <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
+                        <Route path={PLAYER_COMPARE_PAGE_LINK} component={PlayerComparePage}/>
                         <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
                         <Route exact path="/replay_viewer" component={ReplayViewer}/>
                         <Route exact path={ABOUT_LINK} component={AboutPage}/>
@@ -36,6 +47,7 @@ class AppComponent extends React.Component<Props> {
                         <Redirect from="*" to="/"/>
                     </Switch>
                 </BrowserRouter>
+                <Notifications/>
             </div>
         )
     }

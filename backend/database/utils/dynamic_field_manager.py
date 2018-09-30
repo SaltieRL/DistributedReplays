@@ -104,8 +104,10 @@ def get_proto_values(proto_object, fields: List[ProtoFieldResult]):
         resulting_values.append(getattr(current_object, field.field_name))
     return resulting_values
 
+
 def add_dynamic_fields(names):
     return [DynamicFieldResult(name) for name in names]
+
 
 if __name__ == "__main__":
     test_list = get_proto_fields_as_flatten_list(player_pb2.Player)
