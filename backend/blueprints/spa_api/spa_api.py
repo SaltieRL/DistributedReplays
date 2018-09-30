@@ -148,12 +148,12 @@ def api_get_replay_basic_stats(id_):
     return better_jsonify(basic_stats)
 
 
-
 @bp.route('replay/<id_>/positions')
 def api_get_replay_positions(id_):
     positions = ReplayPositions.create_from_id(id_)
     return better_jsonify(positions)
 
+  
 @bp.route('replay/group')
 def api_get_replay_group():
     ids = request.args.getlist('id[]')

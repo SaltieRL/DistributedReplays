@@ -40,8 +40,8 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     <Tab key="basicStats" label="Basic Stats" value="basicStats"/>
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
                         [
-                            <Tab key="advancedStats" label="Advanced Stats" value="advancedStats" />,
-                            <Tab key="replayViewer" label="Replay Viewer" value="replayViewer" />
+                            <Tab key="advancedStats" label="Advanced Stats" value="advancedStats"/>,
+                            <Tab key="replayViewer" label="Replay Viewer" value="replayViewer"/>
                         ]
                     }
                 </Tabs>
