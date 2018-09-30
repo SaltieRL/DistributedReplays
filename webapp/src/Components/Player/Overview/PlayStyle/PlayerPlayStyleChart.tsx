@@ -73,6 +73,7 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
                 pointBackgroundColor: colorsForPlaylists[i % 4] + "bb",
                 borderColor: colorsForPlaylists[i % 4] + "88",
                 pointHoverBackgroundColor: colorsForPlaylists[i % 4] + "dd"
+                // TODO: Make this and ProgressionChart use some specifically-made colours
             }
         })
     }
