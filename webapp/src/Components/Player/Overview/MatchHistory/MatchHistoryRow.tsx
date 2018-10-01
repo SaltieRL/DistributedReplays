@@ -51,7 +51,7 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
         let replayGameMode: string = "Mode"
         let replayScore: React.ReactNode = "Score"
         let replayResult: string = "Result"
-        let chartIcon = <></>
+        let chartIcon: React.ReactNode = null
 
         if (!this.props.header) {
             const {replay, player} = this.props
