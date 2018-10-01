@@ -3,6 +3,7 @@ import io
 import logging
 import os
 import re
+import shutil
 import uuid
 
 from carball.analysis.utils.pandas_manager import PandasManager
@@ -222,26 +223,31 @@ def api_upload_replays():
 @bp.route('/upload/proto', methods=['POST'])
 def api_upload_proto():
     print('Proto uploaded')
+
+    # Convert to byte files from base64
     response = request.get_json()
     proto_in_memory = io.BytesIO(base64.b64decode(response['proto']))
+    pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
+
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
+
+    # Path creation
     filename = protobuf_game.game_metadata.match_guid
     if filename == '':
         filename = protobuf_game.game_metadata.id
     filename += '.replay'
-    print(filename)
-    with open('message.json', 'w') as f:
-        f.write(MessageToJson(protobuf_game))
     parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
-    pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
-    # pandas_game = PandasManager.read_numpy_from_memory(pandas_in_memory)
-    print(protobuf_game)
-    session = current_app.config['db']()
+    id_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays',
+                                  protobuf_game.game_metadata.id + '.replay')
+    guid_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays', filename)
+
     # Process
+    session = current_app.config['db']()
     game, player_games, players = convert_pickle_to_db(protobuf_game)
     add_objs_to_db(game, player_games, players, session, preserve_upload_date=True)
     session.commit()
     session.close()
+
     # Write to disk
     proto_in_memory.seek(0)
     pandas_in_memory.seek(0)
@@ -249,6 +255,10 @@ def api_upload_proto():
         f.write(proto_in_memory.read())
     with open(parsed_path + '.gzip', 'wb') as f:
         f.write(pandas_in_memory.read())
+
+    # Cleanup
+    if os.path.isfile(id_replay_path):
+        shutil.move(id_replay_path, guid_replay_path)
 
     return jsonify({'Success': True})
 

@@ -1,7 +1,6 @@
 # Celery workers
 import base64
 import gzip
-import io
 import json
 import os
 import shutil
@@ -10,8 +9,6 @@ import traceback
 import flask
 import requests
 from carball import analyze_replay_file
-from carball.analysis.utils.pandas_manager import PandasManager
-from carball.analysis.utils.proto_manager import ProtobufManager
 from celery import Celery
 from celery.task import periodic_task
 from redis import Redis
