@@ -3,7 +3,9 @@ import os
 import datetime
 
 import requests
+import sys
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend.database.objects import Game
 from backend.database.startup import startup
 import json
