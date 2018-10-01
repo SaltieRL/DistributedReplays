@@ -158,7 +158,7 @@ export const getReplayBasicStats = (id: string): Promise<BasicStat[]> => {
 }
 
 export const getReplayViewerData = (id: string): Promise<any> => {
-    return doGet(`replay/${id}/positions`)
+    return doGet(`/replay/${id}/positions`)
 }
 
 export const getReplayGroupStats = (ids: string[]): Promise<BasicStat[]> => {

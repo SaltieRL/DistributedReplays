@@ -1,4 +1,3 @@
-import ast
 import gzip
 import json
 import os
@@ -98,13 +97,9 @@ def view_replay_data(id_):
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return jsonify("Error no replay exists for this user")
 
-    def process_tuple_str(s):
-        return ast.literal_eval(s)
-
     try:
         with gzip.open(gzip_path, 'rb') as f:
-            df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f).set_index('index')
-            df.columns = pd.MultiIndex.from_tuples([process_tuple_str(s) for s in df.columns])
+            df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
         with open(pickle_path, 'rb') as f:
             g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
     except Exception as e:
