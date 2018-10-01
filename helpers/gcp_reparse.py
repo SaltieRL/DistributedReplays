@@ -29,8 +29,10 @@ def main(s):
 
         with open(path, 'rb') as f:
             encoded_file = base64.b64encode(f.read())
-        r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
-        print('Delayed', game[0])
+        try:
+            r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
+        except requests.exceptions.ReadTimeout as e:
+            print('Delayed', game[0])
     sess.close()
 
 
