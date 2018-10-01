@@ -3,6 +3,7 @@ import gzip
 import json
 import os
 import shutil
+import traceback
 
 import flask
 from carball import analyze_replay_file
@@ -92,11 +93,21 @@ def setup_periodic_tasks(sender, **kwargs):
 def parse_replay_task(self, fn, preserve_upload_date=False):
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
+    failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
     if os.path.isfile(pickled):
         return
     # try:
+    try:
+        analysis_manager = analyze_replay_file(fn, output)  # type: ReplayGame
+    except Exception as e:
+        if not os.path.isdir(failed_dir):
+            os.makedirs(failed_dir)
+        shutil.move(fn, os.path.join(failed_dir, os.path.basename(fn)))
+        with open(os.path.join(failed_dir, os.path.basename(fn) + '.txt'), 'a') as f:
+            f.write(str(e))
+            f.write(traceback.format_exc())
+        return
 
-    analysis_manager = analyze_replay_file(fn, output)  # type: ReplayGame
     with open(pickled + '.pts', 'wb') as fo:
         analysis_manager.write_proto_out_to_file(fo)
     with gzip.open(pickled + '.gzip', 'wb') as fo:
