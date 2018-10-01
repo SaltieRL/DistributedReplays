@@ -8,6 +8,7 @@ import uuid
 from carball.analysis.utils.pandas_manager import PandasManager
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from google.protobuf.json_format import MessageToJson
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
@@ -222,10 +223,12 @@ def api_upload_proto():
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
     filename = protobuf_game.game_metadata.match_guid + '.replay'
     print(filename)
+    with open('message.json', 'w') as f:
+        f.write(MessageToJson(protobuf_game))
     parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
     pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
     # pandas_game = PandasManager.read_numpy_from_memory(pandas_in_memory)
-
+    print(protobuf_game)
     session = current_app.config['db']()
     # Process
     game, player_games, players = convert_pickle_to_db(protobuf_game)
