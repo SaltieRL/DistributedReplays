@@ -221,6 +221,7 @@ def api_upload_proto():
     proto_in_memory = io.BytesIO(base64.b64decode(response['proto']))
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
     filename = protobuf_game.game_metadata.match_guid + '.replay'
+    print(filename)
     parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
     pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
     # pandas_game = PandasManager.read_numpy_from_memory(pandas_in_memory)
