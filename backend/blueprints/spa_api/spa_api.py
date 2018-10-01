@@ -211,7 +211,11 @@ def api_upload_replays():
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
-        celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+        lengths = get_queue_length()  # priority 0,3,6,9
+        if lengths[1] > 1000:
+            celery_tasks.parse_replay_gcp(os.path.abspath(filename))
+        else:
+            celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return 'Replay uploaded and queued for processing...', 202
 
 
