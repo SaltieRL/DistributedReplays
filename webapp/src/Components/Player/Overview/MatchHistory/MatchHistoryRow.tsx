@@ -51,7 +51,7 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
         let replayGameMode: string = "Mode"
         let replayScore: React.ReactNode = "Score"
         let replayResult: string = "Result"
-        let dropdownIcon = <></>
+        let chartIcon = <></>
 
         if (!this.props.header) {
             const {replay, player} = this.props
@@ -67,7 +67,7 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
             replayGameMode = replay.gameMode
             replayScore = getColouredGameScore(replay)
             replayResult = getReplayResult(replay, player)
-            dropdownIcon =
+            chartIcon =
                 <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
                     <InsertChart/>
                 </IconButton>
@@ -79,8 +79,8 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                 className={!this.props.header ? undefined : classes.notButton}
             >
                 <Grid container>
-                    <Grid item xs={notOnMobile ? 3 : 4}>
-                        <Typography variant={typographyVariant}>
+                    <Grid item xs={notOnMobile ? 3 : 5}>
+                        <Typography variant={typographyVariant} noWrap>
                             {replayName}
                         </Typography>
                     </Grid>
@@ -107,7 +107,7 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                         </Typography>
                     </Grid>
                     <Grid item xs={1}>
-                        {dropdownIcon}
+                        {chartIcon}
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>
