@@ -25,7 +25,7 @@ def main(s):
     with open(datetime.datetime.now().strftime('%H-%m-%s') + '.json', 'w') as f:
         json.dump(list(games), f)
     for game in games:
-        path = os.path.abspath(os.path.join('..', 'data', 'rlreplays', game[0] + '.replay'))
+        path = os.path.abspath(os.path.join('data', 'rlreplays', game[0] + '.replay'))
 
         with open(path, 'rb') as f:
             encoded_file = base64.b64encode(f.read())
