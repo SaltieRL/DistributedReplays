@@ -124,27 +124,21 @@ def parse_replay_task(self, fn, preserve_upload_date=False):
         analysis_manager.write_proto_out_to_file(fo)
     with gzip.open(pickled + '.gzip', 'wb') as fo:
         analysis_manager.write_pandas_out_to_file(fo)
+
+
     g = analysis_manager.protobuf_game
-    os.remove(output)
-    # except Exception as e:
-    #     print('Error: ', e)
-    #     os.system('rm ' + output)
-    #     os.system('mv {} {}'.format(fn, os.path.join(os.path.dirname(fn), 'broken', os.path.basename(fn))))
-    #     return
     sess = self.session()
-    old_hash = str(os.path.basename(fn)).split('.')[0]
-    hash = g.game_metadata.id
-    possible_duplicates = sess.query(Game).filter(Game.hash == hash).all()
-    if len(possible_duplicates) > 0:
-        for p in possible_duplicates:
-            sess.delete(p)
     game, player_games, players = convert_pickle_to_db(g)
     add_objs_to_db(game, player_games, players, sess, preserve_upload_date=preserve_upload_date)
     sess.commit()
     sess.close()
-    shutil.move(fn, os.path.join(os.path.dirname(fn), g.game_metadata.match_guid + '.replay'))
-    shutil.move(pickled + '.pts', os.path.join(os.path.dirname(pickled), g.game_metadata.match_guid + '.replay.pts'))
-    shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), g.game_metadata.match_guid + '.replay.gzip'))
+
+    replay_id = g.game_metadata.match_guid
+    if replay_id == '':
+        replay_id = g.game_metadata.id
+    shutil.move(fn, os.path.join(os.path.dirname(fn), replay_id + '.replay'))
+    shutil.move(pickled + '.pts', os.path.join(os.path.dirname(pickled), replay_id + '.replay.pts'))
+    shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip'))
 
 
 @celery.task(base=DBTask, bind=True, priority=9)

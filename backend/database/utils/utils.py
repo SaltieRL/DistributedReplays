@@ -36,6 +36,8 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                 if 'rank_points' in r[gamemode]:
                     mmr_list.append(r[gamemode]['rank_points'])
     replay_id = game.game_metadata.match_guid
+    if replay_id == '':
+        replay_id = game.game_metadata.id
     team0poss = game.teams[0].stats.possession
     team1poss = game.teams[1].stats.possession
     match_date = datetime.datetime.fromtimestamp(game.game_metadata.time)

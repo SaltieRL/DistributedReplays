@@ -221,7 +221,10 @@ def api_upload_proto():
     response = request.get_json()
     proto_in_memory = io.BytesIO(base64.b64decode(response['proto']))
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
-    filename = protobuf_game.game_metadata.match_guid + '.replay'
+    filename = protobuf_game.game_metadata.match_guid
+    if filename == '':
+        filename = protobuf_game.game_metadata.id
+    filename += '.replay'
     print(filename)
     with open('message.json', 'w') as f:
         f.write(MessageToJson(protobuf_game))
