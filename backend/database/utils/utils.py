@@ -35,7 +35,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                     rank_list.append(r[gamemode]['tier'])
                 if 'rank_points' in r[gamemode]:
                     mmr_list.append(r[gamemode]['rank_points'])
-    replay_id = game.game_metadata.id
+    replay_id = game.game_metadata.match_guid
     team0poss = game.teams[0].stats.possession
     team1poss = game.teams[1].stats.possession
     match_date = datetime.datetime.fromtimestamp(game.game_metadata.time)
@@ -109,12 +109,20 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
 def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], session,
                    preserve_upload_date=False):
     try:
-        match = session.query(Game).filter(Game.hash == game.hash).first()
-        if match is not None:
-            if preserve_upload_date:
-                game.upload_date = match.upload_date
-            session.delete(match)
-            print('deleting {}'.format(match.hash))
+        matches = session.query(Game).filter(Game.hash == game.hash).all()
+        if matches is not None:
+            for match in matches:
+                if preserve_upload_date:
+                    game.upload_date = match.upload_date
+                session.delete(match)
+                print('deleting {}'.format(match.hash))
+        matches = session.query(Game).filter(Game.hash == game.replay_id).all() # catch old replay ids
+        if matches is not None:
+            for match in matches:
+                if preserve_upload_date:
+                    game.upload_date = match.upload_date
+                session.delete(match)
+                print('deleting {}'.format(match.hash))
         session.add(game)
     except TypeError as e:
         print('Error object: ', e)

@@ -10,14 +10,6 @@ from sqlalchemy.orm import relationship, validates
 DBObjectBase = declarative_base()
 
 
-class Playlist(enum.Enum):
-    duel = 1
-    doubles = 2
-    solo = 3
-    standard = 4
-    chaos = 5
-
-
 class PlatformName(enum.Enum):
     unknown = 0
     steam = 1
@@ -30,6 +22,25 @@ class MatchType(enum.Enum):
     private = 1
     unlisted = 2
     public = 3
+
+
+class Playlist(enum.Enum):
+    UNRANKED_DUELS = 1
+    UNRANKED_DOUBLES = 2
+    UNRANKED_STANDARD = 3
+    UNRANKED_CHAOS = 4
+    CUSTOM_LOBBY = 6
+    UNKNOWN = 8
+    RANKED_DUELS = 10
+    RANKED_DOUBLES = 11
+    RANKED_SOLO_STANDARD = 12
+    RANKED_STANDARD = 13
+    UNRANKED_SNOW_DAY = 15
+    ROCKET_LABS = 16
+    RANKED_HOOPS = 27
+    RANKED_RUMBLE = 28
+    RANKED_DROPSHOT = 29
+    RANKED_SNOW_DAY = 30
 
 
 class User(DBObjectBase):
@@ -177,6 +188,7 @@ class PlayerGame(DBObjectBase):
             return value[:max_len]
         return value
 
+
 class Game(DBObjectBase):
     __tablename__ = 'games'
     hash = Column(String(40), primary_key=True)  # replayid
@@ -199,6 +211,11 @@ class Game(DBObjectBase):
     # metadata
     version = Column(Integer)
     length = Column(Float, default=300.0)
+    game_server_id = Column(String(40))
+    server_name = Column(String(40))
+    replay_id = Column(String(40))
+    playlist = Column(Integer)
+    invalid_analysis = Column(Boolean)
 
     @validates('name')
     def validate_code(self, key, value):
