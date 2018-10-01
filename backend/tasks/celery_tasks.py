@@ -156,7 +156,7 @@ def parse_replay_task_low_priority(self, fn):
 def parse_replay_gcp(self, fn):
     with open(fn, 'rb') as f:
         encoded_file = base64.b64encode(f.read())
-    r = requests.post(GCP_URL, data=encoded_file)
+    r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
     response = r.json()
     i = io.BytesIO(base64.b64decode(response['proto']))
     protobuf_game = ProtobufManager.read_proto_out_from_file(i)

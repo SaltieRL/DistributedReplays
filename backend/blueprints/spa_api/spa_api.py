@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
+from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
@@ -217,11 +218,27 @@ def api_upload_replays():
 def api_upload_proto():
     print('Proto uploaded')
     response = request.get_json()
-    i = io.BytesIO(base64.b64decode(response['proto']))
-    protobuf_game = ProtobufManager.read_proto_out_from_file(i)
-    i2 = io.BytesIO(base64.b64decode(response['pandas']))
-    pandas_game = PandasManager.read_numpy_from_memory(i2)
-    print(protobuf_game)
+    proto_in_memory = io.BytesIO(base64.b64decode(response['proto']))
+    protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
+    filename = protobuf_game.game_metadata.match_guid + '.replay'
+    parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
+    pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
+    # pandas_game = PandasManager.read_numpy_from_memory(pandas_in_memory)
+
+    session = current_app.config['db']()
+    # Process
+    game, player_games, players = convert_pickle_to_db(protobuf_game)
+    add_objs_to_db(game, player_games, players, session, preserve_upload_date=True)
+    session.commit()
+    session.close()
+    # Write to disk
+    proto_in_memory.seek(0)
+    pandas_in_memory.seek(0)
+    with open(parsed_path + '.pts', 'wb') as f:
+        f.write(proto_in_memory.read())
+    with open(parsed_path + '.gzip', 'wb') as f:
+        f.write(pandas_in_memory.read())
+
     return jsonify({'Success': True})
 
 
