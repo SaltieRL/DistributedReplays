@@ -1,13 +1,19 @@
+import base64
+import io
 import logging
 import os
 import re
 import uuid
 
+from carball.analysis.utils.pandas_manager import PandasManager
+from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from google.protobuf.json_format import MessageToJson
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
+from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
@@ -205,8 +211,46 @@ def api_upload_replays():
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
-        celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+        lengths = get_queue_length()  # priority 0,3,6,9
+        if lengths[1] > 1000:
+            celery_tasks.parse_replay_gcp(os.path.abspath(filename))
+        else:
+            celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return 'Replay uploaded and queued for processing...', 202
+
+
+@bp.route('/upload/proto', methods=['POST'])
+def api_upload_proto():
+    print('Proto uploaded')
+    response = request.get_json()
+    proto_in_memory = io.BytesIO(base64.b64decode(response['proto']))
+    protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
+    filename = protobuf_game.game_metadata.match_guid
+    if filename == '':
+        filename = protobuf_game.game_metadata.id
+    filename += '.replay'
+    print(filename)
+    with open('message.json', 'w') as f:
+        f.write(MessageToJson(protobuf_game))
+    parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
+    pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
+    # pandas_game = PandasManager.read_numpy_from_memory(pandas_in_memory)
+    print(protobuf_game)
+    session = current_app.config['db']()
+    # Process
+    game, player_games, players = convert_pickle_to_db(protobuf_game)
+    add_objs_to_db(game, player_games, players, session, preserve_upload_date=True)
+    session.commit()
+    session.close()
+    # Write to disk
+    proto_in_memory.seek(0)
+    pandas_in_memory.seek(0)
+    with open(parsed_path + '.pts', 'wb') as f:
+        f.write(proto_in_memory.read())
+    with open(parsed_path + '.gzip', 'wb') as f:
+        f.write(pandas_in_memory.read())
+
+    return jsonify({'Success': True})
 
 
 @bp.errorhandler(CalculatedError)
