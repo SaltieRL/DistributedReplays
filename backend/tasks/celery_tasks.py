@@ -106,7 +106,7 @@ def parse_replay_task(self, fn, preserve_upload_date=False):
         with open(os.path.join(failed_dir, os.path.basename(fn) + '.txt'), 'a') as f:
             f.write(str(e))
             f.write(traceback.format_exc())
-        return
+        raise e
 
     with open(pickled + '.pts', 'wb') as fo:
         analysis_manager.write_proto_out_to_file(fo)
