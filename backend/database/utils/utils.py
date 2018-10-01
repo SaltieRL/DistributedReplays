@@ -124,7 +124,7 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
                     game.upload_date = match.upload_date
                 session.delete(match)
                 print('deleting {}'.format(match.hash))
-        matches = session.query(Game).filter(Game.hash == game.replay_id).all() # catch old replay ids
+        matches = session.query(Game).filter(Game.hash == game.replay_id).all()  # catch old replay ids
         if matches is not None:
             for match in matches:
                 if preserve_upload_date:
@@ -148,4 +148,10 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
             PlayerGame.game == pg.game).first()
         if match is not None:
             session.delete(match)
+
+        matches = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
+            PlayerGame.game == game.replay_id).all()  # catch old replay ids
+        if matches is not None:
+            for match in matches:
+                session.delete(match)
         session.add(pg)
