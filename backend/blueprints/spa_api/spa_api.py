@@ -1,8 +1,12 @@
+import base64
+import io
 import logging
 import os
 import re
 import uuid
 
+from carball.analysis.utils.pandas_manager import PandasManager
+from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
@@ -207,6 +211,18 @@ def api_upload_replays():
         file.save(filename)
         celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return 'Replay uploaded and queued for processing...', 202
+
+
+@bp.route('/upload/proto', methods=['POST'])
+def api_upload_proto():
+    print('Proto uploaded')
+    response = request.get_json()
+    i = io.BytesIO(base64.b64decode(response['proto']))
+    protobuf_game = ProtobufManager.read_proto_out_from_file(i)
+    i2 = io.BytesIO(base64.b64decode(response['pandas']))
+    pandas_game = PandasManager.read_numpy_from_memory(i2)
+    print(protobuf_game)
+    return jsonify({'Success': True})
 
 
 @bp.errorhandler(CalculatedError)
