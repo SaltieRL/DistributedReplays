@@ -4,8 +4,13 @@ import {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
-    IconButton, Theme,
-    Typography, WithStyles, withStyles, withWidth
+    IconButton,
+    Theme,
+    Tooltip,
+    Typography,
+    WithStyles,
+    withStyles,
+    withWidth
 } from "@material-ui/core"
 import {TextStyle} from "@material-ui/core/styles/createTypography"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
@@ -38,12 +43,13 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
     public render() {
         const {classes, width} = this.props
         const notOnMobile = isWidthUp("sm", width)
+        const typographyVariant: TextStyle = !this.props.header ? "subheading" : "title"
 
         // These default values appear as the header
         let replayName: string = "Name"
-        let replayDate: string = "Date"
+        let replayDate: React.ReactNode = "Date"
         let replayGameMode: string = "Mode"
-        let replayScore: JSX.Element = <>Score</>
+        let replayScore: React.ReactNode = "Score"
         let replayResult: string = "Result"
         let dropdownIcon = <></>
 
@@ -51,7 +57,13 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
             const {replay, player} = this.props
             const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
             replayName = replay.name
-            replayDate = replay.date.format(dateFormat)
+            replayDate = (
+                <Tooltip title={replay.date.format("LLLL")} enterDelay={200}>
+                    <Typography variant={typographyVariant}>
+                        {replay.date.format(dateFormat)}
+                    </Typography>
+                </Tooltip>
+            )
             replayGameMode = replay.gameMode
             replayScore = getColouredGameScore(replay)
             replayResult = getReplayResult(replay, player)
@@ -60,8 +72,6 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                     <InsertChart/>
                 </IconButton>
         }
-
-        const typographyVariant: TextStyle = !this.props.header ? "subheading" : "title"
 
         const expansionPanelSummary =
             <ExpansionPanelSummary
@@ -74,13 +84,13 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                             {replayName}
                         </Typography>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <Typography variant={typographyVariant}>
                             {replayDate}
                         </Typography>
                     </Grid>
                     {notOnMobile &&
-                    <Grid item xs={1}>
+                    <Grid item xs={2}>
                         <Typography variant={typographyVariant}>
                             {replayGameMode}
                         </Typography>
