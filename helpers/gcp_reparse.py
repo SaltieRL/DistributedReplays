@@ -26,9 +26,11 @@ def main(s):
         json.dump(list(games), f)
     for game in games:
         path = os.path.abspath(os.path.join('data', 'rlreplays', game[0] + '.replay'))
-
-        with open(path, 'rb') as f:
-            encoded_file = base64.b64encode(f.read())
+        try:
+            with open(path, 'rb') as f:
+                encoded_file = base64.b64encode(f.read())
+        except FileNotFoundError:
+            continue
         try:
             r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
         except requests.exceptions.ReadTimeout as e:
