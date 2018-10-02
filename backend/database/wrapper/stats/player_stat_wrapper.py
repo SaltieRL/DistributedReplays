@@ -22,7 +22,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         self.player_stats_filter = QueryFilterBuilder()
         if ignore_filtering():
             self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
-            3).with_safe_checking().sticky()
+                3).with_safe_checking().sticky()
 
     def get_wrapped_stats(self, stats):
         zipped_stats = dict()
@@ -69,10 +69,12 @@ class PlayerStatWrapper(GlobalStatWrapper):
                 return float(f)
 
         mean_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
-                                   *self.stats_query).join(PlayerGame).filter(PlayerGame.player == id_).group_by(
+                                   *self.stats_query).join(PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
+            PlayerGame.player == id_).group_by(
             'date').order_by('date').all()
         std_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
-                                  *self.std_query).join(PlayerGame).filter(PlayerGame.player == id_).group_by(
+                                  *self.std_query).join(PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
+            PlayerGame.player == id_).group_by(
             'date').order_by('date').all()
         mean_query = [list(q) for q in mean_query]
         std_query = [list(q) for q in std_query]
@@ -117,7 +119,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         return_obj = {}
         # Players
         player_tuples: List[Tuple[str, str, int]] = session.query(PlayerGame.player, func.min(PlayerGame.name),
-                                      func.count(PlayerGame.player)).filter(
+                                                                  func.count(PlayerGame.player)).filter(
             PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.player).all()
         return_obj['playerStats'] = {}
         # ensemble are the players that do not have enough replays to make an individual analysis for them
