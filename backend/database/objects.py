@@ -277,6 +277,7 @@ class TeamStat(DBObjectBase):
     average_distance_from_center = Column(Float)
     average_max_distance_from_center = Column(Float)
     time_clumped = Column(Float)
+    time_boondocks = Column(Float)
     # tendencies
     time_on_ground = Column(Float)
     time_low_in_air = Column(Float)
