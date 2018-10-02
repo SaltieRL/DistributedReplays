@@ -40,7 +40,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
         if replay_ids is not None:
             player_stats_filter.with_replay_ids(replay_ids)
-        query = player_stats_filter.build_query(session)
+        query = player_stats_filter.build_query(session).filter(PlayerGame.time_in_game > 0)
         stats = list(query.first())
         stats = [0 if s is None else s for s in stats]
         if raw:
