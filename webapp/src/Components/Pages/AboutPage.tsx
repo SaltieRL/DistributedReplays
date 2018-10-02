@@ -91,12 +91,12 @@ const replayParsing: ListItemInfo[] = [
     {
         name: "Druthyn",
         link: "",
-        message: "Worked on figuring out how to detect if a player is on a M/KB or a controller"
+        message: "Detecting if a player is on M/KB or a controller"
     },
     {
         name: "Destiphy",
         link: "",
-        message: "Has helped fix tons of bugs and created situations for us to test against."
+        message: "Helped fix countless bugs and created situations to test against"
     },
 ]
 
@@ -104,15 +104,15 @@ const uploading: ListItemInfo[] = [
     {
         name: "Skoocda",
         link: "",
-        message: "Worked on tracking state of uploads and is helping with testing"
+        message: "Tracking state of uploads and testing"
     },
     {
         name: "Kcolton & Bakkes",
         link: "",
-        message: "Bakkes Auto uploader plugin"
+        message: "BakkesMod Auto uploader plugin"
     },
     {
-        name: "Redox ",
+        name: "Redox",
         link: "",
         message: "A custom Auto Uploader"
     },
@@ -146,7 +146,7 @@ const designer: ListItemInfo[] = [
     {
         name: "IBeam ",
         link: "",
-        message: "Worked on backgrounds and a lot of prototypes"
+        message: "Backgrounds and prototypes"
     },
 ]
 
@@ -160,7 +160,7 @@ const supportStaff: ListItemInfo[] = [
     {
         name: "ThatGuyDed, IamEld3st",
         link: "",
-        message: "Helper of support staff, Welcomer"
+        message: "Helper of support staff, welcomer"
     },
 ]
 
