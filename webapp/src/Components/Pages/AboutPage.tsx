@@ -250,6 +250,7 @@ export class AboutPage extends React.PureComponent {
                                                 <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
                                             ))}
                                         </List>
+                                    /*
                                     </CardContent>
                                         <CardHeader subheader="Replay Viewer"/>
                                         <CardContent>
@@ -259,6 +260,7 @@ export class AboutPage extends React.PureComponent {
                                                 ))}
                                             </List>
                                         </CardContent>
+                                    */
                                     <CardHeader subheader="Designers"/>
                                     <CardContent>
                                         <List>
