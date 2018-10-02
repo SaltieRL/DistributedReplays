@@ -1,13 +1,17 @@
-from sqlalchemy import func
+from sqlalchemy import func, case
 
 from backend.database.objects import PlayerGame
+
 
 def safe_divide(sql_value):
     return func.greatest(sql_value, 1)
 
 
 def replay_divide(sql_value):
-    return func.greatest(sql_value, 300.0)
+    return case([
+        (sql_value == 0, 300.0),
+        (sql_value != 0, sql_value)
+    ])
 
 
 def get_total_boost_efficiency():
