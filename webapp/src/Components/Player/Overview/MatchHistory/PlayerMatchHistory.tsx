@@ -8,9 +8,9 @@ import {getMatchHistory} from "../../../../Requests/Player"
 import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {MatchHistoryRow} from "./MatchHistoryRow"
 
-interface MatchHistoryQueryParams {
-    page: string
-    limit: string
+interface MatchHistoryQueryParams<T = string | number> {
+    page?: T
+    limit?: T
 }
 
 interface OwnProps {
@@ -32,16 +32,13 @@ interface State {
 export class PlayerMatchHistoryComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
+        const queryParams = this.readQueryParams()
         this.state = {
             reloadSignal: false,
             page: 0,
-            limit: 10
+            limit: 10,
+            ...queryParams
         }
-    }
-
-    public componentDidMount() {
-        this.readQueryParams()
-        this.setQueryParams()
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
@@ -53,9 +50,6 @@ export class PlayerMatchHistoryComponent extends React.PureComponent<Props, Stat
             this.triggerReload()
             this.setQueryParams()
             return
-        }
-        if (prevProps.location.search !== this.props.location.search) {
-            this.readQueryParams()
         }
     }
 
@@ -71,7 +65,7 @@ export class PlayerMatchHistoryComponent extends React.PureComponent<Props, Stat
                     <LoadableWrapper load={this.getPlayerMatchHistory} reloadSignal={this.state.reloadSignal}>
                         {this.state.matchHistory &&
                         this.state.matchHistory.replays.map((replay: Replay) =>
-                            <MatchHistoryRow replay={replay} player={this.props.player} key={replay.name}
+                            <MatchHistoryRow replay={replay} player={this.props.player} key={replay.id}
                                              useBoxScore={this.props.useBoxScore}/>)
                         }
                     </LoadableWrapper>
@@ -96,20 +90,26 @@ export class PlayerMatchHistoryComponent extends React.PureComponent<Props, Stat
             .then((matchHistory) => this.setState({matchHistory}))
     }
 
-    private readonly readQueryParams = () => {
+    private readonly readQueryParams = (): MatchHistoryQueryParams<number> => {
         const queryString = this.props.location.search
         if (queryString !== "") {
-            const queryParams: MatchHistoryQueryParams = qs.parse(
+            const queryParams: MatchHistoryQueryParams<string> = qs.parse(
                 this.props.location.search,
                 {ignoreQueryPrefix: true}
             )
             const page = Number(queryParams.page) - 1
             const limit = Number(queryParams.limit)
 
-            if (!isNaN(page) && !isNaN(limit)) {
-                this.setState({page, limit})
+            const queryParamNumbers: MatchHistoryQueryParams<number> = {}
+            if (!isNaN(page)) {
+                queryParamNumbers.page = page
             }
+            if (!isNaN(page)) {
+                queryParamNumbers.limit = limit
+            }
+            return queryParamNumbers
         }
+        return {}
     }
 
     private readonly setQueryParams = () => {

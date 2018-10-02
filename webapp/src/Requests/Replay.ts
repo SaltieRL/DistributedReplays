@@ -1,4 +1,5 @@
 import * as moment from "moment"
+import * as qs from "qs"
 import {doGet} from "../apiHandler/apiHandler"
 import {BasicStat} from "../Models/ChartData"
 import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
@@ -156,6 +157,18 @@ export const getReplayBasicStats = (id: string): Promise<BasicStat[]> => {
     return doGet(`/replay/${id}/basic_stats`)
 }
 
+export const getReplayTeamStats = (id: string): Promise<BasicStat[]> => {
+    return doGet(`/replay/${id}/team_stats`)
+}
+
 export const getReplayViewerData = (id: string): Promise<any> => {
     return doGet(`/replay/${id}/positions`)
+}
+
+export const getReplayGroupStats = (ids: string[]): Promise<BasicStat[]> => {
+    return doGet(`/replay/group` +
+        qs.stringify({ids},
+            {arrayFormat: "repeat", addQueryPrefix: true}
+        )
+    )
 }

@@ -3,7 +3,11 @@ import {doGet} from "../apiHandler/apiHandler"
 import {PlayerRanks} from "../Components/Player/Overview/SideBar/PlayerRanksCard"
 import {PlayerStats} from "../Components/Player/Overview/SideBar/PlayerStatsCard"
 import {MatchHistoryResponse} from "../Models/Player/MatchHistory"
-import {PlayStyleResponse} from "../Models/Player/PlayStyle"
+import {
+    parsePlayStyleProgression,
+    PlayStyleProgressionPoint,
+    PlayStyleResponse
+} from "../Models/Player/PlayStyle"
 import {GameMode, parseReplay} from "../Models/Replay/Replay"
 import {useMockData} from "./Config"
 
@@ -42,7 +46,7 @@ export const getStats = (id: string): Promise<PlayerStats> => {
     return doGet(`/player/${id}/profile_stats`)
 }
 
-export const getPlayerPlayStyles = (id: string): Promise<PlayStyleResponse> => {
+export const getPlayerPlayStyles = (id: string, rank?: number): Promise<PlayStyleResponse> => {
     if (useMockData) {
         return Promise.resolve({
                 showWarning: false,
@@ -78,7 +82,12 @@ export const getPlayerPlayStyles = (id: string): Promise<PlayStyleResponse> => {
             }
         )
     }
-    return doGet(`/player/${id}/play_style`)
+    return doGet(`/player/${id}/play_style` + (rank === undefined ? "" : `?rank=${rank}`))
+}
+
+export const getPlayerProgression = (id: string): Promise<PlayStyleProgressionPoint[]> => {
+    return doGet(`/player/${id}/play_style/progression`)
+        .then((data: any[]) => data.map(parsePlayStyleProgression))
 }
 
 export const getRanks = (id: string): Promise<PlayerRanks> => {

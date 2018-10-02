@@ -73,6 +73,7 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
                 pointBackgroundColor: colorsForPlaylists[i % 4] + "bb",
                 borderColor: colorsForPlaylists[i % 4] + "88",
                 pointHoverBackgroundColor: colorsForPlaylists[i % 4] + "dd"
+                // TODO: Make this and ProgressionChart use some specifically-made colours
             }
         })
     }
@@ -81,8 +82,8 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
         return {
             scale: {
                 ticks: {
-                    suggestedMin: -1,
-                    suggestedMax: 1,
+                    suggestedMin: -2,
+                    suggestedMax: 2,
                     maxTicksLimit: 5
                 } as LinearTickOptions
             },

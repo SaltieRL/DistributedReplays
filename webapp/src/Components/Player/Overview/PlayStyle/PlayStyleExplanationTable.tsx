@@ -17,20 +17,24 @@ const explanations: Explanation[] = [
             "basically anything that's not giving the ball away."
     },
     {
-        statName: "Turnovers",
-        message: "Giving the ball away to the opponent"
+        statName: "Turnover Efficiency",
+        message: "Giving the ball away to the opponent divided by the number of hits"
     },
     {
         statName: "Att & Def 1/2 & 1/3",
-        message: "Short for Attacking & Defensive, Half & Third respectively."
+        message: "Short for Attacking & Defensive, Half & Third respectively.  This is time you spent in that area."
     },
     {
         statName: "< ball",
-        message: "Duration spent behind the ball"
+        message: "Duration spent between your goal and the ball"
     },
     {
         statName: "> ball",
-        message: "Duration spent ahead of the ball"
+        message: "Duration spent between the enemy goal and the ball"
+    },
+    {
+        statName: "Total Boost Efficiency",
+        message: "(Wasted collected boost + wasted boost at speed) / (boost used + boost collected)"
     }
 ]
 

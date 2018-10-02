@@ -4,8 +4,9 @@ import * as React from "react"
 import {connect} from "react-redux"
 import {Replay} from "../../Models/Replay/Replay"
 import {StoreState} from "../../Redux"
-import {BasicStatsGrid} from "./BasicStats/BasicStatsGrid"
+import {BasicStatsContent} from "./BasicStats/BasicStatsContent"
 import {ReplayViewer} from "./ReplayViewer/ReplayViewer"
+import {TeamStatsContent} from "./TeamStats/TeamStatsContent"
 
 interface OwnProps {
     replay: Replay
@@ -15,10 +16,10 @@ type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type tabValue = "basicStats" | "advancedStats" | "replayViewer"
+type ReplayTab = "basicStats" | "teamStats" | "advancedStats" | "replayViewer"
 
 interface State {
-    selectedTab: tabValue
+    selectedTab: ReplayTab
 }
 
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
@@ -38,6 +39,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                       scrollable={isWidthSm}
                 >
                     <Tab key="basicStats" label="Basic Stats" value="basicStats"/>
+                    {this.props.loggedInUser && this.props.loggedInUser.beta &&
+                        <Tab key="teamStats" label="Team Stats" value="teamStats"/>
+                    }
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
                         [
                             <Tab key="advancedStats" label="Advanced Stats" value="advancedStats"/>,
@@ -46,7 +50,10 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     }
                 </Tabs>
                 {this.state.selectedTab === "basicStats" &&
-                    <BasicStatsGrid replay={this.props.replay} />
+                <BasicStatsContent replay={this.props.replay}/>
+                }
+                {this.state.selectedTab === "teamStats" &&
+                <TeamStatsContent replay={this.props.replay}/>
                 }
                 {this.state.selectedTab === "replayViewer" &&
                     <ReplayViewer replay={this.props.replay} />
@@ -55,7 +62,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: tabValue) => {
+    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: ReplayTab) => {
         this.setState({selectedTab})
     }
 }

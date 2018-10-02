@@ -1,35 +1,39 @@
+import base64
+import io
 import logging
 import os
 import re
+import shutil
 import uuid
 
+from carball.analysis.utils.pandas_manager import PandasManager
+from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from google.protobuf.json_format import MessageToJson
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
-from backend.database.wrapper import player_wrapper
-from backend.database.wrapper.stats import player_stat_wrapper
+from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
+from .service_layers.player.play_style_progression import PlayStyleProgression
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.replay.basic_stats import BasicStatChartData
 from .service_layers.replay.replay_positions import ReplayPositions
+from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('api', __name__, url_prefix='/api/')
-
-wrapper = player_stat_wrapper.PlayerStatWrapper(player_wrapper.PlayerWrapper(limit=10))
-avg_list, field_list, std_list = wrapper.get_stats_query()
 
 
 def better_jsonify(response: object):
@@ -114,8 +118,32 @@ def api_get_player_ranks(id_):
 
 @bp.route('player/<id_>/play_style')
 def api_get_player_play_style(id_):
-    play_style_response = PlayStyleResponse.create_from_id(id_)
+    if 'rank' in request.args:
+        rank = int(request.args['rank'])
+    else:
+        rank = None
+    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank)
     return better_jsonify(play_style_response)
+
+
+@bp.route('player/<id_>/play_style/all')
+def api_get_player_play_style_all(id_):
+    if 'rank' in request.args:
+        rank = int(request.args['rank'])
+    else:
+        rank = None
+    if 'replay_ids' in request.args:
+        replay_ids = request.args.getlist('replay_ids')
+    else:
+        replay_ids = None
+    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank, replay_ids=replay_ids)
+    return better_jsonify(play_style_response)
+
+
+@bp.route('player/<id_>/play_style/progression')
+def api_get_player_play_style_progress(id_):
+    play_style_progression = PlayStyleProgression.create_progression(id_)
+    return better_jsonify(play_style_progression)
 
 
 @bp.route('player/<id_>/match_history')
@@ -153,14 +181,12 @@ def api_get_replay_positions(id_):
     positions = ReplayPositions.create_from_id(id_)
     return better_jsonify(positions)
 
-  
+
 @bp.route('replay/group')
 def api_get_replay_group():
-    ids = request.args.getlist('id[]')
-    session = current_app.config['db']()
-    stats = wrapper.get_group_stats(session, ids)
-    session.close()
-    return better_jsonify(stats)
+    ids = request.args.getlist('ids')
+    chart_data = ReplayGroupChartData.create_from_ids(ids)
+    return better_jsonify(chart_data)
 
 
 @bp.route('/replay/<id_>/download')
@@ -186,8 +212,55 @@ def api_upload_replays():
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
-        celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+        lengths = get_queue_length()  # priority 0,3,6,9
+        if lengths[1] > 1000:
+            celery_tasks.parse_replay_gcp(os.path.abspath(filename))
+        else:
+            celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
     return 'Replay uploaded and queued for processing...', 202
+
+
+@bp.route('/upload/proto', methods=['POST'])
+def api_upload_proto():
+    print('Proto uploaded')
+
+    # Convert to byte files from base64
+    response = request.get_json()
+    proto_in_memory = io.BytesIO(base64.b64decode(response['proto']))
+    pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
+
+    protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
+
+    # Path creation
+    filename = protobuf_game.game_metadata.match_guid
+    if filename == '':
+        filename = protobuf_game.game_metadata.id
+    filename += '.replay'
+    parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
+    id_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays',
+                                  protobuf_game.game_metadata.id + '.replay')
+    guid_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays', filename)
+
+    # Process
+    session = current_app.config['db']()
+    game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
+    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date=True)
+    session.commit()
+    session.close()
+
+    # Write to disk
+    proto_in_memory.seek(0)
+    pandas_in_memory.seek(0)
+    with open(parsed_path + '.pts', 'wb') as f:
+        f.write(proto_in_memory.read())
+    with open(parsed_path + '.gzip', 'wb') as f:
+        f.write(pandas_in_memory.read())
+
+    # Cleanup
+    if os.path.isfile(id_replay_path):
+        shutil.move(id_replay_path, guid_replay_path)
+
+    return jsonify({'Success': True})
 
 
 @bp.errorhandler(CalculatedError)

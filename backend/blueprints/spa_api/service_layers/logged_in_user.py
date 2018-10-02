@@ -1,7 +1,7 @@
 from flask import g
 
 from backend.blueprints.steam import get_steam_profile_or_random_response
-from backend.utils.checks import get_local_dev
+from backend.utils.checks import is_local_dev
 from ..errors.errors import CalculatedError
 
 
@@ -16,7 +16,7 @@ class LoggedInUser:
 
     @staticmethod
     def create() -> 'LoggedInUser':
-        if get_local_dev():
+        if is_local_dev():
             mock_steam_profile = get_steam_profile_or_random_response("TESTLOCALUSER")['response']['players'][0]
             name = mock_steam_profile['personaname']
             id_ = mock_steam_profile['steamid']

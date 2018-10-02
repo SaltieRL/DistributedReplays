@@ -3,11 +3,10 @@ import * as _ from "lodash"
 import * as qs from "qs"
 import * as React from "react"
 import {RouteComponentProps} from "react-router-dom"
-import {PlayStyleResponse} from "../../Models/Player/PlayStyle"
-import {getPlayer, getPlayerPlayStyles, resolvePlayerNameOrId} from "../../Requests/Player"
+import {getPlayer, resolvePlayerNameOrId} from "../../Requests/Player"
 import {AddPlayerInput} from "../Player/Compare/AddPlayerInput"
 import {PlayerChip} from "../Player/Compare/PlayerChip"
-import {PlayerCompareCharts} from "../Player/Compare/PlayerCompareCharts"
+import {PlayerCompareContent} from "../Player/Compare/PlayerCompareContent"
 import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
 import {BasePage} from "./BasePage"
 
@@ -21,14 +20,13 @@ type Props = RouteComponentProps<{}>
 interface State {
     ids: string[]
     players: Player[]
-    playerPlayStyles: PlayStyleResponse[]
     inputId: string
 }
 
 class PlayerComparePageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {ids: [], players: [], playerPlayStyles: [], inputId: ""}
+        this.state = {ids: [], players: [], inputId: ""}
     }
 
     public componentDidMount() {
@@ -41,14 +39,14 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
             this.setQueryParams()
 
             // Get player data on first load
-            if (this.state.playerPlayStyles.length === 0) {
-                this.getPlayersData()
+            if (this.state.players.length === 0) {
+                this.getPlayers()
             }
         }
     }
 
     public render() {
-        const {ids, players, playerPlayStyles} = this.state
+        const {players} = this.state
         const playerChips = players.map((player) => (
             <PlayerChip {...player} onDelete={() => this.handleRemovePlayer(player.id)} key={player.id}/>
         ))
@@ -70,13 +68,8 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                         ))}
                     </Grid>
                     <Grid item xs={12}> <Divider/> </Grid>
-                    <Grid item xs={12} container spacing={32}>
-                        {playerPlayStyles.length > 0 &&
-                        playerPlayStyles.length === players.length &&
-                        <PlayerCompareCharts ids={ids}
-                                             players={players}
-                                             playerPlayStyles={playerPlayStyles}/>
-                        }
+                    <Grid item xs={12}>
+                        <PlayerCompareContent players={players}/>
                     </Grid>
                 </Grid>
             </BasePage>
@@ -106,18 +99,9 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
         this.props.history.replace({search: queryString})
     }
 
-    private readonly getPlayersData = (): void => {
-        Promise.all([this.getPlayers(), this.getPlayerPlayStyles()])
-    }
-
     private readonly getPlayers = (): Promise<void> => {
         return Promise.all(this.state.ids.map((id) => getPlayer(id)))
             .then((players) => this.setState({players}))
-    }
-
-    private readonly getPlayerPlayStyles = (): Promise<void> => {
-        return Promise.all(this.state.ids.map((id) => getPlayerPlayStyles(id)))
-            .then((playerPlayStyles) => this.setState({playerPlayStyles}))
     }
 
     private readonly handleRemovePlayer = (id: string) => {
@@ -125,8 +109,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
         try {
             this.setState({
                 ids: removeIndexFromArray(this.state.ids, index),
-                players: removeIndexFromArray(this.state.players!, index),
-                playerPlayStyles: removeIndexFromArray(this.state.playerPlayStyles!, index)
+                players: removeIndexFromArray(this.state.players!, index)
             })
         } catch {
             this.props.showNotification({variant: "error", message: "Error removing player", timeout: 2000})
@@ -134,18 +117,11 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly handleAddPlayer = (player: Player) => {
-        const {ids, players, playerPlayStyles} = this.state
-        getPlayerPlayStyles(player.id)
-            .then((playerPlayStyle) => {
-                this.setState({
-                    ids: [...ids, player.id],
-                    players: [...players, player],
-                    playerPlayStyles: [...playerPlayStyles, playerPlayStyle]
-                })
-            })
-            .catch(() => {
-                this.props.showNotification({variant: "error", message: "Error adding player", timeout: 2000})
-            })
+        const {ids, players} = this.state
+        this.setState({
+            ids: [...ids, player.id],
+            players: [...players, player]
+        })
     }
 
     private readonly handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -171,7 +147,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                 })
                 .then(this.handleAddPlayer)
                 .then(() => this.setState({inputId: ""}))
-                .catch((e) => {
+                .catch((e: any) => {
                     console.log(e) // TypeError expected here when above .catch catches something.
                     // TODO: Figure out what the right thing to do here is.
                 })
