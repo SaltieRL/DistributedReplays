@@ -137,6 +137,7 @@ class PlayerGame(DBObjectBase):
     possession_time = Column(Float)
     average_speed = Column(Float)
     average_hit_distance = Column(Float)
+    average_distance_from_center = Column(Float)  # Average distance for this player from the team center
 
     # boost
     boost_usage = Column(Float)
@@ -176,6 +177,10 @@ class PlayerGame(DBObjectBase):
     time_at_slow_speed = Column(Float)
     time_at_super_sonic = Column(Float)
 
+    # distance
+    time_closest_to_team_center = Column(Float)
+    time_furthest_from_team_center = Column(Float)
+
     # metadata
     is_bot = Column(Boolean)
     first_frame_in_game = Column(Integer)
@@ -202,6 +207,7 @@ class Game(DBObjectBase):
     team1score = Column(Integer)
     matchtype = Column(Enum(Playlist))
     playergames = relationship("PlayerGame")  # TODO: should this just replace .players?
+    teamstats = relationship("TeamStat")
     upload_date = Column(DateTime, default=datetime.datetime.utcnow)
     match_date = Column(DateTime)
     team0possession = Column(Float)
@@ -211,7 +217,7 @@ class Game(DBObjectBase):
     # metadata
     version = Column(Integer)
     length = Column(Float, default=300.0)
-    game_server_id = Column(String(40))
+    game_server_id = Column(Integer)
     server_name = Column(String(40))
     replay_id = Column(String(40))
     playlist = Column(Integer)
@@ -258,3 +264,27 @@ class Group(DBObjectBase):
     __tablename__ = 'groups'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50))
+
+
+class TeamStat(DBObjectBase):
+    __tablename__ = 'teamstats'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    game = Column(String(40), ForeignKey('games.hash'), index=True)
+    game_object = relationship("Game", foreign_keys=[game])
+    is_orange = Column(Boolean)
+
+    # Center of Mass
+    average_distance_from_center = Column(Float)
+    average_max_distance_from_center = Column(Float)
+    time_clumped = Column(Float)
+    # tendencies
+    time_on_ground = Column(Float)
+    time_low_in_air = Column(Float)
+    time_high_in_air = Column(Float)
+    time_in_defending_half = Column(Float)
+    time_in_attacking_half = Column(Float)
+    time_in_defending_third = Column(Float)
+    time_in_neutral_third = Column(Float)
+    time_in_attacking_third = Column(Float)
+    time_behind_ball = Column(Float)
+    time_in_front_ball = Column(Float)

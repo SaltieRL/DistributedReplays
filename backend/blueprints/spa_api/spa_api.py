@@ -243,8 +243,8 @@ def api_upload_proto():
 
     # Process
     session = current_app.config['db']()
-    game, player_games, players = convert_pickle_to_db(protobuf_game)
-    add_objs_to_db(game, player_games, players, session, preserve_upload_date=True)
+    game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
+    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date=True)
     session.commit()
     session.close()
 

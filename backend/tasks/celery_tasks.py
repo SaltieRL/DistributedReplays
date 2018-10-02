@@ -124,8 +124,8 @@ def parse_replay_task(self, fn, preserve_upload_date=False):
 
     g = analysis_manager.protobuf_game
     sess = self.session()
-    game, player_games, players = convert_pickle_to_db(g)
-    add_objs_to_db(game, player_games, players, sess, preserve_upload_date=preserve_upload_date)
+    game, player_games, players, teamstats = convert_pickle_to_db(g)
+    add_objs_to_db(game, player_games, players, teamstats, sess, preserve_upload_date=preserve_upload_date)
     sess.commit()
     sess.close()
 
