@@ -12,7 +12,6 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import {BasePage} from "./BasePage"
-import {StoreState} from "../../Redux"
 
 interface ListItemInfo {
     name: string
@@ -118,7 +117,7 @@ const uploading: ListItemInfo[] = [
         message: "A custom Auto Uploader"
     },
 ]
-
+{/*
 const replayViewer: ListItemInfo[] = [
     {
         name: "Xander",
@@ -136,6 +135,7 @@ const replayViewer: ListItemInfo[] = [
         message: "Has a great design for live stats during the viewer"
     },
 ]
+*/}
 
 const designer: ListItemInfo[] = [
     {
@@ -250,8 +250,8 @@ export class AboutPage extends React.PureComponent {
                                                 <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
                                             ))}
                                         </List>
-                                    /*
                                     </CardContent>
+                                    {/*
                                         <CardHeader subheader="Replay Viewer"/>
                                         <CardContent>
                                             <List>
@@ -260,7 +260,7 @@ export class AboutPage extends React.PureComponent {
                                                 ))}
                                             </List>
                                         </CardContent>
-                                    */
+                                    */}
                                     <CardHeader subheader="Designers"/>
                                     <CardContent>
                                         <List>
