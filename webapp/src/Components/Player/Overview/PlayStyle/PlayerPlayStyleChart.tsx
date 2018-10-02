@@ -82,8 +82,8 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
         return {
             scale: {
                 ticks: {
-                    suggestedMin: -1,
-                    suggestedMax: 1,
+                    suggestedMin: -2,
+                    suggestedMax: 2,
                     maxTicksLimit: 5
                 } as LinearTickOptions
             },

@@ -63,7 +63,9 @@ class SharedStatsWrapper:
             PlayerGame.wasted_collection,
             stat_math.get_total_boost_efficiency(),
             stat_math.get_collection_boost_efficiency(),
-            stat_math.get_used_boost_efficiency()
+            stat_math.get_used_boost_efficiency(),
+            -stat_math.get_total_boost_efficiency(),
+            -100 * PlayerGame.turnovers / safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),
         ]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
@@ -71,8 +73,8 @@ class SharedStatsWrapper:
                                           'turnovers', 'shot %', 'aerials',
                                           'att 1/2', 'att 1/3', 'def 1/2', 'def 1/3', '< ball', '> ball',
                                           'luck1', 'luck2', 'luck3', 'luck4', 'won turnovers', 'avg hit dist', 'passes',
-                                          'boost wasted', 'total boost efficiency', 'collection boost efficiency',
-                                          'used boost efficiency'])
+                                          'boost wasted', 'raw total boost efficiency', 'collection boost efficiency',
+                                          'used boost efficiency', 'total boost efficiency', 'turnover efficiency'])
         avg_list = []
         std_list = []
         for i, s in enumerate(stat_list):

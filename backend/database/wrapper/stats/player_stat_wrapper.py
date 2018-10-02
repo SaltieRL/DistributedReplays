@@ -90,8 +90,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
         groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
             ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
-            ['boost wasted', 'assists', 'passes/hit', 'passes', 'assists/hit'],  # chemistry
-            ['turnovers', 'useful/hits', 'aerials', 'won turnovers', 'avg hit dist'],  # skill
+            ['total boost efficiency', 'assists', 'passes/hit', 'passes', 'assists/hit'],  # chemistry
+            ['turnover efficiency', 'useful/hits', 'aerials', 'won turnovers', 'avg hit dist'],  # skill
             ['att 1/3', 'att 1/2', 'def 1/2', 'def 1/3', '< ball', '> ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
