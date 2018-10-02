@@ -6,6 +6,10 @@ def safe_divide(sql_value):
     return func.greatest(sql_value, 1)
 
 
+def replay_divide(sql_value):
+    return func.greatest(sql_value, 300.0)
+
+
 def get_total_boost_efficiency():
     wasted = PlayerGame.wasted_collection + PlayerGame.wasted_usage
     boost_total = PlayerGame.num_large_boosts * 100 + PlayerGame.num_small_boosts * 12 + PlayerGame.boost_usage

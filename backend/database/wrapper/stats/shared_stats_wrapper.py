@@ -7,7 +7,7 @@ from backend.database.objects import PlayerGame
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
 from backend.database.wrapper.stats import stat_math
 
-from backend.database.wrapper.stats.stat_math import safe_divide
+from backend.database.wrapper.stats.stat_math import safe_divide, replay_divide
 from sqlalchemy import func, cast, literal
 
 logger = logging.getLogger(__name__)
@@ -86,7 +86,7 @@ class SharedStatsWrapper:
                 avg_list.append(func.count(s))
             else:
                 std_list.append(func.stddev_samp(s))
-                avg_list.append(func.sum(s) / safe_divide(func.sum(PlayerGame.time_in_game)) * 300)
+                avg_list.append(func.sum(s) / replay_divide(func.sum(PlayerGame.time_in_game)) * 300)
         return avg_list, field_list, std_list
 
     def compare_to_global(self, stats, global_stats, global_stds):
