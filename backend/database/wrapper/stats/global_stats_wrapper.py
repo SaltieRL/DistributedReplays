@@ -54,7 +54,8 @@ class GlobalStatWrapper(SharedStatsWrapper):
                 if ignore_filtering():
                     query = query.subquery()
                 else:
-                    query = query.filter(PlayerGame.game != "").having(func.count(PlayerGame.player) > 5).subquery()
+                    query = query.filter(PlayerGame.game != "").filter(PlayerGame.time_in_game > 0).having(
+                        func.count(PlayerGame.player) > 5).subquery()
 
                 result = sess.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
                 column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
