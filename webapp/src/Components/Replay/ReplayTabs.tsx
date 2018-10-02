@@ -6,6 +6,7 @@ import {Replay} from "../../Models/Replay/Replay"
 import {StoreState} from "../../Redux"
 import {BasicStatsContent} from "./BasicStats/BasicStatsContent"
 import {ReplayViewer} from "./ReplayViewer/ReplayViewer"
+import {TeamStatsContent} from "./TeamStats/TeamStatsContent"
 
 interface OwnProps {
     replay: Replay
@@ -15,7 +16,7 @@ type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type ReplayTab = "basicStats" | "advancedStats" | "replayViewer"
+type ReplayTab = "basicStats" | "teamStats" | "advancedStats" | "replayViewer"
 
 interface State {
     selectedTab: ReplayTab
@@ -38,6 +39,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                       scrollable={isWidthSm}
                 >
                     <Tab key="basicStats" label="Basic Stats" value="basicStats"/>
+                    {this.props.loggedInUser && this.props.loggedInUser.beta &&
+                        <Tab key="teamStats" label="Team Stats" value="teamStats"/>
+                    }
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
                         [
                             <Tab key="advancedStats" label="Advanced Stats" value="advancedStats"/>,
@@ -47,6 +51,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 </Tabs>
                 {this.state.selectedTab === "basicStats" &&
                 <BasicStatsContent replay={this.props.replay}/>
+                }
+                {this.state.selectedTab === "teamStats" &&
+                <TeamStatsContent replay={this.props.replay}/>
                 }
                 {this.state.selectedTab === "replayViewer" &&
                     <ReplayViewer replay={this.props.replay} />
