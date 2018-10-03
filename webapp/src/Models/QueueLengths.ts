@@ -1,6 +1,6 @@
 interface QueueLength {
-    queuePriority: String
-    queueLength: Number
+    queuePriority: string
+    queueLength: number
 }
 
 interface QueueLengths {
