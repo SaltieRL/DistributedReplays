@@ -36,7 +36,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                 if 'rank_points' in r[gamemode]:
                     mmr_list.append(r[gamemode]['rank_points'])
     replay_id = game.game_metadata.match_guid
-    if replay_id == '':
+    if replay_id == '' or replay_id is None:
         replay_id = game.game_metadata.id
     team0poss = game.teams[0].stats.possession
     team1poss = game.teams[1].stats.possession
@@ -124,14 +124,49 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
     return g, player_games, players, teamstats
 
 
-def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], teamstats: List[TeamStat], session,
-                   preserve_upload_date=False):
+def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], teamstats: List[TeamStat],
+                   session,
+                   preserve_upload_date=False, preserve_ranks=True):
+
+    # Team stats
+
+    matches = session.query(TeamStat).filter(TeamStat.game == game.hash).all()
+    if matches is not None:
+        for match in matches:
+            session.delete(match)
+    for team in teamstats:
+        session.add(team)
+
+    for pg in player_games:
+        match = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
+            PlayerGame.game == pg.game).first()
+        if match is not None:
+            if preserve_ranks:
+                pg.rank = match.rank
+                pg.division = match.division
+                pg.mmr = match.mmr
+            session.delete(match)
+
+        matches = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
+            PlayerGame.game == game.replay_id).all()  # catch old replay ids
+        if matches is not None:
+            for match in matches:
+                if preserve_ranks:
+                    pg.rank = match.rank
+                    pg.division = match.division
+                    pg.mmr = match.mmr
+                session.delete(match)
+        session.add(pg)
+
     try:
         matches = session.query(Game).filter(Game.hash == game.hash).all()
         if matches is not None:
             for match in matches:
                 if preserve_upload_date:
                     game.upload_date = match.upload_date
+                if preserve_ranks:
+                    game.ranks = match.ranks
+                    game.mmrs = match.mmrs
                 session.delete(match)
                 print('deleting {}'.format(match.hash))
         matches = session.query(Game).filter(Game.hash == game.replay_id).all()  # catch old replay ids
@@ -139,6 +174,9 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
             for match in matches:
                 if preserve_upload_date:
                     game.upload_date = match.upload_date
+                if preserve_ranks:
+                    game.ranks = match.ranks
+                    game.mmrs = match.mmrs
                 session.delete(match)
                 print('deleting {}'.format(match.hash))
         session.add(game)
@@ -153,24 +191,3 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
             match = None
         if not match:  # we don't need to add duplicate players
             session.add(pl)
-    for pg in player_games:
-        match = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
-            PlayerGame.game == pg.game).first()
-        if match is not None:
-            session.delete(match)
-
-        matches = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
-            PlayerGame.game == game.replay_id).all()  # catch old replay ids
-        if matches is not None:
-            for match in matches:
-                session.delete(match)
-        session.add(pg)
-
-    # Team stats
-
-    matches = session.query(TeamStat).filter(TeamStat.game == game.hash).all()
-    if matches is not None:
-        for match in matches:
-            session.delete(match)
-    for team in teamstats:
-        session.add(team)

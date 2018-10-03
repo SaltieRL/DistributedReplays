@@ -27,8 +27,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
     def get_wrapped_stats(self, stats):
         zipped_stats = dict()
 
-        for i in range(len(self.field_names)):
-            zipped_stats[self.field_names[i].field_name] = stats[i]
+        for i in range(len(self.stat_list)):
+            zipped_stats[self.stat_list[i].get_field_name()] = stats[i]
 
         return zipped_stats
 
@@ -40,7 +40,9 @@ class PlayerStatWrapper(GlobalStatWrapper):
         player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
         if replay_ids is not None:
             player_stats_filter.with_replay_ids(replay_ids)
-        query = player_stats_filter.build_query(session).filter(PlayerGame.time_in_game > 0)
+        query = player_stats_filter.build_query(session).filter(PlayerGame.time_in_game > 0).filter(
+            PlayerGame.game != '').group_by(PlayerGame.player)
+        # logger.debug(str(query))
         stats = list(query.first())
         stats = [0 if s is None else s for s in stats]
         if raw:

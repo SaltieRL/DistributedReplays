@@ -131,7 +131,7 @@ class QueryFilterBuilder:
             filtered_query = filtered_query.filter(Game.teamsize == self.team_size)
 
         if self.safe_checking:
-            filtered_query = filtered_query.filter(PlayerGame.total_hits > 0)
+            filtered_query = filtered_query.filter(PlayerGame.total_hits > 0).filter(PlayerGame.time_in_game > 0)
 
         if self.players is not None and len(self.players) > 0:
             filtered_query = filtered_query.filter(self.handle_list(PlayerGame.player, self.players))
