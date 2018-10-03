@@ -1,4 +1,4 @@
-carball>=0.4.1
+carball>=0.5.0
 celery>=4.2.1
 Flask-Celery-Helper>=1.1.0
 Flask-Cors>=3.0.6

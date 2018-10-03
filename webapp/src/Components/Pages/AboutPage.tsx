@@ -79,8 +79,91 @@ const friends: ListItemInfo[] = [
         name: "GIF Your Game",
         link: "https://www.gifyourgame.com/",
         message: "An addon that enables you to create gifs of your gameplay at the push of a button!"
+    },
+    {
+        name: "Octane.gg",
+        link: "https://octane.gg/",
+        message: "An addon that enables you to create gifs of your gameplay at the push of a button!"
     }
 ]
+
+const replayParsing: ListItemInfo[] = [
+    {
+        name: "Druthyn",
+        link: "",
+        message: "Worked on figuring out how to detect if a player is on a M/KB or a controller"
+    },
+    {
+        name: "Destiphy",
+        link: "",
+        message: "Has helped fix tons of bugs and created situations for us to test against."
+    },
+]
+
+const uploading: ListItemInfo[] = [
+    {
+        name: "Skoocda",
+        link: "",
+        message: "Worked on tracking state of uploads and is helping with testing"
+    },
+    {
+        name: "Kcolton & Bakkes",
+        link: "",
+        message: "Bakkes Auto uploader plugin"
+    },
+    {
+        name: "Redox ",
+        link: "",
+        message: "A custom Auto Uploader"
+    },
+]
+{/*
+const replayViewer: ListItemInfo[] = [
+    {
+        name: "Xander",
+        link: "",
+        message: "Worked on the initial replay viewer"
+    },
+    {
+        name: "DarkAce65",
+        link: "",
+        message: "Worked on server side implementation for the replay viewer"
+    },
+    {
+        name: "enzanki_ars",
+        link: "",
+        message: "Has a great design for live stats during the viewer"
+    },
+]
+*/}
+
+const designer: ListItemInfo[] = [
+    {
+        name: "Gander",
+        link: "",
+        message: "Created all traces seen on the site"
+    },
+    {
+        name: "IBeam ",
+        link: "",
+        message: "Worked on backgrounds and a lot of prototypes"
+    },
+]
+
+
+const supportStaff: ListItemInfo[] = [
+    {
+        name: "Khalcin",
+        link: "",
+        message: "Leader of support staff"
+    },
+    {
+        name: "ThatGuyDed, IamEld3st",
+        link: "",
+        message: "Helper of support staff, Welcomer"
+    },
+]
+
 
 export class AboutPage extends React.PureComponent {
     public render() {
@@ -148,6 +231,54 @@ export class AboutPage extends React.PureComponent {
                                     </CardContent>
                                 </Card>
                             </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Card>
+                                    <CardHeader title="contributors"/>
+                                    <Divider/>
+                                    <CardHeader subheader="Replay Parsing"/>
+                                    <CardContent>
+                                        <List>
+                                            {replayParsing.map((listItemInfo) => (
+                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                            ))}
+                                        </List>
+                                    </CardContent>
+                                    <CardHeader subheader="Uploading"/>
+                                    <CardContent>
+                                        <List>
+                                            {uploading.map((listItemInfo) => (
+                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                            ))}
+                                        </List>
+                                    </CardContent>
+                                    {/*
+                                        <CardHeader subheader="Replay Viewer"/>
+                                        <CardContent>
+                                            <List>
+                                                {replayViewer.map((listItemInfo) => (
+                                                    <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                                ))}
+                                            </List>
+                                        </CardContent>
+                                    */}
+                                    <CardHeader subheader="Designers"/>
+                                    <CardContent>
+                                        <List>
+                                            {designer.map((listItemInfo) => (
+                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                            ))}
+                                        </List>
+                                    </CardContent>
+                                    <CardHeader subheader="Support Staff"/>
+                                    <CardContent>
+                                        <List>
+                                            {supportStaff.map((listItemInfo) => (
+                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                            ))}
+                                        </List>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -155,7 +286,6 @@ export class AboutPage extends React.PureComponent {
         )
     }
 }
-
 const PersonListItem: React.SFC<ListItemInfo> = (props) => (
     <ListItem>
         <ListItemText
@@ -181,3 +311,4 @@ const ExternalLink: React.SFC<ExternalLinkProps> = (props) => (
         </ButtonBase>
     </a>
 )
+
