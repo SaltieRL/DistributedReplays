@@ -14,7 +14,8 @@ export const getQueueLength = (): Promise<QueueLengths> => {
 
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
 
-export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Specify any
+// @return taskIds of uploaded replays
+export const uploadReplays = (replays: File[]): Promise<string[]> => {
     const formData = new FormData()
     replays.forEach((file) => {
         formData.append("replays", file)
