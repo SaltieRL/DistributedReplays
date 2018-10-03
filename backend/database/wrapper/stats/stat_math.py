@@ -13,7 +13,7 @@ def safe_divide(sql_value, default=1):
 
 def get_total_boost_efficiency():
     wasted = PlayerGame.wasted_collection + PlayerGame.wasted_usage
-    boost_total = PlayerGame.num_large_boosts * 100 + PlayerGame.num_small_boosts * 12 + PlayerGame.boost_usage
+    boost_total = PlayerGame.num_large_boosts * 100 + PlayerGame.num_small_boosts * 12
     return wasted / safe_divide(boost_total)
 
 
