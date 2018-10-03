@@ -7,7 +7,7 @@ from backend.database.objects import PlayerGame
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, add_dynamic_fields
 from backend.database.wrapper.stats import stat_math
 
-from backend.database.wrapper.stats.stat_math import safe_divide
+from backend.database.wrapper.stats.stat_math import safe_divide, replay_divide
 from sqlalchemy import func, cast, literal
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,9 @@ class SharedStatsWrapper:
             PlayerGame.wasted_collection,
             stat_math.get_total_boost_efficiency(),
             stat_math.get_collection_boost_efficiency(),
-            stat_math.get_used_boost_efficiency()
+            stat_math.get_used_boost_efficiency(),
+            -stat_math.get_total_boost_efficiency(),
+            -100 * PlayerGame.turnovers / safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts),
         ]
 
         field_list += add_dynamic_fields(['boost usage', 'speed', 'possession', 'hits',
@@ -71,8 +73,8 @@ class SharedStatsWrapper:
                                           'turnovers', 'shot %', 'aerials',
                                           'att 1/2', 'att 1/3', 'def 1/2', 'def 1/3', '< ball', '> ball',
                                           'luck1', 'luck2', 'luck3', 'luck4', 'won turnovers', 'avg hit dist', 'passes',
-                                          'boost wasted', 'total boost efficiency', 'collection boost efficiency',
-                                          'used boost efficiency'])
+                                          'boost wasted', 'raw total boost efficiency', 'collection boost efficiency',
+                                          'used boost efficiency', 'total boost efficiency', 'turnover efficiency'])
         avg_list = []
         std_list = []
         for i, s in enumerate(stat_list):
@@ -84,7 +86,7 @@ class SharedStatsWrapper:
                 avg_list.append(func.count(s))
             else:
                 std_list.append(func.stddev_samp(s))
-                avg_list.append(func.sum(s) / safe_divide(func.sum(PlayerGame.time_in_game)) * 300)
+                avg_list.append(func.sum(s) / replay_divide(func.sum(PlayerGame.time_in_game)) * 300)
         return avg_list, field_list, std_list
 
     def compare_to_global(self, stats, global_stats, global_stds):

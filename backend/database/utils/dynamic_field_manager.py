@@ -6,17 +6,17 @@ from backend.database.objects import DBObjectBase, PlayerGame
 from carball.generated.api import player_pb2
 
 
-class ProtoFieldResult:
-    def __init__(self, nested_parents, field_name, field_descriptor, nested_names=None):
-        self.field_descriptor = field_descriptor
-        self.field_name = field_name
-        self.nested_parents = nested_parents
-        self.nested_names = nested_names
-
-
 class DynamicFieldResult:
     def __init__(self, field_name):
         self.field_name = field_name
+
+
+class ProtoFieldResult(DynamicFieldResult):
+    def __init__(self, nested_parents, field_name, field_descriptor, nested_names=None):
+        super().__init__(field_name)
+        self.field_descriptor = field_descriptor
+        self.nested_parents = nested_parents
+        self.nested_names = nested_names
 
 
 def get_proto_fields_as_flatten_list(proto_message: message, nested_parents=None, nested_fields=None) -> List[ProtoFieldResult]:

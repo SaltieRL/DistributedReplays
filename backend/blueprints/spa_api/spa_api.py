@@ -1,13 +1,20 @@
+import base64
+import io
 import logging
 import os
 import re
+import shutil
 import uuid
 
+from carball.analysis.utils.pandas_manager import PandasManager
+from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from google.protobuf.json_format import MessageToJson
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
+from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
@@ -19,6 +26,7 @@ from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.replay.basic_stats import BasicStatChartData
+from .service_layers.replay.replay_positions import ReplayPositions
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
@@ -168,6 +176,12 @@ def api_get_replay_basic_stats(id_):
     return better_jsonify(basic_stats)
 
 
+@bp.route('replay/<id_>/positions')
+def api_get_replay_positions(id_):
+    positions = ReplayPositions.create_from_id(id_)
+    return better_jsonify(positions)
+
+
 @bp.route('replay/group')
 def api_get_replay_group():
     ids = request.args.getlist('ids')
@@ -199,7 +213,12 @@ def api_upload_replays():
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
-        result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+
+        lengths = get_queue_length()  # priority 0,3,6,9
+        if lengths[1] > 1000:
+            result = celery_tasks.parse_replay_gcp(os.path.abspath(filename))
+        else:
+            result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
         task_ids.append(result.id)
     return jsonify(task_ids), 202
 
@@ -209,6 +228,48 @@ def api_get_parse_status():
     ids = request.args.getlist("ids")
     states = [celery_tasks.get_task_state(id_).name for id_ in ids]
     return jsonify(states)
+
+@bp.route('/upload/proto', methods=['POST'])
+def api_upload_proto():
+    print('Proto uploaded')
+
+    # Convert to byte files from base64
+    response = request.get_json()
+    proto_in_memory = io.BytesIO(base64.b64decode(response['proto']))
+    pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
+
+    protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
+
+    # Path creation
+    filename = protobuf_game.game_metadata.match_guid
+    if filename == '':
+        filename = protobuf_game.game_metadata.id
+    filename += '.replay'
+    parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
+    id_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays',
+                                  protobuf_game.game_metadata.id + '.replay')
+    guid_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays', filename)
+
+    # Process
+    session = current_app.config['db']()
+    game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
+    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date=True)
+    session.commit()
+    session.close()
+
+    # Write to disk
+    proto_in_memory.seek(0)
+    pandas_in_memory.seek(0)
+    with open(parsed_path + '.pts', 'wb') as f:
+        f.write(proto_in_memory.read())
+    with open(parsed_path + '.gzip', 'wb') as f:
+        f.write(pandas_in_memory.read())
+
+    # Cleanup
+    if os.path.isfile(id_replay_path):
+        shutil.move(id_replay_path, guid_replay_path)
+
+    return jsonify({'Success': True})
 
 
 @bp.errorhandler(CalculatedError)
