@@ -47,9 +47,12 @@ class SharedStatsWrapper:
         stat_list += [
             QueryFieldWrapper(stat_math.get_hits_non_dribbles(), DynamicFieldResult('hits')),
             QueryFieldWrapper(stat_math.get_shots_per_non_dribble(), DynamicFieldResult('shots/hit'), is_percent=True),
-            QueryFieldWrapper(stat_math.get_passes_per_non_dribble(), DynamicFieldResult('passes/hit'), is_percent=True),
-            QueryFieldWrapper(stat_math.get_assists_per_non_dribble(), DynamicFieldResult('assists/hit'), is_percent=True),
-            QueryFieldWrapper(stat_math.get_useful_hit_per_non_dribble(), DynamicFieldResult('useful/hits'), is_percent=True),
+            QueryFieldWrapper(stat_math.get_passes_per_non_dribble(), DynamicFieldResult('passes/hit'),
+                              is_percent=True),
+            QueryFieldWrapper(stat_math.get_assists_per_non_dribble(), DynamicFieldResult('assists/hit'),
+                              is_percent=True),
+            QueryFieldWrapper(stat_math.get_useful_hit_per_non_dribble(), DynamicFieldResult('useful/hits'),
+                              is_percent=True),
             QueryFieldWrapper(stat_math.get_shot_percent(),
                               DynamicFieldResult('shot %'), is_percent=True, is_cumulative=True),
             QueryFieldWrapper(PlayerGame.time_in_attacking_half, DynamicFieldResult('att 1/2')),
@@ -100,7 +103,8 @@ class SharedStatsWrapper:
                 avg_list.append(func.count())
             else:
                 std_list.append(func.stddev_samp(stat.query))
-                avg_list.append(300 * func.sum(stat.query) / safe_divide(func.sum(PlayerGame.time_in_game), default=300))
+                avg_list.append(
+                    300 * func.sum(stat.query) / safe_divide(func.sum(PlayerGame.time_in_game), default=300))
         return avg_list, std_list
 
     def compare_to_global(self, stats, global_stats, global_stds):
@@ -125,13 +129,15 @@ class SharedStatsWrapper:
             else:
                 global_stat = float(global_stat)
             if global_std is None or global_std == 0:
-                logger.debug(self.stat_list[i].dynamic_field.field_name, 'std is 0')
+                logger.debug("%s %s", self.stat_list[i].dynamic_field.field_name, 'std is 0')
                 global_std = 1
             else:
                 global_std = float(global_std)
             if global_std != 1 and global_std > 0:
-                logger.debug(self.stat_list[i].dynamic_field.field_name, player_stat, global_stat, global_std,
-                             float((player_stat - global_stat) / global_std))
+                if str(self.stat_list[i].dynamic_field.field_name) == 'time_behind_ball':
+                    logger.debug("%s %s %s %s %s", str(self.stat_list[i].dynamic_field.field_name), str(player_stat),
+                                 str(global_stat), str(global_std),
+                                 str(float((player_stat - global_stat) / global_std)))
                 stats[i] = float((player_stat - global_stat) / global_std)
             else:
                 stats[i] = float(player_stat / global_stat)

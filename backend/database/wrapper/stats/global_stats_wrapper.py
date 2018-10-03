@@ -23,7 +23,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
 
         # this Object needs to be pooled per a session so only one is used at a time
         self.base_query = QueryFilterBuilder().with_relative_start_time(days_ago=self.get_timeframe()).with_team_size(
-            3).sticky()
+            3).with_safe_checking().sticky()
 
     def get_global_stats(self, sess, with_rank=True):
         """
