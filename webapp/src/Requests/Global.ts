@@ -1,3 +1,4 @@
+import * as qs from "qs"
 import {doGet, doPost} from "../apiHandler/apiHandler"
 import {useMockData} from "./Config"
 
@@ -21,7 +22,14 @@ export const uploadReplays = (replays: File[]): Promise<string[]> => {
         formData.append("replays", file)
     })
 
-    return doPost("/upload", formData) //TODO: receive the parse_status object
+    return doPost("/upload", formData)
 }
 
-export const getLoggedInUser = () : Promise<LoggedInUser> => doGet("/me")
+export const getUploadStatuses = (taskIds: string[]): Promise<UploadStatus[]> => {
+    return doGet("/upload" +
+        qs.stringify({taskIds},
+            {arrayFormat: "repeat", addQueryPrefix: true}
+        ))
+}
+
+export const getLoggedInUser = (): Promise<LoggedInUser> => doGet("/me")
