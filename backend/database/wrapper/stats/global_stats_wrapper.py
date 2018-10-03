@@ -41,7 +41,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
             else:
                 return float(f)
 
-        for column, q in zip(self.field_names, self.stats_query):
+        for column, q in zip(self.stat_list, self.stats_query):
             column_results = []
             # set the column result
             self.base_query.clean().with_stat_query([PlayerGame.player, q.label('avg')])
@@ -59,7 +59,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
 
                 result = sess.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
                 column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
-            results[column.field_name] = column_results
+            results[column.get_field_name()] = column_results
         return results
 
     def get_global_stats_by_rank(self, session, query_filter: QueryFilterBuilder, stats_query, stds_query,
@@ -93,14 +93,14 @@ class GlobalStatWrapper(SharedStatsWrapper):
                 # Check to see if the key exists and if so load it
                 if stat_string is not None:
                     stats_dict = json.loads(stat_string)
-                    global_stats = [stats_dict[s.field_name][rank_index]['mean'] for s in self.field_names]
-                    global_stds = [stats_dict[s.field_name][rank_index]['std'] for s in self.field_names]
+                    global_stats = [stats_dict[stat.get_field_name()][rank_index]['mean'] for stat in self.stat_list]
+                    global_stds = [stats_dict[stat.get_field_name()][rank_index]['std'] for stat in self.stat_list]
                     return global_stats, global_stds
             if is_local_dev():
                 rank_index = 0
                 stats = self.get_global_stats(session, with_rank=False)
-                global_stats = [stats[s.field_name][rank_index]['mean'] for s in self.field_names]
-                global_stds = [stats[s.field_name][rank_index]['std'] for s in self.field_names]
+                global_stats = [stats[stat.get_field_name()][rank_index]['mean'] for stat in self.stat_list]
+                global_stds = [stats[stat.get_field_name()][rank_index]['std'] for stat in self.stat_list]
                 return global_stats, global_stds
             raise CalculatedError(500, "Global stats unavailable or have not been calculated yet.")
         else:

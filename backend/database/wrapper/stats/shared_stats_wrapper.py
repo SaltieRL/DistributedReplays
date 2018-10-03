@@ -7,7 +7,7 @@ from google.protobuf.descriptor import FieldDescriptor
 from backend.database.objects import PlayerGame
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, \
     DynamicFieldResult, ProtoFieldResult
-from backend.database.wrapper.field_wrapper import QueryFieldWrapper
+from backend.database.wrapper.field_wrapper import QueryFieldWrapper, get_explanations
 from backend.database.wrapper.stats import stat_math
 
 from backend.database.wrapper.stats.stat_math import safe_divide
@@ -22,17 +22,23 @@ class SharedStatsWrapper:
     """
 
     def __init__(self):
-        self.stat_list = self.create_stats_field_list()
+        self.dynamic_field_list = self.create_dynamic_fields()
+        self.stat_explanation_list, self.stat_explanation_map = get_explanations(self.dynamic_field_list)
+        self.stat_list = self.create_stats_field_list(self.dynamic_field_list, self.stat_explanation_map)
         self.stats_query, self.std_query = self.get_stats_query(self.stat_list)
 
     @staticmethod
-    def create_stats_field_list():
+    def create_dynamic_fields():
         field_list = create_and_filter_proto_field(proto_message=player_pb2.Player,
                                                    blacklist_field_names=['name', 'title_id', 'is_orange', 'is_bot'],
                                                    blacklist_message_types=['api.metadata.CameraSettings',
                                                                             'api.metadata.PlayerLoadout',
                                                                             'api.PlayerId'],
                                                    db_object=PlayerGame)
+        return field_list
+
+    @staticmethod
+    def create_stats_field_list(field_list, explanation_map):
         stat_list = []
         for dynamic_field in field_list:
             query_field = getattr(PlayerGame, dynamic_field.field_name)
@@ -40,11 +46,12 @@ class SharedStatsWrapper:
 
         stat_list += [
             QueryFieldWrapper(stat_math.get_hits_non_dribbles(), DynamicFieldResult('hits')),
-            QueryFieldWrapper(stat_math.get_shots_per_non_dribble(), DynamicFieldResult('shot/hit'), is_percent=True),
+            QueryFieldWrapper(stat_math.get_shots_per_non_dribble(), DynamicFieldResult('shots/hit'), is_percent=True),
             QueryFieldWrapper(stat_math.get_passes_per_non_dribble(), DynamicFieldResult('passes/hit'), is_percent=True),
             QueryFieldWrapper(stat_math.get_assists_per_non_dribble(), DynamicFieldResult('assists/hit'), is_percent=True),
             QueryFieldWrapper(stat_math.get_useful_hit_per_non_dribble(), DynamicFieldResult('useful/hits'), is_percent=True),
-            QueryFieldWrapper(stat_math.get_shot_percent(), DynamicFieldResult('shot %'), is_percent=True),
+            QueryFieldWrapper(stat_math.get_shot_percent(),
+                              DynamicFieldResult('shot %'), is_percent=True, is_cumulative=True),
             QueryFieldWrapper(PlayerGame.time_in_attacking_half, DynamicFieldResult('att 1/2')),
             QueryFieldWrapper(PlayerGame.time_in_attacking_third, DynamicFieldResult('att 1/3')),
             QueryFieldWrapper(PlayerGame.time_in_defending_half, DynamicFieldResult('def 1/2')),
@@ -63,29 +70,31 @@ class SharedStatsWrapper:
             QueryFieldWrapper(stat_math.get_negative_turnover_per_non_dribble(),
                               DynamicFieldResult('turnover efficiency'), is_percent=True),
         ]
-        SharedStatsWrapper.assign_values(stat_list)
+        SharedStatsWrapper.assign_values(stat_list, explanation_map)
         return stat_list
 
     @staticmethod
-    def assign_values(stat_list: List[QueryFieldWrapper]):
+    def assign_values(stat_list: List[QueryFieldWrapper], explanation_map):
         for stat in stat_list:
             if isinstance(stat.dynamic_field, ProtoFieldResult):
                 if stat.dynamic_field.field_descriptor.type == FieldDescriptor.TYPE_BOOL:
                     stat.is_boolean = True
-            if 'average' in stat.dynamic_field.field_name:
+            if 'average' in stat.get_query_key():
                 stat.is_averaged = True
+            if stat.get_query_key() in explanation_map:
+                stat.explanation = explanation_map[stat.get_query_key()]
 
     @staticmethod
     def get_stats_query(stat_list: List[QueryFieldWrapper]):
         avg_list = []
         std_list = []
         for stat in stat_list:
-            if stat.is_percent:
+            if stat.is_cumulative:
                 std_list.append(literal(1))
                 avg_list.append(stat.query)
-            elif stat.is_averaged:
+            elif stat.is_averaged or stat.is_percent:
                 std_list.append(func.stddev_samp(stat.query))
-                avg_list.append(stat.query)
+                avg_list.append(func.avg(stat.query))
             elif stat.is_boolean:
                 std_list.append(literal(1))
                 avg_list.append(func.count())

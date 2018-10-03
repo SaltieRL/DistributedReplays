@@ -28,7 +28,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         zipped_stats = dict()
 
         for i in range(len(self.stat_list)):
-            zipped_stats[self.stat_list[i].dynamic_field.field_name] = stats[i]
+            zipped_stats[self.stat_list[i].get_field_name()] = stats[i]
 
         return zipped_stats
 
