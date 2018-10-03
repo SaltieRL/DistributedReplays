@@ -1,8 +1,8 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
+import {Replay} from "../../../Models/Replay/Replay"
 import {getReplayViewerData} from "../../../Requests/Replay"
 import {ThreeScene} from "./ThreeScene"
-import {Replay} from "../../../Models/Replay/Replay";
 
 interface OwnProps {
     replay: Replay
@@ -95,34 +95,34 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     private readonly setCurrentFrame: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const value: number = parseInt(event.target.value, 10)
         this.setState({currentFrame: value})
-        this.updateeGameTime()
+        this.updateGameTime()
     }
 
-    private updateeGameTime = () => {
+    private readonly updateGameTime = () => {
         // Update game time
         const frame = this.state.replayData.frames[this.state.currentFrame]
         const time: number = parseFloat(frame[1])
         this.setState({gameTime: time})
     }
 
-    private startPlayback = () => {
+    private readonly startPlayback = () => {
         if (!this.state.play) {
             this.setState({play: true})
             setTimeout(() => this.playLoop(), 0)
         }
     }
 
-    private stopPlayback = () => {
+    private readonly stopPlayback = () => {
         this.setState({play: false})
     }
 
-    private playLoop = () => {
+    private readonly playLoop = () => {
         if (this.state.play) {
             if (this.state.currentFrame === this.state.replayData.frames.length) {
                 this.setState({play: false})
             }
             this.setState({currentFrame: this.state.currentFrame + 1})
-            this.updateeGameTime()
+            this.updateGameTime()
             const frame = this.state.replayData.frames[this.state.currentFrame]
             const delta: number = parseFloat(frame[0])
             setTimeout(() => this.playLoop(), delta * 1000)
