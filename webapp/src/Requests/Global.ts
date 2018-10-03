@@ -21,7 +21,7 @@ export const uploadReplays = (replays: File[]): Promise<string[]> => {
         formData.append("replays", file)
     })
 
-    return doPost("/upload", formData)
+    return doPost("/upload", formData) //TODO: receive the parse_status object
 }
 
 export const getLoggedInUser = () : Promise<LoggedInUser> => doGet("/me")

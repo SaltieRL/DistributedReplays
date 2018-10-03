@@ -200,6 +200,7 @@ def api_upload_replays():
     logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:
         raise CalculatedError(400, 'No files uploaded')
+    task_ids = []
 
     for file in uploaded_files:
         file.seek(0, os.SEEK_END)
@@ -214,10 +215,18 @@ def api_upload_replays():
         file.save(filename)
         lengths = get_queue_length()  # priority 0,3,6,9
         if lengths[1] > 1000:
-            celery_tasks.parse_replay_gcp(os.path.abspath(filename))
+            result = celery_tasks.parse_replay_gcp(os.path.abspath(filename))
         else:
-            celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-    return 'Replay uploaded and queued for processing...', 202
+            result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+        task_ids.append(result.id)
+    return jsonify(task_ids), 202
+
+
+@bp.route('/upload', methods=['GET'])
+def api_get_parse_status():
+    ids = request.args.getlist("ids")
+    states = [celery_tasks.get_task_state(id_).name for id_ in ids]
+    return jsonify(states)
 
 
 @bp.route('/upload/proto', methods=['POST'])
