@@ -213,7 +213,6 @@ def api_upload_replays():
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
-
         lengths = get_queue_length()  # priority 0,3,6,9
         if lengths[1] > 1000:
             result = celery_tasks.parse_replay_gcp(os.path.abspath(filename))
@@ -228,6 +227,7 @@ def api_get_parse_status():
     ids = request.args.getlist("ids")
     states = [celery_tasks.get_task_state(id_).name for id_ in ids]
     return jsonify(states)
+
 
 @bp.route('/upload/proto', methods=['POST'])
 def api_upload_proto():

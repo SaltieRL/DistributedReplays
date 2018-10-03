@@ -1,3 +1,4 @@
+import * as qs from "qs"
 import {doGet, doPost} from "../apiHandler/apiHandler"
 import {useMockData} from "./Config"
 
@@ -8,15 +9,27 @@ export const getReplayCount = (): Promise<number> => {
     return doGet("/global/replay_count")
 }
 
+export const getQueueLength = (): Promise<QueueLengths> => {
+    return doGet("/global/queue/count")
+}
+
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
 
-export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Specify any
+// @return taskIds of uploaded replays
+export const uploadReplays = (replays: File[]): Promise<string[]> => {
     const formData = new FormData()
     replays.forEach((file) => {
         formData.append("replays", file)
     })
 
-    return doPost("/upload", formData) //TODO: receive the parse_status object
+    return doPost("/upload", formData)
 }
 
-export const getLoggedInUser = () : Promise<LoggedInUser> => doGet("/me")
+export const getUploadStatuses = (taskIds: string[]): Promise<UploadStatus[]> => {
+    return doGet("/upload" +
+        qs.stringify({taskIds},
+            {arrayFormat: "repeat", addQueryPrefix: true}
+        ))
+}
+
+export const getLoggedInUser = (): Promise<LoggedInUser> => doGet("/me")

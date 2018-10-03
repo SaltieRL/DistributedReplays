@@ -4,8 +4,8 @@ import gzip
 import json
 import os
 import shutil
-from enum import Enum, auto
 import traceback
+from enum import Enum, auto
 
 import flask
 import requests
