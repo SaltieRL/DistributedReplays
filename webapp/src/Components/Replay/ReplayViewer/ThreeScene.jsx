@@ -41,7 +41,6 @@ export class ThreeScene extends Component {
         this.generatePlayers(this.props.replayData.players.length);
 
         this.start();
-        console.log(this);
     }
 
     componentWillUnmount() {
