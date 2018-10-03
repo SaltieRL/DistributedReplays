@@ -100,7 +100,7 @@ class SharedStatsWrapper:
                 avg_list.append(func.count())
             else:
                 std_list.append(func.stddev_samp(stat.query))
-                avg_list.append(func.sum(stat.query) / safe_divide(func.sum(PlayerGame.time_in_game), default=300))
+                avg_list.append(300 * func.sum(stat.query) / safe_divide(func.sum(PlayerGame.time_in_game), default=300))
         return avg_list, std_list
 
     def compare_to_global(self, stats, global_stats, global_stds):
