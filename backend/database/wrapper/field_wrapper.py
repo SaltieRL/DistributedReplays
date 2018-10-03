@@ -11,7 +11,9 @@ class FieldExplanation:
 
 class QueryFieldWrapper:
     def __init__(self, query: any, dynamic_field: DynamicFieldResult,
-                 explanation: FieldExplanation=None):
+                 explanation: FieldExplanation=None, is_percent=False, is_boolean=False):
+        self.is_boolean = is_boolean
+        self.is_percent = is_percent
         self.query = query
         self.explanation = explanation
         self.is_averaged = None

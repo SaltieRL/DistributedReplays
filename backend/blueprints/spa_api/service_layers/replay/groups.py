@@ -8,7 +8,6 @@ from backend.database.wrapper.stats import player_stat_wrapper
 from .basic_stats import basic_stats_metadatas
 
 wrapper = player_stat_wrapper.PlayerStatWrapper(player_wrapper.PlayerWrapper(limit=10))
-avg_list, field_list, std_list = wrapper.get_stats_query()
 
 
 class ReplayGroupChartData(ChartData):
