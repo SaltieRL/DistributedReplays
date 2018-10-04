@@ -20,7 +20,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         # this Object needs to be pooled per a session so only one is used at a time
         self.player_stats_filter = QueryFilterBuilder()
-        if ignore_filtering():
+        if not ignore_filtering():
             self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
                 3).with_safe_checking().sticky()
 
@@ -42,7 +42,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
             player_stats_filter.with_replay_ids(replay_ids)
         query = player_stats_filter.build_query(session).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.game != '').group_by(PlayerGame.player)
-        # logger.debug(str(query))
         stats = list(query.first())
         stats = [0 if s is None else s for s in stats]
         if raw:
