@@ -1,5 +1,8 @@
 import datetime
 
+from sqlalchemy import cast, String
+from sqlalchemy.dialects import postgresql
+
 from backend.database.objects import Game, PlayerGame
 
 
@@ -12,6 +15,7 @@ class QueryFilterBuilder:
         self.start_time = None
         self.end_time = None
         self.players = None
+        self.contains_all_players = None
         self.tags = None  # TODO: Add tags
         self.stats_query = None
         self.rank = None
@@ -19,6 +23,7 @@ class QueryFilterBuilder:
         self.team_size = None
         self.replay_ids = None
         self.is_game = False
+        self.playlist = None
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
         self.safe_checking = False
         self.sticky_values = dict()  # a list of values that survive a clean
@@ -27,6 +32,7 @@ class QueryFilterBuilder:
         self.start_time = None
         self.end_time = None
         self.players = None
+        self.contains_all_players = None
         self.tags = None
         self.stats_query = None
         self.rank = None
@@ -34,6 +40,7 @@ class QueryFilterBuilder:
         self.team_size = None
         self.replay_ids = None
         self.is_game = False
+        self.playlist = None
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
         self.safe_checking = False  # checks to make sure the replay has good data for the player
         self.sticky_values = dict()
@@ -70,6 +77,10 @@ class QueryFilterBuilder:
         self.players = player_ids
         return self
 
+    def with_all_players(self, player_ids) -> 'QueryFilterBuilder':
+        self.contains_all_players = player_ids
+        return self
+
     def with_tags(self, tags) -> 'QueryFilterBuilder':
         self.tags = tags
         return self
@@ -98,6 +109,10 @@ class QueryFilterBuilder:
         self.is_game = True
         return self
 
+    def with_playlist(self, playlist) -> 'QueryFilterBuilder':
+        self.playlist = playlist
+        return self
+
     def build_query(self, session):
         """
         Builds a query given the current state, returns the result.
@@ -113,7 +128,8 @@ class QueryFilterBuilder:
         if (self.start_time is not None or
                 self.end_time is not None or
                 self.team_size is not None):
-            filtered_query = filtered_query.join(Game)
+            if not self.is_game:
+                filtered_query = filtered_query.join(Game)
             has_joined_game = True
 
         if self.start_time is not None:
@@ -130,11 +146,17 @@ class QueryFilterBuilder:
         if self.team_size is not None:
             filtered_query = filtered_query.filter(Game.teamsize == self.team_size)
 
+        if self.playlist is not None:
+            filtered_query = filtered_query.filter(Game.playlist == self.playlist)
+
         if self.safe_checking:
             filtered_query = filtered_query.filter(PlayerGame.total_hits > 0).filter(PlayerGame.time_in_game > 0)
 
         if self.players is not None and len(self.players) > 0:
             filtered_query = filtered_query.filter(self.handle_list(PlayerGame.player, self.players))
+
+        if self.contains_all_players is not None and len(self.contains_all_players) > 0:
+            filtered_query = filtered_query.filter(self.handle_union(Game.players, self.contains_all_players))
 
         if self.replay_ids is not None and len(self.replay_ids) > 0:
             if self.is_game or has_joined_game:
@@ -191,6 +213,13 @@ class QueryFilterBuilder:
                 return field.in_(lst)
         else:
             return field == lst
+
+    @staticmethod
+    def handle_union(field, lst):
+        if isinstance(lst, list):
+            return field.contains(cast(lst, postgresql.ARRAY(String)))
+        else:
+            return field.contains(cast([lst], postgresql.ARRAY(String)))
 
     def get_stored_query(self):
         return self.initial_query

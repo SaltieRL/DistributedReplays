@@ -45,7 +45,7 @@ class Replay:
             id_=game.hash,
             name=game.name,
             date=game.match_date.isoformat(),
-            game_mode=f"{game.teamsize}'s",
+            game_mode=Replay.create_name_from_playlist(game.playlist, game.teamsize),
             game_score=GameScore.create_from_game(game),
             players=[
                 ReplayPlayer.create_from_player_game(player_game)
@@ -53,3 +53,31 @@ class Replay:
                     cast(List[PlayerGame], game.playergames))
             ]
         )
+
+    @staticmethod
+    def create_name_from_playlist(id_: int, teamsize: int) -> str:
+        mapping = {
+            1: 'Duels (U)',
+            2: 'Doubles (U)',
+            3: 'Standard (U)',
+            4: 'Chaos (U)',
+            6: 'Custom',
+            8: 'Offline',
+            10: 'Duels',
+            11: 'Doubles',
+            12: 'Solo Standard',
+            13: 'Standard',
+            15: 'Snow Day (U)',
+            16: 'Rocket Labs',
+            17: 'Hoops (U)',
+            18: 'Rumble (U)',
+            23: 'Dropshot (U)',
+            25: 'Anniversary',
+            27: 'Hoops',
+            28: 'Rumble',
+            29: 'Dropshot',
+            30: 'Snow Day'
+        }
+        if id_ in mapping:
+            return mapping[id_]
+        return f"{teamsize}'s"

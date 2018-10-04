@@ -1,7 +1,10 @@
+import datetime
 from typing import List
 
 from flask import current_app
 
+from backend.database.objects import PlayerGame, Game
+from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from .replay import Replay
 from ..player.player_profile_stats import player_wrapper
 
@@ -20,3 +23,43 @@ class MatchHistory:
         match_history = MatchHistory(total_count, [Replay.create_from_game(game) for game in games])
         session.close()
         return match_history
+
+    @staticmethod
+    def create_with_filters(page: int, limit: int, **kwargs) -> 'MatchHistory':
+        # TODO: move this somewhere else and make it reusable
+        page = int(page)
+        limit = int(limit)
+        if limit > 100:
+            limit = 100
+        session = current_app.config['db']()
+        builder = QueryFilterBuilder().as_game().with_stat_query([Game])
+        if 'rank' in kwargs:
+            builder.with_rank(kwargs['rank'])
+        if 'teamsize' in kwargs:
+            builder.with_team_size(int(kwargs['teamsize']))
+        if 'playlist' in kwargs:
+            builder.with_playlist(kwargs['playlist'])
+        if 'datebefore' in kwargs:
+            if 'dateafter' in kwargs:
+                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(kwargs['datebefore'])),
+                                       start_time=datetime.datetime.fromtimestamp(int(kwargs['dateafter'])))
+            else:
+                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(kwargs['datebefore'])))
+        elif 'dateafter' in kwargs:
+            builder.with_timeframe(start_time=datetime.datetime.fromtimestamp(int(kwargs['dateafter'])))
+        if 'players' in kwargs:
+            builder.with_all_players(kwargs['players'])
+
+        query = builder.build_query(session)
+
+        if 'minlength' in kwargs:
+            query = query.filter(Game.length > float(kwargs['minlength']))
+        if 'maxlength' in kwargs:
+            query = query.filter(Game.length < float(kwargs['maxlength']))
+        if 'map' in kwargs:
+            query = query.filter(Game.map == kwargs['map'])
+        count = query.count()
+        games = query[page * limit: (page + 1) * limit]
+        matches = MatchHistory(count, [Replay.create_from_game(game) for game in games])
+        session.close()
+        return matches

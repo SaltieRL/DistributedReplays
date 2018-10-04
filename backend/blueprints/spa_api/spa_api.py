@@ -1,4 +1,5 @@
 import base64
+import gzip
 import io
 import logging
 import os
@@ -194,6 +195,27 @@ def download_replay(id_):
     return send_from_directory(current_app.config['REPLAY_DIR'], id_ + ".replay", as_attachment=True)
 
 
+@bp.route('replay/search')
+def api_search_replays():
+    page = request.args.get('page')
+    limit = request.args.get('limit')
+
+    if page is None or limit is None:
+        missing_params = []
+        if page is None:
+            missing_params.append('page')
+        if limit is None:
+            missing_params.append('limit')
+        raise MissingQueryParams(missing_params)
+    args = request.args.to_dict()
+    lists = ['playlists', 'players']
+    for list_item in lists:
+        if list_item in args:
+            args[list_item] = request.args.getlist('list_item')
+    match_history = MatchHistory.create_with_filters(**args)
+    return better_jsonify(match_history)
+
+
 @bp.route('/upload', methods=['POST'])
 def api_upload_replays():
     uploaded_files = request.files.getlist("replays")
@@ -226,8 +248,8 @@ def api_upload_proto():
 
     # Convert to byte files from base64
     response = request.get_json()
-    proto_in_memory = io.BytesIO(base64.b64decode(response['proto']))
-    pandas_in_memory = io.BytesIO(base64.b64decode(response['pandas']))
+    proto_in_memory = io.BytesIO(base64.b64decode(gzip.decompress(response['proto'])))
+    pandas_in_memory = io.BytesIO(base64.b64decode(gzip.decompress(response['pandas'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
