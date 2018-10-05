@@ -67,7 +67,7 @@ class SharedStatsWrapper:
                               DynamicFieldResult('collection boost efficiency'), is_percent=True),
             QueryFieldWrapper(stat_math.get_used_boost_efficiency(),
                               DynamicFieldResult('used boost efficiency'), is_percent=True),
-            QueryFieldWrapper(-stat_math.get_total_boost_efficiency(),
+            QueryFieldWrapper(stat_math.get_total_boost_efficiency(),
                               DynamicFieldResult('total boost efficiency'), is_percent=True),
             QueryFieldWrapper(stat_math.get_negative_turnover_per_non_dribble(),
                               DynamicFieldResult('turnover efficiency'), is_percent=True),

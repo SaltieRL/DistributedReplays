@@ -90,8 +90,8 @@ basic_stats_metadatas = [
     # efficiency
     Metadata('collection boost efficiency', ChartType.bar, SubCat.Efficiency),
     Metadata('used boost efficiency', ChartType.bar, SubCat.Efficiency),
-    Metadata('total boost efficiency', ChartType.bar, SubCat.Efficiency),
-    Metadata('turnover efficiency', ChartType.bar, SubCat.Efficiency),
+    Metadata('total boost efficiency', ChartType.radar, SubCat.Efficiency),
+    Metadata('turnover efficiency', ChartType.radar, SubCat.Efficiency),
     Metadata('shot %', ChartType.bar, SubCat.Efficiency),
     Metadata('useful/hits', ChartType.radar, SubCat.Efficiency),
     Metadata('aerial efficiency', ChartType.radar, SubCat.Efficiency),
