@@ -33,23 +33,7 @@ class MatchHistory:
             limit = 100
         session = current_app.config['db']()
         builder = QueryFilterBuilder().as_game().with_stat_query([Game])
-        if 'rank' in kwargs:
-            builder.with_rank(kwargs['rank'])
-        if 'team_size' in kwargs:
-            builder.with_team_size(int(kwargs['team_size']))
-        if 'playlists' in kwargs:
-            builder.with_playlists(kwargs['playlists'])
-        if 'date_before' in kwargs:
-            if 'date_after' in kwargs:
-                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(kwargs['date_before'])),
-                                       start_time=datetime.datetime.fromtimestamp(int(kwargs['date_after'])))
-            else:
-                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(kwargs['date_before'])))
-        elif 'date_after' in kwargs:
-            builder.with_timeframe(start_time=datetime.datetime.fromtimestamp(int(kwargs['date_after'])))
-        if 'player_ids' in kwargs:
-            builder.with_all_players(kwargs['player_ids'])
-
+        QueryFilterBuilder.apply_arguments_to_query(builder, kwargs)
         query = builder.build_query(session)
 
         if 'min_length' in kwargs:

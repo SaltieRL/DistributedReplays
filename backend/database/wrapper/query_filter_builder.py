@@ -226,3 +226,22 @@ class QueryFilterBuilder:
 
     def get_stored_query(self):
         return self.initial_query
+
+    @staticmethod
+    def apply_arguments_to_query(builder, args):
+        if 'rank' in args:
+            builder.with_rank(args['rank'])
+        if 'team_size' in args:
+            builder.with_team_size(int(args['team_size']))
+        if 'playlists' in args:
+            builder.with_playlists(args['playlists'])
+        if 'date_before' in args:
+            if 'date_after' in args:
+                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(args['date_before'])),
+                                       start_time=datetime.datetime.fromtimestamp(int(args['date_after'])))
+            else:
+                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(args['date_before'])))
+        elif 'date_after' in args:
+            builder.with_timeframe(start_time=datetime.datetime.fromtimestamp(int(args['date_after'])))
+        if 'player_ids' in args:
+            builder.with_all_players(args['player_ids'])
