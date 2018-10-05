@@ -121,19 +121,22 @@ class BasicStatChartData(ChartData):
                                           func.max(PlayerGame.name),
                                           *wrapper.individual_query).filter(
             PlayerGame.game == id_).group_by(PlayerGame.player).all()
-        wrapped_playergames: List[dict] = [{**{
-            'id': playergame[0],
-            'is orange': playergame[1],
-            'name': playergame[2]
-        }, **wrapper.get_wrapped_stats(playergame[2:])}
-                                           for playergame in playergames]
+        wrapped_playergames: List[dict] = [{
+            **{
+                'id': playergame[0],
+                'is orange': playergame[1],
+                'name': playergame[2]
+            },
+            **wrapper.get_wrapped_stats(playergame[2:])}
+            for playergame in playergames]
         if game is None:
             raise ReplayNotFound()
         print(wrapped_playergames[0])
         all_chart_data = []
+        wrapped_playergames = sorted(sorted(wrapped_playergames, key=lambda x: x['id']), key=lambda x: x['is orange'])
         for basic_stats_metadata in basic_stats_metadatas:
             datapoints = []
-            for player_game in sorted(sorted(wrapped_playergames, key=lambda x: x['is orange']), key=lambda x: x['id']):
+            for player_game in wrapped_playergames:
                 if basic_stats_metadata.stat_name in player_game:
                     value = float(player_game[basic_stats_metadata.stat_name])
                 elif hasattr(player_game, basic_stats_metadata.stat_name):
