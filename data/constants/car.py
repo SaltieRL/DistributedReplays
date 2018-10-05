@@ -1,4 +1,6 @@
-# Data dicts
+import logging
+
+logger = logging.getLogger(__name__)
 
 cars = {
   21: "Backfire",
@@ -57,9 +59,9 @@ cars = {
 }
 
 
-def get_car(index):
+def get_car(index: int) -> str:
     try:
         return cars[index]
-    except KeyError as e:
-        print(e)
+    except KeyError:
+        logger.warning(f"Could not find car: {index}.")
         return "Unknown"
