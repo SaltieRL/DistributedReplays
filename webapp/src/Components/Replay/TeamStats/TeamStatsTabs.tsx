@@ -1,4 +1,12 @@
-import {faBraille, faBullseye, faCarSide, faCircle, faFutbol, IconDefinition} from "@fortawesome/free-solid-svg-icons"
+import {
+    faBraille,
+    faBullseye,
+    faCarSide,
+    faCircle,
+    faFutbol,
+    faPercent,
+    IconDefinition
+} from "@fortawesome/free-solid-svg-icons"
 import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Tab, Tabs, withWidth} from "@material-ui/core"
@@ -22,7 +30,8 @@ class TeamStatsTabsComponent extends React.PureComponent<Props> {
             Playstyles: faCarSide,
             Possession: faCircle,
             Positioning: faBraille,
-            Boosts: faRocket
+            Boosts: faRocket,
+            Efficiency: faPercent
         }
 
         return (

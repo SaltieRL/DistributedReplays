@@ -72,6 +72,12 @@ class SharedStatsWrapper:
                               DynamicFieldResult('total boost efficiency'), is_percent=True),
             QueryFieldWrapper(stat_math.get_negative_turnover_per_non_dribble(),
                               DynamicFieldResult('turnover efficiency'), is_percent=True),
+            QueryFieldWrapper(stat_math.get_negative_turnover_per_non_dribble(),
+                              DynamicFieldResult('boost ratio'), is_percent=True),
+            QueryFieldWrapper(stat_math.get_aerial_efficiency(),
+                              DynamicFieldResult('aerial_efficiency'), is_percent=True),
+
+
         ]
         SharedStatsWrapper.assign_values(stat_list, explanation_map)
         return stat_list

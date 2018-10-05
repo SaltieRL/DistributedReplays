@@ -22,6 +22,7 @@ class BasicStatSubcategory(Enum):
     Playstyles = auto()
     Possession = auto()
     Boosts = auto()
+    Efficiency = auto()
 
 
 class BasicStatsMetadata:
@@ -82,6 +83,16 @@ basic_stats_metadatas = [
     Metadata('time_full_boost', ChartType.radar, SubCat.Boosts),
     Metadata('time_low_boost', ChartType.radar, SubCat.Boosts),
     Metadata('time_no_boost', ChartType.radar, SubCat.Boosts),
+    Metadata('boost_ratio', ChartType.bar, SubCat.Boosts),
+
+    # efficiency
+    Metadata('collection boost efficiency', ChartType.bar, SubCat.Efficiency),
+    Metadata('used boost efficiency', ChartType.bar, SubCat.Efficiency),
+    Metadata('total boost efficiency', ChartType.bar, SubCat.Efficiency),
+    Metadata('turnover efficiency', ChartType.bar, SubCat.Efficiency),
+    Metadata('shot %', ChartType.bar, SubCat.Efficiency),
+    Metadata('useful/hits', ChartType.radar, SubCat.Efficiency),
+    Metadata('aerial_efficiency', ChartType.radar, SubCat.Efficiency),
 ]
 
 
