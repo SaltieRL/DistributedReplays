@@ -2,12 +2,18 @@
 import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
 
 DBObjectBase = declarative_base()
+
+# association table for tags
+game_tags = Table('game_tags', DBObjectBase.metadata,
+                  Column('game_id', ForeignKey('games.hash'), primary_key=True),
+                  Column('tag_id', ForeignKey('tags.id'), primary_key=True)
+                  )
 
 
 class PlatformName(enum.Enum):
@@ -239,6 +245,7 @@ class Player(DBObjectBase):
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
     groups = Column(postgresql.ARRAY(Integer, dimensions=1), default=[])
+    owned_tags = relationship('Tag')
 
     @validates('platformid')
     def validate_code(self, key, value):
@@ -289,3 +296,10 @@ class TeamStat(DBObjectBase):
     time_in_attacking_third = Column(Float)
     time_behind_ball = Column(Float)
     time_in_front_ball = Column(Float)
+
+
+class Tag(DBObjectBase):
+    __tablename__ = 'tags'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(40))
+    owner = Column(Integer, ForeignKey('players.platformid'), index=True)
