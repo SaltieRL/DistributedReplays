@@ -139,8 +139,6 @@ class BasicStatChartData(ChartData):
             for player_game in wrapped_playergames:
                 if basic_stats_metadata.stat_name in player_game:
                     value = float(player_game[basic_stats_metadata.stat_name])
-                elif hasattr(player_game, basic_stats_metadata.stat_name):
-                    value = getattr(player_game, basic_stats_metadata.stat_name)
                 else:
                     value = 0.0
                 point = StatDataPoint(
