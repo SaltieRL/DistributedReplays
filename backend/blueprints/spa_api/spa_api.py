@@ -195,7 +195,7 @@ def download_replay(id_):
     return send_from_directory(current_app.config['REPLAY_DIR'], id_ + ".replay", as_attachment=True)
 
 
-@bp.route('replay/search')
+@bp.route('/replay')
 def api_search_replays():
     page = request.args.get('page')
     limit = request.args.get('limit')
@@ -206,12 +206,13 @@ def api_search_replays():
             missing_params.append('page')
         if limit is None:
             missing_params.append('limit')
+        #     TODO: Standardise parameter checking.
         raise MissingQueryParams(missing_params)
     args = request.args.to_dict()
-    lists = ['playlists', 'players']
-    for list_item in lists:
-        if list_item in args:
-            args[list_item] = request.args.getlist('list_item')
+    list_query_params = ['player_ids', 'playlists']
+    for list_query_param in list_query_params:
+        if list_query_param in args:
+            args[list_query_param] = request.args.getlist(list_query_param)
     match_history = MatchHistory.create_with_filters(**args)
     return better_jsonify(match_history)
 

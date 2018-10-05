@@ -35,27 +35,27 @@ class MatchHistory:
         builder = QueryFilterBuilder().as_game().with_stat_query([Game])
         if 'rank' in kwargs:
             builder.with_rank(kwargs['rank'])
-        if 'teamsize' in kwargs:
-            builder.with_team_size(int(kwargs['teamsize']))
-        if 'playlist' in kwargs:
-            builder.with_playlist(kwargs['playlist'])
-        if 'datebefore' in kwargs:
-            if 'dateafter' in kwargs:
-                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(kwargs['datebefore'])),
-                                       start_time=datetime.datetime.fromtimestamp(int(kwargs['dateafter'])))
+        if 'team_size' in kwargs:
+            builder.with_team_size(int(kwargs['team_size']))
+        if 'playlists' in kwargs:
+            builder.with_playlists(kwargs['playlists'])
+        if 'date_before' in kwargs:
+            if 'date_after' in kwargs:
+                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(kwargs['date_before'])),
+                                       start_time=datetime.datetime.fromtimestamp(int(kwargs['date_after'])))
             else:
-                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(kwargs['datebefore'])))
-        elif 'dateafter' in kwargs:
-            builder.with_timeframe(start_time=datetime.datetime.fromtimestamp(int(kwargs['dateafter'])))
-        if 'players' in kwargs:
-            builder.with_all_players(kwargs['players'])
+                builder.with_timeframe(end_time=datetime.datetime.fromtimestamp(int(kwargs['date_before'])))
+        elif 'date_after' in kwargs:
+            builder.with_timeframe(start_time=datetime.datetime.fromtimestamp(int(kwargs['date_after'])))
+        if 'player_ids' in kwargs:
+            builder.with_all_players(kwargs['player_ids'])
 
         query = builder.build_query(session)
 
-        if 'minlength' in kwargs:
-            query = query.filter(Game.length > float(kwargs['minlength']))
-        if 'maxlength' in kwargs:
-            query = query.filter(Game.length < float(kwargs['maxlength']))
+        if 'min_length' in kwargs:
+            query = query.filter(Game.length > float(kwargs['min_length']))
+        if 'max_length' in kwargs:
+            query = query.filter(Game.length < float(kwargs['max_length']))
         if 'map' in kwargs:
             query = query.filter(Game.map == kwargs['map'])
         count = query.count()
