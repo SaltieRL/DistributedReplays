@@ -3,15 +3,14 @@ from typing import List
 
 from carball.generated.api import player_pb2
 from google.protobuf.descriptor import FieldDescriptor
+from sqlalchemy import func, literal
 
 from backend.database.objects import PlayerGame
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, \
     DynamicFieldResult, ProtoFieldResult
 from backend.database.wrapper.field_wrapper import QueryFieldWrapper, get_explanations
 from backend.database.wrapper.stats import stat_math
-
 from backend.database.wrapper.stats.stat_math import safe_divide
-from sqlalchemy import func, literal
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,7 @@ class SharedStatsWrapper:
         self.dynamic_field_list = self.create_dynamic_fields()
         self.stat_explanation_list, self.stat_explanation_map = get_explanations(self.dynamic_field_list)
         self.stat_list = self.create_stats_field_list(self.dynamic_field_list, self.stat_explanation_map)
-        self.stats_query, self.std_query = self.get_stats_query(self.stat_list)
+        self.stats_query, self.std_query, self.individual_query = self.get_stats_query(self.stat_list)
 
     @staticmethod
     def create_dynamic_fields():
@@ -77,7 +76,6 @@ class SharedStatsWrapper:
             QueryFieldWrapper(stat_math.get_aerial_efficiency(),
                               DynamicFieldResult('aerial_efficiency'), is_percent=True),
 
-
         ]
         SharedStatsWrapper.assign_values(stat_list, explanation_map)
         return stat_list
@@ -97,21 +95,26 @@ class SharedStatsWrapper:
     def get_stats_query(stat_list: List[QueryFieldWrapper]):
         avg_list = []
         std_list = []
+        individual_list = []
         for stat in stat_list:
             if stat.is_cumulative:
                 std_list.append(literal(1))
                 avg_list.append(stat.query)
+                individual_list.append(stat.query)
             elif stat.is_averaged or stat.is_percent:
                 std_list.append(func.stddev_samp(stat.query))
                 avg_list.append(func.avg(stat.query))
+                individual_list.append(func.sum(stat.query))
             elif stat.is_boolean:
                 std_list.append(literal(1))
                 avg_list.append(func.count())
+                individual_list.append(func.bool_and(stat.query))
             else:
                 std_list.append(func.stddev_samp(stat.query))
                 avg_list.append(
                     300 * func.sum(stat.query) / safe_divide(func.sum(PlayerGame.time_in_game), default=300))
-        return avg_list, std_list
+                individual_list.append(func.sum(stat.query))
+        return avg_list, std_list, individual_list
 
     def compare_to_global(self, stats, global_stats, global_stds):
         """
