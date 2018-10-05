@@ -1,5 +1,5 @@
 from enum import auto, Enum
-from typing import List
+from typing import List, Tuple
 
 from flask import current_app
 from sqlalchemy import func
@@ -106,6 +106,14 @@ class StatDataPoint(ChartDataPoint):
         self.isOrange = is_orange
 
 
+class PlayerDataPoint:
+    def __init__(self, id: int, name: str, is_orange: bool, stats: dict):
+        self.id = id
+        self.name = name
+        self.is_orange = is_orange
+        self.stats = stats
+
+
 class BasicStatChartData(ChartData):
     def __init__(self, title: str, chart_data_points: List[StatDataPoint], type_: str, subcategory: str):
         super().__init__(title, chart_data_points)
@@ -121,30 +129,27 @@ class BasicStatChartData(ChartData):
                                           func.max(PlayerGame.name),
                                           *wrapper.individual_query).filter(
             PlayerGame.game == id_).group_by(PlayerGame.player).all()
-        wrapped_playergames: List[dict] = [{
-            **{
-                'id': playergame[0],
-                'is orange': playergame[1],
-                'name': playergame[2]
-            },
-            **wrapper.get_wrapped_stats(playergame[2:])}
+        wrapped_playergames: List[PlayerDataPoint] = [
+            PlayerDataPoint(id=playergame[0], is_orange=playergame[1], name=playergame[2],
+                            stats=wrapper.get_wrapped_stats(playergame[3:]))
             for playergame in playergames]
         if game is None:
             raise ReplayNotFound()
-        print(wrapped_playergames[0])
+
         all_chart_data = []
-        wrapped_playergames = sorted(sorted(wrapped_playergames, key=lambda x: x['id']), key=lambda x: x['is orange'])
+        wrapped_playergames = sorted(sorted(wrapped_playergames, key=lambda x: x.id),
+                                     key=lambda x: x.is_orange)
         for basic_stats_metadata in basic_stats_metadatas:
             datapoints = []
             for player_game in wrapped_playergames:
-                if basic_stats_metadata.stat_name in player_game:
-                    value = float(player_game[basic_stats_metadata.stat_name])
+                if basic_stats_metadata.stat_name in player_game.stats:
+                    value = float(player_game.stats[basic_stats_metadata.stat_name])
                 else:
                     value = 0.0
                 point = StatDataPoint(
-                    name=player_game['name'],
+                    name=player_game.name,
                     value=value,
-                    is_orange=player_game['is orange']
+                    is_orange=player_game.is_orange
                 )
                 datapoints.append(point)
 
