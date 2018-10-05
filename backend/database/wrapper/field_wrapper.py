@@ -46,7 +46,8 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('total_aerials', 'Total number of aerials that took place in a game', field_rename='aerials'),
         FieldExplanation('total_dribbles', 'Total number of dribbles that took place in a game',
                          field_rename='dribbles'),
-        FieldExplanation('average_hit_distance', 'Total number of aerials that took place in a game',
+        FieldExplanation('average_hit_distance',
+                         'Average distance the ball went after being hit before being touched by another player',
                          field_rename='avg hit dist'),
     ]
     explanation_map = dict()
