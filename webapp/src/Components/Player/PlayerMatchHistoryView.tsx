@@ -10,7 +10,7 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import {PlayerMatchHistory} from "./Overview/MatchHistory/PlayerMatchHistory"
+import {PlayerMatchHistory} from "../MatchHistory/PlayerMatchHistory"
 
 interface OwnProps {
     player: Player

@@ -17,10 +17,10 @@ import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
-import {REPLAY_PAGE_LINK} from "../../../../Globals"
-import {getColouredGameScore, getReplayResult, Replay} from "../../../../Models/Replay/Replay"
-import {ReplayBoxScore} from "../../../Replay/ReplayBoxScore"
-import {ReplayChart} from "../../../Replay/ReplayChart"
+import {REPLAY_PAGE_LINK} from "../../Globals"
+import {getColouredGameScore, getReplayResult, Replay} from "../../Models/Replay/Replay"
+import {ReplayBoxScore} from "../Replay/ReplayBoxScore"
+import {ReplayChart} from "../Replay/ReplayChart"
 
 interface DataProps {
     replay: Replay
