@@ -1,4 +1,5 @@
 import datetime
+from typing import List
 
 from sqlalchemy import cast, String
 from sqlalchemy.dialects import postgresql
@@ -12,21 +13,21 @@ class QueryFilterBuilder:
     """
 
     def __init__(self):
-        self.start_time = None
-        self.end_time = None
-        self.players = None
-        self.contains_all_players = None
+        self.start_time: datetime.datetime = None
+        self.end_time: datetime.datetime = None
+        self.players: List[str] = None
+        self.contains_all_players: List[str] = None
         self.tags = None  # TODO: Add tags
         self.stats_query = None
-        self.rank = None
+        self.rank: int = None
         self.initial_query = None  # This is a query that is created with initial values
-        self.team_size = None
-        self.replay_ids = None
-        self.is_game = False
-        self.playlist = None
-        self.has_joined_game = False  # used to see if this query has been joined with the Game database
-        self.safe_checking = False
-        self.sticky_values = dict()  # a list of values that survive a clean
+        self.team_size: int = None
+        self.replay_ids: List[str] = None
+        self.is_game: bool = False
+        self.playlists: List[int] = None
+        self.has_joined_game: bool = False  # used to see if this query has been joined with the Game database
+        self.safe_checking: bool = False
+        self.sticky_values: dict = dict()  # a list of values that survive a clean
 
     def reset(self):
         self.start_time = None
@@ -40,7 +41,7 @@ class QueryFilterBuilder:
         self.team_size = None
         self.replay_ids = None
         self.is_game = False
-        self.playlist = None
+        self.playlists = None
         self.has_joined_game = False  # used to see if this query has been joined with the Game database
         self.safe_checking = False  # checks to make sure the replay has good data for the player
         self.sticky_values = dict()
@@ -64,20 +65,22 @@ class QueryFilterBuilder:
 
         return self
 
-    def with_relative_start_time(self, days_ago=0, hours_ago=0) -> 'QueryFilterBuilder':
+    def with_relative_start_time(self, days_ago: float = 0, hours_ago: float = 0) -> 'QueryFilterBuilder':
         ago = datetime.datetime.now() - datetime.timedelta(days=days_ago, hours=hours_ago)
         return self.with_timeframe(start_time=ago)
 
-    def with_timeframe(self, start_time=None, end_time=None) -> 'QueryFilterBuilder':
+    def with_timeframe(self,
+                       start_time: datetime.datetime = None,
+                       end_time: datetime.datetime = None) -> 'QueryFilterBuilder':
         self.start_time = start_time
         self.end_time = end_time
         return self
 
-    def with_players(self, player_ids) -> 'QueryFilterBuilder':
+    def with_players(self, player_ids: List[str]) -> 'QueryFilterBuilder':
         self.players = player_ids
         return self
 
-    def with_all_players(self, player_ids) -> 'QueryFilterBuilder':
+    def with_all_players(self, player_ids: List[str]) -> 'QueryFilterBuilder':
         self.contains_all_players = player_ids
         return self
 
@@ -89,15 +92,15 @@ class QueryFilterBuilder:
         self.stats_query = stats_query
         return self
 
-    def with_rank(self, rank) -> 'QueryFilterBuilder':
+    def with_rank(self, rank: int) -> 'QueryFilterBuilder':
         self.rank = rank
         return self
 
-    def with_replay_ids(self, replay_ids) -> 'QueryFilterBuilder':
+    def with_replay_ids(self, replay_ids: List[str]) -> 'QueryFilterBuilder':
         self.replay_ids = replay_ids
         return self
 
-    def with_team_size(self, team_size) -> 'QueryFilterBuilder':
+    def with_team_size(self, team_size: int) -> 'QueryFilterBuilder':
         self.team_size = team_size
         return self
 
@@ -109,8 +112,8 @@ class QueryFilterBuilder:
         self.is_game = True
         return self
 
-    def with_playlist(self, playlist) -> 'QueryFilterBuilder':
-        self.playlist = playlist
+    def with_playlists(self, playlists: List[int]) -> 'QueryFilterBuilder':
+        self.playlists = playlists
         return self
 
     def build_query(self, session):
@@ -146,8 +149,8 @@ class QueryFilterBuilder:
         if self.team_size is not None:
             filtered_query = filtered_query.filter(Game.teamsize == self.team_size)
 
-        if self.playlist is not None:
-            filtered_query = filtered_query.filter(Game.playlist == self.playlist)
+        if self.playlists is not None:
+            filtered_query = filtered_query.filter(Game.playlist.in_(self.playlists))
 
         if self.safe_checking:
             filtered_query = filtered_query.filter(PlayerGame.total_hits > 0).filter(PlayerGame.time_in_game > 0)
