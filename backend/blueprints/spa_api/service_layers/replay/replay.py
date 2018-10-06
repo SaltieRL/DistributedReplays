@@ -3,6 +3,7 @@ from typing import List, cast
 from flask import current_app
 
 from backend.database.objects import Game, PlayerGame, Tag
+from backend.database.wrapper.tag_wrapper import TagWrapper
 from .replay_player import ReplayPlayer
 from ..utils import sort_player_games_by_team_then_id
 from ...errors.errors import ReplayNotFound
@@ -70,23 +71,10 @@ class Replay:
         )
 
     def add_tag(self, user_id, tag_name):
-        session = current_app.config['db']()
-        tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
-        game = session.query(Game).filter(Game.hash == self.id).first()
-        if tag not in game.tags:
-            game.tags.append(tag)
-            session.commit()
-        session.close()
-        # TODO maybe add else
-
+        tag = TagWrapper.add_tag_to_game(self.id, user_id, tag_name)
         self.tags.append(GameTag.create_from_tag(tag).__dict__)
 
     def remove_tag(self, user_id, tag_name):
-        session = current_app.config['db']()
-        tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
-        game = session.query(Game).filter(Game.hash == self.id).first()
+        tag = TagWrapper.remove_tag_from_game(self.id, user_id, tag_name)
         if tag is not None:
-            game.tags.remove(tag)
             self.tags.remove(GameTag.create_from_tag(tag).__dict__)
-            session.commit()
-        session.close()

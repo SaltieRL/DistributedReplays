@@ -1,9 +1,9 @@
 from flask import g, current_app
 
 from backend.blueprints.steam import get_steam_profile_or_random_response
+from backend.database.wrapper.tag_wrapper import TagWrapper
 from backend.utils.checks import is_local_dev
-from ..errors.errors import CalculatedError, TagNotFound
-from backend.database.objects import Tag
+from ..errors.errors import CalculatedError
 
 
 class LoggedInUser:
@@ -27,48 +27,37 @@ class LoggedInUser:
             raise CalculatedError(404, "User is not logged in.")
         return LoggedInUser(g.user.platformname, g.user.platformid, g.user.avatar, g.admin, g.alpha, g.beta)
 
-    def create_tag(self, name: str):
-        session = current_app.config['db']()
-        tag = session.query(Tag).filter(Tag.owner == self.id, Tag.name == name).first()
-        if tag is None:
-            tag = Tag(name=name, owner=self.id)
-        else:
-            raise CalculatedError(400, "Tag already exists.")
-        session.add(tag)
-        session.commit()
-        session.close()
+    @staticmethod
+    def create_tag(name: str):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
 
-    def rename_tag(self, old_name: str, new_name: str):
-        session = current_app.config['db']()
-        tag = self.get_tag(old_name, session)
-        tag.name = new_name
-        session.commit()
-        session.close()
+        TagWrapper.create_tag(g.user.platformid, name)
 
-    def get_tags(self):
-        session = current_app.config['db']()
-        return session.query(Tag).filter(Tag.owner == self.id).all()
+    @staticmethod
+    def rename_tag(old_name: str, new_name: str):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
 
-    def remove_tag(self, name: str):
-        session = current_app.config['db']()
-        tag = self.get_tag(name, session)
-        session.delete(tag)
-        session.commit()
-        session.close()
-        return
+        TagWrapper.rename_tag(g.user.platformid, old_name, new_name)
 
-    def get_tag(self, name: str, session=None):
-        no_ses_ref = session is None
+    @staticmethod
+    def get_tags():
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
 
-        if no_ses_ref:
-            session = current_app.config['db']()
+        return TagWrapper.get_tags(g.user.platformid)
 
-        tag = session.query(Tag).filter(Tag.owner == self.id, Tag.name == name).first()
+    @staticmethod
+    def remove_tag(name: str):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
 
-        if no_ses_ref:
-            session.close()
+        TagWrapper.create_tag(g.user.platformid, name)
 
-        if tag is None:
-            raise TagNotFound
-        else:
-            return tag
+    @staticmethod
+    def get_tag(name: str):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
+
+        return TagWrapper.get_tag(g.user.platformid, name)

@@ -9,12 +9,6 @@ from sqlalchemy.orm import relationship, validates
 
 DBObjectBase = declarative_base()
 
-# association table for tags
-# game_tags = Table('game_tags', DBObjectBase.metadata,
-#                  Column('game_id', ForeignKey('games.hash'), primary_key=True),
-#                  Column('tag_id', ForeignKey('tags.id'), primary_key=True)
-#                  )
-
 
 class PlatformName(enum.Enum):
     unknown = 0
