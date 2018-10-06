@@ -10,10 +10,10 @@ from sqlalchemy.orm import relationship, validates
 DBObjectBase = declarative_base()
 
 # association table for tags
-game_tags = Table('game_tags', DBObjectBase.metadata,
-                  Column('game_id', ForeignKey('games.hash'), primary_key=True),
-                  Column('tag_id', ForeignKey('tags.id'), primary_key=True)
-                  )
+# game_tags = Table('game_tags', DBObjectBase.metadata,
+#                  Column('game_id', ForeignKey('games.hash'), primary_key=True),
+#                  Column('tag_id', ForeignKey('tags.id'), primary_key=True)
+#                  )
 
 
 class PlatformName(enum.Enum):
@@ -220,7 +220,7 @@ class Game(DBObjectBase):
     team1possession = Column(Float)
     frames = Column(Integer)
 
-    tags = relationship('Tag', secondary=game_tags, back_populates='games')
+    tags = relationship('Tag', secondary='game_tags', back_populates='games')
 
     # metadata
     version = Column(Integer)
@@ -305,5 +305,11 @@ class Tag(DBObjectBase):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(40))
     owner = Column(String(40), ForeignKey('players.platformid'), index=True)
-    games = relationship('Game', secondary=game_tags, back_populates='tags')
+    games = relationship('Game', secondary='game_tags', back_populates='tags')
     UniqueConstraint('name', 'owner', name='unique_names')
+
+
+class GameTag(DBObjectBase):
+    __tablename__ = 'game_tags'
+    game_id = Column(String(40), ForeignKey('games.hash'), primary_key=True)
+    tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
