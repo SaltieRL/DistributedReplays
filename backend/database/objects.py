@@ -2,7 +2,7 @@
 import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
@@ -220,6 +220,8 @@ class Game(DBObjectBase):
     team1possession = Column(Float)
     frames = Column(Integer)
 
+    tags = relationship('Tag', secondary=game_tags, back_populates='games')
+
     # metadata
     version = Column(Integer)
     length = Column(Float, default=300.0)
@@ -302,4 +304,6 @@ class Tag(DBObjectBase):
     __tablename__ = 'tags'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(40))
-    owner = Column(Integer, ForeignKey('players.platformid'), index=True)
+    owner = Column(String(40), ForeignKey('players.platformid'), index=True)
+    games = relationship('Game', secondary=game_tags, back_populates='tags')
+    UniqueConstraint('name', 'owner', name='unique_names')
