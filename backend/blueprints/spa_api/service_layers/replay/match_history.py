@@ -1,9 +1,9 @@
-import datetime
 from typing import List
 
 from flask import current_app
+from sqlalchemy import desc
 
-from backend.database.objects import PlayerGame, Game
+from backend.database.objects import Game
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from .replay import Replay
 from ..player.player_profile_stats import player_wrapper
@@ -27,8 +27,6 @@ class MatchHistory:
     @staticmethod
     def create_with_filters(page: int, limit: int, **kwargs) -> 'MatchHistory':
         # TODO: move this somewhere else and make it reusable
-        page = int(page)
-        limit = int(limit)
         if limit > 100:
             limit = 100
         session = current_app.config['db']()
@@ -37,13 +35,13 @@ class MatchHistory:
         query = builder.build_query(session)
 
         if 'min_length' in kwargs:
-            query = query.filter(Game.length > float(kwargs['min_length']))
+            query = query.filter(Game.length > kwargs['min_length'])
         if 'max_length' in kwargs:
-            query = query.filter(Game.length < float(kwargs['max_length']))
+            query = query.filter(Game.length < kwargs['max_length'])
         if 'map' in kwargs:
             query = query.filter(Game.map == kwargs['map'])
         count = query.count()
-        games = query[page * limit: (page + 1) * limit]
+        games = query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
         matches = MatchHistory(count, [Replay.create_from_game(game) for game in games])
         session.close()
         return matches

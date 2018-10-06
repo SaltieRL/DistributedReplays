@@ -7,10 +7,8 @@ import re
 import shutil
 import uuid
 
-from carball.analysis.utils.pandas_manager import PandasManager
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
-from google.protobuf.json_format import MessageToJson
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
@@ -19,6 +17,7 @@ from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
+from .query_params_handler import QueryParam, convert_to_datetime, get_query_params
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
@@ -27,10 +26,10 @@ from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.replay.basic_stats import BasicStatChartData
-from .service_layers.replay.replay_positions import ReplayPositions
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
+from .service_layers.replay.replay_positions import ReplayPositions
 
 logger = logging.getLogger(__name__)
 
@@ -197,23 +196,21 @@ def download_replay(id_):
 
 @bp.route('/replay')
 def api_search_replays():
-    page = request.args.get('page')
-    limit = request.args.get('limit')
-
-    if page is None or limit is None:
-        missing_params = []
-        if page is None:
-            missing_params.append('page')
-        if limit is None:
-            missing_params.append('limit')
-        #     TODO: Standardise parameter checking.
-        raise MissingQueryParams(missing_params)
-    args = request.args.to_dict()
-    list_query_params = ['player_ids', 'playlists']
-    for list_query_param in list_query_params:
-        if list_query_param in args:
-            args[list_query_param] = request.args.getlist(list_query_param)
-    match_history = MatchHistory.create_with_filters(**args)
+    accepted_query_params = [
+        QueryParam(name='page', type_=int),
+        QueryParam(name='limit', type_=int),
+        QueryParam(name='player_ids', optional=True, is_list=True),
+        QueryParam(name='playlists', optional=True, is_list=True, type_=int),
+        QueryParam(name='rank', optional=True, type_=int),
+        QueryParam(name='team_size', optional=True, type_=int),
+        QueryParam(name='date_before', optional=True, type_=convert_to_datetime),
+        QueryParam(name='date_after', optional=True, type_=convert_to_datetime),
+        QueryParam(name='min_length', optional=True, type_=float),
+        QueryParam(name='max_length', optional=True, type_=float),
+        QueryParam(name='map', optional=True),
+    ]
+    query_params = get_query_params(accepted_query_params, request)
+    match_history = MatchHistory.create_with_filters(**query_params)
     return better_jsonify(match_history)
 
 
