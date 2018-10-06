@@ -1,8 +1,6 @@
+import * as _ from "lodash"
 import * as moment from "moment"
 import * as qs from "qs"
-import {Omit} from "react-redux"
-
-export type ReplaysSearchOptions = Omit<ReplaysSearchQueryParams, "page" | "limit">
 
 export interface ReplaysSearchQueryParams {
     page: number
@@ -14,11 +12,6 @@ export interface ReplaysSearchQueryParams {
     dateAfter?: moment.Moment
     minLength?: number
     maxLength?: number
-}
-
-export const defaultReplaysSearchQueryParams: ReplaysSearchQueryParams = {
-    page: 0,
-    limit: 10
 }
 
 export const stringifyReplaySearchQueryParam = (queryParams: Partial<ReplaysSearchQueryParams>): string => {
@@ -33,14 +26,15 @@ export const stringifyReplaySearchQueryParam = (queryParams: Partial<ReplaysSear
     }
     // TODO: Check if it's worth it to standardise .unix() stringifying.
     return qs.stringify(
-        parsedQueryParams,
+        _.mapKeys(parsedQueryParams, (value: unknown, key) => _.snakeCase(key)),
         {arrayFormat: "repeat", addQueryPrefix: true}
     )
 }
 
 export const parseReplaySearchFromQueryString = (queryParams: any): Partial<ReplaysSearchQueryParams> => {
-    const replaySearchQueryParams: Partial<ReplaysSearchQueryParams> = {}
+    queryParams = _.mapKeys(queryParams, (value: unknown, key) => _.camelCase(key))
 
+    const replaySearchQueryParams: Partial<ReplaysSearchQueryParams> = {}
     if (queryParams.page !== undefined) {
         replaySearchQueryParams.page = Number(queryParams.page)
     }
