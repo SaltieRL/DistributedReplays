@@ -1,8 +1,8 @@
 import {Card, Divider, Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
 import {Replay} from "../../../Models/Replay/Replay"
-import {ReplaysDetailsChartsWrapper} from "./Charts/ReplaysDetailsChartsWrapper"
-import {ReplaysDetailsTable} from "./ReplaysDetailsTable"
+import {ReplaysGroupChartsWrapper} from "./Charts/ReplaysGroupChartsWrapper"
+import {ReplaysGroupTable} from "./Table/ReplaysGroupTable"
 
 interface Props {
     replays: Replay[]
@@ -14,7 +14,7 @@ interface State {
     selectedTab: ReplaysDetailsTab
 }
 
-export class ReplaysDetailsContent extends React.PureComponent<Props, State> {
+export class ReplaysGroupContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedTab: "Charts"}
@@ -32,9 +32,9 @@ export class ReplaysDetailsContent extends React.PureComponent<Props, State> {
                 </Tabs>
                 <Divider/>
                 {this.state.selectedTab === "Table" ?
-                    <ReplaysDetailsTable replays={this.props.replays}/>
+                    <ReplaysGroupTable replays={this.props.replays}/>
                     :
-                    <ReplaysDetailsChartsWrapper replays={this.props.replays}/>
+                    <ReplaysGroupChartsWrapper replays={this.props.replays}/>
                 }
             </Card>
         )

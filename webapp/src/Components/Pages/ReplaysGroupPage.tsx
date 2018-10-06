@@ -5,9 +5,9 @@ import * as React from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {Replay} from "../../Models/Replay/Replay"
 import {getReplay} from "../../Requests/Replay"
-import {AddReplayInput} from "../Replay/Details/AddReplayInput"
-import {ReplayChip} from "../Replay/Details/ReplayChip"
-import {ReplaysDetailsContent} from "../Replay/Details/ReplaysDetailsContent"
+import {AddReplayInput} from "../Replay/Group/AddReplayInput"
+import {ReplayChip} from "../Replay/Group/ReplayChip"
+import {ReplaysGroupContent} from "../Replay/Group/ReplaysGroupContent"
 import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
 import {BasePage} from "./BasePage"
 
@@ -24,7 +24,7 @@ interface State {
     inputId: string
 }
 
-class ReplaysDetailsPageComponent extends React.PureComponent<Props, State> {
+class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {ids: [], replays: [], inputId: ""}
@@ -70,7 +70,7 @@ class ReplaysDetailsPageComponent extends React.PureComponent<Props, State> {
                     </Grid>
                     <Grid item xs={12}> <Divider/> </Grid>
                     <Grid item xs={12}>
-                        <ReplaysDetailsContent replays={replays}/>
+                        <ReplaysGroupContent replays={replays}/>
                     </Grid>
                 </Grid>
             </BasePage>
@@ -161,7 +161,7 @@ class ReplaysDetailsPageComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const ReplaysDetailsPage = withNotifications()(ReplaysDetailsPageComponent)
+export const ReplaysGroupPage = withNotifications()(ReplaysGroupPageComponent)
 
 const removeIndexFromArray = <T extends {}>(array: T[], index: number): T[] => {
     return array.filter((__, i) => i !== index)

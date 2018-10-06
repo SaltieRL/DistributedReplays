@@ -1,9 +1,9 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
-import {BasicStat} from "../../../Models/ChartData"
-import {Replay} from "../../../Models/Replay/Replay"
-import {getReplayGroupStats} from "../../../Requests/Replay"
-import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {BasicStat} from "../../../../Models/ChartData"
+import {Replay} from "../../../../Models/Replay/Replay"
+import {getReplayGroupStats} from "../../../../Requests/Replay"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {BasicStatsTable} from "./BasicStatsTable"
 
 interface Props {
@@ -15,7 +15,7 @@ interface State {
     reloadSignal: boolean
 }
 
-export class ReplaysDetailsTable extends React.PureComponent<Props, State> {
+export class ReplaysGroupTable extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {basicStats: [], reloadSignal: false}
