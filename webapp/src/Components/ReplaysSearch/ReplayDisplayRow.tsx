@@ -18,13 +18,12 @@ import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
 import {REPLAY_PAGE_LINK} from "../../Globals"
-import {getColouredGameScore, getReplayResult, Replay} from "../../Models/Replay/Replay"
+import {getColouredGameScore, Replay} from "../../Models/Replay/Replay"
 import {ReplayBoxScore} from "../Replay/ReplayBoxScore"
 import {ReplayChart} from "../Replay/ReplayChart"
 
 interface DataProps {
     replay: Replay
-    player: Player
     header?: false
     useBoxScore?: boolean
 }
@@ -39,7 +38,7 @@ type Props = OwnProps
     & WithStyles<typeof styles>
     & WithWidth
 
-class MatchHistoryRowComponent extends React.PureComponent<Props> {
+class ReplayDisplayRowComponent extends React.PureComponent<Props> {
     public render() {
         const {classes, width} = this.props
         const notOnMobile = isWidthUp("sm", width)
@@ -50,11 +49,10 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
         let replayDate: React.ReactNode = "Date"
         let replayGameMode: string = "Mode"
         let replayScore: React.ReactNode = "Score"
-        let replayResult: string = "Result"
         let chartIcon: React.ReactNode = null
 
         if (!this.props.header) {
-            const {replay, player} = this.props
+            const {replay} = this.props
             const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
             replayName = replay.name
             replayDate = (
@@ -66,7 +64,6 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
             )
             replayGameMode = replay.gameMode
             replayScore = getColouredGameScore(replay)
-            replayResult = getReplayResult(replay, player)
             chartIcon =
                 <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
                     <InsertChart/>
@@ -79,7 +76,7 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                 className={!this.props.header ? undefined : classes.notButton}
             >
                 <Grid container>
-                    <Grid item xs={notOnMobile ? 3 : 5}>
+                    <Grid item xs={notOnMobile ? 4 : 7}>
                         <Typography variant={typographyVariant} noWrap>
                             {replayName}
                         </Typography>
@@ -90,7 +87,7 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                         </Typography>
                     </Grid>
                     {notOnMobile &&
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
                         <Typography variant={typographyVariant}>
                             {replayGameMode}
                         </Typography>
@@ -99,11 +96,6 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                     <Grid item xs={2}>
                         <Typography variant={typographyVariant}>
                             {replayScore}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayResult}
                         </Typography>
                     </Grid>
                     <Grid item xs={1}>
@@ -121,7 +113,7 @@ class MatchHistoryRowComponent extends React.PureComponent<Props> {
                             {!this.props.useBoxScore ?
                                 <ReplayChart replay={this.props.replay}/>
                                 :
-                                <ReplayBoxScore replay={this.props.replay} player={this.props.player}/>
+                                <ReplayBoxScore replay={this.props.replay}/>
                             }
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
@@ -155,4 +147,4 @@ const styles = (theme: Theme) => createStyles({
     }
 })
 
-export const MatchHistoryRow = withWidth()(withStyles(styles)(MatchHistoryRowComponent))
+export const ReplayDisplayRow = withWidth()(withStyles(styles)(ReplayDisplayRowComponent))

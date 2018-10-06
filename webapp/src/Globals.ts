@@ -1,3 +1,5 @@
+import {ReplaysSearchQueryParams, stringifyReplaySearchQueryParam} from "./Models/ReplaysSearchQueryParams"
+
 export const GITHUB_LINK = "https://github.com/SaltieRL"
 export const DISCORD_LINK = "https://discord.gg/c8cArY9"
 export const TWITTER_LINK = "https://twitter.com/calculated_gg"
@@ -10,7 +12,14 @@ export const PLAYER_COMPARE_PAGE_LINK = "/compare/"
 export const PLAYER_COMPARE_WITH_LINK = (id: string) => `/compare/?ids=${id}`  // TODO: Make link generation less manual
 
 export const REPLAY_PAGE_LINK = (id: string) => `/replays/${id}`
-export const REPLAYS_DETAILS_PAGE_LINK = "/details"
+export const REPLAYS_GROUP_PAGE_LINK = "/details" // TODO: Change this to /replay/group, handle migration.
+export const REPLAYS_SEARCH_PAGE_LINK = (queryParams?: Partial<ReplaysSearchQueryParams>) => {
+    let pageLink = "/search/replays"
+    if (queryParams !== undefined) {
+        pageLink += stringifyReplaySearchQueryParam(queryParams)
+    }
+    return pageLink
+}
 
 export const GLOBAL_STATS_LINK = "/global/stats"
 export const STEAM_LOGIN_LINK = "/auth/steam"
