@@ -57,10 +57,10 @@ export const parseReplaySearchFromQueryString = (queryParams: any): Partial<Repl
         replaySearchQueryParams.rank = Number(queryParams.rank)
     }
     if (queryParams.dateBefore !== undefined) {
-        replaySearchQueryParams.dateBefore = moment(queryParams.dateBefore)
+        replaySearchQueryParams.dateBefore = moment.unix(queryParams.dateBefore)
     }
     if (queryParams.dateAfter !== undefined) {
-        replaySearchQueryParams.dateAfter = moment(queryParams.dateAfter)
+        replaySearchQueryParams.dateAfter = moment.unix(queryParams.dateAfter)
     }
     if (queryParams.minLength !== undefined) {
         replaySearchQueryParams.minLength = Number(queryParams.minLength)

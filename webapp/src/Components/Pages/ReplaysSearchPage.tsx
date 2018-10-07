@@ -56,7 +56,6 @@ export class ReplaysSearchPage extends React.PureComponent<{}, State> {
 
     private readonly updateReplays = () => {
         if (this.state.queryParams !== undefined) {
-            console.log(this.state.queryParams)
             searchReplays(this.state.queryParams)
                 .then((replaySearchResult) => {
                     this.setState({replaySearchResult})
