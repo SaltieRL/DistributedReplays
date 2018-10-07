@@ -1,11 +1,13 @@
 from enum import auto, Enum
-from typing import List, cast
+from typing import List, Tuple
 
 from flask import current_app
+from sqlalchemy import func
 
 from backend.database.objects import Game, PlayerGame
+from backend.database.wrapper.player_wrapper import PlayerWrapper
+from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from ..chart_data import ChartData, ChartDataPoint
-from ..utils import sort_player_games_by_team_then_id
 from ...errors.errors import ReplayNotFound
 
 
@@ -37,69 +39,79 @@ Metadata = BasicStatsMetadata
 
 basic_stats_metadatas = [
     # Hits
-    Metadata('total_hits', ChartType.radar, SubCat.Hits),
-    Metadata('average_hit_distance', ChartType.radar, SubCat.Hits),
-    Metadata('ball_hit_forward', ChartType.bar, SubCat.Hits),
-    Metadata('total_dribbles', ChartType.bar, SubCat.Hits),
-    Metadata('total_passes', ChartType.bar, SubCat.Hits),
-    Metadata('total_aerials', ChartType.bar, SubCat.Hits),
+    Metadata('hits', ChartType.radar, SubCat.Hits),
+    Metadata('avg hit dist', ChartType.radar, SubCat.Hits),
+    Metadata('ball hit forward', ChartType.bar, SubCat.Hits),
+    Metadata('dribbles', ChartType.bar, SubCat.Hits),
+    Metadata('passes', ChartType.bar, SubCat.Hits),
+    Metadata('aerials', ChartType.bar, SubCat.Hits),
 
     # Ball
-    Metadata('time_close_to_ball', ChartType.radar, SubCat.Ball),
-    Metadata('time_closest_to_ball', ChartType.pie, SubCat.Ball),
-    Metadata('time_furthest_from_ball', ChartType.pie, SubCat.Ball),
-    Metadata('time_behind_ball', ChartType.radar, SubCat.Ball),
-    Metadata('time_in_front_ball', ChartType.radar, SubCat.Ball),
+    Metadata('time close to ball', ChartType.radar, SubCat.Ball),
+    Metadata('time closest to ball', ChartType.pie, SubCat.Ball),
+    Metadata('time furthest from ball', ChartType.pie, SubCat.Ball),
+    Metadata('time behind ball', ChartType.radar, SubCat.Ball),
+    Metadata('time in front ball', ChartType.radar, SubCat.Ball),
 
     # Positioning
-    Metadata('time_high_in_air', ChartType.radar, SubCat.Positioning),
-    Metadata('time_low_in_air', ChartType.radar, SubCat.Positioning),
-    Metadata('time_on_ground', ChartType.radar, SubCat.Positioning),
-    Metadata('time_in_defending_third', ChartType.radar, SubCat.Positioning),
-    Metadata('time_in_neutral_third', ChartType.radar, SubCat.Positioning),
-    Metadata('time_in_attacking_third', ChartType.radar, SubCat.Positioning),
-    Metadata('time_in_defending_half', ChartType.radar, SubCat.Positioning),
-    Metadata('time_in_attacking_half', ChartType.radar, SubCat.Positioning),
+    Metadata('time high in air', ChartType.radar, SubCat.Positioning),
+    Metadata('time low in air', ChartType.radar, SubCat.Positioning),
+    Metadata('time on ground', ChartType.radar, SubCat.Positioning),
+    Metadata('time in defending third', ChartType.radar, SubCat.Positioning),
+    Metadata('time in neutral third', ChartType.radar, SubCat.Positioning),
+    Metadata('time in attacking third', ChartType.radar, SubCat.Positioning),
+    Metadata('time in defending half', ChartType.radar, SubCat.Positioning),
+    Metadata('time in attacking half', ChartType.radar, SubCat.Positioning),
 
     # playstyles
-    Metadata('average_speed', ChartType.radar, SubCat.Playstyles),
-    Metadata('time_at_boost_speed', ChartType.radar, SubCat.Playstyles),
-    Metadata('time_at_slow_speed', ChartType.radar, SubCat.Playstyles),
-    Metadata('time_at_super_sonic', ChartType.radar, SubCat.Playstyles),
+    Metadata('speed', ChartType.radar, SubCat.Playstyles),
+    Metadata('time at boost speed', ChartType.radar, SubCat.Playstyles),
+    Metadata('time at slow speed', ChartType.radar, SubCat.Playstyles),
+    Metadata('time at super sonic', ChartType.radar, SubCat.Playstyles),
 
     # Positioning
-    Metadata('possession_time', ChartType.pie, SubCat.Possession),
+    Metadata('possession', ChartType.pie, SubCat.Possession),
     Metadata('turnovers', ChartType.bar, SubCat.Possession),
-    Metadata('turnovers_on_my_half', ChartType.bar, SubCat.Possession),
-    Metadata('turnovers_on_their_half', ChartType.bar, SubCat.Possession),
+    Metadata('turnovers on my half', ChartType.bar, SubCat.Possession),
+    Metadata('turnovers on their half', ChartType.bar, SubCat.Possession),
 
     # boost
-    Metadata('boost_usage', ChartType.radar, SubCat.Boosts),
-    Metadata('wasted_collection', ChartType.radar, SubCat.Boosts),
-    Metadata('wasted_usage', ChartType.radar, SubCat.Boosts),
-    Metadata('num_small_boosts', ChartType.bar, SubCat.Boosts),
-    Metadata('num_large_boosts', ChartType.bar, SubCat.Boosts),
-    Metadata('num_stolen_boosts', ChartType.bar, SubCat.Boosts),
-    Metadata('time_full_boost', ChartType.radar, SubCat.Boosts),
-    Metadata('time_low_boost', ChartType.radar, SubCat.Boosts),
-    Metadata('time_no_boost', ChartType.radar, SubCat.Boosts),
-    Metadata('boost_ratio', ChartType.bar, SubCat.Boosts),
+    Metadata('boost usage', ChartType.radar, SubCat.Boosts),
+    Metadata('wasted collection', ChartType.radar, SubCat.Boosts),
+    Metadata('wasted usage', ChartType.radar, SubCat.Boosts),
+    Metadata('num small boosts', ChartType.bar, SubCat.Boosts),
+    Metadata('num large boosts', ChartType.bar, SubCat.Boosts),
+    Metadata('num stolen boosts', ChartType.bar, SubCat.Boosts),
+    Metadata('time full boost', ChartType.radar, SubCat.Boosts),
+    Metadata('time low boost', ChartType.radar, SubCat.Boosts),
+    Metadata('time no boost', ChartType.radar, SubCat.Boosts),
+    Metadata('boost ratio', ChartType.bar, SubCat.Boosts),
 
     # efficiency
     Metadata('collection boost efficiency', ChartType.bar, SubCat.Efficiency),
     Metadata('used boost efficiency', ChartType.bar, SubCat.Efficiency),
-    Metadata('total boost efficiency', ChartType.bar, SubCat.Efficiency),
-    Metadata('turnover efficiency', ChartType.bar, SubCat.Efficiency),
+    Metadata('total boost efficiency', ChartType.radar, SubCat.Efficiency),
+    Metadata('turnover efficiency', ChartType.radar, SubCat.Efficiency),
     Metadata('shot %', ChartType.bar, SubCat.Efficiency),
     Metadata('useful/hits', ChartType.radar, SubCat.Efficiency),
-    Metadata('aerial_efficiency', ChartType.radar, SubCat.Efficiency),
+    Metadata('aerial efficiency', ChartType.radar, SubCat.Efficiency),
 ]
+pw = PlayerWrapper()
+wrapper = PlayerStatWrapper(pw)
 
 
 class StatDataPoint(ChartDataPoint):
     def __init__(self, name: str, value: float, is_orange: bool):
         super().__init__(name, value)
         self.isOrange = is_orange
+
+
+class PlayerDataPoint:
+    def __init__(self, id: int, name: str, is_orange: bool, stats: dict):
+        self.id = id
+        self.name = name
+        self.is_orange = is_orange
+        self.stats = stats
 
 
 class BasicStatChartData(ChartData):
@@ -112,22 +124,38 @@ class BasicStatChartData(ChartData):
     def create_from_id(id_: str) -> List['BasicStatChartData']:
         session = current_app.config['db']()
         game: Game = session.query(Game).filter(Game.hash == id_).first()
+        # this is weird because we need to do aggregate
+        playergames: List = session.query(func.max(PlayerGame.id), func.bool_and(PlayerGame.is_orange),
+                                          func.max(PlayerGame.name),
+                                          *wrapper.individual_query).filter(
+            PlayerGame.game == id_).group_by(PlayerGame.player).all()
+        wrapped_playergames: List[PlayerDataPoint] = [
+            PlayerDataPoint(id=playergame[0], is_orange=playergame[1], name=playergame[2],
+                            stats=wrapper.get_wrapped_stats(playergame[3:]))
+            for playergame in playergames]
         if game is None:
             raise ReplayNotFound()
 
         all_chart_data = []
+        wrapped_playergames = sorted(sorted(wrapped_playergames, key=lambda x: x.id),
+                                     key=lambda x: x.is_orange)
         for basic_stats_metadata in basic_stats_metadatas:
+            datapoints = []
+            for player_game in wrapped_playergames:
+                if basic_stats_metadata.stat_name in player_game.stats:
+                    value = float(player_game.stats[basic_stats_metadata.stat_name])
+                else:
+                    value = 0.0
+                point = StatDataPoint(
+                    name=player_game.name,
+                    value=value,
+                    is_orange=player_game.is_orange
+                )
+                datapoints.append(point)
+
             chart_data = BasicStatChartData(
                 title=basic_stats_metadata.stat_name,
-                chart_data_points=[
-                    StatDataPoint(
-                        name=player_game.name,
-                        value=getattr(player_game, basic_stats_metadata.stat_name),
-                        is_orange=player_game.is_orange
-                    )
-                    for player_game in sort_player_games_by_team_then_id(
-                        cast(List[PlayerGame], game.playergames))
-                ],
+                chart_data_points=datapoints,
                 type_=basic_stats_metadata.type,
                 subcategory=basic_stats_metadata.subcategory
             )

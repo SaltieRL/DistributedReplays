@@ -13,9 +13,16 @@ export interface StatDataPoint extends ChartDataPoint {
     isOrange: boolean
 }
 
-export type BasicStatsSubcategory = "Hits" | "Ball" | "Positioning" | "Boosts" | "Playstyles" | "Possession" | "Efficiency"
+export type BasicStatsSubcategory =
+    "Hits"
+    | "Ball"
+    | "Positioning"
+    | "Boosts"
+    | "Playstyles"
+    | "Possession"
+    | "Efficiency"
 export const basicStatsSubcategoryValues = [
-    "Hits", "Ball", "Positioning", "Boosts",  "Playstyles", "Possession"
+    "Hits", "Ball", "Positioning", "Boosts", "Playstyles", "Possession", "Efficiency"
 ]  // Needed as these values cannot be gotten from the type at runtime (TypeScript is a lie)
 export interface BasicStat extends ChartDataResponse {
     chartDataPoints: StatDataPoint[]
