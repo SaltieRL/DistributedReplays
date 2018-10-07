@@ -50,7 +50,7 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
                 </Grid>
                 <Grid item xs={12} container spacing={8}>
                     {playerChips.map((playerChip) => (
-                        <Grid item key={playerChip.key as string}>
+                        <Grid item key={playerChip.key as string} zeroMinWidth>
                             {playerChip}
                         </Grid>
                     ))}

@@ -283,7 +283,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 }>
                     {playlistsMultiSelect}
                 </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
+                <ExpansionPanelDetails className={classes.panelDetails}>
                     {filterCurrentCheckbox}
                     {filterStandardCheckbox}
                     {filterRankedCheckbox}
@@ -323,6 +323,9 @@ const styles = createStyles({
         maxWidth: 400,
         minWidth: 200,
         width: "90%"
+    },
+    panelDetails: {
+        flexWrap: "wrap"
     }
 })
 
