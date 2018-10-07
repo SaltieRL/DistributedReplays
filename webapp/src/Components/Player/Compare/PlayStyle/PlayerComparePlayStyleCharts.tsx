@@ -2,8 +2,8 @@ import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {PlayStyleResponse} from "../../../../Models/Player/PlayStyle"
 import {getPlayerPlayStyles} from "../../../../Requests/Player"
+import {RankSelect} from "../../../Shared/Selects/RankSelect"
 import {PlayerPlayStyleChart} from "../../Overview/PlayStyle/PlayerPlayStyleChart"
-import {RankSelect} from "./RankSelect"
 
 interface Props {
     players: Player[]
