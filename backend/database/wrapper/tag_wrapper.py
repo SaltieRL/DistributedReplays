@@ -64,6 +64,8 @@ class TagWrapper:
         if tag is None:
             raise TagNotFound
         game = session.query(Game).filter(Game.hash == game_id).first()
+        if game is None:
+            raise ReplayNotFound
         if tag not in game.tags:
             game.tags.append(tag)
             session.commit()
@@ -76,6 +78,8 @@ class TagWrapper:
         session = current_app.config['db']()
         tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
         game = session.query(Game).filter(Game.hash == game_id).first()
+        if game is None:
+            raise ReplayNotFound
         if tag is not None:
             game.tags.remove(tag)
             session.commit()
@@ -85,7 +89,7 @@ class TagWrapper:
     @staticmethod
     def get_tagged_games(user_id: str, names):
         session = current_app.config['db']()
-        games = session.query(GameTag.game_id).\
+        game_tags = session.query(GameTag.game_id).\
             join(Tag).\
             filter(Tag.owner == user_id).\
             filter(Tag.name.in_(names)).\
@@ -93,7 +97,7 @@ class TagWrapper:
             having(func.count(GameTag.game_id) == len(names)).all()
         session.close()
 
-        if len(games) == 0:
+        if len(game_tags) == 0:
             raise ReplayNotFound
 
-        return games
+        return [game_tag.game_id for game_tag in game_tags]
