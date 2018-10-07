@@ -12,7 +12,6 @@ import {
     withStyles,
     withWidth
 } from "@material-ui/core"
-import {TextStyle} from "@material-ui/core/styles/createTypography"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
@@ -36,7 +35,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
     public render() {
         const {classes, width} = this.props
         const notOnMobile = isWidthUp("sm", width)
-        const typographyVariant: TextStyle = "subheading"
+        const typographyVariant = "subheading"
 
         const {replay, player} = this.props
         const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"

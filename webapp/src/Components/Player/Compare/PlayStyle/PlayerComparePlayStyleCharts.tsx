@@ -61,7 +61,11 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
         return (
             <>
                 <Grid item xs={12} style={{textAlign: "center"}}>
-                    <RankSelect selectedRank={this.state.rank || -1} handleChange={this.handleRankChange}/>
+                    <RankSelect selectedRank={this.state.rank || -1}
+                                handleChange={this.handleRankChange}
+                                inputLabel="Rank to compare"
+                                helperText="Select the rank to plot as average"
+                                noneLabel="Default"/>
                 </Grid>
                 {chartTitles.map((chartTitle, i) => {
                     return (

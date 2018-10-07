@@ -54,7 +54,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
             <BasePage>
                 <Grid container spacing={24} justify="center">
                     <Grid item xs={12} container justify="center">
-                        <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
+                        <Grid item xs={12} container justify="center">
                             <AddPlayerInput onSubmit={this.attemptToAddPlayer}
                                             value={this.state.inputId}
                                             onChange={this.handleInputChange}/>
@@ -62,7 +62,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                     </Grid>
                     <Grid item xs={12} sm={11} md={10} lg={9} xl={8} container spacing={8}>
                         {playerChips.map((playerChip) => (
-                            <Grid item key={playerChip.key as string}>
+                            <Grid item key={playerChip.key as string} style={{maxWidth: "100%"}}>
                                 {playerChip}
                             </Grid>
                         ))}

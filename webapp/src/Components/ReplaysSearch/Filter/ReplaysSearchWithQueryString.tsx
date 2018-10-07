@@ -6,6 +6,7 @@ import {
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../../../Models/ReplaysSearchQueryParams"
+import {ReplaysSearchFilter} from "./ReplaysSearchFilter"
 
 interface OwnProps {
     handleChange: (queryParams: ReplaysSearchQueryParams) => void
@@ -15,17 +16,13 @@ type Props = RouteComponentProps<{}>
     & OwnProps
 
 interface State {
-    queryParams?: ReplaysSearchQueryParams
+    queryParams: ReplaysSearchQueryParams
 }
 
 class ReplaysSearchWithQueryStringComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {}
-    }
-
-    public componentDidMount() {
-        this.readQueryString()
+        this.state = {queryParams: {page: 0, limit: 10, ...this.readQueryString()}}
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
@@ -34,23 +31,24 @@ class ReplaysSearchWithQueryStringComponent extends React.PureComponent<Props, S
             this.props.handleChange(this.state.queryParams)
         }
         if (prevProps.location.search !== this.props.location.search) {
-            this.readQueryString()
+            const queryParams = {
+                ...this.state.queryParams,
+                ...this.readQueryString()
+            }
+            this.setState({queryParams})
         }
     }
 
     public render() {
         return (
-            <>
-            </>
+            <ReplaysSearchFilter queryParams={this.state.queryParams} handleChange={this.setQueryParams}/>
         )
     }
 
-    private readonly readQueryString = () => {
+    private readonly readQueryString = (): Partial<ReplaysSearchQueryParams> => {
         const queryString = this.props.location.search
         if (queryString !== "") {
-            const queryParams: ReplaysSearchQueryParams = {
-                page: 0,
-                limit: 10,
+            return {
                 ...parseReplaySearchFromQueryString(
                     qs.parse(
                         this.props.location.search,
@@ -58,12 +56,16 @@ class ReplaysSearchWithQueryStringComponent extends React.PureComponent<Props, S
                     )
                 )
             }
-            this.setState({queryParams})
         }
+        return {}
     }
 
     private readonly setQueryString = (queryParams: ReplaysSearchQueryParams) => {
         this.props.history.replace({search: stringifyReplaySearchQueryParam(queryParams)})
+    }
+
+    private readonly setQueryParams = (queryParams: ReplaysSearchQueryParams) => {
+        this.setState({queryParams})
     }
 }
 
