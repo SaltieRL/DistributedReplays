@@ -41,7 +41,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
         const replayName = replay.name
         const replayDate = (
-            <Tooltip title={replay.date.format("LLLL")} enterDelay={200}>
+            <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
                 <Typography variant={typographyVariant}>
                     {replay.date.format(dateFormat)}
                 </Typography>

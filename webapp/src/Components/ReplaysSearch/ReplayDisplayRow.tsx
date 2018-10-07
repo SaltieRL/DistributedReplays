@@ -45,7 +45,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
 
         // These default values appear as the header
         let replayName: string = "Name"
-        let replayDate: React.ReactNode = "Date"
+        let replayDate: React.ReactNode = <Typography variant={typographyVariant}>"Date"</Typography>
         let replayGameMode: string = "Mode"
         let replayScore: React.ReactNode = "Score"
         let chartIcon: React.ReactNode = null
@@ -55,7 +55,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
             const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
             replayName = replay.name
             replayDate = (
-                <Tooltip title={replay.date.format("LLLL")} enterDelay={200}>
+                <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
                     <Typography variant={typographyVariant}>
                         {replay.date.format(dateFormat)}
                     </Typography>
@@ -81,9 +81,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                         </Typography>
                     </Grid>
                     <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayDate}
-                        </Typography>
+                        {replayDate}
                     </Grid>
                     {notOnMobile &&
                     <Grid item xs={3}>
