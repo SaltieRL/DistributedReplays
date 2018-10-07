@@ -28,7 +28,7 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props> {
                     </>
                     :
                     <Typography variant="subheading" align="center">
-                        <i>No replays have been found with the selected filters.</i>
+                        <i>No replays match the selected filters.</i>
                     </Typography>
                 }
             </>

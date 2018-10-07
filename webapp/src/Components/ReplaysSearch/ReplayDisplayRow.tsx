@@ -40,7 +40,6 @@ type Props = OwnProps
 class ReplayDisplayRowComponent extends React.PureComponent<Props> {
     public render() {
         const {classes, width} = this.props
-        const notOnMobile = isWidthUp("sm", width)
         const typographyVariant = !this.props.header ? "subheading" : "title"
 
         // These default values appear as the header
@@ -75,21 +74,19 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                 className={!this.props.header ? undefined : classes.notButton}
             >
                 <Grid container>
-                    <Grid item xs={notOnMobile ? 4 : 7}>
+                    <Grid item xs={3} zeroMinWidth>
                         <Typography variant={typographyVariant} noWrap>
                             {replayName}
                         </Typography>
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
                         {replayDate}
                     </Grid>
-                    {notOnMobile &&
-                    <Grid item xs={3}>
-                        <Typography variant={typographyVariant}>
+                    <Grid item xs={3} zeroMinWidth>
+                        <Typography variant={typographyVariant} noWrap>
                             {replayGameMode}
                         </Typography>
                     </Grid>
-                    }
                     <Grid item xs={2}>
                         <Typography variant={typographyVariant}>
                             {replayScore}

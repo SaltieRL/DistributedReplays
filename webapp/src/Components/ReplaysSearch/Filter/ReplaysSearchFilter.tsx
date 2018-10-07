@@ -55,7 +55,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
         return (
             <>
                 <Grid container spacing={32} justify="center">
-                    <Grid item xs={12} md={6} lg={4}>
+                    <Grid item xs={12}>
                         <Card>
                             <CardHeader title="Players" subheader="All selected players will appear in every game."/>
                             <Divider/>
@@ -64,32 +64,29 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} md={6} lg={7} container spacing={24}>
-                        <Grid item xs={12} lg={6}>
-                            <Card>
-                                <CardContent>
-                                    {rankSelect}
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        <Grid item xs={12} lg={6}>
-                            {playlistSelect}
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Card>
-                                <CardHeader title="Date Range"/>
-                                <CardContent>
-                                    <Grid container spacing={16}>
-                                        <Grid item xs={12} lg={6}>
-                                            {dateAfterPicker}
-                                        </Grid>
-                                        <Grid item xs={12} lg={6}>
-                                            {dateBeforePicker}
-                                        </Grid>
+                    <Grid item xs={12}>
+                        <Card>
+                            <CardContent>
+                                {rankSelect}
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {playlistSelect}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Card>
+                            <CardContent>
+                                <Grid container spacing={16}>
+                                    <Grid item xs={12}>
+                                        {dateAfterPicker}
                                     </Grid>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                    <Grid item xs={12}>
+                                        {dateBeforePicker}
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                        </Card>
                     </Grid>
                 </Grid>
             </>

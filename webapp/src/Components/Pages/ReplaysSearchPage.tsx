@@ -1,4 +1,4 @@
-import {Divider, Grid} from "@material-ui/core"
+import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {MatchHistoryResponse} from "../../Models/Player/MatchHistory"
 import {ReplaysSearchQueryParams} from "../../Models/ReplaysSearchQueryParams"
@@ -28,19 +28,30 @@ export class ReplaysSearchPage extends React.PureComponent<{}, State> {
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center">
-                    <Grid item xs={12}>
-                        <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange}/>
+                    <Grid item xs={12} md={4} container>
+                        <Grid item xs={12}>
+                            <Typography variant="title" align="center" gutterBottom>
+                                Filters
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange}/>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                        <Divider/>
+                    <Grid item xs={12} md={8} container alignContent="flex-start">
+                        <Grid item xs={12}>
+                            <Typography variant="title" align="center" gutterBottom>
+                                Replays
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            {this.state.replaySearchResult && this.state.queryParams &&
+                            <ReplaysSearchResultDisplay replaySearchResult={this.state.replaySearchResult}
+                                                        page={this.state.queryParams.page}
+                                                        limit={this.state.queryParams.limit}/>
+                            }
+                        </Grid>
                     </Grid>
-                    {this.state.replaySearchResult && this.state.queryParams &&
-                    <Grid item xs={12}>
-                        <ReplaysSearchResultDisplay replaySearchResult={this.state.replaySearchResult}
-                                                    page={this.state.queryParams.page}
-                                                    limit={this.state.queryParams.limit}/>
-                    </Grid>
-                    }
                 </Grid>
             </BasePage>
         )

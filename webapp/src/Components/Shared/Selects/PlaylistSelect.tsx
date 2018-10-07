@@ -274,13 +274,16 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
 
         return (
             <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
-                <ExpansionPanelSummary expandIcon={
-                    <IconButton onClick={this.handleExpandedChange}>
-                        <Tooltip title="Playlist options">
-                            <ExpandMore/>
-                        </Tooltip>
-                    </IconButton>
-                }>
+                <ExpansionPanelSummary
+                    classes={classes}
+                    expandIcon={
+                        <IconButton onClick={this.handleExpandedChange}>
+                            <Tooltip title="Playlist options">
+                                <ExpandMore/>
+                            </Tooltip>
+                        </IconButton>
+                    }
+                >
                     {playlistsMultiSelect}
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className={classes.panelDetails}>
@@ -326,6 +329,12 @@ const styles = createStyles({
     },
     panelDetails: {
         flexWrap: "wrap"
+    },
+    root: {
+        cursor: "default"
+    },
+    content: {
+        cursor: "default"
     }
 })
 
