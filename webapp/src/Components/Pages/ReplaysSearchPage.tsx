@@ -1,11 +1,10 @@
-import {Grid} from "@material-ui/core"
+import {Divider, Grid} from "@material-ui/core"
 import * as React from "react"
 import {MatchHistoryResponse} from "../../Models/Player/MatchHistory"
 import {ReplaysSearchQueryParams} from "../../Models/ReplaysSearchQueryParams"
 import {searchReplays} from "../../Requests/Replay"
 import {ReplaysSearchWithQueryString} from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
 import {ReplaysSearchResultDisplay} from "../ReplaysSearch/ReplaysSearchResultDisplay"
-import {ReplaysSearchTablePagination} from "../ReplaysSearch/ReplaysSearchTablePagination"
 import {BasePage} from "./BasePage"
 
 interface State {
@@ -32,18 +31,15 @@ export class ReplaysSearchPage extends React.PureComponent<{}, State> {
                     <Grid item xs={12}>
                         <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange}/>
                     </Grid>
+                    <Grid item xs={12}>
+                        <Divider/>
+                    </Grid>
                     {this.state.replaySearchResult && this.state.queryParams &&
-                    <>
-                        <Grid item xs={12}>
-                            <ReplaysSearchResultDisplay replaySearchResult={this.state.replaySearchResult}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <ReplaysSearchTablePagination
-                                totalCount={this.state.replaySearchResult.totalCount}
-                                page={this.state.queryParams.page}
-                                limit={this.state.queryParams.limit}/>
-                        </Grid>
-                    </>
+                    <Grid item xs={12}>
+                        <ReplaysSearchResultDisplay replaySearchResult={this.state.replaySearchResult}
+                                                    page={this.state.queryParams.page}
+                                                    limit={this.state.queryParams.limit}/>
+                    </Grid>
                     }
                 </Grid>
             </BasePage>
