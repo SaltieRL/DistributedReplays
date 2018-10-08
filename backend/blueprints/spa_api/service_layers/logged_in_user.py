@@ -1,4 +1,4 @@
-from flask import g, current_app
+from flask import g
 
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.database.wrapper.tag_wrapper import TagWrapper
