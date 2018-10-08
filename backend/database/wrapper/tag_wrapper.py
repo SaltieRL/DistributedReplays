@@ -22,6 +22,9 @@ class TagWrapper:
     @staticmethod
     def rename_tag(user_id: str, old_name: str, new_name: str):
         session = current_app.config['db']()
+        tag_test = session.query(Tag).filter(Tag.owner == user_id, Tag.name == new_name).first()
+        if tag_test is not None:
+            raise CalculatedError(400, "Name is already taken.")
         tag = TagWrapper.get_tag(user_id, old_name, session)
         tag.name = new_name
         session.commit()

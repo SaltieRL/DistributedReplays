@@ -15,10 +15,12 @@ TEST_GAME_ID = "TEST_REPLAY"
 
 
 def start_test_app_():
+    # TODO start test app with !test! db
     return
 
 
 def close_test_app():
+    # TODO close test app
     return
 
 
@@ -174,7 +176,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
         self.assertEqual(tag.name, self.tag_name_new)
 
     def test_rename_tag_tag_not_found(self):
-        # assert that tag isn't
+        # assert that tag isn't present
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
 
         if tag is not None:
@@ -186,6 +188,16 @@ class TagWrapperRenameTagTest(unittest.TestCase):
 
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
         self.assertIsNone(tag)
+
+    def test_rename_tag_name_taken(self):
+        tag = Tag(owner=self.test_user_id, name=self.tag_name)
+        self.session.add(tag)
+        tag2 = Tag(owner=self.test_user_id, name=self.tag_name_new)
+        self.session.add(tag2)
+        self.session.commit()
+
+        with self.assertRaises(CalculatedError):
+            TagWrapper.rename_tag(self.test_user_id, self.tag_name, self.tag_name_new)
 
 
 class TagWrapperGetTagTest(unittest.TestCase):
