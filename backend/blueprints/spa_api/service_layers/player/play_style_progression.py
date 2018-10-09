@@ -13,12 +13,12 @@ class PlayStyleProgressionDataPoint(ProgressionDataPoint):
 
 class PlayStyleProgression:
     @staticmethod
-    def create_progression(id_: str) -> List['PlayStyleProgressionDataPoint']:
+    def create_progression(id_: str, timeframe=None, begin=None, end=None) -> List['PlayStyleProgressionDataPoint']:
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
             raise UserHasNoReplays()
-        data = player_stat_wrapper.get_progression_stats(session, id_)
+        data = player_stat_wrapper.get_progression_stats(session, id_, timeframe=timeframe, begin=begin, end=end)
         session.close()
 
         return [
@@ -29,7 +29,8 @@ class PlayStyleProgression:
                               average=data_point_info['average'][name],
                               std_dev=data_point_info['std_dev'][name])
                     for name in data_point_info['average']
-                ]
+                ],
+                count=data_point_info['count']
             )
             for data_point_info in data
         ]

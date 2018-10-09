@@ -142,7 +142,16 @@ def api_get_player_play_style_all(id_):
 
 @bp.route('player/<id_>/play_style/progression')
 def api_get_player_play_style_progress(id_):
-    play_style_progression = PlayStyleProgression.create_progression(id_)
+    timeframe = None
+    begin = None
+    end = None
+    if 'timeframe' in request.args:
+        timeframe = request.args['timeframe']
+    if 'begin' in request.args:
+        begin = request.args['begin']
+    if 'end' in request.args:
+        end = request.args['end']
+    play_style_progression = PlayStyleProgression.create_progression(id_, timeframe=timeframe, begin=begin, end=end)
     return better_jsonify(play_style_progression)
 
 
