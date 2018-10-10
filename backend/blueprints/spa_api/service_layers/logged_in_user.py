@@ -1,6 +1,7 @@
 from flask import g
 
 from backend.blueprints.steam import get_steam_profile_or_random_response
+from backend.database.wrapper.tag_wrapper import TagWrapper
 from backend.utils.checks import is_local_dev
 from ..errors.errors import CalculatedError
 
@@ -25,3 +26,38 @@ class LoggedInUser:
         if g.user is None:
             raise CalculatedError(404, "User is not logged in.")
         return LoggedInUser(g.user.platformname, g.user.platformid, g.user.avatar, g.admin, g.alpha, g.beta)
+
+    @staticmethod
+    def create_tag(name: str):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
+
+        TagWrapper.create_tag(g.user.platformid, name)
+
+    @staticmethod
+    def rename_tag(old_name: str, new_name: str):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
+
+        TagWrapper.rename_tag(g.user.platformid, old_name, new_name)
+
+    @staticmethod
+    def get_tags():
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
+
+        return TagWrapper.get_tags(g.user.platformid)
+
+    @staticmethod
+    def remove_tag(name: str):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
+
+        TagWrapper.create_tag(g.user.platformid, name)
+
+    @staticmethod
+    def get_tag(name: str):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
+
+        return TagWrapper.get_tag(g.user.platformid, name)
