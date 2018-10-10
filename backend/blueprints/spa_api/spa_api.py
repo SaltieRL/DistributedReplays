@@ -14,10 +14,11 @@ from werkzeug.utils import secure_filename
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
+from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
-from .query_params_handler import QueryParam, convert_to_datetime, get_query_params
+from .query_params_handler import QueryParam, convert_to_datetime, get_query_params, convert_to_enum
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
@@ -128,30 +129,26 @@ def api_get_player_play_style(id_):
 
 @bp.route('player/<id_>/play_style/all')
 def api_get_player_play_style_all(id_):
-    if 'rank' in request.args:
-        rank = int(request.args['rank'])
-    else:
-        rank = None
-    if 'replay_ids' in request.args:
-        replay_ids = request.args.getlist('replay_ids')
-    else:
-        replay_ids = None
-    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, rank=rank, replay_ids=replay_ids)
+    accepted_query_params = [
+        QueryParam(name='rank', optional=True, type_=int),
+        QueryParam(name='replay_ids', optional=True)
+    ]
+    query_params = get_query_params(accepted_query_params, request)
+
+    play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, **query_params)
     return better_jsonify(play_style_response)
 
 
 @bp.route('player/<id_>/play_style/progression')
 def api_get_player_play_style_progress(id_):
-    timeframe = None
-    begin = None
-    end = None
-    if 'timeframe' in request.args:
-        timeframe = request.args['timeframe']
-    if 'begin' in request.args:
-        begin = request.args['begin']
-    if 'end' in request.args:
-        end = request.args['end']
-    play_style_progression = PlayStyleProgression.create_progression(id_, timeframe=timeframe, begin=begin, end=end)
+    accepted_query_params = [
+        QueryParam(name='time_unit', optional=True, type_=convert_to_enum(TimeUnit)),
+        QueryParam(name='start_date', optional=True, type_=convert_to_datetime),
+        QueryParam(name='end_date', optional=True, type_=convert_to_datetime),
+    ]
+    query_params = get_query_params(accepted_query_params, request)
+
+    play_style_progression = PlayStyleProgression.create_progression(id_, **query_params)
     return better_jsonify(play_style_progression)
 
 
