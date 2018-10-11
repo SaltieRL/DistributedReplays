@@ -5,7 +5,7 @@ from backend.database.utils.dynamic_field_manager import DynamicFieldResult
 
 class FieldExplanation:
     def __init__(self, field_name: str, simple_explanation: str,
-                 field_rename: str=None, math_explanation: str=None, file_creation: str=None):
+                 field_rename: str = None, math_explanation: str = None, file_creation: str = None):
         self.field_rename = field_rename
         self.field_name = field_name
         self.simple_explanation = simple_explanation
@@ -15,7 +15,7 @@ class FieldExplanation:
 
 class QueryFieldWrapper:
     def __init__(self, query: any, dynamic_field: DynamicFieldResult,
-                 explanation: FieldExplanation=None, is_percent=False, is_boolean=False, is_cumulative=False):
+                 explanation: FieldExplanation = None, is_percent=False, is_boolean=False, is_cumulative=False):
         self.is_cumulative = is_cumulative
         self.is_boolean = is_boolean
         self.is_percent = is_percent
@@ -37,14 +37,21 @@ class QueryFieldWrapper:
             return self.dynamic_field.field_name
 
 
-def get_explanations(dynamic_field_list) ->(Dict[str, FieldExplanation], List[FieldExplanation]):
+def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[FieldExplanation]):
     field_list = [
         FieldExplanation('possession_time', 'Duration the ball was last touched by player', field_rename='possession'),
         FieldExplanation('average_speed', 'The average speed of the player in a game', field_rename='speed'),
         FieldExplanation('total_passes', 'Total passes that took place in a game', field_rename='passes'),
         FieldExplanation('total_hits', 'Total number of hits that took place in a game', field_rename='hits'),
         FieldExplanation('total_aerials', 'Total number of aerials that took place in a game', field_rename='aerials'),
-        FieldExplanation('average_hit_distance', 'Total number of aerials that took place in a game', field_rename='avg hit dist'),
+        FieldExplanation('total_dribbles', 'Total number of dribbles that took place in a game',
+                         field_rename='dribbles'),
+        FieldExplanation('average_hit_distance',
+                         'Average distance the ball went after being hit before being touched by another player',
+                         field_rename='avg hit dist'),
+        FieldExplanation('useful hits',
+                         'Average distance the ball went after being hit before being touched by another player',
+                         field_rename='avg hit dist'),
     ]
     explanation_map = dict()
     for field in field_list:
