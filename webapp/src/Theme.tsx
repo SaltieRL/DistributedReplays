@@ -30,7 +30,10 @@ const theme = createMuiTheme({
     },
     typography: {
         fontFamily: "Lato",
-        fontWeightRegular: 300
+        fontWeightRegular: 300,
+        caption: {
+            fontWeight: 400
+        }
     }
 })
 

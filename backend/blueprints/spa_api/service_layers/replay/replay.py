@@ -3,6 +3,7 @@ from typing import List, cast
 from flask import current_app
 
 from backend.database.objects import Game, PlayerGame
+from data.constants.playlist import get_playlist
 from .replay_player import ReplayPlayer
 from ..utils import sort_player_games_by_team_then_id
 from ...errors.errors import ReplayNotFound
@@ -45,7 +46,7 @@ class Replay:
             id_=game.hash,
             name=game.name,
             date=game.match_date.isoformat(),
-            game_mode=f"{game.teamsize}'s",
+            game_mode=get_playlist(game.playlist, game.teamsize),
             game_score=GameScore.create_from_game(game),
             players=[
                 ReplayPlayer.create_from_player_game(player_game)

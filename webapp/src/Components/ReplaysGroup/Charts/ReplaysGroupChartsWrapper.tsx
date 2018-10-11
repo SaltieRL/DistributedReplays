@@ -1,9 +1,9 @@
 import {CardContent, Grid} from "@material-ui/core"
 import * as React from "react"
-import {BasicStat, BasicStatsSubcategory} from "../../../../Models/ChartData"
-import {Replay} from "../../../../Models/Replay/Replay"
-import {BasicStatsTabs} from "../../BasicStats/BasicStatsTabs"
-import {ReplayDetailsCharts} from "./ReplayDetailsCharts"
+import {BasicStat, BasicStatsSubcategory} from "../../../Models/ChartData"
+import {Replay} from "../../../Models/Replay/Replay"
+import {BasicStatsTabs} from "../../Replay/BasicStats/BasicStatsTabs"
+import {ReplaysGroupCharts} from "./ReplaysGroupCharts"
 
 interface OwnProps {
     replays: Replay[]
@@ -16,7 +16,7 @@ interface State {
     selectedTab: BasicStatsSubcategory
 }
 
-export class ReplaysDetailsChartsWrapper extends React.PureComponent<Props, State> {
+export class ReplaysGroupChartsWrapper extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedTab: "Hits"}
@@ -28,7 +28,7 @@ export class ReplaysDetailsChartsWrapper extends React.PureComponent<Props, Stat
                 <BasicStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
                 <CardContent>
                     <Grid container spacing={32} justify="center">
-                        <ReplayDetailsCharts replays={this.props.replays} selectedTab={this.state.selectedTab}/>
+                        <ReplaysGroupCharts replays={this.props.replays} selectedTab={this.state.selectedTab}/>
                     </Grid>
                 </CardContent>
             </>

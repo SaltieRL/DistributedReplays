@@ -15,7 +15,7 @@ interface State {
     reloadSignal: boolean
 }
 
-export class ReplaysDetailsTable extends React.PureComponent<Props, State> {
+export class ReplaysGroupTable extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {basicStats: [], reloadSignal: false}

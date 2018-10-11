@@ -1,8 +1,8 @@
 import {Chip} from "@material-ui/core"
 import * as React from "react"
 import {RouteComponentProps, withRouter} from "react-router"
-import {REPLAY_PAGE_LINK} from "../../../Globals"
-import {Replay} from "../../../Models/Replay/Replay"
+import {REPLAY_PAGE_LINK} from "../../Globals"
+import {Replay} from "../../Models/Replay/Replay"
 
 interface OwnProps extends Replay {
     onDelete: () => void
