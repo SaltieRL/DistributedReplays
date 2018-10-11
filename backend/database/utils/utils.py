@@ -127,13 +127,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
 def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], teamstats: List[TeamStat],
                    session,
                    preserve_upload_date=False, preserve_ranks=True):
-    # Team stats
-
-    matches = session.query(TeamStat).filter(TeamStat.game == game.hash).all()
-    if matches is not None:
-        for match in matches:
-            session.delete(match)
-
+    # delete playergames/teamstats first, to prevent orphans
     for pg in player_games:
         match = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
             PlayerGame.game == pg.game).first()
@@ -153,6 +147,11 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
                     pg.division = match.division
                     pg.mmr = match.mmr
                 session.delete(match)
+
+    matches = session.query(TeamStat).filter(TeamStat.game == game.hash).all()
+    if matches is not None:
+        for match in matches:
+            session.delete(match)
 
     try:
         matches = session.query(Game).filter(Game.hash == game.hash).all()
