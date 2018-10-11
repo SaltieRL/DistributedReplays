@@ -5,7 +5,7 @@ import * as React from "react"
 import {Redirect} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../Globals"
 import {AppError} from "../../Models/Error"
-import {resolvePlayerNameOrId} from "../../Requests/Player"
+import {resolvePlayerNameOrId} from "../../Requests/Player/resolvePlayerNameOrId"
 import {WithNotifications, withNotifications} from "./Notification/NotificationUtils"
 
 interface OwnProps {
