@@ -16,14 +16,17 @@ export class StatChart extends React.PureComponent<Props> {
         )
     }
 
-    private readonly getChartType = (): React.ComponentType<{basicStat: BasicStat}> => {
+    private readonly getChartType = (): React.ComponentType<{ basicStat: BasicStat }> => {
         switch (this.props.basicStat.type) {
             case "radar":
-                return ColoredRadarChart
-            case "pie":
-                return ColoredPieChart
+                if (this.props.basicStat.chartDataPoints.length > 2) {
+                    return ColoredRadarChart
+                }
+                return ColoredBarChart
             case "bar":
                 return ColoredBarChart
+            case "pie":
+                return ColoredPieChart
             default:
                 throw Error
         }

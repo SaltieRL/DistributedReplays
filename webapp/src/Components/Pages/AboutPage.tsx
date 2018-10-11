@@ -91,31 +91,31 @@ const replayParsing: ListItemInfo[] = [
     {
         name: "Druthyn",
         link: "",
-        message: "Worked on figuring out how to detect if a player is on a M/KB or a controller"
+        message: "Detecting if a player is on M/KB or a controller"
     },
     {
         name: "Destiphy",
         link: "",
-        message: "Has helped fix tons of bugs and created situations for us to test against."
-    },
+        message: "Helped fix countless bugs and created situations to test against"
+    }
 ]
 
 const uploading: ListItemInfo[] = [
     {
         name: "Skoocda",
         link: "",
-        message: "Worked on tracking state of uploads and is helping with testing"
+        message: "Tracking state of uploads and testing"
     },
     {
         name: "Kcolton & Bakkes",
         link: "",
-        message: "Bakkes Auto uploader plugin"
+        message: "BakkesMod Auto uploader plugin"
     },
     {
-        name: "Redox ",
+        name: "Redox",
         link: "",
         message: "A custom Auto Uploader"
-    },
+    }
 ]
 {/*
 const replayViewer: ListItemInfo[] = [
@@ -135,7 +135,8 @@ const replayViewer: ListItemInfo[] = [
         message: "Has a great design for live stats during the viewer"
     },
 ]
-*/}
+*/
+}
 
 const designer: ListItemInfo[] = [
     {
@@ -146,10 +147,9 @@ const designer: ListItemInfo[] = [
     {
         name: "IBeam ",
         link: "",
-        message: "Worked on backgrounds and a lot of prototypes"
-    },
+        message: "Backgrounds and prototypes"
+    }
 ]
-
 
 const supportStaff: ListItemInfo[] = [
     {
@@ -160,10 +160,9 @@ const supportStaff: ListItemInfo[] = [
     {
         name: "ThatGuyDed, IamEld3st",
         link: "",
-        message: "Helper of support staff, Welcomer"
-    },
+        message: "Helper of support staff, welcomer"
+    }
 ]
-
 
 export class AboutPage extends React.PureComponent {
     public render() {
@@ -233,25 +232,22 @@ export class AboutPage extends React.PureComponent {
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <Card>
-                                    <CardHeader title="contributors"/>
+                                    <CardHeader title="Contributors"/>
                                     <Divider/>
-                                    <CardHeader subheader="Replay Parsing"/>
-                                    <CardContent>
-                                        <List>
-                                            {replayParsing.map((listItemInfo) => (
-                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                            ))}
-                                        </List>
-                                    </CardContent>
-                                    <CardHeader subheader="Uploading"/>
-                                    <CardContent>
-                                        <List>
-                                            {uploading.map((listItemInfo) => (
-                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                            ))}
-                                        </List>
-                                    </CardContent>
-                                    {/*
+                                    <List>
+                                        <ListSubheader>Replay Parsing</ListSubheader>
+
+                                        {replayParsing.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+                                        <Divider/>
+                                        <ListSubheader>Uploading</ListSubheader>
+
+                                        {uploading.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+
+                                        {/*
                                         <CardHeader subheader="Replay Viewer"/>
                                         <CardContent>
                                             <List>
@@ -261,22 +257,19 @@ export class AboutPage extends React.PureComponent {
                                             </List>
                                         </CardContent>
                                     */}
-                                    <CardHeader subheader="Designers"/>
-                                    <CardContent>
-                                        <List>
-                                            {designer.map((listItemInfo) => (
-                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                            ))}
-                                        </List>
-                                    </CardContent>
-                                    <CardHeader subheader="Support Staff"/>
-                                    <CardContent>
-                                        <List>
-                                            {supportStaff.map((listItemInfo) => (
-                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                            ))}
-                                        </List>
-                                    </CardContent>
+                                        <Divider/>
+                                        <ListSubheader>Designers</ListSubheader>
+
+                                        {designer.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+                                        <Divider/>
+                                        <ListSubheader>Support Staff</ListSubheader>
+
+                                        {supportStaff.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+                                    </List>
                                 </Card>
                             </Grid>
                         </Grid>
@@ -286,6 +279,7 @@ export class AboutPage extends React.PureComponent {
         )
     }
 }
+
 const PersonListItem: React.SFC<ListItemInfo> = (props) => (
     <ListItem>
         <ListItemText
@@ -311,4 +305,3 @@ const ExternalLink: React.SFC<ExternalLinkProps> = (props) => (
         </ButtonBase>
     </a>
 )
-

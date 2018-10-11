@@ -2,7 +2,9 @@ import * as moment from "moment"
 import * as qs from "qs"
 import {doGet} from "../apiHandler/apiHandler"
 import {BasicStat} from "../Models/ChartData"
+import {MatchHistoryResponse} from "../Models/Player/MatchHistory"
 import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
+import {ReplaysSearchQueryParams, stringifyReplaySearchQueryParam} from "../Models/ReplaysSearchQueryParams"
 import {useMockData} from "./Config"
 
 export const getReplay = (id: string): Promise<Replay> => {
@@ -171,4 +173,12 @@ export const getReplayGroupStats = (ids: string[]): Promise<BasicStat[]> => {
             {arrayFormat: "repeat", addQueryPrefix: true}
         )
     )
+}
+
+export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<MatchHistoryResponse> => {
+    return doGet(`/replay` + stringifyReplaySearchQueryParam(queryParams))
+        .then((data) => ({
+            ...data,
+            replays: data.replays.map(parseReplay)
+        }))
 }

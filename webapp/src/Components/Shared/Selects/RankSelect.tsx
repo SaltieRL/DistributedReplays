@@ -17,6 +17,10 @@ const ranks = ["Unranked", "Bronze I", "Bronze II", "Bronze III", "Silver I", "S
 interface OwnProps {
     selectedRank: number
     handleChange: React.ChangeEventHandler<HTMLSelectElement>
+    helperText: string
+    inputLabel: string
+    noneLabel: string
+    disabled?: boolean
 }
 
 type Props = OwnProps
@@ -24,17 +28,18 @@ type Props = OwnProps
 
 class RankSelectComponent extends React.PureComponent<Props> {
     public render() {
-        const {classes, selectedRank, handleChange} = this.props
+        const {classes, selectedRank, handleChange, inputLabel, helperText, noneLabel, disabled} = this.props
         return (
             <FormControl className={classes.formControl}>
-                <InputLabel>Rank to compare</InputLabel>
+                <InputLabel>{inputLabel}</InputLabel>
                 <Select
                     value={selectedRank}
                     onChange={handleChange}
                     autoWidth
+                    disabled={disabled}
                 >
                     <MenuItem value={-1} key="None">
-                        Default
+                        {noneLabel}
                     </MenuItem>
                     {ranks.map((rank, i) => (
                             <MenuItem value={i} key={i}>
@@ -43,7 +48,7 @@ class RankSelectComponent extends React.PureComponent<Props> {
                         )
                     )}
                 </Select>
-                <FormHelperText>Select the rank to plot as average</FormHelperText>
+                <FormHelperText>{helperText}</FormHelperText>
             </FormControl>
         )
     }
@@ -51,7 +56,9 @@ class RankSelectComponent extends React.PureComponent<Props> {
 
 const styles = createStyles({
     formControl: {
-        minWidth: 300
+        maxWidth: 400,
+        minWidth: 200,
+        width: "80%"
     }
 })
 
