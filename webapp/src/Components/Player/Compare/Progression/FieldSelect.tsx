@@ -69,7 +69,8 @@ class FieldSelectComponent extends React.PureComponent<Props> {
 
 const styles = (theme: Theme) => createStyles({
     formControl: {
-        minWidth: 300
+        minWidth: 250,
+        width: "90%"
     },
     chipWrapper: {
         display: "flex",

@@ -67,7 +67,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
             || (this.state.startDate !== prevState.startDate)
             || (this.state.endDate !== prevState.endDate)) {
             this.refreshAllData()
-            this.updateFields()
+                .then(this.updateFields)
         }
     }
 
@@ -85,14 +85,14 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Grid item xs={12} style={{textAlign: "center"}} container>
-                    <Grid item xs={12}>
+                <Grid item xs={12} md={10} xl={8} style={{textAlign: "center"}} container spacing={16}>
+                    <Grid item xs={12} sm={6} lg={4}>
                         <FieldSelect fields={this.state.fields}
                                      selectedFields={this.state.selectedFields}
                                      handleChange={this.handleSelectChange}
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6} lg={3}>
                         <FormControl>
                             <InputLabel>Duration</InputLabel>
                             <Select
@@ -111,12 +111,12 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
                         </FormControl>
 
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6} lg={2}>
                         <ClearableDatePicker value={this.state.startDate}
                                              onChange={this.handleStartDateChange}
                                              label="Start date"/>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6} lg={2}>
                         <ClearableDatePicker value={this.state.endDate}
                                              onChange={this.handleEndDateChange}
                                              label="End date"/>
@@ -153,8 +153,8 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
         this.setState({fields})
     }
 
-    private readonly refreshAllData = () => {
-        Promise.all(this.props.players.map((player) => this.getProgressionForPlayer(player.id)))
+    private readonly refreshAllData = (): Promise<void> => {
+        return Promise.all(this.props.players.map((player) => this.getProgressionForPlayer(player.id)))
             .then((playStyleProgressions) => {
                 this.setState({playStyleProgressions})
             })
