@@ -2,7 +2,7 @@
 import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, UniqueConstraint
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
@@ -213,6 +213,7 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
+    series = relationship("SeriesGame")
 
     # metadata
     version = Column(Integer)
@@ -239,6 +240,10 @@ class Player(DBObjectBase):
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
     groups = Column(postgresql.ARRAY(Integer, dimensions=1), default=[])
+    owned_tournaments = relationship('Tournament')
+    participating_tournaments = relationship('Tournament',
+                                                secondary='tournament_players', back_populates='participants')
+    administrating_tournaments = relationship('Tournament', secondary='tournament_admins', back_populates='admins')
 
     @validates('platformid')
     def validate_code(self, key, value):
@@ -289,3 +294,49 @@ class TeamStat(DBObjectBase):
     time_in_attacking_third = Column(Float)
     time_behind_ball = Column(Float)
     time_in_front_ball = Column(Float)
+
+
+class Tournament(DBObjectBase):
+    __tablename__ = 'tournaments'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100))
+    owner = Column(String(40), ForeignKey('players.platformid'))
+    participants = relationship('Player', secondary='tournament_players', back_populates='participating_tournaments')
+    admins = relationship('Player', secondary='tournament_admins', back_populates='administrating_tournaments')
+    __table_args_ = (UniqueConstraint(name, owner, name='unique_names_tournament'))
+
+
+class TournamentAdmin(DBObjectBase):
+    __tablename__ = 'tournament_admins'
+    tournament_id = Column(Integer, ForeignKey('tournaments.id'), primary_key=True)
+    player_id = Column(String(40), ForeignKey('players.platformid'), primary_key=True)
+
+
+class TournamentStage(DBObjectBase):
+    __tablename__ = 'tournament_stages'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100))
+    tournament_id = Column(Integer, ForeignKey('tournaments.id'))
+    # TODO allow admins to add time info about games so that it will only find games played at certain time frames
+    __table_args_ = (UniqueConstraint(name, tournament_id, name='unique_tournament_stages'))
+
+
+class TournamentPlayers(DBObjectBase):
+    __tablename__ = 'tournament_players'
+    tournament_id = Column(Integer, ForeignKey('tournaments.id'), primary_key=True)
+    player_id = Column(String(40), ForeignKey('players.platformid'), primary_key=True)
+
+
+class TournamentSeries(DBObjectBase):
+    __tablename__ = 'tournament_serieses'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100))
+    stage_id = Column(Integer, ForeignKey('tournament_stages.id'))
+
+
+class SeriesGame(DBObjectBase):
+    __tablename__ = 'series_games'
+    series_id = Column(Integer, ForeignKey('tournament_serieses.id'), primary_key=True)
+    game_hash = Column(String(40), ForeignKey('games.hash'), primary_key=True)
+
+
