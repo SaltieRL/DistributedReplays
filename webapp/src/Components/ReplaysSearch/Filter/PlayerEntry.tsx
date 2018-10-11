@@ -1,6 +1,7 @@
 import {Grid} from "@material-ui/core"
 import * as React from "react"
-import {getPlayer, resolvePlayerNameOrId} from "../../../Requests/Player"
+import {getPlayer} from "../../../Requests/Player/getPlayer"
+import {resolvePlayerNameOrId} from "../../../Requests/Player/resolvePlayerNameOrId"
 import {AddPlayerInput} from "../../Player/Compare/AddPlayerInput"
 import {PlayerChip} from "../../Player/Compare/PlayerChip"
 import {WithNotifications, withNotifications} from "../../Shared/Notification/NotificationUtils"

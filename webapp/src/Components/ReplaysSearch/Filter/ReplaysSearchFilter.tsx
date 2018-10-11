@@ -1,8 +1,8 @@
 import {Card, CardContent, CardHeader, Divider, Grid} from "@material-ui/core"
-import {DatePicker} from "material-ui-pickers"
 import * as moment from "moment"
 import * as React from "react"
 import {ReplaysSearchQueryParams} from "../../../Models/ReplaysSearchQueryParams"
+import {ClearableDatePicker} from "../../Shared/ClearableDatePicker"
 import {PlaylistSelect} from "../../Shared/Selects/PlaylistSelect"
 import {RankSelect} from "../../Shared/Selects/RankSelect"
 import {PlayerEntry} from "./PlayerEntry"
@@ -35,20 +35,16 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
                             helperText="Select playlist to filter by"/>
 
         const dateAfterPicker =
-            <DatePicker
+            <ClearableDatePicker
                 value={queryParams.dateAfter ? queryParams.dateAfter : null}
                 onChange={this.handleDateAfterChange}
-                format="DD/MM/YYYY"
-                clearable
                 label="Start date"
                 helperText="Date after which game must have happened"/>
 
         const dateBeforePicker =
-            <DatePicker
+            <ClearableDatePicker
                 value={queryParams.dateBefore ? queryParams.dateBefore : null}
                 onChange={this.handleDateBeforeChange}
-                format="DD/MM/YYYY"
-                clearable
                 label="End date"
                 helperText="Date before which game must have happened"/>
 
@@ -123,7 +119,6 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
                 ...remainingQueryParams
             })
         } else {
-            console.log(selectedPlaylists)
             this.props.handleChange({
                 ...this.props.queryParams,
                 playlists: selectedPlaylists

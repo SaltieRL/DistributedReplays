@@ -1,5 +1,6 @@
 import datetime
-from typing import List, Dict, Any, Callable
+from enum import Enum
+from typing import List, Dict, Any, Callable, Type, TypeVar
 
 from flask import Request
 
@@ -42,3 +43,14 @@ def get_query_params(query_params: List[QueryParam], request: Request) -> Dict[s
 
 def convert_to_datetime(timestamp: str):
     return datetime.datetime.fromtimestamp(int(timestamp))
+
+
+T = TypeVar('T', bound=Enum)
+
+
+def convert_to_enum(enum: Type[T]) -> Callable[[str], T]:
+    # TODO: Type this to reject non-enums while stil typing the return of the function
+    def convert_string_to_enum(string: str) -> T:
+        return enum[string.upper()]
+    return convert_string_to_enum
+
