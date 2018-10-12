@@ -43,7 +43,7 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
             logger.warning('No secret key has been set')
 
         app.config['db'] = Session
-        app.config['r'] = get_redis()
+        app.config['r'] = get_redis(app)
 
         _session = Session()
         groups_to_add = ['admin', 'alpha', 'beta']
@@ -68,8 +68,8 @@ def create_needed_folders(app: Flask):
 
 def set_up_app_config(app: Flask):
     # Read host values from the environment, fallback to defaults
-    postgres_host = os.env.get('POSTGRES_HOST', 'localhost')
-    redis_host = os.env.get('REDIS_HOST', 'localhost')
+    postgres_host = os.getenv('POSTGRES_HOST', 'localhost')
+    redis_host = os.getenv('REDIS_HOST', 'localhost')
     app.config.update(
         UPLOAD_FOLDER=UPLOAD_FOLDER,
         MAX_CONTENT_LENGTH=512 * 1024 * 1024,

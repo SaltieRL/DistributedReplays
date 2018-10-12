@@ -53,7 +53,7 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
     except RuntimeError:  # we're not in application context, use our own redis
         if offline_redis is None and use_redis:
             offline_redis = redis.Redis(
-                host=os.env.get('REDIS_HOST', 'localhost'),
+                host=os.getenv('REDIS_HOST', 'localhost'),
                 port=6379)
         r = offline_redis
     if r is not None:

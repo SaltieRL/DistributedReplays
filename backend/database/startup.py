@@ -27,7 +27,7 @@ def startup():
         engine, Session = login(connection_string)
     except OperationalError as e:
         print('trying backup info', e)
-        postgres_host = os.env.get('POSTGRES_HOST', 'localhost')
+        postgres_host = os.getenv('POSTGRES_HOST', 'localhost')
         postgres_addr = 'postgresql://postgres:postgres@{}'.format(postgres_host)
         try:
             engine, Session = login('{}/saltie'.format(postgres_addr))

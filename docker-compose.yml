@@ -21,6 +21,43 @@ services:
     ports:
       - 6379:6379
 
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile-python
+    image: distributed-replays-python
+    # The sleep is less than ideal but there seems to be a delay between
+    # when dockerize can connect to postgres and when our backend can
+    command: sh -c "dockerize -timeout 30s -wait tcp://ccgg-postgres10:5432 -wait tcp://ccgg-redis4:6379 && sleep 3 && python ./RLBotServer.py"
+    environment:
+      POSTGRES_HOST: ccgg-postgres10
+      REDIS_HOST: ccgg-redis4
+    volumes:
+      - ./:/app:rw
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8000:8000
+
+  celery:
+    image: distributed-replays-python
+    command: sh -c "dockerize -wait tcp://ccgg-redis4:6379 celery -A backend.tasks.celery_tasks.celery worker --loglevel=INFO"
+    environment:
+      REDIS_HOST: ccgg-redis4
+    volumes:
+      - ./:/app:rw
+    depends_on:
+      - redis
+
+  webapp:
+    image: node:10-alpine
+    command: sh -c "cd /app && npm install && npm run start"
+    volumes:
+      - ./webapp/:/app:rw
+    ports:
+      - 3000:3000
+
 #  rabbitmq:
 #    image: rabbitmq:3-alpine
 #    container_name: ccgg-rabbitmq
