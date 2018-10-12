@@ -4,8 +4,8 @@ import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
 import {getCurrentUploadStatuses} from "./StatusUtils"
 import {UploadContainedButton} from "./UploadContainedButton"
+import {UploadDialog} from "./UploadDialog"
 import {UploadFloatingButton} from "./UploadFloatingButton"
-import {UploadModal} from "./UploadModal"
 
 interface OwnProps {
     buttonStyle: "contained" | "floating" | "icon"
@@ -19,7 +19,7 @@ interface State {
     currentUploadsCount: number
 }
 
-class UploadModalWrapperComponent extends React.PureComponent<Props, State> {
+class UploadDialogWrapperComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
@@ -65,7 +65,7 @@ class UploadModalWrapperComponent extends React.PureComponent<Props, State> {
                         </IconButton>
                     </Tooltip>}
                 </>}
-                <UploadModal open={this.state.open} handleClickOutside={this.handleClose}/>
+                <UploadDialog open={this.state.open} handleClickOutside={this.handleClose}/>
                 {this.props.children}
             </>
         )
@@ -82,4 +82,4 @@ class UploadModalWrapperComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const UploadModalWrapper = withWidth()(UploadModalWrapperComponent)
+export const UploadDialogWrapper = withWidth()(UploadDialogWrapperComponent)
