@@ -25,9 +25,9 @@ export const uploadReplays = (replays: File[]): Promise<string[]> => {
     return doPost("/upload", formData)
 }
 
-export const getUploadStatuses = (taskIds: string[]): Promise<UploadStatus[]> => {
+export const getUploadStatuses = (ids: string[]): Promise<UploadStatus[]> => {
     return doGet("/upload" +
-        qs.stringify({taskIds},
+        qs.stringify({ids},
             {arrayFormat: "repeat", addQueryPrefix: true}
         ))
 }
