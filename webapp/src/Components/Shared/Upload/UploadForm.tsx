@@ -1,9 +1,7 @@
 import {
     Button,
-    Card,
     CardActions,
     CardContent,
-    CardHeader,
     CircularProgress,
     createStyles,
     Theme,
@@ -18,6 +16,7 @@ import {DropFilesEventHandler} from "react-dropzone"
 import {uploadReplays} from "../../../Requests/Global"
 import {WithNotifications, withNotifications} from "../Notification/NotificationUtils"
 import {BakkesModAd} from "./BakkesModAd"
+import {addTaskIds} from "./StatusUtils"
 import {UploadDropzone} from "./UploadDropzone"
 
 type Props = WithStyles<typeof styles>
@@ -39,8 +38,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         const {classes} = this.props
         const hasFilesSelected = this.state.files.length !== 0
         return (
-            <Card>
-                <CardHeader title={"Upload Replays"}/>
+            <>
                 {this.state.uploadingStage !== "pressedUpload" ?
                     <>
                         <CardContent>
@@ -78,7 +76,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                         <CircularProgress/>
                     </div>
                 }
-            </Card>
+            </>
         )
     }
 

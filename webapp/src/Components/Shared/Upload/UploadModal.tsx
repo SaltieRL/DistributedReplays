@@ -1,5 +1,6 @@
-import {Grid, Modal} from "@material-ui/core"
+import {Grid, Modal, Paper, Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
+import {PreviousUploads} from "./PreviousUploads"
 import {UploadForm} from "./UploadForm"
 
 interface Props {
@@ -7,7 +8,19 @@ interface Props {
     handleClickOutside: () => void
 }
 
-export class UploadModal extends React.PureComponent<Props> {
+type UploadTab = "Upload Replays" | "Previous Uploads"
+const uploadTabs: UploadTab[] = ["Upload Replays", "Previous Uploads"]
+
+interface State {
+    selectedTab: UploadTab
+}
+
+export class UploadModal extends React.PureComponent<Props, State> {
+    constructor(props: Props) {
+        super(props)
+        this.state = {selectedTab: "Upload Replays"}
+    }
+
     public render() {
         const spacer = <Grid item xs={1} sm={2} lg={3} xl={4} onClick={this.props.handleClickOutside}/>
 
@@ -21,11 +34,29 @@ export class UploadModal extends React.PureComponent<Props> {
                 }}>
                     {spacer}
                     <Grid item>
-                        <UploadForm/>
+                        <Paper>
+                            <Tabs value={this.state.selectedTab}
+                                  onChange={this.handleTabChange}
+                                  centered
+                            >
+                                {uploadTabs.map((uploadTab) =>
+                                    <Tab label={uploadTab} value={uploadTab} key={uploadTab}/>
+                                )}
+                            </Tabs>
+                            {this.state.selectedTab === "Upload Replays" ?
+                                <UploadForm/>
+                                :
+                                <PreviousUploads/>
+                            }
+                        </Paper>
                     </Grid>
                     {spacer}
                 </Grid>
             </Modal>
         )
+    }
+
+    private readonly handleTabChange = (event: React.ChangeEvent, selectedTab: UploadTab) => {
+        this.setState({selectedTab})
     }
 }
