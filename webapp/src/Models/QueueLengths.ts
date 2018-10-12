@@ -1,8 +1,5 @@
-interface QueueLength {
-    queuePriority: string
-    queueLength: number
-}
-
-interface QueueLengths {
-    queues: QueueLength[]
+interface QueueStatus {
+    name: string
+    priority: number
+    count: number
 }

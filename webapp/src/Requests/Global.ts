@@ -9,7 +9,7 @@ export const getReplayCount = (): Promise<number> => {
     return doGet("/global/replay_count")
 }
 
-export const getQueueLength = (): Promise<QueueLengths> => {
+export const getQueueStatuses = (): Promise<QueueStatus[]> => {
     return doGet("/global/queue/count")
 }
 
