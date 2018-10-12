@@ -83,10 +83,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
     private readonly handleUpload = () => {
         this.setState({uploadingStage: "pressedUpload"})
         uploadReplays(this.state.files)
-            .then((taskIds) => {
-                const currentTaskIds: string[] = JSON.parse(sessionStorage.getItem("taskIds") || "[]")
-                sessionStorage.setItem("taskIds", JSON.stringify([...currentTaskIds, ...taskIds]))
-            })
+            .then(addTaskIds)
             .then(this.clearFiles)
             .then(() => {
                 this.setState({uploadingStage: "uploaded"})
