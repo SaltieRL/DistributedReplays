@@ -26,6 +26,7 @@ from .service_layers.player.play_style_progression import PlayStyleProgression
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
+from .service_layers.queue_status import QueueStatus
 from .service_layers.replay.basic_stats import BasicStatChartData
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
@@ -65,8 +66,7 @@ def api_get_replay_count():
 
 @bp.route('/global/queue/count')
 def api_get_queue_length():
-    steps = [0, 3, 6, 9]
-    return jsonify({'priority ' + str(k): v for k, v in zip(steps, get_queue_length())})
+    return better_jsonify(QueueStatus.create_for_queues())
 
 
 @bp.route('/global/stats')
