@@ -61,7 +61,7 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 try:
     _redis = Redis(
-        host='localhost',
+        host=os.env.get('REDIS_HOST', 'localhost'),
         port=6379)
     _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
 except:  # TODO: Investigate and specify this except.

@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
@@ -18,7 +20,6 @@ def login(connection_string, recreate_database=False):
     return engine, Session
 
 
-
 def startup():
     try:
         # Sql Stuff
@@ -26,8 +27,10 @@ def startup():
         engine, Session = login(connection_string)
     except OperationalError as e:
         print('trying backup info', e)
+        postgres_host = os.env.get('POSTGRES_HOST', 'localhost')
+        postgres_addr = 'postgresql://postgres:postgres@{}'.format(postgres_host)
         try:
-            engine, Session = login('postgresql://postgres:postgres@localhost/saltie')
+            engine, Session = login('{}/saltie'.format(postgres_addr))
         except Exception as e:
-            engine, Session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+            engine, Session = login(postgres_addr, recreate_database=True)
     return engine, Session

@@ -67,14 +67,19 @@ def create_needed_folders(app: Flask):
 
 
 def set_up_app_config(app: Flask):
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.config['BASE_URL'] = 'https://calculated.gg'
-    app.config['REPLAY_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'rlreplays')
-    app.config['PARSED_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'parsed')
+    # Read host values from the environment, fallback to defaults
+    postgres_host = os.env.get('POSTGRES_HOST', 'localhost')
+    redis_host = os.env.get('REDIS_HOST', 'localhost')
     app.config.update(
-        broker_url='redis://localhost:6379/0',
+        UPLOAD_FOLDER=UPLOAD_FOLDER,
+        MAX_CONTENT_LENGTH=512 * 1024 * 1024,
+        TEMPLATES_AUTO_RELOAD=True,
+        BASE_URL='https://calculated.gg',
+        REPLAY_DIR=os.path.join(os.path.dirname(__file__), 'data', 'rlreplays'),
+        PARSED_DIR=os.path.join(os.path.dirname(__file__), 'data', 'parsed'),
+        postgres_host=postgres_host,
+        redis_host=redis_host,
+        broker_url='redis://{}:6379/0'.format(redis_host),
         result_backend='redis://',
         worker_max_tasks_per_child=100,
         broker_transport_options={'fanout_prefix': True}
@@ -95,10 +100,10 @@ def register_blueprints(app: Flask):
     app.register_blueprint(admin.bp)
 
 
-def get_redis() -> Optional[Redis]:
+def get_redis(app: Flask) -> Optional[Redis]:
     try:
         _redis = Redis(
-            host='localhost',
+            host=app.config['redis_host'],
             port=6379)
         _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
         return _redis
