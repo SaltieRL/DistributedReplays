@@ -20,7 +20,7 @@ export class UploadPage extends React.PureComponent<{}, State> {
             <BasePage>
                 <Grid container spacing={16} alignItems="center" justify="center">
                     <Grid item>
-                        <Card>
+                        <Card style={{width: 600, maxWidth: "90vw"}}>
                             <UploadTabs selectedTab={this.state.selectedTab} handleChange={this.handleTabChange}/>
                             <Divider/>
                             {this.state.selectedTab === "Upload Replays" ?

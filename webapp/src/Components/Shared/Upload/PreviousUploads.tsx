@@ -35,15 +35,16 @@ export class PreviousUploads extends React.PureComponent<{}, State> {
                                     {this.state.uploadTasks
                                         .sort((a, b) => b.dateCreated.diff(a.dateCreated))
                                         .map((uploadTask, i) => (
-                                        <ListItem key={uploadTask.id}>
-                                            <ListItemText
-                                                primary={
-                                                 `${uploadTask.id}: ${this.state.uploadStatuses![i].toLowerCase()}`
-                                            }
-                                                secondary={uploadTask.dateCreated.format("DD/MM")}
-                                            />
-                                        </ListItem>
-                                    ))}
+                                            <ListItem key={uploadTask.id}>
+                                                <ListItemText
+                                                    primary={
+                                                        `Upload on ${uploadTask.dateCreated.format("lll")}:  ` +
+                                                        `${this.state.uploadStatuses![i].toLowerCase()}`
+                                                    }
+                                                    secondary={uploadTask.id}
+                                                />
+                                            </ListItem>
+                                        ))}
                                 </List>
                                 :
                                 <Typography>

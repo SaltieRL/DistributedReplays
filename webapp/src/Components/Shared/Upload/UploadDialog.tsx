@@ -23,7 +23,9 @@ export class UploadDialog extends React.PureComponent<Props, State> {
         return (
             <Dialog open={this.props.open}
                     onClose={this.props.handleClickOutside}
-                    scroll="paper">
+                    scroll="paper"
+                    PaperProps={
+                        {style: {width: 600, maxWidth: "90vw"}}}>
                 <DialogTitle style={{padding: 0}}>
                     <UploadTabs selectedTab={this.state.selectedTab} handleChange={this.handleTabChange}/>
                     <Divider/>
