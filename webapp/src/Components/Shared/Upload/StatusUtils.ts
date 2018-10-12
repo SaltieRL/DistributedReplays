@@ -1,5 +1,7 @@
 import {getUploadStatuses} from "../../../Requests/Global"
 
+// TODO: Check if this is the right place for this and if this should be in redux.
+
 export const getPreviousUploads = (): string[] => {
     return JSON.parse(sessionStorage.getItem("taskIds") || "[123]")
 }
