@@ -1,4 +1,4 @@
-import {Grid, Modal, Paper, Tab, Tabs} from "@material-ui/core"
+import {Dialog, DialogTitle, Divider, Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
 import {PreviousUploads} from "./PreviousUploads"
 import {UploadForm} from "./UploadForm"
@@ -22,37 +22,28 @@ export class UploadModal extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const spacer = <Grid item xs={1} sm={2} lg={3} xl={4} onClick={this.props.handleClickOutside}/>
-
         return (
-            <Modal open={this.props.open} onClose={this.props.handleClickOutside}>
-                <Grid container justify="center" alignItems="stretch" style={{
-                    position: "relative",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    outline: "none"
-                }}>
-                    {spacer}
-                    <Grid item>
-                        <Paper>
-                            <Tabs value={this.state.selectedTab}
-                                  onChange={this.handleTabChange}
-                                  centered
-                            >
-                                {uploadTabs.map((uploadTab) =>
-                                    <Tab label={uploadTab} value={uploadTab} key={uploadTab}/>
-                                )}
-                            </Tabs>
-                            {this.state.selectedTab === "Upload Replays" ?
-                                <UploadForm/>
-                                :
-                                <PreviousUploads/>
-                            }
-                        </Paper>
-                    </Grid>
-                    {spacer}
-                </Grid>
-            </Modal>
+            <Dialog open={this.props.open}
+                    onClose={this.props.handleClickOutside}
+                    scroll="paper">
+                <DialogTitle style={{padding: 0}}>
+                    <Tabs value={this.state.selectedTab}
+                          onChange={this.handleTabChange}
+                          centered
+                    >
+                        {uploadTabs.map((uploadTab) =>
+                            <Tab label={uploadTab} value={uploadTab} key={uploadTab}/>
+                        )}
+                    </Tabs>
+                    <Divider/>
+                </DialogTitle>
+                    {this.state.selectedTab === "Upload Replays" ?
+                        <UploadForm/>
+                        :
+                        <PreviousUploads/>
+                    }
+            </Dialog>
+
         )
     }
 

@@ -1,9 +1,9 @@
 import {
     Button,
-    CardActions,
-    CardContent,
     CircularProgress,
     createStyles,
+    DialogActions,
+    DialogContent,
     Theme,
     Typography,
     WithStyles,
@@ -41,7 +41,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
             <>
                 {this.state.uploadingStage !== "pressedUpload" ?
                     <>
-                        <CardContent>
+                        <DialogContent>
                             <BakkesModAd/>
                             <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
                             {this.state.rejected.length !== 0 &&
@@ -50,8 +50,8 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                                 ".replay".
                             </Typography>
                             }
-                        </CardContent>
-                        <CardActions>
+                        </DialogContent>
+                        <DialogActions>
                             <Button variant="outlined"
                                     onClick={this.clearFiles}
                                     disabled={!hasFilesSelected}
@@ -69,7 +69,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                                 <CloudUpload className={classes.leftIcon}/>
                                 Upload
                             </Button>
-                        </CardActions>
+                        </DialogActions>
                     </>
                     :
                     <div style={{margin: "auto", textAlign: "center", padding: 20}}>
