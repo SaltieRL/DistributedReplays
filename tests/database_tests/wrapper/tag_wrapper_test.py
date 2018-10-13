@@ -30,7 +30,7 @@ class TagWrapperCreateTagTest(unittest.TestCase):
         start_test_app_()
 
     @classmethod
-    def setUpClass(cls):
+    def tearDownClass(cls):
         close_test_app()
 
     def setUp(self):
@@ -76,7 +76,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
         start_test_app_()
 
     @classmethod
-    def setUpClass(cls):
+    def tearDownClass(cls):
         close_test_app()
 
     def setUp(self):
@@ -96,7 +96,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
         if tag is not None:
             self.session.delete(tag)
-            self.sessoion.commit()
+            self.session.commit()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
         if test_user is not None:
@@ -121,7 +121,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
 
         if tag is not None:
             self.session.delete(tag)
-            self.sessoion.commit()
+            self.session.commit()
 
         with self.assertRaises(TagNotFound):
             TagWrapper.remove_tag(self.test_user_id, self.tag_name)
@@ -133,7 +133,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
         start_test_app_()
 
     @classmethod
-    def setUpClass(cls):
+    def tearDownClass(cls):
         close_test_app()
 
     def setUp(self):
@@ -181,7 +181,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
 
         if tag is not None:
             self.session.delete(tag)
-            self.sessoion.commit()
+            self.session.commit()
 
         with self.assertRaises(TagNotFound):
             TagWrapper.rename_tag(self.test_user_id, self.tag_name, self.tag_name_new)
@@ -206,7 +206,7 @@ class TagWrapperGetTagTest(unittest.TestCase):
         start_test_app_()
 
     @classmethod
-    def setUpClass(cls):
+    def tearDownClass(cls):
         close_test_app()
 
     def setUp(self):
@@ -261,7 +261,7 @@ class TagWrapperAddTagToGameTest(unittest.TestCase):
         start_test_app_()
 
     @classmethod
-    def setUpClass(cls):
+    def tearDownClass(cls):
         close_test_app()
 
     def setUp(self):
@@ -326,7 +326,7 @@ class TagWrapperRemoveTagFromGameTest(unittest.TestCase):
         start_test_app_()
 
     @classmethod
-    def setUpClass(cls):
+    def tearDownClass(cls):
         close_test_app()
 
     def setUp(self):
@@ -389,7 +389,7 @@ class TagWrapperGetTaggedGamesTest(unittest.TestCase):
         start_test_app_()
 
     @classmethod
-    def setUpClass(cls):
+    def tearDownClass(cls):
         close_test_app()
 
     def setUp(self):
