@@ -100,11 +100,11 @@ basic_stats_metadatas = [
     Metadata('aerial efficiency', ChartType.radar, SubCat.Efficiency),
 
     # team positioning
-    Metadata('time_in_front_of_center_of_mass', ChartType.radar, SubCat.TeamPositioning),
-    Metadata('time_behind_center_of_mass', ChartType.radar, SubCat.TeamPositioning),
-    Metadata('time_most_forward_player', ChartType.bar, SubCat.TeamPositioning),
-    Metadata('time_most_back_player', ChartType.bar, SubCat.TeamPositioning),
-    Metadata('time_between_players', ChartType.bar, SubCat.TeamPositioning),
+    Metadata('time in front of center of mass', ChartType.radar, SubCat.TeamPositioning),
+    Metadata('time behind center of mass', ChartType.radar, SubCat.TeamPositioning),
+    Metadata('time most forward player', ChartType.bar, SubCat.TeamPositioning),
+    Metadata('time most back player', ChartType.bar, SubCat.TeamPositioning),
+    Metadata('time between players', ChartType.bar, SubCat.TeamPositioning),
 ]
 pw = PlayerWrapper()
 wrapper = PlayerStatWrapper(pw)
