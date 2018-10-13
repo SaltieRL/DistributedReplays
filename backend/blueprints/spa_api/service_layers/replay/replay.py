@@ -2,8 +2,8 @@ from typing import List, cast
 
 from flask import current_app
 
-from backend.database.objects import Game, PlayerGame, Tag
-from backend.database.wrapper.tag_wrapper import TagWrapper
+from backend.database.objects import Game, PlayerGame
+from .game_tag import GameTag
 from .replay_player import ReplayPlayer
 from ..utils import sort_player_games_by_team_then_id
 from ...errors.errors import ReplayNotFound
@@ -17,16 +17,6 @@ class GameScore:
     @staticmethod
     def create_from_game(game: Game):
         return GameScore(game.team0score, game.team1score)
-
-
-class GameTag:
-    def __init__(self, name: str, owner: str):
-        self.name = name
-        self.ownerId = owner
-
-    @staticmethod
-    def create_from_tag(tag: Tag):
-        return GameTag(tag.name, tag.owner)
 
 
 class Replay:
@@ -69,12 +59,3 @@ class Replay:
                 for tag in game.tags
             ]
         )
-
-    def add_tag(self, user_id, tag_name):
-        tag = TagWrapper.add_tag_to_game(self.id, user_id, tag_name)
-        self.tags.append(GameTag.create_from_tag(tag).__dict__)
-
-    def remove_tag(self, user_id, tag_name):
-        tag = TagWrapper.remove_tag_from_game(self.id, user_id, tag_name)
-        if tag is not None:
-            self.tags.remove(GameTag.create_from_tag(tag).__dict__)

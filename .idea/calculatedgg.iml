@@ -8,5 +8,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (Distributed-Replays)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="material-components-web" level="application" />
+    <orderEntry type="library" name="solid" level="application" />
   </component>
 </module>
