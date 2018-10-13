@@ -6,6 +6,14 @@ from backend.utils.checks import is_local_dev
 from ..errors.errors import CalculatedError
 
 
+def require_user(func):
+    def wrapper_require_user(*args, **kwargs):
+        if g.user is None:
+            raise CalculatedError(404, "User is not logged in.")
+        func(*args, **kwargs)
+    return wrapper_require_user
+
+
 class LoggedInUser:
     def __init__(self, name: str, id_: str, avatar_link: str, admin: bool, alpha: bool, beta: bool):
         self.name = name
@@ -28,36 +36,26 @@ class LoggedInUser:
         return LoggedInUser(g.user.platformname, g.user.platformid, g.user.avatar, g.admin, g.alpha, g.beta)
 
     @staticmethod
+    @require_user
     def create_tag(name: str):
-        if g.user is None:
-            raise CalculatedError(404, "User is not logged in.")
-
         TagWrapper.create_tag(g.user.platformid, name)
 
     @staticmethod
+    @require_user
     def rename_tag(old_name: str, new_name: str):
-        if g.user is None:
-            raise CalculatedError(404, "User is not logged in.")
-
         TagWrapper.rename_tag(g.user.platformid, old_name, new_name)
 
     @staticmethod
+    @require_user
     def get_tags():
-        if g.user is None:
-            raise CalculatedError(404, "User is not logged in.")
-
         return TagWrapper.get_tags(g.user.platformid)
 
     @staticmethod
+    @require_user
     def remove_tag(name: str):
-        if g.user is None:
-            raise CalculatedError(404, "User is not logged in.")
-
         TagWrapper.create_tag(g.user.platformid, name)
 
     @staticmethod
+    @require_user
     def get_tag(name: str):
-        if g.user is None:
-            raise CalculatedError(404, "User is not logged in.")
-
         return TagWrapper.get_tag(g.user.platformid, name)
