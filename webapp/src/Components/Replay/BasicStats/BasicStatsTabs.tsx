@@ -6,7 +6,8 @@ import {
     faFutbol,
     IconDefinition,
     faPercent,
-    faHandshake
+    faHandshake,
+    IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
 import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
