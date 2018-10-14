@@ -1,23 +1,13 @@
-import {
-    faBraille,
-    faBullseye,
-    faCarSide,
-    faCircle,
-    faFutbol,
-    faHandshake,
-    faPercent,
-    IconDefinition
-} from "@fortawesome/free-solid-svg-icons"
-import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
+import {faBraille, faHandshake, IconDefinition} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Tab, Tabs, withWidth} from "@material-ui/core"
 import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
-import {BasicStatsSubcategory, teamStatsSubcategoryValues} from "../../../../Models/ChartData"
+import {TeamStatsSubcategory, teamStatsSubcategoryValues} from "../../../../Models/ChartData"
 
 interface OwnProps {
-    selectedTab: BasicStatsSubcategory
-    handleChange: (event: unknown, selectedTab: BasicStatsSubcategory) => void
+    selectedTab: TeamStatsSubcategory
+    handleChange: (event: unknown, selectedTab: TeamStatsSubcategory) => void
 }
 
 type Props = OwnProps
@@ -25,16 +15,9 @@ type Props = OwnProps
 
 class TeamStatsTabsComponent extends React.PureComponent<Props> {
     public render() {
-        const categoryToIcon: Record<BasicStatsSubcategory, IconDefinition> = {
-            Hits: faBullseye,
-            Ball: faFutbol,
-            Playstyles: faCarSide,
-            Possession: faCircle,
+        const categoryToIcon: Record<TeamStatsSubcategory, IconDefinition> = {
             Positioning: faBraille,
-            Boosts: faRocket,
-            Efficiency: faPercent,
-            TeamPositioning: faHandshake,
-            CenterOfMass: faHandshake
+            "Center of Mass": faHandshake
         }
 
         return (
@@ -45,7 +28,7 @@ class TeamStatsTabsComponent extends React.PureComponent<Props> {
                   scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
             >
                 {teamStatsSubcategoryValues
-                    .map((subcategory: BasicStatsSubcategory) =>
+                    .map((subcategory) =>
                         <Tab label={subcategory} value={subcategory} key={subcategory}
                              icon={<FontAwesomeIcon icon={categoryToIcon[subcategory]}/>}
                         />

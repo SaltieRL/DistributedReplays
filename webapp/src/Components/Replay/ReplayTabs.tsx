@@ -5,8 +5,8 @@ import {connect} from "react-redux"
 import {Replay} from "../../Models/Replay/Replay"
 import {StoreState} from "../../Redux"
 import {PlayerStatsContent} from "./BasicStats/PlayerStats/PlayerStatsContent"
-import {ReplayViewer} from "./ReplayViewer/ReplayViewer"
 import {TeamStatsContent} from "./BasicStats/TeamStats/TeamStatsContent"
+import {ReplayViewer} from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay

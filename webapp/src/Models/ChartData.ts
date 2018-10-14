@@ -16,10 +16,11 @@ export interface StatDataPoint extends ChartDataPoint {
 export interface BasicStat extends ChartDataResponse {
     chartDataPoints: StatDataPoint[]
     type: "radar" | "bar" | "pie"
-    subcategory: BasicStatsSubcategory
+    subcategory: StatsSubcategory
 }
 
-export type BasicStatsSubcategory =
+// TODO: Investigate if can be replaced with enum to avoid repetition
+export type PlayerStatsSubcategory =
     "Positioning"
     | "Hits"
     | "Ball"
@@ -27,13 +28,20 @@ export type BasicStatsSubcategory =
     | "Playstyles"
     | "Possession"
     | "Efficiency"
-    | "TeamPositioning"
-    | "CenterOfMass"
+    | "Team Positioning"
 
-export const playerStatsSubcategoryValues = [
-    "Hits", "Ball", "Positioning", "Boosts", "Playstyles", "Possession", "Efficiency", "TeamPositioning"
+export const playerStatsSubcategoryValues: PlayerStatsSubcategory[] = [
+    "Hits", "Ball", "Positioning", "Boosts", "Playstyles", "Possession", "Efficiency", "Team Positioning"
 ]  // Needed as these values cannot be gotten from the type at runtime (TypeScript is a lie)
 
-export const teamStatsSubcategoryValues = [
-    "Positioning", "CenterOfMass"
-]  // Needed as these values cannot be gotten from the type at runtime (TypeScript is a lie)
+export type TeamStatsSubcategory =
+    "Positioning"
+    | "Center of Mass"
+
+export const teamStatsSubcategoryValues: TeamStatsSubcategory[] = [
+    "Positioning", "Center of Mass"
+]
+
+export type StatsSubcategory =
+    PlayerStatsSubcategory
+    | TeamStatsSubcategory
