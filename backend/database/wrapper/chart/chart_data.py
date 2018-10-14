@@ -25,7 +25,6 @@ class ChartType(Enum):
 class ChartSubcatagory(Enum):
     pass
 
-
 class ChartStatsMetadata:
     def __init__(self, stat_name: str, type_: ChartType, subcategory: ChartSubcatagory):
         self.stat_name = stat_name
