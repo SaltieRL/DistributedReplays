@@ -43,6 +43,12 @@ class Playlist(enum.Enum):
     RANKED_SNOW_DAY = 30
 
 
+class GameVisibilitySetting(enum.Enum):
+    DEFAULT = 0
+    PUBLIC = 1
+    PRIVATE = 2
+
+
 class User(DBObjectBase):
     __tablename__ = 'users'
 
@@ -213,6 +219,11 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
+    visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.DEFAULT)
+    # to update the DB
+    # ALTER TABLE games
+    # ADD COLUMN visibility gamevisibilitysetting NULL
+    # CONSTRAINT default_visibility DEFAULT 'DEFAULT';
 
     # metadata
     version = Column(Integer)
@@ -289,3 +300,11 @@ class TeamStat(DBObjectBase):
     time_in_attacking_third = Column(Float)
     time_behind_ball = Column(Float)
     time_in_front_ball = Column(Float)
+
+
+class GameVisibility(DBObjectBase):
+    __tablename__ = "game_visibility"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    game = Column(String(40), ForeignKey('games.hash'), index=True)
+    player = Column(String(40), ForeignKey('players.platformid'))
+    visibility = Column(Enum(GameVisibilitySetting))
