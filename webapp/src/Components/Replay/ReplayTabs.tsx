@@ -4,9 +4,9 @@ import * as React from "react"
 import {connect} from "react-redux"
 import {Replay} from "../../Models/Replay/Replay"
 import {StoreState} from "../../Redux"
-import {BasicStatsContent} from "./BasicStats/BasicStatsContent"
+import {PlayerStatsContent} from "./BasicStats/PlayerStats/BasicStatsContent"
 import {ReplayViewer} from "./ReplayViewer/ReplayViewer"
-import {TeamStatsContent} from "./TeamStats/TeamStatsContent"
+import {TeamStatsContent} from "./BasicStats/TeamStats/TeamStatsContent"
 
 interface OwnProps {
     replay: Replay
@@ -50,7 +50,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     }
                 </Tabs>
                 {this.state.selectedTab === "basicStats" &&
-                <BasicStatsContent replay={this.props.replay}/>
+                <PlayerStatsContent replay={this.props.replay}/>
                 }
                 {this.state.selectedTab === "teamStats" &&
                 <TeamStatsContent replay={this.props.replay}/>

@@ -1,11 +1,11 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
-import {BasicStat, BasicStatsSubcategory} from "../../../Models/ChartData"
-import {Replay} from "../../../Models/Replay/Replay"
-import {getReplayTeamStats} from "../../../Requests/Replay"
-import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
-import {StatChart} from "../../Shared/Charts/StatChart"
-import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {BasicStat, BasicStatsSubcategory} from "../../../../Models/ChartData"
+import {Replay} from "../../../../Models/Replay/Replay"
+import {getReplayTeamStats} from "../../../../Requests/Replay"
+import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
+import {StatChart} from "../../../Shared/Charts/StatChart"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 
 interface Props {
     replay: Replay

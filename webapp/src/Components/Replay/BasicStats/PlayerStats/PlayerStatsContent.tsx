@@ -1,9 +1,9 @@
 import {CardContent, Divider, Grid} from "@material-ui/core"
 import * as React from "react"
-import {BasicStatsSubcategory} from "../../../Models/ChartData"
-import {Replay} from "../../../Models/Replay/Replay"
-import {TeamStatsCharts} from "./TeamStatsCharts"
-import {TeamStatsTabs} from "./TeamStatsTabs"
+import {BasicStatsSubcategory} from "../../../../Models/ChartData"
+import {Replay} from "../../../../Models/Replay/Replay"
+import {PlayerStatsCharts} from "./BasicStatsCharts"
+import {PlayerStatsTabs} from "./BasicStatsTabs"
 
 interface Props {
     replay: Replay
@@ -13,7 +13,7 @@ interface State {
     selectedTab: BasicStatsSubcategory
 }
 
-export class TeamStatsContent extends React.PureComponent<Props, State> {
+export class PlayerStatsContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedTab: "Hits"}
@@ -23,10 +23,10 @@ export class TeamStatsContent extends React.PureComponent<Props, State> {
         return (
             <>
                 <Divider/>
-                <TeamStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
+                <PlayerStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
                 <CardContent>
                     <Grid container spacing={32}>
-                        <TeamStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab}/>
+                        <PlayerStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab}/>
                     </Grid>
                 </CardContent>
             </>

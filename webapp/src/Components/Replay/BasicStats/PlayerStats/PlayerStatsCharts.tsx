@@ -16,7 +16,7 @@ interface State {
     basicStats: BasicStat[]
 }
 
-export class BasicStatsCharts extends React.PureComponent<Props, State> {
+export class PlayerStatsCharts extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {basicStats: []}
