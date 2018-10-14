@@ -2,8 +2,8 @@ import {CardContent, Divider, Grid} from "@material-ui/core"
 import * as React from "react"
 import {BasicStatsSubcategory} from "../../../../Models/ChartData"
 import {Replay} from "../../../../Models/Replay/Replay"
-import {PlayerStatsCharts} from "./BasicStatsCharts"
-import {PlayerStatsTabs} from "./BasicStatsTabs"
+import {PlayerStatsCharts} from "./PlayerStatsCharts"
+import {PlayerStatsTabs} from "./PlayerStatsTabs"
 
 interface Props {
     replay: Replay

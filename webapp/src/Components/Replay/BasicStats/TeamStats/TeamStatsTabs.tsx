@@ -13,7 +13,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Tab, Tabs, withWidth} from "@material-ui/core"
 import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
-import {BasicStatsSubcategory, basicStatsSubcategoryValues} from "../../../../Models/ChartData"
+import {BasicStatsSubcategory, teamStatsSubcategoryValues} from "../../../../Models/ChartData"
 
 interface OwnProps {
     selectedTab: BasicStatsSubcategory
@@ -33,7 +33,8 @@ class TeamStatsTabsComponent extends React.PureComponent<Props> {
             Positioning: faBraille,
             Boosts: faRocket,
             Efficiency: faPercent,
-            TeamPositioning: faHandshake
+            TeamPositioning: faHandshake,
+            CenterOfMass: faHandshake
         }
 
         return (
@@ -43,7 +44,7 @@ class TeamStatsTabsComponent extends React.PureComponent<Props> {
                   scrollable={isWidthDown("xs", this.props.width)}
                   scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
             >
-                {basicStatsSubcategoryValues
+                {teamStatsSubcategoryValues
                     .map((subcategory: BasicStatsSubcategory) =>
                         <Tab label={subcategory} value={subcategory} key={subcategory}
                              icon={<FontAwesomeIcon icon={categoryToIcon[subcategory]}/>}

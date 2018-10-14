@@ -1,11 +1,11 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
-import {BasicStat, BasicStatsSubcategory} from "../../../Models/ChartData"
-import {Replay} from "../../../Models/Replay/Replay"
-import {getReplayBasicStats} from "../../../Requests/Replay"
-import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
-import {StatChart} from "../../Shared/Charts/StatChart"
-import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {BasicStat, BasicStatsSubcategory} from "../../../../Models/ChartData"
+import {Replay} from "../../../../Models/Replay/Replay"
+import {getReplayPlayerStats} from "../../../../Requests/Replay"
+import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
+import {StatChart} from "../../../Shared/Charts/StatChart"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 
 interface Props {
     replay: Replay
@@ -13,35 +13,35 @@ interface Props {
 }
 
 interface State {
-    basicStats: BasicStat[]
+    playerStats: BasicStat[]
 }
 
 export class PlayerStatsCharts extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {basicStats: []}
+        this.state = {playerStats: []}
     }
 
     public render() {
         const {selectedTab} = this.props
-        const {basicStats} = this.state
+        const {playerStats} = this.state
 
-        const basicStatsForSelectedTab: BasicStat[] = basicStats ?
-            basicStats
-                .filter((basicStat) => basicStat.subcategory === selectedTab)
+        const playerStatsForSelectedTab: BasicStat[] = playerStats ?
+            playerStats
+                .filter((playerStat) => playerStat.subcategory === selectedTab)
             : []
 
         return (
-            <LoadableWrapper load={this.getBasicStats}>
-                {basicStatsForSelectedTab.length > 0 ?
-                    basicStatsForSelectedTab
-                        .map((basicStat) => {
+            <LoadableWrapper load={this.getPlayerStats}>
+                {playerStatsForSelectedTab.length > 0 ?
+                    playerStatsForSelectedTab
+                        .map((playerStat) => {
                             return (
-                                <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
+                                <Grid item xs={12} md={6} lg={4} xl={3} key={playerStat.title}>
                                     <Typography variant="subheading" align="center">
-                                        {convertSnakeAndCamelCaseToReadable(basicStat.title)}
+                                        {convertSnakeAndCamelCaseToReadable(playerStat.title)}
                                     </Typography>
-                                    <StatChart basicStat={basicStat}/>
+                                    <StatChart basicStat={playerStat}/>
                                 </Grid>
                             )
                         })
@@ -56,8 +56,8 @@ export class PlayerStatsCharts extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly getBasicStats = (): Promise<any> => {
-        return getReplayBasicStats(this.props.replay.id)
-            .then((basicStats) => this.setState({basicStats}))
+    private readonly getPlayerStats = (): Promise<any> => {
+        return getReplayPlayerStats(this.props.replay.id)
+            .then((playerStats) => this.setState({playerStats}))
     }
 }
