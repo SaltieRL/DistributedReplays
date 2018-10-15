@@ -164,6 +164,8 @@ class PlayerGame(DBObjectBase):
     time_closest_to_ball = Column(Float)
     time_furthest_from_ball = Column(Float)
     time_close_to_ball = Column(Float)
+    time_near_wall = Column(Float)
+    time_in_corner = Column(Float)
 
     # distance
     ball_hit_forward = Column(Float)
@@ -185,6 +187,13 @@ class PlayerGame(DBObjectBase):
     is_bot = Column(Boolean)
     first_frame_in_game = Column(Integer)
     time_in_game = Column(Float)
+
+    # relative positioning
+    time_in_front_of_center_of_mass = Column(Float)
+    time_behind_center_of_mass = Column(Float)
+    time_most_forward_player = Column(Float)
+    time_most_back_player = Column(Float)
+    time_between_players = Column(Float)
 
     @validates('player')
     def validate_code(self, key, value):

@@ -4,6 +4,7 @@ import {
     faCarSide,
     faCircle,
     faFutbol,
+    faHandshake,
     faPercent,
     IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
@@ -31,7 +32,8 @@ class TeamStatsTabsComponent extends React.PureComponent<Props> {
             Possession: faCircle,
             Positioning: faBraille,
             Boosts: faRocket,
-            Efficiency: faPercent
+            Efficiency: faPercent,
+            TeamPositioning: faHandshake
         }
 
         return (
