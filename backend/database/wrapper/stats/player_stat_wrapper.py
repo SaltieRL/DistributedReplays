@@ -56,6 +56,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             player_stats_filter.with_playlists([playlist])
         query = player_stats_filter.build_query(session).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.game != '').group_by(PlayerGame.player)
+        if query.count() < 1:
+            raise CalculatedError(404, 'User does not have enough replays.')
         stats = list(query.first())
         stats = [0 if s is None else s for s in stats]
         if raw:
