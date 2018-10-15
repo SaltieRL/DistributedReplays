@@ -56,9 +56,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         query = player_stats_filter.build_query(session).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.game != '').group_by(PlayerGame.player)
         if win is not None:
-            query.filter(PlayerGame.win == win)
-
-        print(query.count())
+            query = query.filter(PlayerGame.win == win)
         if query.count() < 1:
             raise CalculatedError(404, 'User does not have enough replays.')
         stats = list(query.first())
