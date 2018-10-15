@@ -44,7 +44,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         return zipped_stats
 
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None,
-                  playlist=13):
+                  playlist=13, win: bool = None):
         player_stats_filter = self.player_stats_filter.clean().clone()
         global_stats, global_stds = self.get_global_stats_by_rank(session, player_stats_filter,
                                                                   stats_query, std_query, player_rank=rank, redis=redis,
@@ -56,6 +56,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             player_stats_filter.with_playlists([playlist])
         query = player_stats_filter.build_query(session).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.game != '').group_by(PlayerGame.player)
+        if win is not None:
+            query.filter(PlayerGame.win == win)
         if query.count() < 1:
             raise CalculatedError(404, 'User does not have enough replays.')
         stats = list(query.first())
@@ -66,7 +68,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
             return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
 
     def get_averaged_stats(self, session, id_: str, rank: int = None, redis=None, raw: bool = False,
-                           replay_ids: list = None, playlist: int = 13):
+                           replay_ids: list = None, playlist: int = 13, win: bool = None):
         """
         Gets the averaged stats for the given ID, in either raw or standard deviation form.
 
@@ -84,7 +86,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
         if total_games > 0:
             stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
-                                                 replay_ids=replay_ids, playlist=playlist)
+                                                 replay_ids=replay_ids, playlist=playlist, win=win)
         else:
             stats = [0.0] * len(stats_query)
             global_stats = [0.0] * len(stats_query)
