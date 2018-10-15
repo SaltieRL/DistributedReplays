@@ -67,6 +67,10 @@ def get_boost_ratio():
 
 
 def get_aerial_efficiency():
-    air_time = PlayerGame.time_high_in_air + PlayerGame.time_low_in_air / safe_divide(PlayerGame.time_in_game,
+    air_time = (PlayerGame.time_high_in_air + PlayerGame.time_low_in_air) / safe_divide(PlayerGame.time_in_game,
                                                                                       default=300)
     return PlayerGame.total_aerials / safe_divide(air_time, default=100)
+
+
+def get_game_boost_usage_per_minute():
+    return PlayerGame.boost_usage / safe_divide(PlayerGame.time_in_game, default=300) * 60
