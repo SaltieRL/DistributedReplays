@@ -1,10 +1,16 @@
 import json
 import logging
+import sys
+import os
 
 from sqlalchemy import func
 
+path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+print(path)
+sys.path.append(path)
+
 from backend.blueprints.spa_api.errors.errors import CalculatedError
-from backend.database.objects import PlayerGame
+from backend.database.objects import PlayerGame, Game, Playlist
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.rank_wrapper import get_rank_number
 from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
@@ -22,14 +28,13 @@ class GlobalStatWrapper(SharedStatsWrapper):
         super().__init__()
 
         # this Object needs to be pooled per a session so only one is used at a time
-        self.base_query = QueryFilterBuilder().with_relative_start_time(days_ago=self.get_timeframe()).with_team_size(
-            3).with_safe_checking().sticky()
+        self.base_query = QueryFilterBuilder().with_relative_start_time(
+            days_ago=self.get_timeframe()).with_safe_checking().sticky()
 
     def get_global_stats(self, sess, with_rank=True):
         """
         :return: A list of stats by rank for every field.
         """
-        results = {}
         if with_rank:
             ranks = list(range(20))
         else:
@@ -41,29 +46,48 @@ class GlobalStatWrapper(SharedStatsWrapper):
             else:
                 return float(f)
 
-        for column, q in zip(self.stat_list, self.stats_query):
-            column_results = []
-            # set the column result
-            self.base_query.clean().with_stat_query([PlayerGame.player, q.label('avg')])
-            for rank in ranks:
-                query = self.base_query
-                if with_rank:
-                    query = query.with_rank(rank)
-                query = query.build_query(sess)
-                query = query.group_by(PlayerGame.player)
-                if ignore_filtering():
-                    query = query.subquery()
-                else:
-                    query = query.filter(PlayerGame.game != "").filter(PlayerGame.time_in_game > 0).having(
-                        func.count(PlayerGame.player) > 5).subquery()
+        playlists = [Playlist.UNRANKED_DUELS,
+                     Playlist.UNRANKED_DOUBLES,
+                     Playlist.UNRANKED_STANDARD,
+                     Playlist.UNRANKED_CHAOS,
+                     Playlist.RANKED_DUELS,
+                     Playlist.RANKED_DOUBLES,
+                     Playlist.RANKED_SOLO_STANDARD,
+                     Playlist.RANKED_STANDARD,
+                     Playlist.RANKED_DROPSHOT,
+                     Playlist.RANKED_HOOPS,
+                     Playlist.RANKED_RUMBLE,
+                     Playlist.RANKED_SNOW_DAY]
+        playlists = [int(p.value) for p in playlists]
+        playlist_results = {}
+        for playlist in playlists:
+            results = {}
+            for column, q in zip(self.stat_list, self.stats_query):
+                column_results = []
+                # set the column result
+                self.base_query.clean().with_stat_query([PlayerGame.player, q.label('avg')])
+                for rank in ranks:
+                    query = self.base_query
+                    if with_rank:
+                        query = query.with_rank(rank)
+                    if not ignore_filtering():
+                        query.with_playlists([playlist])
+                    query = query.build_query(sess)
+                    query = query.group_by(PlayerGame.player)
+                    if ignore_filtering():
+                        query = query.subquery()
+                    else:
+                        query = query.filter(PlayerGame.game != "").filter(PlayerGame.time_in_game > 0).having(
+                            func.count(PlayerGame.player) > 5).filter(Game.playlist == 13).subquery()
 
-                result = sess.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
-                column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
-            results[column.get_field_name()] = column_results
-        return results
+                    result = sess.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
+                    column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
+                results[column.get_field_name()] = column_results
+            playlist_results[playlist] = results
+        return playlist_results
 
     def get_global_stats_by_rank(self, session, query_filter: QueryFilterBuilder, stats_query, stds_query,
-                                 player_rank=None, redis=None, ids=None):
+                                 player_rank=None, redis=None, ids=None, playlist=13):
         """
         Returns the global stats based on the rank of a player.
 
@@ -93,6 +117,11 @@ class GlobalStatWrapper(SharedStatsWrapper):
                 # Check to see if the key exists and if so load it
                 if stat_string is not None:
                     stats_dict = json.loads(stat_string)
+                    if playlist is not None:
+                        playlist = str(playlist)
+                    if playlist not in stats_dict:
+                        raise CalculatedError(404, 'Playlist does not exist in global stats')
+                    stats_dict = stats_dict[playlist]
                     global_stats = [stats_dict[stat.get_field_name()][rank_index]['mean'] for stat in self.stat_list]
                     global_stds = [stats_dict[stat.get_field_name()][rank_index]['std'] for stat in self.stat_list]
                     return global_stats, global_stds

@@ -94,7 +94,7 @@ def better_json_dumps(response: object):
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(10 * 60, calc_global_stats.s(), name='calculate global stats every 10 min')
+    sender.add_periodic_task(60 * 60 * 3, calc_global_stats.s(), name='calculate global stats every 10 min')
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
 
 

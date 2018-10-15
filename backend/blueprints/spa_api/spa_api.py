@@ -123,7 +123,11 @@ def api_get_player_play_style(id_):
         rank = int(request.args['rank'])
     else:
         rank = None
-    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank)
+    if 'playlist' in request.args:
+        playlist = request.args['playlist']
+    else:
+        playlist = 13  # standard
+    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank, playlist=playlist)
     return better_jsonify(play_style_response)
 
 
