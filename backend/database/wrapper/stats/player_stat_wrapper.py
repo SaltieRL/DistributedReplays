@@ -32,8 +32,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # this Object needs to be pooled per a session so only one is used at a time
         self.player_stats_filter = QueryFilterBuilder()
         if not ignore_filtering():
-            self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
-                3).with_safe_checking().sticky()
+            self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_safe_checking().sticky()
 
     def get_wrapped_stats(self, stats):
         zipped_stats = dict()
@@ -58,6 +57,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             PlayerGame.game != '').group_by(PlayerGame.player)
         if win is not None:
             query.filter(PlayerGame.win == win)
+
+        print(query.count())
         if query.count() < 1:
             raise CalculatedError(404, 'User does not have enough replays.')
         stats = list(query.first())
