@@ -213,7 +213,7 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
-    series = relationship("SeriesGame")
+    serieses = relationship('TournamentSeries', secondary='series_games', back_populates='games')
 
     # metadata
     version = Column(Integer)
@@ -321,7 +321,7 @@ class TournamentStage(DBObjectBase):
     __table_args_ = (UniqueConstraint(name, tournament_id, name='unique_tournament_stages'))
 
 
-class TournamentPlayers(DBObjectBase):
+class TournamentPlayer(DBObjectBase):
     __tablename__ = 'tournament_players'
     tournament_id = Column(Integer, ForeignKey('tournaments.id'), primary_key=True)
     player_id = Column(String(40), ForeignKey('players.platformid'), primary_key=True)
@@ -332,11 +332,11 @@ class TournamentSeries(DBObjectBase):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
     stage_id = Column(Integer, ForeignKey('tournament_stages.id'))
+    games = relationship('Game', secondary='series_games', back_populates='serieses')
 
 
 class SeriesGame(DBObjectBase):
     __tablename__ = 'series_games'
     series_id = Column(Integer, ForeignKey('tournament_serieses.id'), primary_key=True)
     game_hash = Column(String(40), ForeignKey('games.hash'), primary_key=True)
-
 
