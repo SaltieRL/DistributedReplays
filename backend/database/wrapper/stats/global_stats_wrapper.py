@@ -18,6 +18,20 @@ from backend.utils.checks import ignore_filtering, is_local_dev
 
 logger = logging.getLogger(__name__)
 
+GLOBAL_STATS_PLAYLISTS = [Playlist.UNRANKED_DUELS,
+                          Playlist.UNRANKED_DOUBLES,
+                          Playlist.UNRANKED_STANDARD,
+                          Playlist.UNRANKED_CHAOS,
+                          Playlist.RANKED_DUELS,
+                          Playlist.RANKED_DOUBLES,
+                          Playlist.RANKED_SOLO_STANDARD,
+                          Playlist.RANKED_STANDARD,
+                          Playlist.RANKED_DROPSHOT,
+                          Playlist.RANKED_HOOPS,
+                          Playlist.RANKED_RUMBLE,
+                          Playlist.RANKED_SNOW_DAY]
+GLOBAL_STATS_PLAYLISTS = [int(p.value) for p in GLOBAL_STATS_PLAYLISTS]
+
 
 class GlobalStatWrapper(SharedStatsWrapper):
     """
@@ -46,21 +60,8 @@ class GlobalStatWrapper(SharedStatsWrapper):
             else:
                 return float(f)
 
-        playlists = [Playlist.UNRANKED_DUELS,
-                     Playlist.UNRANKED_DOUBLES,
-                     Playlist.UNRANKED_STANDARD,
-                     Playlist.UNRANKED_CHAOS,
-                     Playlist.RANKED_DUELS,
-                     Playlist.RANKED_DOUBLES,
-                     Playlist.RANKED_SOLO_STANDARD,
-                     Playlist.RANKED_STANDARD,
-                     Playlist.RANKED_DROPSHOT,
-                     Playlist.RANKED_HOOPS,
-                     Playlist.RANKED_RUMBLE,
-                     Playlist.RANKED_SNOW_DAY]
-        playlists = [int(p.value) for p in playlists]
         playlist_results = {}
-        for playlist in playlists:
+        for playlist in GLOBAL_STATS_PLAYLISTS:
             results = {}
             for column, q in zip(self.stat_list, self.stats_query):
                 column_results = []
