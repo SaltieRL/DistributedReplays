@@ -1,27 +1,26 @@
 import {
-    IconDefinition,
     faBraille,
     faBullseye,
     faCarSide,
     faCircle,
     faFutbol,
+    faHandshake,
     faPercent,
-    faHandshake
+    IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
-import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Tab, Tabs, withWidth} from "@material-ui/core"
-import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
+import { faRocket } from "@fortawesome/free-solid-svg-icons/faRocket"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Tab, Tabs, withWidth } from "@material-ui/core"
+import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import {BasicStatsSubcategory, basicStatsSubcategoryValues} from "../../../Models/ChartData"
+import { BasicStatsSubcategory, basicStatsSubcategoryValues } from "src/Models"
 
 interface OwnProps {
     selectedTab: BasicStatsSubcategory
     handleChange: (event: unknown, selectedTab: BasicStatsSubcategory) => void
 }
 
-type Props = OwnProps
-    & WithWidth
+type Props = OwnProps & WithWidth
 
 class BasicStatsTabsComponent extends React.PureComponent<Props> {
     public render() {
@@ -37,19 +36,21 @@ class BasicStatsTabsComponent extends React.PureComponent<Props> {
         }
 
         return (
-            <Tabs value={this.props.selectedTab}
-                  onChange={this.props.handleChange}
-                  centered
-                  scrollable={isWidthDown("xs", this.props.width)}
-                  scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
+            <Tabs
+                value={this.props.selectedTab}
+                onChange={this.props.handleChange}
+                centered
+                scrollable={isWidthDown("xs", this.props.width)}
+                scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
             >
-                {basicStatsSubcategoryValues
-                    .map((subcategory: BasicStatsSubcategory) =>
-                        <Tab label={subcategory} value={subcategory} key={subcategory}
-                             icon={<FontAwesomeIcon icon={categoryToIcon[subcategory]}/>}
-                        />
-                    )
-                }
+                {basicStatsSubcategoryValues.map((subcategory: BasicStatsSubcategory) => (
+                    <Tab
+                        label={subcategory}
+                        value={subcategory}
+                        key={subcategory}
+                        icon={<FontAwesomeIcon icon={categoryToIcon[subcategory]} />}
+                    />
+                ))}
             </Tabs>
         )
     }

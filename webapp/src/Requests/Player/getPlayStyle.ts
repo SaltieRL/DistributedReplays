@@ -1,12 +1,13 @@
-import {doGet} from "../../apiHandler/apiHandler"
-import {PlayStyleResponse} from "../../Models/Player/PlayStyle"
-import {useMockData} from "../Config"
+import { PlayStyleResponse } from "src/Models"
+import { doGet } from "../../apiHandler/apiHandler"
+import { useMockData } from "../Config"
 
 export const getPlayStyle = (id: string, rank?: number): Promise<PlayStyleResponse> => {
     if (useMockData) {
         return Promise.resolve({
-                showWarning: false,
-                chartDatas: [{
+            showWarning: false,
+            chartDatas: [
+                {
                     title: "Aggressiveness",
                     chartDataPoints: [
                         {
@@ -34,9 +35,9 @@ export const getPlayStyle = (id: string, rank?: number): Promise<PlayStyleRespon
                             value: 0.4827
                         }
                     ]
-                }]
-            }
-        )
+                }
+            ]
+        })
     }
     return doGet(`/player/${id}/play_style` + (rank === undefined ? "" : `?rank=${rank}`))
 }

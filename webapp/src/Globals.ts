@@ -1,4 +1,4 @@
-import {ReplaysSearchQueryParams, stringifyReplaySearchQueryParam} from "./Models/ReplaysSearchQueryParams"
+import { ReplaysSearchQueryParams, stringifyReplaySearchQueryParam } from "./Models"
 
 export const GITHUB_LINK = "https://github.com/SaltieRL"
 export const DISCORD_LINK = "https://discord.gg/c8cArY9"
@@ -9,7 +9,7 @@ export const LOCAL_LINK = process.env.NODE_ENV === "development" ? "http://local
 export const PLAYER_PAGE_LINK = (id: string) => `/players/${id}`
 export const PLAYER_MATCH_HISTORY_PAGE_LINK = (id: string) => `/players/${id}/match_history`
 export const PLAYER_COMPARE_PAGE_LINK = "/compare"
-export const PLAYER_COMPARE_WITH_LINK = (id: string) => `/compare?ids=${id}`  // TODO: Make link generation less manual
+export const PLAYER_COMPARE_WITH_LINK = (id: string) => `/compare?ids=${id}` // TODO: Make link generation less manual
 
 export const REPLAY_PAGE_LINK = (id: string) => `/replays/${id}`
 export const REPLAYS_GROUP_PAGE_LINK = "/details" // TODO: Change this to /replay/group, handle migration.

@@ -1,9 +1,8 @@
-import {CardContent, Divider, Grid} from "@material-ui/core"
+import { CardContent, Divider, Grid } from "@material-ui/core"
 import * as React from "react"
-import {BasicStatsSubcategory} from "../../../Models/ChartData"
-import {Replay} from "../../../Models/Replay/Replay"
-import {BasicStatsCharts} from "./BasicStatsCharts"
-import {BasicStatsTabs} from "./BasicStatsTabs"
+import { BasicStatsSubcategory, Replay } from "src/Models"
+import { BasicStatsCharts } from "./BasicStatsCharts"
+import { BasicStatsTabs } from "./BasicStatsTabs"
 
 interface Props {
     replay: Replay
@@ -16,17 +15,17 @@ interface State {
 export class BasicStatsContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedTab: "Hits"}
+        this.state = { selectedTab: "Hits" }
     }
 
     public render() {
         return (
             <>
-                <Divider/>
-                <BasicStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
+                <Divider />
+                <BasicStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab} />
                 <CardContent>
                     <Grid container spacing={32}>
-                        <BasicStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab}/>
+                        <BasicStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab} />
                     </Grid>
                 </CardContent>
             </>
@@ -34,6 +33,6 @@ export class BasicStatsContent extends React.PureComponent<Props, State> {
     }
 
     private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: BasicStatsSubcategory) => {
-        this.setState({selectedTab})
+        this.setState({ selectedTab })
     }
 }

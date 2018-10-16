@@ -1,11 +1,16 @@
 import * as moment from "moment"
 import * as qs from "qs"
-import {doGet} from "../apiHandler/apiHandler"
-import {BasicStat} from "../Models/ChartData"
-import {MatchHistoryResponse} from "../Models/Player/MatchHistory"
-import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
-import {ReplaysSearchQueryParams, stringifyReplaySearchQueryParam} from "../Models/ReplaysSearchQueryParams"
-import {useMockData} from "./Config"
+import {
+    BasicStat,
+    GameMode,
+    MatchHistoryResponse,
+    parseReplay,
+    Replay,
+    ReplaysSearchQueryParams,
+    stringifyReplaySearchQueryParam
+} from "src/Models"
+import { doGet } from "../apiHandler/apiHandler"
+import { useMockData } from "./Config"
 
 export const getReplay = (id: string): Promise<Replay> => {
     if (useMockData) {
@@ -14,7 +19,7 @@ export const getReplay = (id: string): Promise<Replay> => {
             name: "Name",
             date: moment(),
             gameMode: "1's" as GameMode,
-            gameScore: {team0Score: 5, team1Score: 6},
+            gameScore: { team0Score: 5, team1Score: 6 },
             players: [
                 {
                     id: "214214124",
@@ -151,8 +156,7 @@ export const getReplay = (id: string): Promise<Replay> => {
             ]
         })
     }
-    return doGet(`/replay/${id}`)
-        .then(parseReplay)
+    return doGet(`/replay/${id}`).then(parseReplay)
 }
 
 export const getReplayBasicStats = (id: string): Promise<BasicStat[]> => {
@@ -168,17 +172,12 @@ export const getReplayViewerData = (id: string): Promise<any> => {
 }
 
 export const getReplayGroupStats = (ids: string[]): Promise<BasicStat[]> => {
-    return doGet(`/replay/group` +
-        qs.stringify({ids},
-            {arrayFormat: "repeat", addQueryPrefix: true}
-        )
-    )
+    return doGet(`/replay/group` + qs.stringify({ ids }, { arrayFormat: "repeat", addQueryPrefix: true }))
 }
 
 export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<MatchHistoryResponse> => {
-    return doGet(`/replay` + stringifyReplaySearchQueryParam(queryParams))
-        .then((data) => ({
-            ...data,
-            replays: data.replays.map(parseReplay)
-        }))
+    return doGet(`/replay` + stringifyReplaySearchQueryParam(queryParams)).then((data) => ({
+        ...data,
+        replays: data.replays.map(parseReplay)
+    }))
 }

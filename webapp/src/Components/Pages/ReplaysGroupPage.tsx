@@ -1,22 +1,21 @@
-import {Divider, Grid} from "@material-ui/core"
+import { Divider, Grid } from "@material-ui/core"
 import * as _ from "lodash"
 import * as qs from "qs"
 import * as React from "react"
-import {RouteComponentProps} from "react-router-dom"
-import {Replay} from "../../Models/Replay/Replay"
-import {getReplay} from "../../Requests/Replay"
-import {AddReplayInput} from "../ReplaysGroup/AddReplayInput"
-import {ReplayChip} from "../ReplaysGroup/ReplayChip"
-import {ReplaysGroupContent} from "../ReplaysGroup/ReplaysGroupContent"
-import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
-import {BasePage} from "./BasePage"
+import { RouteComponentProps } from "react-router-dom"
+import { Replay } from "src/Models"
+import { getReplay } from "../../Requests/Replay"
+import { AddReplayInput } from "../ReplaysGroup/AddReplayInput"
+import { ReplayChip } from "../ReplaysGroup/ReplayChip"
+import { ReplaysGroupContent } from "../ReplaysGroup/ReplaysGroupContent"
+import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
+import { BasePage } from "./BasePage"
 
 interface ReplayQueryParams {
     ids: string[]
 }
 
-type Props = RouteComponentProps<{}>
-    & WithNotifications
+type Props = RouteComponentProps<{}> & WithNotifications
 
 interface State {
     ids: string[]
@@ -27,7 +26,7 @@ interface State {
 class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {ids: [], replays: [], inputId: ""}
+        this.state = { ids: [], replays: [], inputId: "" }
     }
 
     public componentDidMount() {
@@ -47,18 +46,20 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {replays} = this.state
+        const { replays } = this.state
         const replayChips = replays.map((replay) => (
-            <ReplayChip {...replay} onDelete={() => this.handleRemoveReplay(replay.id)} key={replay.id}/>
+            <ReplayChip {...replay} onDelete={() => this.handleRemoveReplay(replay.id)} key={replay.id} />
         ))
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center">
                     <Grid item xs={12} container justify="center">
                         <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
-                            <AddReplayInput onSubmit={this.attemptToAddReplay}
-                                            value={this.state.inputId}
-                                            onChange={this.handleInputChange}/>
+                            <AddReplayInput
+                                onSubmit={this.attemptToAddReplay}
+                                value={this.state.inputId}
+                                onChange={this.handleInputChange}
+                            />
                         </Grid>
                     </Grid>
                     <Grid item xs={12} sm={11} md={10} lg={9} xl={8} container spacing={8}>
@@ -68,9 +69,12 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         ))}
                     </Grid>
-                    <Grid item xs={12}> <Divider/> </Grid>
                     <Grid item xs={12}>
-                        <ReplaysGroupContent replays={replays}/>
+                        {" "}
+                        <Divider />{" "}
+                    </Grid>
+                    <Grid item xs={12}>
+                        <ReplaysGroupContent replays={replays} />
                     </Grid>
                 </Grid>
             </BasePage>
@@ -80,29 +84,22 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     private readonly readQueryParams = () => {
         const queryString = this.props.location.search
         if (queryString !== "") {
-            const queryParams: ReplayQueryParams = qs.parse(
-                this.props.location.search,
-                {ignoreQueryPrefix: true}
-            )
+            const queryParams: ReplayQueryParams = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
             if (queryParams.ids) {
                 const ids = Array.isArray(queryParams.ids) ? queryParams.ids : [queryParams.ids]
-                this.setState({ids: _.uniq(ids)})
+                this.setState({ ids: _.uniq(ids) })
             }
         }
     }
 
     // TODO: Compartmentalise query params, data retrieval
     private readonly setQueryParams = () => {
-        const queryString = qs.stringify(
-            {ids: this.state.ids},
-            {addQueryPrefix: true, indices: false}
-        )
-        this.props.history.replace({search: queryString})
+        const queryString = qs.stringify({ ids: this.state.ids }, { addQueryPrefix: true, indices: false })
+        this.props.history.replace({ search: queryString })
     }
 
     private readonly getReplays = (): Promise<void> => {
-        return Promise.all(this.state.ids.map((id) => getReplay(id)))
-            .then((replays) => this.setState({replays}))
+        return Promise.all(this.state.ids.map((id) => getReplay(id))).then((replays) => this.setState({ replays }))
     }
 
     private readonly handleRemoveReplay = (id: string) => {
@@ -113,12 +110,12 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                 replays: removeIndexFromArray(this.state.replays!, index)
             })
         } catch {
-            this.props.showNotification({variant: "error", message: "Error removing replay", timeout: 2000})
+            this.props.showNotification({ variant: "error", message: "Error removing replay", timeout: 2000 })
         }
     }
 
     private readonly handleAddReplay = (replay: Replay) => {
-        const {ids, replays} = this.state
+        const { ids, replays } = this.state
         this.setState({
             ids: [...ids, replay.id],
             replays: [...replays, replay]
@@ -126,11 +123,11 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-        this.setState({inputId: event.target.value})
+        this.setState({ inputId: event.target.value })
     }
 
     private readonly attemptToAddReplay = () => {
-        const {inputId, ids} = this.state
+        const { inputId, ids } = this.state
         if (inputId === "") {
             // TODO: Make input red to gain user's attention?
             return
@@ -146,7 +143,7 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                     })
                 })
                 .then(this.handleAddReplay)
-                .then(() => this.setState({inputId: ""}))
+                .then(() => this.setState({ inputId: "" }))
                 .catch((e: any) => {
                     console.log(e) // TypeError expected here when above .catch catches something.
                     // TODO: Figure out what the right thing to do here is.

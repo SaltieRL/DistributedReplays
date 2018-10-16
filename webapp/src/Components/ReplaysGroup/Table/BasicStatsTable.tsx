@@ -1,7 +1,7 @@
-import {Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
+import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
 import * as React from "react"
-import {BasicStat, BasicStatsSubcategory} from "../../../Models/ChartData"
-import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
+import { BasicStat, BasicStatsSubcategory } from "src/Models"
+import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
 
 interface StatMetadata {
     name: string
@@ -35,27 +35,24 @@ interface State {
 export class BasicStatsTable extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {currentSort: {statName: "total_hits", direction: "desc"}}
+        this.state = { currentSort: { statName: "total_hits", direction: "desc" } }
     }
 
     public render() {
-        const stats: StatMetadata[] = this.props.basicStats.map((basicStat) => (
-            {
-                name: basicStat.title,
-                category: basicStat.subcategory
-            }
-        ))
-        const playerNames: string[] = this.props.basicStats[0].chartDataPoints
-            .map((statDataPoint) => statDataPoint.name)
+        const stats: StatMetadata[] = this.props.basicStats.map((basicStat) => ({
+            name: basicStat.title,
+            category: basicStat.subcategory
+        }))
+        const playerNames: string[] = this.props.basicStats[0].chartDataPoints.map(
+            (statDataPoint) => statDataPoint.name
+        )
 
         const playerStats: PlayerStat[] = playerNames.map((playerName) => {
             return {
                 playerName,
                 stats: this.props.basicStats.map((basicStat) => ({
                     statName: basicStat.title,
-                    value: basicStat.chartDataPoints
-                        .find((statDataPoint) => statDataPoint.name === playerName)!
-                        .value,
+                    value: basicStat.chartDataPoints.find((statDataPoint) => statDataPoint.name === playerName)!.value,
                     isMax: false
                 }))
             }
@@ -102,11 +99,7 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
                             <TableCell>{playerStat.playerName}</TableCell>
                             {playerStat.stats.map((stat, i) => (
                                 <TableCell key={i} numeric>
-                                    {stat.isMax ?
-                                        <b>{stat.value}</b>
-                                        :
-                                        stat.value
-                                    }
+                                    {stat.isMax ? <b>{stat.value}</b> : stat.value}
                                 </TableCell>
                             ))}
                         </TableRow>
@@ -118,11 +111,13 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
 
     // Sorts playerStats inplace
     private readonly sortPlayerStats = (playerStats: PlayerStat[]): void => {
-        const {statName, direction} = this.state.currentSort!
+        const { statName, direction } = this.state.currentSort!
 
         playerStats.sort((playerStatA, playerStatB) => {
-            return playerStatA.stats.find((stat) => stat.statName === statName)!.value
-                - playerStatB.stats.find((stat) => stat.statName === statName)!.value
+            return (
+                playerStatA.stats.find((stat) => stat.statName === statName)!.value -
+                playerStatB.stats.find((stat) => stat.statName === statName)!.value
+            )
         })
         if (direction !== "asc") {
             playerStats.reverse()

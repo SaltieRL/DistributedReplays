@@ -1,20 +1,21 @@
-import {AppError} from "../Models/Error"
-import {baseUrl} from "../Requests/Config"
+import { AppError } from "src/Models"
+import { baseUrl } from "../Requests/Config"
 
 export const doGet = (destination: string): Promise<any> => {
     return fetch(baseUrl + destination, {
         method: "GET",
         headers: {
-            "Accept": "application/json",
+            Accept: "application/json",
             "Content-Type": "application/json"
         }
     }).then((response) => {
         if (!response.ok) {
             const code = response.status
             let message: string = response.statusText
-            return response.json()
+            return response
+                .json()
                 .catch(() => {
-                    throw {code, message} as AppError
+                    throw { code, message } as AppError
                 })
                 .then((responseJson: any) => {
                     if (responseJson.message) {
@@ -22,7 +23,7 @@ export const doGet = (destination: string): Promise<any> => {
                     }
                 })
                 .then(() => {
-                    throw {code, message} as AppError
+                    throw { code, message } as AppError
                 })
         } else {
             return response.json()
@@ -36,7 +37,7 @@ export const doPost = (destination: string, body: BodyInit): Promise<any> => {
         body
     }).then((response) => {
         if (!response.ok) {
-            throw {code: response.status, message: response.statusText} as AppError
+            throw { code: response.status, message: response.statusText } as AppError
         }
         return response
     })
