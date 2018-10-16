@@ -32,7 +32,9 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
             <PlaylistSelect selectedPlaylists={queryParams.playlists || []}
                             handleChange={this.handlePlaylistsChange}
                             inputLabel="Playlist"
-                            helperText="Select playlist to filter by"/>
+                            helperText="Select playlist to filter by"
+                            multiple={true}
+            />
 
         const dateAfterPicker =
             <ClearableDatePicker

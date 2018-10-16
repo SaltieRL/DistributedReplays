@@ -8,6 +8,7 @@ import {PlayerPlayStyleChart} from "./PlayerPlayStyleChart"
 
 interface OwnProps {
     player: Player
+    playlist?: number
 }
 
 type Props = OwnProps
@@ -16,17 +17,22 @@ type Props = OwnProps
 interface State {
     data?: PlayStyleResponse
     reloadSignal: boolean
+    playlist?: number
 }
 
 class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false}
+        this.state = {reloadSignal: false, playlist: this.props.playlist}
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>) {
         if (prevProps.player.id !== this.props.player.id) {
             this.triggerReload()
+        }
+        if (prevProps.playlist !== this.props.playlist) {
+            this.triggerReload()
+            console.log(prevProps, this.props)
         }
     }
 
@@ -73,7 +79,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayStyles = (): Promise<void> => {
-        return getPlayStyle(this.props.player.id)
+        return getPlayStyle(this.props.player.id, undefined, this.props.playlist)
             .then((data) => this.setState({data}))
     }
 

@@ -20,6 +20,7 @@ interface PlaylistMetadata {
     current: boolean
     ranked: boolean
     standardMode: boolean
+    publicMode: boolean
 }
 
 const playlists: PlaylistMetadata[] = [
@@ -28,140 +29,160 @@ const playlists: PlaylistMetadata[] = [
         value: 1,
         current: true,
         ranked: false,
-        standardMode: true
+        standardMode: true,
+        publicMode: true
     },
     {
         name: "Doubles (U)",
         value: 2,
         current: true,
         ranked: false,
-        standardMode: true
+        standardMode: true,
+        publicMode: true
     },
     {
         name: "Standard (U)",
         value: 3,
         current: true,
         ranked: false,
-        standardMode: true
+        standardMode: true,
+        publicMode: true
     },
     {
         name: "Chaos (U)",
         value: 4,
         current: true,
         ranked: false,
-        standardMode: true
+        standardMode: true,
+        publicMode: true
     },
     {
         name: "Custom",
         value: 6,
         current: true,
         ranked: false,
-        standardMode: false
+        standardMode: false,
+        publicMode: false
     },
     {
         name: "Offline",
         value: 8,
         current: true,
         ranked: false,
-        standardMode: false
+        standardMode: false,
+        publicMode: false
     },
     {
         name: "Duels",
         value: 10,
         current: true,
         ranked: true,
-        standardMode: true
+        standardMode: true,
+        publicMode: true
     },
     {
         name: "Doubles",
         value: 11,
         current: true,
         ranked: true,
-        standardMode: true
+        standardMode: true,
+        publicMode: true
     },
     {
         name: "Solo Standard",
         value: 12,
         current: true,
         ranked: true,
-        standardMode: true
+        standardMode: true,
+        publicMode: true
     },
     {
         name: "Standard",
         value: 13,
         current: true,
         ranked: true,
-        standardMode: true
+        standardMode: true,
+        publicMode: true
     },
     {
         name: "Snow Day (U)",
         value: 15,
         current: false,
         ranked: false,
-        standardMode: false
+        standardMode: false,
+        publicMode: false
     },
     {
         name: "Rocket Labs",
         value: 16,
         current: false,
         ranked: false,
-        standardMode: false
+        standardMode: false,
+        publicMode: false
     },
     {
         name: "Hoops (U)",
         value: 17,
         current: false,
         ranked: false,
-        standardMode: false
+        standardMode: false,
+        publicMode: false
     },
     {
         name: "Rumble (U)",
         value: 18,
         current: false,
         ranked: false,
-        standardMode: false
+        standardMode: false,
+        publicMode: false
     },
     {
         name: "Dropshot (U)",
         value: 23,
         current: false,
         ranked: false,
-        standardMode: false
+        standardMode: false,
+        publicMode: false
     },
     {
         name: "Anniversary",
         value: 25,
         current: false,
         ranked: false,
-        standardMode: false
+        standardMode: false,
+        publicMode: false
     },
     {
         name: "Hoops",
         value: 27,
         current: true,
         ranked: true,
-        standardMode: false
+        standardMode: false,
+        publicMode: true
     },
     {
         name: "Rumble",
         value: 28,
         current: true,
         ranked: true,
-        standardMode: false
+        standardMode: false,
+        publicMode: true
     },
     {
         name: "Dropshot",
         value: 29,
         current: true,
         ranked: true,
-        standardMode: false
+        standardMode: false,
+        publicMode: true
     },
     {
         name: "Snow Day",
         value: 30,
         current: true,
         ranked: true,
-        standardMode: false
+        standardMode: false,
+        publicMode: true
     }
 ]
 
@@ -170,6 +191,9 @@ interface OwnProps {
     handleChange: React.ChangeEventHandler<HTMLSelectElement>
     helperText: string
     inputLabel: string
+    justDropdown?: boolean
+    justCurrentPlaylists?: boolean
+    multiple: boolean
 }
 
 type Props = OwnProps
@@ -179,16 +203,22 @@ interface State {
     filterCurrent: boolean
     filterRanked: boolean
     filterStandardMode: boolean
+    filterPublic: boolean // Just playlists that exist on play online menu, in which we can get consistent data
     optionsExpanded: boolean
 }
 
 class PlaylistSelectComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
+        let shouldFilterPublic = false
+        if (props.justCurrentPlaylists) {
+            shouldFilterPublic = true
+        }
         this.state = {
             filterCurrent: true,
             filterRanked: false,
             filterStandardMode: false,
+            filterPublic: shouldFilterPublic,
             optionsExpanded: false
         }
     }
@@ -212,14 +242,15 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
             <FormControl className={classes.formControl}>
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
-                    multiple
+                    multiple={this.props.multiple}
                     value={selectedPlaylists}
                     onChange={handleChange}
                     autoWidth
                     input={
+
                         <Input
                             endAdornment={
-                                selectedPlaylists.length > 0 &&
+                                 this.props.multiple && selectedPlaylists.length > 0 &&
                                 <IconButton onClick={this.clearSelection}>
                                     <Tooltip title="Clear selection">
                                         <Clear/>
@@ -272,35 +303,45 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 label="Show only ranked playlists"
             />
 
-        return (
-            <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
-                <ExpansionPanelSummary
-                    classes={classes}
-                    expandIcon={
-                        <IconButton onClick={this.handleExpandedChange}>
-                            <Tooltip title="Playlist options">
-                                <ExpandMore/>
-                            </Tooltip>
-                        </IconButton>
-                    }
-                >
-                    {playlistsMultiSelect}
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.panelDetails}>
-                    {filterCurrentCheckbox}
-                    {filterStandardCheckbox}
-                    {filterRankedCheckbox}
-                </ExpansionPanelDetails>
-            </ExpansionPanel>
+        return (<>
+
+                {!this.props.justDropdown &&
+                <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
+                    <ExpansionPanelSummary
+                        classes={classes}
+                        expandIcon={
+                            <IconButton onClick={this.handleExpandedChange}>
+                                <Tooltip title="Playlist options">
+                                    <ExpandMore/>
+                                </Tooltip>
+                            </IconButton>
+                        }
+                    >
+                        {playlistsMultiSelect}
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails className={classes.panelDetails}>
+                        {filterCurrentCheckbox}
+                        {filterStandardCheckbox}
+                        {filterRankedCheckbox}
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
+
+                }
+                {
+                    this.props.justDropdown && <>{playlistsMultiSelect}</>
+                }
+            </>
+
         )
     }
 
     private readonly getFilteredPlaylists = (): PlaylistMetadata[] => {
-        const {filterCurrent, filterRanked, filterStandardMode} = this.state
+        const {filterCurrent, filterRanked, filterStandardMode, filterPublic} = this.state
         return playlists
             .filter((playlistMetadata) => !filterCurrent || playlistMetadata.current)
             .filter((playlistMetadata) => !filterRanked || playlistMetadata.ranked)
             .filter((playlistMetadata) => !filterStandardMode || playlistMetadata.standardMode)
+            .filter((playlistMetadata) => !filterPublic || playlistMetadata.publicMode)
     }
 
     private readonly handleCheckboxChange = (filterField: keyof State) =>
