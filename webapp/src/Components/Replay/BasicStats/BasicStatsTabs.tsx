@@ -1,12 +1,12 @@
 import {
-    IconDefinition,
     faBraille,
     faBullseye,
     faCarSide,
     faCircle,
     faFutbol,
+    faHandshake,
     faPercent,
-    faHandshake
+    IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
 import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"

@@ -1,4 +1,5 @@
 import {
+    Checkbox,
     createStyles,
     ExpansionPanel,
     ExpansionPanelDetails,
@@ -25,10 +26,16 @@ interface DataProps {
     replay: Replay
     header?: false
     useBoxScore?: boolean
+    selectable?: boolean
+    onChecked?: (id: string, checked: boolean) => void
 }
 
 interface HeaderProps {
     header: true
+}
+
+interface State {
+    selected: boolean
 }
 
 type OwnProps = DataProps | HeaderProps
@@ -37,7 +44,12 @@ type Props = OwnProps
     & WithStyles<typeof styles>
     & WithWidth
 
-class ReplayDisplayRowComponent extends React.PureComponent<Props> {
+class ReplayDisplayRowComponent extends React.PureComponent<Props, State> {
+    constructor(props: Props) {
+        super(props)
+        this.state = {selected: false}
+    }
+
     public render() {
         const {classes, width} = this.props
         const typographyVariant = !this.props.header ? "subheading" : "title"
@@ -68,54 +80,73 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                 </IconButton>
         }
 
+        const innard = <Grid container style={{
+            padding: (!this.props.header && this.props.selectable) ? "10px" : "",
+            backgroundColor: this.state.selected ? "#c2dbff" : "#fff"
+        }}>
+            {(!this.props.header && this.props.selectable) &&
+            <Grid item xs={1} zeroMinWidth>
+                <Checkbox style={{padding: 0}} onChange={this.toggleSelect} color={"secondary"}/>
+            </Grid>
+            }
+
+            <Grid item xs={(!this.props.header && this.props.selectable) ? 2 : 3} zeroMinWidth>
+                <Typography variant={typographyVariant} noWrap>
+                    {replayName}
+                </Typography>
+            </Grid>
+            <Grid item xs={3}>
+                {replayDate}
+            </Grid>
+            <Grid item xs={3} zeroMinWidth>
+                <Typography variant={typographyVariant} noWrap>
+                    {replayGameMode}
+                </Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography variant={typographyVariant}>
+                    {replayScore}
+                </Typography>
+            </Grid>
+            <Grid item xs={1}>
+                {chartIcon}
+            </Grid>
+        </Grid>
+
         const expansionPanelSummary =
             <ExpansionPanelSummary
                 expandIcon={!this.props.header ? <ExpandMore/> : undefined}
                 className={!this.props.header ? undefined : classes.notButton}
             >
-                <Grid container>
-                    <Grid item xs={3} zeroMinWidth>
-                        <Typography variant={typographyVariant} noWrap>
-                            {replayName}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                        {replayDate}
-                    </Grid>
-                    <Grid item xs={3} zeroMinWidth>
-                        <Typography variant={typographyVariant} noWrap>
-                            {replayGameMode}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayScore}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                        {chartIcon}
-                    </Grid>
-                </Grid>
+                {innard}
             </ExpansionPanelSummary>
 
         return (
             <>
-                {!this.props.header ?
-                    <ExpansionPanel>
-                        {expansionPanelSummary}
-                        <ExpansionPanelDetails className={classes.panelDetails}>
-                            {!this.props.useBoxScore ?
-                                <ReplayChart replay={this.props.replay}/>
-                                :
-                                <ReplayBoxScore replay={this.props.replay}/>
-                            }
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                    :
-                    expansionPanelSummary
+                {!this.props.header && !this.props.selectable &&
+                <ExpansionPanel>
+                    {expansionPanelSummary}
+                    <ExpansionPanelDetails className={classes.panelDetails}>
+                        {!this.props.useBoxScore ?
+                            <ReplayChart replay={this.props.replay}/>
+                            :
+                            <ReplayBoxScore replay={this.props.replay}/>
+                        }
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
                 }
+                {(!this.props.header && this.props.selectable) && innard}
             </>
         )
+    }
+
+    private readonly toggleSelect = (event: object, checked: boolean) => {
+        this.setState({selected: checked})
+        if (!this.props.header) {
+            if (this.props.onChecked) {
+                this.props.onChecked(this.props.replay.id, checked)
+            }
+        }
     }
 }
 
