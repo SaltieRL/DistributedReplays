@@ -1,20 +1,19 @@
-import {faCalculator, faSearch} from "@fortawesome/free-solid-svg-icons"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {IconButton, Paper, TextField} from "@material-ui/core"
+import { faCalculator, faSearch } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { IconButton, Paper, TextField } from "@material-ui/core"
 import * as React from "react"
-import {Redirect} from "react-router-dom"
-import {PLAYER_PAGE_LINK} from "../../Globals"
-import {AppError} from "../../Models/Error"
-import {resolvePlayerNameOrId} from "../../Requests/Player/resolvePlayerNameOrId"
-import {WithNotifications, withNotifications} from "./Notification/NotificationUtils"
+import { Redirect } from "react-router-dom"
+import { AppError } from "src/Models"
+import { PLAYER_PAGE_LINK } from "../../Globals"
+import { resolvePlayerNameOrId } from "../../Requests/Player/resolvePlayerNameOrId"
+import { WithNotifications, withNotifications } from "./Notification/NotificationUtils"
 
 interface OwnProps {
     usePaper: boolean
     useCalculatorIcon?: boolean
 }
 
-type Props = OwnProps
-    & WithNotifications
+type Props = OwnProps & WithNotifications
 
 interface State {
     enteredText: string
@@ -30,14 +29,15 @@ class SearchComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const searchButton =
+        const searchButton = (
             <IconButton aria-label="Search" onClick={this.onSubmit}>
-                <FontAwesomeIcon icon={this.props.useCalculatorIcon ? faCalculator : faSearch}/>
+                <FontAwesomeIcon icon={this.props.useCalculatorIcon ? faCalculator : faSearch} />
             </IconButton>
+        )
 
-        const inputField =
+        const inputField = (
             <>
-                <form onSubmit={this.onSubmit} style={{margin: "auto 16px", width: "100%"}}>
+                <form onSubmit={this.onSubmit} style={{ margin: "auto 16px", width: "100%" }}>
                     <TextField
                         name="name"
                         type="text"
@@ -45,11 +45,12 @@ class SearchComponent extends React.PureComponent<Props, State> {
                         onChange={this.handleChange}
                         value={this.state.enteredText}
                         fullWidth
-                        InputProps={{disableUnderline: this.props.usePaper, endAdornment: searchButton}}
+                        InputProps={{ disableUnderline: this.props.usePaper, endAdornment: searchButton }}
                         required
                     />
                 </form>
             </>
+        )
 
         const containerStyle: React.CSSProperties = {
             display: "flex",
@@ -60,34 +61,30 @@ class SearchComponent extends React.PureComponent<Props, State> {
 
         return (
             <>
-                {this.props.usePaper ?
-                    <Paper style={containerStyle}>
-                        {inputField}
-                    </Paper>
-                    :
-                    <div style={containerStyle}>
-                        {inputField}
-                    </div>
-                }
-                {this.state.resolvedId &&
-                <Redirect to={PLAYER_PAGE_LINK(this.state.resolvedId)}/>
-                }
+                {this.props.usePaper ? (
+                    <Paper style={containerStyle}>{inputField}</Paper>
+                ) : (
+                    <div style={containerStyle}>{inputField}</div>
+                )}
+                {this.state.resolvedId && <Redirect to={PLAYER_PAGE_LINK(this.state.resolvedId)} />}
             </>
         )
     }
 
     private readonly handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-        this.setState({enteredText: e.target.value})
+        this.setState({ enteredText: e.target.value })
     }
 
     private readonly onSubmit: React.FormEventHandler = (e) => {
         e.preventDefault()
         resolvePlayerNameOrId(this.state.enteredText)
-            .then((resolvedId) => this.setState({resolvedId}))
-            .catch((appError: AppError) => this.props.showNotification({
-                variant: "appError",
-                appError
-            }))
+            .then((resolvedId) => this.setState({ resolvedId }))
+            .catch((appError: AppError) =>
+                this.props.showNotification({
+                    variant: "appError",
+                    appError
+                })
+            )
     }
 }
 

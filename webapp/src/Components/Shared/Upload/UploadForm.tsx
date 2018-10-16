@@ -14,14 +14,13 @@ import {
 import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
-import {DropFilesEventHandler} from "react-dropzone"
-import {uploadReplays} from "../../../Requests/Global"
-import {WithNotifications, withNotifications} from "../Notification/NotificationUtils"
-import {BakkesModAd} from "./BakkesModAd"
-import {UploadDropzone} from "./UploadDropzone"
+import { DropFilesEventHandler } from "react-dropzone"
+import { uploadReplays } from "../../../Requests/Global"
+import { WithNotifications, withNotifications } from "../Notification/NotificationUtils"
+import { BakkesModAd } from "./BakkesModAd"
+import { UploadDropzone } from "./UploadDropzone"
 
-type Props = WithStyles<typeof styles>
-    & WithNotifications
+type Props = WithStyles<typeof styles> & WithNotifications
 
 interface State {
     files: File[]
@@ -32,73 +31,73 @@ interface State {
 class UploadFormComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {files: [], rejected: []}
+        this.state = { files: [], rejected: [] }
     }
 
     public render() {
-        const {classes} = this.props
+        const { classes } = this.props
         const hasFilesSelected = this.state.files.length !== 0
         return (
             <>
                 <Card>
-                    <CardHeader title={"Upload Replays"}/>
-                    {this.state.uploadingStage !== "pressedUpload" ?
+                    <CardHeader title={"Upload Replays"} />
+                    {this.state.uploadingStage !== "pressedUpload" ? (
                         <>
                             <CardContent>
-                                <BakkesModAd/>
-                                <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
-                                {this.state.rejected.length !== 0 &&
-                                <Typography color="error">
-                                    {this.state.rejected.length} file(s) were not selected as they do not end in
-                                    ".replay".
-                                </Typography>
-                                }
+                                <BakkesModAd />
+                                <UploadDropzone onDrop={this.handleDrop} files={this.state.files} />
+                                {this.state.rejected.length !== 0 && (
+                                    <Typography color="error">
+                                        {this.state.rejected.length} file(s) were not selected as they do not end in
+                                        ".replay".
+                                    </Typography>
+                                )}
                             </CardContent>
-                            < CardActions>
-                                < Button variant="outlined"
-                                         onClick={this.clearFiles}
-                                         disabled={!hasFilesSelected}
-                                >
-                                    <Clear className={classes.leftIcon}/>
+                            <CardActions>
+                                <Button variant="outlined" onClick={this.clearFiles} disabled={!hasFilesSelected}>
+                                    <Clear className={classes.leftIcon} />
                                     Clear
                                 </Button>
 
-                                <Button variant="contained"
-                                        color="secondary"
-                                        onClick={this.handleUpload}
-                                        disabled={!hasFilesSelected}
-                                        className={classes.uploadButton}
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={this.handleUpload}
+                                    disabled={!hasFilesSelected}
+                                    className={classes.uploadButton}
                                 >
-                                    <CloudUpload className={classes.leftIcon}/>
+                                    <CloudUpload className={classes.leftIcon} />
                                     Upload
                                 </Button>
                             </CardActions>
                         </>
-                        :
-                        <div style={{margin: "auto", textAlign: "center", padding: 20}}>
-                            <CircularProgress/>
+                    ) : (
+                        <div style={{ margin: "auto", textAlign: "center", padding: 20 }}>
+                            <CircularProgress />
                         </div>
-                    }
+                    )}
                 </Card>
             </>
         )
     }
     private readonly handleUpload = () => {
-        this.setState({uploadingStage: "pressedUpload"})
+        this.setState({ uploadingStage: "pressedUpload" })
         uploadReplays(this.state.files)
             .then(this.clearFiles)
             .then(() => {
-                this.setState({uploadingStage: "uploaded"})
+                this.setState({ uploadingStage: "uploaded" })
                 this.props.showNotification({
                     variant: "success",
                     message: "Successfully uploaded replays",
                     timeout: 5000
                 })
             })
-            .catch(() => this.props.showNotification({
-                variant: "error",
-                message: "Could not upload replays."
-            }))
+            .catch(() =>
+                this.props.showNotification({
+                    variant: "error",
+                    message: "Could not upload replays."
+                })
+            )
     }
 
     private readonly handleDrop: DropFilesEventHandler = (accepted, rejected) => {
@@ -109,17 +108,18 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly clearFiles = () => {
-        this.setState({files: [], rejected: []})
+        this.setState({ files: [], rejected: [] })
     }
 }
 
-const styles = (theme: Theme) => createStyles({
-    leftIcon: {
-        marginRight: theme.spacing.unit
-    },
-    uploadButton: {
-        marginLeft: "auto"
-    }
-})
+const styles = (theme: Theme) =>
+    createStyles({
+        leftIcon: {
+            marginRight: theme.spacing.unit
+        },
+        uploadButton: {
+            marginLeft: "auto"
+        }
+    })
 
 export const UploadForm = withStyles(styles)(withNotifications()(UploadFormComponent))

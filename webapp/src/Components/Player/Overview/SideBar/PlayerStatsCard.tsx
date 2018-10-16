@@ -11,9 +11,10 @@ import {
 } from "@material-ui/core"
 import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import * as React from "react"
-import {getStats} from "../../../../Requests/Player/getStats"
-import {roundNumberToMaxDP} from "../../../../Utils/String"
-import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
+import { Player } from "src/Models"
+import { getStats } from "../../../../Requests/Player/getStats"
+import { roundNumberToMaxDP } from "../../../../Utils/String"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 
 interface CarStat {
     carName: string
@@ -28,8 +29,7 @@ interface OwnProps {
     player: Player
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 interface State {
     playerStats?: PlayerStats
@@ -39,7 +39,7 @@ interface State {
 class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false}
+        this.state = { reloadSignal: false }
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>): void {
@@ -49,38 +49,34 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {classes} = this.props
+        const { classes } = this.props
 
         return (
             <Card>
-                <CardHeader title="Stats"/>
-                <Divider/>
+                <CardHeader title="Stats" />
+                <Divider />
                 <CardContent>
                     <LoadableWrapper load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
-                        {this.state.playerStats &&
-                        <Grid container alignItems="center" justify="space-around" spacing={8}>
-                            <Grid item xs="auto">
-                                <DirectionsCar/>
-                            </Grid>
-                            <Grid item xs="auto">
-                                <Typography variant="subheading">
-                                    favourite car
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={3} container direction="column" alignItems="center">
-                                <Grid item>
-                                    <Typography align="center">
-                                        {this.state.playerStats.car.carName}
-                                    </Typography>
+                        {this.state.playerStats && (
+                            <Grid container alignItems="center" justify="space-around" spacing={8}>
+                                <Grid item xs="auto">
+                                    <DirectionsCar />
                                 </Grid>
-                                <Grid item>
-                                    <Typography className={classes.percentage}>
-                                        {roundNumberToMaxDP(this.state.playerStats.car.carPercentage * 100, 1)}%
-                                    </Typography>
+                                <Grid item xs="auto">
+                                    <Typography variant="subheading">favourite car</Typography>
+                                </Grid>
+                                <Grid item xs={3} container direction="column" alignItems="center">
+                                    <Grid item>
+                                        <Typography align="center">{this.state.playerStats.car.carName}</Typography>
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography className={classes.percentage}>
+                                            {roundNumberToMaxDP(this.state.playerStats.car.carPercentage * 100, 1)}%
+                                        </Typography>
+                                    </Grid>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                        }
+                        )}
                     </LoadableWrapper>
                 </CardContent>
             </Card>
@@ -88,12 +84,11 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerProfileStats = (): Promise<void> => {
-        return getStats(this.props.player.id)
-            .then((playerStats) => this.setState({playerStats}))
+        return getStats(this.props.player.id).then((playerStats) => this.setState({ playerStats }))
     }
 
     private readonly triggerReload = () => {
-        this.setState({reloadSignal: !this.state.reloadSignal})
+        this.setState({ reloadSignal: !this.state.reloadSignal })
     }
 }
 

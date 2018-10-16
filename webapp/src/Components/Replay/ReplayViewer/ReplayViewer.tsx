@@ -1,8 +1,8 @@
-import {Grid, Typography} from "@material-ui/core"
+import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import {Replay} from "../../../Models/Replay/Replay"
-import {getReplayViewerData} from "../../../Requests/Replay"
-import {ThreeScene} from "./ThreeScene"
+import { Replay } from "src/Models"
+import { getReplayViewerData } from "../../../Requests/Replay"
+import { ThreeScene } from "./ThreeScene"
 
 interface OwnProps {
     replay: Replay
@@ -11,9 +11,9 @@ interface OwnProps {
 type Props = OwnProps
 
 interface State {
-    replayData?: any,
-    currentFrame: number,
-    gameTime: number,
+    replayData?: any
+    currentFrame: number
+    gameTime: number
     play: boolean
 }
 
@@ -36,22 +36,13 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         return (
             <Grid container spacing={24}>
                 <Grid item xs={12}>
-                    <Typography>
-                        Replay Viewer
-                    </Typography>
+                    <Typography>Replay Viewer</Typography>
                 </Grid>
                 <Grid item xs={8}>
-                    {
-                        !this.state.replayData &&
-                        <Typography>Loading...</Typography>
-                    }
-                    {
-                        this.state.replayData &&
-                        <ThreeScene
-                            replayData={this.state.replayData}
-                            frame={this.state.currentFrame}
-                        />
-                    }
+                    {!this.state.replayData && <Typography>Loading...</Typography>}
+                    {this.state.replayData && (
+                        <ThreeScene replayData={this.state.replayData} frame={this.state.currentFrame} />
+                    )}
                 </Grid>
                 <Grid item xs={4}>
                     <Typography>Playback Controls</Typography>
@@ -64,37 +55,28 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                 </Grid>
                 <Grid item xs={6}>
                     <label>Frame:</label>
-                    <input type="number" value={this.state.currentFrame} onChange={this.setCurrentFrame}/>
+                    <input type="number" value={this.state.currentFrame} onChange={this.setCurrentFrame} />
                 </Grid>
                 <Grid item xs={6}>
                     <Typography>
                         Ball Position:
-                        {
-                            this.state.replayData &&
-                            this.state.replayData.ball[this.state.currentFrame][0]
-                        },
-                        {
-                            this.state.replayData &&
-                            this.state.replayData.ball[this.state.currentFrame][1]
-                        },
-                        {
-                            this.state.replayData &&
-                            this.state.replayData.ball[this.state.currentFrame][2]
-                        }
+                        {this.state.replayData && this.state.replayData.ball[this.state.currentFrame][0]},
+                        {this.state.replayData && this.state.replayData.ball[this.state.currentFrame][1]},
+                        {this.state.replayData && this.state.replayData.ball[this.state.currentFrame][2]}
                     </Typography>
                 </Grid>
             </Grid>
         )
     }
 
-    private readonly getReplayPositions = async() => {
+    private readonly getReplayPositions = async () => {
         const data: any = await getReplayViewerData(this.props.replay.id)
-        this.setState({replayData: data})
+        this.setState({ replayData: data })
     }
 
     private readonly setCurrentFrame: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const value: number = parseInt(event.target.value, 10)
-        this.setState({currentFrame: value})
+        this.setState({ currentFrame: value })
         this.updateGameTime()
     }
 
@@ -102,26 +84,26 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         // Update game time
         const frame = this.state.replayData.frames[this.state.currentFrame]
         const time: number = parseFloat(frame[1])
-        this.setState({gameTime: time})
+        this.setState({ gameTime: time })
     }
 
     private readonly startPlayback = () => {
         if (!this.state.play) {
-            this.setState({play: true})
+            this.setState({ play: true })
             setTimeout(() => this.playLoop(), 0)
         }
     }
 
     private readonly stopPlayback = () => {
-        this.setState({play: false})
+        this.setState({ play: false })
     }
 
     private readonly playLoop = () => {
         if (this.state.play) {
             if (this.state.currentFrame === this.state.replayData.frames.length) {
-                this.setState({play: false})
+                this.setState({ play: false })
             }
-            this.setState({currentFrame: this.state.currentFrame + 1})
+            this.setState({ currentFrame: this.state.currentFrame + 1 })
             this.updateGameTime()
             const frame = this.state.replayData.frames[this.state.currentFrame]
             const delta: number = parseFloat(frame[0])

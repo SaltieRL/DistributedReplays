@@ -1,11 +1,18 @@
 import {
     Checkbox,
-    createStyles, ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary,
-    FormControl, FormControlLabel,
-    FormHelperText, IconButton, Input,
+    createStyles,
+    ExpansionPanel,
+    ExpansionPanelDetails,
+    ExpansionPanelSummary,
+    FormControl,
+    FormControlLabel,
+    FormHelperText,
+    IconButton,
+    Input,
     InputLabel,
     MenuItem,
-    Select, Tooltip,
+    Select,
+    Tooltip,
     WithStyles,
     withStyles
 } from "@material-ui/core"
@@ -172,8 +179,7 @@ interface OwnProps {
     inputLabel: string
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 interface State {
     filterCurrent: boolean
@@ -194,9 +200,11 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
-        if ((this.state.filterRanked !== prevState.filterRanked)
-            || (this.state.filterStandardMode !== prevState.filterStandardMode)
-            || (this.state.filterCurrent !== prevState.filterCurrent)) {
+        if (
+            this.state.filterRanked !== prevState.filterRanked ||
+            this.state.filterStandardMode !== prevState.filterStandardMode ||
+            this.state.filterCurrent !== prevState.filterCurrent
+        ) {
             const filteredPlaylists = this.getFilteredPlaylists().map((playlist) => playlist.value)
             const filteredSelectedPlaylists = _.intersection(this.props.selectedPlaylists, filteredPlaylists)
             if (!_.isEqual(this.props.selectedPlaylists, filteredSelectedPlaylists)) {
@@ -206,9 +214,9 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {classes, selectedPlaylists, handleChange, inputLabel, helperText} = this.props
+        const { classes, selectedPlaylists, handleChange, inputLabel, helperText } = this.props
 
-        const playlistsMultiSelect =
+        const playlistsMultiSelect = (
             <FormControl className={classes.formControl}>
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
@@ -219,29 +227,28 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                     input={
                         <Input
                             endAdornment={
-                                selectedPlaylists.length > 0 &&
-                                <IconButton onClick={this.clearSelection}>
-                                    <Tooltip title="Clear selection">
-                                        <Clear/>
-                                    </Tooltip>
-                                </IconButton>
+                                selectedPlaylists.length > 0 && (
+                                    <IconButton onClick={this.clearSelection}>
+                                        <Tooltip title="Clear selection">
+                                            <Clear />
+                                        </Tooltip>
+                                    </IconButton>
+                                )
                             }
                         />
                     }
                 >
-                    {this.getFilteredPlaylists()
-                        .map((playlist) => (
-                                <MenuItem value={playlist.value} key={playlist.value}>
-                                    {playlist.name}
-                                </MenuItem>
-                            )
-                        )
-                    }
+                    {this.getFilteredPlaylists().map((playlist) => (
+                        <MenuItem value={playlist.value} key={playlist.value}>
+                            {playlist.name}
+                        </MenuItem>
+                    ))}
                 </Select>
                 <FormHelperText>{helperText}</FormHelperText>
             </FormControl>
+        )
 
-        const filterCurrentCheckbox =
+        const filterCurrentCheckbox = (
             <FormControlLabel
                 control={
                     <Checkbox
@@ -251,7 +258,8 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 }
                 label="Show only current playlists"
             />
-        const filterStandardCheckbox =
+        )
+        const filterStandardCheckbox = (
             <FormControlLabel
                 control={
                     <Checkbox
@@ -261,16 +269,15 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 }
                 label="Show only standard modes"
             />
-        const filterRankedCheckbox =
+        )
+        const filterRankedCheckbox = (
             <FormControlLabel
                 control={
-                    <Checkbox
-                        checked={this.state.filterRanked}
-                        onChange={this.handleCheckboxChange("filterRanked")}
-                    />
+                    <Checkbox checked={this.state.filterRanked} onChange={this.handleCheckboxChange("filterRanked")} />
                 }
                 label="Show only ranked playlists"
             />
+        )
 
         return (
             <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
@@ -279,7 +286,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                     expandIcon={
                         <IconButton onClick={this.handleExpandedChange}>
                             <Tooltip title="Playlist options">
-                                <ExpandMore/>
+                                <ExpandMore />
                             </Tooltip>
                         </IconButton>
                     }
@@ -296,28 +303,30 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getFilteredPlaylists = (): PlaylistMetadata[] => {
-        const {filterCurrent, filterRanked, filterStandardMode} = this.state
+        const { filterCurrent, filterRanked, filterStandardMode } = this.state
         return playlists
             .filter((playlistMetadata) => !filterCurrent || playlistMetadata.current)
             .filter((playlistMetadata) => !filterRanked || playlistMetadata.ranked)
             .filter((playlistMetadata) => !filterStandardMode || playlistMetadata.standardMode)
     }
 
-    private readonly handleCheckboxChange = (filterField: keyof State) =>
-        (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-            this.setState({[filterField]: checked} as Pick<State, keyof State>)
-        }
+    private readonly handleCheckboxChange = (filterField: keyof State) => (
+        event: React.ChangeEvent<HTMLInputElement>,
+        checked: boolean
+    ) => {
+        this.setState({ [filterField]: checked } as Pick<State, keyof State>)
+    }
 
     private readonly clearSelection = () => {
         this.setSelectedPlaylists([])
     }
 
     private readonly setSelectedPlaylists = (playlistsToSet: number[]) => {
-        this.props.handleChange({target: {value: playlistsToSet}} as any as React.ChangeEvent<HTMLSelectElement>)
+        this.props.handleChange(({ target: { value: playlistsToSet } } as any) as React.ChangeEvent<HTMLSelectElement>)
     }
 
     private readonly handleExpandedChange = () => {
-        this.setState({optionsExpanded: !this.state.optionsExpanded})
+        this.setState({ optionsExpanded: !this.state.optionsExpanded })
     }
 }
 

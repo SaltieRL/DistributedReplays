@@ -1,13 +1,13 @@
-import {FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Typography} from "@material-ui/core"
+import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Typography } from "@material-ui/core"
 import * as _ from "lodash"
 import * as moment from "moment"
 import * as React from "react"
-import {PlayStyleProgressionPoint} from "../../../../Models/Player/PlayStyle"
-import {getProgression} from "../../../../Requests/Player/getProgression"
-import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
-import {ClearableDatePicker} from "../../../Shared/ClearableDatePicker"
-import {FieldSelect} from "./FieldSelect"
-import {ProgressionChart} from "./ProgressionChart"
+import { Player, PlayStyleProgressionPoint } from "src/Models"
+import { getProgression } from "../../../../Requests/Player/getProgression"
+import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
+import { ClearableDatePicker } from "../../../Shared/ClearableDatePicker"
+import { FieldSelect } from "./FieldSelect"
+import { ProgressionChart } from "./ProgressionChart"
 
 interface Props {
     players: Player[]
@@ -50,12 +50,11 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
         }
         if (this.props.players.length < prevProps.players.length) {
             const indicesToRemove: number[] = []
-            prevProps.players
-                .forEach((player, i) => {
-                    if (this.props.players.indexOf(player) === -1) {
-                        indicesToRemove.push(i)
-                    }
-                })
+            prevProps.players.forEach((player, i) => {
+                if (this.props.players.indexOf(player) === -1) {
+                    indicesToRemove.push(i)
+                }
+            })
             this.handleRemovePlayers(indicesToRemove)
         }
 
@@ -63,17 +62,18 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
             this.updateFields()
         }
 
-        if ((this.state.timeUnit !== prevState.timeUnit)
-            || (this.state.startDate !== prevState.startDate)
-            || (this.state.endDate !== prevState.endDate)) {
-            this.refreshAllData()
-                .then(this.updateFields)
+        if (
+            this.state.timeUnit !== prevState.timeUnit ||
+            this.state.startDate !== prevState.startDate ||
+            this.state.endDate !== prevState.endDate
+        ) {
+            this.refreshAllData().then(this.updateFields)
         }
     }
 
     public render() {
-        const {players} = this.props
-        const {playStyleProgressions} = this.state
+        const { players } = this.props
+        const { playStyleProgressions } = this.state
         if (playStyleProgressions.length === 0) {
             return null
         }
@@ -85,51 +85,49 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Grid item xs={12} md={10} xl={8} style={{textAlign: "center"}} container spacing={16}>
+                <Grid item xs={12} md={10} xl={8} style={{ textAlign: "center" }} container spacing={16}>
                     <Grid item xs={12} sm={6} lg={4}>
-                        <FieldSelect fields={this.state.fields}
-                                     selectedFields={this.state.selectedFields}
-                                     handleChange={this.handleSelectChange}
+                        <FieldSelect
+                            fields={this.state.fields}
+                            selectedFields={this.state.selectedFields}
+                            handleChange={this.handleSelectChange}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} lg={3}>
                         <FormControl>
                             <InputLabel>Duration</InputLabel>
-                            <Select
-                                value={this.state.timeUnit}
-                                onChange={this.handleTimeUnitChange}
-                                autoWidth
-                            >
+                            <Select value={this.state.timeUnit} onChange={this.handleTimeUnitChange} autoWidth>
                                 {timeUnits.map((timeUnit) => (
-                                        <MenuItem value={timeUnit} key={timeUnit}>
-                                            {convertSnakeAndCamelCaseToReadable(timeUnit)}
-                                        </MenuItem>
-                                    )
-                                )}
+                                    <MenuItem value={timeUnit} key={timeUnit}>
+                                        {convertSnakeAndCamelCaseToReadable(timeUnit)}
+                                    </MenuItem>
+                                ))}
                             </Select>
                             <FormHelperText>Select duration represented by each point</FormHelperText>
                         </FormControl>
-
                     </Grid>
                     <Grid item xs={12} sm={6} lg={2}>
-                        <ClearableDatePicker value={this.state.startDate}
-                                             onChange={this.handleStartDateChange}
-                                             label="Start date"/>
+                        <ClearableDatePicker
+                            value={this.state.startDate}
+                            onChange={this.handleStartDateChange}
+                            label="Start date"
+                        />
                     </Grid>
                     <Grid item xs={12} sm={6} lg={2}>
-                        <ClearableDatePicker value={this.state.endDate}
-                                             onChange={this.handleEndDateChange}
-                                             label="End date"/>
+                        <ClearableDatePicker
+                            value={this.state.endDate}
+                            onChange={this.handleEndDateChange}
+                            label="End date"
+                        />
                     </Grid>
                 </Grid>
                 {this.state.selectedFields.map((field) => {
                     return (
-                        <Grid item xs={12} md={6} lg={5} key={field}
-                              style={{height: 400}}>
+                        <Grid item xs={12} md={6} lg={5} key={field} style={{ height: 400 }}>
                             <Typography variant="subheading" align="center">
                                 {convertSnakeAndCamelCaseToReadable(field)}
                             </Typography>
-                            <ProgressionChart field={field} playerPlayStyleProgressions={playerPlayStyleProgressions}/>
+                            <ProgressionChart field={field} playerPlayStyleProgressions={playerPlayStyleProgressions} />
                         </Grid>
                     )
                 })}
@@ -140,33 +138,29 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
     private readonly updateFields = () => {
         // TODO: Check if this is necessary, or if it can just be gotten from the first guy.
         const fields = _.uniq(
-            _.flatMap(this.state.playStyleProgressions,
-                ((playStyleProgression) =>
-                        _.flatMap(playStyleProgression,
-                            ((playStyleProgressionPoint) =>
-                                playStyleProgressionPoint.dataPoints
-                                    .map((dataPoint) => dataPoint.name))
-                        )
+            _.flatMap(this.state.playStyleProgressions, (playStyleProgression) =>
+                _.flatMap(playStyleProgression, (playStyleProgressionPoint) =>
+                    playStyleProgressionPoint.dataPoints.map((dataPoint) => dataPoint.name)
                 )
             )
         )
-        this.setState({fields})
+        this.setState({ fields })
     }
 
     private readonly refreshAllData = (): Promise<void> => {
-        return Promise.all(this.props.players.map((player) => this.getProgressionForPlayer(player.id)))
-            .then((playStyleProgressions) => {
-                this.setState({playStyleProgressions})
-            })
+        return Promise.all(this.props.players.map((player) => this.getProgressionForPlayer(player.id))).then(
+            (playStyleProgressions) => {
+                this.setState({ playStyleProgressions })
+            }
+        )
     }
 
     private readonly handleAddPlayers = (players: Player[]) => {
-        Promise.all(players.map((player) => this.getProgressionForPlayer(player.id)))
-            .then((playersProgressions) => {
-                this.setState({
-                    playStyleProgressions: [...this.state.playStyleProgressions, ...playersProgressions]
-                })
+        Promise.all(players.map((player) => this.getProgressionForPlayer(player.id))).then((playersProgressions) => {
+            this.setState({
+                playStyleProgressions: [...this.state.playStyleProgressions, ...playersProgressions]
             })
+        })
     }
 
     private readonly getProgressionForPlayer = (playerId: string) => {
@@ -179,26 +173,25 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
 
     private readonly handleRemovePlayers = (indicesToRemove: number[]) => {
         this.setState({
-            playStyleProgressions: this.state.playStyleProgressions
-                .filter((__, i) => indicesToRemove.indexOf(i) !== -1)
+            playStyleProgressions: this.state.playStyleProgressions.filter((__, i) => indicesToRemove.indexOf(i) !== -1)
         })
     }
 
     private readonly handleSelectChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         this.setState({
-            selectedFields: event.target.value as any as string[]
+            selectedFields: (event.target.value as any) as string[]
         })
     }
 
     private readonly handleStartDateChange = (startDate: moment.Moment | null) => {
-        this.setState({startDate})
+        this.setState({ startDate })
     }
 
     private readonly handleEndDateChange = (endDate: moment.Moment | null) => {
-        this.setState({endDate})
+        this.setState({ endDate })
     }
 
     private readonly handleTimeUnitChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
-        this.setState({timeUnit: event.target.value as TimeUnit})
+        this.setState({ timeUnit: event.target.value as TimeUnit })
     }
 }

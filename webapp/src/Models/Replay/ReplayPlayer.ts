@@ -11,7 +11,7 @@ export interface ReplayPlayer {
     loadout: Loadout
 }
 
-interface CameraSettings {
+export interface CameraSettings {
     distance: number
     fieldOfView: number
     transitionSpeed: number
@@ -21,6 +21,6 @@ interface CameraSettings {
     height: number
 }
 
-interface Loadout {
+export interface Loadout {
     car: string
 }

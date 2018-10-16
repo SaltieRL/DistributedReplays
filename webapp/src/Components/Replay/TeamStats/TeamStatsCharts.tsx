@@ -1,11 +1,10 @@
-import {Grid, Typography} from "@material-ui/core"
+import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import {BasicStat, BasicStatsSubcategory} from "../../../Models/ChartData"
-import {Replay} from "../../../Models/Replay/Replay"
-import {getReplayTeamStats} from "../../../Requests/Replay"
-import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
-import {StatChart} from "../../Shared/Charts/StatChart"
-import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import { BasicStat, BasicStatsSubcategory, Replay } from "src/Models"
+import { getReplayTeamStats } from "../../../Requests/Replay"
+import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
+import { StatChart } from "../../Shared/Charts/StatChart"
+import { LoadableWrapper } from "../../Shared/LoadableWrapper"
 
 interface Props {
     replay: Replay
@@ -19,45 +18,42 @@ interface State {
 export class TeamStatsCharts extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {basicStats: []}
+        this.state = { basicStats: [] }
     }
 
     public render() {
-        const {selectedTab} = this.props
-        const {basicStats} = this.state
+        const { selectedTab } = this.props
+        const { basicStats } = this.state
 
-        const basicStatsForSelectedTab: BasicStat[] = basicStats ?
-            basicStats
-                .filter((basicStat) => basicStat.subcategory === selectedTab)
+        const basicStatsForSelectedTab: BasicStat[] = basicStats
+            ? basicStats.filter((basicStat) => basicStat.subcategory === selectedTab)
             : []
 
         return (
             <LoadableWrapper load={this.getTeamStats}>
-                {basicStatsForSelectedTab.length > 0 ?
-                    basicStatsForSelectedTab
-                        .map((basicStat) => {
-                            return (
-                                <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
-                                    <Typography variant="subheading" align="center">
-                                        {convertSnakeAndCamelCaseToReadable(basicStat.title)}
-                                    </Typography>
-                                    <StatChart basicStat={basicStat}/>
-                                </Grid>
-                            )
-                        })
-                    :
+                {basicStatsForSelectedTab.length > 0 ? (
+                    basicStatsForSelectedTab.map((basicStat) => {
+                        return (
+                            <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
+                                <Typography variant="subheading" align="center">
+                                    {convertSnakeAndCamelCaseToReadable(basicStat.title)}
+                                </Typography>
+                                <StatChart basicStat={basicStat} />
+                            </Grid>
+                        )
+                    })
+                ) : (
                     <Grid item xs={12}>
-                        <Typography align="center" style={{width: "100%"}}>
+                        <Typography align="center" style={{ width: "100%" }}>
                             These stats have not yet been calculated for this replay
                         </Typography>
                     </Grid>
-                }
+                )}
             </LoadableWrapper>
         )
     }
 
     private readonly getTeamStats = (): Promise<any> => {
-        return getReplayTeamStats(this.props.replay.id)
-            .then((basicStats) => this.setState({basicStats}))
+        return getReplayTeamStats(this.props.replay.id).then((basicStats) => this.setState({ basicStats }))
     }
 }

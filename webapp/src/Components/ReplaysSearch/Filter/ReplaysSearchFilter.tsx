@@ -1,11 +1,11 @@
-import {Card, CardContent, CardHeader, Divider, Grid} from "@material-ui/core"
+import { Card, CardContent, CardHeader, Divider, Grid } from "@material-ui/core"
 import * as moment from "moment"
 import * as React from "react"
-import {ReplaysSearchQueryParams} from "../../../Models/ReplaysSearchQueryParams"
-import {ClearableDatePicker} from "../../Shared/ClearableDatePicker"
-import {PlaylistSelect} from "../../Shared/Selects/PlaylistSelect"
-import {RankSelect} from "../../Shared/Selects/RankSelect"
-import {PlayerEntry} from "./PlayerEntry"
+import { Player, ReplaysSearchQueryParams } from "src/Models"
+import { ClearableDatePicker } from "../../Shared/ClearableDatePicker"
+import { PlaylistSelect } from "../../Shared/Selects/PlaylistSelect"
+import { RankSelect } from "../../Shared/Selects/RankSelect"
+import { PlayerEntry } from "./PlayerEntry"
 
 interface Props {
     queryParams: ReplaysSearchQueryParams
@@ -14,57 +14,63 @@ interface Props {
 
 export class ReplaysSearchFilter extends React.PureComponent<Props> {
     public render() {
-        const {queryParams} = this.props
+        const { queryParams } = this.props
 
-        const playerEntry =
-            <PlayerEntry playerIds={queryParams.playerIds || []}
-                         handleChange={this.handlePlayersChange}/>
+        const playerEntry = (
+            <PlayerEntry playerIds={queryParams.playerIds || []} handleChange={this.handlePlayersChange} />
+        )
 
-        const rankSelect =
-            <RankSelect selectedRank={queryParams.rank || -1}
-                        handleChange={this.handleRankChange}
-                        inputLabel="Replay rank"
-                        helperText="Select rank to filter by"
-                        noneLabel="None"
-                        disabled/>
+        const rankSelect = (
+            <RankSelect
+                selectedRank={queryParams.rank || -1}
+                handleChange={this.handleRankChange}
+                inputLabel="Replay rank"
+                helperText="Select rank to filter by"
+                noneLabel="None"
+                disabled
+            />
+        )
 
-        const playlistSelect =
-            <PlaylistSelect selectedPlaylists={queryParams.playlists || []}
-                            handleChange={this.handlePlaylistsChange}
-                            inputLabel="Playlist"
-                            helperText="Select playlist to filter by"/>
+        const playlistSelect = (
+            <PlaylistSelect
+                selectedPlaylists={queryParams.playlists || []}
+                handleChange={this.handlePlaylistsChange}
+                inputLabel="Playlist"
+                helperText="Select playlist to filter by"
+            />
+        )
 
-        const dateAfterPicker =
+        const dateAfterPicker = (
             <ClearableDatePicker
                 value={queryParams.dateAfter ? queryParams.dateAfter : null}
                 onChange={this.handleDateAfterChange}
                 label="Start date"
-                helperText="Date after which game must have happened"/>
+                helperText="Date after which game must have happened"
+            />
+        )
 
-        const dateBeforePicker =
+        const dateBeforePicker = (
             <ClearableDatePicker
                 value={queryParams.dateBefore ? queryParams.dateBefore : null}
                 onChange={this.handleDateBeforeChange}
                 label="End date"
-                helperText="Date before which game must have happened"/>
+                helperText="Date before which game must have happened"
+            />
+        )
 
         return (
             <>
                 <Grid container spacing={32} justify="center">
                     <Grid item xs={12}>
                         <Card>
-                            <CardHeader title="Players" subheader="All selected players will appear in every game."/>
-                            <Divider/>
-                            <CardContent>
-                                {playerEntry}
-                            </CardContent>
+                            <CardHeader title="Players" subheader="All selected players will appear in every game." />
+                            <Divider />
+                            <CardContent>{playerEntry}</CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={12}>
                         <Card>
-                            <CardContent>
-                                {rankSelect}
-                            </CardContent>
+                            <CardContent>{rankSelect}</CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={12}>
@@ -99,7 +105,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
     private readonly handleRankChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         const selectedRank = Number(event.target.value)
         if (selectedRank === -1) {
-            const {rank, ...remainingQueryParams} = this.props.queryParams
+            const { rank, ...remainingQueryParams } = this.props.queryParams
             this.props.handleChange({
                 ...remainingQueryParams
             })
@@ -112,9 +118,9 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
     }
 
     private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
-        const selectedPlaylists = event.target.value as any as number[]
+        const selectedPlaylists = (event.target.value as any) as number[]
         if (selectedPlaylists.length === 0) {
-            const {playlists, ...remainingQueryParams} = this.props.queryParams
+            const { playlists, ...remainingQueryParams } = this.props.queryParams
             this.props.handleChange({
                 ...remainingQueryParams
             })
@@ -128,7 +134,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
 
     private readonly handleDateBeforeChange = (date: moment.Moment | null) => {
         if (date === null) {
-            const {dateBefore, ...remainingQueryParams} = this.props.queryParams
+            const { dateBefore, ...remainingQueryParams } = this.props.queryParams
             this.props.handleChange({
                 ...remainingQueryParams
             })
@@ -142,7 +148,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
 
     private readonly handleDateAfterChange = (date: moment.Moment | null) => {
         if (date === null) {
-            const {dateAfter, ...remainingQueryParams} = this.props.queryParams
+            const { dateAfter, ...remainingQueryParams } = this.props.queryParams
             this.props.handleChange({
                 ...remainingQueryParams
             })

@@ -1,5 +1,6 @@
-import {doGet, doPost} from "../apiHandler/apiHandler"
-import {useMockData} from "./Config"
+import { GlobalStatsGraph, LoggedInUser } from "src/Models"
+import { doGet, doPost } from "../apiHandler/apiHandler"
+import { useMockData } from "./Config"
 
 export const getReplayCount = (): Promise<number> => {
     if (useMockData) {
@@ -10,7 +11,8 @@ export const getReplayCount = (): Promise<number> => {
 
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
 
-export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Specify any
+export const uploadReplays = (replays: File[]): Promise<any> => {
+    // TODO: Specify any
     const formData = new FormData()
     replays.forEach((file) => {
         formData.append("replays", file)
@@ -19,4 +21,4 @@ export const uploadReplays = (replays: File[]): Promise<any> => {  // TODO: Spec
     return doPost("/upload", formData)
 }
 
-export const getLoggedInUser = () : Promise<LoggedInUser> => doGet("/me")
+export const getLoggedInUser = (): Promise<LoggedInUser> => doGet("/me")

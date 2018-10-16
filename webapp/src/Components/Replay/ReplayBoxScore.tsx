@@ -11,11 +11,11 @@ import {
 } from "@material-ui/core"
 import Grid from "@material-ui/core/Grid/Grid"
 import * as React from "react"
-import {Replay} from "../../Models/Replay/Replay"
+import { Player, Replay, ReplayPlayer } from "src/Models"
 
 interface BoxScoreData {
-    name: "Blue" | "Orange",
-    score: number,
+    name: "Blue" | "Orange"
+    score: number
     players: ReplayPlayer[]
 }
 
@@ -32,20 +32,19 @@ interface OwnProps {
     player?: Player
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
     public render() {
         return (
-            <Grid container style={{minWidth: "400px"}}>
+            <Grid container style={{ minWidth: "400px" }}>
                 {this.getBars()}
             </Grid>
         )
     }
 
     private readonly getBars = () => {
-        const {replay} = this.props
+        const { replay } = this.props
 
         const blueBoxScoreTeamData: BoxScoreData = {
             name: "Blue",
@@ -62,7 +61,6 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
             <Grid container justify="center" spacing={16}>
                 {[blueBoxScoreTeamData, orangeBoxScoreTeamData].map(this.createTeamBoxScoreGridItem)}
             </Grid>
-
         )
     }
 
@@ -80,7 +78,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         return (
             <TableHead className={boxScoreData.name === "Blue" ? classes.blueTableHead : classes.orangeTableHead}>
                 <TableRow>
-                    <TableCell style={{width: "30%"}} padding="dense">
+                    <TableCell style={{ width: "30%" }} padding="dense">
                         <Typography variant="title" className={classes.teamName}>
                             {boxScoreData.score} {boxScoreData.name}
                         </Typography>
@@ -89,9 +87,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                         if (key !== "name") {
                             return (
                                 <TableCell numeric key={key} padding="dense">
-                                    <Typography variant="subheading">
-                                        {label}
-                                    </Typography>
+                                    <Typography variant="subheading">{label}</Typography>
                                 </TableCell>
                             )
                         }
@@ -106,21 +102,21 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         return (
             <TableBody>
                 {boxScoreData.players
-                    .sort((playerA: ReplayPlayer, playerB: ReplayPlayer) =>
-                        playerB.score - playerA.score)
+                    .sort((playerA: ReplayPlayer, playerB: ReplayPlayer) => playerB.score - playerA.score)
                     .map((player: ReplayPlayer) => (
                         <TableRow key={player.id}>
                             {Array.from(labelToKeys, ([label, key]) => (
-                                <TableCell key={key}
-                                           numeric={key !== "name"}
-                                           className={this.props.classes.tableData}
-                                           padding="dense"
+                                <TableCell
+                                    key={key}
+                                    numeric={key !== "name"}
+                                    className={this.props.classes.tableData}
+                                    padding="dense"
                                 >
-                                    {(this.props.player && player.id === this.props.player.id) ?
+                                    {this.props.player && player.id === this.props.player.id ? (
                                         <b>{player[key]}</b>
-                                        :
+                                    ) : (
                                         player[key]
-                                    }
+                                    )}
                                 </TableCell>
                             ))}
                         </TableRow>

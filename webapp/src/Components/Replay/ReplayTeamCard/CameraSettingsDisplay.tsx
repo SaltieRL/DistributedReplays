@@ -1,7 +1,8 @@
-import {Grid, TextField} from "@material-ui/core"
+import { Grid, TextField } from "@material-ui/core"
 import * as _ from "lodash"
 import * as React from "react"
-import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../../Utils/String"
+import { CameraSettings } from "src/Models"
+import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../../Utils/String"
 
 interface Props {
     cameraSettings: CameraSettings
@@ -10,7 +11,7 @@ interface Props {
 export class CameraSettingsDisplay extends React.PureComponent<Props> {
     public render() {
         return (
-            <div style={{padding: 24}}>
+            <div style={{ padding: 24 }}>
                 <Grid container spacing={24}>
                     {_.toPairs(this.props.cameraSettings).map(([key, value]: [string, number]) => {
                         return (
@@ -19,7 +20,7 @@ export class CameraSettingsDisplay extends React.PureComponent<Props> {
                                     id={key}
                                     label={convertSnakeAndCamelCaseToReadable(key)}
                                     value={roundNumberToMaxDP(value)}
-                                    InputProps={{readOnly: true}}
+                                    InputProps={{ readOnly: true }}
                                 />
                             </Grid>
                         )

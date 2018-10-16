@@ -1,4 +1,5 @@
-import {Action} from "redux"
+import { Action } from "redux"
+import { LoggedInUser } from "src/Models"
 
 interface SetLoggedInUserAction extends Action<"SET_LOGGED_IN_USER"> {
     loggedInUser: LoggedInUser
