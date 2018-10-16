@@ -214,7 +214,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
             filterCurrent: true,
             filterRanked: false,
             filterStandardMode: false,
-            filterPublic: !!props.currentPlaylistsOnly,
+            filterPublic: Boolean(props.currentPlaylistsOnly),
             optionsExpanded: false
         }
     }
