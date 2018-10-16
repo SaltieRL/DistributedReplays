@@ -4,8 +4,8 @@ import * as React from "react"
 import {Link} from "react-router-dom"
 import {PLAYER_COMPARE_WITH_LINK} from "../../../../Globals"
 import {LinkButton} from "../../../Shared/LinkButton"
-import {PlayStyleExplanationTable} from "./PlayStyleExplanationTable"
 import {PlaylistSelect} from "../../../Shared/Selects/PlaylistSelect"
+import {PlayStyleExplanationTable} from "./PlayStyleExplanationTable"
 
 interface OwnProps {
     player: Player

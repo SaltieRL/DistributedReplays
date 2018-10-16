@@ -21,8 +21,9 @@ export class PlayerPlayStyleCard extends React.PureComponent<Props> {
 
         return (
             <Card>
-                <CardHeader title={playStyleTitle} action={<PlayStyleActions player={this.props.player}
-                                                                             handlePlaylistChange={this.props.handlePlaylistChange}/>}/>
+                <CardHeader title={playStyleTitle} action={<PlayStyleActions
+                    player={this.props.player}
+                    handlePlaylistChange={this.props.handlePlaylistChange}/>}/>
                 <CardContent>
                     {this.props.children}
                 </CardContent>
