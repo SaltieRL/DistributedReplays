@@ -31,7 +31,6 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
         }
         if (prevProps.playlist !== this.props.playlist) {
             this.triggerReload()
-            console.log(prevProps, this.props)
         }
     }
 

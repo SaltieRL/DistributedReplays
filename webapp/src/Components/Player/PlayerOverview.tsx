@@ -105,7 +105,6 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly handlePlaylistChange = (playlist: number) => {
-        console.log("Got playlist change in Page", playlist)
         this.setState({playlist})
     }
 }
