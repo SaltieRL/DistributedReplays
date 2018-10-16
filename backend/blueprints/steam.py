@@ -29,7 +29,7 @@ def resolve_steam():
     return redirect(url_for('players.view_player', id_=steamid))
 
 
-def get_steam_profile_or_random_response(steam_id, current_app):
+def get_steam_profile_or_random_response(steam_id):
     try:
         return steam_id_to_profile(steam_id)
     except BaseException as e:
@@ -39,18 +39,14 @@ def get_steam_profile_or_random_response(steam_id, current_app):
         print(player)
         return {
             'response': {
-                'steamid': player.platformid,
-                'personaname': player.platformname,
-                'avatarfull': player.avatar,
-                'players': [
-                    {
-                        'steamid': player.platformid,
-                        'personaname': player.platformname,
-                        'platformname': player.platformname,
-                        'avatarfull': player.avatar,
-                        'avatar': player.avatar,
-                    }
-                ]
+                'players': [{
+                    'steamid': player.platformid,
+                    'personaname': player.platformname,
+                    'avatarfull': player.avatar,
+                    'platformname': player.platformname,
+                    'profileurl': f"https://steamcommunity.com/id/{player.platformid}/",
+                    'avatar': player.avatar
+                }]
             }
         }
 

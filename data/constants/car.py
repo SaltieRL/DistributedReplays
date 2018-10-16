@@ -1,4 +1,6 @@
-# Data dicts
+import logging
+
+logger = logging.getLogger(__name__)
 
 cars = {
   21: "Backfire",
@@ -51,12 +53,15 @@ cars = {
   2313: "Mario NSR",
   2665: "TDK Tumbler",
   2666: "'89 Batmobile",
+  2853: "Twinzer",
+  2919: "Jurassic Jeep Wrangler",
+  3031: "Cyclone",
 }
 
 
-def get_car(index):
+def get_car(index: int) -> str:
     try:
         return cars[index]
-    except KeyError as e:
-        print(e)
+    except KeyError:
+        logger.warning(f"Could not find car: {index}.")
         return "Unknown"
