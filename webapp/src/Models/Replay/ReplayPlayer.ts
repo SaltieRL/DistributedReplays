@@ -1,4 +1,4 @@
-interface ReplayPlayer {
+export interface ReplayPlayer {
     id: string
     name: string
     isOrange: boolean
@@ -12,13 +12,13 @@ interface ReplayPlayer {
 }
 
 interface CameraSettings {
-    distance : number
-    fieldOfView : number
-    transitionSpeed : number
-    pitch : number
-    swivelSpeed : number
-    stiffness : number
-    height : number
+    distance: number
+    fieldOfView: number
+    transitionSpeed: number
+    pitch: number
+    swivelSpeed: number
+    stiffness: number
+    height: number
 }
 
 interface Loadout {

@@ -25,10 +25,10 @@ export const stringifyReplaySearchQueryParam = (queryParams: Partial<ReplaysSear
         parsedQueryParams.dateAfter = queryParams.dateAfter.unix()
     }
     // TODO: Check if it's worth it to standardise .unix() stringifying.
-    return qs.stringify(
-        _.mapKeys(parsedQueryParams, (value: unknown, key) => _.snakeCase(key)),
-        {arrayFormat: "repeat", addQueryPrefix: true}
-    )
+    return qs.stringify(_.mapKeys(parsedQueryParams, (value: unknown, key) => _.snakeCase(key)), {
+        arrayFormat: "repeat",
+        addQueryPrefix: true
+    })
 }
 
 export const parseReplaySearchFromQueryString = (queryParams: any): Partial<ReplaysSearchQueryParams> => {

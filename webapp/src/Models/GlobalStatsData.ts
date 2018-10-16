@@ -4,7 +4,7 @@ interface GlobalStatsGraphDataset {
     name: string
 }
 
-interface GlobalStatsGraph {
+export interface GlobalStatsGraph {
     name: string
     data: GlobalStatsGraphDataset[]
 }
