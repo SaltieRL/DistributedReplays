@@ -17,13 +17,12 @@ type Props = OwnProps
 interface State {
     data?: PlayStyleResponse
     reloadSignal: boolean
-    playlist?: number
 }
 
 class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false, playlist: this.props.playlist}
+        this.state = {reloadSignal: false}
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>) {
