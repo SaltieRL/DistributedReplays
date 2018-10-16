@@ -12,7 +12,7 @@ sys.path.append(path)
 from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.database.objects import PlayerGame, Game, Playlist
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
-from backend.database.wrapper.rank_wrapper import get_rank_number
+from backend.database.wrapper.rank_wrapper import get_rank_tier
 from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
 from backend.utils.checks import ignore_filtering, is_local_dev
 
@@ -105,8 +105,8 @@ class GlobalStatWrapper(SharedStatsWrapper):
         if ids is None:
             # Set the correct rank index
             if player_rank is not None:
-                if isinstance(player_rank, list):
-                    rank_index = get_rank_number(player_rank)
+                if isinstance(player_rank, dict) or isinstance(player_rank, list):
+                    rank_index = get_rank_tier(player_rank, playlist=playlist)
                 else:
                     rank_index = player_rank
             else:
