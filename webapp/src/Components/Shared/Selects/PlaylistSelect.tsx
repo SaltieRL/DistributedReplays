@@ -191,8 +191,8 @@ interface OwnProps {
     handleChange: React.ChangeEventHandler<HTMLSelectElement>
     helperText: string
     inputLabel: string
-    justDropdown?: boolean
-    justCurrentPlaylists?: boolean
+    dropdownOnly?: boolean
+    currentPlaylistsOnly?: boolean
     multiple: boolean
 }
 
@@ -211,7 +211,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         let shouldFilterPublic = false
-        if (props.justCurrentPlaylists) {
+        if (props.currentPlaylistsOnly) {
             shouldFilterPublic = true
         }
         this.state = {
@@ -243,7 +243,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
                     multiple={this.props.multiple}
-                    value={selectedPlaylists}
+                    value={this.props.multiple ? selectedPlaylists : selectedPlaylists[0]}
                     onChange={handleChange}
                     autoWidth
                     input={
@@ -305,7 +305,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
 
         return (<>
 
-                {!this.props.justDropdown &&
+                {!this.props.dropdownOnly &&
                 <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
                     <ExpansionPanelSummary
                         classes={classes}
@@ -328,7 +328,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
 
                 }
                 {
-                    this.props.justDropdown && <>{playlistsMultiSelect}</>
+                    this.props.dropdownOnly && <>{playlistsMultiSelect}</>
                 }
             </>
 

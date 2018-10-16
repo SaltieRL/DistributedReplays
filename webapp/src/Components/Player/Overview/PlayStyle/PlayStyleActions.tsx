@@ -43,12 +43,12 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                 </Link>
             </div>
         const dropDown =
-            <PlaylistSelect
+            <PlaylistSelect selectedPlaylists={[this.state.playlist]}
                             handleChange={this.handlePlaylistsChange}
                             inputLabel="Playlist"
                             helperText="Select playlist to use"
-                            justDropdown
-                            justCurrentPlaylists
+                            dropdownOnly
+                            currentPlaylistsOnly
                             multiple={false}/>
 
         return (
