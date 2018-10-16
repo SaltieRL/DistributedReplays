@@ -33,7 +33,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
                             handleChange={this.handlePlaylistsChange}
                             inputLabel="Playlist"
                             helperText="Select playlist to filter by"
-                            multiple={true}
+                            multiple
             />
 
         const dateAfterPicker =

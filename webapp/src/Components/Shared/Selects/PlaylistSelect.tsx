@@ -210,15 +210,11 @@ interface State {
 class PlaylistSelectComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        let shouldFilterPublic = false
-        if (props.currentPlaylistsOnly) {
-            shouldFilterPublic = true
-        }
         this.state = {
             filterCurrent: true,
             filterRanked: false,
             filterStandardMode: false,
-            filterPublic: shouldFilterPublic,
+            filterPublic: !!props.currentPlaylistsOnly,
             optionsExpanded: false
         }
     }
@@ -303,8 +299,8 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 label="Show only ranked playlists"
             />
 
-        return (<>
-
+        return (
+            <>
                 {!this.props.dropdownOnly &&
                 <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
                     <ExpansionPanelSummary
