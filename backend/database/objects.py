@@ -149,6 +149,9 @@ class PlayerGame(DBObjectBase):
     time_full_boost = Column(Float)
     time_low_boost = Column(Float)
     time_no_boost = Column(Float)
+    average_boost_level = Column(Float)
+    wasted_big = Column(Float)
+    wasted_small = Column(Float)
 
     # tendencies
     time_on_ground = Column(Float)
