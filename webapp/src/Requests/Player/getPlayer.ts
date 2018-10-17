@@ -1,6 +1,5 @@
 import { Player } from "src/Models"
-import { doGet } from "../../apiHandler/apiHandler"
-import { useMockData } from "../Config"
+import { doGet, useMockData } from ".."
 
 export const getPlayer = (id: string): Promise<Player> => {
     if (useMockData) {

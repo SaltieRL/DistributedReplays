@@ -1,6 +1,5 @@
-import {doGet} from "../../apiHandler/apiHandler"
-import {PlayerStats} from "../../Components/Player/Overview/SideBar/PlayerStatsCard"
-import {useMockData} from "../Config"
+import { doGet, useMockData } from ".."
+import { PlayerStats } from "../../Components/Player/Overview/SideBar/PlayerStatsCard"
 
 export const getStats = (id: string): Promise<PlayerStats> => {
     if (useMockData) {

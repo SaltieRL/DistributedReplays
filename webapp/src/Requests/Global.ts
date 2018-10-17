@@ -1,6 +1,5 @@
 import { GlobalStatsGraph, LoggedInUser } from "src/Models"
-import { doGet, doPost } from "../apiHandler/apiHandler"
-import { useMockData } from "./Config"
+import { doGet, doPost, useMockData } from "."
 
 // TODO: useMockData is bad code smell. Mock data should exist in the store and we should access
 // it from there.

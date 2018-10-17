@@ -1,6 +1,5 @@
 // Checks if nameOrId exists by querying backend. Resolves name to Id.
-import {doGet} from "../../apiHandler/apiHandler"
-import {useMockData} from "../Config"
+import { doGet, useMockData } from ".."
 
 export const resolvePlayerNameOrId = (nameOrId: string): Promise<string> => {
     if (useMockData) {

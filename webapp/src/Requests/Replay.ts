@@ -9,8 +9,7 @@ import {
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "src/Models"
-import { doGet } from "../apiHandler/apiHandler"
-import { useMockData } from "./Config"
+import { doGet, useMockData } from "."
 
 // TODO: useMockData is bad code smell. Mock data should exist in the store and we should access
 // it from there
