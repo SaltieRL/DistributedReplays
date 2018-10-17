@@ -35,7 +35,7 @@ interface State {
 export class BasicStatsTable extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {currentSort: {statName: "total_hits", direction: "desc"}}
+        this.state = {currentSort: {statName: "hits", direction: "desc"}}
     }
 
     public render() {
