@@ -1,10 +1,14 @@
 import {ReplaysSearchQueryParams, stringifyReplaySearchQueryParam} from "./Models/ReplaysSearchQueryParams"
 
+// TODO: Move this into a namespace?
+
 export const GITHUB_LINK = "https://github.com/SaltieRL"
 export const DISCORD_LINK = "https://discord.gg/c8cArY9"
 export const TWITTER_LINK = "https://twitter.com/calculated_gg"
 export const REDDIT_LINK = "https://reddit.com/r/calculated"
 export const LOCAL_LINK = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://calculated.gg"
+
+export const STATUS_PAGE_LINK = "/status"
 
 export const PLAYER_PAGE_LINK = (id: string) => `/players/${id}`
 export const PLAYER_MATCH_HISTORY_PAGE_LINK = (id: string) => `/players/${id}/match_history`

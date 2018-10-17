@@ -16,7 +16,7 @@ interface State {
     loadingState: "not loaded" | "loading" | "loaded" | "failed"
 }
 
-export class LoadableWrapperComponent extends React.PureComponent<Props, State> {
+class LoadableWrapperComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {loadingState: "not loaded"}
