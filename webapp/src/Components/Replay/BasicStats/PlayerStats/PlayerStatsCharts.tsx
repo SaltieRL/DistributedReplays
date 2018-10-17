@@ -1,11 +1,10 @@
-import {Grid, Typography} from "@material-ui/core"
+import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import {BasicStat, PlayerStatsSubcategory} from "../../../../Models/ChartData"
-import {Replay} from "../../../../Models/Replay/Replay"
-import {getReplayPlayerStats} from "../../../../Requests/Replay"
-import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
-import {StatChart} from "../../../Shared/Charts/StatChart"
-import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
+import { BasicStat, PlayerStatsSubcategory, Replay } from "src/Models"
+import { ReplayService } from "src/Requests"
+import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
+import { StatChart } from "../../../Shared/Charts/StatChart"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 
 interface Props {
     replay: Replay
@@ -19,12 +18,12 @@ interface State {
 export class PlayerStatsCharts extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {playerStats: []}
+        this.state = { playerStats: [] }
     }
 
     public render() {
-        const {selectedTab} = this.props
-        const {playerStats} = this.state
+        const { selectedTab } = this.props
+        const { playerStats } = this.state
 
         const playerStatsForSelectedTab: BasicStat[] = playerStats ?
             playerStats
@@ -41,13 +40,13 @@ export class PlayerStatsCharts extends React.PureComponent<Props, State> {
                                     <Typography variant="subheading" align="center">
                                         {convertSnakeAndCamelCaseToReadable(playerStat.title)}
                                     </Typography>
-                                    <StatChart basicStat={playerStat}/>
+                                    <StatChart basicStat={playerStat} />
                                 </Grid>
                             )
                         })
                     :
                     <Grid item xs={12}>
-                        <Typography align="center" style={{width: "100%"}}>
+                        <Typography align="center" style={{ width: "100%" }}>
                             These stats have not yet been calculated for this replay
                         </Typography>
                     </Grid>
@@ -57,7 +56,7 @@ export class PlayerStatsCharts extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerStats = (): Promise<any> => {
-        return getReplayPlayerStats(this.props.replay.id)
-            .then((playerStats) => this.setState({playerStats}))
+        return ReplayService.getInstance().getReplayPlayerStats(this.props.replay.id)
+            .then((playerStats) => this.setState({ playerStats }))
     }
 }

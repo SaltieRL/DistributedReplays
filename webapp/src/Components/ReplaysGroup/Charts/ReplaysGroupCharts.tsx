@@ -1,7 +1,6 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import {BasicStat, PlayerStatsSubcategory} from "../../../Models/ChartData"
-import { BasicStat, BasicStatsSubcategory, Replay } from "src/Models"
+import { BasicStat, PlayerStatsSubcategory, Replay } from "src/Models"
 import { ReplayService } from "src/Requests/Replay"
 import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
 import { StatChart } from "../../Shared/Charts/StatChart"
@@ -53,16 +52,16 @@ export class ReplaysGroupCharts extends React.PureComponent<Props, State> {
                                 )
                             })
                         ) : (
-                            <Grid item xs={12}>
-                                <Typography align="center" style={{ width: "100%" }}>
-                                    These stats have not yet been calculated for this replay
+                                <Grid item xs={12}>
+                                    <Typography align="center" style={{ width: "100%" }}>
+                                        These stats have not yet been calculated for this replay
                                 </Typography>
-                            </Grid>
-                        )}
+                                </Grid>
+                            )}
                     </LoadableWrapper>
                 ) : (
-                    <Typography>No replay selected</Typography>
-                )}
+                        <Typography>No replay selected</Typography>
+                    )}
             </>
         )
     }

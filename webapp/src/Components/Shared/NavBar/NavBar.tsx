@@ -24,7 +24,7 @@ import { StoreState } from "../../../Redux"
 import { setLoggedInUserAction } from "../../../Redux/loggedInUser/actions"
 import { Logo } from "../Logo/Logo"
 import { Search } from "../Search"
-import { UploadModalWrapper } from "../Upload/UploadModalWrapper"
+import { UploadDialogWrapper } from "../Upload/UploadDialogWrapper"
 import { AccountMenu } from "./AccountMenu"
 
 type Props = ReturnType<typeof mapStateToProps> &
@@ -76,7 +76,7 @@ class NavBarComponent extends React.PureComponent<Props> {
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <UploadModalWrapper buttonStyle="icon" />
+                                    <UploadDialogWrapper buttonStyle="icon" />
                                 </Grid>
                                 <Grid item xs="auto" className={classes.accountMenuGridItem}>
                                     {/*TODO: Show AccountMenu even on mobile, but as a 3 dots icon.*/}

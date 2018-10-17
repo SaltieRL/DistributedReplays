@@ -172,7 +172,7 @@ export class ReplayService {
             .then(parseReplay)
     }
 
-    public getReplayBasicStats(id: string): Promise<BasicStat[]> {
+    public getReplayPlayerStats(id: string): Promise<BasicStat[]> {
         return doGet(`/replay/${id}/basic_player_stats`)
     }
 

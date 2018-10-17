@@ -109,7 +109,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             </Grid>
                             <Grid item> | </Grid>
                             <Grid item>
-                                <Link to={STATUS_PAGE_LINK} style={{textDecoration: "none"}}>
+                                <Link to={STATUS_PAGE_LINK} style={{ textDecoration: "none" }}>
                                     <ButtonBase>
                                         <Typography align={isWidthUpMd ? "left" : "center"}>
                                             Status

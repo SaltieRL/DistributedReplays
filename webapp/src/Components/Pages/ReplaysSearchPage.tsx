@@ -1,5 +1,6 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
+import { RouteComponentProps } from "react-router"
 import { MatchHistoryResponse, ReplaysSearchQueryParams } from "src/Models"
 import { ReplayService } from "src/Requests"
 import { ReplaysSearchWithQueryString } from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"

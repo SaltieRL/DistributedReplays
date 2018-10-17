@@ -27,7 +27,7 @@ import { setLoggedInUserAction } from "../../Redux/loggedInUser/actions"
 import { LinkButton } from "../Shared/LinkButton"
 import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
-import { UploadModalWrapper } from "../Shared/Upload/UploadModalWrapper"
+import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
 
 type Props = ReturnType<typeof mapStateToProps> &
     ReturnType<typeof mapDispatchToProps> &

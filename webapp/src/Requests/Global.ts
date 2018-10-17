@@ -6,7 +6,7 @@ import { doGet, doPost, useMockData } from "."
 // it from there.
 export class GlobalService {
     private static instance: GlobalService
-    private constructor() {}
+    private constructor() { }
 
     public static getInstance() {
         if (this.instance == null) {
@@ -21,10 +21,10 @@ export class GlobalService {
         }
         return doGet("/global/replay_count")
     }
-export const getQueueStatuses = (): Promise<QueueStatus[]> => {
-    return doGet("/global/queue/count")
-}
 
+    public getQueueStatuses(): Promise<QueueStatus[]> {
+        return doGet("/global/queue/count")
+    }
 
     public getGlobalStats(): Promise<GlobalStatsGraph[]> {
         return doGet("/global/stats")
@@ -46,8 +46,8 @@ export const getQueueStatuses = (): Promise<QueueStatus[]> => {
 
 export const getUploadStatuses = (ids: string[]): Promise<UploadStatus[]> => {
     return doGet("/upload" +
-        qs.stringify({ids},
-            {arrayFormat: "repeat", addQueryPrefix: true}
+        qs.stringify({ ids },
+            { arrayFormat: "repeat", addQueryPrefix: true }
         ))
 }
 
