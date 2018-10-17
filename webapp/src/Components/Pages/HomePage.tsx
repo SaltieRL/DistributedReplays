@@ -1,33 +1,23 @@
-import { faDiscord, faGithub, faSteam, faTwitter } from "@fortawesome/free-brands-svg-icons"
-import { faChartBar } from "@fortawesome/free-solid-svg-icons"
-import { Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth } from "@material-ui/core"
-import { GridProps } from "@material-ui/core/Grid"
-import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
-import CloudUpload from "@material-ui/icons/CloudUpload"
-import Info from "@material-ui/icons/Info"
-import * as React from "react"
-import { connect } from "react-redux"
-import { Link } from "react-router-dom"
-import { Dispatch } from "redux"
-import { LoggedInUser } from "src/Models"
-import { GlobalService } from "src/Requests"
-import {
-    ABOUT_LINK,
-    DISCORD_LINK,
-    GITHUB_LINK,
-    GLOBAL_STATS_LINK,
-    LOCAL_LINK,
-    PLAYER_PAGE_LINK,
-    STEAM_LOGIN_LINK,
-    TWITTER_LINK,
-    UPLOAD_LINK
-} from "../../Globals"
-import { StoreState } from "../../Redux"
-import { setLoggedInUserAction } from "../../Redux/loggedInUser/actions"
-import { LinkButton } from "../Shared/LinkButton"
-import { Logo } from "../Shared/Logo/Logo"
-import { Search } from "../Shared/Search"
-import { UploadModalWrapper } from "../Shared/Upload/UploadModalWrapper"
+import { faDiscord, faGithub, faSteam, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { faChartBar } from "@fortawesome/free-solid-svg-icons";
+import { Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth } from "@material-ui/core";
+import { GridProps } from "@material-ui/core/Grid";
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth";
+import CloudUpload from "@material-ui/icons/CloudUpload";
+import Info from "@material-ui/icons/Info";
+import * as React from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { Dispatch } from "redux";
+import { LoggedInUser } from "src/Models";
+import { GlobalService } from "src/Requests";
+import { ABOUT_LINK, DISCORD_LINK, GITHUB_LINK, GLOBAL_STATS_LINK, LOCAL_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, TWITTER_LINK, UPLOAD_LINK } from "../../Globals";
+import { StoreState } from "../../Redux";
+import { setLoggedInUserAction } from "../../Redux/loggedInUser/actions";
+import { LinkButton } from "../Shared/LinkButton";
+import { Logo } from "../Shared/Logo/Logo";
+import { Search } from "../Shared/Search";
+import { UploadModalWrapper } from "../Shared/Upload/UploadModalWrapper";
 
 type Props = ReturnType<typeof mapStateToProps> &
     ReturnType<typeof mapDispatchToProps> &
@@ -125,7 +115,9 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
     const globalStatsLinkButton = (
         <LinkButton to={GLOBAL_STATS_LINK} iconType="fontawesome" icon={faChartBar} tooltip="Global stats" />
     )
-    const aboutLinkButton = <LinkButton to={ABOUT_LINK} iconType="mui" icon={Info} tooltip="About" />
+    const aboutLinkButton = (
+        <LinkButton to={ABOUT_LINK} iconType="mui" icon={Info} tooltip="About" />
+    )
     const twitterLinkButton = (
         <LinkButton to={TWITTER_LINK} isExternalLink iconType="fontawesome" icon={faTwitter} tooltip="Twitter" />
     )

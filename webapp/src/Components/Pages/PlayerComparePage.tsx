@@ -71,8 +71,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                         ))}
                     </Grid>
                     <Grid item xs={12}>
-                        {" "}
-                        <Divider />{" "}
+                        <Divider />
                     </Grid>
                     <Grid item xs={12}>
                         <PlayerCompareContent players={players} />
@@ -102,7 +101,8 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayers = (): Promise<void> => {
-        return Promise.all(this.state.ids.map((id) => getPlayer(id))).then((players) => this.setState({ players }))
+        return Promise.all(this.state.ids.map((id) => getPlayer(id)))
+            .then((players) => this.setState({ players }))
     }
 
     private readonly handleRemovePlayer = (id: string) => {

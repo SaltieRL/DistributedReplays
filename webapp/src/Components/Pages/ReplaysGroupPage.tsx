@@ -70,8 +70,7 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                         ))}
                     </Grid>
                     <Grid item xs={12}>
-                        {" "}
-                        <Divider />{" "}
+                        <Divider />
                     </Grid>
                     <Grid item xs={12}>
                         <ReplaysGroupContent replays={replays} />
