@@ -89,6 +89,8 @@ basic_stats_metadatas = [
     Metadata('time low boost', ChartType.radar, SubCat.Boosts),
     Metadata('time no boost', ChartType.radar, SubCat.Boosts),
     Metadata('boost ratio', ChartType.bar, SubCat.Boosts),
+    Metadata('boost usage per minute', ChartType.radar, SubCat.Boosts),
+
 
     # efficiency
     Metadata('collection boost efficiency', ChartType.bar, SubCat.Efficiency),
