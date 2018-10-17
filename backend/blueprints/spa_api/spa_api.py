@@ -11,6 +11,7 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
@@ -26,7 +27,6 @@ from .service_layers.player.play_style_progression import PlayStyleProgression
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
-from .service_layers.replay.basic_stats import BasicStatChartData
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
@@ -176,9 +176,15 @@ def api_get_replay_data(id_):
     return better_jsonify(replay)
 
 
-@bp.route('replay/<id_>/basic_stats')
-def api_get_replay_basic_stats(id_):
-    basic_stats = BasicStatChartData.create_from_id(id_)
+@bp.route('replay/<id_>/basic_player_stats')
+def api_get_replay_basic_player_stats(id_):
+    basic_stats = PlayerStatsChart.create_from_id(id_)
+    return better_jsonify(basic_stats)
+
+
+@bp.route('replay/<id_>/basic_team_stats')
+def api_get_replay_basic_team_stats(id_):
+    basic_stats = TeamStatsChart.create_from_id(id_)
     return better_jsonify(basic_stats)
 
 
