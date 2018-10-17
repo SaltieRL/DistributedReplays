@@ -15,7 +15,7 @@ import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
 import { DropFilesEventHandler } from "react-dropzone"
-import { uploadReplays } from "../../../Requests/Global"
+import { GlobalService } from "src/Requests"
 import { WithNotifications, withNotifications } from "../Notification/NotificationUtils"
 import { BakkesModAd } from "./BakkesModAd"
 import { UploadDropzone } from "./UploadDropzone"
@@ -82,7 +82,8 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
     }
     private readonly handleUpload = () => {
         this.setState({ uploadingStage: "pressedUpload" })
-        uploadReplays(this.state.files)
+        GlobalService.getInstance()
+            .uploadReplays(this.state.files)
             .then(this.clearFiles)
             .then(() => {
                 this.setState({ uploadingStage: "uploaded" })

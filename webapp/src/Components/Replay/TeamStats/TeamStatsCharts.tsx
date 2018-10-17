@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
 import { BasicStat, BasicStatsSubcategory, Replay } from "src/Models"
-import { getReplayTeamStats } from "../../../Requests/Replay"
+import { ReplayService } from "src/Requests/Replay"
 import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
 import { StatChart } from "../../Shared/Charts/StatChart"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
@@ -54,6 +54,8 @@ export class TeamStatsCharts extends React.PureComponent<Props, State> {
     }
 
     private readonly getTeamStats = (): Promise<any> => {
-        return getReplayTeamStats(this.props.replay.id).then((basicStats) => this.setState({ basicStats }))
+        return ReplayService.getInstance()
+            .getReplayTeamStats(this.props.replay.id)
+            .then((basicStats) => this.setState({ basicStats }))
     }
 }

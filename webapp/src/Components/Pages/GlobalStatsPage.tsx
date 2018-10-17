@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import { GlobalStatsGraph } from "src/Models"
-import { getGlobalStats } from "../../Requests/Global"
+import { GlobalService } from "src/Requests"
 import { GlobalStatsChart } from "../GlobalStatsChart"
 import { IconTooltip } from "../Shared/IconTooltip"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
@@ -63,7 +63,9 @@ class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getStats = (): Promise<void> => {
-        return getGlobalStats().then((globalStats) => this.setState({ globalStats }))
+        return GlobalService.getInstance()
+            .getGlobalStats()
+            .then((globalStats) => this.setState({ globalStats }))
     }
 }
 

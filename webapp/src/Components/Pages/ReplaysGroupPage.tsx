@@ -4,7 +4,7 @@ import * as qs from "qs"
 import * as React from "react"
 import { RouteComponentProps } from "react-router-dom"
 import { Replay } from "src/Models"
-import { getReplay } from "../../Requests/Replay"
+import { ReplayService } from "src/Requests"
 import { AddReplayInput } from "../ReplaysGroup/AddReplayInput"
 import { ReplayChip } from "../ReplaysGroup/ReplayChip"
 import { ReplaysGroupContent } from "../ReplaysGroup/ReplaysGroupContent"
@@ -99,7 +99,9 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getReplays = (): Promise<void> => {
-        return Promise.all(this.state.ids.map((id) => getReplay(id))).then((replays) => this.setState({ replays }))
+        return Promise.all(this.state.ids.map((id) => ReplayService.getInstance().getReplay(id))).then((replays) =>
+            this.setState({ replays })
+        )
     }
 
     private readonly handleRemoveReplay = (id: string) => {
@@ -134,7 +136,8 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
         }
 
         if (ids.indexOf(inputId) === -1) {
-            getReplay(inputId)
+            ReplayService.getInstance()
+                .getReplay(inputId)
                 .catch(() => {
                     this.props.showNotification({
                         variant: "error",

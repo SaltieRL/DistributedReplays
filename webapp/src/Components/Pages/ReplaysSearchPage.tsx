@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
 import { MatchHistoryResponse, ReplaysSearchQueryParams } from "src/Models"
-import { searchReplays } from "../../Requests/Replay"
+import { ReplayService } from "src/Requests"
 import { ReplaysSearchWithQueryString } from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
 import { ReplaysSearchResultDisplay } from "../ReplaysSearch/ReplaysSearchResultDisplay"
 import { BasePage } from "./BasePage"
@@ -65,9 +65,11 @@ export class ReplaysSearchPage extends React.PureComponent<{}, State> {
 
     private readonly updateReplays = () => {
         if (this.state.queryParams !== undefined) {
-            searchReplays(this.state.queryParams).then((replaySearchResult) => {
-                this.setState({ replaySearchResult })
-            })
+            ReplayService.getInstance()
+                .searchReplays(this.state.queryParams)
+                .then((replaySearchResult) => {
+                    this.setState({ replaySearchResult })
+                })
             // TODO: handle error
         } else {
             this.setState({ replaySearchResult: undefined })

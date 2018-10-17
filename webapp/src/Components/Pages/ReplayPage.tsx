@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core"
 import * as React from "react"
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
 import { Replay } from "src/Models"
-import { getReplay } from "../../Requests/Replay"
+import { ReplayService } from "src/Requests"
 import { ReplayView } from "../Replay/ReplayView"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
@@ -44,6 +44,8 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     }
 
     private readonly getReplay = (): Promise<void> => {
-        return getReplay(this.props.match.params.id).then((replay) => this.setState({ replay }))
+        return ReplayService.getInstance()
+            .getReplay(this.props.match.params.id)
+            .then((replay) => this.setState({ replay }))
     }
 }

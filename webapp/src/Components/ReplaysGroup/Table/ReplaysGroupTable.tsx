@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
 import { BasicStat, Replay } from "src/Models"
-import { getReplayGroupStats } from "../../../Requests/Replay"
+import { ReplayService } from "src/Requests/Replay"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
 import { BasicStatsTable } from "./BasicStatsTable"
 
@@ -55,9 +55,9 @@ export class ReplaysGroupTable extends React.PureComponent<Props, State> {
     }
 
     private readonly getStatsForReplays = () => {
-        return getReplayGroupStats(this.props.replays.map((replay) => replay.id)).then((basicStats) =>
-            this.setState({ basicStats })
-        )
+        return ReplayService.getInstance()
+            .getReplayGroupStats(this.props.replays.map((replay) => replay.id))
+            .then((basicStats) => this.setState({ basicStats }))
     }
 
     private readonly triggerReload = () => {

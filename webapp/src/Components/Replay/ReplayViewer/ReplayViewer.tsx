@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
 import { Replay } from "src/Models"
-import { getReplayViewerData } from "../../../Requests/Replay"
+import { ReplayService } from "src/Requests"
 import { ThreeScene } from "./ThreeScene"
 
 interface OwnProps {
@@ -70,7 +70,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     }
 
     private readonly getReplayPositions = async () => {
-        const data: any = await getReplayViewerData(this.props.replay.id)
+        const data: any = await ReplayService.getInstance().getReplayViewerData(this.props.replay.id)
         this.setState({ replayData: data })
     }
 

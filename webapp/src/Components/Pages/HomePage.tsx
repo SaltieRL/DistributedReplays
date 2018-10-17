@@ -10,6 +10,7 @@ import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
 import { LoggedInUser } from "src/Models"
+import { GlobalService } from "src/Requests"
 import {
     ABOUT_LINK,
     DISCORD_LINK,
@@ -23,7 +24,6 @@ import {
 } from "../../Globals"
 import { StoreState } from "../../Redux"
 import { setLoggedInUserAction } from "../../Redux/loggedInUser/actions"
-import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { LinkButton } from "../Shared/LinkButton"
 import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
@@ -45,8 +45,11 @@ class HomePageComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        getReplayCount().then((replayCount: number) => this.setState({ replayCount }))
-        getLoggedInUser()
+        GlobalService.getInstance()
+            .getReplayCount()
+            .then((replayCount: number) => this.setState({ replayCount }))
+        GlobalService.getInstance()
+            .getLoggedInUser()
             .then((loggedInUser) => this.props.setLoggedInUser(loggedInUser))
             .catch(() => undefined)
     }

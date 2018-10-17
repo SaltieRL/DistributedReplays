@@ -18,10 +18,10 @@ import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
 import { LoggedInUser } from "src/Models"
+import { GlobalService } from "src/Requests"
 import { GLOBAL_STATS_LINK } from "../../../Globals"
 import { StoreState } from "../../../Redux"
 import { setLoggedInUserAction } from "../../../Redux/loggedInUser/actions"
-import { getLoggedInUser } from "../../../Requests/Global"
 import { Logo } from "../Logo/Logo"
 import { Search } from "../Search"
 import { UploadModalWrapper } from "../Upload/UploadModalWrapper"
@@ -34,7 +34,8 @@ type Props = ReturnType<typeof mapStateToProps> &
 
 class NavBarComponent extends React.PureComponent<Props> {
     public componentDidMount() {
-        getLoggedInUser()
+        GlobalService.getInstance()
+            .getLoggedInUser()
             .then((loggedInUser) => this.props.setLoggedInUser(loggedInUser))
             .catch(() => undefined)
     }
