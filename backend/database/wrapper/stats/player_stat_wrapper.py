@@ -162,9 +162,10 @@ class PlayerStatWrapper(GlobalStatWrapper):
             std_devs.with_replay_ids(replay_ids)
         average = average.build_query(session).filter(PlayerGame.time_in_game > 0).first()
         std_devs = std_devs.build_query(session).filter(PlayerGame.time_in_game > 0).first()
-
-        average = {n.dynamic_field.field_name: round(float(s), 2) for n, s in zip(self.stat_list, average) if s is not None}
-        std_devs = {n.dynamic_field.field_name: round(float(s), 2) for n, s in zip(self.stat_list, std_devs) if s is not None}
+        print(len(average))
+        average = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.stat_list, average) if s is not None}
+        print(len(average.keys()))
+        std_devs = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.stat_list, std_devs) if s is not None}
         return {'average': average, 'std_dev': std_devs}
 
     def get_group_stats(self, session, replay_ids):
