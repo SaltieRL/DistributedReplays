@@ -76,7 +76,8 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerRanks = (): Promise<void> => {
-        return getRanks(this.props.player.id).then((playerRanks) => this.setState({ playerRanks }))
+        return getRanks(this.props.player.id)
+            .then((playerRanks) => this.setState({ playerRanks }))
     }
 
     private readonly triggerReload = () => {

@@ -63,8 +63,9 @@ export const getMatchHistory = (id: string, page: number, limit: number): Promis
             ]
         })
     }
-    return doGet(`/player/${id}/match_history?page=${page}&limit=${limit}`).then((data) => ({
-        ...data,
-        replays: data.replays.map(parseReplay)
-    }))
+    return doGet(`/player/${id}/match_history?page=${page}&limit=${limit}`)
+        .then((data) => ({
+            ...data,
+            replays: data.replays.map(parseReplay)
+        }))
 }

@@ -84,7 +84,8 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerProfileStats = (): Promise<void> => {
-        return getStats(this.props.player.id).then((playerStats) => this.setState({ playerStats }))
+        return getStats(this.props.player.id)
+            .then((playerStats) => this.setState({ playerStats }))
     }
 
     private readonly triggerReload = () => {

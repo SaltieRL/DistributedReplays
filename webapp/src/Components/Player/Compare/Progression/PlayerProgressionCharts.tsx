@@ -67,7 +67,8 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
             this.state.startDate !== prevState.startDate ||
             this.state.endDate !== prevState.endDate
         ) {
-            this.refreshAllData().then(this.updateFields)
+            this.refreshAllData()
+                .then(this.updateFields)
         }
     }
 
@@ -148,19 +149,21 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
     }
 
     private readonly refreshAllData = (): Promise<void> => {
-        return Promise.all(this.props.players.map((player) => this.getProgressionForPlayer(player.id))).then(
-            (playStyleProgressions) => {
-                this.setState({ playStyleProgressions })
-            }
-        )
+        return Promise.all(this.props.players.map((player) => this.getProgressionForPlayer(player.id)))
+            .then(
+                (playStyleProgressions) => {
+                    this.setState({ playStyleProgressions })
+                }
+            )
     }
 
     private readonly handleAddPlayers = (players: Player[]) => {
-        Promise.all(players.map((player) => this.getProgressionForPlayer(player.id))).then((playersProgressions) => {
-            this.setState({
-                playStyleProgressions: [...this.state.playStyleProgressions, ...playersProgressions]
+        Promise.all(players.map((player) => this.getProgressionForPlayer(player.id)))
+            .then((playersProgressions) => {
+                this.setState({
+                    playStyleProgressions: [...this.state.playStyleProgressions, ...playersProgressions]
+                })
             })
-        })
     }
 
     private readonly getProgressionForPlayer = (playerId: string) => {

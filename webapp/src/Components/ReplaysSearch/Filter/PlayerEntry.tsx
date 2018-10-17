@@ -26,9 +26,10 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        Promise.all(this.props.playerIds.map((playerId) => getPlayer(playerId))).then((players) =>
-            this.setState({ players })
-        )
+        Promise.all(this.props.playerIds.map((playerId) => getPlayer(playerId)))
+            .then((players) =>
+                this.setState({ players })
+            )
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {

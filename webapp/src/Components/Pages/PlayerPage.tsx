@@ -62,7 +62,8 @@ export class PlayerPage extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerForPage = (): Promise<void> => {
-        return getPlayer(this.props.match.params.id).then((player) => this.setState({ player }))
+        return getPlayer(this.props.match.params.id)
+            .then((player) => this.setState({ player }))
     }
 
     private readonly triggerReload = () => {

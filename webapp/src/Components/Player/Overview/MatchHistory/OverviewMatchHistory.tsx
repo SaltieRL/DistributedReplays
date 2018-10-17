@@ -70,9 +70,10 @@ export class OverviewMatchHistory extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerMatchHistory = (): Promise<void> => {
-        return getMatchHistory(this.props.player.id, this.state.page, this.state.limit).then((matchHistory) =>
-            this.setState({ matchHistory })
-        )
+        return getMatchHistory(this.props.player.id, this.state.page, this.state.limit)
+            .then((matchHistory) =>
+                this.setState({ matchHistory })
+            )
     }
 
     private readonly triggerReload = () => {

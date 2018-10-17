@@ -15,7 +15,7 @@ import { doGet, useMockData } from "."
 // it from there
 export class ReplayService {
     private static instance: ReplayService
-    private constructor() {}
+    private constructor() { }
 
     public static getInstance() {
         if (this.instance == null) {
@@ -168,7 +168,8 @@ export class ReplayService {
                 ]
             })
         }
-        return doGet(`/replay/${id}`).then(parseReplay)
+        return doGet(`/replay/${id}`)
+            .then(parseReplay)
     }
 
     public getReplayBasicStats(id: string): Promise<BasicStat[]> {
@@ -188,9 +189,10 @@ export class ReplayService {
     }
 
     public searchReplays(queryParams: ReplaysSearchQueryParams): Promise<MatchHistoryResponse> {
-        return doGet(`/replay` + stringifyReplaySearchQueryParam(queryParams)).then((data) => ({
-            ...data,
-            replays: data.replays.map(parseReplay)
-        }))
+        return doGet(`/replay` + stringifyReplaySearchQueryParam(queryParams))
+            .then((data) => ({
+                ...data,
+                replays: data.replays.map(parseReplay)
+            }))
     }
 }

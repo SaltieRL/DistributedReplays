@@ -81,7 +81,8 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayStyles = (): Promise<void> => {
-        return getPlayStyle(this.props.player.id).then((data) => this.setState({ data }))
+        return getPlayStyle(this.props.player.id)
+            .then((data) => this.setState({ data }))
     }
 
     private readonly triggerReload = () => {
