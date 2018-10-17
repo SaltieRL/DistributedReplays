@@ -1,11 +1,12 @@
 import {
+    IconDefinition,
     faBraille,
     faBullseye,
     faCarSide,
     faCircle,
     faFutbol,
     faPercent,
-    IconDefinition
+    faHandshake
 } from "@fortawesome/free-solid-svg-icons"
 import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
@@ -31,7 +32,8 @@ class BasicStatsTabsComponent extends React.PureComponent<Props> {
             Possession: faCircle,
             Positioning: faBraille,
             Boosts: faRocket,
-            Efficiency: faPercent
+            Efficiency: faPercent,
+            TeamPositioning: faHandshake
         }
 
         return (

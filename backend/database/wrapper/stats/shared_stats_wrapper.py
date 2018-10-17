@@ -75,7 +75,8 @@ class SharedStatsWrapper:
                               DynamicFieldResult('boost ratio'), is_percent=True),
             QueryFieldWrapper(stat_math.get_aerial_efficiency(),
                               DynamicFieldResult('aerial_efficiency'), is_percent=True),
-
+            QueryFieldWrapper(stat_math.get_game_boost_usage_per_minute(),
+                              DynamicFieldResult('boost_usage_per_minute')),
         ]
         SharedStatsWrapper.assign_values(stat_list, explanation_map)
         return stat_list

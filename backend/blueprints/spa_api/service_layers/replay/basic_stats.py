@@ -1,5 +1,5 @@
 from enum import auto, Enum
-from typing import List, Tuple
+from typing import List
 
 from flask import current_app
 from sqlalchemy import func
@@ -25,6 +25,7 @@ class BasicStatSubcategory(Enum):
     Possession = auto()
     Boosts = auto()
     Efficiency = auto()
+    TeamPositioning = auto()
 
 
 class BasicStatsMetadata:
@@ -62,6 +63,8 @@ basic_stats_metadatas = [
     Metadata('time in attacking third', ChartType.radar, SubCat.Positioning),
     Metadata('time in defending half', ChartType.radar, SubCat.Positioning),
     Metadata('time in attacking half', ChartType.radar, SubCat.Positioning),
+    Metadata('time near wall', ChartType.radar, SubCat.Positioning),
+    Metadata('time in corner', ChartType.radar, SubCat.Positioning),
 
     # playstyles
     Metadata('speed', ChartType.radar, SubCat.Playstyles),
@@ -69,7 +72,7 @@ basic_stats_metadatas = [
     Metadata('time at slow speed', ChartType.radar, SubCat.Playstyles),
     Metadata('time at super sonic', ChartType.radar, SubCat.Playstyles),
 
-    # Positioning
+    # Possession
     Metadata('possession', ChartType.pie, SubCat.Possession),
     Metadata('turnovers', ChartType.bar, SubCat.Possession),
     Metadata('turnovers on my half', ChartType.bar, SubCat.Possession),
@@ -86,6 +89,8 @@ basic_stats_metadatas = [
     Metadata('time low boost', ChartType.radar, SubCat.Boosts),
     Metadata('time no boost', ChartType.radar, SubCat.Boosts),
     Metadata('boost ratio', ChartType.bar, SubCat.Boosts),
+    Metadata('boost usage per minute', ChartType.radar, SubCat.Boosts),
+
 
     # efficiency
     Metadata('collection boost efficiency', ChartType.bar, SubCat.Efficiency),
@@ -95,6 +100,13 @@ basic_stats_metadatas = [
     Metadata('shot %', ChartType.bar, SubCat.Efficiency),
     Metadata('useful/hits', ChartType.radar, SubCat.Efficiency),
     Metadata('aerial efficiency', ChartType.radar, SubCat.Efficiency),
+
+    # team positioning
+    Metadata('time in front of center of mass', ChartType.radar, SubCat.TeamPositioning),
+    Metadata('time behind center of mass', ChartType.radar, SubCat.TeamPositioning),
+    Metadata('time most forward player', ChartType.bar, SubCat.TeamPositioning),
+    Metadata('time most back player', ChartType.bar, SubCat.TeamPositioning),
+    Metadata('time between players', ChartType.bar, SubCat.TeamPositioning),
 ]
 pw = PlayerWrapper()
 wrapper = PlayerStatWrapper(pw)
