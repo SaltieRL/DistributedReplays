@@ -99,15 +99,15 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                             </Button>
                                         </Link>
                                     ) : (
-                                        <LinkButton
-                                            to={LOCAL_LINK + STEAM_LOGIN_LINK}
-                                            isExternalLink
-                                            iconType="fontawesome"
-                                            icon={faSteam}
-                                        >
-                                            {isWidthUp("sm", width) ? "Log in with Steam" : "Log in"}
-                                        </LinkButton>
-                                    )}
+                                            <LinkButton
+                                                to={LOCAL_LINK + STEAM_LOGIN_LINK}
+                                                isExternalLink
+                                                iconType="fontawesome"
+                                                icon={faSteam}
+                                            >
+                                                {isWidthUp("sm", width) ? "Log in with Steam" : "Log in"}
+                                            </LinkButton>
+                                        )}
                                 </Grid>
                                 <Grid item xs={6} style={{ textAlign: "center" }}>
                                     <LinkButton to={UPLOAD_LINK} iconType="mui" icon={CloudUpload}>
@@ -133,7 +133,9 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
     const globalStatsLinkButton = (
         <LinkButton to={GLOBAL_STATS_LINK} iconType="fontawesome" icon={faChartBar} tooltip="Global stats" />
     )
-    const aboutLinkButton = <LinkButton to={ABOUT_LINK} iconType="mui" icon={Info} tooltip="About" />
+    const aboutLinkButton = (
+        <LinkButton to={ABOUT_LINK} iconType="mui" icon={Info} tooltip="About" />
+    )
     const twitterLinkButton = (
         <LinkButton to={TWITTER_LINK} isExternalLink iconType="fontawesome" icon={faTwitter} tooltip="Twitter" />
     )
@@ -155,21 +157,21 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
                     )
                 )
             ) : (
-                <>
-                    {[
-                        [globalStatsLinkButton, aboutLinkButton],
-                        [twitterLinkButton, discordLinkButton, githubLinkButton]
-                    ].map((linkButtonRow, i) => (
-                        <Grid item xs={12} container justify="space-around" key={i}>
-                            {linkButtonRow.map((linkButton, j) => (
-                                <Grid item xs="auto" style={{ textAlign: "center" }} key={j}>
-                                    {linkButton}
-                                </Grid>
-                            ))}
-                        </Grid>
-                    ))}
-                </>
-            )}
+                    <>
+                        {[
+                            [globalStatsLinkButton, aboutLinkButton],
+                            [twitterLinkButton, discordLinkButton, githubLinkButton]
+                        ].map((linkButtonRow, i) => (
+                            <Grid item xs={12} container justify="space-around" key={i}>
+                                {linkButtonRow.map((linkButton, j) => (
+                                    <Grid item xs="auto" style={{ textAlign: "center" }} key={j}>
+                                        {linkButton}
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        ))}
+                    </>
+                )}
         </Grid>
     )
 }
