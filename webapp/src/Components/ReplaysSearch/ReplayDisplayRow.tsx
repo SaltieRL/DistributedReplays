@@ -40,40 +40,42 @@ type Props = OwnProps
 
 class ReplayDisplayRowComponent extends React.PureComponent<Props> {
     public render() {
-        const {classes, width, replay} = this.props
+        const {classes, width, replay, selectProps} = this.props
         const typographyVariant = "subheading"
         const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
 
         const contents =
             <Grid container>
-                {this.props.selectProps &&
+                {selectProps &&
                 <Grid item xs={1} zeroMinWidth>
-                    <Checkbox style={{padding: 0}} onChange={this.toggleSelect} color={"secondary"}/>
+                    <Checkbox checked={selectProps.selected}
+                              onChange={this.toggleSelect}
+                              color="secondary"/>
                 </Grid>
                 }
-                <Grid item xs={this.props.selectProps ? 2 : 3} zeroMinWidth>
+                <Grid item xs={selectProps ? 2 : 3} zeroMinWidth className={classes.listGridItem}>
                     <Typography variant={typographyVariant} noWrap>
                         {replay.name}
                     </Typography>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={3} className={classes.listGridItem}>
                     <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
                         <Typography variant={typographyVariant}>
                             {replay.date.format(dateFormat)}
                         </Typography>
                     </Tooltip>
                 </Grid>
-                <Grid item xs={3} zeroMinWidth>
+                <Grid item xs={3} zeroMinWidth className={classes.listGridItem}>
                     <Typography variant={typographyVariant} noWrap>
                         {replay.gameMode}
                     </Typography>
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={2} className={classes.listGridItem}>
                     <Typography variant={typographyVariant}>
                         {getColouredGameScore(replay)}
                     </Typography>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={1} className={classes.listGridItem}>
                     <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
                         <InsertChart/>
                     </IconButton>
@@ -82,8 +84,9 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
 
         return (
             <>
-                {this.props.selectProps ?
-                    <ListItem selected={this.props.selectProps.selected}>
+                {selectProps ?
+                    <ListItem selected={selectProps.selected}
+                              onClick={() => selectProps!.handleSelectChange(!selectProps.selected)}>
                         {contents}
                     </ListItem>
                     :
@@ -124,6 +127,9 @@ const styles = (theme: Theme) => createStyles({
     panelDetails: {
         overflowX: "auto",
         maxWidth: "95vw",
+        margin: "auto"
+    },
+    listGridItem: {
         margin: "auto"
     }
 })

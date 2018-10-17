@@ -53,7 +53,7 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                             </div>
                         }/>
                         {selectable ?
-                            <List>
+                            <List dense>
                                 <Divider/>
                                 {this.props.replaySearchResult.replays.map((replay: Replay, i) =>
                                     <>
