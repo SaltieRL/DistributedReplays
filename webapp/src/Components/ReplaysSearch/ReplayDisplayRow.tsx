@@ -47,25 +47,25 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
         const contents =
             <Grid container>
                 {selectProps &&
-                <Grid item xs={1} zeroMinWidth>
+                <Grid item xs="auto" sm={1}>
                     <Checkbox checked={selectProps.selected}
                               onChange={this.toggleSelect}
                               color="secondary"/>
                 </Grid>
                 }
-                <Grid item xs={selectProps ? 2 : 3} zeroMinWidth className={classes.listGridItem}>
+                <Grid item xs={selectProps ? 3 : 4} zeroMinWidth className={classes.listGridItem}>
                     <Typography variant={typographyVariant} noWrap>
                         {replay.name}
                     </Typography>
                 </Grid>
-                <Grid item xs={3} className={classes.listGridItem}>
+                <Grid item xs={2} sm={3} className={classes.listGridItem}>
                     <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
                         <Typography variant={typographyVariant}>
                             {replay.date.format(dateFormat)}
                         </Typography>
                     </Tooltip>
                 </Grid>
-                <Grid item xs={3} zeroMinWidth className={classes.listGridItem}>
+                <Grid item xs={2} zeroMinWidth className={classes.listGridItem}>
                     <Typography variant={typographyVariant} noWrap>
                         {replay.gameMode}
                     </Typography>

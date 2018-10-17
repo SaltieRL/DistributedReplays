@@ -1,14 +1,13 @@
-import {Card, CardHeader, Checkbox, Divider, FormControlLabel, List, Typography} from "@material-ui/core"
-import Send from "@material-ui/icons/Send"
+import {Card, CardHeader, Divider, List, Typography} from "@material-ui/core"
 import * as _ from "lodash"
 import * as qs from "qs"
 import * as React from "react"
 import {REPLAYS_GROUP_PAGE_LINK} from "../../Globals"
 import {MatchHistoryResponse} from "../../Models/Player/MatchHistory"
 import {Replay} from "../../Models/Replay/Replay"
-import {LinkButton} from "../Shared/LinkButton"
 import {ReplayDisplayRow} from "./ReplayDisplayRow"
 import {ReplaysSearchTablePagination} from "./ReplaysSearchTablePagination"
+import {ResultsActions} from "./ResultsActions"
 
 interface Props {
     replaySearchResult: MatchHistoryResponse
@@ -31,26 +30,15 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
         const {replaySearchResult, page, limit} = this.props
         const {selectable} = this.state
 
-        const linkDisabled = this.state.selectedReplayIds.length === 0
-
         return (
             <>
                 {replaySearchResult.replays.length > 0 ?
                     <Card>
                         <CardHeader title="Results" action={
-                            <div style={{paddingRight: 8}}>
-                                <FormControlLabel
-                                    control={<Checkbox checked={this.state.selectable}
-                                                       onChange={this.handleSelectableChange}/>}
-                                    label="Select mode"
-                                />
-                                <LinkButton icon={Send} iconType="mui"
+                            <ResultsActions disabled={this.state.selectedReplayIds.length === 0}
                                             to={this.getGroupLink()}
-                                            disabled={linkDisabled}
-                                            tooltip="Select at least one replay to view as group">
-                                    View as group
-                                </LinkButton>
-                            </div>
+                                            handleSelectableChange={this.handleSelectableChange}
+                                            selectable={this.state.selectable}/>
                         }/>
                         {selectable ?
                             <List dense>
@@ -91,6 +79,11 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
     private readonly handleSelectableChange = (event: React.ChangeEvent<HTMLInputElement>,
                                                selectable: boolean) => {
         this.setState({selectable})
+        if (!selectable) {
+            this.setState({
+                selectedReplayIds: []
+            })
+        }
     }
 
     private readonly handleSelectChange = (id: string) => (checked: boolean) => {
