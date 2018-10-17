@@ -98,9 +98,8 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getReplays = (): Promise<void> => {
-        return Promise.all(this.state.ids.map((id) => ReplayService.getInstance().getReplay(id))).then((replays) =>
-            this.setState({ replays })
-        )
+        return Promise.all(this.state.ids.map((id) => ReplayService.getInstance().getReplay(id)))
+            .then((replays) => this.setState({ replays }))
     }
 
     private readonly handleRemoveReplay = (id: string) => {
