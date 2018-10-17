@@ -53,12 +53,20 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                               color="secondary"/>
                 </Grid>
                 }
-                <Grid item xs={selectProps ? 3 : 4} zeroMinWidth className={classes.listGridItem}>
+                <Grid item xs={selectProps ? 3 : 4} md={selectProps ? 4 : 5} zeroMinWidth className={classes.listGridItem}>
                     <Typography variant={typographyVariant} noWrap>
                         {replay.name}
                     </Typography>
+                    {selectProps &&
+                    <Typography variant="caption" noWrap>
+                        {replay.players
+                            .map((player) => player.name)
+                            .join(", ")
+                        }
+                    </Typography>
+                    }
                 </Grid>
-                <Grid item xs={2} sm={3} className={classes.listGridItem}>
+                <Grid item xs={2} sm={3} md={2} className={classes.listGridItem}>
                     <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
                         <Typography variant={typographyVariant}>
                             {replay.date.format(dateFormat)}
