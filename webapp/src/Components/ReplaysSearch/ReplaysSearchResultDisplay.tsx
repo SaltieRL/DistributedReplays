@@ -91,6 +91,11 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
     private readonly handleSelectableChange = (event: React.ChangeEvent<HTMLInputElement>,
                                                selectable: boolean) => {
         this.setState({selectable})
+        if (!selectable) {
+            this.setState({
+                selectedReplayIds: []
+            })
+        }
     }
 
     private readonly handleSelectChange = (id: string) => (checked: boolean) => {
