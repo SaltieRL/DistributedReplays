@@ -28,17 +28,20 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const checkbox = <FormControlLabel
-            control={<Checkbox checked={this.props.selectable}
-                               onChange={this.props.handleSelectableChange}/>}
-            label="Select mode"
-        />
-        const linkButton = <LinkButton icon={Send} iconType="mui"
-                                       to={this.props.to}
-                                       disabled={this.props.disabled}
-                                       tooltip="Select at least one replay to view as group">
-            View as group
-        </LinkButton>
+        const checkbox =
+            <FormControlLabel
+                control={<Checkbox checked={this.props.selectable}
+                                   onChange={this.props.handleSelectableChange}/>}
+                label="Select mode"
+            />
+        const linkButton =
+            <LinkButton icon={Send} iconType="mui"
+                        to={this.props.to}
+                        disabled={this.props.disabled}
+                        tooltip="Select at least one replay to view as group">
+                View as group
+            </LinkButton>
+
         return (
             <div style={{paddingRight: 8}}>
                 {isWidthUp("sm", this.props.width) ?
