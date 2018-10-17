@@ -11,6 +11,7 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
@@ -26,6 +27,7 @@ from .service_layers.player.play_style_progression import PlayStyleProgression
 from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
+from .service_layers.queue_status import QueueStatus
 from .service_layers.replay.basic_stats import BasicStatChartData
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
@@ -65,8 +67,7 @@ def api_get_replay_count():
 
 @bp.route('/global/queue/count')
 def api_get_queue_length():
-    steps = [0, 3, 6, 9]
-    return jsonify({'priority ' + str(k): v for k, v in zip(steps, get_queue_length())})
+    return better_jsonify(QueueStatus.create_for_queues())
 
 
 @bp.route('/global/stats')
@@ -176,9 +177,15 @@ def api_get_replay_data(id_):
     return better_jsonify(replay)
 
 
-@bp.route('replay/<id_>/basic_stats')
-def api_get_replay_basic_stats(id_):
-    basic_stats = BasicStatChartData.create_from_id(id_)
+@bp.route('replay/<id_>/basic_player_stats')
+def api_get_replay_basic_player_stats(id_):
+    basic_stats = PlayerStatsChart.create_from_id(id_)
+    return better_jsonify(basic_stats)
+
+
+@bp.route('replay/<id_>/basic_team_stats')
+def api_get_replay_basic_team_stats(id_):
+    basic_stats = TeamStatsChart.create_from_id(id_)
     return better_jsonify(basic_stats)
 
 
@@ -226,6 +233,7 @@ def api_upload_replays():
     logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:
         raise CalculatedError(400, 'No files uploaded')
+    task_ids = []
 
     for file in uploaded_files:
         file.seek(0, os.SEEK_END)
@@ -240,10 +248,18 @@ def api_upload_replays():
         file.save(filename)
         lengths = get_queue_length()  # priority 0,3,6,9
         if lengths[1] > 1000:
-            celery_tasks.parse_replay_gcp(os.path.abspath(filename))
+            result = celery_tasks.parse_replay_gcp(os.path.abspath(filename))
         else:
-            celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-    return 'Replay uploaded and queued for processing...', 202
+            result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+        task_ids.append(result.id)
+    return jsonify(task_ids), 202
+
+
+@bp.route('/upload', methods=['GET'])
+def api_get_parse_status():
+    ids = request.args.getlist("ids")
+    states = [celery_tasks.get_task_state(id_).name for id_ in ids]
+    return jsonify(states)
 
 
 @bp.route('/upload/proto', methods=['POST'])

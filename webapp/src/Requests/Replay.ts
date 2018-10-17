@@ -173,11 +173,11 @@ export class ReplayService {
     }
 
     public getReplayBasicStats(id: string): Promise<BasicStat[]> {
-        return doGet(`/replay/${id}/basic_stats`)
+        return doGet(`/replay/${id}/basic_player_stats`)
     }
 
     public getReplayTeamStats(id: string): Promise<BasicStat[]> {
-        return doGet(`/replay/${id}/team_stats`)
+        return doGet(`/replay/${id}/basic_team_stats`)
     }
 
     public getReplayViewerData(id: string): Promise<any> {

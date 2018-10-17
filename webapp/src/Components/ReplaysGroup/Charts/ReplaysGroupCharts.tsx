@@ -1,5 +1,6 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
+import {BasicStat, PlayerStatsSubcategory} from "../../../Models/ChartData"
 import { BasicStat, BasicStatsSubcategory, Replay } from "src/Models"
 import { ReplayService } from "src/Requests/Replay"
 import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
@@ -8,7 +9,7 @@ import { LoadableWrapper } from "../../Shared/LoadableWrapper"
 
 interface Props {
     replays: Replay[]
-    selectedTab: BasicStatsSubcategory
+    selectedTab: PlayerStatsSubcategory
 }
 
 interface State {

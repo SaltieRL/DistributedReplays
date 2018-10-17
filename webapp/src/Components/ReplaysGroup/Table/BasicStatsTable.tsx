@@ -1,11 +1,11 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
 import * as React from "react"
-import { BasicStat, BasicStatsSubcategory } from "src/Models"
+import {BasicStat, StatsSubcategory} from "../../../Models/ChartData"
 import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
 
 interface StatMetadata {
     name: string
-    category: BasicStatsSubcategory
+    category: StatsSubcategory
 }
 
 interface Stat {
@@ -35,7 +35,7 @@ interface State {
 export class BasicStatsTable extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = { currentSort: { statName: "total_hits", direction: "desc" } }
+        this.state = {currentSort: {statName: "hits", direction: "desc"}}
     }
 
     public render() {

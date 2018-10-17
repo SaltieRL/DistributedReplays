@@ -60,7 +60,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
         const alignCenterProps: GridProps = { container: true, justify: "center", alignItems: "center" }
         return (
             <div className={classes.backgroundContainer}>
-                <UploadModalWrapper buttonStyle="floating">
+                <UploadDialogWrapper buttonStyle="floating">
                     <div className={classes.root}>
                         <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}>
                             <Grid item xs={12} {...alignCenterProps} style={{ minHeight: "300px" }} direction="column">
@@ -123,7 +123,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         </Grid>
                     </div>
-                </UploadModalWrapper>
+                </UploadDialogWrapper>
             </div>
         )
     }

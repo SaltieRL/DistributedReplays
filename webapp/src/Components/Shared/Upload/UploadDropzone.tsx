@@ -65,9 +65,9 @@ const styles = createStyles({
         backgroundColor: "#ccc"
     },
     default: {
-        width: "550px",
-        height: "430px",
-        maxWidth: "90vw",
+        width: 550,
+        height: 430,
+        maxWidth: "80vw",
         maxHeight: "90vh",
         borderWidth: 2,
         borderColor: "#666",
@@ -84,7 +84,8 @@ const styles = createStyles({
     dropzoneContent: {
         position: "absolute",
         width: "100%",
-        textAlign: "center"
+        textAlign: "center",
+        padding: 20
     }
 })
 

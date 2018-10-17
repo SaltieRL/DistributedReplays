@@ -1,3 +1,4 @@
+import * as qs from "qs"
 import { GlobalStatsGraph, LoggedInUser } from "src/Models"
 import { doGet, doPost, useMockData } from "."
 
@@ -20,6 +21,10 @@ export class GlobalService {
         }
         return doGet("/global/replay_count")
     }
+export const getQueueStatuses = (): Promise<QueueStatus[]> => {
+    return doGet("/global/queue/count")
+}
+
 
     public getGlobalStats(): Promise<GlobalStatsGraph[]> {
         return doGet("/global/stats")
@@ -38,3 +43,12 @@ export class GlobalService {
         return doGet("/me")
     }
 }
+
+export const getUploadStatuses = (ids: string[]): Promise<UploadStatus[]> => {
+    return doGet("/upload" +
+        qs.stringify({ids},
+            {arrayFormat: "repeat", addQueryPrefix: true}
+        ))
+}
+
+export const getLoggedInUser = (): Promise<LoggedInUser> => doGet("/me")

@@ -11,8 +11,8 @@ interface State {
     replaySearchResult?: MatchHistoryResponse
 }
 
-export class ReplaysSearchPage extends React.PureComponent<{}, State> {
-    constructor(props: {}) {
+export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{}>, State> {
+    constructor(props: RouteComponentProps<{}>) {
         super(props)
         this.state = {}
     }
@@ -27,7 +27,7 @@ export class ReplaysSearchPage extends React.PureComponent<{}, State> {
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center">
-                    <Grid item xs={12} md={4} container>
+                    <Grid item xs={12} md={4} container spacing={32} alignContent="flex-start">
                         <Grid item xs={12}>
                             <Typography variant="title" align="center" gutterBottom>
                                 Filters
@@ -72,7 +72,9 @@ export class ReplaysSearchPage extends React.PureComponent<{}, State> {
                 })
             // TODO: handle error
         } else {
-            this.setState({ replaySearchResult: undefined })
+            this.setState({
+                replaySearchResult: undefined
+            })
         }
     }
 }

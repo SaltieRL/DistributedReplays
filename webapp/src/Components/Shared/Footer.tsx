@@ -15,7 +15,15 @@ import {
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
 import { Link } from "react-router-dom"
-import { ABOUT_LINK, DISCORD_LINK, GITHUB_LINK, GLOBAL_STATS_LINK, REDDIT_LINK, TWITTER_LINK } from "../../Globals"
+import {
+    ABOUT_LINK,
+    DISCORD_LINK,
+    GITHUB_LINK,
+    GLOBAL_STATS_LINK,
+    REDDIT_LINK,
+    STATUS_PAGE_LINK,
+    TWITTER_LINK
+} from "../../Globals"
 
 interface ButtonData {
     to: string
@@ -96,6 +104,16 @@ class FooterComponent extends React.PureComponent<Props> {
                                 <Link to={ABOUT_LINK} style={{ textDecoration: "none" }}>
                                     <ButtonBase>
                                         <Typography align={isWidthUpMd ? "left" : "center"}>About Us</Typography>
+                                    </ButtonBase>
+                                </Link>
+                            </Grid>
+                            <Grid item> | </Grid>
+                            <Grid item>
+                                <Link to={STATUS_PAGE_LINK} style={{textDecoration: "none"}}>
+                                    <ButtonBase>
+                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                            Status
+                                        </Typography>
                                     </ButtonBase>
                                 </Link>
                             </Grid>
