@@ -9,4 +9,8 @@ export class PlayerService {
         }
         return this.instance
     }
+
+    public shutTheLinterUp() {
+        return true
+    }
 }
