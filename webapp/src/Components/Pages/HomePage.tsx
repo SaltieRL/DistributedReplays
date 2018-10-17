@@ -77,16 +77,8 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             <Grid item xs={11} {...alignCenterProps} style={{ padding: "20px 0 20px 0" }}>
                                 <Search usePaper />
                             </Grid>
-                            <Grid
-                                item
-                                xs={12}
-                                sm={10}
-                                md={8}
-                                container
-                                spacing={16}
-                                alignItems="center"
-                                style={{ maxWidth: 550 }}
-                            >
+                            <Grid item xs={12} sm={10} md={8} container spacing={16} alignItems="center"
+                                  style={{ maxWidth: 550 }} >
                                 <Grid item xs={6} style={{ textAlign: "center" }}>
                                     {loggedInUser ? (
                                         <Link to={PLAYER_PAGE_LINK(loggedInUser.id)} style={{ textDecoration: "none" }}>
