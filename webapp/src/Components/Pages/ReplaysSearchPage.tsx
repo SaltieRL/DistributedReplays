@@ -1,9 +1,6 @@
-import {Card, CardContent, Checkbox, FormControlLabel, Grid, IconButton, Typography} from "@material-ui/core"
-import {Send} from "@material-ui/icons"
-import * as qs from "qs"
+import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
-import {RouteComponentProps, withRouter} from "react-router"
-import {REPLAYS_GROUP_PAGE_LINK} from "../../Globals"
+import {RouteComponentProps} from "react-router"
 import {MatchHistoryResponse} from "../../Models/Player/MatchHistory"
 import {ReplaysSearchQueryParams} from "../../Models/ReplaysSearchQueryParams"
 import {searchReplays} from "../../Requests/Replay"
@@ -14,14 +11,12 @@ import {BasePage} from "./BasePage"
 interface State {
     queryParams?: ReplaysSearchQueryParams
     replaySearchResult?: MatchHistoryResponse
-    selectMode: boolean
-    selectedReplays: string[]
 }
 
-class ReplaysSearchPageComponent extends React.PureComponent<RouteComponentProps<{}>, State> {
+export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{}>, State> {
     constructor(props: RouteComponentProps<{}>) {
         super(props)
-        this.state = {selectMode: false, selectedReplays: []}
+        this.state = {}
     }
 
     public componentDidUpdate(prevProps: unknown, prevState: Readonly<State>) {
@@ -43,17 +38,6 @@ class ReplaysSearchPageComponent extends React.PureComponent<RouteComponentProps
                         <Grid item xs={12}>
                             <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange}/>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Card>
-                                <CardContent>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox onChange={this.toggleSelectable}>
-                                                Select Mode
-                                            </Checkbox>} label="Select Mode"/>
-                                </CardContent>
-                            </Card>
-                        </Grid>
                     </Grid>
                     <Grid item xs={12} md={8} container alignContent="flex-start">
                         <Grid item xs={12}>
@@ -65,20 +49,9 @@ class ReplaysSearchPageComponent extends React.PureComponent<RouteComponentProps
                             {this.state.replaySearchResult && this.state.queryParams &&
                             <ReplaysSearchResultDisplay replaySearchResult={this.state.replaySearchResult}
                                                         page={this.state.queryParams.page}
-                                                        limit={this.state.queryParams.limit}
-                                                        selectable={this.state.selectMode}
-                                                        onChecked={this.onChecked}/>
+                                                        limit={this.state.queryParams.limit}/>
                             }
                         </Grid>
-                        {this.state.selectMode &&
-                        <Grid item xs={12} container alignContent="flex-end">
-                            <FormControlLabel
-                                control={<IconButton onClick={this.handleGroup}>
-                                    <Send/>
-                                </IconButton>}
-                                label="Group"/>
-                        </Grid>
-                        }
                     </Grid>
                 </Grid>
             </BasePage>
@@ -98,36 +71,8 @@ class ReplaysSearchPageComponent extends React.PureComponent<RouteComponentProps
             // TODO: handle error
         } else {
             this.setState({
-                replaySearchResult: {
-                    totalCount: 1,
-                    replays: []
-                },
-                selectedReplays: []
+                replaySearchResult: undefined
             })
         }
-    }
-
-    private readonly toggleSelectable = (event: object, checked: boolean) => {
-        this.setState({selectMode: checked})
-    }
-
-    private readonly onChecked = (id: string, checked: boolean) => {
-        if (!checked) {
-            this.setState({
-                selectedReplays: this.state.selectedReplays.filter((x) => x !== id)
-            })
-        } else {
-            this.setState({
-                selectedReplays: this.state.selectedReplays.concat([id])
-            })
-        }
-    }
-
-    private readonly handleGroup = () => {
-        const url = qs.stringify({ids: this.state.selectedReplays},
-            {arrayFormat: "repeat", addQueryPrefix: true})
-        this.props.history.push(REPLAYS_GROUP_PAGE_LINK + url)
     }
 }
-
-export const ReplaysSearchPage = withRouter(ReplaysSearchPageComponent)
