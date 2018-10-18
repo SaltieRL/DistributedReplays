@@ -1,3 +1,5 @@
+from typing import List
+
 from flask import current_app
 from sqlalchemy import func, desc, cast, String, literal_column
 from sqlalchemy.dialects import postgresql
@@ -11,13 +13,20 @@ player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
+class PlayerInCommonStats:
+    def __init__(self, id: str, name: str, count: int):
+        self.id = id
+        self.name = name
+        self.count = count
+
+
 class PlayerProfileStats:
-    def __init__(self, favourite_car: str, car_percentage: float, players_in_common: list):
+    def __init__(self, favourite_car: str, car_percentage: float, players_in_common: List[PlayerInCommonStats]):
         self.car = {
             "carName": favourite_car,
             "carPercentage": car_percentage
         }
-        self.playersInCommon = players_in_common
+        self.playersInCommon = [player_in_common.__dict__ for player_in_common in players_in_common]
 
     @staticmethod
     def create_from_id(id_: str) -> 'PlayerProfileStats':
@@ -42,11 +51,7 @@ class PlayerProfileStats:
                                                                  Player.platformid == result.c.player).filter(
             Player.platformid != id_).filter(literal_column('count') > 1)[:3]
         for p in result:
-            players_in_common.append({
-                'name': p[2],
-                'count': p[1],
-                'id': p[0]
-            })
+            players_in_common.append(PlayerInCommonStats(name=p[2], count=p[1], id=p[0]))
         return players_in_common
 
     @staticmethod
