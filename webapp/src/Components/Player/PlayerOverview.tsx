@@ -22,12 +22,13 @@ const playerViewTabs = ["Profile", "Playstyle", "Match History"]
 
 interface State {
     selectedMobileTab?: PlayerViewTab
+    playlist?: number
 }
 
 class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedMobileTab: "Profile"}
+        this.state = {selectedMobileTab: "Profile", playlist: 3}
     }
 
     public render() {
@@ -38,7 +39,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
         }
 
         const playerSideBar = <PlayerSideBar player={this.props.player}/>
-        const playerPlayStyle = <PlayerPlayStyle player={this.props.player}/>
+        const playerPlayStyle = <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}/>
         const playerMatchHistory = <OverviewMatchHistory player={this.props.player}
                                                          useBoxScore={isWidthDown("sm", this.props.width)}/>
 
@@ -51,7 +52,8 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
-                                <PlayerPlayStyleCard player={this.props.player}>
+                                <PlayerPlayStyleCard player={this.props.player}
+                                                     handlePlaylistChange={this.handlePlaylistChange}>
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
                             </Grid>
@@ -81,7 +83,9 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
                                 <>
-                                    <PlayStyleActions player={this.props.player} useFullSizeCompareButton/>
+                                    <PlayStyleActions player={this.props.player}
+                                                      handlePlaylistChange={this.handlePlaylistChange}
+                                                      useFullSizeCompareButton/>
                                     {playerPlayStyle}
                                 </>
                                 }
@@ -98,6 +102,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
     private readonly handleSelectMobileTab = (event: React.ChangeEvent, selectedMobileTab: PlayerViewTab) => {
         this.setState({selectedMobileTab})
+    }
+
+    private readonly handlePlaylistChange = (playlist: number) => {
+        this.setState({playlist})
     }
 }
 
