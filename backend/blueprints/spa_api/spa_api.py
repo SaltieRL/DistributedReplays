@@ -29,7 +29,6 @@ from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.queue_status import QueueStatus
-from .service_layers.replay.basic_stats import BasicStatChartData
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
@@ -303,18 +302,6 @@ def api_upload_proto():
     if os.path.isfile(id_replay_path):
         shutil.move(id_replay_path, guid_replay_path)
 
-    return jsonify({'Success': True})
-
-
-@bp.route('/upload/proto', methods=['POST'])
-def api_upload_proto():
-    print('Proto uploaded')
-    response = request.get_json()
-    i = io.BytesIO(base64.b64decode(response['proto']))
-    protobuf_game = ProtobufManager.read_proto_out_from_file(i)
-    i2 = io.BytesIO(base64.b64decode(response['pandas']))
-    pandas_game = PandasManager.read_numpy_from_memory(i2)
-    print(protobuf_game)
     return jsonify({'Success': True})
 
 
