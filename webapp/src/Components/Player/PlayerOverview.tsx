@@ -3,10 +3,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Card, CardContent, Divider, Grid, Tab, Tabs, withWidth} from "@material-ui/core"
 import {isWidthDown, isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
-import {PlayerMatchHistory} from "./Overview/MatchHistory/PlayerMatchHistory"
+import {OverviewMatchHistory} from "./Overview/MatchHistory/OverviewMatchHistory"
 import {PlayerMatchHistoryCard} from "./Overview/MatchHistory/PlayerMatchHistoryCard"
 import {PlayerPlayStyle} from "./Overview/PlayStyle/PlayerPlayStyle"
 import {PlayerPlayStyleCard} from "./Overview/PlayStyle/PlayerPlayStyleCard"
+import {PlayStyleActions} from "./Overview/PlayStyle/PlayStyleActions"
 import {PlayerSideBar} from "./Overview/SideBar/PlayerSideBar"
 
 interface OwnProps {
@@ -38,19 +39,19 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
         const playerSideBar = <PlayerSideBar player={this.props.player}/>
         const playerPlayStyle = <PlayerPlayStyle player={this.props.player}/>
-        const playerMatchHistory = <PlayerMatchHistory player={this.props.player}
-                                                       useBoxScore={isWidthDown("sm", this.props.width)}/>
+        const playerMatchHistory = <OverviewMatchHistory player={this.props.player}
+                                                         useBoxScore={isWidthDown("sm", this.props.width)}/>
 
         return (
             <>
-                {isWidthUp("sm", this.props.width) ?
+                {isWidthUp("md", this.props.width) ?
                     <>
                         <Grid item xs={5} md={3}>
                             {playerSideBar}
                         </Grid>
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
-                                <PlayerPlayStyleCard>
+                                <PlayerPlayStyleCard player={this.props.player}>
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
                             </Grid>
@@ -79,7 +80,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 playerSideBar
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
-                                playerPlayStyle
+                                <>
+                                    <PlayStyleActions player={this.props.player} useFullSizeCompareButton/>
+                                    {playerPlayStyle}
+                                </>
                                 }
                                 {this.state.selectedMobileTab === "Match History" &&
                                 playerMatchHistory

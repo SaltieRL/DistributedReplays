@@ -3,8 +3,8 @@ from sqlalchemy import func, desc
 
 from backend.database.objects import PlayerGame
 from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.database.wrapper.stat_wrapper import PlayerStatWrapper
-from data import constants
+from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
+from data.constants.car import get_car
 
 player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
@@ -32,7 +32,7 @@ class PlayerProfileStats:
             favourite_car = "Unknown"
             car_percentage = 0.
         else:
-            favourite_car = constants.get_car(int(fav_car_str[0]))
+            favourite_car = get_car(int(fav_car_str[0]))
             total_games = player_wrapper.get_total_games(session, id_)
             car_percentage = fav_car_str[1] / total_games
 

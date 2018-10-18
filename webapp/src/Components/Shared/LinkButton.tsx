@@ -31,6 +31,7 @@ type IconProps = MuiIconProps | FontAwesomIconProps
 interface OwnProps {
     iconPosition?: "left"
     tooltip?: string
+    disabled?: boolean
 }  // TODO: Make use of iconPosition
 
 type LinkButtonProps = OwnProps
@@ -40,10 +41,10 @@ type LinkButtonProps = OwnProps
 
 class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
     public render() {
-        const {classes, children, isExternalLink, tooltip} = this.props
+        const {classes, children, isExternalLink, tooltip, disabled} = this.props
         const className = children ? `${classes.icon} ${classes.leftIcon}` : classes.icon
         let button =
-            <Button variant="outlined">
+            <Button variant="outlined" style={{height: "100%"}} disabled={disabled}>
                 {this.props.iconType === "fontawesome" &&
                 <FontAwesomeIcon icon={this.props.icon} className={className}/>
                 }
@@ -62,14 +63,19 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
 
         return (
             <>
-                {isExternalLink === true ?
-                    (<a href={this.props.to as string} target="_blank" style={{textDecoration: "none"}}>
+                {disabled ?
+                    <>
                         {button}
-                    </a>)
+                    </>
                     :
-                    (<Link to={this.props.to} style={{textDecoration: "none"}}>
-                        {button}
-                    </Link>)
+                    isExternalLink === true ?
+                        (<a href={this.props.to as string} target="_blank" style={{textDecoration: "none"}}>
+                            {button}
+                        </a>)
+                        :
+                        (<Link to={this.props.to} style={{textDecoration: "none"}}>
+                            {button}
+                        </Link>)
                 }
             </>
         )

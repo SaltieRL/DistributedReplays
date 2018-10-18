@@ -7,7 +7,7 @@ import {LinkButton} from "../LinkButton"
 export class BakkesModAd extends React.PureComponent {
     public render() {
         return (
-            <div style={{maxWidth: 400, textAlign: "center", margin: "0 auto 0 auto", paddingBottom: 15}}>
+            <div style={{maxWidth: 400, textAlign: "center", margin: "0 auto 0 auto", padding: 15}}>
                 <Typography variant="subheading">
                     A shoutout for BakkesMod
                 </Typography>

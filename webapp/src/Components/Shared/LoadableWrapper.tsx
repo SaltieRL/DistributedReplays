@@ -1,7 +1,7 @@
 import {Button, CircularProgress, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
 import {AppError} from "../../Models/Error"
-import {NotificationSnackbar} from "./Notification/NotificationSnackbar"
+import {WithNotifications, withNotifications} from "./Notification/NotificationUtils"
 
 interface OwnProps {
     load: () => Promise<any>
@@ -10,17 +10,16 @@ interface OwnProps {
 
 type Props = OwnProps
     & WithStyles<typeof styles>
+    & WithNotifications
 
 interface State {
     loadingState: "not loaded" | "loading" | "loaded" | "failed"
-    appError?: AppError
-    notificationOpen: boolean
 }
 
-export class LoadableWrapperComponent extends React.PureComponent<Props, State> {
+class LoadableWrapperComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {loadingState: "not loaded", notificationOpen: false}
+        this.state = {loadingState: "not loaded"}
     }
 
     public componentDidMount() {
@@ -35,7 +34,7 @@ export class LoadableWrapperComponent extends React.PureComponent<Props, State> 
 
     public render() {
         const {classes} = this.props
-        const {loadingState, appError, notificationOpen} = this.state
+        const {loadingState} = this.state
         return (
             <>
                 {loadingState === "loading" &&
@@ -59,31 +58,20 @@ export class LoadableWrapperComponent extends React.PureComponent<Props, State> 
 
                 </>
                 }
-                {appError &&
-                <NotificationSnackbar variant="appError" appError={appError}
-                                      open={notificationOpen}
-                                      handleClose={this.handleNotificationClose}/>
-                }
             </>
         )
     }
 
     private readonly attemptToLoad = () => {
-        this.setState({loadingState: "loading", notificationOpen: false})
+        this.setState({loadingState: "loading"})
         this.props.load()
             .then(() => this.setState({loadingState: "loaded"}))
-            .catch((appError: AppError) => this.setState({
-                loadingState: "failed",
-                appError,
-                notificationOpen: true
-            }))
-    }
-
-    private readonly handleNotificationClose = (event: any, reason?: string) => {
-        if (reason === "clickaway") {
-            return
-        }
-        this.setState({notificationOpen: false})
+            .catch((appError: AppError) => {
+                this.setState({
+                    loadingState: "failed"
+                })
+                this.props.showNotification({variant: "appError", appError})
+            })
     }
 }
 
@@ -95,4 +83,6 @@ const styles = createStyles({
     }
 })
 
-export const LoadableWrapper = withStyles(styles)(LoadableWrapperComponent)
+export const LoadableWrapper = withStyles(styles)(
+    withNotifications()(LoadableWrapperComponent)
+)

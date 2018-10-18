@@ -1,4 +1,4 @@
-import {faDiscord, faGithub, faSteam} from "@fortawesome/free-brands-svg-icons"
+import {faDiscord, faGithub, faSteam, faTwitter} from "@fortawesome/free-brands-svg-icons"
 import {faChartBar} from "@fortawesome/free-solid-svg-icons"
 import {Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth} from "@material-ui/core"
 import {GridProps} from "@material-ui/core/Grid"
@@ -17,6 +17,7 @@ import {
     LOCAL_LINK,
     PLAYER_PAGE_LINK,
     STEAM_LOGIN_LINK,
+    TWITTER_LINK,
     UPLOAD_LINK
 } from "../../Globals"
 import {StoreState} from "../../Redux"
@@ -25,7 +26,7 @@ import {getLoggedInUser, getReplayCount} from "../../Requests/Global"
 import {LinkButton} from "../Shared/LinkButton"
 import {Logo} from "../Shared/Logo/Logo"
 import {Search} from "../Shared/Search"
-import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
+import {UploadDialogWrapper} from "../Shared/Upload/UploadDialogWrapper"
 
 type Props = ReturnType<typeof mapStateToProps>
     & ReturnType<typeof mapDispatchToProps>
@@ -56,7 +57,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
         const alignCenterProps: GridProps = {container: true, justify: "center", alignItems: "center"}
         return (
             <div className={classes.backgroundContainer}>
-                <UploadModalWrapper buttonStyle="floating">
+                <UploadDialogWrapper buttonStyle="floating">
                     <div className={classes.root}>
                         <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}>
                             <Grid item xs={12} {...alignCenterProps} style={{minHeight: "300px"}} direction="column">
@@ -105,39 +106,69 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         </Grid>
                     </div>
-                </UploadModalWrapper>
+                </UploadDialogWrapper>
             </div>
         )
     }
 }
 
-const HomePageFooter: React.SFC = () => {
-    const linkButtonGridItemProps: GridProps = {item: true, xs: 3, sm: 3, md: 2, style: {textAlign: "center"}}
+const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
+
+    const globalStatsLinkButton =
+        <LinkButton to={GLOBAL_STATS_LINK}
+                    iconType="fontawesome" icon={faChartBar}
+                    tooltip="Global stats"/>
+    const aboutLinkButton =
+        <LinkButton to={ABOUT_LINK}
+                    iconType="mui" icon={Info}
+                    tooltip="About"/>
+    const twitterLinkButton =
+        <LinkButton to={TWITTER_LINK} isExternalLink
+                    iconType="fontawesome" icon={faTwitter}
+                    tooltip="Twitter"/>
+    const discordLinkButton =
+        <LinkButton to={DISCORD_LINK} isExternalLink
+                    iconType="fontawesome" icon={faDiscord}
+                    tooltip="Discord"/>
+    const githubLinkButton =
+        <LinkButton to={GITHUB_LINK} isExternalLink
+                    iconType="fontawesome" icon={faGithub}
+                    tooltip="Github"/>
+
     return (
         <Grid container justify="center" spacing={16}>
-            <Grid {...linkButtonGridItemProps}>
-                <LinkButton to={GLOBAL_STATS_LINK}
-                            iconType="fontawesome" icon={faChartBar}
-                            tooltip="Global stats"/>
-            </Grid>
-            <Grid {...linkButtonGridItemProps}>
-                <LinkButton to={ABOUT_LINK}
-                            iconType="mui" icon={Info}
-                            tooltip="About"/>
-            </Grid>
-            <Grid {...linkButtonGridItemProps}>
-                <LinkButton to={GITHUB_LINK} isExternalLink
-                            iconType="fontawesome" icon={faGithub}
-                            tooltip="Github"/>
-            </Grid>
-            <Grid {...linkButtonGridItemProps}>
-                <LinkButton to={DISCORD_LINK} isExternalLink
-                            iconType="fontawesome" icon={faDiscord}
-                            tooltip="Discord"/>
-            </Grid>
+            {isWidthUp("md", props.width) ?
+                [globalStatsLinkButton, aboutLinkButton, twitterLinkButton, discordLinkButton, githubLinkButton]
+                    .map((linkButton, i) => (
+                        <Grid item xs={3} md={2} style={{textAlign: "center"}} key={i}>
+                            {linkButton}
+                        </Grid>
+                    ))
+                :
+                <>
+                    {
+                        [
+                            [globalStatsLinkButton, aboutLinkButton],
+                            [twitterLinkButton, discordLinkButton, githubLinkButton]
+                        ]
+                            .map((linkButtonRow, i) => (
+                                <Grid item xs={12} container justify="space-around" key={i}>
+                                    {linkButtonRow.map((linkButton, j) => (
+                                        <Grid item xs="auto" style={{textAlign: "center"}} key={j}>
+                                            {linkButton}
+                                        </Grid>
+                                    ))
+                                    }
+                                </Grid>
+                            ))
+                    }
+                </>
+            }
         </Grid>
     )
 }
+
+const HomePageFooter = withWidth()(HomePageFooterComponent)
 
 const styles = createStyles({
     root: {

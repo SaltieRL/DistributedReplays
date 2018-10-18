@@ -6,17 +6,17 @@ from backend.database.objects import DBObjectBase, PlayerGame
 from carball.generated.api import player_pb2
 
 
-class ProtoFieldResult:
-    def __init__(self, nested_parents, field_name, field_descriptor, nested_names=None):
-        self.field_descriptor = field_descriptor
-        self.field_name = field_name
-        self.nested_parents = nested_parents
-        self.nested_names = nested_names
-
-
 class DynamicFieldResult:
     def __init__(self, field_name):
         self.field_name = field_name
+
+
+class ProtoFieldResult(DynamicFieldResult):
+    def __init__(self, nested_parents, field_name, field_descriptor, nested_names=None):
+        super().__init__(field_name)
+        self.field_descriptor = field_descriptor
+        self.nested_parents = nested_parents
+        self.nested_names = nested_names
 
 
 def get_proto_fields_as_flatten_list(proto_message: message, nested_parents=None, nested_fields=None) -> List[ProtoFieldResult]:
@@ -104,13 +104,15 @@ def get_proto_values(proto_object, fields: List[ProtoFieldResult]):
         resulting_values.append(getattr(current_object, field.field_name))
     return resulting_values
 
+
 def add_dynamic_fields(names):
     return [DynamicFieldResult(name) for name in names]
+
 
 if __name__ == "__main__":
     test_list = get_proto_fields_as_flatten_list(player_pb2.Player)
     test_list = filter_proto_fields(test_list, ['name', 'title_id', 'is_orange', 'load_out_id'],
-                               ['api.metadata.CameraSettings', 'api.PlayerId'])
+                                    ['api.metadata.CameraSettings', 'api.PlayerId'])
 
     test_list = get_db_proto_union(test_list, PlayerGame)
     print(test_list)

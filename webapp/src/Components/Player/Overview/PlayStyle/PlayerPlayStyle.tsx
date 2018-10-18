@@ -2,7 +2,7 @@ import {createStyles, Grid, Theme, Typography, withStyles, WithStyles} from "@ma
 import Warning from "@material-ui/icons/Warning"
 import * as React from "react"
 import {PlayStyleResponse} from "../../../../Models/Player/PlayStyle"
-import {getPlayerPlayStyles} from "../../../../Requests/Player"
+import {getPlayStyle} from "../../../../Requests/Player/getPlayStyle"
 import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {PlayerPlayStyleChart} from "./PlayerPlayStyleChart"
 
@@ -60,7 +60,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                     <Typography variant="subheading" align="center">
                                         {chartDataResponse.title}
                                     </Typography>
-                                    <PlayerPlayStyleChart data={chartDataResponse}/>
+                                    <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>
                                 </Grid>
                             )
                         })}
@@ -73,7 +73,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayStyles = (): Promise<void> => {
-        return getPlayerPlayStyles(this.props.player.id)
+        return getPlayStyle(this.props.player.id)
             .then((data) => this.setState({data}))
     }
 

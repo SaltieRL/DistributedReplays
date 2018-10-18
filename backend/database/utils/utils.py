@@ -1,9 +1,10 @@
 import datetime
 import math
+from typing import List
 
 from carball.generated.api import game_pb2
 
-from backend.database.objects import Game, PlayerGame, Player
+from backend.database.objects import Game, PlayerGame, Player, TeamStat
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
 from backend.utils.psyonix_api_handler import get_rank_batch
 
@@ -34,7 +35,9 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                     rank_list.append(r[gamemode]['tier'])
                 if 'rank_points' in r[gamemode]:
                     mmr_list.append(r[gamemode]['rank_points'])
-    replay_id = game.game_metadata.id
+    replay_id = game.game_metadata.match_guid
+    if replay_id == '' or replay_id is None:
+        replay_id = game.game_metadata.id
     team0poss = game.teams[0].stats.possession
     team1poss = game.teams[1].stats.possession
     match_date = datetime.datetime.fromtimestamp(game.game_metadata.time)
@@ -45,10 +48,26 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
              team1score=game.game_metadata.score.team_1_score, teamsize=teamsize,
              match_date=match_date, team0possession=team0poss.possession_time,
              team1possession=team1poss.possession_time, name='' if match_name is None else match_name,
-             frames=game.game_metadata.frames)
+             frames=game.game_metadata.frames, length=game.game_metadata.length,
+             playlist=game.game_metadata.playlist,
+             game_server_id=game.game_metadata.game_server_id,
+             server_name=game.game_metadata.server_name,
+             replay_id=game.game_metadata.id)
+
     player_games = []
     players = []
+    teamstats = []
     # print('iterating over players')
+    for team in game.teams:
+        fields = create_and_filter_proto_field(team, ['id', 'name', 'is_orange'], [], TeamStat)
+        values = get_proto_values(team, fields)
+        kwargs = {k.field_name: v for k, v in zip(fields, values)}
+        for k in kwargs:
+            if kwargs[k] == 'NaN' or math.isnan(kwargs[k]):
+                kwargs[k] = 0.0
+        t = TeamStat(game=replay_id, is_orange=team.is_orange, **kwargs)
+        teamstats.append(t)
+        print(t)
     for p in player_objs:  # type: GamePlayer
         fields = create_and_filter_proto_field(p, ['name', 'title_id', 'is_orange'],
                                                ['api.metadata.CameraSettings', 'api.metadata.PlayerLoadout',
@@ -102,30 +121,72 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
             pid = pid[:40]
         p = Player(platformid=pid, platformname=p.name, avatar="", ranks=[], groups=[])
         players.append(p)
-    return g, player_games, players
+    return g, player_games, players, teamstats
 
 
-def add_objs_to_db(game, player_games, players, s):
-    try:
-        match = s.query(Game).filter(Game.hash == game.hash).first()
+def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], teamstats: List[TeamStat],
+                   session,
+                   preserve_upload_date=False, preserve_ranks=True):
+    # delete playergames/teamstats first, to prevent orphans
+    for pg in player_games:
+        match = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
+            PlayerGame.game == pg.game).first()
         if match is not None:
-            s.delete(match)
-            print('deleting {}'.format(match.hash))
-        s.add(game)
+            if preserve_ranks:
+                pg.rank = match.rank
+                pg.division = match.division
+                pg.mmr = match.mmr
+            session.delete(match)
+
+        matches = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
+            PlayerGame.game == game.replay_id).all()  # catch old replay ids
+        if matches is not None:
+            for match in matches:
+                if preserve_ranks:
+                    pg.rank = match.rank
+                    pg.division = match.division
+                    pg.mmr = match.mmr
+                session.delete(match)
+
+    matches = session.query(TeamStat).filter(TeamStat.game == game.hash).all()
+    if matches is not None:
+        for match in matches:
+            session.delete(match)
+
+    try:
+        matches = session.query(Game).filter(Game.hash == game.hash).all()
+        if matches is not None:
+            for match in matches:
+                if preserve_upload_date:
+                    game.upload_date = match.upload_date
+                if preserve_ranks:
+                    game.ranks = match.ranks
+                    game.mmrs = match.mmrs
+                session.delete(match)
+                print('deleting {}'.format(match.hash))
+        matches = session.query(Game).filter(Game.hash == game.replay_id).all()  # catch old replay ids
+        if matches is not None:
+            for match in matches:
+                if preserve_upload_date:
+                    game.upload_date = match.upload_date
+                if preserve_ranks:
+                    game.ranks = match.ranks
+                    game.mmrs = match.mmrs
+                session.delete(match)
+                print('deleting {}'.format(match.hash))
+        session.add(game)
     except TypeError as e:
         print('Error object: ', e)
         pass
     for pl in players:  # type: Player
         try:
-            match = s.query(Player).filter(Player.platformid == str(pl.platformid)).first()
+            match = session.query(Player).filter(Player.platformid == str(pl.platformid)).first()
         except TypeError:
             print('platform id', pl.platformid)
             match = None
         if not match:  # we don't need to add duplicate players
-            s.add(pl)
+            session.add(pl)
     for pg in player_games:
-        match = s.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
-            PlayerGame.game == pg.game).first()
-        if match is not None:
-            s.delete(match)
-        s.add(pg)
+        session.add(pg)
+    for team in teamstats:
+        session.add(team)

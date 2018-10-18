@@ -48,7 +48,7 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
                                     Drop your .replay files here, or click to select files to upload.
                                 </Typography>
                                 <Typography align="center">
-                                    Replays can be found in your Documents/My Games/TAGame/Demos/ folder
+                                    Replays can be found in your Documents/My Games/Rocket League/TAGame/Demos/ folder
                                 </Typography>
                                 <br/>
                                 <ArrowDownward/>
@@ -68,9 +68,9 @@ const styles = createStyles({
         backgroundColor: "#ccc"
     },
     default: {
-        width: "550px",
-        height: "430px",
-        maxWidth: "90vw",
+        width: 550,
+        height: 430,
+        maxWidth: "80vw",
         maxHeight: "90vh",
         borderWidth: 2,
         borderColor: "#666",
@@ -87,7 +87,8 @@ const styles = createStyles({
     dropzoneContent: {
         position: "absolute",
         width: "100%",
-        textAlign: "center"
+        textAlign: "center",
+        padding: 20
     }
 })
 

@@ -3,7 +3,7 @@ import * as _ from "lodash"
 import * as React from "react"
 import {Bar} from "react-chartjs-2"
 import {roundLabelToMaxDPCallback} from "../Utils/Chart"
-import {colorsForPlaylists} from "../Utils/Color"
+import {colorsForPlaylists, convertHexToRgba} from "../Utils/Color"
 
 interface Props {
     graph: GlobalStatsGraph
@@ -32,7 +32,7 @@ export class GlobalStatsChart extends React.PureComponent<Props> {
                     }
                     return dataset.values[index]
                 }),
-                backgroundColor: colorsForPlaylists[i]
+                backgroundColor: convertHexToRgba(colorsForPlaylists[i], 0.8)
             }))
         }
     }

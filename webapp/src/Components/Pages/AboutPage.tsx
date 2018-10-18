@@ -79,6 +79,88 @@ const friends: ListItemInfo[] = [
         name: "GIF Your Game",
         link: "https://www.gifyourgame.com/",
         message: "An addon that enables you to create gifs of your gameplay at the push of a button!"
+    },
+    {
+        name: "Octane.gg",
+        link: "https://octane.gg/",
+        message: "An addon that enables you to create gifs of your gameplay at the push of a button!"
+    }
+]
+
+const replayParsing: ListItemInfo[] = [
+    {
+        name: "Druthyn",
+        link: "",
+        message: "Detecting if a player is on M/KB or a controller"
+    },
+    {
+        name: "Destiphy",
+        link: "",
+        message: "Helped fix countless bugs and created situations to test against"
+    }
+]
+
+const uploading: ListItemInfo[] = [
+    {
+        name: "Skoocda",
+        link: "",
+        message: "Tracking state of uploads and testing"
+    },
+    {
+        name: "Kcolton & Bakkes",
+        link: "",
+        message: "BakkesMod Auto uploader plugin"
+    },
+    {
+        name: "Redox",
+        link: "",
+        message: "A custom Auto Uploader"
+    }
+]
+{/*
+const replayViewer: ListItemInfo[] = [
+    {
+        name: "Xander",
+        link: "",
+        message: "Worked on the initial replay viewer"
+    },
+    {
+        name: "DarkAce65",
+        link: "",
+        message: "Worked on server side implementation for the replay viewer"
+    },
+    {
+        name: "enzanki_ars",
+        link: "",
+        message: "Has a great design for live stats during the viewer"
+    },
+]
+*/
+}
+
+const designer: ListItemInfo[] = [
+    {
+        name: "Gander",
+        link: "",
+        message: "Created all traces seen on the site"
+    },
+    {
+        name: "IBeam ",
+        link: "",
+        message: "Backgrounds and prototypes"
+    }
+]
+
+const supportStaff: ListItemInfo[] = [
+    {
+        name: "Khalcin",
+        link: "",
+        message: "Leader of support staff"
+    },
+    {
+        name: "ThatGuyDed, IamEld3st",
+        link: "",
+        message: "Helper of support staff, welcomer"
     }
 ]
 
@@ -146,6 +228,48 @@ export class AboutPage extends React.PureComponent {
                                             ))}
                                         </List>
                                     </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Card>
+                                    <CardHeader title="Contributors"/>
+                                    <Divider/>
+                                    <List>
+                                        <ListSubheader>Replay Parsing</ListSubheader>
+
+                                        {replayParsing.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+                                        <Divider/>
+                                        <ListSubheader>Uploading</ListSubheader>
+
+                                        {uploading.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+
+                                        {/*
+                                        <CardHeader subheader="Replay Viewer"/>
+                                        <CardContent>
+                                            <List>
+                                                {replayViewer.map((listItemInfo) => (
+                                                    <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                                ))}
+                                            </List>
+                                        </CardContent>
+                                    */}
+                                        <Divider/>
+                                        <ListSubheader>Designers</ListSubheader>
+
+                                        {designer.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+                                        <Divider/>
+                                        <ListSubheader>Support Staff</ListSubheader>
+
+                                        {supportStaff.map((listItemInfo) => (
+                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                                        ))}
+                                    </List>
                                 </Card>
                             </Grid>
                         </Grid>

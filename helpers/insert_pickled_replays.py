@@ -45,8 +45,8 @@ def parse_pickle(p):
             print ('what error')
             return
         try:
-            game, player_games, players = convert_pickle_to_db(g, offline_redis=r)
-            add_objs_to_db(game, player_games, players, s)
+            game, player_games, players, teamstats = convert_pickle_to_db(g, offline_redis=r)
+            add_objs_to_db(game, player_games, players, teamstats, s)
         except Exception as e:
             print(e)
             traceback.print_exc()

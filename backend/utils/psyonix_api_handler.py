@@ -87,9 +87,12 @@ def get_rank_batch(ids, offline_redis=None):
     data = requests.post(url, headers=headers, json=post_data)
 
     logger.debug(data.text)
+    if data.status_code >= 300:
+        return {**rank_datas_for_players, **get_empty_data(ids_to_find)}
     try:
         data = data.json()
-    except:
+    except Exception as e:
+        print(e)
         return get_empty_data(ids)
     if 'detail' in data:
         return {str(i): {} for i in ids}
@@ -100,7 +103,7 @@ def get_rank_batch(ids, offline_redis=None):
         if 'player_skills' in player:
             found_modes = []
             for playlist in player['player_skills']:
-                if 'tier' in playlist:  # excludes unranked
+                if 'tier' in playlist and str(playlist['playlist']) in names:  # excludes unranked
                     mode = names[str(playlist['playlist'])]
                     found_modes.append(mode)
                     rank_data = {'mode': mode, 'rank_points': playlist['skill'],
@@ -119,7 +122,7 @@ def get_rank_batch(ids, offline_redis=None):
                     })
 
             if r is not None:
-                r.set(unique_id, json.dumps(rank_datas), ex=24 * 60 * 60)
+                r.set(unique_id, json.dumps(rank_datas), ex=30 * 60)
             rank_datas_for_players[unique_id] = rank_datas
         else:
             rank_datas_for_players[unique_id] = {}
@@ -184,6 +187,8 @@ def tier_div_to_string(rank: Union[int, None], div: int = -1):
         logger.debug(rank)
         logger.debug(div)
         return 'Unknown'
+    if rank == 19:
+        return f"{ranks[rank]}"
     if rank < 19 and div >= 0:
         return f"{ranks[rank]} (div {div + 1})"
 
@@ -193,3 +198,6 @@ def get_platform_id(i):
         return 'steam'  # steam
     else:
         return '-1'
+
+if __name__ == '__main__':
+    print(get_rank('76561198374703623'))
