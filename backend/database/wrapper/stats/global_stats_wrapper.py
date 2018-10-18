@@ -85,7 +85,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
             query = query.subquery()
         else:
             query = query.filter(PlayerGame.game != "").filter(PlayerGame.time_in_game > 0).having(
-                func.count(PlayerGame.player) > 5).filter(Game.playlist == 13).subquery()
+                func.count(PlayerGame.player) > 5).subquery()
 
         return session.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
 

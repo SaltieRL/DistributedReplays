@@ -158,7 +158,7 @@ def calc_global_stats(self):
     sess.close()
     if _redis is not None:
         _redis.set('global_stats', json.dumps(result))
-        _redis.set('global_stats_expire', json.dumps(True), ex=60 * 10)
+        _redis.set('global_stats_expire', json.dumps(True))
     print('Done')
     return result
 
