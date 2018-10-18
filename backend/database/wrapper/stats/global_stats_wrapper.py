@@ -68,18 +68,18 @@ class GlobalStatWrapper(SharedStatsWrapper):
                 # set the column result
                 self.base_query.clean().with_stat_query([PlayerGame.player, q.label('avg')])
                 for rank in ranks:
-                    result = self._get_global_stats_result(self.base_query, playlist, rank, with_rank=with_rank)
+                    result = self._get_global_stats_result(self.base_query, playlist, rank, sess, with_rank=with_rank)
                     column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
                 results[column.get_field_name()] = column_results
             playlist_results[playlist] = results
         return playlist_results
 
-    def _get_global_stats_result(self, query, playlist, rank, with_rank=True):
+    def _get_global_stats_result(self, query, playlist, rank, session, with_rank=True):
         if with_rank:
             query = query.with_rank(rank)
         if not ignore_filtering():
             query.with_playlists([playlist])
-        query = query.build_query(sess)
+        query = query.build_query(session)
         query = query.group_by(PlayerGame.player)
         if ignore_filtering():
             query = query.subquery()
@@ -87,7 +87,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
             query = query.filter(PlayerGame.game != "").filter(PlayerGame.time_in_game > 0).having(
                 func.count(PlayerGame.player) > 5).filter(Game.playlist == 13).subquery()
 
-        return sess.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
+        return session.query(func.avg(query.c.avg), func.stddev_samp(query.c.avg)).first()
 
     def get_global_stats_by_rank(self, session, query_filter: QueryFilterBuilder, stats_query, stds_query,
                                  player_rank=None, redis=None, ids=None, playlist=13):
