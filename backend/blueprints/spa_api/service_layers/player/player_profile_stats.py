@@ -1,5 +1,5 @@
 from flask import current_app
-from sqlalchemy import func, desc, cast, String, and_, distinct
+from sqlalchemy import func, desc, cast, String, literal_column
 from sqlalchemy.dialects import postgresql
 
 from backend.database.objects import PlayerGame, Game, Player
@@ -45,7 +45,7 @@ class PlayerProfileStats:
                                        postgresql.ARRAY(String)))).group_by('player').order_by(desc('count')).subquery(
             't')
         result = session.query(result, Player.platformname).join(Player,
-                                                                 Player.platformid == result.c.player)[1:10]
+                                                                 Player.platformid == result.c.player).filter(Player.platformid != id_).filter(literal_column('count') > 1)[:3]
         for p in result:
             players_in_common.append({
                 'name': p[2],
