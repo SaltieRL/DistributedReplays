@@ -306,12 +306,11 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                     <ExpansionPanelSummary
                         classes={classes}
                         expandIcon={
-                            <IconButton onClick={this.handleExpandedChange}>
-                                <Tooltip title="Playlist options">
+                            <Tooltip title="Playlist options">
                                     <ExpandMore/>
                                 </Tooltip>
-                            </IconButton>
-                        }
+                            }
+                        IconButtonProps={{onClick: this.handleExpandedChange}}
                     >
                         {playlistsMultiSelect}
                     </ExpansionPanelSummary>
@@ -327,7 +326,6 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                     this.props.dropdownOnly && <>{playlistsMultiSelect}</>
                 }
             </>
-
         )
     }
 

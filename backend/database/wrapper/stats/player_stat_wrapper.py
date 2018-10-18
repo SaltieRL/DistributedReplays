@@ -81,8 +81,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
         :param win: filter by wins/losses (win = True)
         :return: stats
         """
-        stats_query = self.stats_query
-        std_query = self.std_query
+        stats_query = self.get_player_stat_query()
+        std_query = self.get_player_stat_std_query()
         total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
         if total_games > 0:
             stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
@@ -90,7 +90,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
         else:
             stats = [0.0] * len(stats_query)
             global_stats = [0.0] * len(stats_query)
-        return self.get_wrapped_stats(stats), self.get_wrapped_stats(global_stats)
+        return (self.get_wrapped_stats(stats, self.player_stats),
+                self.get_wrapped_stats(global_stats, self.player_stats))
 
     def get_progression_stats(self, session, id_,
                               time_unit: 'TimeUnit' = TimeUnit.MONTH,
@@ -124,11 +125,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         date = date.label('date')
         mean_query = session.query(date, func.count(Game.hash),
-                                   *self.stats_query).join(PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
+                                   *self.get_player_stat_query()).join(
+            PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.player == id_).group_by(
             'date').order_by('date')
         std_query = session.query(date, func.count(Game.hash),
-                                  *self.std_query).join(PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
+                                  *self.get_player_stat_std_query()).join(
+            PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.player == id_).group_by(
             'date').order_by('date')
 
@@ -148,8 +151,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
         for q, s in zip(mean_query, std_query):
             result = {
                 'name': datetime.datetime.strptime(q[0], time_format),
-                'average': self.get_wrapped_stats([float_maybe(qn) for qn in q[2:]]),
-                'std_dev': self.get_wrapped_stats([float_maybe(qn) for qn in s[2:]]),
+                'average': self.get_wrapped_stats([float_maybe(qn) for qn in q[2:]], self.player_stats),
+                'std_dev': self.get_wrapped_stats([float_maybe(qn) for qn in s[2:]], self.player_stats),
                 'count': q[1]
             }
             if time_unit == 'quarter':
@@ -173,8 +176,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
 
     def _create_stats(self, session, player_filter=None, replay_ids=None):
-        average = QueryFilterBuilder().with_stat_query(self.stats_query)
-        std_devs = QueryFilterBuilder().with_stat_query(self.std_query)
+        average = QueryFilterBuilder().with_stat_query(self.get_player_stat_query())
+        std_devs = QueryFilterBuilder().with_stat_query(self.get_player_stat_std_query())
         if player_filter is not None:
             average.with_players(player_filter)
             std_devs.with_players(player_filter)
@@ -183,10 +186,9 @@ class PlayerStatWrapper(GlobalStatWrapper):
             std_devs.with_replay_ids(replay_ids)
         average = average.build_query(session).filter(PlayerGame.time_in_game > 0).first()
         std_devs = std_devs.build_query(session).filter(PlayerGame.time_in_game > 0).first()
-
-        average = {n.dynamic_field.field_name: round(float(s), 2) for n, s in zip(self.stat_list, average) if
+        average = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.stat_list, average) if
                    s is not None}
-        std_devs = {n.dynamic_field.field_name: round(float(s), 2) for n, s in zip(self.stat_list, std_devs) if
+        std_devs = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.stat_list, std_devs) if
                     s is not None}
         return {'average': average, 'std_dev': std_devs}
 
