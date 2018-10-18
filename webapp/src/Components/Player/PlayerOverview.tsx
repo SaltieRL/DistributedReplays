@@ -28,7 +28,7 @@ interface State {
 class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedMobileTab: "Profile", playlist: 3}
+        this.state = {selectedMobileTab: "Profile", playlist: 13}
     }
 
     public render() {
