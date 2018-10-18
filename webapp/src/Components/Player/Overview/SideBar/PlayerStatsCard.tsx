@@ -111,8 +111,9 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                 <Grid item xs={12}>
                                     <List component="nav">
                                         {this.state.playerStats.playersInCommon.map((person) =>
-                                            <Link to={PLAYER_PAGE_LINK(person.id)} style={{textDecoration: "none"}}>
-                                                <ListItem button key={person.id}>
+                                            <Link to={PLAYER_PAGE_LINK(person.id)} style={{textDecoration: "none"}}
+                                                  key={person.id}>
+                                                <ListItem button>
                                                     <ListItemIcon>
                                                         <Person/>
                                                     </ListItemIcon>
