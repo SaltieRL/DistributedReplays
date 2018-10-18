@@ -102,7 +102,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                 </Grid>
                                 <Grid item xs={9}>
                                     <Typography variant="subheading">
-                                        favourite players
+                                        plays with
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -111,16 +111,14 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                 <Grid item xs={12}>
                                     <List component="nav">
                                         {this.state.playerStats.playersInCommon.map((person) =>
-                                            <>
-                                                <Link to={PLAYER_PAGE_LINK(person.id)} style={{textDecoration: "none"}}>
-                                                    <ListItem button>
-                                                        <ListItemIcon>
-                                                            <Person/>
-                                                        </ListItemIcon>
-                                                        <ListItemText primary={person.name}/>
-                                                    </ListItem>
-                                                </Link>
-                                            </>
+                                            <Link to={PLAYER_PAGE_LINK(person.id)} style={{textDecoration: "none"}}>
+                                                <ListItem button key={person.id}>
+                                                    <ListItemIcon>
+                                                        <Person/>
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={person.name}/>
+                                                </ListItem>
+                                            </Link>
                                         )}
                                     </List>
                                 </Grid>
