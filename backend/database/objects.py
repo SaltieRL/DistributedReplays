@@ -339,4 +339,5 @@ class SeriesGame(DBObjectBase):
     __tablename__ = 'series_games'
     series_id = Column(Integer, ForeignKey('tournament_serieses.id'), primary_key=True)
     game_hash = Column(String(40), ForeignKey('games.hash'), primary_key=True)
+    # TODO add status [review needed, scrim, default]
 
