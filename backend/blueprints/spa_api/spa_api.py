@@ -7,7 +7,6 @@ import re
 import shutil
 import uuid
 
-from carball.analysis.utils.pandas_manager import PandasManager
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
