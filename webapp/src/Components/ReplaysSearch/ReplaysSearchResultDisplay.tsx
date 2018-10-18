@@ -38,8 +38,7 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                             <ResultsActions disabled={this.state.selectedReplayIds.length === 0}
                                 to={this.getGroupLink()}
                                 handleSelectableChange={this.handleSelectableChange}
-                                selectable={this.state.selectable} />
-                        } />
+                                selectable={this.state.selectable} />} />
                         {selectable ?
                             <List dense>
                                 <Divider />

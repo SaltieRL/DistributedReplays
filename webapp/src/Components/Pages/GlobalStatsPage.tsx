@@ -56,14 +56,3 @@ export class GlobalStatsPage extends React.PureComponent<{}, State> {
             .then((globalStats) => this.setState({ globalStats }))
     }
 }
-
-const styles = (theme: Theme) =>
-    createStyles({
-        infoIcon: {
-            verticalAlign: "middle",
-            marginLeft: theme.spacing.unit,
-            marginTop: -4
-        }
-    })
-
-export const GlobalStatsPage = withStyles(styles)(GlobalStatsPageComponent)

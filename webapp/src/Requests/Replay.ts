@@ -14,15 +14,16 @@ import { doGet, useMockData } from "."
 // TODO: useMockData is bad code smell. Mock data should exist in the store and we should access
 // it from there
 export class ReplayService {
-    private static instance: ReplayService
-    private constructor() { }
-
     public static getInstance() {
         if (this.instance == null) {
             this.instance = new ReplayService()
         }
         return this.instance
     }
+
+    private static instance: ReplayService
+
+    private constructor() { }
 
     public getReplay(id: string): Promise<Replay> {
         if (useMockData) {

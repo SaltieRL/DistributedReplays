@@ -83,6 +83,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         this.setState({ uploadingStage: "pressedUpload" })
         GlobalService.getInstance()
             .uploadReplays(this.state.files)
+            .then(addTaskIds)
             .then(this.clearFiles)
             .then(() => {
                 this.setState({ uploadingStage: "uploaded" })

@@ -10,7 +10,7 @@ export const doGet = (destination: string): Promise<any> => {
     return fetch(baseUrl + destination, {
         method: "GET",
         headers: {
-            Accept: "application/json",
+            "Accept": "application/json",
             "Content-Type": "application/json"
         }
     })

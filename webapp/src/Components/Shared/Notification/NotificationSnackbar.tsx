@@ -39,19 +39,20 @@ interface NotificationSnackbarProps {
 
 export type NotificationProps = DefaultNotificationProps | AppErrorProps
 
-type Props = NotificationProps & NotificationSnackbarProps & WithStyles<typeof styles>
+type Props = NotificationProps
+    & NotificationSnackbarProps
+    & WithStyles<typeof styles>
 
 class NotificationSnackbarComponent extends React.PureComponent<Props> {
+
     public render() {
-        const { variant, message, timeout } =
-            this.props.variant !== "appError"
-                ? this.props
-                : {
-                      ...this.props,
-                      variant: "error",
-                      message: `${this.props.appError.code} Error: ${this.props.appError.message}`,
-                      timeout: undefined
-                  }
+        const { variant, message, timeout } = this.props.variant !== "appError" ? this.props
+            : {
+                ...this.props,
+                variant: "error",
+                message: `${this.props.appError.code} Error: ${this.props.appError.message}`,
+                timeout: undefined
+            }
 
         const { classes, open, handleClose, count } = this.props
 
@@ -63,7 +64,7 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                 color="inherit"
                 onClick={handleClose}
             >
-                <Close/>
+                <Close />
             </IconButton>
         )
 
@@ -83,16 +84,13 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                         <Typography align="center" className={classes.message}>
                             <Icon className={classes.icon} />
                             {message}
-                        </Typography>
-                    }
-                    action={
-                        count ? (
-                            <Badge badgeContent={count} color="primary">
-                                {closeButton}
-                            </Badge>
-                        ) : (
-                            closeButton
-                        )
+                        </Typography>}
+                    action={count ?
+                        <Badge badgeContent={count} color="primary">
+                            {closeButton}
+                        </Badge>
+                        :
+                        closeButton
                     }
                 />
             </Snackbar>
@@ -107,28 +105,27 @@ const variantIcon = {
     info: InfoIcon
 }
 
-const styles = (theme: Theme) =>
-    createStyles({
-        icon: {
-            marginRight: theme.spacing.unit
-        },
-        success: {
-            backgroundColor: green[600]
-        },
-        error: {
-            backgroundColor: theme.palette.error.dark
-        },
-        info: {
-            backgroundColor: theme.palette.primary.dark
-        },
-        warning: {
-            backgroundColor: amber[700]
-        },
-        message: {
-            color: "#fff",
-            display: "flex",
-            alignItems: "center"
-        }
-    })
+const styles = (theme: Theme) => createStyles({
+    icon: {
+        marginRight: theme.spacing.unit
+    },
+    success: {
+        backgroundColor: green[600]
+    },
+    error: {
+        backgroundColor: theme.palette.error.dark
+    },
+    info: {
+        backgroundColor: theme.palette.primary.dark
+    },
+    warning: {
+        backgroundColor: amber[700]
+    },
+    message: {
+        color: "#fff",
+        display: "flex",
+        alignItems: "center"
+    }
+})
 
 export const NotificationSnackbar = withStyles(styles)(NotificationSnackbarComponent)

@@ -15,7 +15,8 @@ interface OwnProps {
     player: Player
 }
 
-type Props = OwnProps & WithWidth
+type Props = OwnProps
+    & WithWidth
 
 type PlayerViewTab = "Profile" | "Playstyle" | "Match History"
 const playerViewTabs = ["Profile", "Playstyle", "Match History"]
@@ -28,18 +29,18 @@ interface State {
 class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedMobileTab: "Profile", playlist: 13}
+        this.state = { selectedMobileTab: "Profile", playlist: 13 }
     }
 
     public render() {
         const tabToIcon: Record<PlayerViewTab, IconDefinition> = {
-            Profile: faUserCircle,
-            Playstyle: faCarSide,
+            "Profile": faUserCircle,
+            "Playstyle": faCarSide,
             "Match History": faHistory
         }
 
-        const playerSideBar = <PlayerSideBar player={this.props.player}/>
-        const playerPlayStyle = <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}/>
+        const playerSideBar = <PlayerSideBar player={this.props.player} />
+        const playerPlayStyle = <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist} />
         const playerMatchHistory = (
             <OverviewMatchHistory
                 player={this.props.player}
@@ -49,7 +50,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
         return (
             <>
-                {isWidthUp("md", this.props.width) ? (
+                {isWidthUp("md", this.props.width) ?
                     <>
                         <Grid item xs={5} md={3}>
                             {playerSideBar}
@@ -57,7 +58,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
                                 <PlayerPlayStyleCard player={this.props.player}
-                                                     handlePlaylistChange={this.handlePlaylistChange}>
+                                    handlePlaylistChange={this.handlePlaylistChange}>
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
                             </Grid>
@@ -68,39 +69,38 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         </Grid>
                     </>
-                ) : (
+                    :
                     <Grid item xs={12}>
                         <Card>
-                            <Tabs value={this.state.selectedMobileTab} onChange={this.handleSelectMobileTab} centered>
-                                {playerViewTabs.map((playerViewTab: PlayerViewTab) => (
-                                    <Tab
-                                        label={playerViewTab}
-                                        value={playerViewTab}
-                                        key={playerViewTab}
-                                        icon={<FontAwesomeIcon icon={tabToIcon[playerViewTab]} />}
-                                    />
-                                ))}
+                            <Tabs value={this.state.selectedMobileTab}
+                                onChange={this.handleSelectMobileTab}
+                                centered
+                            >
+                                {playerViewTabs.map((playerViewTab: PlayerViewTab) =>
+                                    <Tab label={playerViewTab} value={playerViewTab} key={playerViewTab}
+                                        icon={<FontAwesomeIcon icon={tabToIcon[playerViewTab]} />} />
+                                )}
                             </Tabs>
                             <Divider />
                             <CardContent>
                                 {this.state.selectedMobileTab === "Profile" &&
-                                playerSideBar
+                                    playerSideBar
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
-                                <>
-                                    <PlayStyleActions player={this.props.player}
-                                                      handlePlaylistChange={this.handlePlaylistChange}
-                                                      useFullSizeCompareButton/>
-                                    {playerPlayStyle}
-                                </>
+                                    <>
+                                        <PlayStyleActions player={this.props.player}
+                                            handlePlaylistChange={this.handlePlaylistChange}
+                                            useFullSizeCompareButton />
+                                        {playerPlayStyle}
+                                    </>
                                 }
                                 {this.state.selectedMobileTab === "Match History" &&
-                                playerMatchHistory
+                                    playerMatchHistory
                                 }
                             </CardContent>
                         </Card>
                     </Grid>
-                )}
+                }
             </>
         )
     }
@@ -110,7 +110,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly handlePlaylistChange = (playlist: number) => {
-        this.setState({playlist})
+        this.setState({ playlist })
     }
 }
 

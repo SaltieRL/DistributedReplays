@@ -5,8 +5,6 @@ import { doGet, doPost, useMockData } from "."
 // TODO: useMockData is bad code smell. Mock data should exist in the store and we should access
 // it from there.
 export class GlobalService {
-    private static instance: GlobalService
-    private constructor() { }
 
     public static getInstance() {
         if (this.instance == null) {
@@ -14,6 +12,10 @@ export class GlobalService {
         }
         return this.instance
     }
+
+    private static instance: GlobalService
+
+    private constructor() { }
 
     public getReplayCount(): Promise<number> {
         if (useMockData) {

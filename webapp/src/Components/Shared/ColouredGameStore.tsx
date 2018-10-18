@@ -1,13 +1,11 @@
 import * as React from "react"
 import { Replay } from "src/Models"
 
-export namespace ColouredGameScore {
-    export interface Props {
-        replay: Replay
-    }
+interface Props {
+    replay: Replay
 }
 
-export class ColouredGameScore extends React.PureComponent<ColouredGameScore.Props> {
+export class ColouredGameScore extends React.PureComponent<Props> {
     public render() {
         return (
             <>

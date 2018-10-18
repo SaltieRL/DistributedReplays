@@ -131,45 +131,29 @@ class HomePageComponent extends React.PureComponent<Props, State> {
 
 const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
     const globalStatsLinkButton = (
-        <LinkButton to={GLOBAL_STATS_LINK} iconType="fontawesome" icon={faChartBar} tooltip="Global stats" />
-    )
-    const aboutLinkButton = (
-        <LinkButton to={ABOUT_LINK} iconType="mui" icon={Info} tooltip="About" />
-    )
-    const twitterLinkButton = (
-        <LinkButton to={TWITTER_LINK} isExternalLink iconType="fontawesome" icon={faTwitter} tooltip="Twitter" />
-    )
-    const discordLinkButton = (
-        <LinkButton to={DISCORD_LINK} isExternalLink iconType="fontawesome" icon={faDiscord} tooltip="Discord" />
-    )
-    const githubLinkButton = (
-        <LinkButton to={GITHUB_LINK} isExternalLink iconType="fontawesome" icon={faGithub} tooltip="Github" />
-    )
-
-    const globalStatsLinkButton = (
         <LinkButton to={GLOBAL_STATS_LINK}
-                    iconType="fontawesome" icon={faChartBar}
-                    tooltip="Global stats"/>
+            iconType="fontawesome" icon={faChartBar}
+            tooltip="Global stats" />
     )
     const aboutLinkButton = (
         <LinkButton to={ABOUT_LINK}
-                    iconType="mui" icon={Info}
-                    tooltip="About"/>
+            iconType="mui" icon={Info}
+            tooltip="About" />
     )
     const twitterLinkButton = (
         <LinkButton to={TWITTER_LINK} isExternalLink
-                    iconType="fontawesome" icon={faTwitter}
-                    tooltip="Twitter"/>
+            iconType="fontawesome" icon={faTwitter}
+            tooltip="Twitter" />
     )
     const discordLinkButton = (
         <LinkButton to={DISCORD_LINK} isExternalLink
-                    iconType="fontawesome" icon={faDiscord}
-                    tooltip="Discord"/>
+            iconType="fontawesome" icon={faDiscord}
+            tooltip="Discord" />
     )
     const githubLinkButton = (
         <LinkButton to={GITHUB_LINK} isExternalLink
-                    iconType="fontawesome" icon={faGithub}
-                    tooltip="Github"/>
+            iconType="fontawesome" icon={faGithub}
+            tooltip="Github" />
     )
 
     return (
