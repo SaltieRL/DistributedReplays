@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 def create_default_player():
     player = Player()
-    player.platformid = 3678
-    player.platformname = 'test user'
+    player.platformid = "3678"
+    player.platformname = 'test user with a really long name but even longer'
     if bool(random.getrandbits(1)):
         player.avatar = "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
     else:
@@ -39,13 +39,16 @@ class PlayerWrapper:
     def __init__(self, limit=None):
         self.limit = limit
 
-    def get_player_games(self, session, id_):
+    def get_player_games(self, session, id_, replay_ids=None):
+        query = session.query(PlayerGame)
+        if replay_ids is not None:
+            query = query.filter(PlayerGame.game.in_(replay_ids))
         if isinstance(id_, list):
-            return session.query(PlayerGame).join(Game).filter(
+            return query.join(Game).filter(
                 Game.players.contains(cast(id_, postgresql.ARRAY(String)))).filter(
                 PlayerGame.player == id_[0])
         else:
-            return session.query(PlayerGame).filter(PlayerGame.player == id_).filter(
+            return query.filter(PlayerGame.player == id_).filter(
                 PlayerGame.game != None)
 
     def get_player_games_paginated(self, session, id_, page: int = 0, limit: int = None):
@@ -60,5 +63,5 @@ class PlayerWrapper:
 
         return existing_query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
 
-    def get_total_games(self, session, id_):
-        return self.get_player_games(session, id_).count()
+    def get_total_games(self, session, id_, replay_ids=None):
+        return self.get_player_games(session, id_, replay_ids=replay_ids).count()

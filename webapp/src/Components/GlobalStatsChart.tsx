@@ -1,8 +1,9 @@
-import {ChartData, ChartDataSets, ChartOptions} from "chart.js"
+import {ChartData, ChartDataSets, ChartOptions, ChartTooltipItem} from "chart.js"
 import * as _ from "lodash"
 import * as React from "react"
 import {Bar} from "react-chartjs-2"
-import {colorsForPlaylists} from "../Utils/Color"
+import {roundLabelToMaxDPCallback} from "../Utils/Chart"
+import {colorsForPlaylists, convertHexToRgba} from "../Utils/Color"
 
 interface Props {
     graph: GlobalStatsGraph
@@ -31,7 +32,7 @@ export class GlobalStatsChart extends React.PureComponent<Props> {
                     }
                     return dataset.values[index]
                 }),
-                backgroundColor: colorsForPlaylists[i]
+                backgroundColor: convertHexToRgba(colorsForPlaylists[i], 0.8)
             }))
         }
     }
@@ -57,6 +58,12 @@ export class GlobalStatsChart extends React.PureComponent<Props> {
                         maxTicksLimit: 8
                     }
                 }]
+            },
+            tooltips: {
+                callbacks: {
+                    label: (tooltipItem: ChartTooltipItem, data: ChartData) =>
+                        roundLabelToMaxDPCallback(tooltipItem, data, 4)
+                }
             }
         }
     }

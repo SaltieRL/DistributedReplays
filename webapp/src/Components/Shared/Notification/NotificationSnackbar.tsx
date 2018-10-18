@@ -1,4 +1,5 @@
 import {
+    Badge,
     createStyles,
     IconButton,
     Snackbar,
@@ -22,7 +23,7 @@ type NotificationVariant = "success" | "info" | "warning" | "error"
 interface DefaultNotificationProps {
     variant: NotificationVariant
     message: string
-    timeout: number
+    timeout?: number
 }
 
 interface AppErrorProps {
@@ -30,31 +31,40 @@ interface AppErrorProps {
     appError: AppError
 }
 
-interface SnackbarProps {
+interface NotificationSnackbarProps {
     open: boolean
     handleClose: (event: any, reason?: string) => void
+    count?: number
 }
 
-type OwnProps = DefaultNotificationProps | AppErrorProps
+export type NotificationProps = DefaultNotificationProps | AppErrorProps
 
-type Props = OwnProps
-    & SnackbarProps
+type Props = NotificationProps
+    & NotificationSnackbarProps
     & WithStyles<typeof styles>
 
 class NotificationSnackbarComponent extends React.PureComponent<Props> {
 
     public render() {
-        // const {classes, variant, message} = this.props
-        const {classes, variant, message} = this.props.variant !== "appError" ? this.props
+        const {variant, message, timeout} = this.props.variant !== "appError" ? this.props
             : {
                 ...this.props,
                 variant: "error",
-                message: `${this.props.appError.code} Error: ${this.props.appError.message}`
+                message: `${this.props.appError.code} Error: ${this.props.appError.message}`,
+                timeout: undefined
             }
 
-        const {open, handleClose} = this.props
+        const {classes, open, handleClose, count} = this.props
 
         const Icon = variantIcon[variant]
+        const closeButton = <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={handleClose}
+        >
+            <Close/>
+        </IconButton>
         return (
             <Snackbar
                 anchorOrigin={{
@@ -62,7 +72,7 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                     horizontal: "left"
                 }}
                 open={open}
-                autoHideDuration={variant === "error" ? undefined : 6000}
+                autoHideDuration={timeout}
                 onClose={handleClose}
             >
                 <SnackbarContent
@@ -73,16 +83,13 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                             {message}
                         </Typography>
                     }
-                    action={[
-                        <IconButton
-                            key="close"
-                            aria-label="Close"
-                            color="inherit"
-                            onClick={handleClose}
-                        >
-                            <Close className={classes.icon}/>
-                        </IconButton>
-                    ]}
+                    action={count ?
+                        <Badge badgeContent={count} color="primary">
+                            {closeButton}
+                        </Badge>
+                        :
+                        closeButton
+                    }
                 />
             </Snackbar>
         )

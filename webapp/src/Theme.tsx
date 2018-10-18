@@ -7,7 +7,7 @@ const theme = createMuiTheme({
         primary: {
             contrastText: "#000",
             dark: "#808e95",
-            light: "#e2f1f8",
+            light: "#eff5fc",
             main: "#b0bec5"
         },
         secondary: {
@@ -30,7 +30,10 @@ const theme = createMuiTheme({
     },
     typography: {
         fontFamily: "Lato",
-        fontWeightRegular: 300
+        fontWeightRegular: 300,
+        caption: {
+            fontWeight: 400
+        }
     }
 })
 

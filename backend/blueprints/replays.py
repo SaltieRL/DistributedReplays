@@ -1,4 +1,3 @@
-import ast
 import gzip
 import json
 import os
@@ -7,10 +6,9 @@ import uuid
 
 import numpy as np
 import pandas as pd
-import redis
 from carball.analysis.utils import proto_manager, pandas_manager
 from flask import request, redirect, send_from_directory, render_template, url_for, Blueprint, current_app, jsonify, g
-from sqlalchemy import func, desc, cast, Numeric
+from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.shared_renders import render_with_session, return_error
@@ -99,13 +97,9 @@ def view_replay_data(id_):
     if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
         return jsonify("Error no replay exists for this user")
 
-    def process_tuple_str(s):
-        return ast.literal_eval(s)
-
     try:
         with gzip.open(gzip_path, 'rb') as f:
-            df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f).set_index('index')
-            df.columns = pd.MultiIndex.from_tuples([process_tuple_str(s) for s in df.columns])
+            df = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
         with open(pickle_path, 'rb') as f:
             g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
     except Exception as e:
@@ -194,8 +188,6 @@ def score_distribution_np():
 stats = ['score', 'goals', 'assists', 'saves', 'shots', 'total_hits', 'turnovers', 'total_passes', 'total_dribbles',
          'assistsph',
          'savesph', 'shotsph', 'turnoversph', 'total_dribblesph']
-
-
 @bp.route('/stats/<id_>')
 def goal_distribution(id_):
     if id_ in stats:
@@ -217,58 +209,9 @@ def goal_distribution(id_):
 
 @bp.route('/stats/all')
 def distribution():
-    session = current_app.config['db']()
-    try:
-        r = current_app.config['r']
-    except KeyError:
-        r = None
-    if r is not None:
-        try:
-            cache = r.get('stats_cache')
-            if cache is not None:
-                return jsonify(json.loads(cache))
-        except redis.exceptions.ConnectionError as e:
-            print('Issue connecting to cache')
-    overall_data = {}
-    numbers = []
-    for n in range(4):
-        numbers.append(session.query(func.count(PlayerGame.id)).join(Game).filter(Game.teamsize == (n + 1)).first()[0])
-    print(numbers)
-    for id_ in stats:
-        gamemodes = range(1, 5)
-        print(id_)
-        if id_.endswith('ph'):
-            q = session.query(
-                func.round(cast(getattr(PlayerGame, id_.replace('ph', '')), Numeric) / PlayerGame.total_hits, 2).label(
-                    'n'),
-                func.count(PlayerGame.id)).filter(PlayerGame.total_hits > 0).group_by('n').order_by('n')
-        else:
-            q = session.query(getattr(PlayerGame, id_), func.count(PlayerGame.id)).group_by(
-                getattr(PlayerGame, id_)).order_by(getattr(PlayerGame, id_))
-        if id_ == 'score':
-            q = q.filter(PlayerGame.score % 10 == 0)
-        data = {}
-        for g in gamemodes:
-            # print(g)
-            d = q.join(Game).filter(Game.teamsize == g).all()
-            data[g] = {
-                'keys': [],
-                'values': []
-            }
-            for k, v in d:
-                if k is not None:
-                    data[g]['keys'].append(float(k))
-                    data[g]['values'].append(float(v) / float(numbers[g - 1]))
-        overall_data[id_] = data
-
-    if r is not None:
-        try:
-            r.set('stats_cache', json.dumps(overall_data), ex=60 * 60)
-        except redis.exceptions.ConnectionError as e:
-            print('connection error')
-
-    session.close()
-    return jsonify(overall_data)
+    redis = current_app.config['r']()
+    stats = redis.get('global_distributions')
+    return jsonify(json.loads(stats))
 
 
 @bp.route('/stats/cars')

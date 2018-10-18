@@ -39,18 +39,14 @@ def get_steam_profile_or_random_response(steam_id):
         print(player)
         return {
             'response': {
-                'steamid': player.platformid,
-                'personaname': player.platformname,
-                'avatarfull': player.avatar,
-                'players': [
-                    {
-                        'steamid': player.platformid,
-                        'personaname': player.platformname,
-                        'platformname': player.platformname,
-                        'avatarfull': player.avatar,
-                        'avatar': player.avatar,
-                    }
-                ]
+                'players': [{
+                    'steamid': player.platformid,
+                    'personaname': player.platformname,
+                    'avatarfull': player.avatar,
+                    'platformname': player.platformname,
+                    'profileurl': f"https://steamcommunity.com/id/{player.platformid}/",
+                    'avatar': player.avatar
+                }]
             }
         }
 

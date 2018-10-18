@@ -6,10 +6,12 @@ from flask import Flask, render_template, g, current_app, session, request, redi
 from flask_cors import CORS
 from redis import Redis
 
-from backend.blueprints import steam, auth, debug, admin
+from backend.blueprints import steam, auth, debug, admin, api
 from backend.blueprints.spa_api import spa_api
 from backend.database.objects import Player, Group
 from backend.database.startup import startup
+from backend.database.wrapper.player_wrapper import create_default_player
+from backend.utils.checks import is_local_dev
 from backend.utils.global_jinja_functions import create_jinja_globals
 
 logger = logging.getLogger(__name__)
@@ -86,7 +88,7 @@ def register_blueprints(app: Flask):
     # app.register_blueprint(replays.bp)
     # app.register_blueprint(saltie.bp)
     # app.register_blueprint(stats.bp)
-    # app.register_blueprint(api.bp)
+    app.register_blueprint(api.bp)
     app.register_blueprint(spa_api.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(debug.bp)
@@ -126,7 +128,6 @@ def get_id_group_dicts(_session, groups_to_add: List[str]) -> Tuple[Dict[str, in
 
 app, ids = start_app()
 
-
 try:
     from config import ALLOWED_STEAM_ACCOUNTS
 except ImportError:
@@ -138,10 +139,6 @@ except ImportError:
 def lookup_current_user():
     s = current_app.config['db']()
     g.user = None
-    allowed_routes = ['/auth', '/api', '/replays/stats']
-    allowed = any([request.path.startswith(a) for a in allowed_routes])
-    if allowed:
-        return
     if 'openid' in session:
         openid = session['openid']
         if len(ALLOWED_STEAM_ACCOUNTS) > 0 and openid not in ALLOWED_STEAM_ACCOUNTS:
@@ -154,13 +151,16 @@ def lookup_current_user():
         g.admin = ids['admin'] in g.user.groups
         g.alpha = ids['alpha'] in g.user.groups
         g.beta = ids['beta'] in g.user.groups
+    elif is_local_dev():
+        g.user = create_default_player()
+        g.admin = True
     s.close()
 
 
 # Serve React App
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-def serve(path):
+def home(path):
     if path != "" and os.path.exists("webapp/build/" + path):
         return send_from_directory('webapp/build', path)
     else:

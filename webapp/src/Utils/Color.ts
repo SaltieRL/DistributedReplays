@@ -67,8 +67,8 @@ interface ChartColors {
     orange: ChartDataSets[]
 }
 
-const blueBorderColour = "rgba(100, 100, 255, 0.8)"
-const orangeBorderColour = "rgba(255, 150, 0, 0.8)"
+const blueBorderColour = bluePrimaryColors[0]  // "rgba(100, 100, 255, 0.8)"
+const orangeBorderColour = orangePrimaryColors[0]  // "rgba(255, 150, 0, 0.8)"
 
 const chartColors: ChartColors = {
     blue: bluePrimaryColors.map((primaryColor) => ({
@@ -84,3 +84,14 @@ const chartColors: ChartColors = {
 }
 
 export const colorsForPlaylists = ["#F9A782", "#71EFAF", "#88C6F9", "#E888F7"]
+
+export const primaryColours = [
+    "#33B8A5",
+    "#F04950",
+    "#3276B5",
+    "#F58D4E",
+    "#B868AD",
+    "#FECE3E",
+    "#A2C334",
+    "#f0447c"
+]
