@@ -14,7 +14,7 @@ class PlayerStatsChart:
     def create_from_id(id_: str) -> List[OutputChartData]:
         session = current_app.config['db']()
         wrapped_player_games = wrapper.get_chart_stats_for_player(session, id_)
-
+        session.close()
         return wrapper.wrap_chart_stats(wrapped_player_games, player_stats_metadata)
 
 
@@ -24,5 +24,5 @@ class TeamStatsChart:
     def create_from_id(id_: str) -> List[OutputChartData]:
         session = current_app.config['db']()
         wrapped_team_games = wrapper.get_chart_stats_for_team(session, id_)
-
+        session.close()
         return wrapper.wrap_chart_stats(wrapped_team_games, team_stats_metadata)
