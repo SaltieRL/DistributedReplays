@@ -33,15 +33,13 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                 Compare
             </LinkButton>
         ) : (
-            <div style={{maxHeight: 0}}>
-                <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
-                    <Tooltip title="Compare with...">
-                        <IconButton style={{marginRight: 8, top: -3}}>
-                            <CompareArrows/>
-                        </IconButton>
-                    </Tooltip>
-                </Link>
-            </div>
+            <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
+                <Tooltip title="Compare with...">
+                    <IconButton style={{marginRight: 8, top: -3}}>
+                        <CompareArrows/>
+                    </IconButton>
+                </Tooltip>
+            </Link>
         )
         const dropDown = (
             <PlaylistSelect
@@ -56,13 +54,13 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
 
         return (
             <Grid container justify="center" spacing={8}>
-                <Grid item xs="auto" style={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs="auto" style={{margin: "auto"}}>
                     {dropDown}
                 </Grid>
-                <Grid item xs="auto" style={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs="auto" style={{margin: "auto"}}>
                     {compareButton}
                 </Grid>
-                <Grid item xs="auto" style={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs="auto" style={{margin: "auto"}}>
                     <Button variant="outlined"
                             onClick={this.handleOpen}
                             style={{marginRight: 8, height: "100%"}}

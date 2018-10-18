@@ -246,7 +246,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
 
                         <Input
                             endAdornment={
-                                 this.props.multiple && selectedPlaylists.length > 0 &&
+                                this.props.multiple && selectedPlaylists.length > 0 &&
                                 <IconButton onClick={this.clearSelection}>
                                     <Tooltip title="Clear selection">
                                         <Clear/>
@@ -311,9 +311,9 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                         classes={classes}
                         expandIcon={
                             <Tooltip title="Playlist options">
-                                    <ExpandMore/>
-                                </Tooltip>
-                            }
+                                <ExpandMore/>
+                            </Tooltip>
+                        }
                         IconButtonProps={{onClick: this.handleExpandedChange}}
                     >
                         {playlistsMultiSelect}
@@ -326,9 +326,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 </ExpansionPanel>
 
                 }
-                {
-                    this.props.dropdownOnly && <>{playlistsMultiSelect}</>
-                }
+                {this.props.dropdownOnly && playlistsMultiSelect}
             </>
         )
     }
