@@ -1,9 +1,6 @@
 {
     "defaultSeverity": "warning",
-    "extends": [
-        "tslint:recommended",
-        "tslint-react"
-    ],
+    "extends": ["tslint:recommended", "tslint-react"],
     "linterOptions": {
         "exclude": [
             "config/**/*.js",
@@ -14,34 +11,21 @@
     },
     "rules": {
         "align": true,
-        "array-type": [
-            true,
-            "array"
-        ],
+        "array-type": [true, "array"],
         "arrow-parens": true,
         "arrow-return-shorthand": true,
         "class-name": true,
-        "comment-format": [
-            true,
-            "check-space"
-        ],
+        "comment-format": [true, "check-space"],
         "curly": true,
         "eofline": true,
-        "indent": [
-            true,
-            "spaces",
-            4
-        ],
+        "indent": [true, "spaces", 4],
         "interface-name": false,
         "jsx-alignment": false,
         "jsx-boolean-value": false,
         "jsx-no-lambda": false,
         "jsx-no-multiline-js": false,
         "jsx-space-before-trailing-slash": false,
-        "max-line-length": [
-            true,
-            120
-        ],
+        "max-line-length": [true, 120],
         "new-parens": true,
         "newline-per-chained-call": false,
         "no-angle-bracket-type-assertion": true,
@@ -50,10 +34,7 @@
         "no-console": false,
         "no-default-export": true,
         "no-duplicate-imports": true,
-        "no-duplicate-variable": [
-            true,
-            "check-parameters"
-        ],
+        "no-duplicate-variable": [true, "check-parameters"],
         "no-empty": true,
         "no-empty-interface": false,
         "no-invalid-this": true,
@@ -63,52 +44,20 @@
         "no-unnecessary-class": true,
         "no-unused-expression": true,
         "no-var-keyword": true,
-        "no-void-expression": [
-            true,
-            "ignore-arrow-function-shorthand"
-        ],
+        "no-void-expression": [true, "ignore-arrow-function-shorthand"],
         "object-literal-sort-keys": false,
-        "one-line": [
-            true,
-            "check-catch",
-            "check-else",
-            "check-finally",
-            "check-open-brace",
-            "check-whitespace"
-        ],
+        "one-line": [true, "check-catch", "check-else", "check-finally", "check-open-brace", "check-whitespace"],
         "only-arrow-functions": true,
         "ordered-imports": true,
         "prefer-conditional-expression": false,
         "prefer-const": true,
         "prefer-for-of": true,
         "prefer-readonly": true,
-        "quotemark": [
-            true,
-            "double",
-            "avoid-escape",
-            "jsx-double"
-        ],
-        "semicolon": [
-            true,
-            "never"
-        ],
-        "space-before-function-paren": [
-            true,
-            "never"
-        ],
-        "trailing-comma": [
-            true,
-            {
-                "multiline": "never",
-                "singleline": "never"
-            }
-        ],
-        "variable-name": [
-            true,
-            "ban-keywords",
-            "check-format",
-            "allow-pascal-case"
-        ],
+        "quotemark": [true, "double", "avoid-escape", "jsx-double"],
+        "semicolon": [true, "never"],
+        "space-before-function-paren": [true, "never"],
+        "trailing-comma": [true, { "multiline": "never", "singleline": "never" }],
+        "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
         "whitespace": [
             true,
             "check-branch",
