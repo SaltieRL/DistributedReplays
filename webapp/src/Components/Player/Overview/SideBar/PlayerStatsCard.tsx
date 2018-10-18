@@ -13,7 +13,9 @@ import {
     withStyles,
     WithStyles
 } from "@material-ui/core"
-import {DirectionsCar, People, Person} from "@material-ui/icons"
+import DirectionsCar from "@material-ui/icons/DirectionsCar"
+import People from "@material-ui/icons/People"
+import Person from "@material-ui/icons/Person"
 import * as React from "react"
 import {Link} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../../../Globals"
