@@ -153,21 +153,6 @@ def parse_replay_gcp(self, fn):
         encoded_file = base64.b64encode(f.read())
     r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
 
-
-@celery.task(base=DBTask, bind=True, priority=9)
-def parse_replay_gcp(self, fn):
-    with open(fn, 'rb') as f:
-        encoded_file = base64.b64encode(f.read())
-    r = requests.post(GCP_URL, data=encoded_file)
-    response = r.json()
-    i = io.BytesIO(base64.b64decode(response['proto']))
-    protobuf_game = ProtobufManager.read_proto_out_from_file(i)
-    i2 = io.BytesIO(base64.b64decode(response['pandas']))
-    pandas_game = PandasManager.read_numpy_from_memory(i2)
-
-    return protobuf_game, pandas_game
-
-
 @periodic_task(run_every=30.0, base=DBTask, bind=True, priority=0)
 def calc_global_stats(self):
     sess = self.session()
