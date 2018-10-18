@@ -65,5 +65,5 @@ class PlayStyleResponse:
                                                                   DataPoint(k, averaged_stats[k])
                                                                   for k in averaged_stats
                                                               ])
-
+        session.close()
         return playstyle_data_raw
