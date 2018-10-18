@@ -1,8 +1,8 @@
-import {Typography} from "@material-ui/core"
+import { Typography } from "@material-ui/core"
 import Info from "@material-ui/icons/Info"
 import * as React from "react"
-import {PLUGINS_LINK} from "../../../Globals"
-import {LinkButton} from "../LinkButton"
+import { PLUGINS_LINK } from "../../../Globals"
+import { LinkButton } from "../LinkButton"
 
 export class BakkesModAd extends React.PureComponent {
     public render() {

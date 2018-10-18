@@ -1,5 +1,5 @@
-import {Action} from "redux"
-import {NotificationProps} from "../../Components/Shared/Notification/NotificationSnackbar"
+import { Action } from "redux"
+import { NotificationProps } from "../../Components/Shared/Notification/NotificationSnackbar"
 
 interface ShowNotifictionAction extends Action<"SHOW_NOTIFICATION"> {
     notification: NotificationProps

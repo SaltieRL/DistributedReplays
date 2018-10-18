@@ -1,8 +1,8 @@
 import * as moment from "moment"
-import {doGet} from "../../apiHandler/apiHandler"
-import {MatchHistoryResponse} from "../../Models/Player/MatchHistory"
-import {GameMode, parseReplay} from "../../Models/Replay/Replay"
-import {useMockData} from "../Config"
+import { doGet } from "../../apiHandler/apiHandler"
+import { MatchHistoryResponse } from "../../Models/Player/MatchHistory"
+import { GameMode, parseReplay } from "../../Models/Replay/Replay"
+import { useMockData } from "../Config"
 
 export const getMatchHistory = (id: string, page: number, limit: number): Promise<MatchHistoryResponse> => {
     if (useMockData) {

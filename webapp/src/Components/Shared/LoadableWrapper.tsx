@@ -1,7 +1,7 @@
-import {Button, CircularProgress, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
+import { Button, CircularProgress, createStyles, Typography, WithStyles, withStyles } from "@material-ui/core"
 import * as React from "react"
-import {AppError} from "../../Models/Error"
-import {WithNotifications, withNotifications} from "./Notification/NotificationUtils"
+import { AppError } from "../../Models/Error"
+import { WithNotifications, withNotifications } from "./Notification/NotificationUtils"
 
 interface OwnProps {
     load: () => Promise<any>

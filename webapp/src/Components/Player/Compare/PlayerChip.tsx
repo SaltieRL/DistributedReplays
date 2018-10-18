@@ -1,7 +1,7 @@
-import {Avatar, Chip, createStyles, Typography, withStyles, WithStyles} from "@material-ui/core"
+import { Avatar, Chip, createStyles, Typography, withStyles, WithStyles } from "@material-ui/core"
 import * as React from "react"
-import {RouteComponentProps, withRouter} from "react-router"
-import {PLAYER_PAGE_LINK} from "../../../Globals"
+import { RouteComponentProps, withRouter } from "react-router"
+import { PLAYER_PAGE_LINK } from "../../../Globals"
 
 interface OwnProps extends Player {
     onDelete: () => void

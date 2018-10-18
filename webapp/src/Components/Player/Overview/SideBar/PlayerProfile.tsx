@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import {Card, CardContent, CardMedia, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
-import {PlayerNameDropdown} from "./PlayerNameDropdown"
+import { Card, CardContent, CardMedia, createStyles, Typography, WithStyles, withStyles } from "@material-ui/core"
+import { PlayerNameDropdown } from "./PlayerNameDropdown"
 
 interface OwnProps {
     player: Player

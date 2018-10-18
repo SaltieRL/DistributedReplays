@@ -1,10 +1,10 @@
-import {Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, Tooltip} from "@material-ui/core"
+import { Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, Tooltip } from "@material-ui/core"
 import CompareArrows from "@material-ui/icons/CompareArrows"
 import * as React from "react"
-import {Link} from "react-router-dom"
-import {PLAYER_COMPARE_WITH_LINK} from "../../../../Globals"
-import {LinkButton} from "../../../Shared/LinkButton"
-import {PlayStyleExplanationTable} from "./PlayStyleExplanationTable"
+import { Link } from "react-router-dom"
+import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
+import { LinkButton } from "../../../Shared/LinkButton"
+import { PlayStyleExplanationTable } from "./PlayStyleExplanationTable"
 
 interface OwnProps {
     player: Player
@@ -24,21 +24,22 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const compareButton = this.props.useFullSizeCompareButton ?
+        const compareButton = this.props.useFullSizeCompareButton ? (
             <LinkButton icon={CompareArrows} iconType="mui"
                         to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
                 Compare
             </LinkButton>
-            :
+        ) : (
             <div style={{maxHeight: 0}}>
-            <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
-                <Tooltip title="Compare with...">
-                    <IconButton style={{marginRight: 8, top: -3}}>
-                        <CompareArrows/>
-                    </IconButton>
-                </Tooltip>
-            </Link>
+                <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
+                    <Tooltip title="Compare with...">
+                        <IconButton style={{marginRight: 8, top: -3}}>
+                            <CompareArrows/>
+                        </IconButton>
+                    </Tooltip>
+                </Link>
             </div>
+        )
 
         return (
             <Grid container justify="center" spacing={8}>

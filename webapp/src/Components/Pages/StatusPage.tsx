@@ -1,8 +1,8 @@
-import {Card, CardContent, CardHeader, Grid, List, ListItem, ListItemText} from "@material-ui/core"
+import { Card, CardContent, CardHeader, Grid, List, ListItem, ListItemText } from "@material-ui/core"
 import * as React from "react"
-import {getQueueStatuses} from "../../Requests/Global"
-import {LoadableWrapper} from "../Shared/LoadableWrapper"
-import {BasePage} from "./BasePage"
+import { getQueueStatuses } from "../../Requests/Global"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
+import { BasePage } from "./BasePage"
 
 interface State {
     queueStatuses?: QueueStatus[]

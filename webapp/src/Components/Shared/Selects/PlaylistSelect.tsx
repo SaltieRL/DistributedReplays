@@ -208,7 +208,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
     public render() {
         const {classes, selectedPlaylists, handleChange, inputLabel, helperText} = this.props
 
-        const playlistsMultiSelect =
+        const playlistsMultiSelect = (
             <FormControl className={classes.formControl}>
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
@@ -240,8 +240,8 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 </Select>
                 <FormHelperText>{helperText}</FormHelperText>
             </FormControl>
-
-        const filterCurrentCheckbox =
+        )
+        const filterCurrentCheckbox = (
             <FormControlLabel
                 control={
                     <Checkbox
@@ -251,7 +251,8 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 }
                 label="Show only current playlists"
             />
-        const filterStandardCheckbox =
+        )
+        const filterStandardCheckbox = (
             <FormControlLabel
                 control={
                     <Checkbox
@@ -261,7 +262,8 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 }
                 label="Show only standard modes"
             />
-        const filterRankedCheckbox =
+        )
+        const filterRankedCheckbox = (
             <FormControlLabel
                 control={
                     <Checkbox
@@ -271,6 +273,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 }
                 label="Show only ranked playlists"
             />
+        )
 
         return (
             <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>

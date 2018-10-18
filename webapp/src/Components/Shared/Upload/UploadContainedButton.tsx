@@ -1,7 +1,7 @@
-import {Button, WithStyles, withStyles} from "@material-ui/core"
-import {SvgIconProps} from "@material-ui/core/SvgIcon"
+import { Button, WithStyles, withStyles } from "@material-ui/core"
+import { SvgIconProps } from "@material-ui/core/SvgIcon"
 import * as React from "react"
-import {buttonStyles} from "../LinkButton"
+import { buttonStyles } from "../LinkButton"
 
 interface OwnProps {
     handleOpen: () => void

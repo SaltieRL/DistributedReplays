@@ -10,11 +10,11 @@ import {
     WithStyles
 } from "@material-ui/core"
 import * as React from "react"
-import {getGlobalStats} from "../../Requests/Global"
-import {GlobalStatsChart} from "../GlobalStatsChart"
-import {IconTooltip} from "../Shared/IconTooltip"
-import {LoadableWrapper} from "../Shared/LoadableWrapper"
-import {BasePage} from "./BasePage"
+import { getGlobalStats } from "../../Requests/Global"
+import { GlobalStatsChart } from "../GlobalStatsChart"
+import { IconTooltip } from "../Shared/IconTooltip"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
+import { BasePage } from "./BasePage"
 
 type Props = WithStyles<typeof styles>
 

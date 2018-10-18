@@ -1,5 +1,5 @@
-import {faDiscord, faGithub, faReddit, faTwitter, IconDefinition} from "@fortawesome/free-brands-svg-icons"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import { faDiscord, faGithub, faReddit, faTwitter, IconDefinition } from "@fortawesome/free-brands-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
     ButtonBase,
     createStyles,
@@ -12,9 +12,9 @@ import {
     WithStyles,
     withWidth
 } from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 import {
     ABOUT_LINK,
     DISCORD_LINK,

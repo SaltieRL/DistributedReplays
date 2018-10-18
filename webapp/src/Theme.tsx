@@ -1,5 +1,5 @@
-import {MuiThemeProvider} from "@material-ui/core"
-import {createMuiTheme} from "@material-ui/core/styles"
+import { MuiThemeProvider } from "@material-ui/core"
+import { createMuiTheme } from "@material-ui/core/styles"
 import * as React from "react"
 
 const theme = createMuiTheme({

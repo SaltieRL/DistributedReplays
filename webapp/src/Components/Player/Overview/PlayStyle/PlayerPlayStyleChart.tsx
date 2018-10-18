@@ -1,10 +1,10 @@
-import {withTheme, WithTheme} from "@material-ui/core"
-import {ChartData, ChartDataSets, LinearTickOptions, RadialChartOptions} from "chart.js"
+import { withTheme, WithTheme } from "@material-ui/core"
+import { ChartData, ChartDataSets, LinearTickOptions, RadialChartOptions } from "chart.js"
 import * as React from "react"
-import {Radar} from "react-chartjs-2"
-import {ChartDataResponse} from "../../../../Models/ChartData"
-import {roundLabelToMaxDPCallback} from "../../../../Utils/Chart"
-import {colorsForPlaylists, convertHexToRgba} from "../../../../Utils/Color"
+import { Radar } from "react-chartjs-2"
+import { ChartDataResponse } from "../../../../Models/ChartData"
+import { roundLabelToMaxDPCallback } from "../../../../Utils/Chart"
+import { colorsForPlaylists, convertHexToRgba } from "../../../../Utils/Color"
 
 interface OwnProps {
     names: string[]

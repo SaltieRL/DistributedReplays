@@ -1,10 +1,10 @@
-import {Grid, TablePagination} from "@material-ui/core"
+import { Grid, TablePagination } from "@material-ui/core"
 import * as React from "react"
-import {MatchHistoryResponse} from "../../../../Models/Player/MatchHistory"
-import {Replay} from "../../../../Models/Replay/Replay"
-import {getMatchHistory} from "../../../../Requests/Player/getMatchHistory"
-import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
-import {OverviewMatchHistoryRow} from "./OverviewMatchHistoryRow"
+import { MatchHistoryResponse } from "../../../../Models/Player/MatchHistory"
+import { Replay } from "../../../../Models/Replay/Replay"
+import { getMatchHistory } from "../../../../Requests/Player/getMatchHistory"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
+import { OverviewMatchHistoryRow } from "./OverviewMatchHistoryRow"
 
 interface Props {
     player: Player

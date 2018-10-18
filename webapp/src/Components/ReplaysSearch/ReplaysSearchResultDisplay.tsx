@@ -1,13 +1,13 @@
-import {Card, CardHeader, Divider, List, Typography} from "@material-ui/core"
+import { Card, CardHeader, Divider, List, Typography } from "@material-ui/core"
 import * as _ from "lodash"
 import * as qs from "qs"
 import * as React from "react"
-import {REPLAYS_GROUP_PAGE_LINK} from "../../Globals"
-import {MatchHistoryResponse} from "../../Models/Player/MatchHistory"
-import {Replay} from "../../Models/Replay/Replay"
-import {ReplayDisplayRow} from "./ReplayDisplayRow"
-import {ReplaysSearchTablePagination} from "./ReplaysSearchTablePagination"
-import {ResultsActions} from "./ResultsActions"
+import { REPLAYS_GROUP_PAGE_LINK } from "../../Globals"
+import { MatchHistoryResponse } from "../../Models/Player/MatchHistory"
+import { Replay } from "../../Models/Replay/Replay"
+import { ReplayDisplayRow } from "./ReplayDisplayRow"
+import { ReplaysSearchTablePagination } from "./ReplaysSearchTablePagination"
+import { ResultsActions } from "./ResultsActions"
 
 interface Props {
     replaySearchResult: MatchHistoryResponse
@@ -38,8 +38,7 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                             <ResultsActions disabled={this.state.selectedReplayIds.length === 0}
                                             to={this.getGroupLink()}
                                             handleSelectableChange={this.handleSelectableChange}
-                                            selectable={this.state.selectable}/>
-                        }/>
+                                            selectable={this.state.selectable}/>}/>
                         {selectable ?
                             <List dense>
                                 <Divider/>

@@ -11,9 +11,9 @@ import {
 } from "@material-ui/core"
 import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import * as React from "react"
-import {getStats} from "../../../../Requests/Player/getStats"
-import {roundNumberToMaxDP} from "../../../../Utils/String"
-import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
+import { getStats } from "../../../../Requests/Player/getStats"
+import { roundNumberToMaxDP } from "../../../../Utils/String"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 
 interface CarStat {
     carName: string

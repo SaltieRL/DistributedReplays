@@ -1,9 +1,9 @@
 import Grid from "@material-ui/core/Grid/Grid"
-import {ChartDataSets, ChartOptions} from "chart.js"
+import { ChartDataSets, ChartOptions } from "chart.js"
 import * as React from "react"
-import {HorizontalBar} from "react-chartjs-2"
-import {Replay} from "../../Models/Replay/Replay"
-import {getChartColors} from "../../Utils/Color"
+import { HorizontalBar } from "react-chartjs-2"
+import { Replay } from "../../Models/Replay/Replay"
+import { getChartColors } from "../../Utils/Color"
 
 interface Props {
     replay: Replay
@@ -41,18 +41,20 @@ export class ReplayChart extends React.PureComponent<Props> {
 
             const xLimit = Math.round(Math.max(-negativeValuesSum, positiveValuesSum) * 1.2) + 1
 
-            const element = <HorizontalBar
-                key={label}
-                data={data}
-                options={this.getOptions(showLegend, xLimit)}
-                height={showLegend ? 100 : 80}
-                width={300}
-            />
+            const chart = (
+                <HorizontalBar
+                    key={label}
+                    data={data}
+                    options={this.getOptions(showLegend, xLimit)}
+                    height={showLegend ? 100 : 80}
+                    width={300}
+                />
+            )
 
             showLegend = false
             return (
                 <Grid item xs={12} key={key}>
-                    {element}
+                    {chart}
                 </Grid>
             )
         }))

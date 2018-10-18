@@ -1,8 +1,8 @@
-import {Dialog, DialogTitle, Divider} from "@material-ui/core"
+import { Dialog, DialogTitle, Divider } from "@material-ui/core"
 import * as React from "react"
-import {PreviousUploads} from "./PreviousUploads"
-import {UploadForm} from "./UploadForm"
-import {UploadTab, UploadTabs} from "./UploadTabs"
+import { PreviousUploads } from "./PreviousUploads"
+import { UploadForm } from "./UploadForm"
+import { UploadTab, UploadTabs } from "./UploadTabs"
 
 interface Props {
     open: boolean,

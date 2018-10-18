@@ -1,5 +1,5 @@
 import * as moment from "moment"
-import {getUploadStatuses} from "../../../Requests/Global"
+import { getUploadStatuses } from "../../../Requests/Global"
 
 const SESSION_STORAGE_UPLOADS_KEY = "uploadTasks"
 // TODO: Check if this is the right place for this and if this should be in redux.

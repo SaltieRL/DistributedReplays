@@ -1,5 +1,5 @@
-import {Button, Tooltip} from "@material-ui/core"
-import {SvgIconProps} from "@material-ui/core/SvgIcon"
+import { Button, Tooltip } from "@material-ui/core"
+import { SvgIconProps } from "@material-ui/core/SvgIcon"
 import * as React from "react"
 
 interface Props {
