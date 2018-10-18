@@ -7,8 +7,9 @@ import re
 import shutil
 import uuid
 
+import pandas as pd
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from flask import jsonify, Blueprint, current_app, request, send_from_directory, send_file
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
@@ -208,6 +209,28 @@ def api_get_replay_group():
     ids = request.args.getlist('ids')
     chart_data = ReplayGroupChartData.create_from_ids(ids)
     return better_jsonify(chart_data)
+
+
+@bp.route('replay/group/download')
+def api_download_group():
+    ids = request.args.getlist('ids')
+    chart_data = ReplayGroupChartData.create_from_ids(ids)
+    mem = io.StringIO()
+    df = pd.DataFrame(columns=["Player"] + [c.title for c in chart_data])
+    df["Player"] = pd.Series([c["name"] for c in chart_data[0].chartDataPoints])
+    for data in chart_data:
+        df[data.title] = pd.Series([c["value"] for c in data.chartDataPoints])
+    df.to_csv(mem)
+    csv = io.BytesIO()
+    csv.write(mem.getvalue().encode('utf-8'))
+    csv.seek(0)
+    mem.close()
+    return send_file(
+        csv,
+        as_attachment=True,
+        attachment_filename='test.csv',
+        mimetype='text/csv'
+    )
 
 
 @bp.route('/replay/<id_>/download')
