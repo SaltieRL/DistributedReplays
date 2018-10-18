@@ -33,7 +33,7 @@ for k, v in rank_mapping.items():
 def get_rank_tier(rank, playlist=13):
     if rank is not None:
         try:
-            return rank[str(real_rank_mapping[int(playlist)])]['tier']
+            return rank[real_rank_mapping[int(playlist)]]['tier']
         except KeyError:
             return rank[str(13)]['tier']
     else:
@@ -43,6 +43,6 @@ def get_rank_tier(rank, playlist=13):
 def get_rank_obj_by_mapping(rank, playlist=13):
     try:
         print(rank)
-        return rank[str(real_rank_mapping[int(playlist)])]
+        return rank[real_rank_mapping[int(playlist)]]
     except KeyError:
-        return rank[str(13)]
+        return rank[13]
