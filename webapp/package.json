@@ -30,7 +30,8 @@
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "tslint-prettier-check": "tslint-config-prettier-check ./tslint.json"
   },
   "devDependencies": {
     "@types/chart.js": "^2.7.33",
