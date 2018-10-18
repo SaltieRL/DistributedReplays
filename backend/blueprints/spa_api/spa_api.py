@@ -28,7 +28,6 @@ from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.queue_status import QueueStatus
-from .service_layers.replay.basic_stats import BasicStatChartData
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
@@ -124,7 +123,16 @@ def api_get_player_play_style(id_):
         rank = int(request.args['rank'])
     else:
         rank = None
-    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank)
+    if 'playlist' in request.args:
+        playlist = request.args['playlist']
+    else:
+        playlist = 13  # standard
+    if 'win' in request.args:
+        win = bool(int(request.args['win']))
+    else:
+        win = None
+    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank, playlist=playlist,
+                                                           win=win)
     return better_jsonify(play_style_response)
 
 

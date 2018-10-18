@@ -5,6 +5,7 @@ import { PlayStyleActions } from "./PlayStyleActions"
 
 interface Props {
     player: Player
+    handlePlaylistChange?: (playlist: number) => void
 }
 
 export class PlayerPlayStyleCard extends React.PureComponent<Props> {
@@ -20,7 +21,12 @@ export class PlayerPlayStyleCard extends React.PureComponent<Props> {
 
         return (
             <Card>
-                <CardHeader title={playStyleTitle} action={<PlayStyleActions player={this.props.player}/>}/>
+                <CardHeader title={playStyleTitle}
+                            action={
+                                <PlayStyleActions
+                                    player={this.props.player}
+                                    handlePlaylistChange={this.props.handlePlaylistChange}/>
+                            }/>
                 <CardContent>
                     {this.props.children}
                 </CardContent>

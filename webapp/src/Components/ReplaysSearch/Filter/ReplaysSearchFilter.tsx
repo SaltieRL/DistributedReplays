@@ -17,22 +17,26 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
         const {queryParams} = this.props
 
         const playerEntry = (
-            <PlayerEntry playerIds={queryParams.playerIds || []}
-                         handleChange={this.handlePlayersChange}/>
+            <PlayerEntry
+                playerIds={queryParams.playerIds || []}
+                handleChange={this.handlePlayersChange}/>
         )
         const rankSelect = (
-            <RankSelect selectedRank={queryParams.rank || -1}
-                        handleChange={this.handleRankChange}
-                        inputLabel="Replay rank"
-                        helperText="Select rank to filter by"
-                        noneLabel="None"
-                        disabled/>
+            <RankSelect
+                selectedRank={queryParams.rank || -1}
+                handleChange={this.handleRankChange}
+                inputLabel="Replay rank"
+                helperText="Select rank to filter by"
+                noneLabel="None"
+                disabled/>
         )
         const playlistSelect = (
-            <PlaylistSelect selectedPlaylists={queryParams.playlists || []}
-                            handleChange={this.handlePlaylistsChange}
-                            inputLabel="Playlist"
-                            helperText="Select playlist to filter by"/>
+            <PlaylistSelect
+                selectedPlaylists={queryParams.playlists || []}
+                handleChange={this.handlePlaylistsChange}
+                inputLabel="Playlist"
+                helperText="Select playlist to filter by"
+                multiple/>
         )
         const dateAfterPicker = (
             <ClearableDatePicker
