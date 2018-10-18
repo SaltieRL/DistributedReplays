@@ -16,6 +16,7 @@ from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerS
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
+from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
@@ -192,10 +193,22 @@ def api_get_replay_basic_player_stats(id_):
     return better_jsonify(basic_stats)
 
 
+@bp.route('replay/<id_>/basic_player_stats/download')
+def api_get_replay_basic_player_stats_download(id_):
+    basic_stats = PlayerStatsChart.create_from_id(id_)
+    return convert_to_csv(basic_stats)
+
+
 @bp.route('replay/<id_>/basic_team_stats')
 def api_get_replay_basic_team_stats(id_):
     basic_stats = TeamStatsChart.create_from_id(id_)
     return better_jsonify(basic_stats)
+
+
+@bp.route('replay/<id_>/basic_team_stats/download')
+def api_get_replay_basic_team_stats_download(id_):
+    basic_stats = TeamStatsChart.create_from_id(id_)
+    return convert_to_csv(basic_stats)
 
 
 @bp.route('replay/<id_>/positions')
@@ -215,22 +228,7 @@ def api_get_replay_group():
 def api_download_group():
     ids = request.args.getlist('ids')
     chart_data = ReplayGroupChartData.create_from_ids(ids)
-    mem = io.StringIO()
-    df = pd.DataFrame(columns=["Player"] + [c.title for c in chart_data])
-    df["Player"] = pd.Series([c["name"] for c in chart_data[0].chartDataPoints])
-    for data in chart_data:
-        df[data.title] = pd.Series([c["value"] for c in data.chartDataPoints])
-    df.to_csv(mem)
-    csv = io.BytesIO()
-    csv.write(mem.getvalue().encode('utf-8'))
-    csv.seek(0)
-    mem.close()
-    return send_file(
-        csv,
-        as_attachment=True,
-        attachment_filename='test.csv',
-        mimetype='text/csv'
-    )
+    return convert_to_csv(chart_data)
 
 
 @bp.route('/replay/<id_>/download')

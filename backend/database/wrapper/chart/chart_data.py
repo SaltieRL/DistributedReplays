@@ -1,5 +1,9 @@
+import io
 from enum import Enum, auto
 from typing import List, Optional
+
+import pandas as pd
+from flask import send_file
 
 
 class ChartDataPoint:
@@ -25,6 +29,7 @@ class ChartType(Enum):
 class ChartSubcatagory(Enum):
     pass
 
+
 class ChartStatsMetadata:
     def __init__(self, stat_name: str, type_: ChartType, subcategory: ChartSubcatagory):
         self.stat_name = stat_name
@@ -32,3 +37,20 @@ class ChartStatsMetadata:
         self.subcategory = subcategory.name
 
 
+def convert_to_csv(chart_data):
+    mem = io.StringIO()
+    df = pd.DataFrame(columns=["Player"] + [c.title for c in chart_data])
+    df["Player"] = pd.Series([c["name"] for c in chart_data[0].chartDataPoints])
+    for data in chart_data:
+        df[data.title] = pd.Series([c["value"] for c in data.chartDataPoints])
+    df.to_csv(mem)
+    csv = io.BytesIO()
+    csv.write(mem.getvalue().encode())
+    csv.seek(0)
+    mem.close()
+    return send_file(
+        csv,
+        as_attachment=True,
+        attachment_filename='test.csv',
+        mimetype='text/csv'
+    )
