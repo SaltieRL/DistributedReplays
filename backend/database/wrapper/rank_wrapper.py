@@ -1,24 +1,48 @@
-from backend.utils.psyonix_api_handler import get_rank_batch
+from backend.database.objects import Playlist
+
+# Used to map playlists to a certain ranked playlist
+# In case of unranked playlists, this is where you would map them to their ranked counterparts
+# This is used to compare people in unranked playlists to each other
+# To use a playlist as its own rank, use `None`.
+rank_mapping = {
+    Playlist.UNRANKED_DUELS: Playlist.RANKED_DUELS,
+    Playlist.UNRANKED_DOUBLES: Playlist.RANKED_DOUBLES,
+    Playlist.UNRANKED_STANDARD: Playlist.RANKED_STANDARD,
+    Playlist.UNRANKED_CHAOS: Playlist.RANKED_STANDARD,
+
+    # Ranked
+    Playlist.RANKED_DUELS: None,
+    Playlist.RANKED_DOUBLES: None,
+    Playlist.RANKED_SOLO_STANDARD: None,
+    Playlist.RANKED_STANDARD: None,
+
+    # Ranked Other modes
+    Playlist.RANKED_HOOPS: None,
+    Playlist.RANKED_RUMBLE: None,
+    Playlist.RANKED_DROPSHOT: None,
+    Playlist.RANKED_SNOW_DAY: None
+}
+real_rank_mapping = {}
+for k, v in rank_mapping.items():
+    if v is not None:
+        real_rank_mapping[k.value] = v.value
+    else:
+        real_rank_mapping[k.value] = k.value
 
 
-def get_rank(steam_id):
-    """
-    Gets a single rank of a given steam id. Just calls get_rank_batch with a single id.
-
-    :param steam_id: steamid to get
-    :return: rank, if it exists
-    """
-    rank = get_rank_batch([steam_id])
-    if rank is None or len(rank) <= 0:
-        return None
-    return rank[list(rank.keys())[0]]
-
-
-def get_rank_number(rank):
+def get_rank_tier(rank, playlist=13):
     if rank is not None:
         try:
-            return rank[3]['tier']
-        except IndexError:
-            return rank[1]['tier']
+            return rank[real_rank_mapping[int(playlist)]]['tier']
+        except KeyError:
+            return rank[str(13)]['tier']
     else:
         return 0
+
+
+def get_rank_obj_by_mapping(rank, playlist=13):
+    try:
+        print(rank)
+        return rank[real_rank_mapping[int(playlist)]]
+    except KeyError:
+        return rank[13]

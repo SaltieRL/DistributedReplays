@@ -7,6 +7,7 @@ from typing import Tuple, List
 
 from sqlalchemy import func, cast
 
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.database.objects import PlayerGame, Game
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
@@ -31,19 +32,25 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # this Object needs to be pooled per a session so only one is used at a time
         self.player_stats_filter = QueryFilterBuilder()
         if not ignore_filtering():
-            self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
-                3).with_safe_checking().sticky()
+            self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_safe_checking().sticky()
 
-    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None):
+    def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None,
+                  playlist=13, win: bool = None):
         player_stats_filter = self.player_stats_filter.clean().clone()
         global_stats, global_stds = self.get_global_stats_by_rank(session, player_stats_filter,
                                                                   stats_query, std_query, player_rank=rank, redis=redis,
-                                                                  ids=replay_ids)
+                                                                  ids=replay_ids, playlist=playlist)
         player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
         if replay_ids is not None:
             player_stats_filter.with_replay_ids(replay_ids)
+        else:
+            player_stats_filter.with_playlists([playlist])
         query = player_stats_filter.build_query(session).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.game != '').group_by(PlayerGame.player)
+        if win is not None:
+            query = query.filter(PlayerGame.win == win)
+        if query.count() < 1:
+            raise CalculatedError(404, 'User does not have enough replays.')
         stats = list(query.first())
         stats = [0 if s is None else s for s in stats]
         if raw:
@@ -51,13 +58,27 @@ class PlayerStatWrapper(GlobalStatWrapper):
         else:
             return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
 
-    def get_averaged_stats(self, session, id_, rank=None, redis=None, raw=False, replay_ids=None):
+    def get_averaged_stats(self, session, id_: str, rank: int = None, redis=None, raw: bool = False,
+                           replay_ids: list = None, playlist: int = 13, win: bool = None):
+        """
+        Gets the averaged stats for the given ID, in either raw or standard deviation form.
+
+        :param session: DBSession
+        :param id_: Player ID to retrieve
+        :param rank: rank in integer form (0-19) (optional)
+        :param redis: optional redis instance, for caching/retrieving
+        :param raw: return the values in raw form instead of compared to global
+        :param replay_ids: replay ids to get stats from
+        :param playlist: what playlist to filter by (only when replay_ids is None)
+        :param win: filter by wins/losses (win = True)
+        :return: stats
+        """
         stats_query = self.get_player_stat_query()
         std_query = self.get_player_stat_std_query()
         total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
         if total_games > 0:
             stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
-                                                 replay_ids=replay_ids)
+                                                 replay_ids=replay_ids, playlist=playlist, win=win)
         else:
             stats = [0.0] * len(stats_query)
             global_stats = [0.0] * len(stats_query)
@@ -157,8 +178,10 @@ class PlayerStatWrapper(GlobalStatWrapper):
             std_devs.with_replay_ids(replay_ids)
         average = average.build_query(session).filter(PlayerGame.time_in_game > 0).first()
         std_devs = std_devs.build_query(session).filter(PlayerGame.time_in_game > 0).first()
-        average = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.stat_list, average) if s is not None}
-        std_devs = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.stat_list, std_devs) if s is not None}
+        average = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, average) if
+                   s is not None}
+        std_devs = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, std_devs) if
+                    s is not None}
         return {'average': average, 'std_dev': std_devs}
 
     def get_group_stats(self, session, replay_ids):

@@ -21,7 +21,7 @@ class PlayStyleResponse:
         self.showWarning = show_warning
 
     @classmethod
-    def create_from_id(cls, id_: str, raw=False, rank=None, replay_ids=None):
+    def create_from_id(cls, id_: str, raw=False, rank=None, replay_ids=None, playlist=13, win=None):
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
@@ -30,7 +30,8 @@ class PlayStyleResponse:
             rank = get_rank(id_)
         averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                               redis=current_app.config['r'], raw=raw,
-                                                                              rank=rank, replay_ids=replay_ids)
+                                                                              rank=rank, replay_ids=replay_ids,
+                                                                              playlist=playlist, win=win)
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
 
         play_style_chart_datas: List[PlayStyleChartData] = []
