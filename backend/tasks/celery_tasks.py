@@ -153,6 +153,7 @@ def parse_replay_gcp(self, fn):
         encoded_file = base64.b64encode(f.read())
     r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
 
+
 @periodic_task(run_every=30.0, base=DBTask, bind=True, priority=0)
 def calc_global_stats(self):
     sess = self.session()
