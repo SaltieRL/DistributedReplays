@@ -34,14 +34,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
         if not ignore_filtering():
             self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_safe_checking().sticky()
 
-    def get_wrapped_stats(self, stats):
-        zipped_stats = dict()
-
-        for i in range(len(self.stat_list)):
-            zipped_stats[self.stat_list[i].get_field_name()] = stats[i]
-
-        return zipped_stats
-
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None,
                   playlist=13, win: bool = None):
         player_stats_filter = self.player_stats_filter.clean().clone()
