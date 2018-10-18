@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import {createStyles, Toolbar, WithStyles, withStyles} from "@material-ui/core"
+import { createStyles, Toolbar, WithStyles, withStyles } from "@material-ui/core"
 
 type Props = WithStyles<typeof styles>
 

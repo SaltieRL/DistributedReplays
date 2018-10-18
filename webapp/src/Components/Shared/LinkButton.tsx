@@ -1,10 +1,10 @@
-import {IconDefinition} from "@fortawesome/fontawesome-common-types"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Button, createStyles, Theme, Tooltip, WithStyles, withStyles} from "@material-ui/core"
-import {SvgIconProps} from "@material-ui/core/SvgIcon"
+import { IconDefinition } from "@fortawesome/fontawesome-common-types"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Button, createStyles, Theme, Tooltip, WithStyles, withStyles } from "@material-ui/core"
+import { SvgIconProps } from "@material-ui/core/SvgIcon"
 import * as H from "history"
 import * as React from "react"
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 
 interface InternalLinkProps {
     isExternalLink?: false
@@ -43,7 +43,7 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
     public render() {
         const {classes, children, isExternalLink, tooltip, disabled} = this.props
         const className = children ? `${classes.icon} ${classes.leftIcon}` : classes.icon
-        let button =
+        let button = (
             <Button variant="outlined" style={{height: "100%"}} disabled={disabled}>
                 {this.props.iconType === "fontawesome" &&
                 <FontAwesomeIcon icon={this.props.icon} className={className}/>
@@ -53,12 +53,14 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
                 }
                 {children}
             </Button>
+        )
 
         if (tooltip) {
-            button =
+            button = (
                 <Tooltip title={tooltip} placement="bottom" PopperProps={{className: classes.tooltip}}>
                     {button}
                 </Tooltip>
+            )
         }
 
         return (

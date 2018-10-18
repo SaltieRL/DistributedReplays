@@ -1,20 +1,10 @@
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    Collapse,
-    createStyles,
-    Divider,
-    Grid,
-    IconButton,
-    withStyles
-} from "@material-ui/core"
-import CardActions from '@material-ui/core/CardActions'
+import { Card, CardContent, CardHeader, Collapse, Divider, Grid, IconButton } from "@material-ui/core"
+import CardActions from "@material-ui/core/CardActions"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import * as React from "react"
-import {getRanks} from "../../../../Requests/Player/getRanks"
-import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
-import {PlayerPlaylistRank, PlaylistRank} from "./PlayerPlaylistRank"
+import { getRanks } from "../../../../Requests/Player/getRanks"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
+import { PlayerPlaylistRank, PlaylistRank } from "./PlayerPlaylistRank"
 
 export interface PlayerRanks {
     duel: PlaylistRank
@@ -38,17 +28,7 @@ interface State {
     expanded: boolean
 }
 
-const styles = createStyles({
-    expand: {
-        transform: "rotate(0deg)",
-        marginLeft: "auto"
-    },
-    expandOpen: {
-        transform: "rotate(180deg)"
-    }
-})
-
-export class PlayerRanksCardComponent extends React.PureComponent<Props, State> {
+export class PlayerRanksCard extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         const loadingRating = {
@@ -139,5 +119,3 @@ export class PlayerRanksCardComponent extends React.PureComponent<Props, State> 
         this.setState((state) => ({expanded: !state.expanded}))
     }
 }
-
-export const PlayerRanksCard = withStyles(styles)(PlayerRanksCardComponent)

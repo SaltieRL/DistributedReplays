@@ -1,4 +1,4 @@
-import {faSteam} from "@fortawesome/free-brands-svg-icons"
+import { faSteam } from "@fortawesome/free-brands-svg-icons"
 import {
     Avatar,
     Button,
@@ -13,10 +13,10 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import {Link} from "react-router-dom"
-import {LOCAL_LINK, LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK} from "../../../Globals"
-import {LoggedInUserState} from "../../../Redux/loggedInUser/actions"
-import {LinkButton} from "../LinkButton"
+import { Link } from "react-router-dom"
+import { LOCAL_LINK, LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK } from "../../../Globals"
+import { LoggedInUserState } from "../../../Redux/loggedInUser/actions"
+import { LinkButton } from "../LinkButton"
 
 interface OwnProps {
     loggedInUser: LoggedInUserState

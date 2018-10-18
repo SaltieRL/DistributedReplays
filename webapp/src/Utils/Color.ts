@@ -1,4 +1,4 @@
-import {ChartDataSets} from "chart.js"
+import { ChartDataSets } from "chart.js"
 
 export const convertHexToRgba = (hex: string, alpha: number = 1) => {
     const r = parseInt(hex.slice(1, 3), 16)

@@ -17,11 +17,11 @@ import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import People from "@material-ui/icons/People"
 import Person from "@material-ui/icons/Person"
 import * as React from "react"
-import {Link} from "react-router-dom"
-import {PLAYER_PAGE_LINK} from "../../../../Globals"
-import {getStats} from "../../../../Requests/Player/getStats"
-import {roundNumberToMaxDP} from "../../../../Utils/String"
-import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
+import { Link } from "react-router-dom"
+import { PLAYER_PAGE_LINK } from "../../../../Globals"
+import { getStats } from "../../../../Requests/Player/getStats"
+import { roundNumberToMaxDP } from "../../../../Utils/String"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 
 interface CarStat {
     carName: string
