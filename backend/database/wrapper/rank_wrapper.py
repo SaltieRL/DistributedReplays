@@ -1,5 +1,9 @@
 from backend.database.objects import Playlist
 
+# Used to map playlists to a certain ranked playlist
+# In case of unranked playlists, this is where you would map them to their ranked counterparts
+# This is used to compare people in unranked playlists to each other
+# To use a playlist as its own rank, use `None`.
 rank_mapping = {
     Playlist.UNRANKED_DUELS: Playlist.RANKED_DUELS,
     Playlist.UNRANKED_DOUBLES: Playlist.RANKED_DOUBLES,
