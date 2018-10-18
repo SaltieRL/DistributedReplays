@@ -146,6 +146,32 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
         <LinkButton to={GITHUB_LINK} isExternalLink iconType="fontawesome" icon={faGithub} tooltip="Github" />
     )
 
+    const globalStatsLinkButton = (
+        <LinkButton to={GLOBAL_STATS_LINK}
+                    iconType="fontawesome" icon={faChartBar}
+                    tooltip="Global stats"/>
+    )
+    const aboutLinkButton = (
+        <LinkButton to={ABOUT_LINK}
+                    iconType="mui" icon={Info}
+                    tooltip="About"/>
+    )
+    const twitterLinkButton = (
+        <LinkButton to={TWITTER_LINK} isExternalLink
+                    iconType="fontawesome" icon={faTwitter}
+                    tooltip="Twitter"/>
+    )
+    const discordLinkButton = (
+        <LinkButton to={DISCORD_LINK} isExternalLink
+                    iconType="fontawesome" icon={faDiscord}
+                    tooltip="Discord"/>
+    )
+    const githubLinkButton = (
+        <LinkButton to={GITHUB_LINK} isExternalLink
+                    iconType="fontawesome" icon={faGithub}
+                    tooltip="Github"/>
+    )
+
     return (
         <Grid container justify="center" spacing={16}>
             {isWidthUp("md", props.width) ? (

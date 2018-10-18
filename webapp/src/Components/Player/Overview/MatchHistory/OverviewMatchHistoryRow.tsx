@@ -54,7 +54,9 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         )
 
         const expansionPanelSummary = (
-            <ExpansionPanelSummary expandIcon={<ExpandMore />}>
+            <ExpansionPanelSummary
+                expandIcon={<ExpandMore/>}
+            >
                 <Grid container>
                     <Grid item xs={notOnMobile ? 3 : 5}>
                         <Typography variant={typographyVariant} noWrap>
@@ -97,24 +99,23 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
     }
 }
 
-const styles = (theme: Theme) =>
-    createStyles({
-        iconButton: {
-            height: 20,
-            width: 20,
-            color: theme.palette.secondary.main,
-            "&:hover": {
-                transitionProperty: "transform",
-                transitionDuration: "100ms",
-                transform: "scale(1.2)",
-                color: theme.palette.secondary.dark
-            }
-        },
-        panelDetails: {
-            overflowX: "auto",
-            maxWidth: "95vw",
-            margin: "auto"
+const styles = (theme: Theme) => createStyles({
+    iconButton: {
+        "height": 20,
+        "width": 20,
+        "color": theme.palette.secondary.main,
+        "&:hover": {
+            transitionProperty: "transform",
+            transitionDuration: "100ms",
+            transform: "scale(1.2)",
+            color: theme.palette.secondary.dark
         }
-    })
+    },
+    panelDetails: {
+        overflowX: "auto",
+        maxWidth: "95vw",
+        margin: "auto"
+    }
+})
 
 export const OverviewMatchHistoryRow = withWidth()(withStyles(styles)(OverviewMatchHistoryRowComponent))

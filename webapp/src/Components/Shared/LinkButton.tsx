@@ -41,7 +41,7 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
         const { classes, children, isExternalLink, tooltip, disabled } = this.props
         const className = children ? `${classes.icon} ${classes.leftIcon}` : classes.icon
         let button = (
-            <Button variant="outlined" style={{ height: "100%" }} disabled={disabled}>
+            <Button variant="outlined" style={{height: "100%"}} disabled={disabled}>
                 {this.props.iconType === "fontawesome" &&
                     <FontAwesomeIcon icon={this.props.icon} className={className} />
                 }
@@ -54,7 +54,7 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
 
         if (tooltip) {
             button = (
-                <Tooltip title={tooltip} placement="bottom" PopperProps={{ className: classes.tooltip }}>
+                <Tooltip title={tooltip} placement="bottom" PopperProps={{className: classes.tooltip}}>
                     {button}
                 </Tooltip>
             )

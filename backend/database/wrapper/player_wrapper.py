@@ -64,4 +64,12 @@ class PlayerWrapper:
         return existing_query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
 
     def get_total_games(self, session, id_, replay_ids=None):
+        """
+        Get total number of games this player has.
+
+        :param session: DBSession
+        :param id_: ID to get
+        :param replay_ids: Replay IDs to filter by
+        :return: Integer
+        """
         return self.get_player_games(session, id_, replay_ids=replay_ids).count()

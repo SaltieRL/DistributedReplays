@@ -1,14 +1,4 @@
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    createStyles,
-    Grid,
-    Theme,
-    Typography,
-    withStyles,
-    WithStyles
-} from "@material-ui/core"
+import { Card, CardContent, CardHeader, Grid, Typography } from "@material-ui/core"
 import * as React from "react"
 import { GlobalStatsGraph } from "src/Models"
 import { GlobalService } from "src/Requests"
@@ -17,14 +7,12 @@ import { IconTooltip } from "../Shared/IconTooltip"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
-type Props = WithStyles<typeof styles>
-
 interface State {
     globalStats?: GlobalStatsGraph[]
 }
 
-class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
-    constructor(props: Props) {
+export class GlobalStatsPage extends React.PureComponent<{}, State> {
+    constructor(props: {}) {
         super(props)
         this.state = {}
     }

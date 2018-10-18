@@ -8,6 +8,7 @@ import { PlayerPlayStyleChart } from "./PlayerPlayStyleChart"
 
 interface OwnProps {
     player: Player
+    playlist?: number
 }
 
 type Props = OwnProps & WithStyles<typeof styles>
@@ -25,6 +26,9 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
 
     public componentDidUpdate(prevProps: Readonly<Props>) {
         if (prevProps.player.id !== this.props.player.id) {
+            this.triggerReload()
+        }
+        if (prevProps.playlist !== this.props.playlist) {
             this.triggerReload()
         }
     }
@@ -81,8 +85,8 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayStyles = (): Promise<void> => {
-        return getPlayStyle(this.props.player.id)
-            .then((data) => this.setState({ data }))
+        return getPlayStyle(this.props.player.id, undefined, this.props.playlist)
+            .then((data) => this.setState({data}))
     }
 
     private readonly triggerReload = () => {

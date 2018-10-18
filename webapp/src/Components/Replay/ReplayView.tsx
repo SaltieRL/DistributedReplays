@@ -32,7 +32,6 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                 </IconButton>
             </Tooltip>
         )
-
         const replayChartCard = (
             <Card>
                 <CardHeader
@@ -41,7 +40,8 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                     titleTypographyProps={{ align: "center" }}
                     subheaderTypographyProps={{ align: "center", variant: "subheading" }}
                     action={
-                        isWidthUp("sm", width) && <div style={{ position: "relative", width: 0 }}>{downloadButton}</div>
+                        isWidthUp("sm", width) &&
+                        <div style={{ position: "relative", width: 0 }}>{downloadButton}</div>
                     }
                 />
                 <CardContent style={{ overflowX: "auto" }}>
@@ -49,7 +49,6 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                 </CardContent>
             </Card>
         )
-
         const blueGridItem = (
             <Grid item xs={12} sm={6} lg={3}>
                 {blueCard}
@@ -75,12 +74,12 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                         {orangeGridItem}
                     </>
                 ) : (
-                    <>
-                        {blueGridItem}
-                        {orangeGridItem}
-                        {replayChartGridItem}
-                    </>
-                )}
+                        <>
+                            {blueGridItem}
+                            {orangeGridItem}
+                            {replayChartGridItem}
+                        </>
+                    )}
                 <Grid item xs={12}>
                     <ReplayTabs replay={replay} />
                 </Grid>

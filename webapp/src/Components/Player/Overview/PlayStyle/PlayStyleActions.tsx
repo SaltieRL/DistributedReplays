@@ -3,51 +3,69 @@ import CompareArrows from "@material-ui/icons/CompareArrows"
 import * as React from "react"
 import { Link } from "react-router-dom"
 import { Player } from "src/Models"
-import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
 import { LinkButton } from "../../../Shared/LinkButton"
+import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
+import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { PlayStyleExplanationTable } from "./PlayStyleExplanationTable"
 
 interface OwnProps {
     player: Player
     useFullSizeCompareButton?: boolean
+    handlePlaylistChange?: (playlist: number) => void
 }
 
 type Props = OwnProps
 
 interface State {
     dialogOpen: boolean
+    playlist: number
 }
 
 export class PlayStyleActions extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = { dialogOpen: false }
+        this.state = {dialogOpen: false, playlist: 13}
     }
 
     public render() {
         const compareButton = this.props.useFullSizeCompareButton ? (
-            <LinkButton icon={CompareArrows} iconType="mui" to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
+            <LinkButton icon={CompareArrows} iconType="mui"
+                        to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
                 Compare
             </LinkButton>
         ) : (
-            <div style={{ maxHeight: 0 }}>
-                <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
-                    <Tooltip title="Compare with...">
-                        <IconButton style={{ marginRight: 8, top: -3 }}>
-                            <CompareArrows />
-                        </IconButton>
-                    </Tooltip>
-                </Link>
-            </div>
+            <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
+                <Tooltip title="Compare with...">
+                    <IconButton style={{marginRight: 8, top: -3}}>
+                        <CompareArrows/>
+                    </IconButton>
+                </Tooltip>
+            </Link>
+        )
+        const dropDown = (
+            <PlaylistSelect
+                selectedPlaylists={[this.state.playlist]}
+                handleChange={this.handlePlaylistsChange}
+                inputLabel="Playlist"
+                helperText="Select playlist to use"
+                dropdownOnly
+                currentPlaylistsOnly
+                multiple={false}/>
         )
 
         return (
             <Grid container justify="center" spacing={8}>
-                <Grid item xs="auto" style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item xs="auto" style={{margin: "auto"}}>
+                    {dropDown}
+                </Grid>
+                <Grid item xs="auto" style={{margin: "auto"}}>
                     {compareButton}
                 </Grid>
-                <Grid item xs="auto" style={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="outlined" onClick={this.handleOpen} style={{ marginRight: 8, height: "100%" }}>
+                <Grid item xs="auto" style={{margin: "auto"}}>
+                    <Button variant="outlined"
+                            onClick={this.handleOpen}
+                            style={{marginRight: 8, height: "100%"}}
+                    >
                         What are these stats?
                     </Button>
                 </Grid>
@@ -68,5 +86,13 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
 
     private readonly handleClose = () => {
         this.setState({ dialogOpen: false })
+    }
+
+    private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
+        const selectedPlaylist = event.target.value as any as number
+        this.setState({playlist: selectedPlaylist})
+        if (this.props.handlePlaylistChange) {
+            this.props.handlePlaylistChange(selectedPlaylist)
+        }
     }
 }

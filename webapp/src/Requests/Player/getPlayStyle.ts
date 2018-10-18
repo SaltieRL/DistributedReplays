@@ -1,7 +1,8 @@
+import * as qs from "qs"
 import { PlayStyleResponse } from "src/Models"
 import { doGet, useMockData } from ".."
 
-export const getPlayStyle = (id: string, rank?: number): Promise<PlayStyleResponse> => {
+export const getPlayStyle = (id: string, rank?: number, playlist?: number): Promise<PlayStyleResponse> => {
     if (useMockData) {
         return Promise.resolve({
             showWarning: false,
@@ -38,5 +39,6 @@ export const getPlayStyle = (id: string, rank?: number): Promise<PlayStyleRespon
             ]
         })
     }
-    return doGet(`/player/${id}/play_style` + (rank === undefined ? "" : `?rank=${rank}`))
+    const url = qs.stringify({rank, playlist}, {addQueryPrefix: true, indices: false})
+    return doGet(`/player/${id}/play_style` + url)
 }

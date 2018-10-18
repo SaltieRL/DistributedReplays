@@ -17,9 +17,10 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
         const { queryParams } = this.props
 
         const playerEntry = (
-            <PlayerEntry playerIds={queryParams.playerIds || []} handleChange={this.handlePlayersChange} />
+            <PlayerEntry
+                playerIds={queryParams.playerIds || []}
+                handleChange={this.handlePlayersChange}/>
         )
-
         const rankSelect = (
             <RankSelect
                 selectedRank={queryParams.rank || -1}
@@ -27,37 +28,30 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
                 inputLabel="Replay rank"
                 helperText="Select rank to filter by"
                 noneLabel="None"
-                disabled
-            />
+                disabled/>
         )
-
         const playlistSelect = (
             <PlaylistSelect
                 selectedPlaylists={queryParams.playlists || []}
                 handleChange={this.handlePlaylistsChange}
                 inputLabel="Playlist"
                 helperText="Select playlist to filter by"
-            />
+                multiple/>
         )
-
         const dateAfterPicker = (
             <ClearableDatePicker
                 value={queryParams.dateAfter ? queryParams.dateAfter : null}
                 onChange={this.handleDateAfterChange}
                 label="Start date"
-                helperText="Date after which game must have happened"
-            />
+                helperText="Date after which game must have happened"/>
         )
-
         const dateBeforePicker = (
             <ClearableDatePicker
                 value={queryParams.dateBefore ? queryParams.dateBefore : null}
                 onChange={this.handleDateBeforeChange}
                 label="End date"
-                helperText="Date before which game must have happened"
-            />
+                helperText="Date before which game must have happened"/>
         )
-
         return (
             <>
                 <Grid container spacing={32} justify="center">

@@ -22,12 +22,13 @@ const playerViewTabs = ["Profile", "Playstyle", "Match History"]
 
 interface State {
     selectedMobileTab?: PlayerViewTab
+    playlist?: number
 }
 
 class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = { selectedMobileTab: "Profile" }
+        this.state = {selectedMobileTab: "Profile", playlist: 13}
     }
 
     public render() {
@@ -37,10 +38,13 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
             "Match History": faHistory
         }
 
-        const playerSideBar = <PlayerSideBar player={this.props.player} />
-        const playerPlayStyle = <PlayerPlayStyle player={this.props.player} />
+        const playerSideBar = <PlayerSideBar player={this.props.player}/>
+        const playerPlayStyle = <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}/>
         const playerMatchHistory = (
-            <OverviewMatchHistory player={this.props.player} useBoxScore={isWidthDown("sm", this.props.width)} />
+            <OverviewMatchHistory
+                player={this.props.player}
+                useBoxScore={isWidthDown("sm", this.props.width)}
+            />
         )
 
         return (
@@ -52,7 +56,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
-                                <PlayerPlayStyleCard player={this.props.player}>{playerPlayStyle}</PlayerPlayStyleCard>
+                                <PlayerPlayStyleCard player={this.props.player}
+                                                     handlePlaylistChange={this.handlePlaylistChange}>
+                                    {playerPlayStyle}
+                                </PlayerPlayStyleCard>
                             </Grid>
                             <Grid item xs={12}>
                                 <PlayerMatchHistoryCard player={this.props.player}>
@@ -76,14 +83,20 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                             </Tabs>
                             <Divider />
                             <CardContent>
-                                {this.state.selectedMobileTab === "Profile" && playerSideBar}
-                                {this.state.selectedMobileTab === "Playstyle" && (
-                                    <>
-                                        <PlayStyleActions player={this.props.player} useFullSizeCompareButton />
-                                        {playerPlayStyle}
-                                    </>
-                                )}
-                                {this.state.selectedMobileTab === "Match History" && playerMatchHistory}
+                                {this.state.selectedMobileTab === "Profile" &&
+                                playerSideBar
+                                }
+                                {this.state.selectedMobileTab === "Playstyle" &&
+                                <>
+                                    <PlayStyleActions player={this.props.player}
+                                                      handlePlaylistChange={this.handlePlaylistChange}
+                                                      useFullSizeCompareButton/>
+                                    {playerPlayStyle}
+                                </>
+                                }
+                                {this.state.selectedMobileTab === "Match History" &&
+                                playerMatchHistory
+                                }
                             </CardContent>
                         </Card>
                     </Grid>
@@ -94,6 +107,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
     private readonly handleSelectMobileTab = (event: React.ChangeEvent, selectedMobileTab: PlayerViewTab) => {
         this.setState({ selectedMobileTab })
+    }
+
+    private readonly handlePlaylistChange = (playlist: number) => {
+        this.setState({playlist})
     }
 }
 

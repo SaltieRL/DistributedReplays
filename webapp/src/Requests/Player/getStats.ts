@@ -10,19 +10,19 @@ export const getStats = (id: string): Promise<PlayerStats> => {
             },
             playersInCommon: [
                 {
-                    "count": 3,
-                    "id": "76561198060924319",
-                    "name": "synthex"
+                    count: 3,
+                    id: "76561198060924319",
+                    name: "synthex"
                 },
                 {
-                    "count": 2,
-                    "id": "76561198296700336",
-                    "name": "Starsy"
+                    count: 2,
+                    id: "76561198296700336",
+                    name: "Starsy"
                 },
                 {
-                    "count": 1,
-                    "id": "76561198201788086",
-                    "name": "Blitze"
+                    count: 1,
+                    id: "76561198201788086",
+                    name: "Blitze"
                 }
             ]
         })

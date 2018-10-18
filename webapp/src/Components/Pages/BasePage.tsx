@@ -1,8 +1,8 @@
-import {createStyles, Grid, WithStyles, withStyles} from "@material-ui/core"
+import { createStyles, Grid, WithStyles, withStyles } from "@material-ui/core"
 import * as React from "react"
-import {Footer} from "../Shared/Footer"
-import {NavBar} from "../Shared/NavBar/NavBar"
-import {PageContent} from "../Shared/PageContent"
+import { Footer } from "../Shared/Footer"
+import { NavBar } from "../Shared/NavBar/NavBar"
+import { PageContent } from "../Shared/PageContent"
 
 interface OwnProps {
     backgroundImage?: string

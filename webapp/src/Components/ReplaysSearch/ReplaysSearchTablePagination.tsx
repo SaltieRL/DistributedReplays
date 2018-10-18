@@ -1,7 +1,7 @@
-import {TablePagination} from "@material-ui/core"
+import { TablePagination } from "@material-ui/core"
 import * as qs from "qs"
 import * as React from "react"
-import {RouteComponentProps, withRouter} from "react-router"
+import { RouteComponentProps, withRouter } from "react-router"
 
 interface OwnProps {
     totalCount: number

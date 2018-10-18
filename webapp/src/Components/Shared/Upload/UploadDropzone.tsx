@@ -65,18 +65,18 @@ const styles = createStyles({
         backgroundColor: "#ccc"
     },
     default: {
-        width: 550,
-        height: 430,
-        maxWidth: "80vw",
-        maxHeight: "90vh",
-        borderWidth: 2,
-        borderColor: "#666",
-        borderStyle: "dashed",
-        borderRadius: 5,
-        cursor: "pointer",
-        backgroundColor: "#eee",
-        display: "flex",
-        alignItems: "center",
+        "width": 550,
+        "height": 430,
+        "maxWidth": "80vw",
+        "maxHeight": "90vh",
+        "borderWidth": 2,
+        "borderColor": "#666",
+        "borderStyle": "dashed",
+        "borderRadius": 5,
+        "cursor": "pointer",
+        "backgroundColor": "#eee",
+        "display": "flex",
+        "alignItems": "center",
         "&:hover": {
             backgroundColor: "#ddd"
         }

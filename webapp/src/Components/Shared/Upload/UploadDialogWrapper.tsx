@@ -1,11 +1,11 @@
-import {Badge, IconButton, Tooltip, withWidth} from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { Badge, IconButton, Tooltip, withWidth } from "@material-ui/core"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
-import {getCurrentUploadStatuses} from "./StatusUtils"
-import {UploadContainedButton} from "./UploadContainedButton"
-import {UploadDialog} from "./UploadDialog"
-import {UploadFloatingButton} from "./UploadFloatingButton"
+import { getCurrentUploadStatuses } from "./StatusUtils"
+import { UploadContainedButton } from "./UploadContainedButton"
+import { UploadDialog } from "./UploadDialog"
+import { UploadFloatingButton } from "./UploadFloatingButton"
 
 interface OwnProps {
     buttonStyle: "contained" | "floating" | "icon"

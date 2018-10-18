@@ -1,8 +1,8 @@
-import {Card, CardActions, CardContent, CardHeader, Grid, Typography} from "@material-ui/core"
+import { Card, CardActions, CardContent, CardHeader, Grid, Typography } from "@material-ui/core"
 import OpenInNew from "@material-ui/icons/OpenInNew"
 import * as React from "react"
-import {LinkButton} from "../Shared/LinkButton"
-import {BasePage} from "./BasePage"
+import { LinkButton } from "../Shared/LinkButton"
+import { BasePage } from "./BasePage"
 
 export class PluginsPage extends React.PureComponent {
     public render() {

@@ -36,20 +36,18 @@ class SearchComponent extends React.PureComponent<Props, State> {
         )
 
         const inputField = (
-            <>
-                <form onSubmit={this.onSubmit} style={{ margin: "auto 16px", width: "100%" }}>
-                    <TextField
-                        name="name"
-                        type="text"
-                        placeholder="Enter a steamId or username"
-                        onChange={this.handleChange}
-                        value={this.state.enteredText}
-                        fullWidth
-                        InputProps={{ disableUnderline: this.props.usePaper, endAdornment: searchButton }}
-                        required
-                    />
-                </form>
-            </>
+            <form onSubmit={this.onSubmit} style={{margin: "auto 16px", width: "100%"}}>
+                <TextField
+                    name="name"
+                    type="text"
+                    placeholder="Enter a steamId or username"
+                    onChange={this.handleChange}
+                    value={this.state.enteredText}
+                    fullWidth
+                    InputProps={{disableUnderline: this.props.usePaper, endAdornment: searchButton}}
+                    required
+                />
+            </form>
         )
 
         const containerStyle: React.CSSProperties = {

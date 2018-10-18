@@ -16,6 +16,7 @@ import { DropFilesEventHandler } from "react-dropzone"
 import { GlobalService } from "src/Requests"
 import { WithNotifications, withNotifications } from "../Notification/NotificationUtils"
 import { BakkesModAd } from "./BakkesModAd"
+import { addTaskIds } from "./StatusUtils"
 import { UploadDropzone } from "./UploadDropzone"
 
 type Props = WithStyles<typeof styles> & WithNotifications

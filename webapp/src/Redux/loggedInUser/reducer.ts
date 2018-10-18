@@ -1,5 +1,5 @@
-import {Reducer} from "redux"
-import {LoggedInUserActionTypes, LoggedInUserState} from "./actions"
+import { Reducer } from "redux"
+import { LoggedInUserActionTypes, LoggedInUserState } from "./actions"
 
 export const loggedInUserReducer: Reducer<LoggedInUserState, LoggedInUserActionTypes> = (
     state = null, action) => {
