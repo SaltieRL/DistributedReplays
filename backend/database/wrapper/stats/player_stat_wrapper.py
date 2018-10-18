@@ -78,6 +78,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         :param raw: return the values in raw form instead of compared to global
         :param replay_ids: replay ids to get stats from
         :param playlist: what playlist to filter by (only when replay_ids is None)
+        :param win: filter by wins/losses (win = True)
         :return: stats
         """
         stats_query = self.stats_query
