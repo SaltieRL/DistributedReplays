@@ -1,8 +1,11 @@
 import datetime
 import logging
+from enum import Enum, auto
+
+import sqlalchemy
 from typing import Tuple, List
 
-from sqlalchemy import func
+from sqlalchemy import func, cast
 
 from backend.database.objects import PlayerGame, Game
 from backend.database.wrapper.player_wrapper import PlayerWrapper
@@ -11,6 +14,13 @@ from backend.database.wrapper.stats.global_stats_wrapper import GlobalStatWrappe
 from backend.utils.checks import ignore_filtering
 
 logger = logging.getLogger(__name__)
+
+
+class TimeUnit(Enum):
+    DAY = auto()
+    MONTH = auto()
+    QUARTER = auto()
+    YEAR = auto()
 
 
 class PlayerStatWrapper(GlobalStatWrapper):
@@ -23,14 +33,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
         if not ignore_filtering():
             self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_team_size(
                 3).with_safe_checking().sticky()
-
-    def get_wrapped_stats(self, stats):
-        zipped_stats = dict()
-
-        for i in range(len(self.stat_list)):
-            zipped_stats[self.stat_list[i].get_field_name()] = stats[i]
-
-        return zipped_stats
 
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None):
         player_stats_filter = self.player_stats_filter.clean().clone()
@@ -50,8 +52,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
 
     def get_averaged_stats(self, session, id_, rank=None, redis=None, raw=False, replay_ids=None):
-        stats_query = self.stats_query
-        std_query = self.std_query
+        stats_query = self.get_player_stat_query()
+        std_query = self.get_player_stat_std_query()
         total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
         if total_games > 0:
             stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
@@ -59,9 +61,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
         else:
             stats = [0.0] * len(stats_query)
             global_stats = [0.0] * len(stats_query)
-        return self.get_wrapped_stats(stats), self.get_wrapped_stats(global_stats)
+        return (self.get_wrapped_stats(stats, self.player_stats),
+                self.get_wrapped_stats(global_stats, self.player_stats))
 
-    def get_progression_stats(self, session, id_):
+    def get_progression_stats(self, session, id_,
+                              time_unit: 'TimeUnit' = TimeUnit.MONTH,
+                              start_date: datetime.datetime = None,
+                              end_date: datetime.datetime = None):
 
         def float_maybe(f):
             if f is None:
@@ -69,21 +75,61 @@ class PlayerStatWrapper(GlobalStatWrapper):
             else:
                 return float(f)
 
-        mean_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
-                                   *self.stats_query).join(PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
+        if time_unit == TimeUnit.MONTH:
+            date = func.to_char(Game.match_date, 'YY-MM')
+            time_format = "%y-%m"
+        elif time_unit == TimeUnit.DAY:
+            date = func.to_char(Game.match_date, 'YY-MM-DD')
+            time_format = "%y-%m-%d"
+        elif time_unit == TimeUnit.YEAR:
+            date = func.to_char(Game.match_date, 'YY')
+            time_format = "%y"
+        elif time_unit == TimeUnit.QUARTER:
+            date = func.concat(func.to_char(Game.match_date, 'YY'), '-',
+                               func.floor(cast(func.extract('quarter', Game.match_date), sqlalchemy.Numeric)))
+            time_format = '%y-%m'
+        else:
+            # Mainly to help the linter know that time_unit is assigned.
+            logger.error(f'Unknown time unit: {time_unit}. Falling back onto month.')
+            date = func.to_char(Game.match_date, 'YY-MM')
+            time_format = "%y-%m"
+
+        date = date.label('date')
+        mean_query = session.query(date, func.count(Game.hash),
+                                   *self.get_player_stat_query()).join(
+            PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.player == id_).group_by(
-            'date').order_by('date').all()
-        std_query = session.query(func.to_char(Game.match_date, 'YY-MM').label('date'),
-                                  *self.std_query).join(PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
+            'date').order_by('date')
+        std_query = session.query(date, func.count(Game.hash),
+                                  *self.get_player_stat_std_query()).join(
+            PlayerGame).filter(PlayerGame.time_in_game > 0).filter(
             PlayerGame.player == id_).group_by(
-            'date').order_by('date').all()
+            'date').order_by('date')
+
+        if start_date is not None:
+            mean_query = mean_query.filter(Game.match_date > start_date)
+            std_query = std_query.filter(Game.match_date > start_date)
+        if end_date is not None:
+            mean_query = mean_query.filter(Game.match_date < end_date)
+            std_query = std_query.filter(Game.match_date < end_date)
+
+        mean_query = mean_query.all()
+        std_query = std_query.all()
+
         mean_query = [list(q) for q in mean_query]
         std_query = [list(q) for q in std_query]
         results = []
         for q, s in zip(mean_query, std_query):
-            result = {'name': datetime.datetime.strptime(q[0], '%y-%m').isoformat(),
-                      'average': self.get_wrapped_stats([float_maybe(qn) for qn in q[1:]]),
-                      'std_dev': self.get_wrapped_stats([float_maybe(qn) for qn in s[1:]])}
+            result = {
+                'name': datetime.datetime.strptime(q[0], time_format),
+                'average': self.get_wrapped_stats([float_maybe(qn) for qn in q[2:]], self.player_stats),
+                'std_dev': self.get_wrapped_stats([float_maybe(qn) for qn in s[2:]], self.player_stats),
+                'count': q[1]
+            }
+            if time_unit == 'quarter':
+                date = result['name']
+                result['name'] = datetime.datetime(date.year, (date.month - 1) * 3 + 1, 1)
+            result['name'] = result['name'].isoformat()
             results.append(result)
         return results
 
@@ -101,8 +147,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
 
     def _create_stats(self, session, player_filter=None, replay_ids=None):
-        average = QueryFilterBuilder().with_stat_query(self.stats_query)
-        std_devs = QueryFilterBuilder().with_stat_query(self.std_query)
+        average = QueryFilterBuilder().with_stat_query(self.get_player_stat_query())
+        std_devs = QueryFilterBuilder().with_stat_query(self.get_player_stat_std_query())
         if player_filter is not None:
             average.with_players(player_filter)
             std_devs.with_players(player_filter)
@@ -111,9 +157,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             std_devs.with_replay_ids(replay_ids)
         average = average.build_query(session).filter(PlayerGame.time_in_game > 0).first()
         std_devs = std_devs.build_query(session).filter(PlayerGame.time_in_game > 0).first()
-
-        average = {n.field_name: round(float(s), 2) for n, s in zip(self.field_names, average) if s is not None}
-        std_devs = {n.field_name: round(float(s), 2) for n, s in zip(self.field_names, std_devs) if s is not None}
+        average = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.stat_list, average) if s is not None}
+        std_devs = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.stat_list, std_devs) if s is not None}
         return {'average': average, 'std_dev': std_devs}
 
     def get_group_stats(self, session, replay_ids):

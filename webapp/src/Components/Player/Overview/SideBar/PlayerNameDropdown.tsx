@@ -20,7 +20,7 @@ export class PlayerNameDropdown extends React.PureComponent<Props, State> {
     public render() {
         return (
             <>
-                <IconButton style={{width: 32, height: 32, marginLeft: 12}}
+                <IconButton style={{width: 32, height: 32, padding: 0, margin: "auto"}}
                             onClick={this.handleOpen}>
                     <ArrowDropDown/>
                 </IconButton>

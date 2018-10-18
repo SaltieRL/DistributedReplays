@@ -96,6 +96,8 @@ def api_v1_get_replays():
     pagesize = 50
     if 'num' in args:
         pagesize = int(args['num'])
+        if pagesize > 200:
+            pagesize = 200
     response = {}
     data = []
     games = games[page * pagesize:(page + 1) * pagesize]
@@ -111,8 +113,8 @@ def api_v1_get_replays():
                 'matchtype': game.matchtype,
                 'teamsize': game.teamsize,
                 'hash': game.hash,
-                'link': url_for('replays.view_replay', id_=game.hash),
-                'download': url_for('replays.download_replay', id_=game.hash),
+                'link': '/replays/' + game.hash,
+                'download': '/api/replay/' + game.hash + '/download',
                 'info': url_for('apiv1.api_v1_get_replay_info', id_=game.hash, key=api_key),
                 'mmrs': game.mmrs,
                 'ranks': game.ranks,
@@ -148,8 +150,6 @@ def api_v1_get_stats():
 def api_v1_get_replay_info(id_):
     pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-    if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-        return render_template('replay.html', replay=None)
     try:
         with open(pickle_path, 'rb') as f:
             g = proto_manager.ProtobufManager.read_proto_out_from_file(f)

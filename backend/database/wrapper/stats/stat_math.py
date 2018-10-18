@@ -55,4 +55,22 @@ def get_shot_percent():
 
 
 def get_negative_turnover_per_non_dribble():
-    return -100 * PlayerGame.turnovers / safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)
+    return 100 - get_turnover_per_non_dribble()
+
+
+def get_turnover_per_non_dribble():
+    return 100 * PlayerGame.turnovers / safe_divide(PlayerGame.total_hits - PlayerGame.total_dribble_conts)
+
+
+def get_boost_ratio():
+    return safe_divide(PlayerGame.num_small_boosts) / safe_divide(PlayerGame.num_large_boosts)
+
+
+def get_aerial_efficiency():
+    air_time = (PlayerGame.time_high_in_air + PlayerGame.time_low_in_air) / safe_divide(PlayerGame.time_in_game,
+                                                                                      default=300)
+    return PlayerGame.total_aerials / safe_divide(air_time, default=100)
+
+
+def get_game_boost_usage_per_minute():
+    return PlayerGame.boost_usage / safe_divide(PlayerGame.time_in_game, default=300) * 60

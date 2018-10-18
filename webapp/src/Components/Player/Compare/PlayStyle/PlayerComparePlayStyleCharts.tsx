@@ -1,9 +1,9 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {PlayStyleResponse} from "../../../../Models/Player/PlayStyle"
-import {getPlayerPlayStyles} from "../../../../Requests/Player"
+import {getPlayStyle} from "../../../../Requests/Player/getPlayStyle"
+import {RankSelect} from "../../../Shared/Selects/RankSelect"
 import {PlayerPlayStyleChart} from "../../Overview/PlayStyle/PlayerPlayStyleChart"
-import {RankSelect} from "./RankSelect"
 
 interface Props {
     players: Player[]
@@ -61,7 +61,11 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
         return (
             <>
                 <Grid item xs={12} style={{textAlign: "center"}}>
-                    <RankSelect selectedRank={this.state.rank || -1} handleChange={this.handleRankChange}/>
+                    <RankSelect selectedRank={this.state.rank || -1}
+                                handleChange={this.handleRankChange}
+                                inputLabel="Rank to compare"
+                                helperText="Select the rank to plot as average"
+                                noneLabel="Default"/>
                 </Grid>
                 {chartTitles.map((chartTitle, i) => {
                     return (
@@ -81,7 +85,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     private readonly handleAddPlayers = (players: Player[], reload: boolean = false) => {
         const rank = this.state.rank === -1 ? undefined : this.state.rank
-        Promise.all(players.map((player) => getPlayerPlayStyles(player.id, rank)))
+        Promise.all(players.map((player) => getPlayStyle(player.id, rank)))
             .then((playerPlayStyles) => {
                 if (reload) {
                     this.setState({playerPlayStyles})

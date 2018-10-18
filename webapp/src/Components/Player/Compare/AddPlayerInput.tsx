@@ -11,7 +11,7 @@ interface Props {
 export class AddPlayerInput extends React.PureComponent<Props> {
     public render() {
         return (
-            <form onSubmit={this.handleFormSubmit}>
+            <form onSubmit={this.handleFormSubmit} style={{minWidth: 250, maxWidth: 500, width: "90%"}}>
                 <TextField value={this.props.value}
                            onChange={this.props.onChange}
                            label="Enter a steamId or username"
