@@ -1,6 +1,6 @@
-import {doGet} from "../../apiHandler/apiHandler"
-import {PlayStyleResponse} from "../../Models/Player/PlayStyle"
-import {useMockData} from "../Config"
+import { doGet } from "../../apiHandler/apiHandler"
+import { PlayStyleResponse } from "../../Models/Player/PlayStyle"
+import { useMockData } from "../Config"
 
 export const getPlayStyle = (id: string, rank?: number): Promise<PlayStyleResponse> => {
     if (useMockData) {

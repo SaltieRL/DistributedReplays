@@ -1,5 +1,5 @@
-import {AppError} from "../Models/Error"
-import {baseUrl} from "../Requests/Config"
+import { AppError } from "../Models/Error"
+import { baseUrl } from "../Requests/Config"
 
 export const doGet = (destination: string): Promise<any> => {
     return fetch(baseUrl + destination, {

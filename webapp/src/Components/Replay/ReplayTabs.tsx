@@ -1,12 +1,12 @@
-import {Card, Tab, Tabs, withWidth} from "@material-ui/core"
-import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
+import { Card, Tab, Tabs, withWidth } from "@material-ui/core"
+import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import {connect} from "react-redux"
-import {Replay} from "../../Models/Replay/Replay"
-import {StoreState} from "../../Redux"
-import {PlayerStatsContent} from "./BasicStats/PlayerStats/PlayerStatsContent"
-import {TeamStatsContent} from "./BasicStats/TeamStats/TeamStatsContent"
-import {ReplayViewer} from "./ReplayViewer/ReplayViewer"
+import { connect } from "react-redux"
+import { Replay } from "../../Models/Replay/Replay"
+import { StoreState } from "../../Redux"
+import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
+import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
+import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay

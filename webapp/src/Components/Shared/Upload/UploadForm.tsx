@@ -12,12 +12,12 @@ import {
 import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
-import {DropFilesEventHandler} from "react-dropzone"
-import {uploadReplays} from "../../../Requests/Global"
-import {WithNotifications, withNotifications} from "../Notification/NotificationUtils"
-import {BakkesModAd} from "./BakkesModAd"
-import {addTaskIds} from "./StatusUtils"
-import {UploadDropzone} from "./UploadDropzone"
+import { DropFilesEventHandler } from "react-dropzone"
+import { uploadReplays } from "../../../Requests/Global"
+import { WithNotifications, withNotifications } from "../Notification/NotificationUtils"
+import { BakkesModAd } from "./BakkesModAd"
+import { addTaskIds } from "./StatusUtils"
+import { UploadDropzone } from "./UploadDropzone"
 
 type Props = WithStyles<typeof styles>
     & WithNotifications

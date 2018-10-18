@@ -1,5 +1,5 @@
-import {DatePicker} from "material-ui-pickers"
-import {DatePickerModalProps} from "material-ui-pickers/DatePicker/DatePickerModal"
+import { DatePicker } from "material-ui-pickers"
+import { DatePickerModalProps } from "material-ui-pickers/DatePicker/DatePickerModal"
 import * as React from "react"
 
 type Props = DatePickerModalProps

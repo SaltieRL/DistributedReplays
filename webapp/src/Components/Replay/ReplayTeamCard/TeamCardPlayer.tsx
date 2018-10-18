@@ -1,5 +1,5 @@
-import {faCamera, faCarSide} from "@fortawesome/free-solid-svg-icons"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import { faCamera, faCarSide } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
     Dialog,
     DialogTitle,
@@ -10,10 +10,10 @@ import {
     Tooltip
 } from "@material-ui/core"
 import * as React from "react"
-import {Link} from "react-router-dom"
-import {PLAYER_PAGE_LINK} from "../../../Globals"
-import {CameraSettingsDisplay} from "./CameraSettingsDisplay"
-import {LoadoutDisplay} from "./LoadoutDisplay"
+import { Link } from "react-router-dom"
+import { PLAYER_PAGE_LINK } from "../../../Globals"
+import { CameraSettingsDisplay } from "./CameraSettingsDisplay"
+import { LoadoutDisplay } from "./LoadoutDisplay"
 
 interface Props {
     player: ReplayPlayer
@@ -33,19 +33,21 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
     public render() {
         const {player} = this.props
 
-        const carButton =
+        const carButton = (
             <Tooltip title="Loadout">
                 <IconButton onClick={this.handleShowLoadout}>
                     <FontAwesomeIcon icon={faCarSide}/>
                 </IconButton>
             </Tooltip>
+        )
 
-        const cameraButton =
+        const cameraButton = (
             <Tooltip title="Camera settings">
                 <IconButton onClick={this.handleShowCamera}>
                     <FontAwesomeIcon icon={faCamera}/>
                 </IconButton>
             </Tooltip>
+        )
 
         return (
             <>

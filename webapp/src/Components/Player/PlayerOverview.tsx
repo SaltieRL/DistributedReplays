@@ -1,14 +1,14 @@
-import {faCarSide, faHistory, faUserCircle, IconDefinition} from "@fortawesome/free-solid-svg-icons"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Card, CardContent, Divider, Grid, Tab, Tabs, withWidth} from "@material-ui/core"
-import {isWidthDown, isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { faCarSide, faHistory, faUserCircle, IconDefinition } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Card, CardContent, Divider, Grid, Tab, Tabs, withWidth } from "@material-ui/core"
+import { isWidthDown, isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import {OverviewMatchHistory} from "./Overview/MatchHistory/OverviewMatchHistory"
-import {PlayerMatchHistoryCard} from "./Overview/MatchHistory/PlayerMatchHistoryCard"
-import {PlayerPlayStyle} from "./Overview/PlayStyle/PlayerPlayStyle"
-import {PlayerPlayStyleCard} from "./Overview/PlayStyle/PlayerPlayStyleCard"
-import {PlayStyleActions} from "./Overview/PlayStyle/PlayStyleActions"
-import {PlayerSideBar} from "./Overview/SideBar/PlayerSideBar"
+import { OverviewMatchHistory } from "./Overview/MatchHistory/OverviewMatchHistory"
+import { PlayerMatchHistoryCard } from "./Overview/MatchHistory/PlayerMatchHistoryCard"
+import { PlayerPlayStyle } from "./Overview/PlayStyle/PlayerPlayStyle"
+import { PlayerPlayStyleCard } from "./Overview/PlayStyle/PlayerPlayStyleCard"
+import { PlayStyleActions } from "./Overview/PlayStyle/PlayStyleActions"
+import { PlayerSideBar } from "./Overview/SideBar/PlayerSideBar"
 
 interface OwnProps {
     player: Player
@@ -39,8 +39,12 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
         const playerSideBar = <PlayerSideBar player={this.props.player}/>
         const playerPlayStyle = <PlayerPlayStyle player={this.props.player}/>
-        const playerMatchHistory = <OverviewMatchHistory player={this.props.player}
-                                                         useBoxScore={isWidthDown("sm", this.props.width)}/>
+        const playerMatchHistory = (
+            <OverviewMatchHistory
+                player={this.props.player}
+                useBoxScore={isWidthDown("sm", this.props.width)}
+            />
+        )
 
         return (
             <>

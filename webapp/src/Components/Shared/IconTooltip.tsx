@@ -1,4 +1,4 @@
-import {createStyles, Theme, Tooltip, WithStyles, withStyles} from "@material-ui/core"
+import { createStyles, Theme, Tooltip, WithStyles, withStyles } from "@material-ui/core"
 import Info from "@material-ui/icons/Info"
 import * as React from "react"
 

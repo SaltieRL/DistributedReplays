@@ -1,9 +1,9 @@
-import {Card, Divider, Grid} from "@material-ui/core"
+import { Card, Divider, Grid } from "@material-ui/core"
 import * as React from "react"
-import {PreviousUploads} from "../Shared/Upload/PreviousUploads"
-import {UploadForm} from "../Shared/Upload/UploadForm"
-import {UploadTab, UploadTabs} from "../Shared/Upload/UploadTabs"
-import {BasePage} from "./BasePage"
+import { PreviousUploads } from "../Shared/Upload/PreviousUploads"
+import { UploadForm } from "../Shared/Upload/UploadForm"
+import { UploadTab, UploadTabs } from "../Shared/Upload/UploadTabs"
+import { BasePage } from "./BasePage"
 
 interface State {
     selectedTab: UploadTab

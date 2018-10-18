@@ -9,14 +9,14 @@ import {
     WithStyles,
     withStyles
 } from "@material-ui/core"
-import {amber, green} from "@material-ui/core/colors"
+import { amber, green } from "@material-ui/core/colors"
 import CheckCircleIcon from "@material-ui/icons/CheckCircle"
 import Close from "@material-ui/icons/Close"
 import ErrorIcon from "@material-ui/icons/Error"
 import InfoIcon from "@material-ui/icons/Info"
 import WarningIcon from "@material-ui/icons/Warning"
 import * as React from "react"
-import {AppError} from "../../../Models/Error"
+import { AppError } from "../../../Models/Error"
 
 type NotificationVariant = "success" | "info" | "warning" | "error"
 
@@ -57,14 +57,17 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
         const {classes, open, handleClose, count} = this.props
 
         const Icon = variantIcon[variant]
-        const closeButton = <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={handleClose}
-        >
-            <Close/>
-        </IconButton>
+        const closeButton = (
+            <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={handleClose}
+            >
+                <Close/>
+            </IconButton>
+        )
+
         return (
             <Snackbar
                 anchorOrigin={{
@@ -81,8 +84,7 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                         <Typography align="center" className={classes.message}>
                             <Icon className={classes.icon}/>
                             {message}
-                        </Typography>
-                    }
+                        </Typography>}
                     action={count ?
                         <Badge badgeContent={count} color="primary">
                             {closeButton}

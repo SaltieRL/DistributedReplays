@@ -1,10 +1,10 @@
-import {createStyles, Grid, Theme, Typography, withStyles, WithStyles} from "@material-ui/core"
+import { createStyles, Grid, Theme, Typography, withStyles, WithStyles } from "@material-ui/core"
 import Warning from "@material-ui/icons/Warning"
 import * as React from "react"
-import {PlayStyleResponse} from "../../../../Models/Player/PlayStyle"
-import {getPlayStyle} from "../../../../Requests/Player/getPlayStyle"
-import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
-import {PlayerPlayStyleChart} from "./PlayerPlayStyleChart"
+import { PlayStyleResponse } from "../../../../Models/Player/PlayStyle"
+import { getPlayStyle } from "../../../../Requests/Player/getPlayStyle"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
+import { PlayerPlayStyleChart } from "./PlayerPlayStyleChart"
 
 interface OwnProps {
     player: Player

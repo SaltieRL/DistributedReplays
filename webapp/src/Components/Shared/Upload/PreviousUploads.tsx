@@ -10,8 +10,8 @@ import {
 } from "@material-ui/core"
 import Refresh from "@material-ui/icons/Refresh"
 import * as React from "react"
-import {getUploadStatuses} from "../../../Requests/Global"
-import {getPreviousUploads, UploadTask} from "./StatusUtils"
+import { getUploadStatuses } from "../../../Requests/Global"
+import { getPreviousUploads, UploadTask } from "./StatusUtils"
 
 interface State {
     uploadTasks: UploadTask[]
@@ -54,8 +54,7 @@ export class PreviousUploads extends React.PureComponent<{}, State> {
                                                     <ListItemText
                                                         primary={
                                                             `Upload on ${uploadTask.dateCreated.format("lll")}:  ` +
-                                                            `${this.state.uploadStatuses![i].toLowerCase()}`
-                                                        }
+                                                            `${this.state.uploadStatuses![i].toLowerCase()}`}
                                                         secondary={uploadTask.id}
                                                     />
                                                 </ListItem>

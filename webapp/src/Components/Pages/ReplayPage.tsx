@@ -1,11 +1,11 @@
-import {Grid} from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import * as React from "react"
-import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
-import {Replay} from "../../Models/Replay/Replay"
-import {getReplay} from "../../Requests/Replay"
-import {ReplayView} from "../Replay/ReplayView"
-import {LoadableWrapper} from "../Shared/LoadableWrapper"
-import {BasePage} from "./BasePage"
+import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
+import { Replay } from "../../Models/Replay/Replay"
+import { getReplay } from "../../Requests/Replay"
+import { ReplayView } from "../Replay/ReplayView"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
+import { BasePage } from "./BasePage"
 
 interface RouteParams {
     id: string

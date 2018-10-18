@@ -1,7 +1,7 @@
-import {Card, CardContent, CardHeader, Typography} from "@material-ui/core"
+import { Card, CardContent, CardHeader, Typography } from "@material-ui/core"
 import * as React from "react"
-import {IconTooltip} from "../../../Shared/IconTooltip"
-import {PlayStyleActions} from "./PlayStyleActions"
+import { IconTooltip } from "../../../Shared/IconTooltip"
+import { PlayStyleActions } from "./PlayStyleActions"
 
 interface Props {
     player: Player

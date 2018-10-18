@@ -1,7 +1,7 @@
 import ViewList from "@material-ui/icons/ViewList"
 import * as React from "react"
-import {PLAYER_MATCH_HISTORY_PAGE_LINK} from "../../../../Globals"
-import {LinkButton} from "../../../Shared/LinkButton"
+import { PLAYER_MATCH_HISTORY_PAGE_LINK } from "../../../../Globals"
+import { LinkButton } from "../../../Shared/LinkButton"
 
 interface Props {
     player: Player

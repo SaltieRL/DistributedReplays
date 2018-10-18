@@ -1,10 +1,10 @@
-import {Checkbox, FormControlLabel, IconButton, Menu, MenuItem, withWidth} from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { Checkbox, FormControlLabel, IconButton, Menu, MenuItem, withWidth } from "@material-ui/core"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import MoreVert from "@material-ui/icons/MoreVert"
 import Send from "@material-ui/icons/Send"
 import * as H from "history"
 import * as React from "react"
-import {LinkButton} from "../Shared/LinkButton"
+import { LinkButton } from "../Shared/LinkButton"
 
 interface OwnProps {
     disabled: boolean
@@ -28,19 +28,21 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const checkbox =
+        const checkbox = (
             <FormControlLabel
                 control={<Checkbox checked={this.props.selectable}
                                    onChange={this.props.handleSelectableChange}/>}
                 label="Select mode"
             />
-        const linkButton =
+        )
+        const linkButton = (
             <LinkButton icon={Send} iconType="mui"
                         to={this.props.to}
                         disabled={this.props.disabled}
                         tooltip="Select at least one replay to view as group">
                 View as group
             </LinkButton>
+        )
 
         return (
             <div style={{paddingRight: 8}}>

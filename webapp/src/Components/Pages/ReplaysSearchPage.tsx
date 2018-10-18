@@ -1,12 +1,12 @@
-import {Grid, Typography} from "@material-ui/core"
+import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import {RouteComponentProps} from "react-router"
-import {MatchHistoryResponse} from "../../Models/Player/MatchHistory"
-import {ReplaysSearchQueryParams} from "../../Models/ReplaysSearchQueryParams"
-import {searchReplays} from "../../Requests/Replay"
-import {ReplaysSearchWithQueryString} from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
-import {ReplaysSearchResultDisplay} from "../ReplaysSearch/ReplaysSearchResultDisplay"
-import {BasePage} from "./BasePage"
+import { RouteComponentProps } from "react-router"
+import { MatchHistoryResponse } from "../../Models/Player/MatchHistory"
+import { ReplaysSearchQueryParams } from "../../Models/ReplaysSearchQueryParams"
+import { searchReplays } from "../../Requests/Replay"
+import { ReplaysSearchWithQueryString } from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
+import { ReplaysSearchResultDisplay } from "../ReplaysSearch/ReplaysSearchResultDisplay"
+import { BasePage } from "./BasePage"
 
 interface State {
     queryParams?: ReplaysSearchQueryParams

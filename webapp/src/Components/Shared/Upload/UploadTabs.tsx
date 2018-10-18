@@ -1,4 +1,4 @@
-import {Tab, Tabs} from "@material-ui/core"
+import { Tab, Tabs } from "@material-ui/core"
 import * as React from "react"
 
 export type UploadTab = "Upload Replays" | "Previous Uploads"
