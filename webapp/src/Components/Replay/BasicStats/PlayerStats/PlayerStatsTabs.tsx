@@ -43,13 +43,14 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
                   scrollable={isWidthDown("xs", this.props.width)}
                   scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
             >
-                {Object.keys(PlayerStatsSubcategory)
-                    .map((subcategory: PlayerStatsSubcategory) =>
-                        <Tab label={subcategory} value={subcategory} key={subcategory}
-                             icon={<FontAwesomeIcon icon={categoryToIcon[subcategory]}/>}
+                {Object.keys(PlayerStatsSubcategory).map((subcategory: PlayerStatsSubcategory) => {
+                    const value = PlayerStatsSubcategory[subcategory]
+                    return <Tab label={value}
+                                value={value}
+                                key={value}
+                                icon={<FontAwesomeIcon icon={categoryToIcon[value]} />}
                         />
-                    )
-                }
+                })}
             </Tabs>
         )
     }

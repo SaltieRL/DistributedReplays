@@ -28,11 +28,12 @@ class TeamStatsTabsComponent extends React.PureComponent<Props> {
                   scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
             >
                 {Object.keys(TeamStatsSubcategory)
-                    .map((subcategory) =>
-                        <Tab label={subcategory} value={subcategory} key={subcategory}
-                             icon={<FontAwesomeIcon icon={categoryToIcon[subcategory]}/>}
+                    .map((subcategory) => {
+                        const value = TeamStatsSubcategory[subcategory]
+                        return <Tab label={value} value={value} key={value}
+                            icon={<FontAwesomeIcon icon={categoryToIcon[value]}/>}
                         />
-                    )
+                    })
                 }
             </Tabs>
         )
