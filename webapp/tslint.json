@@ -38,6 +38,7 @@
         "no-empty": true,
         "no-empty-interface": false,
         "no-invalid-this": true,
+        "no-namespace": false,
         "no-require-imports": true,
         "no-this-assignment": true,
         "no-trailing-whitespace": true,
@@ -56,7 +57,10 @@
         "quotemark": [true, "double", "avoid-escape", "jsx-double"],
         "semicolon": [true, "never"],
         "space-before-function-paren": [true, "never"],
-        "trailing-comma": [true, { "multiline": "never", "singleline": "never" }],
+        "trailing-comma": [true, {
+            "multiline": "never",
+            "singleline": "never"
+        }],
         "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
         "whitespace": [
             true,
