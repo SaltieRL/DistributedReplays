@@ -1,5 +1,4 @@
 import * as moment from "moment"
-import { ChartDataResponse } from "../ChartData"
 
 export interface PlayStyleResponse {
     showWarning: boolean

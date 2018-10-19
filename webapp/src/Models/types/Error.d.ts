@@ -1,4 +1,4 @@
-export interface AppError {
+interface AppError {
     code?: number
     message: string
 }
