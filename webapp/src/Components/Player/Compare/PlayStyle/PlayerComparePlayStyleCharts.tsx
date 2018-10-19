@@ -1,9 +1,10 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleResponse } from "../../../../Models/Player/PlayStyle"
-import { getPlayStyle } from "../../../../Requests/Player/getPlayStyle"
+import { PlayStyleRawResponse, PlayStyleResponse } from "../../../../Models/Player/PlayStyle"
+import { getPlayStyle, getPlayStyleRaw } from "../../../../Requests/Player/getPlayStyle"
 import { RankSelect } from "../../../Shared/Selects/RankSelect"
 import { PlayerPlayStyleChart } from "../../Overview/PlayStyle/PlayerPlayStyleChart"
+import { PlayerCompareTable } from "./PlayerCompareTable"
 
 interface Props {
     players: Player[]
@@ -11,13 +12,14 @@ interface Props {
 
 interface State {
     playerPlayStyles: PlayStyleResponse[]
+    playerPlayStylesRaw: PlayStyleRawResponse[]
     rank: number
 }
 
 export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {playerPlayStyles: [], rank: -1}
+        this.state = {playerPlayStyles: [], playerPlayStylesRaw: [], rank: -1}
     }
 
     public componentDidMount() {
@@ -47,7 +49,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     public render() {
         const {players} = this.props
-        const {playerPlayStyles} = this.state
+        const {playerPlayStyles, playerPlayStylesRaw} = this.state
         if (playerPlayStyles.length === 0) {
             return null
         }
@@ -79,6 +81,12 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                         </Grid>
                     )
                 })}
+                <Grid container xs={12} justify="center" alignItems="center">
+                    <Grid item xs={"auto"}>
+                        <PlayerCompareTable names={players.map((player) => player.name)}
+                                            rawPlayers={playerPlayStylesRaw}/>
+                    </Grid>
+                </Grid>
             </>
         )
     }
@@ -95,11 +103,23 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                     })
                 }
             })
+        Promise.all(players.map((player) => getPlayStyleRaw(player.id)))
+            .then((playerPlayStylesRaw) => {
+                if (reload) {
+                    this.setState({playerPlayStylesRaw})
+                } else {
+                    this.setState({
+                        playerPlayStylesRaw: [...this.state.playerPlayStylesRaw, ...playerPlayStylesRaw]
+                    })
+                }
+            })
     }
 
     private readonly handleRemovePlayers = (indicesToRemove: number[]) => {
         this.setState({
             playerPlayStyles: this.state.playerPlayStyles
+                .filter((_, i) => indicesToRemove.indexOf(i) !== -1),
+            playerPlayStylesRaw: this.state.playerPlayStylesRaw
                 .filter((_, i) => indicesToRemove.indexOf(i) !== -1)
         })
     }

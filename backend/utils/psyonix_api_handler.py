@@ -165,14 +165,14 @@ def get_empty_data(ids):
 
 def get_formatted_rank_data(rank, div):
     modes = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
-    return [
-        {'mode': mode,
-         'rank_points': rank * random.randint(60, 75) + 15 * div,
-         'tier': rank,
-         'division': div,
-         'string': tier_div_to_string(rank, div)}
-        for mode in modes.values()
-    ]
+    return {id:
+                {'mode': mode,
+                 'rank_points': rank * random.randint(60, 75) + 15 * div,
+                 'tier': rank,
+                 'division': div,
+                 'string': tier_div_to_string(rank, div)}
+            for id, mode in modes.items()
+            }
 
 
 def tier_div_to_string(rank: Union[int, None], div: int = -1):

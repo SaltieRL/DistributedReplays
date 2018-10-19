@@ -36,6 +36,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None,
                   playlist=13, win: bool = None):
+
+
+        def float_maybe(f):
+            if f is None:
+                return None
+            else:
+                return float(f)
         player_stats_filter = self.player_stats_filter.clean().clone()
         global_stats, global_stds = self.get_global_stats_by_rank(session, player_stats_filter,
                                                                   stats_query, std_query, player_rank=rank, redis=redis,
@@ -54,7 +61,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         stats = list(query.first())
         stats = [0 if s is None else s for s in stats]
         if raw:
-            return [float(s) for s in stats], [float(s) for s in global_stats]
+            return [float_maybe(s) for s in stats], [float_maybe(s) for s in global_stats]
         else:
             return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
 
