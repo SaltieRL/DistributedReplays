@@ -66,3 +66,9 @@ class SharedStatsWrapper:
 
     def get_player_stat_std_query(self):
         return self.player_stats.std_query
+
+    def float_maybe(self, f):
+        if f is None:
+            return None
+        else:
+            return float(f)

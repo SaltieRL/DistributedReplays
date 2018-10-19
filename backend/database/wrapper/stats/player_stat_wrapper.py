@@ -37,12 +37,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None,
                   playlist=13, win: bool = None):
 
-
-        def float_maybe(f):
-            if f is None:
-                return None
-            else:
-                return float(f)
         player_stats_filter = self.player_stats_filter.clean().clone()
         global_stats, global_stds = self.get_global_stats_by_rank(session, player_stats_filter,
                                                                   stats_query, std_query, player_rank=rank, redis=redis,
@@ -61,7 +55,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         stats = list(query.first())
         stats = [0 if s is None else s for s in stats]
         if raw:
-            return [float_maybe(s) for s in stats], [float_maybe(s) for s in global_stats]
+            return [self.float_maybe(s) for s in stats], [self.float_maybe(s) for s in global_stats]
         else:
             return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
 
@@ -96,12 +90,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
                               time_unit: 'TimeUnit' = TimeUnit.MONTH,
                               start_date: datetime.datetime = None,
                               end_date: datetime.datetime = None):
-
-        def float_maybe(f):
-            if f is None:
-                return None
-            else:
-                return float(f)
 
         if time_unit == TimeUnit.MONTH:
             date = func.to_char(Game.match_date, 'YY-MM')
@@ -150,8 +138,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
         for q, s in zip(mean_query, std_query):
             result = {
                 'name': datetime.datetime.strptime(q[0], time_format),
-                'average': self.get_wrapped_stats([float_maybe(qn) for qn in q[2:]], self.player_stats),
-                'std_dev': self.get_wrapped_stats([float_maybe(qn) for qn in s[2:]], self.player_stats),
+                'average': self.get_wrapped_stats([self.float_maybe(qn) for qn in q[2:]], self.player_stats),
+                'std_dev': self.get_wrapped_stats([self.float_maybe(qn) for qn in s[2:]], self.player_stats),
                 'count': q[1]
             }
             if time_unit == 'quarter':
