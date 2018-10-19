@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/c
 import * as React from "react"
 import { PlayStyleRawResponse } from "../../../../Models/Player/PlayStyle"
 
-class StatRow {
+interface StatRow {
     max: number
     min: number
     name: string
@@ -65,8 +65,12 @@ export class PlayerCompareTable extends React.PureComponent<Props, State> {
                                     {stat.values.map((value, i) =>
                                         <TableCell key={i}
                                                    style={{
-                                                       backgroundColor: (heatmap ? `rgba(${200 * (value - stat.min) / (stat.max - stat.min)}, 0, ${200 * (stat.max - value) / (stat.max - stat.min)}, 1)` : "#fff"),
-                                                       color: (heatmap ? "white" : "black")
+                                                       backgroundColor: ((heatmap && rawPlayers.length > 1) ?
+                                                           `rgba(${200 * (value - stat.min) / (stat.max - stat.min)}, 0,
+                                                            ${200 * (stat.max - value) / (stat.max - stat.min)}, 1)`
+                                                           :
+                                                           "#fff"),
+                                                       color: ((heatmap && rawPlayers.length > 1) ? "white" : "black")
                                                    }}>
                                             {value.toFixed(2)}
                                         </TableCell>)}
