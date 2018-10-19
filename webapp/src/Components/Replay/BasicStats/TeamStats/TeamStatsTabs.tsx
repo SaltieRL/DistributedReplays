@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Tab, Tabs, withWidth } from "@material-ui/core"
 import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import { TeamStatsSubcategory, teamStatsSubcategoryValues } from "../../../../Models/ChartData"
 
 interface OwnProps {
     selectedTab: TeamStatsSubcategory
@@ -27,7 +26,7 @@ class TeamStatsTabsComponent extends React.PureComponent<Props> {
                   scrollable={isWidthDown("xs", this.props.width)}
                   scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
             >
-                {teamStatsSubcategoryValues
+                {Object.keys(TeamStatsSubcategory)
                     .map((subcategory) =>
                         <Tab label={subcategory} value={subcategory} key={subcategory}
                              icon={<FontAwesomeIcon icon={categoryToIcon[subcategory]}/>}

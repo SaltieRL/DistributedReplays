@@ -1,6 +1,5 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import { BasicStat } from "../../../Models/ChartData"
 import { Replay } from "../../../Models/Replay/Replay"
 import { getReplayGroupStats } from "../../../Requests/Replay"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
