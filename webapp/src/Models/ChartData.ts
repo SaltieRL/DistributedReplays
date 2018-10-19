@@ -1,26 +1,25 @@
-interface ChartDataPoint {
+export interface ChartDataPoint {
     name: string
     value: number
     average?: number
 }
 
-interface ChartDataResponse {
+export interface ChartDataResponse {
     title: string
     chartDataPoints: ChartDataPoint[]
 }
 
-interface StatDataPoint extends ChartDataPoint {
+export interface StatDataPoint extends ChartDataPoint {
     isOrange: boolean
 }
 
-interface BasicStat extends ChartDataResponse {
+export interface BasicStat extends ChartDataResponse {
     chartDataPoints: StatDataPoint[]
     type: "radar" | "bar" | "pie"
     subcategory: StatsSubcategory
 }
 
-// TODO: Investigate if can be replaced with enum to avoid repetition
-declare enum PlayerStatsSubcategory {
+export enum PlayerStatsSubcategory {
     POSITIONING = "Positioning",
     HITS = "Hits",
     BALL = "Ball",
@@ -31,9 +30,9 @@ declare enum PlayerStatsSubcategory {
     TEAM_POSITIONING = "Team Positioning"
 }
 
-declare enum TeamStatsSubcategory {
+export enum TeamStatsSubcategory {
     POSITIONING = "Positioning",
     CENTER_OF_MASS = "Center of Mass"
 }
 
-type StatsSubcategory = PlayerStatsSubcategory | TeamStatsSubcategory
+export type StatsSubcategory = PlayerStatsSubcategory | TeamStatsSubcategory

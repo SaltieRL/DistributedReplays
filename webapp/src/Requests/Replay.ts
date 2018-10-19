@@ -1,5 +1,6 @@
 import * as moment from "moment"
 import * as qs from "qs"
+import { BasicStat } from "src/Models/ChartData"
 import { doGet } from "../apiHandler/apiHandler"
 import { MatchHistoryResponse } from "../Models/Player/MatchHistory"
 import { GameMode, parseReplay, Replay } from "../Models/Replay/Replay"

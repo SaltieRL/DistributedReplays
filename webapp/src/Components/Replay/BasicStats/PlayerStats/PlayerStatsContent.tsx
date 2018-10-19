@@ -1,6 +1,7 @@
 import { CardContent, Divider, Grid } from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../../Models/Replay/Replay"
+import { PlayerStatsSubcategory } from "src/Models/ChartData"
+import { Replay } from "src/Models/Replay/Replay"
 import { PlayerStatsCharts } from "./PlayerStatsCharts"
 import { PlayerStatsTabs } from "./PlayerStatsTabs"
 
@@ -15,7 +16,7 @@ interface State {
 export class PlayerStatsContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedTab: PlayerStatsSubcategory.HITS}
+        this.state = { selectedTab: PlayerStatsSubcategory.HITS }
     }
 
     public render() {
@@ -33,6 +34,6 @@ export class PlayerStatsContent extends React.PureComponent<Props, State> {
     }
 
     private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: PlayerStatsSubcategory) => {
-        this.setState({selectedTab})
+        this.setState({ selectedTab })
     }
 }

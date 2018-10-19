@@ -1,6 +1,7 @@
 import { ChartData, ChartOptions, ChartTooltipItem } from "chart.js"
 import * as React from "react"
 import { Pie } from "react-chartjs-2"
+import { BasicStat } from "src/Models/ChartData"
 import { convertHexToRgba, getPrimaryColorsForPlayers, primaryColours } from "../../../Utils/Color"
 import { roundNumberToMaxDP } from "../../../Utils/String"
 
