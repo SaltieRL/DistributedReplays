@@ -2,9 +2,17 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/c
 import * as React from "react"
 import { PlayStyleRawResponse } from "../../../../Models/Player/PlayStyle"
 
+class StatRow {
+    max: number
+    min: number
+    name: string
+    values: number[]
+}
+
 interface Props {
     rawPlayers: PlayStyleRawResponse[]
     names: string[]
+    heatmap?: boolean
 }
 
 interface State {
@@ -19,7 +27,7 @@ export class PlayerCompareTable extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {names} = this.props
+        const {names, rawPlayers, heatmap} = this.props
         const header = (
             <TableRow>
                 <TableCell>Stat</TableCell>
@@ -30,8 +38,18 @@ export class PlayerCompareTable extends React.PureComponent<Props, State> {
                     </>)}
             </TableRow>
         )
-        if (this.props.rawPlayers.length > 0) {
-            const categories = this.props.rawPlayers[0].dataPoints.map((point) => point.name)
+
+        if (rawPlayers.length > 0) {
+            const categories = rawPlayers[0].dataPoints.map((point) => point.name)
+            const stats: StatRow[] = categories.map((category, i) => {
+                const values = rawPlayers.map((player) => player.dataPoints[i].average)
+                return {
+                    max: Math.max(...values),
+                    min: Math.min(...values),
+                    values,
+                    name: category
+                }
+            })
             return (
                 <Table>
                     <TableHead>
@@ -39,16 +57,22 @@ export class PlayerCompareTable extends React.PureComponent<Props, State> {
                     </TableHead>
                     <TableBody>
 
-                        {categories.map((category, i) =>
-                            <TableRow key={category}>
-                                <TableCell>
-                                    {category}
-                                </TableCell>
-                                {this.props.rawPlayers.map((player) =>
-                                    <TableCell key={player.name}>
-                                        {player.dataPoints[i].average.toFixed(2)}
-                                    </TableCell>)}
-                            </TableRow>)}
+                        {stats.map((stat) => {
+                                return <TableRow key={stat.name}>
+                                    <TableCell>
+                                        {stat.name}
+                                    </TableCell>
+                                    {stat.values.map((value, i) =>
+                                        <TableCell key={i}
+                                                   style={{
+                                                       backgroundColor: (heatmap ? `rgba(${200 * (value - stat.min) / (stat.max - stat.min)}, 0, ${200 * (stat.max - value) / (stat.max - stat.min)}, 1)` : "#fff"),
+                                                       color: (heatmap ? "white" : "black")
+                                                   }}>
+                                            {value.toFixed(2)}
+                                        </TableCell>)}
+                                </TableRow>
+                            }
+                        )}
                     </TableBody>
                 </Table>
             )
