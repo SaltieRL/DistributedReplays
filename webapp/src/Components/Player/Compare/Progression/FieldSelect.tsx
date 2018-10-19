@@ -11,7 +11,7 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
+import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 
 interface OwnProps {
     fields: string[]

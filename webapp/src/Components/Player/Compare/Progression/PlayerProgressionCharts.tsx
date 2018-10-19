@@ -1,13 +1,13 @@
-import {FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Typography} from "@material-ui/core"
+import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Typography } from "@material-ui/core"
 import * as _ from "lodash"
 import * as moment from "moment"
 import * as React from "react"
-import {PlayStyleProgressionPoint} from "../../../../Models/Player/PlayStyle"
-import {getProgression} from "../../../../Requests/Player/getProgression"
-import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
-import {ClearableDatePicker} from "../../../Shared/ClearableDatePicker"
-import {FieldSelect} from "./FieldSelect"
-import {ProgressionChart} from "./ProgressionChart"
+import { PlayStyleProgressionPoint } from "../../../../Models/Player/PlayStyle"
+import { getProgression } from "../../../../Requests/Player/getProgression"
+import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
+import { ClearableDatePicker } from "../../../Shared/ClearableDatePicker"
+import { FieldSelect } from "./FieldSelect"
+import { ProgressionChart } from "./ProgressionChart"
 
 interface Props {
     players: Player[]

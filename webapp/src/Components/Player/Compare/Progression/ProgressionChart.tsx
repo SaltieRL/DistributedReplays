@@ -1,9 +1,9 @@
-import {ChartData, ChartOptions, ChartPoint, ChartTooltipItem} from "chart.js"
+import { ChartData, ChartOptions, ChartPoint, ChartTooltipItem } from "chart.js"
 import * as React from "react"
-import {Line} from "react-chartjs-2"
-import {PlayStyleProgressionPoint} from "../../../../Models/Player/PlayStyle"
-import {roundLabelToMaxDPCallback} from "../../../../Utils/Chart"
-import {colorsForPlaylists} from "../../../../Utils/Color"
+import { Line } from "react-chartjs-2"
+import { PlayStyleProgressionPoint } from "../../../../Models/Player/PlayStyle"
+import { roundLabelToMaxDPCallback } from "../../../../Utils/Chart"
+import { colorsForPlaylists } from "../../../../Utils/Color"
 
 interface PlayerPlayStyleProgression {
     player: Player

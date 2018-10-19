@@ -14,14 +14,14 @@ import {
     withStyles,
     withWidth
 } from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
-import {REPLAY_PAGE_LINK} from "../../Globals"
-import {getColouredGameScore, Replay} from "../../Models/Replay/Replay"
-import {ReplayBoxScore} from "../Replay/ReplayBoxScore"
-import {ReplayChart} from "../Replay/ReplayChart"
+import { REPLAY_PAGE_LINK } from "../../Globals"
+import { getColouredGameScore, Replay } from "../../Models/Replay/Replay"
+import { ReplayBoxScore } from "../Replay/ReplayBoxScore"
+import { ReplayChart } from "../Replay/ReplayChart"
 
 interface SelectProps {
     selected: boolean
@@ -44,7 +44,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
         const typographyVariant = "subheading"
         const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
 
-        const contents =
+        const contents = (
             <Grid container>
                 {selectProps &&
                 <Grid item xs="auto" sm={1}>
@@ -53,7 +53,8 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                               color="secondary"/>
                 </Grid>
                 }
-                <Grid item xs={selectProps ? 3 : 4} md={selectProps ? 4 : 5} zeroMinWidth className={classes.listGridItem}>
+                <Grid item xs={selectProps ? 3 : 4} md={selectProps ? 4 : 5} zeroMinWidth
+                      className={classes.listGridItem}>
                     <Typography variant={typographyVariant} noWrap>
                         {replay.name}
                     </Typography>
@@ -89,6 +90,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                     </IconButton>
                 </Grid>
             </Grid>
+        )
 
         return (
             <>
@@ -122,9 +124,9 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {
-        height: 20,
-        width: 20,
-        color: theme.palette.secondary.main,
+        "height": 20,
+        "width": 20,
+        "color": theme.palette.secondary.main,
         "&:hover": {
             transitionProperty: "transform",
             transitionDuration: "100ms",

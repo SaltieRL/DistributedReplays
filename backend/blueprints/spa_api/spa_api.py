@@ -7,14 +7,16 @@ import re
 import shutil
 import uuid
 
+import pandas as pd
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from flask import jsonify, Blueprint, current_app, request, send_from_directory, send_file
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
+from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
@@ -28,7 +30,6 @@ from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.queue_status import QueueStatus
-from .service_layers.replay.basic_stats import BasicStatChartData
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
@@ -124,7 +125,16 @@ def api_get_player_play_style(id_):
         rank = int(request.args['rank'])
     else:
         rank = None
-    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank)
+    if 'playlist' in request.args:
+        playlist = request.args['playlist']
+    else:
+        playlist = 13  # standard
+    if 'win' in request.args:
+        win = bool(int(request.args['win']))
+    else:
+        win = None
+    play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank, playlist=playlist,
+                                                           win=win)
     return better_jsonify(play_style_response)
 
 
@@ -183,10 +193,22 @@ def api_get_replay_basic_player_stats(id_):
     return better_jsonify(basic_stats)
 
 
+@bp.route('replay/<id_>/basic_player_stats/download')
+def api_get_replay_basic_player_stats_download(id_):
+    basic_stats = PlayerStatsChart.create_from_id(id_)
+    return convert_to_csv(basic_stats)
+
+
 @bp.route('replay/<id_>/basic_team_stats')
 def api_get_replay_basic_team_stats(id_):
     basic_stats = TeamStatsChart.create_from_id(id_)
     return better_jsonify(basic_stats)
+
+
+@bp.route('replay/<id_>/basic_team_stats/download')
+def api_get_replay_basic_team_stats_download(id_):
+    basic_stats = TeamStatsChart.create_from_id(id_)
+    return convert_to_csv(basic_stats)
 
 
 @bp.route('replay/<id_>/positions')
@@ -200,6 +222,13 @@ def api_get_replay_group():
     ids = request.args.getlist('ids')
     chart_data = ReplayGroupChartData.create_from_ids(ids)
     return better_jsonify(chart_data)
+
+
+@bp.route('replay/group/download')
+def api_download_group():
+    ids = request.args.getlist('ids')
+    chart_data = ReplayGroupChartData.create_from_ids(ids)
+    return convert_to_csv(chart_data)
 
 
 @bp.route('/replay/<id_>/download')

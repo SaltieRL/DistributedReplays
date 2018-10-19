@@ -11,7 +11,7 @@ import {
     Typography
 } from "@material-ui/core"
 import * as React from "react"
-import {BasePage} from "./BasePage"
+import { BasePage } from "./BasePage"
 
 interface ListItemInfo {
     name: string
@@ -284,8 +284,7 @@ const PersonListItem: React.SFC<ListItemInfo> = (props) => (
     <ListItem>
         <ListItemText
             primary={
-                <ExternalLink name={props.name} link={props.link}/>
-            }
+                <ExternalLink name={props.name} link={props.link}/>}
             secondary={props.message}
         />
     </ListItem>

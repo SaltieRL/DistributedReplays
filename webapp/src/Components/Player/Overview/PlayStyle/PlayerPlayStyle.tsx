@@ -1,13 +1,14 @@
-import {createStyles, Grid, Theme, Typography, withStyles, WithStyles} from "@material-ui/core"
+import { createStyles, Grid, Theme, Typography, withStyles, WithStyles } from "@material-ui/core"
 import Warning from "@material-ui/icons/Warning"
 import * as React from "react"
-import {PlayStyleResponse} from "../../../../Models/Player/PlayStyle"
-import {getPlayStyle} from "../../../../Requests/Player/getPlayStyle"
-import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
-import {PlayerPlayStyleChart} from "./PlayerPlayStyleChart"
+import { PlayStyleResponse } from "../../../../Models/Player/PlayStyle"
+import { getPlayStyle } from "../../../../Requests/Player/getPlayStyle"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
+import { PlayerPlayStyleChart } from "./PlayerPlayStyleChart"
 
 interface OwnProps {
     player: Player
+    playlist?: number
 }
 
 type Props = OwnProps
@@ -26,6 +27,9 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
 
     public componentDidUpdate(prevProps: Readonly<Props>) {
         if (prevProps.player.id !== this.props.player.id) {
+            this.triggerReload()
+        }
+        if (prevProps.playlist !== this.props.playlist) {
             this.triggerReload()
         }
     }
@@ -73,7 +77,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayStyles = (): Promise<void> => {
-        return getPlayStyle(this.props.player.id)
+        return getPlayStyle(this.props.player.id, undefined, this.props.playlist)
             .then((data) => this.setState({data}))
     }
 

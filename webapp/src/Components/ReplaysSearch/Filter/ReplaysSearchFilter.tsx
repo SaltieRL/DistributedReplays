@@ -1,11 +1,11 @@
-import {Card, CardContent, CardHeader, Divider, Grid} from "@material-ui/core"
+import { Card, CardContent, CardHeader, Divider, Grid } from "@material-ui/core"
 import * as moment from "moment"
 import * as React from "react"
-import {ReplaysSearchQueryParams} from "../../../Models/ReplaysSearchQueryParams"
-import {ClearableDatePicker} from "../../Shared/ClearableDatePicker"
-import {PlaylistSelect} from "../../Shared/Selects/PlaylistSelect"
-import {RankSelect} from "../../Shared/Selects/RankSelect"
-import {PlayerEntry} from "./PlayerEntry"
+import { ReplaysSearchQueryParams } from "../../../Models/ReplaysSearchQueryParams"
+import { ClearableDatePicker } from "../../Shared/ClearableDatePicker"
+import { PlaylistSelect } from "../../Shared/Selects/PlaylistSelect"
+import { RankSelect } from "../../Shared/Selects/RankSelect"
+import { PlayerEntry } from "./PlayerEntry"
 
 interface Props {
     queryParams: ReplaysSearchQueryParams
@@ -16,38 +16,42 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
     public render() {
         const {queryParams} = this.props
 
-        const playerEntry =
-            <PlayerEntry playerIds={queryParams.playerIds || []}
-                         handleChange={this.handlePlayersChange}/>
-
-        const rankSelect =
-            <RankSelect selectedRank={queryParams.rank || -1}
-                        handleChange={this.handleRankChange}
-                        inputLabel="Replay rank"
-                        helperText="Select rank to filter by"
-                        noneLabel="None"
-                        disabled/>
-
-        const playlistSelect =
-            <PlaylistSelect selectedPlaylists={queryParams.playlists || []}
-                            handleChange={this.handlePlaylistsChange}
-                            inputLabel="Playlist"
-                            helperText="Select playlist to filter by"/>
-
-        const dateAfterPicker =
+        const playerEntry = (
+            <PlayerEntry
+                playerIds={queryParams.playerIds || []}
+                handleChange={this.handlePlayersChange}/>
+        )
+        const rankSelect = (
+            <RankSelect
+                selectedRank={queryParams.rank || -1}
+                handleChange={this.handleRankChange}
+                inputLabel="Replay rank"
+                helperText="Select rank to filter by"
+                noneLabel="None"
+                disabled/>
+        )
+        const playlistSelect = (
+            <PlaylistSelect
+                selectedPlaylists={queryParams.playlists || []}
+                handleChange={this.handlePlaylistsChange}
+                inputLabel="Playlist"
+                helperText="Select playlist to filter by"
+                multiple/>
+        )
+        const dateAfterPicker = (
             <ClearableDatePicker
                 value={queryParams.dateAfter ? queryParams.dateAfter : null}
                 onChange={this.handleDateAfterChange}
                 label="Start date"
                 helperText="Date after which game must have happened"/>
-
-        const dateBeforePicker =
+        )
+        const dateBeforePicker = (
             <ClearableDatePicker
                 value={queryParams.dateBefore ? queryParams.dateBefore : null}
                 onChange={this.handleDateBeforeChange}
                 label="End date"
                 helperText="Date before which game must have happened"/>
-
+        )
         return (
             <>
                 <Grid container spacing={32} justify="center">
