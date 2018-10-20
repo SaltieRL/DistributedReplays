@@ -56,7 +56,7 @@ class TagWrapper:
             session.close()
 
         if tag is None:
-            raise TagNotFound
+            raise TagNotFound()
         else:
             return tag
 
@@ -65,10 +65,10 @@ class TagWrapper:
         session = current_app.config['db']()
         tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
         if tag is None:
-            raise TagNotFound
+            raise TagNotFound()
         game = session.query(Game).filter(Game.hash == game_id).first()
         if game is None:
-            raise ReplayNotFound
+            raise ReplayNotFound()
         if tag not in game.tags:
             game.tags.append(tag)
             session.commit()
@@ -82,7 +82,7 @@ class TagWrapper:
         tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
         game = session.query(Game).filter(Game.hash == game_id).first()
         if game is None:
-            raise ReplayNotFound
+            raise ReplayNotFound()
         if tag is not None:
             game.tags.remove(tag)
             session.commit()
@@ -101,6 +101,6 @@ class TagWrapper:
         session.close()
 
         if len(game_tags) == 0:
-            raise ReplayNotFound
+            raise ReplayNotFound()
 
         return [game_tag.game_id for game_tag in game_tags]
