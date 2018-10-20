@@ -87,7 +87,7 @@ const friends: ListItemInfo[] = [
     {
         name: "Octane.gg",
         link: "https://octane.gg/",
-        message: "An addon that enables you to create gifs of your gameplay at the push of a button!"
+        message: "The best source for Rocket League Esports coverage of news, events, teams, players, and more!"
     }
 ]
 
