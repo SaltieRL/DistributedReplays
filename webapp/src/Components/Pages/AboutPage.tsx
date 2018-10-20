@@ -2,13 +2,17 @@ import {
     ButtonBase,
     Card,
     CardContent,
-    CardHeader, Divider,
+    CardHeader,
+    createStyles,
+    Divider,
     Grid,
     List,
     ListItem,
     ListItemText,
     ListSubheader,
-    Typography
+    Typography,
+    WithStyles,
+    withStyles
 } from "@material-ui/core"
 import * as React from "react"
 import { BasePage } from "./BasePage"
@@ -166,111 +170,127 @@ const supportStaff: ListItemInfo[] = [
 
 export class AboutPage extends React.PureComponent {
     public render() {
+        const aboutSaltie = (
+            <Card>
+                <CardHeader title="About us" subheader="Saltie"/>
+                <Divider/>
+                <CardContent>
+                    <Typography>
+                        The Saltie group was founded in 2017 as a deep reinforcement research group
+                        for
+                        Rocket League. It was created by
+                        {" "}
+                        <ExternalLink name={"Sciguymjm"}
+                                      link={"https://steamcommunity.com/id/Sciguymjm"}/>
+                        {" and "}
+                        <ExternalLink name={"dtracers"}
+                                      link={"https://steamcommunity.com/id/dtracers"}/>
+                        .
+                    </Typography>
+                </CardContent>
+            </Card>
+        )
+
+        const aboutCalculated = (
+            <Card>
+                <CardHeader title="About" subheader="calculated.gg"/>
+                <Divider/>
+                <List>
+                    <ListSubheader>Core Developers</ListSubheader>
+                    {coreDevelopers.map((listItemInfo) => (
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                    ))}
+
+                    <Divider/>
+
+                    <ListSubheader>Special thanks to</ListSubheader>
+                    {specialThanks.map((listItemInfo) => (
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                    ))}
+
+                    <Divider/>
+
+                    <ListSubheader>Source code</ListSubheader>
+                    {sourceCode.map((listItemInfo) => (
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                    ))}
+                </List>
+            </Card>
+        )
+
+        const friendsCard = (
+            <Card>
+                <CardHeader title="Friends" subheader="of calculated.gg"/>
+                <Divider/>
+                <CardContent>
+                    <List>
+                        {friends.map((listItemInfo) => (
+                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        ))}
+                    </List>
+                </CardContent>
+            </Card>
+        )
+
+        const contributors = (
+            <Card>
+                <CardHeader title="Contributors" subheader="to calculated.gg"/>
+                <Divider/>
+                <List>
+                    <ListSubheader>Replay Parsing</ListSubheader>
+
+                    {replayParsing.map((listItemInfo) => (
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                    ))}
+                    <Divider/>
+                    <ListSubheader>Uploading</ListSubheader>
+
+                    {uploading.map((listItemInfo) => (
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                    ))}
+
+                    {/*
+                <CardHeader subheader="Replay Viewer"/>
+                <CardContent>
+                    <List>
+                        {replayViewer.map((listItemInfo) => (
+                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        ))}
+                    </List>
+                </CardContent>
+            */}
+                    <Divider/>
+                    <ListSubheader>Designers</ListSubheader>
+
+                    {designer.map((listItemInfo) => (
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                    ))}
+                    <Divider/>
+                    <ListSubheader>Support Staff</ListSubheader>
+
+                    {supportStaff.map((listItemInfo) => (
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                    ))}
+                </List>
+            </Card>
+        )
+
         return (
             <BasePage backgroundImage={"/splash.png"}>
                 <Grid container justify="center">
-                    <Grid item xs={12} md={8} lg={7} xl={6}>
+                    <Grid item xs={12} lg={10} xl={8}>
                         <Grid container spacing={16} justify="center">
                             <Grid item xs={12}>
-                                <Card>
-                                    <CardHeader title="About us" subheader="Saltie"/>
-                                    <Divider/>
-                                    <CardContent>
-                                        <Typography>
-                                            The Saltie group was founded in 2017 as a deep reinforcement research group
-                                            for
-                                            Rocket League. It was created by
-                                            {" "}
-                                            <ExternalLink name={"Sciguymjm"}
-                                                          link={"https://steamcommunity.com/id/Sciguymjm"}/>
-                                            {" and "}
-                                            <ExternalLink name={"dtracers"}
-                                                          link={"https://steamcommunity.com/id/dtracers"}/>
-                                            .
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
+                                {aboutSaltie}
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Card>
-                                    <CardHeader title="About" subheader="calculated.gg"/>
-                                    <Divider/>
-                                    <List>
-                                        <ListSubheader>Core Developers</ListSubheader>
-                                        {coreDevelopers.map((listItemInfo) => (
-                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                        ))}
-
-                                        <Divider/>
-
-                                        <ListSubheader>Special thanks to</ListSubheader>
-                                        {specialThanks.map((listItemInfo) => (
-                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                        ))}
-
-                                        <Divider/>
-
-                                        <ListSubheader>Source code</ListSubheader>
-                                        {sourceCode.map((listItemInfo) => (
-                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                        ))}
-                                    </List>
-                                </Card>
+                            <Grid item xs={12} sm={6} md={4}>
+                                {aboutCalculated}
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Card>
-                                    <CardHeader title="Friends" subheader="of calculated.gg"/>
-                                    <Divider/>
-                                    <CardContent>
-                                        <List>
-                                            {friends.map((listItemInfo) => (
-                                                <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                            ))}
-                                        </List>
-                                    </CardContent>
-                                </Card>
+                            <Grid item xs={12} sm={6} md={4}>
+                                {friendsCard}
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Card>
-                                    <CardHeader title="Contributors"/>
-                                    <Divider/>
-                                    <List>
-                                        <ListSubheader>Replay Parsing</ListSubheader>
-
-                                        {replayParsing.map((listItemInfo) => (
-                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                        ))}
-                                        <Divider/>
-                                        <ListSubheader>Uploading</ListSubheader>
-
-                                        {uploading.map((listItemInfo) => (
-                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                        ))}
-
-                                        {/*
-                                        <CardHeader subheader="Replay Viewer"/>
-                                        <CardContent>
-                                            <List>
-                                                {replayViewer.map((listItemInfo) => (
-                                                    <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                                ))}
-                                            </List>
-                                        </CardContent>
-                                    */}
-                                        <Divider/>
-                                        <ListSubheader>Designers</ListSubheader>
-
-                                        {designer.map((listItemInfo) => (
-                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                        ))}
-                                        <Divider/>
-                                        <ListSubheader>Support Staff</ListSubheader>
-
-                                        {supportStaff.map((listItemInfo) => (
-                                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
-                                        ))}
-                                    </List>
-                                </Card>
+                            <Grid item xs={12} sm={6} md={4}>
+                                {contributors}
                             </Grid>
                         </Grid>
                     </Grid>
