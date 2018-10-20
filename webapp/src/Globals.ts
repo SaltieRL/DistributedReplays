@@ -1,4 +1,4 @@
-import { ReplaysSearchQueryParams, stringifyReplaySearchQueryParam } from "./Models/ReplaysSearchQueryParams"
+import { ReplaysSearchQueryParams, stringifyReplaySearchQueryParam } from "./Models"
 
 // TODO: Move this into a namespace?
 

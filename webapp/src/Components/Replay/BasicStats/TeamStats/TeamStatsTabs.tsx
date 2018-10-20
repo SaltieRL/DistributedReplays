@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Tab, Tabs, withWidth } from "@material-ui/core"
 import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import { TeamStatsSubcategory } from "src/Models/ChartData"
+import { TeamStatsSubcategory } from "src/Models"
 
 interface OwnProps {
     selectedTab: TeamStatsSubcategory

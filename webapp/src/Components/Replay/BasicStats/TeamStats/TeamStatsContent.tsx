@@ -1,7 +1,6 @@
 import { CardContent, Divider, Grid } from "@material-ui/core"
 import * as React from "react"
-import { TeamStatsSubcategory } from "src/Models/ChartData"
-import { Replay } from "../../../../Models/Replay/Replay"
+import { Replay, TeamStatsSubcategory } from "src/Models"
 import { TeamStatsCharts } from "./TeamStatsCharts"
 import { TeamStatsTabs } from "./TeamStatsTabs"
 

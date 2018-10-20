@@ -1,6 +1,6 @@
 import * as qs from "qs"
+import { PlayStyleResponse } from "src/Models"
 import { doGet } from "../../apiHandler/apiHandler"
-import { PlayStyleResponse } from "../../Models/Player/PlayStyle"
 import { useMockData } from "../Config"
 
 export const getPlayStyle = (id: string, rank?: number, playlist?: number): Promise<PlayStyleResponse> => {

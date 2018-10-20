@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, createStyles, Divider, List, WithStyles, withStyles } from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models/Replay/Replay"
+import { Replay } from "src/Models"
 import { TeamCardPlayer } from "./TeamCardPlayer"
 
 interface OwnProps {

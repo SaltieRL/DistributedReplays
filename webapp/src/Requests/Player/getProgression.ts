@@ -1,7 +1,7 @@
 import * as moment from "moment"
+import { parsePlayStyleProgression, PlayStyleProgressionPoint } from "src/Models"
 import { doGet } from "../../apiHandler/apiHandler"
 import { TimeUnit } from "../../Components/Player/Compare/Progression/PlayerProgressionCharts"
-import { parsePlayStyleProgression, PlayStyleProgressionPoint } from "../../Models/Player/PlayStyle"
 import { QueryParamMetadata, stringifyQueryParams } from "../Utils"
 
 interface ProgressionQueryParams {
