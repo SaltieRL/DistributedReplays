@@ -1,9 +1,10 @@
-import { Grid, Typography } from "@material-ui/core"
+import { Checkbox, FormControlLabel, Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleResponse } from "src/Models"
-import { getPlayStyle } from "../../../../Requests/Player/getPlayStyle"
+import { PlayStyleRawResponse, PlayStyleResponse } from "src/Models"
+import { getPlayStyle, getPlayStyleRaw } from "../../../../Requests/Player/getPlayStyle"
 import { RankSelect } from "../../../Shared/Selects/RankSelect"
 import { PlayerPlayStyleChart } from "../../Overview/PlayStyle/PlayerPlayStyleChart"
+import { PlayerCompareTable } from "./PlayerCompareTable"
 
 interface Props {
     players: Player[]
@@ -11,13 +12,15 @@ interface Props {
 
 interface State {
     playerPlayStyles: PlayStyleResponse[]
+    playerPlayStylesRaw: PlayStyleRawResponse[]
     rank: number
+    heatmapMode: boolean
 }
 
 export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {playerPlayStyles: [], rank: -1}
+        this.state = {playerPlayStyles: [], playerPlayStylesRaw: [], rank: -1, heatmapMode: false}
     }
 
     public componentDidMount() {
@@ -37,6 +40,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                         indicesToRemove.push(i)
                     }
                 })
+            console.log(indicesToRemove)
             this.handleRemovePlayers(indicesToRemove)
         }
 
@@ -47,7 +51,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     public render() {
         const {players} = this.props
-        const {playerPlayStyles} = this.state
+        const {playerPlayStyles, playerPlayStylesRaw} = this.state
         if (playerPlayStyles.length === 0) {
             return null
         }
@@ -57,7 +61,13 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                 .map((playStyleResponse) => playStyleResponse.chartDatas[i])
             )
         const chartTitles = playerPlayStyles[0].chartDatas.map((chartData) => chartData.title)
-
+        const checkbox = (
+            <FormControlLabel
+                control={<Checkbox
+                    onChange={this.handleHeatmapChange}/>}
+                label="Heatmap mode"
+            />
+        )
         return (
             <>
                 <Grid item xs={12} style={{textAlign: "center"}}>
@@ -79,6 +89,16 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                         </Grid>
                     )
                 })}
+                <Grid container xs={12} justify="center" alignItems="center">
+                    <Grid item xs={12} style={{textAlign: "center"}}>
+                        {checkbox}
+                    </Grid>
+                    <Grid item xs={"auto"}>
+                        <PlayerCompareTable names={players.map((player) => player.name)}
+                                            rawPlayers={playerPlayStylesRaw}
+                        heatmap={this.state.heatmapMode}/>
+                    </Grid>
+                </Grid>
             </>
         )
     }
@@ -95,16 +115,33 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                     })
                 }
             })
+        Promise.all(players.map((player) => getPlayStyleRaw(player.id)))
+            .then((playerPlayStylesRaw) => {
+                if (reload) {
+                    this.setState({playerPlayStylesRaw})
+                } else {
+                    this.setState({
+                        playerPlayStylesRaw: [...this.state.playerPlayStylesRaw, ...playerPlayStylesRaw]
+                    })
+                }
+            })
     }
 
     private readonly handleRemovePlayers = (indicesToRemove: number[]) => {
         this.setState({
             playerPlayStyles: this.state.playerPlayStyles
-                .filter((_, i) => indicesToRemove.indexOf(i) !== -1)
+                .filter((_, i) => indicesToRemove.indexOf(i) === -1),
+            playerPlayStylesRaw: this.state.playerPlayStylesRaw
+                .filter((_, i) => indicesToRemove.indexOf(i) === -1)
         })
     }
 
     private readonly handleRankChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         this.setState({rank: Number(event.target.value)})
+    }
+
+    private readonly handleHeatmapChange = (event: React.ChangeEvent<HTMLInputElement>,
+                                            heatmapMode: boolean) => {
+        this.setState({heatmapMode})
     }
 }

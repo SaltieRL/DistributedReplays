@@ -54,11 +54,6 @@ class GlobalStatWrapper(SharedStatsWrapper):
         else:
             ranks = [0]
 
-        def float_maybe(f):
-            if f is None:
-                return None
-            else:
-                return float(f)
 
         playlist_results = {}
         for playlist in GLOBAL_STATS_PLAYLISTS:
@@ -69,7 +64,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
                 self.base_query.clean().with_stat_query([PlayerGame.player, q.label('avg')])
                 for rank in ranks:
                     result = self._get_global_stats_result(self.base_query, playlist, rank, sess, with_rank=with_rank)
-                    column_results.append({'mean': float_maybe(result[0]), 'std': float_maybe(result[1])})
+                    column_results.append({'mean': self.float_maybe(result[0]), 'std': self.float_maybe(result[1])})
                 results[column.get_field_name()] = column_results
             playlist_results[playlist] = results
         return playlist_results
