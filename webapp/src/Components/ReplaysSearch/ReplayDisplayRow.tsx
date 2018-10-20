@@ -18,10 +18,11 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
+import { Replay } from "src/Models"
 import { REPLAY_PAGE_LINK } from "../../Globals"
-import { getColouredGameScore, Replay } from "../../Models/Replay/Replay"
 import { ReplayBoxScore } from "../Replay/ReplayBoxScore"
 import { ReplayChart } from "../Replay/ReplayChart"
+import { ColouredGameScore } from "../Shared/ColouredGameScore"
 
 interface SelectProps {
     selected: boolean
@@ -81,7 +82,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                 </Grid>
                 <Grid item xs={2} className={classes.listGridItem}>
                     <Typography variant={typographyVariant}>
-                        {getColouredGameScore(replay)}
+                        <ColouredGameScore replay={replay}/>
                     </Typography>
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
