@@ -300,15 +300,26 @@ export class AboutPage extends React.PureComponent {
     }
 }
 
-const PersonListItem: React.SFC<ListItemInfo> = (props) => (
+type PersonListItemComponentProps = ListItemInfo & WithStyles<typeof personListItemStyles>
+
+const PersonListItemComponent: React.SFC<PersonListItemComponentProps> = (props) => (
     <ListItem>
         <ListItemText
             primary={
                 <ExternalLink name={props.name} link={props.link}/>}
             secondary={props.message}
+            classes={props.classes}
         />
     </ListItem>
 )
+
+const personListItemStyles = createStyles({
+    secondary: {
+        fontWeight: 400
+    }
+})
+
+const PersonListItem = withStyles(personListItemStyles)(PersonListItemComponent)
 
 type ExternalLinkProps = Pick<ListItemInfo, "link" | "name">
 
