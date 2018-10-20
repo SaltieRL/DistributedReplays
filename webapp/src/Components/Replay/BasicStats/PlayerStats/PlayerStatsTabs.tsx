@@ -45,11 +45,8 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
             >
                 {Object.keys(PlayerStatsSubcategory).map((subcategory: PlayerStatsSubcategory) => {
                     const value = PlayerStatsSubcategory[subcategory]
-                    return <Tab label={value}
-                                value={value}
-                                key={value}
-                                icon={<FontAwesomeIcon icon={categoryToIcon[value]} />}
-                        />
+                    return <Tab label={value} value={value} key={value}
+                                icon={<FontAwesomeIcon icon={categoryToIcon[value]}/>}/>
                 })}
             </Tabs>
         )
