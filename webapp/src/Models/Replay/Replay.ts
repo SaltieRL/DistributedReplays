@@ -1,5 +1,4 @@
 import * as moment from "moment"
-import * as React from "react"
 
 export type GameMode = "1's" | "2's" | "3's"
 
@@ -22,16 +21,6 @@ export const parseReplay = (data: any) => {
         ...data,
         date: moment(data.date)
     }
-}
-
-export const getColouredGameScore = (replay: Replay) => {
-    return (
-        <>
-            <span style={{color: "blue"}}>{replay.gameScore.team0Score}</span>
-            {" - "}
-            <span style={{color: "orange"}}>{replay.gameScore.team1Score}</span>
-        </>
-    )
 }
 
 type GameResult = "Win" | "Loss"
