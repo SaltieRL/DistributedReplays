@@ -1,4 +1,4 @@
-const MOCK_PLAY_STYLE = {
+export const MOCK_PLAY_STYLE = {
     showWarning: false,
     chartDatas: [{
         title: "Aggressiveness",
@@ -31,7 +31,7 @@ const MOCK_PLAY_STYLE = {
     }]
 }
 
-const MOCK_PLAY_STYLE_RAW = {
+export const MOCK_PLAY_STYLE_RAW = {
     dataPoints: [
         {
             average: 279.004401155593,
