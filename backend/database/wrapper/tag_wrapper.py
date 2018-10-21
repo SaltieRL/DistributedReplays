@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import func
 
 from backend.blueprints.spa_api.errors.errors import TagNotFound, CalculatedError, ReplayNotFound
@@ -8,35 +10,25 @@ from flask import current_app
 
 class TagWrapper:
     @staticmethod
-    def create_tag(user_id: str, name: str):
-        session = current_app.config['db']()
-        tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == name).first()
-        if tag is None:
-            tag = Tag(name=name, owner=user_id)
-        else:
-            raise CalculatedError(400, "Tag already exists.")
+    def create_tag(session, user_id: str, name: str) -> Tag:
+        tag = Tag(name=name, owner=user_id)
         session.add(tag)
         session.commit()
-        session.close()
+        return tag
 
     @staticmethod
-    def rename_tag(user_id: str, old_name: str, new_name: str):
-        session = current_app.config['db']()
-        tag_test = session.query(Tag).filter(Tag.owner == user_id, Tag.name == new_name).first()
-        if tag_test is not None:
-            raise CalculatedError(400, "Name is already taken.")
+    def rename_tag(session, user_id: str, old_name: str, new_name: str) -> Tag:
         tag = TagWrapper.get_tag(user_id, old_name, session)
         tag.name = new_name
         session.commit()
-        session.close()
+        return tag
 
     @staticmethod
-    def get_tags(user_id: str):
-        session = current_app.config['db']()
+    def get_tags(session, user_id: str) -> List[Tag]:
         return session.query(Tag).filter(Tag.owner == user_id).all()
 
     @staticmethod
-    def remove_tag(user_id: str, name: str):
+    def delete_tag(user_id: str, name: str):
         session = current_app.config['db']()
         tag = TagWrapper.get_tag(user_id, name, session)
         session.delete(tag)
@@ -44,7 +36,7 @@ class TagWrapper:
         session.close()
 
     @staticmethod
-    def get_tag(user_id: str, name: str, session=None):
+    def get_tag(user_id: str, name: str, session=None) -> Tag:
         no_ses_ref = session is None
 
         if no_ses_ref:
@@ -61,9 +53,9 @@ class TagWrapper:
             return tag
 
     @staticmethod
-    def add_tag_to_game(game_id: str, user_id: str, tag_name: str):
+    def add_tag_to_game(game_id: str, user_id: str, tag_name: str) -> None:
         session = current_app.config['db']()
-        tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
+        tag: Tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
         if tag is None:
             raise TagNotFound()
         game = session.query(Game).filter(Game.hash == game_id).first()
@@ -72,12 +64,11 @@ class TagWrapper:
         if tag not in game.tags:
             game.tags.append(tag)
             session.commit()
-        session.close()
-        return tag
         # TODO maybe add else
+        session.close()
 
     @staticmethod
-    def remove_tag_from_game(game_id: str, user_id: str, tag_name: str):
+    def remove_tag_from_game(game_id: str, user_id: str, tag_name: str) -> None:
         session = current_app.config['db']()
         tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
         game = session.query(Game).filter(Game.hash == game_id).first()
@@ -87,7 +78,6 @@ class TagWrapper:
             game.tags.remove(tag)
             session.commit()
         session.close()
-        return tag
 
     @staticmethod
     def get_tagged_games(user_id: str, names):

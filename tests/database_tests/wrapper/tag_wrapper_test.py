@@ -110,7 +110,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
         self.session.add(tag)
         self.session.commit()
 
-        TagWrapper.remove_tag(self.test_user_id, self.tag_name)
+        TagWrapper.delete_tag(self.test_user_id, self.tag_name)
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
 
         self.assertIsNone(tag)
@@ -124,7 +124,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
             self.session.commit()
 
         with self.assertRaises(TagNotFound):
-            TagWrapper.remove_tag(self.test_user_id, self.tag_name)
+            TagWrapper.delete_tag(self.test_user_id, self.tag_name)
 
 
 class TagWrapperRenameTagTest(unittest.TestCase):
