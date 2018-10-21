@@ -23,7 +23,7 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
         def permission_wrapper(*args, **kwargs):
             sender = kwargs['sender']
             if sender is None:
-                raise CalculatedError(400, 'Permission denied. User not authenticated.')
+                raise CalculatedError(401, 'User not authenticated.')
 
             tournament_id = kwargs['tournament_id']
             stage_id = kwargs['stage_id']
@@ -42,7 +42,7 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
 
             if tournament_id is None or tournament is None:
                 session.close()
-                raise CalculatedError(400, 'Cannot find tournament.')
+                raise CalculatedError(404, "Tournament not found.")
 
             is_site_admin = g.admin
             is_owner = sender is tournament.owner
@@ -65,7 +65,7 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
                                                                                  is_tournament_admin):
                 return decorated_function(args, kwargs)
             else:
-                raise CalculatedError(400, 'User not authorized.')
+                raise CalculatedError(403, 'User not authorized.')
         return permission_wrapper
     return perm_arg_wrapper
 
