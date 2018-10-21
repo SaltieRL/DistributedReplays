@@ -82,6 +82,9 @@ class SearchComponent extends React.PureComponent<Props, State> {
 
     private readonly onSubmit: React.FormEventHandler = (e) => {
         e.preventDefault()
+        if (this.state.enteredText.length === 0) {
+            return
+        }
         resolvePlayerNameOrId(this.state.enteredText)
             .then((resolvedId) => this.setState({resolvedId}))
             .catch((appError: AppError) => this.props.showNotification({

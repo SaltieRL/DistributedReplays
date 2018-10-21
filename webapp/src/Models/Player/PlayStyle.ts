@@ -6,6 +6,16 @@ export interface PlayStyleResponse {
     chartDatas: ChartDataResponse[]
 }
 
+export interface PlayStyleRawResponse {
+    dataPoints: RawDataPoint[]
+    name: string
+}
+
+interface RawDataPoint {
+    name: string
+    average: number
+}
+
 interface DataPoint {
     average: number
     name: string
