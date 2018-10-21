@@ -43,6 +43,12 @@ class Playlist(enum.Enum):
     RANKED_SNOW_DAY = 30
 
 
+class TournamentSeriesStatus:
+    OFFICIAL_MATCH = 1
+    REVIEW_NEEDED = 2
+    SCRIM = 3
+
+
 class User(DBObjectBase):
     __tablename__ = 'users'
 
@@ -333,11 +339,11 @@ class TournamentSeries(DBObjectBase):
     name = Column(String(100))
     stage_id = Column(Integer, ForeignKey('tournament_stages.id'))
     games = relationship('Game', secondary='series_games', back_populates='serieses')
+    status = Column(Enum(TournamentSeriesStatus))
 
 
 class SeriesGame(DBObjectBase):
     __tablename__ = 'series_games'
     series_id = Column(Integer, ForeignKey('tournament_serieses.id'), primary_key=True)
     game_hash = Column(String(40), ForeignKey('games.hash'), primary_key=True)
-    # TODO add status [review needed, scrim, default]
 

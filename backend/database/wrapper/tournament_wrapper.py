@@ -1,12 +1,12 @@
 import datetime
 import enum
 
-from flask import current_app
+from flask import current_app, g
 from sqlalchemy import func
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
-from backend.database.objects import Game, TournamentPlayer, TournamentSeries, SeriesGame, PlayerGame, TournamentStage,\
-    Tournament, Player
+from backend.database.objects import Game, TournamentPlayer, TournamentSeries, SeriesGame, PlayerGame, TournamentStage, \
+    Tournament, Player, TournamentSeriesStatus
 
 DEFAULT_SERIES_NAME = "Unknown Series"
 DEFAULT_STAGE_NAME = "Unknown Stage"
@@ -44,7 +44,7 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
                 session.close()
                 raise CalculatedError(400, 'Cannot find tournament.')
 
-            is_site_admin = False # TODO implement site admin permissions
+            is_site_admin = g.admin
             is_owner = sender is tournament.owner
             is_tournament_admin = False
 
@@ -278,7 +278,11 @@ class TournamentWrapper:
                     series = tournament_series
                     matched = False
                     for series_game in series.games:
-                        if series_game.match_date - game.match_date <= time_between_matches:
+                        series_game_finished = series_game.match_date + \
+                                               datetime.timedelta(seconds=round(series_game.length))
+                        game_finished = game.match_date + datetime.timedelta(seconds=round(game.length))
+                        if series_game_finished - game.match_date <= time_between_matches or \
+                                game_finished - series_game.match_date <= time_between_matches:
                             matched = True
                             break
                     if matched:
@@ -296,8 +300,8 @@ class TournamentWrapper:
 
             TournamentWrapper.add_game_to_series(game.hash, series.id)
 
-            # if matched_count < game.teamsize * 2:
-                # pass
-            # TODO mark SeriesGame with review needed
+            if matched_count < game.teamsize * 2:
+                series.status = TournamentSeriesStatus.REVIEW_NEEDED
+                session.commit()
         # no need to commit anything here
         session.close()
