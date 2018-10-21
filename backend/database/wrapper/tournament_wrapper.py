@@ -245,7 +245,10 @@ class TournamentWrapper:
         session = current_app.config['db']()
         game = session.query(Game).filter(Game.hash == game_hash).scalar()
 
-        unmatched_players_tolerance = 1  # TODO make this configurable
+        unmatched_players_tolerance = 0
+        if game.teamsize > 1:
+            unmatched_players_tolerance = 1
+        # TODO make this configurable but for now 1s should not have any tolerance
         tournaments = session.query(TournamentPlayer, func.count(TournamentPlayer.tournament_id)).\
             filter(TournamentPlayer.player_id.in_(game.players)).\
             group_by(TournamentPlayer.tournament_id).\
@@ -276,9 +279,7 @@ class TournamentWrapper:
                     for series_game in series.games:
                         series_game_finished = series_game.match_date + \
                                                datetime.timedelta(seconds=round(series_game.length))
-                        game_finished = game.match_date + datetime.timedelta(seconds=round(game.length))
-                        if series_game_finished - game.match_date <= time_between_matches or \
-                                game_finished - series_game.match_date <= time_between_matches:
+                        if abs(series_game_finished - game.match_date) <= time_between_matches:
                             matched = True
                             break
                     if matched:
@@ -299,5 +300,4 @@ class TournamentWrapper:
             if matched_count < game.teamsize * 2:
                 series.status = TournamentSeriesStatus.REVIEW_NEEDED
                 session.commit()
-        # no need to commit anything here
         session.close()
