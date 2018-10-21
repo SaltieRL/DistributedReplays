@@ -309,6 +309,7 @@ class Tournament(DBObjectBase):
     owner = Column(String(40), ForeignKey('players.platformid'))
     participants = relationship('Player', secondary='tournament_players', back_populates='participating_tournaments')
     admins = relationship('Player', secondary='tournament_admins', back_populates='administrating_tournaments')
+    stages = relationship('TournamentStage')
 
 
 class TournamentAdmin(DBObjectBase):
@@ -322,6 +323,7 @@ class TournamentStage(DBObjectBase):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
     tournament_id = Column(Integer, ForeignKey('tournaments.id'))
+    serieses = relationship('TournamentSeries')
     # TODO allow admins to add time info about games so that it will only find games played at certain time frames
 
 

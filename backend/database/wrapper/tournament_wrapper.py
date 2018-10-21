@@ -5,8 +5,8 @@ from flask import current_app, g
 from sqlalchemy import func
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
-from backend.database.objects import Game, TournamentPlayer, TournamentSeries, SeriesGame, PlayerGame, TournamentStage, \
-    Tournament, Player, TournamentSeriesStatus
+from backend.database.objects import Game, TournamentPlayer, TournamentSeries, SeriesGame, PlayerGame, TournamentStage,\
+     Tournament, Player, TournamentSeriesStatus
 
 DEFAULT_SERIES_NAME = "Unknown Series"
 DEFAULT_STAGE_NAME = "Unknown Stage"
@@ -123,14 +123,14 @@ class TournamentWrapper:
             raise CalculatedError(404, "Tournament not found.")
         player = session.query(Player).filter(Player.platformid == admin_platformid).one()
         if tournament is None:
-            raise CalculatedError(404, "Player not found.")
+            raise CalculatedError(404, "Player not found.")  # TODO add player to DB instead
         tournament.admins.append(player)
         session.commit()
         session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_OWNER)
-    def add_tournament_admin(admin_platformid, tournament_id=None, sender=None):
+    def remove_tournament_admin(admin_platformid, tournament_id=None, sender=None):
         session = current_app.config['db']()
         tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
         if tournament is None:
@@ -139,6 +139,34 @@ class TournamentWrapper:
         if tournament is None:
             raise CalculatedError(404, "Player not found.")
         tournament.admins.remove(player)
+        session.commit()
+        session.close()
+
+    @staticmethod
+    @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
+    def add_tournament_participant(participant_platformid, tournament_id=None, sender=None):
+        session = current_app.config['db']()
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+        if tournament is None:
+            raise CalculatedError(404, "Tournament not found.")
+        player = session.query(Player).filter(Player.platformid == participant_platformid).one()
+        if tournament is None:
+            raise CalculatedError(404, "Player not found.")  # TODO add player to DB instead
+        tournament.participants.append(player)
+        session.commit()
+        session.close()
+
+    @staticmethod
+    @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
+    def remove_tournament_participant(participant_platformid, tournament_id=None, sender=None):
+        session = current_app.config['db']()
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+        if tournament is None:
+            raise CalculatedError(404, "Tournament not found.")
+        player = session.query(Player).filter(Player.platformid == participant_platformid).one()
+        if tournament is None:
+            raise CalculatedError(404, "Player not found.")
+        tournament.participants.remove(player)
         session.commit()
         session.close()
 
