@@ -8,16 +8,14 @@ import shutil
 import uuid
 
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory, g
+from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-from backend.blueprints.spa_api.service_layers.replay.tag import Tag
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
-from backend.database.wrapper.tag_wrapper import TagWrapper
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
@@ -34,6 +32,7 @@ from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 from .service_layers.replay.replay_positions import ReplayPositions
+from .service_layers.replay.tag import Tag
 from .utils.decorators import require_user
 from .utils.query_params_handler import QueryParam, convert_to_datetime, get_query_params, \
     convert_to_enum
@@ -369,15 +368,19 @@ def api_get_tags():
     tags = Tag.get_all()
     return better_jsonify(tags)
 
+
 @require_user
-@bp.route('/tag/<name>/replay/<id_>', methods=["PUT, DELETE"])
-def api_add_or_remove_tag_to_game(name: str, id_: str):
-    if request.method == "PUT":
-        Tag.add_tag_to_game(name, id_)
-        return '', 204
-    elif request.method == "DELETE":
-        Tag.remove_tag_from_game(name, id_)
-        return '', 204
+@bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
+def api_add_tag_to_game(name: str, id_: str):
+    Tag.add_tag_to_game(name, id_)
+    return '', 204
+
+
+@require_user
+@bp.route('/tag/<name>/replay/<id_>', methods=["DELETE"])
+def api_remove_tag_from_game(name: str, id_: str):
+    Tag.remove_tag_from_game(name, id_)
+    return '', 204
 
 
 @bp.errorhandler(CalculatedError)
