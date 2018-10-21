@@ -243,7 +243,6 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                     onChange={handleChange}
                     autoWidth
                     input={
-
                         <Input
                             endAdornment={
                                 this.props.multiple && selectedPlaylists.length > 0 &&
