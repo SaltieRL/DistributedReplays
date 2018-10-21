@@ -75,10 +75,6 @@ class TournamentWrapper:
     # no permissions required here
     def add_tournament(owner, name):
         session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.owner == owner, Tournament.name == name).first()
-        if tournament is not None:
-            # we could also ignore that if we want to use ids anyway
-            raise CalculatedError(400, "User already has a tournament with that name.")
         tournament = Tournament(owner=owner, name=name)
         session.add(tournament)
         session.commit()

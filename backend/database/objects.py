@@ -309,7 +309,6 @@ class Tournament(DBObjectBase):
     owner = Column(String(40), ForeignKey('players.platformid'))
     participants = relationship('Player', secondary='tournament_players', back_populates='participating_tournaments')
     admins = relationship('Player', secondary='tournament_admins', back_populates='administrating_tournaments')
-    __table_args_ = (UniqueConstraint(name, owner, name='unique_names_tournament'))
 
 
 class TournamentAdmin(DBObjectBase):
@@ -324,7 +323,6 @@ class TournamentStage(DBObjectBase):
     name = Column(String(100))
     tournament_id = Column(Integer, ForeignKey('tournaments.id'))
     # TODO allow admins to add time info about games so that it will only find games played at certain time frames
-    __table_args_ = (UniqueConstraint(name, tournament_id, name='unique_tournament_stages'))
 
 
 class TournamentPlayer(DBObjectBase):
