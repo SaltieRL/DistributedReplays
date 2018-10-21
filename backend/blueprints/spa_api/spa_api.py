@@ -11,6 +11,9 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+from backend.blueprints.spa_api.service_layers.tournament.tournament import Tournament
+from backend.blueprints.spa_api.service_layers.tournament.tournament_series import TournamentSeries
+from backend.blueprints.spa_api.service_layers.tournament.tournament_stage import TournamentStage
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
@@ -287,6 +290,110 @@ def api_upload_proto():
         shutil.move(id_replay_path, guid_replay_path)
 
     return jsonify({'Success': True})
+
+
+### Tournament
+# TODO add require user for all tournament routes
+@bp.route('tournament/<id_>')
+def api_get_tournament(id_):
+    return better_jsonify(Tournament.create_from_id(id_))
+
+
+@bp.route('tournament/<name>', methods=["PUT"])
+def api_create_tournament(name):
+    return better_jsonify(Tournament.create(name)), 201
+
+
+@bp.route('tournament/<tournament_id>', methods=["POST"])
+def api_rename_tournament(tournament_id):
+    accepted_query_params = [QueryParam(name='new_name')]
+    query_params = get_query_params(accepted_query_params, request)
+    tournament = Tournament.rename(query_params['new_name'], tournament_id=tournament_id)
+    return better_jsonify(tournament), 200
+
+
+@bp.route('tournament/<tournament_id>/', methods=["DELETE"])
+def api_delete_tournament(tournament_id):
+    # keep in mind that this operation is only allowed for site admins
+    Tournament.delete(tournament_id)
+    return '', 204
+
+
+@bp.route('tournament/<tournament_id>/admin/<player_id>', methods=["PUT"])
+def api_add_tournament_admin(tournament_id, player_id):
+    Tournament.add_admin(tournament_id, player_id)
+    return '', 201  # return sth?
+
+
+@bp.route('tournament/<tournament_id>/admin/<player_id>', methods=["DELETE"])
+def api_remove_tournament_admin(tournament_id, player_id):
+    Tournament.remove_admin(tournament_id, player_id)
+    return '', 204
+
+
+@bp.route('tournament/<tournament_id>/participant/<player_id>', methods=["PUT"])
+def api_add_tournament_participant(tournament_id, player_id):
+    Tournament.add_participant(tournament_id, player_id)
+    return '', 201  # return sth?
+
+
+@bp.route('tournament/<tournament_id>/participant/<player_id>', methods=["DELETE"])
+def api_remove_tournament_participant(tournament_id, player_id):
+    Tournament.remove_participant(tournament_id, player_id)
+    return '', 204
+
+
+@bp.route('tournament/<tournament_id>/stage/<stage_id>')
+def api_get_tournament_stage(tournament_id, stage_id):
+    return better_jsonify(TournamentStage.create_from_id(stage_id))
+
+
+@bp.route('tournament/<tournament_id>/stage/<name>', methods=["PUT"])
+def api_create_tournament_stage(tournament_id, name):
+    return better_jsonify(TournamentStage.create(name, tournament_id=tournament_id)), 201
+
+
+@bp.route('tournament/<tournament_id>/stage/<stage_id>', methods=["POST"])
+def api_rename_tournament_stage(tournament_id, stage_id):
+    accepted_query_params = [QueryParam(name='new_name')]
+    query_params = get_query_params(accepted_query_params, request)
+    stage = TournamentStage.rename(query_params['new_name'], stage_id=stage_id)
+    return better_jsonify(stage), 200
+
+
+@bp.route('tournament/<tournament_id>/stage/<stage_id>', methods=["DELETE"])
+def api_delete_tournament_stage(tournament_id, stage_id):
+    TournamentStage.delete(stage_id)
+    return '', 204
+
+
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>')
+def api_get_tournament_series(tournament_id, stage_id, series_id):
+    return better_jsonify(TournamentSeries.create_from_id(series_id))
+
+
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<name>', methods=["PUT"])
+def api_create_tournament_series(tournament_id, stage_id, name):
+    return better_jsonify(TournamentSeries.create(name, stage_id)), 201
+
+
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>', methods=["POST"])
+def api_rename_tournament_series(tournament_id, stage_id, series_id):
+    accepted_query_params = [QueryParam(name='new_name')]
+    query_params = get_query_params(accepted_query_params, request)
+    tournament_series = TournamentSeries.rename(query_params['new_name'], series_id=series_id)
+    return better_jsonify(tournament_series), 200
+
+
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>', methods=["DELETE"])
+def api_delete_tournament_series(tournament_id, stage_id, series_id):
+    TournamentSeries.delete(series_id)
+    return '', 204
+
+
+@bp.route('player/<id_>/tournaments')
+def api_get_players_tournaments(id_):
+    return better_jsonify(Tournament.get_players_tournaments(id_))
 
 
 @bp.errorhandler(CalculatedError)
