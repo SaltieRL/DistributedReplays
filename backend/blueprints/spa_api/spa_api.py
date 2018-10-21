@@ -346,7 +346,7 @@ def api_create_tag(name: str):
 
 
 @require_user
-@bp.route('/tag/<current_name>', methods=["POST"])
+@bp.route('/tag/<current_name>', methods=["PATCH"])
 def api_rename_tag(current_name: str):
     accepted_query_params = [QueryParam(name='new_name')]
     query_params = get_query_params(accepted_query_params, request)
@@ -363,7 +363,7 @@ def api_delete_tag(name: str):
 
 
 @require_user
-@bp.route('/tag/all')
+@bp.route('/tag')
 def api_get_tags():
     tags = Tag.get_all()
     return better_jsonify(tags)
