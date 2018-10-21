@@ -369,6 +369,16 @@ def api_get_tags():
     tags = Tag.get_all()
     return better_jsonify(tags)
 
+@require_user
+@bp.route('/tag/<name>/replay/<id_>', methods=["PUT, DELETE"])
+def api_add_or_remove_tag_to_game(name: str, id_: str):
+    if request.method == "PUT":
+        Tag.add_tag_to_game(name, id_)
+        return '', 204
+    elif request.method == "DELETE":
+        Tag.remove_tag_from_game(name, id_)
+        return '', 204
+
 
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):
