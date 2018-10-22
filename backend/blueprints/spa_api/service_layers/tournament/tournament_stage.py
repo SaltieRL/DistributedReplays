@@ -25,7 +25,6 @@ class TournamentStage:
         return TournamentStage.create_from_db_object(stage)
 
     @staticmethod
-    @with_session
     def create_from_db_object(db_stage: DBStage) -> 'TournamentStage':
         return TournamentStage(db_stage.id, db_stage.tournament_id, db_stage.name,
                                [TournamentSeries.create_from_db_object(series) for series in db_stage.serieses])

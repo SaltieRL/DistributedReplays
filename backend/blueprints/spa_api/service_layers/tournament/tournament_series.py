@@ -33,7 +33,7 @@ class TournamentSeries:
     @with_session
     def create(name: str, stage_id: int, session=None) -> 'TournamentSeries':
         return TournamentSeries.create_from_db_object(
-            TournamentWrapper.add_tournament_stage(session, name, stage_id=stage_id, sender=g.user.platformid))
+            TournamentWrapper.add_series_to_stage(session, name, stage_id=stage_id, sender=g.user.platformid))
 
     @staticmethod
     @with_session
@@ -44,4 +44,4 @@ class TournamentSeries:
     @staticmethod
     @with_session
     def delete(series_id: int, session=None):
-        TournamentWrapper.remove_tournament_stage(session, series_id=series_id, sender=g.user.platformid)
+        TournamentWrapper.remove_series(session, series_id=series_id, sender=g.user.platformid)

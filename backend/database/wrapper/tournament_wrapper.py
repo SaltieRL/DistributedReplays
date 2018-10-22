@@ -131,8 +131,9 @@ class TournamentWrapper:
         player = session.query(Player).filter(Player.platformid == admin_platformid).first()
         if tournament is None:
             raise CalculatedError(404, "Player not found.")
-        tournament.admins.remove(player)
-        session.commit()
+        if player in tournament.admins:
+            tournament.admins.remove(player)
+            session.commit()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
@@ -155,8 +156,9 @@ class TournamentWrapper:
         player = session.query(Player).filter(Player.platformid == participant_platformid).first()
         if tournament is None:
             raise CalculatedError(404, "Player not found.")
-        tournament.participants.remove(player)
-        session.commit()
+        if player in tournament.participants:
+            tournament.participants.remove(player)
+            session.commit()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
@@ -166,7 +168,6 @@ class TournamentWrapper:
             raise CalculatedError(404, "Tournament not found.")
         stage = TournamentStage(tournament_id=tournament_id, name=stage_name)
         session.add(stage)
-        session.expunge(stage)
         session.commit()
         return stage
 
