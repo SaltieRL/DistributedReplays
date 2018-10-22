@@ -5,6 +5,7 @@ from flask import current_app, g
 from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.blueprints.spa_api.service_layers.player.player import Player
 from backend.blueprints.spa_api.service_layers.tournament.tournament_stage import TournamentStage
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player as DBPlayer, Tournament as DBTournament
 from backend.database.wrapper.tournament_wrapper import TournamentWrapper
 
@@ -21,12 +22,11 @@ class Tournament:
             self.admins = [admin.__dict__ for admin in admins]
 
     @staticmethod
-    def create_from_id(tournament_id: int) -> 'Tournament':
-        session = current_app.config['db']()
-        tournament: DBTournament = session.query(DBTournament).filter(DBTournament.id == tournament_id).one()
+    @with_session
+    def create_from_id(tournament_id: int, session=None) -> 'Tournament':
+        tournament: DBTournament = TournamentWrapper.get_tournament(session, tournament_id)
         if tournament is None:
             raise CalculatedError(404, "Tournament not found.")
-        session.close()
         return Tournament.create_from_db_object(tournament)
 
     @staticmethod
@@ -39,40 +39,53 @@ class Tournament:
     @staticmethod
     def get_players_tournaments(platform_id: str) -> 'List[Tournament]':
         session = current_app.config['db']()
-        player: DBPlayer = session.query(DBPlayer).filter(DBPlayer.platformid == platform_id).one()
+        player: DBPlayer = session.query(DBPlayer).filter(DBPlayer.platformid == platform_id).first()
+        if player is None:
+            session.close()
+            raise CalculatedError(404, "Player does not exist.")
         session.close()
         return [Tournament.create_from_db_object(tournament) for tournament in player.owned_tournaments]
 
     @staticmethod
-    def create(name: str) -> 'Tournament':
-        return Tournament.create_from_db_object(TournamentWrapper.add_tournament(g.user.platformid, name))
+    @with_session
+    def create(name: str, session=None) -> 'Tournament':
+        tournament_db, session = TournamentWrapper.add_tournament(session, g.user.platformid, name)
+        result = Tournament.create_from_db_object(tournament_db)
+        session.close()
+        return result
 
     @staticmethod
-    def rename(new_name: str, tournament_id: int) -> 'Tournament':
-        tournament = TournamentWrapper.rename_tournament(new_name, tournament_id=tournament_id,
+    @with_session
+    def rename(new_name: str, tournament_id: int, session=None) -> 'Tournament':
+        tournament = TournamentWrapper.rename_tournament(session, new_name, tournament_id=tournament_id,
                                                          sender=g.user.platformid)
         return Tournament.create_from_db_object(tournament)
 
     @staticmethod
-    def delete(tournament_id: int):
-        TournamentWrapper.remove_tournament(tournament_id=tournament_id, sender=g.user.platformid)
+    @with_session
+    def delete(tournament_id: int, session=None):
+        TournamentWrapper.remove_tournament(session, tournament_id=tournament_id, sender=g.user.platformid)
 
     @staticmethod
-    def add_admin(tournament_id: int, platformid: str):
+    @with_session
+    def add_admin(tournament_id: int, platformid: str, session=None):
         TournamentWrapper.add_tournament_admin(admin_platformid=platformid, tournament_id=tournament_id,
                                                sender=g.user.platformid)
 
     @staticmethod
-    def remove_admin(tournament_id: int, platformid: str):
-        TournamentWrapper.remove_tournament_admin(admin_platformid=platformid, tournament_id=tournament_id,
+    @with_session
+    def remove_admin(tournament_id: int, platformid: str, session=None):
+        TournamentWrapper.remove_tournament_admin(session, admin_platformid=platformid, tournament_id=tournament_id,
                                                   sender=g.user.platformid)
 
     @staticmethod
-    def add_participant(tournament_id: int, platformid: str):
-        TournamentWrapper.add_tournament_participant(participant_platformid=platformid, tournament_id=tournament_id,
-                                                     sender=g.user.platformid)
+    @with_session
+    def add_participant(tournament_id: int, platformid: str, session=None):
+        TournamentWrapper.add_tournament_participant(session, participant_platformid=platformid,
+                                                     tournament_id=tournament_id, sender=g.user.platformid)
 
     @staticmethod
-    def remove_participant(tournament_id: int, platformid: str):
-        TournamentWrapper.remove_tournament_participant(participant_platformid=platformid, tournament_id=tournament_id,
-                                                        sender=g.user.platformid)
+    @with_session
+    def remove_participant(tournament_id: int, platformid: str, session=None):
+        TournamentWrapper.remove_tournament_participant(session, participant_platformid=platformid,
+                                                        tournament_id=tournament_id, sender=g.user.platformid)

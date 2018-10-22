@@ -4,6 +4,7 @@ from flask import current_app, g
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import TournamentSeries as DBSeries
 from backend.database.wrapper.tournament_wrapper import TournamentWrapper
 
@@ -16,12 +17,11 @@ class TournamentSeries:
         self.replays = [replay.__dict__ for replay in replays]
 
     @staticmethod
-    def create_from_id(stage_id: int) -> 'TournamentSeries':
-        session = current_app.config['db']()
-        series: DBSeries = session.query(DBSeries).filter(DBSeries.id == stage_id).one()
+    @with_session
+    def create_from_id(series_id: int, session=None) -> 'TournamentSeries':
+        series: DBSeries = TournamentWrapper.get_series(session, series_id)
         if series is None:
             raise CalculatedError(404, "Series not found.")
-        session.close()
         return TournamentSeries.create_from_db_object(series)
 
     @staticmethod
@@ -30,15 +30,18 @@ class TournamentSeries:
                                 [Replay.create_from_game(game) for game in db_series.games])
 
     @staticmethod
-    def create(name: str, stage_id: int) -> 'TournamentSeries':
+    @with_session
+    def create(name: str, stage_id: int, session=None) -> 'TournamentSeries':
         return TournamentSeries.create_from_db_object(
-            TournamentWrapper.add_tournament_stage(name, stage_id=stage_id, sender=g.user.platformid))
+            TournamentWrapper.add_tournament_stage(session, name, stage_id=stage_id, sender=g.user.platformid))
 
     @staticmethod
-    def rename(new_name: str, series_id: int) -> 'TournamentSeries':
-        tournament = TournamentWrapper.rename_series(new_name, series_id=series_id, sender=g.user.platformid)
+    @with_session
+    def rename(new_name: str, series_id: int, session=None) -> 'TournamentSeries':
+        tournament = TournamentWrapper.rename_series(session, new_name, series_id=series_id, sender=g.user.platformid)
         return TournamentSeries.create_from_db_object(tournament)
 
     @staticmethod
-    def delete(series_id: int):
-        TournamentWrapper.remove_tournament_stage(series_id=series_id, sender=g.user.platformid)
+    @with_session
+    def delete(series_id: int, session=None):
+        TournamentWrapper.remove_tournament_stage(session, series_id=series_id, sender=g.user.platformid)

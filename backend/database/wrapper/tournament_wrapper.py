@@ -49,7 +49,7 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
 
             if tournament_id is None or tournament is None:
                 session.close()
-                raise CalculatedError(404, "Tournament not found.")
+                raise CalculatedError(404, "Tournament not found.")  # TODO create a sub class for that error
 
             is_site_admin = g.admin
             is_owner = sender is tournament.owner
@@ -80,178 +80,158 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
 class TournamentWrapper:
     @staticmethod
     # no permissions required here
-    def add_tournament(owner, name):
-        session = current_app.config['db']()
+    def add_tournament(session, owner, name):
         tournament = Tournament(owner=owner, name=name)
         session.add(tournament)
         session.commit()
-        session.close()
         return tournament
 
     @staticmethod
     @require_permission(TournamentPermissions.SITE_ADMIN)
-    def remove_tournament(tournament_id=None, sender=None):
+    def remove_tournament(session, tournament_id=None, sender=None):
         # better hide this from users, you do not really need to delete tournaments
-        session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
             raise CalculatedError(404, "Tournament not found.")
         session.delete(tournament)
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def rename_tournament(new_name, tournament_id=None, sender=None):
-        session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+    def rename_tournament(session, new_name, tournament_id=None, sender=None):
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
             raise CalculatedError(404, "Tournament not found.")
         tournament.name = new_name
         session.commit()
-        session.close()
 
     @staticmethod
-    def get_tournament(tournament_id, session=None):
-        passed_session = session is not None
-        if not passed_session:
-            session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
-        if not passed_session:
-            session.close()
+    def get_tournament(session, tournament_id):
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         return tournament
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_OWNER)
-    def add_tournament_admin(admin_platformid, tournament_id=None, sender=None):
-        session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+    def add_tournament_admin(session, admin_platformid, tournament_id=None, sender=None):
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
             raise CalculatedError(404, "Tournament not found.")
-        player = session.query(Player).filter(Player.platformid == admin_platformid).one()
+        player = session.query(Player).filter(Player.platformid == admin_platformid).first()
         if tournament is None:
             raise CalculatedError(404, "Player not found.")  # TODO add player to DB instead
         tournament.admins.append(player)
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_OWNER)
-    def remove_tournament_admin(admin_platformid, tournament_id=None, sender=None):
-        session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+    def remove_tournament_admin(session, admin_platformid, tournament_id=None, sender=None):
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
             raise CalculatedError(404, "Tournament not found.")
-        player = session.query(Player).filter(Player.platformid == admin_platformid).one()
+        player = session.query(Player).filter(Player.platformid == admin_platformid).first()
         if tournament is None:
             raise CalculatedError(404, "Player not found.")
         tournament.admins.remove(player)
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def add_tournament_participant(participant_platformid, tournament_id=None, sender=None):
-        session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+    def add_tournament_participant(session, participant_platformid, tournament_id=None, sender=None):
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
             raise CalculatedError(404, "Tournament not found.")
-        player = session.query(Player).filter(Player.platformid == participant_platformid).one()
+        player = session.query(Player).filter(Player.platformid == participant_platformid).first()
         if tournament is None:
             raise CalculatedError(404, "Player not found.")  # TODO add player to DB instead
         tournament.participants.append(player)
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def remove_tournament_participant(participant_platformid, tournament_id=None, sender=None):
-        session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+    def remove_tournament_participant(session, participant_platformid, tournament_id=None, sender=None):
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
             raise CalculatedError(404, "Tournament not found.")
-        player = session.query(Player).filter(Player.platformid == participant_platformid).one()
+        player = session.query(Player).filter(Player.platformid == participant_platformid).first()
         if tournament is None:
             raise CalculatedError(404, "Player not found.")
         tournament.participants.remove(player)
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def add_tournament_stage(stage_name, tournament_id=None, sender=None):
-        session = current_app.config['db']()
-        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
+    def add_tournament_stage(session, stage_name, tournament_id=None, sender=None):
+        tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
             raise CalculatedError(404, "Tournament not found.")
         stage = TournamentStage(tournament_id=tournament_id, name=stage_name)
         session.add(stage)
+        session.expunge(stage)
         session.commit()
-        session.close()
+        return stage
+
+    @staticmethod
+    def get_stage(session, stage_id):
+        stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).first()
         return stage
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def remove_tournament_stage(stage_id=None, sender=None):
-        session = current_app.config['db']()
-        stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).one()
+    def remove_tournament_stage(session, stage_id=None, sender=None):
+        stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).first()
         if stage is None:
             raise CalculatedError(404, "Stage not found.")
         session.delete(stage)
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def rename_tournament_stage(new_name, stage_id=None, sender=None):
-        session = current_app.config['db']()
-        stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).one()
+    def rename_tournament_stage(session, new_name, stage_id=None, sender=None):
+        stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).first()
         if stage is None:
             raise CalculatedError(404, "Stage not found.")
         stage.name = new_name
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def add_series_to_stage(series_name, stage_id=None, sender=None):
-        session = current_app.config['db']()
-        stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).one()
+    def add_series_to_stage(session, series_name, stage_id=None, sender=None):
+        stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).first()
         if stage is None:
             raise CalculatedError(404, "Stage not found.")
         series = TournamentSeries(name=series_name, stage_id=stage_id)
         session.add(series)
         session.commit()
-        session.close()
         return series
 
     @staticmethod
+    def get_series(session, series_id):
+        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
+        return series
+
+
+    @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def remove_series(series_id=None, sender=None):
-        session = current_app.config['db']()
-        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).one()
+    def remove_series(session, series_id=None, sender=None):
+        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
             raise CalculatedError(404, "Stage not found.")
         session.delete(series)
-        session.commit()
         session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def rename_series(new_name, series_id=None, sender=None):
-        session = current_app.config['db']()
-        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).one()
+    def rename_series(session, new_name, series_id=None, sender=None):
+        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
             raise CalculatedError(404, "Stage not found.")
         series.name = new_name
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def add_game_to_series(game_hash, series_id=None, sender=None):
-        session = current_app.config['db']()
-        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).one()
+    def add_game_to_series(session, game_hash, series_id=None, sender=None):
+        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
             raise CalculatedError(404, "Stage not found.")
         game = session.query(Game).filter(Game.hash == game_hash)
@@ -259,13 +239,11 @@ class TournamentWrapper:
             raise CalculatedError(404, "Game not found.")
         series.games.append(game)
         session.commit()
-        session.close()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
-    def remove_game_from_series(game_hash, series_id=None, sender=None):
-        session = current_app.config['db']()
-        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).one()
+    def remove_game_from_series(session, game_hash, series_id=None, sender=None):
+        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
             raise CalculatedError(404, "Stage not found.")
         game = session.query(Game).filter(Game.hash == game_hash)
@@ -273,11 +251,9 @@ class TournamentWrapper:
             raise CalculatedError(404, "Game not found.")
         series.games.remove(game)
         session.commit()
-        session.close()
 
     @staticmethod
-    def start_auto_tournament_adding(game_hash):
-        session = current_app.config['db']()
+    def start_auto_tournament_adding(session, game_hash):
         game = session.query(Game).filter(Game.hash == game_hash).scalar()
 
         unmatched_players_tolerance = 0
@@ -326,11 +302,12 @@ class TournamentWrapper:
                 stage = session.query(TournamentStage).\
                     filter(TournamentStage.tournament_id == tourney_player.tournament_id).first()
                 if stage is None:
-                    stage = TournamentWrapper.add_tournament_stage(tourney_player.tournament_id, DEFAULT_STAGE_NAME)
+                    stage = TournamentWrapper.add_tournament_stage(session, tourney_player.tournament_id,
+                                                                   DEFAULT_STAGE_NAME)
 
-                series = TournamentWrapper.add_series_to_stage(stage.id, DEFAULT_SERIES_NAME)
+                series = TournamentWrapper.add_series_to_stage(session, stage.id, DEFAULT_SERIES_NAME)
 
-            TournamentWrapper.add_game_to_series(game.hash, series.id)
+            TournamentWrapper.add_game_to_series(session, game.hash, series.id)
 
             if matched_count < game.teamsize * 2:
                 series.status = TournamentSeriesStatus.REVIEW_NEEDED
