@@ -43,7 +43,7 @@ class Playlist(enum.Enum):
     RANKED_SNOW_DAY = 30
 
 
-class TournamentSeriesStatus:
+class TournamentSeriesStatus(enum.Enum):
     OFFICIAL_MATCH = 1
     REVIEW_NEEDED = 2
     SCRIM = 3
@@ -309,7 +309,7 @@ class Tournament(DBObjectBase):
     owner = Column(String(40), ForeignKey('players.platformid'))
     participants = relationship('Player', secondary='tournament_players', back_populates='participating_tournaments')
     admins = relationship('Player', secondary='tournament_admins', back_populates='administrating_tournaments')
-    stages = relationship('TournamentStage')
+    stages = relationship('TournamentStage', back_populates='tournament')
 
 
 class TournamentAdmin(DBObjectBase):
@@ -323,7 +323,8 @@ class TournamentStage(DBObjectBase):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
     tournament_id = Column(Integer, ForeignKey('tournaments.id'))
-    serieses = relationship('TournamentSeries')
+    tournament = relationship('Tournament', back_populates='stages')
+    serieses = relationship('TournamentSeries', back_populates='stage')
     # TODO allow admins to add time info about games so that it will only find games played at certain time frames
 
 
@@ -338,6 +339,7 @@ class TournamentSeries(DBObjectBase):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100))
     stage_id = Column(Integer, ForeignKey('tournament_stages.id'))
+    stage = relationship('TournamentStage', back_populates='serieses')
     games = relationship('Game', secondary='series_games', back_populates='serieses')
     status = Column(Enum(TournamentSeriesStatus))
 

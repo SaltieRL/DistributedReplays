@@ -304,7 +304,7 @@ def api_create_tournament(name):
     return better_jsonify(Tournament.create(name)), 201
 
 
-@bp.route('tournament/<tournament_id>', methods=["POST"])
+@bp.route('tournament/<tournament_id>', methods=["PATCH"])
 def api_rename_tournament(tournament_id):
     accepted_query_params = [QueryParam(name='new_name')]
     query_params = get_query_params(accepted_query_params, request)
@@ -353,7 +353,7 @@ def api_create_tournament_stage(tournament_id, name):
     return better_jsonify(TournamentStage.create(name, tournament_id=tournament_id)), 201
 
 
-@bp.route('tournament/<tournament_id>/stage/<stage_id>', methods=["POST"])
+@bp.route('tournament/<tournament_id>/stage/<stage_id>', methods=["PATCH"])
 def api_rename_tournament_stage(tournament_id, stage_id):
     accepted_query_params = [QueryParam(name='new_name')]
     query_params = get_query_params(accepted_query_params, request)
@@ -377,7 +377,7 @@ def api_create_tournament_series(tournament_id, stage_id, name):
     return better_jsonify(TournamentSeries.create(name, stage_id)), 201
 
 
-@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>', methods=["POST"])
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>', methods=["PATCH"])
 def api_rename_tournament_series(tournament_id, stage_id, series_id):
     accepted_query_params = [QueryParam(name='new_name')]
     query_params = get_query_params(accepted_query_params, request)

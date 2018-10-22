@@ -25,9 +25,16 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
             if sender is None:
                 raise CalculatedError(401, 'User not authenticated.')
 
-            tournament_id = kwargs['tournament_id']
-            stage_id = kwargs['stage_id']
-            series_id = kwargs['series_id']
+            tournament_id = None
+            stage_id = None
+            series_id = None
+
+            if 'tournament_id' in kwargs:
+                tournament_id = kwargs['tournament_id']
+            if 'stage_id' in kwargs:
+                stage_id = kwargs['stage_id']
+            if 'series_id' in kwargs:
+                series_id = kwargs['series_id']
 
             session = current_app.config['db']()
             if series_id is not None:
@@ -58,12 +65,12 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
             session.close()
 
             if permission_level is TournamentPermissions.SITE_ADMIN and is_site_admin:
-                return decorated_function(args, kwargs)
+                return decorated_function(*args, **kwargs)
             elif permission_level is TournamentPermissions.TOURNAMENT_OWNER and (is_owner or is_site_admin):
-                return decorated_function(args, kwargs)
+                return decorated_function(*args, **kwargs)
             elif permission_level is TournamentPermissions.TOURNAMENT_ADMIN and (is_owner or is_site_admin or
                                                                                  is_tournament_admin):
-                return decorated_function(args, kwargs)
+                return decorated_function(*args, **kwargs)
             else:
                 raise CalculatedError(403, 'User not authorized.')
         return permission_wrapper
