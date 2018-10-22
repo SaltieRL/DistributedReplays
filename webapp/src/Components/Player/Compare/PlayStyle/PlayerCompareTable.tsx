@@ -1,6 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
 import * as React from "react"
 import { PlayStyleRawResponse } from "src/Models"
+import { roundNumberToMaxDP } from "../../../../Utils/String"
 
 interface StatRow {
     max: number
@@ -31,11 +32,7 @@ export class PlayerCompareTable extends React.PureComponent<Props, State> {
         const header = (
             <TableRow>
                 <TableCell>Stat</TableCell>
-                {names.map((player) =>
-                    <>
-                        <TableCell>{player}</TableCell>
-
-                    </>)}
+                {names.map((player, i) => <TableCell key={player}>{player}</TableCell>)}
             </TableRow>
         )
 
@@ -57,31 +54,35 @@ export class PlayerCompareTable extends React.PureComponent<Props, State> {
                     </TableHead>
                     <TableBody>
 
-                        {stats.map((stat) => {
-                                return <TableRow key={stat.name}>
+                        {stats.map((stat) => (<TableRow key={stat.name}>
                                     <TableCell>
                                         {stat.name}
                                     </TableCell>
                                     {stat.values.map((value, i) =>
                                         <TableCell key={i}
-                                                   style={{
-                                                       backgroundColor: ((heatmap && rawPlayers.length > 1) ?
-                                                           `rgba(${200 * (value - stat.min) / (stat.max - stat.min)}, 0,
-                                                            ${200 * (stat.max - value) / (stat.max - stat.min)}, 1)`
-                                                           :
-                                                           "#fff"),
-                                                       color: ((heatmap && rawPlayers.length > 1) ? "white" : "black")
-                                                   }}>
-                                            {value.toFixed(2)}
+                                                   style={this.getTableCellStyles(value, stat,
+                                                       (heatmap && rawPlayers.length > 1))}>
+                                            {roundNumberToMaxDP(value)}
                                         </TableCell>)}
                                 </TableRow>
-                            }
+                            )
                         )}
                     </TableBody>
                 </Table>
             )
-        } else {
-            return ""
+        }
+        return null
+    }
+
+    private readonly getTableCellStyles = (value: number, stat: StatRow, isHeatmapMode?: boolean) => {
+        return {
+            backgroundColor: (isHeatmapMode ?
+                `rgba(${200 * (value - stat.min) / (stat.max - stat.min)}, 0,
+                                                            ${200 * (stat.max - value) / (stat.max - stat.min)}, 1)`
+                :
+                "#fff"),
+            color: (isHeatmapMode ? "white" : "black")
         }
     }
+
 }
