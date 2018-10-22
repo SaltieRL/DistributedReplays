@@ -1,1 +1,13 @@
 Generic single-database configuration.
+
+To create a new revision:
+
+```
+alembic revision --autogenerate -m "<What changed>"
+```
+
+Upgrade to the most recent revision:
+
+```
+alembic upgrade head
+```
