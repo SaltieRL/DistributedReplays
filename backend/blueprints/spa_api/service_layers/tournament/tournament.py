@@ -37,13 +37,12 @@ class Tournament:
                           [Player.create_from_id(admin.platformid) for admin in tournament.admins])
 
     @staticmethod
-    def get_players_tournaments(platform_id: str) -> 'List[Tournament]':
-        session = current_app.config['db']()
+    @with_session
+    def get_players_tournaments(platform_id: str, session=None) -> 'List[Tournament]':
         player: DBPlayer = session.query(DBPlayer).filter(DBPlayer.platformid == platform_id).first()
         if player is None:
             session.close()
             raise CalculatedError(404, "Player does not exist.")
-        session.close()
         return [Tournament.create_from_db_object(tournament) for tournament in player.owned_tournaments]
 
     @staticmethod
@@ -69,7 +68,7 @@ class Tournament:
     @staticmethod
     @with_session
     def add_admin(tournament_id: int, platformid: str, session=None):
-        TournamentWrapper.add_tournament_admin(admin_platformid=platformid, tournament_id=tournament_id,
+        TournamentWrapper.add_tournament_admin(session, admin_platformid=platformid, tournament_id=tournament_id,
                                                sender=g.user.platformid)
 
     @staticmethod

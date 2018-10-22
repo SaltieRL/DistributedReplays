@@ -209,7 +209,6 @@ class TournamentWrapper:
         series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         return series
 
-
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
     def remove_series(session, series_id=None, sender=None):
