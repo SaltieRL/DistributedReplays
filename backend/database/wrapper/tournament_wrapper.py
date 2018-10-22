@@ -104,6 +104,7 @@ class TournamentWrapper:
             raise CalculatedError(404, "Tournament not found.")
         tournament.name = new_name
         session.commit()
+        return tournament
 
     @staticmethod
     def get_tournament(session, tournament_id):
@@ -193,6 +194,7 @@ class TournamentWrapper:
             raise CalculatedError(404, "Stage not found.")
         stage.name = new_name
         session.commit()
+        return stage
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
@@ -227,6 +229,7 @@ class TournamentWrapper:
             raise CalculatedError(404, "Stage not found.")
         series.name = new_name
         session.commit()
+        return series
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)

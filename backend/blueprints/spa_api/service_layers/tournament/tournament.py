@@ -13,6 +13,7 @@ from backend.database.wrapper.tournament_wrapper import TournamentWrapper
 class Tournament:
     def __init__(self, id_: int, owner: str, name: str, participants: List[Player], stages: List[TournamentStage],
                  admins: List[Player]):
+        # TODO consider changing player for better performance
         self.id = id_
         self.owner = owner
         self.name = name
