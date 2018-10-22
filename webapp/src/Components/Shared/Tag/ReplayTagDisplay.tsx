@@ -6,31 +6,19 @@ import { addTagToGame, removeTagFromGame } from "../../../Requests/Tag"
 interface Props {
     replay: Replay
     userTags: Tag[]
+    handleUpdateTags: (tags: Tag[]) => void // TODO: Investigate if this should be moved to avoid passing down a lot.
 }
 
-interface State {
-    // TODO: Remove this monstrosity - it acts as a local override that avoids mutating this.props.replay
-    /* TODO: This means that reopening the dialog resets the changes in the page (but change is actually made in db
-     and show if you refresh.*/
-    locallyChangedTags?: Tag[]
-}
-
-export class ReplayTagDisplay extends React.PureComponent<Props, State> {
-    constructor(props: Props) {
-        super(props)
-        this.state = {}
-    }
-
+export class ReplayTagDisplay extends React.PureComponent<Props> {
     public render() {
-        const {userTags} = this.props
-        const replayTags = this.getReplayTags()
+        const {replay, userTags} = this.props
         return (
             <div style={{paddingTop: 16}}>
                 <FormControl>
                     <InputLabel>Tags</InputLabel>
                     <Select
                         multiple
-                        value={replayTags.map((tag) => tag.name)}
+                        value={replay.tags.map((tag) => tag.name)}
                         onChange={this.handleChange}
                         autoWidth
                         renderValue={(tagNames: string[]) => {
@@ -59,12 +47,8 @@ export class ReplayTagDisplay extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly getReplayTags = () => {
-        return this.state.locallyChangedTags ? this.state.locallyChangedTags : this.props.replay.tags
-    }
-
     private readonly handleChipDelete = (tagName: string) => () => {
-        const replayTags = this.getReplayTags()
+        const replayTags = this.props.replay.tags
         this.handleChange({
             target: {
                 value: replayTags.filter((tag) => tag.name !== tagName)
@@ -82,15 +66,13 @@ export class ReplayTagDisplay extends React.PureComponent<Props, State> {
 
         const addedTagNames = selectedTagNames.filter((tagName) => originalTagNames.indexOf(tagName) === -1)
 
-        removedTagNames.forEach((tagName) => {
-            removeTagFromGame(tagName, replay.id)
-        })
-        addedTagNames.forEach((tagName) => {
-            addTagToGame(tagName, replay.id)
-        })
-
-        const selectedTags = this.props.userTags.filter((tag) => selectedTagNames.indexOf(tag.name) !== -1)
-
-        this.setState({locallyChangedTags: selectedTags})
+        Promise.all([
+            ...removedTagNames.map((tagName) => removeTagFromGame(tagName, replay.id)),
+            ...addedTagNames.map((tagName) => addTagToGame(tagName, replay.id))
+        ])
+            .then(() => {
+                const selectedTags = this.props.userTags.filter((tag) => selectedTagNames.indexOf(tag.name) !== -1)
+                this.props.handleUpdateTags(selectedTags)
+            })
     }
 }

@@ -7,6 +7,7 @@ import { TagDialog } from "./TagDialog"
 
 interface Props {
     replay: Replay
+    handleUpdateTags: (tags: Tag[]) => void
 }
 
 interface State {
@@ -31,6 +32,7 @@ export class TagDialogWrapper extends React.PureComponent<Props, State> {
                     open={this.state.open}
                     onClose={this.handleClose}
                     replay={this.props.replay}
+                    handleUpdateTags={this.props.handleUpdateTags}
                 />
             </>
         )

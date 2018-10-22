@@ -13,6 +13,7 @@ interface Props {
     open: boolean,
     onClose: () => void
     replay: Replay
+    handleUpdateTags: (tags: Tag[]) => void
 }
 
 interface State {
@@ -53,6 +54,7 @@ export class TagDialog extends React.PureComponent<Props, State> {
                                 <ReplayTagDisplay
                                     replay={this.props.replay}
                                     userTags={this.state.userTags}
+                                    handleUpdateTags={this.props.handleUpdateTags}
                                 />
                                 :
                                 <UserTagDisplay

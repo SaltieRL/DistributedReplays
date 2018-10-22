@@ -11,6 +11,7 @@ import { ReplayTeamCard } from "./ReplayTeamCard/ReplayTeamCard"
 
 interface OwnProps {
     replay: Replay
+        handleUpdateTags: (tags: Tag[]) => void
 }
 
 type Props = OwnProps
@@ -42,7 +43,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                     action={
                         <div style={{position: "relative", width: 0, right: 16, top: 16}}>
                             <div style={{display: "flex", float: "right"}}>
-                            <TagDialogWrapper replay={replay}/>
+                            <TagDialogWrapper replay={replay} handleUpdateTags={this.props.handleUpdateTags}/>
                             {isWidthUp("sm", width) && downloadButton
                             }
                             </div>
