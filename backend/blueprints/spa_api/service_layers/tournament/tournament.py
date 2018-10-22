@@ -71,6 +71,7 @@ class Tournament:
     def add_admin(tournament_id: int, platformid: str, session=None):
         TournamentWrapper.add_tournament_admin(session, admin_platformid=platformid, tournament_id=tournament_id,
                                                sender=g.user.platformid)
+        return Player.create_from_id(platformid)
 
     @staticmethod
     @with_session
@@ -83,6 +84,7 @@ class Tournament:
     def add_participant(tournament_id: int, platformid: str, session=None):
         TournamentWrapper.add_tournament_participant(session, participant_platformid=platformid,
                                                      tournament_id=tournament_id, sender=g.user.platformid)
+        return Player.create_from_id(platformid)
 
     @staticmethod
     @with_session
