@@ -63,6 +63,7 @@ venv.bak/
 .mypy_cache/
 replays/
 .idea/
+.vscode
 *.iws
 out/
 .idea_modules/

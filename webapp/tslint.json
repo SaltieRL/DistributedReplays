@@ -56,7 +56,10 @@
         "quotemark": [true, "double", "avoid-escape", "jsx-double"],
         "semicolon": [true, "never"],
         "space-before-function-paren": [true, "never"],
-        "trailing-comma": [true, { "multiline": "never", "singleline": "never" }],
+        "trailing-comma": [true, {
+            "multiline": "never",
+            "singleline": "never"
+        }],
         "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
         "whitespace": [
             true,

@@ -2,7 +2,7 @@ import { withTheme, WithTheme } from "@material-ui/core"
 import { ChartData, ChartDataSets, LinearTickOptions, RadialChartOptions } from "chart.js"
 import * as React from "react"
 import { Radar } from "react-chartjs-2"
-import { ChartDataResponse } from "../../../../Models/ChartData"
+import { ChartDataPoint, ChartDataResponse } from "src/Models"
 import { roundLabelToMaxDPCallback } from "../../../../Utils/Chart"
 import { colorsForPlaylists, convertHexToRgba } from "../../../../Utils/Color"
 
@@ -26,8 +26,8 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
     private readonly getChartData = (): ChartData => {
         const {names, data} = this.props
 
-        const labels = data[0].chartDataPoints.map((chartDataPoint) => chartDataPoint.name)
-        const averageData = data[0].chartDataPoints.map((chartDataPoint) =>
+        const labels = data[0].chartDataPoints.map((chartDataPoint: ChartDataPoint) => chartDataPoint.name)
+        const averageData = data[0].chartDataPoints.map((chartDataPoint: ChartDataPoint) =>
             chartDataPoint.average === undefined ? 0 : chartDataPoint.average)
         const chartDataSetColors = this.getChartDataSetColors()
 

@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, Grid, IconButton, Tooltip, withWidth } f
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import CloudDownload from "@material-ui/icons/CloudDownload"
 import * as React from "react"
+import { Replay } from "src/Models"
 import { LOCAL_LINK } from "../../Globals"
-import { getColouredGameScore, Replay } from "../../Models/Replay/Replay"
+import { ColouredGameScore } from "../Shared/ColouredGameScore"
 import { ReplayChart } from "./ReplayChart"
 import { ReplayTabs } from "./ReplayTabs"
 import { ReplayTeamCard } from "./ReplayTeamCard/ReplayTeamCard"
@@ -36,7 +37,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
             <Card>
                 <CardHeader
                     title={replay.name ? replay.name : "Unnamed replay"}
-                    subheader={getColouredGameScore(replay)}
+                    subheader={<ColouredGameScore replay={replay}/>}
                     titleTypographyProps={{align: "center"}}
                     subheaderTypographyProps={{align: "center", variant: "subheading"}}
                     action={

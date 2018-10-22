@@ -16,7 +16,6 @@ import ErrorIcon from "@material-ui/icons/Error"
 import InfoIcon from "@material-ui/icons/Info"
 import WarningIcon from "@material-ui/icons/Warning"
 import * as React from "react"
-import { AppError } from "../../../Models/Error"
 
 type NotificationVariant = "success" | "info" | "warning" | "error"
 

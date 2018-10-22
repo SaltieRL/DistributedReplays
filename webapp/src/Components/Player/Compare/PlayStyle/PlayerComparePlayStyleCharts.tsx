@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleRawResponse, PlayStyleResponse } from "../../../../Models/Player/PlayStyle"
+import { PlayStyleRawResponse, PlayStyleResponse } from "src/Models"
 import { getPlayStyle, getPlayStyleRaw } from "../../../../Requests/Player/getPlayStyle"
 import { RankSelect } from "../../../Shared/Selects/RankSelect"
 import { PlayerPlayStyleChart } from "../../Overview/PlayStyle/PlayerPlayStyleChart"

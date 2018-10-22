@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
 import * as React from "react"
-import { BasicStat, StatsSubcategory } from "../../../Models/ChartData"
+import { BasicStat, StatsSubcategory } from "src/Models"
 import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
 
 interface StatMetadata {
