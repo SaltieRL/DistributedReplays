@@ -45,3 +45,14 @@ class TournamentSeries:
     @with_session
     def delete(series_id: int, session=None):
         TournamentWrapper.remove_series(session, series_id=series_id, sender=g.user.platformid)
+
+    @staticmethod
+    @with_session
+    def add_game(series_id: int, game_hash: str, session=None):
+        return Replay.create_from_game(TournamentWrapper.add_game_to_series(session, game_hash, series_id=series_id,
+                                                                            sender=g.user.platformid))
+
+    @staticmethod
+    @with_session
+    def remove_game(series_id: int, game_hash: str, session=None):
+        TournamentWrapper.remove_game_from_series(session, game_hash, series_id=series_id, sender=g.user.platformid)

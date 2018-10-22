@@ -391,6 +391,18 @@ def api_delete_tournament_series(tournament_id, stage_id, series_id):
     return '', 204
 
 
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>/<game_hash>', methods=["PUT"])
+def api_add_game_to_series(tournament_id, stage_id, series_id, game_hash):
+    replay = TournamentSeries.add_game(series_id, game_hash)
+    return better_jsonify(replay), 201
+
+
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>/<game_hash>', methods=["DELETE"])
+def api_remove_game_from_series(tournament_id, stage_id, series_id, game_hash):
+    TournamentSeries.remove_game(series_id, game_hash)
+    return '', 204
+
+
 @bp.route('player/<id_>/tournaments')
 def api_get_players_tournaments(id_):
     return better_jsonify(Tournament.get_players_tournaments(id_))

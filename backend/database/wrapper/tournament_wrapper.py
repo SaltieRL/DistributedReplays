@@ -237,11 +237,12 @@ class TournamentWrapper:
         series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
             raise CalculatedError(404, "Stage not found.")
-        game = session.query(Game).filter(Game.hash == game_hash)
+        game = session.query(Game).filter(Game.hash == game_hash).first()
         if game is None:
             raise CalculatedError(404, "Game not found.")
         series.games.append(game)
         session.commit()
+        return game
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
@@ -249,15 +250,18 @@ class TournamentWrapper:
         series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
             raise CalculatedError(404, "Stage not found.")
-        game = session.query(Game).filter(Game.hash == game_hash)
+        game = session.query(Game).filter(Game.hash == game_hash).first()
         if game is None:
             raise CalculatedError(404, "Game not found.")
-        series.games.remove(game)
+        if game in series.games:
+            series.games.remove(game)
         session.commit()
 
     @staticmethod
     def start_auto_tournament_adding(session, game_hash):
-        game = session.query(Game).filter(Game.hash == game_hash).scalar()
+        game = session.query(Game).filter(Game.hash == game_hash).first()
+        if game is None:
+            raise CalculatedError(404, "Game not found.")
 
         unmatched_players_tolerance = 0
         if game.teamsize > 1:
