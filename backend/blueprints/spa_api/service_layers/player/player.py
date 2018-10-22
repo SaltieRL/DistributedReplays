@@ -26,6 +26,10 @@ class Player:
         try:
             steam_profile = get_steam_profile_or_random_response(id_)['response']['players'][0]
         except TypeError:
+            if len(names_and_counts) > 0:
+                return Player(id_=id_, name=names_and_counts[0][0], past_names=names_and_counts, profile_link="",
+                              avatar_link="https://cdn.discordapp.com/attachments/499329447967850507/503993148024815617/781cd87d570a7df1e51994d39dc41b09f1a8cf3a_full.jpg" if not id_.startswith(
+                                  'b') else "https://cdn.discordapp.com/attachments/499329447967850507/503992592074014738/ai.jpeg")
             raise PlayerNotFound
         session.close()
         return Player(id_=id_, name=steam_profile['personaname'], past_names=names_and_counts,
