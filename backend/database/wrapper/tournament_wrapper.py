@@ -52,13 +52,13 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
                 raise CalculatedError(404, "Tournament not found.")  # TODO create a sub class for that error
 
             is_site_admin = g.admin
-            is_owner = sender is tournament.owner
+            is_owner = sender == tournament.owner
             is_tournament_admin = False
 
-            # if the sender is the owner, we can skip going through admins
-            if not is_owner:
+            # if the sender is the owner or site admin, we can skip going through admins
+            if not is_site_admin and not is_owner:
                 for admin in tournament.admins:
-                    if admin.platformid is sender:
+                    if admin.platformid == sender:
                         is_tournament_admin = True
                         break
 

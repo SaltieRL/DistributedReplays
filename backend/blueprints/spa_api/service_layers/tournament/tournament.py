@@ -49,7 +49,7 @@ class Tournament:
     @staticmethod
     @with_session
     def create(name: str, session=None) -> 'Tournament':
-        tournament_db, session = TournamentWrapper.add_tournament(session, g.user.platformid, name)
+        tournament_db = TournamentWrapper.add_tournament(session, g.user.platformid, name)
         result = Tournament.create_from_db_object(tournament_db)
         session.close()
         return result
