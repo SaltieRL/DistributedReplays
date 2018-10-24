@@ -93,7 +93,11 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                     </Typography>
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
-                    <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
+                    <IconButton
+                        href={REPLAY_PAGE_LINK(replay.id)}
+                        className={classes.iconButton}
+                        onClick={(event) => event.stopPropagation()}
+                    >
                         <InsertChart/>
                     </IconButton>
                 </Grid>
