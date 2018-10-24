@@ -41,7 +41,8 @@ export class PlayerCompareContent extends React.PureComponent<Props, State> {
                     :
                     <div style={{padding: 16, paddingBottom: 48}}>
                         <Grid container spacing={32} justify="center">
-                            <PlayerProgressionCharts players={this.props.players}/>
+                            <PlayerProgressionCharts players={this.props.players} playlist={this.state.playlist}
+                                                          handlePlaylistChange={this.handlePlaylistChange}/>
                         </Grid>
                     </div>
                 }

@@ -18,13 +18,14 @@ class PlayStyleProgression:
     def create_progression(id_: str,
                            time_unit: TimeUnit = None,
                            start_date: datetime.datetime = None,
-                           end_date: datetime.datetime = None) -> List['PlayStyleProgressionDataPoint']:
+                           end_date: datetime.datetime = None,
+                           playlist: int = None) -> List['PlayStyleProgressionDataPoint']:
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
             raise UserHasNoReplays()
         data = player_stat_wrapper.get_progression_stats(session, id_, time_unit=time_unit, start_date=start_date,
-                                                         end_date=end_date)
+                                                         end_date=end_date, playlist=playlist)
         session.close()
 
         return [

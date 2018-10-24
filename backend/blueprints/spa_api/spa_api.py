@@ -157,6 +157,7 @@ def api_get_player_play_style_progress(id_):
         QueryParam(name='time_unit', optional=True, type_=convert_to_enum(TimeUnit)),
         QueryParam(name='start_date', optional=True, type_=convert_to_datetime),
         QueryParam(name='end_date', optional=True, type_=convert_to_datetime),
+        QueryParam(name='playlist', optional=True, type_=int),
     ]
     query_params = get_query_params(accepted_query_params, request)
 

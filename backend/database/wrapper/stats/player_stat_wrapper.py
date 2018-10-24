@@ -89,7 +89,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
     def get_progression_stats(self, session, id_,
                               time_unit: 'TimeUnit' = TimeUnit.MONTH,
                               start_date: datetime.datetime = None,
-                              end_date: datetime.datetime = None):
+                              end_date: datetime.datetime = None,
+                              playlist: int = 13):
 
         if time_unit == TimeUnit.MONTH:
             date = func.to_char(Game.match_date, 'YY-MM')
@@ -128,6 +129,9 @@ class PlayerStatWrapper(GlobalStatWrapper):
         if end_date is not None:
             mean_query = mean_query.filter(Game.match_date < end_date)
             std_query = std_query.filter(Game.match_date < end_date)
+        if playlist is not None:
+            mean_query = mean_query.filter(Game.playlist == playlist)
+            std_query = std_query.filter(Game.playlist == playlist)
 
         mean_query = mean_query.all()
         std_query = std_query.all()

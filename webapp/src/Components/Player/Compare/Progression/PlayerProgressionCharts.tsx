@@ -8,9 +8,12 @@ import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 import { ClearableDatePicker } from "../../../Shared/ClearableDatePicker"
 import { FieldSelect } from "./FieldSelect"
 import { ProgressionChart } from "./ProgressionChart"
+import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 
 interface Props {
     players: Player[]
+    playlist: number
+    handlePlaylistChange?: (playlist: number) => void
 }
 
 export type TimeUnit = "day" | "month" | "quarter" | "year"
@@ -23,6 +26,7 @@ interface State {
     startDate: moment.Moment | null
     endDate: moment.Moment | null
     timeUnit: "day" | "month" | "quarter" | "year"
+    playlist: number | null
 }
 
 export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
@@ -34,7 +38,8 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
             selectedFields: [],
             startDate: null,
             endDate: null,
-            timeUnit: "month"
+            timeUnit: "month",
+            playlist: this.props.playlist
         }
     }
 
@@ -65,7 +70,8 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
 
         if ((this.state.timeUnit !== prevState.timeUnit)
             || (this.state.startDate !== prevState.startDate)
-            || (this.state.endDate !== prevState.endDate)) {
+            || (this.state.endDate !== prevState.endDate)
+            || (this.state.playlist !== prevState.playlist)) {
             this.refreshAllData()
                 .then(this.updateFields)
         }
@@ -82,10 +88,19 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
             player: players[i],
             playStyleProgressionPoints
         }))
-
+        const dropDown = (
+            <PlaylistSelect
+                selectedPlaylists={[this.props.playlist]}
+                handleChange={this.handlePlaylistsChange}
+                inputLabel="Playlist"
+                helperText="Select playlist to use"
+                dropdownOnly
+                currentPlaylistsOnly
+                multiple={false}/>
+        )
         return (
             <>
-                <Grid item xs={12} md={10} xl={8} style={{textAlign: "center"}} container spacing={16}>
+                <Grid item xs={12} md={12} xl={10} style={{textAlign: "center"}} container spacing={16}>
                     <Grid item xs={12} sm={6} lg={4}>
                         <FieldSelect fields={this.state.fields}
                                      selectedFields={this.state.selectedFields}
@@ -121,6 +136,9 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
                                              onChange={this.handleEndDateChange}
                                              label="End date"/>
                     </Grid>
+                </Grid>
+                <Grid item xs={12} style={{textAlign: "center"}}>
+                    {dropDown}
                 </Grid>
                 {this.state.selectedFields.map((field) => {
                     return (
@@ -173,7 +191,8 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
         return getProgression(playerId, {
             timeUnit: this.state.timeUnit === null ? undefined : this.state.timeUnit,
             startDate: this.state.startDate === null ? undefined : this.state.startDate,
-            endDate: this.state.endDate === null ? undefined : this.state.endDate
+            endDate: this.state.endDate === null ? undefined : this.state.endDate,
+            playlist: this.state.playlist === null ? undefined : this.state.playlist
         })
     }
 
@@ -200,5 +219,12 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
 
     private readonly handleTimeUnitChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         this.setState({timeUnit: event.target.value as TimeUnit})
+    }
+    private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
+        const selectedPlaylist = event.target.value as any as number
+        this.setState({playlist: selectedPlaylist})
+        if (this.props.handlePlaylistChange) {
+            this.props.handlePlaylistChange(selectedPlaylist)
+        }
     }
 }
