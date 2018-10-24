@@ -49,7 +49,8 @@ class TagDialogWrapperComponent extends React.PureComponent<Props, State> {
         this.setState({open: true})
     }
 
-    private readonly handleClose = () => {
+    private readonly handleClose: React.ReactEventHandler<{}> = (event) => {
+        event.stopPropagation()
         this.setState({open: false})
     }
 }

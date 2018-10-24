@@ -11,7 +11,7 @@ const tagTabs: TagTab[] = ["Replay", "My tags"]
 
 interface Props {
     open: boolean,
-    onClose: () => void
+    onClose: React.ReactEventHandler<{}>
     replay: Replay
     handleUpdateTags: (tags: Tag[]) => void
 }
