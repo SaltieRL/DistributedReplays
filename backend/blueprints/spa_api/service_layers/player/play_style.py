@@ -50,7 +50,8 @@ class PlayStyleResponse:
         )
 
     @staticmethod
-    def create_all_stats_from_id(id_: str, rank=None, replay_ids=None, playlist=None, win=None) -> PlayerDataPoint:
+    def create_all_stats_from_id(id_: str, rank: int = None, replay_ids: List[str] = None, playlist: int = None,
+                                 win: bool = None) -> PlayerDataPoint:
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
