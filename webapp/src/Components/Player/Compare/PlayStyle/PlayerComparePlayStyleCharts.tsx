@@ -18,7 +18,6 @@ interface State {
     playerPlayStylesRaw: PlayStyleRawResponse[]
     rank: number
     heatmapMode: boolean
-    playlist: number
 }
 
 export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, State> {
@@ -28,8 +27,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
             playerPlayStyles: [],
             playerPlayStylesRaw: [],
             rank: -1,
-            heatmapMode: false,
-            playlist: props.playlist
+            heatmapMode: false
         }
     }
 
@@ -56,7 +54,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
         if (this.state.rank !== prevState.rank) {
             this.handleAddPlayers(this.props.players, true)
         }
-        if (this.state.playlist !== prevState.playlist) {
+        if (this.props.playlist !== prevProps.playlist) {
             this.handleAddPlayers(this.props.players, true)
         }
     }
@@ -130,7 +128,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     private readonly handleAddPlayers = (players: Player[], reload: boolean = false) => {
         const rank = this.state.rank === -1 ? undefined : this.state.rank
-        Promise.all(players.map((player) => getPlayStyle(player.id, rank, this.state.playlist)))
+        Promise.all(players.map((player) => getPlayStyle(player.id, rank, this.props.playlist)))
             .then((playerPlayStyles) => {
                 if (reload) {
                     this.setState({playerPlayStyles})
@@ -140,7 +138,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                     })
                 }
             })
-        Promise.all(players.map((player) => getPlayStyleRaw(player.id, this.state.playlist)))
+        Promise.all(players.map((player) => getPlayStyleRaw(player.id, this.props.playlist)))
             .then((playerPlayStylesRaw) => {
                 if (reload) {
                     this.setState({playerPlayStylesRaw})
@@ -172,7 +170,6 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         const selectedPlaylist = event.target.value as any as number
-        this.setState({playlist: selectedPlaylist})
         if (this.props.handlePlaylistChange) {
             this.props.handlePlaylistChange(selectedPlaylist)
         }

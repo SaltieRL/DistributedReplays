@@ -40,8 +40,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
         }
 
         const playerSideBar = <PlayerSideBar player={this.props.player}/>
-        const playerPlayStyle = <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}
-                                                 winLossMode={this.state.winLossMode}/>
+        const playerPlayStyle = (
+            <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}
+                             winLossMode={this.state.winLossMode}/>
+        )
         const playerMatchHistory = (
             <OverviewMatchHistory
                 player={this.props.player}

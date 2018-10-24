@@ -220,6 +220,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
     private readonly handleTimeUnitChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         this.setState({timeUnit: event.target.value as TimeUnit})
     }
+
     private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         const selectedPlaylist = event.target.value as any as number
         this.setState({playlist: selectedPlaylist})
