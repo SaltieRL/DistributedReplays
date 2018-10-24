@@ -17,6 +17,7 @@ type Props = OwnProps
 
 interface State {
     data?: PlayStyleResponse
+    winLossData?: PlayStyleResponse[]
     reloadSignal: boolean
 }
 
@@ -33,6 +34,9 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
         if (prevProps.playlist !== this.props.playlist) {
             this.triggerReload()
         }
+        if (prevProps.winLossMode !== this.props.winLossMode) {
+            this.triggerReload()
+        }
     }
 
     public render() {
@@ -42,7 +46,8 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
             "Upload more replays to get more accurate stats."
         return (
             <Grid container justify="space-around" spacing={32}>
-                <LoadableWrapper load={this.getPlayStyles} reloadSignal={this.state.reloadSignal}>
+                <LoadableWrapper load={this.props.winLossMode ? this.getPlayStylesWinLoss : this.getPlayStyles}
+                                 reloadSignal={this.state.reloadSignal}>
                     {this.state.data &&
                     <>
                         {this.state.data.showWarning &&
@@ -58,18 +63,33 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         </Grid>
                         }
-                        {this.state.data.chartDatas.map((chartDataResponse) => {
-                            return (
-                                <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
-                                      style={{height: 400}}>
-                                    <Typography variant="subheading" align="center">
-                                        {chartDataResponse.title}
-                                    </Typography>
-                                    <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>
-                                </Grid>
-                            )
-                        })}
-
+                        {(this.props.winLossMode && this.state.winLossData) ?
+                            this.state.winLossData[0].chartDatas.map((chartDataResponse, i) => {
+                                return (
+                                    <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
+                                          style={{height: 400}}>
+                                        <Typography variant="subheading" align="center">
+                                            {chartDataResponse.title}
+                                        </Typography>
+                                        {this.state.winLossData &&
+                                        <PlayerPlayStyleChart names={["Win", "Loss"]}
+                                                              data={this.state.winLossData.map((data) =>
+                                                                  data.chartDatas[i])}/>}
+                                    </Grid>
+                                )
+                            })
+                            :
+                            this.state.data.chartDatas.map((chartDataResponse) => {
+                                return (
+                                    <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
+                                          style={{height: 400}}>
+                                        <Typography variant="subheading" align="center">
+                                            {chartDataResponse.title}
+                                        </Typography>
+                                        <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>
+                                    </Grid>
+                                )
+                            })}
                     </>
                     }
                 </LoadableWrapper>
@@ -78,8 +98,14 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayStyles = (): Promise<void> => {
-        return getPlayStyle(this.props.player.id, undefined, this.props.playlist, this.props.winLossMode)
+        return getPlayStyle(this.props.player.id, undefined, this.props.playlist)
             .then((data) => this.setState({data}))
+    }
+
+    private readonly getPlayStylesWinLoss = (): Promise<void> => {
+        const win = getPlayStyle(this.props.player.id, undefined, this.props.playlist, true)
+        const loss = getPlayStyle(this.props.player.id, undefined, this.props.playlist, false)
+        return Promise.all([win, loss]).then((winLossData) => this.setState({winLossData}))
     }
 
     private readonly triggerReload = () => {
