@@ -10,6 +10,7 @@ export const LOCAL_LINK = process.env.NODE_ENV === "development" ? "http://local
 
 export const STATUS_PAGE_LINK = "/status"
 export const ESPORTS_LINK = "/esports"
+export const ESPORTS_TEAM_LINK = (id: string) => `/esports/team/${id}`
 
 export const PLAYER_PAGE_LINK = (id: string) => `/players/${id}`
 export const PLAYER_MATCH_HISTORY_PAGE_LINK = (id: string) => `/players/${id}/match_history`

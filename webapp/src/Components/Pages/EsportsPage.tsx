@@ -12,6 +12,8 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import { BasePage } from "./BasePage"
+import { Link } from "react-router-dom"
+import { ESPORTS_TEAM_LINK } from "../../Globals"
 
 // interface TeamInfo {
 //     name: string
@@ -45,10 +47,12 @@ export class EsportsPage extends React.PureComponent {
                 <Divider/>
                 <List>
                     {teamNames.map((name) =>
-                        <ListItem>
-                            <Avatar src={`/team-logos/${name}.jpg`}/>
-                            <ListItemText primary={name}/>
-                        </ListItem>
+                        <Link to={ESPORTS_TEAM_LINK(name)} style={{textDecoration: "none"}} key={name}>
+                            <ListItem button>
+                                <Avatar src={`/team-logos/${name}.png`}/>
+                                <ListItemText primary={name}/>
+                            </ListItem>
+                        </Link>
                     )}
                 </List>
             </Card>

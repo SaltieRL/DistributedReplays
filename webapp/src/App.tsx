@@ -14,7 +14,7 @@ import { StatusPage } from "./Components/Pages/StatusPage"
 import { UploadPage } from "./Components/Pages/UploadPage"
 import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
-    ABOUT_LINK, ESPORTS_LINK,
+    ABOUT_LINK, ESPORTS_LINK, ESPORTS_TEAM_LINK,
     GLOBAL_STATS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_PAGE_LINK,
@@ -26,6 +26,7 @@ import {
     UPLOAD_LINK
 } from "./Globals"
 import { EsportsPage } from "./Components/Pages/EsportsPage"
+import { EsportsTeamPage } from "./Components/Pages/EsportsTeamPage"
 
 type Props = WithStyles<typeof styles>
 
@@ -45,6 +46,7 @@ class AppComponent extends React.Component<Props> {
                         <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
                         <Route path={REPLAYS_GROUP_PAGE_LINK} component={ReplaysGroupPage}/>
                         <Route path={REPLAYS_SEARCH_PAGE_LINK()} component={ReplaysSearchPage}/>
+                        <Route path={ESPORTS_TEAM_LINK(":id")} component={EsportsTeamPage}/>
                         <Route exact path={ABOUT_LINK} component={AboutPage}/>
                         <Route exact path={UPLOAD_LINK} component={UploadPage}/>
                         <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
