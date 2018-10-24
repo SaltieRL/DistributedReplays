@@ -11,9 +11,9 @@ import {
     Typography
 } from "@material-ui/core"
 import * as React from "react"
-import { BasePage } from "./BasePage"
 import { Link } from "react-router-dom"
 import { ESPORTS_TEAM_LINK } from "../../Globals"
+import { BasePage } from "./BasePage"
 
 // interface TeamInfo {
 //     name: string

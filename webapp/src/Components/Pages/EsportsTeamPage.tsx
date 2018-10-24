@@ -1,5 +1,4 @@
 import {
-    Avatar,
     Card,
     CardContent,
     CardHeader,
@@ -9,14 +8,13 @@ import {
     Grid,
     List,
     ListItem,
-    ListItemText,
     Typography,
     WithStyles,
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import { Link, RouteComponentProps } from "react-router-dom"
-import { PLAYER_PAGE_LINK } from "../../Globals"
+import { RouteComponentProps } from "react-router-dom"
+import { EsportsPlayerListItem } from "../Esports/EsportsPlayerListItem"
 import { BasePage } from "./BasePage"
 
 interface RouteParams {
@@ -30,17 +28,16 @@ interface State {
     reloadSignal: boolean
 }
 
-interface Team {
+interface EsportsTeam {
     name: string
     link: string
-    players: Player[]
+    players: EsportsPlayer[]
 }
 
-interface Player {
+interface EsportsPlayer {
     name: string
     id: string
     sub: number
-
 }
 
 // const teamNames = ["1NE Glory Stone", "Allegiance", "Bread", "Chiefs Esports", "Cloud9", "compLexity Gaming",
@@ -50,7 +47,7 @@ interface Player {
 //     "Team Dignitas", "Team Secret", "Team Vitality", "Team WLF", "The Clappers", "The Magicians",
 //     "Triple Trouble", "We Dem Girlz"]
 
-const teams: Team[] = [
+const teams: EsportsTeam[] = [
     {
         name: "1NE eSports",
         link: "http://1neesports.com/",
@@ -1041,30 +1038,10 @@ const teams: Team[] = [
     }
 ]
 
-interface EsportsPlayerProps {
-    player: Player
-    team: string
-}
-
-class EsportsPlayerListItem extends React.PureComponent<EsportsPlayerProps, {}> {
-    public render() {
-        const {player, team} = this.props
-        return <Link to={PLAYER_PAGE_LINK(player.id)} style={{textDecoration: "none"}}>
-            <ListItem button key={player.id}>
-                <Avatar src={`/team-logos/${team}.png`}/>
-                <ListItemText primary={player.name}/>
-            </ListItem>
-        </Link>
-    }
-}
-
 export class EsportsTeamPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {reloadSignal: false}
-    }
-
-    public componentDidUpdate(prevProps: Readonly<Props>) {
     }
 
     public render() {
@@ -1104,13 +1081,13 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
                             <List>
                                 <Typography>Starters</Typography>
                                 {starters.map((player) =>
-                                    <EsportsPlayerListItem player={player} team={teamId}/>
+                                    <EsportsPlayerListItem player={player} team={teamId} key={player.name}/>
                                 )}
                                 {subs.length > 0 ? <>
                                         <Divider/>
                                         <Typography>Subs</Typography>
                                         {subs.map((player) =>
-                                            <EsportsPlayerListItem player={player} team={teamId}/>
+                                            <EsportsPlayerListItem player={player} team={teamId} key={player.name}/>
                                         )}
                                     </>
                                     :
