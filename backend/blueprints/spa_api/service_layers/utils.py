@@ -8,9 +8,11 @@ from backend.database.objects import PlayerGame
 def with_session(decorated_function):
     def wrapper_func(*args, **kwargs):
         session = current_app.config['db']()
-        kwargs['session'] = session
-        result = decorated_function(*args, **kwargs)
-        session.close()
+        try:
+            kwargs['session'] = session
+            result = decorated_function(*args, **kwargs)
+        finally:
+            session.close()
         return result
     return wrapper_func
 
