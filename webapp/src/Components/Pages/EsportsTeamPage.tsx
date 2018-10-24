@@ -14,7 +14,11 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import { RouteComponentProps } from "react-router-dom"
+import { MatchHistoryResponse, ReplaysSearchQueryParams } from "../../Models"
+import { searchReplays } from "../../Requests/Replay"
 import { EsportsPlayerListItem } from "../Esports/EsportsPlayerListItem"
+import { ReplaysSearchResultDisplay } from "../ReplaysSearch/ReplaysSearchResultDisplay"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
 interface RouteParams {
@@ -26,6 +30,7 @@ type Props = RouteComponentProps<RouteParams>
 
 interface State {
     reloadSignal: boolean
+    matchHistory?: MatchHistoryResponse
 }
 
 interface EsportsTeam {
@@ -1050,6 +1055,7 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
         const team = teams.filter((t) => t.name === teamId)[0]
         const starters = team.players.filter((player) => player.sub === 0)
         const subs = team.players.filter((player) => player.sub === 1)
+
         const {classes} = this.props
         return (
             <BasePage>
@@ -1095,9 +1101,32 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
                             </List>
                         </Card>
                     </Grid>
+                    <Grid item xs={12}>
+                        <LoadableWrapper load={this.loadMatchHistory} reloadSignal={this.state.reloadSignal}>
+                            {this.state.matchHistory ?
+                                <ReplaysSearchResultDisplay page={0} limit={0}
+                                                            replaySearchResult={this.state.matchHistory}/>
+                                :
+                                ""}
+                        </LoadableWrapper>
+                    </Grid>
                 </Grid>
             </BasePage>
         )
+    }
+
+    private readonly loadMatchHistory = () => {
+        const teamId = this.props.match.params.id
+        const team = teams.filter((t) => t.name === teamId)[0]
+        const starters = team.players.filter((player) => player.sub === 0)
+        // const subs = team.players.filter((player) => player.sub === 1)
+        const searchParams: ReplaysSearchQueryParams = {
+            page: 0,
+            limit: 10,
+            playerIds: starters.map((player) => player.id)
+        }
+
+        return searchReplays(searchParams).then((matchHistory) => this.setState({matchHistory}))
     }
 }
 

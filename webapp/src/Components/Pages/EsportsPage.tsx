@@ -21,11 +21,13 @@ import { BasePage } from "./BasePage"
 //     message: string
 // }
 
-const teamNames = ["1NE Glory Stone", "Allegiance", "Bread", "Chiefs Esports", "Cloud9", "compLexity Gaming",
-    "Evil Geniuses", "exceL Esports", "FlipSid3 Tactics", "FlyQuest", "Fnatic", "G2 Esports", "Ghost Gaming", "Method",
-    "mousesports", "Nordavind", "NRG Esports", "PSG eSports", "Savage!", "Sol Esports", "Splyce", "Tainted Minds",
-    "Team Dignitas", "Team Secret", "Team Vitality", "Team WLF", "The Clappers", "The Magicians",
-    "Triple Trouble", "We Dem Girlz"]
+const teamNames = ["Applesauce", "Allegiance", "Bread", "Chiefs Esports", "Cloud9", "Compadres", "compLexity Gaming",
+    "Copenhagen Flames",
+    "Evil Geniuses", "exceL Esports", "FlipSid3 Tactics", "FlyQuest", "Fnatic", "G2 Esports", "Ghost Gaming",
+    "Manhattan", "Method",
+    "mousesports", "Nordavind", "NRG Esports", "PSG eSports", "Red Reserve", "Rogue", "Savage!", "Splyce",
+    "Team Dignitas", "Team Secret", "Team Vitality", "The Clappers", "The Hosses", "The Magicians", "The Peeps",
+    "We Dem Girlz"]
 
 export class EsportsPage extends React.PureComponent {
     public render() {
