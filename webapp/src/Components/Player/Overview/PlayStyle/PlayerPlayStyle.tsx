@@ -9,6 +9,7 @@ import { PlayerPlayStyleChart } from "./PlayerPlayStyleChart"
 interface OwnProps {
     player: Player
     playlist?: number
+    winLossMode?: boolean
 }
 
 type Props = OwnProps
@@ -77,7 +78,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayStyles = (): Promise<void> => {
-        return getPlayStyle(this.props.player.id, undefined, this.props.playlist)
+        return getPlayStyle(this.props.player.id, undefined, this.props.playlist, this.props.winLossMode)
             .then((data) => this.setState({data}))
     }
 
