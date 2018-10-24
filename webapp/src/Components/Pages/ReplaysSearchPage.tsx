@@ -2,6 +2,7 @@ import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
 import { RouteComponentProps } from "react-router"
 import { MatchHistoryResponse } from "../../Models/Player/MatchHistory"
+import { Replay } from "../../Models/Replay/Replay"
 import { ReplaysSearchQueryParams } from "../../Models/ReplaysSearchQueryParams"
 import { searchReplays } from "../../Requests/Replay"
 import { ReplaysSearchWithQueryString } from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
@@ -47,9 +48,11 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                         </Grid>
                         <Grid item xs={12}>
                             {this.state.replaySearchResult && this.state.queryParams &&
-                            <ReplaysSearchResultDisplay replaySearchResult={this.state.replaySearchResult}
-                                                        page={this.state.queryParams.page}
-                                                        limit={this.state.queryParams.limit}/>
+                            <ReplaysSearchResultDisplay
+                                replaySearchResult={this.state.replaySearchResult}
+                                handleUpdateTags={this.handleUpdateTags}
+                                page={this.state.queryParams.page}
+                                limit={this.state.queryParams.limit}/>
                             }
                         </Grid>
                     </Grid>
@@ -72,6 +75,28 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
         } else {
             this.setState({
                 replaySearchResult: undefined
+            })
+        }
+    }
+
+    private readonly handleUpdateTags = (replay: Replay) => (tags: Tag[]) => {
+        if (this.state.replaySearchResult) {
+            this.setState({
+                replaySearchResult: {
+                    ...this.state.replaySearchResult,
+                    replays: [
+                        ...this.state.replaySearchResult.replays
+                            .map((searchResultReplay): Replay => {
+                                if (searchResultReplay.id === replay.id) {
+                                    return {
+                                        ...searchResultReplay,
+                                        tags
+                                    }
+                                }
+                                return searchResultReplay
+                            })
+                    ]
+                }
             })
         }
     }

@@ -11,6 +11,7 @@ import { ResultsActions } from "./ResultsActions"
 
 interface Props {
     replaySearchResult: MatchHistoryResponse
+    handleUpdateTags: (replay: Replay) => (tags: Tag[]) => void
     page: number
     limit: number
 }
@@ -44,21 +45,30 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                                 <Divider/>
                                 {this.props.replaySearchResult.replays.map((replay: Replay, i) =>
                                     <>
-                                        <ReplayDisplayRow replay={replay} key={replay.id} useBoxScore={true}
-                                                          selectProps={{
-                                                              selected: _.includes(
-                                                                  this.state.selectedReplayIds,
-                                                                  replay.id
-                                                              ),
-                                                              handleSelectChange: this.handleSelectChange(replay.id)
-                                                          }}/>
+                                        <ReplayDisplayRow
+                                            key={replay.id}
+                                            replay={replay}
+                                            handleUpdateTags={this.props.handleUpdateTags(replay)}
+                                            useBoxScore
+                                            selectProps={{
+                                                selected: _.includes(
+                                                    this.state.selectedReplayIds,
+                                                    replay.id
+                                                ),
+                                                handleSelectChange: this.handleSelectChange(replay.id)
+                                            }}/>
                                         {!(i === this.props.replaySearchResult.replays.length) && <Divider/>}
                                     </>
                                 )}
                             </List>
                             :
                             this.props.replaySearchResult.replays.map((replay: Replay) =>
-                                <ReplayDisplayRow replay={replay} key={replay.id} useBoxScore={true}/>
+                                <ReplayDisplayRow
+                                    key={replay.id}
+                                    replay={replay}
+                                    handleUpdateTags={this.props.handleUpdateTags(replay)}
+                                    useBoxScore
+                                />
                             )
                         }
                         <ReplaysSearchTablePagination
