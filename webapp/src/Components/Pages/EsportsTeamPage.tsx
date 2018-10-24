@@ -99,17 +99,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Allushin",
-                id: "",
+                id: "76561198341071770",
                 sub: 0
             },
             {
                 name: "Sea-Bass",
-                id: "",
+                id: "76561198247356798",
                 sub: 0
             },
             {
                 name: "TyNotTyler",
-                id: "",
+                id: "76561198176000659",
                 sub: 0
             }
         ]
@@ -120,17 +120,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "EPICJonny",
-                id: "",
+                id: "76561198318383132",
                 sub: 0
             },
             {
                 name: "Hato",
-                id: "",
+                id: "76561198122873203",
                 sub: 0
             },
             {
                 name: "zol",
-                id: "",
+                id: "76561198131350065",
                 sub: 0
             }
         ]
@@ -162,17 +162,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "AxB",
-                id: "",
+                id: "76561198071944774",
                 sub: 0
             },
             {
                 name: "Satthew",
-                id: "",
+                id: "76561198149461762",
                 sub: 0
             },
             {
                 name: "Sypical",
-                id: "",
+                id: "76561198323843523",
                 sub: 0
             }
         ]
@@ -225,17 +225,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Gimmick",
-                id: "",
+                id: "76561198148418720",
                 sub: 0
             },
             {
                 name: "SquishyMuffinz",
-                id: "",
+                id: "76561198286759507",
                 sub: 0
             },
             {
                 name: "Torment",
-                id: "",
+                id: "76561198097285289",
                 sub: 0
             }
         ]
@@ -246,17 +246,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Aeon",
-                id: "",
+                id: "76561198106926788",
                 sub: 0
             },
             {
                 name: "Astroh",
-                id: "",
+                id: "76561198354750319",
                 sub: 0
             },
             {
                 name: "Moses",
-                id: "",
+                id: "76561198043788652",
                 sub: 0
             }
         ]
@@ -267,7 +267,7 @@ const teams: Team[] = [
         players: [
             {
                 name: "al0t",
-                id: "",
+                id: "76561198129290934",
                 sub: 0
             },
             {
@@ -277,7 +277,7 @@ const teams: Team[] = [
             },
             {
                 name: "Mognus",
-                id: "",
+                id: "76561198072970081",
                 sub: 0
             }
         ]
@@ -299,17 +299,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Chicago",
-                id: "",
+                id: "76561198293785594",
                 sub: 0
             },
             {
                 name: "CorruptedG",
-                id: "",
+                id: "76561197992682099",
                 sub: 0
             },
             {
                 name: "Klassux",
-                id: "",
+                id: "76561198128584479",
                 sub: 0
             }
         ]
@@ -320,17 +320,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Markydooda",
-                id: "",
+                id: "76561198070673430",
                 sub: 0
             },
             {
                 name: "Nielskoek",
-                id: "",
+                id: "76561198068121494",
                 sub: 0
             },
             {
                 name: "Pwndx",
-                id: "",
+                id: "76561198000542688",
                 sub: 0
             }
         ]
@@ -341,17 +341,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "kuxir97",
-                id: "",
+                id: "76561198072696308",
                 sub: 0
             },
             {
                 name: "miztik",
-                id: "",
+                id: "76561198064630547",
                 sub: 0
             },
             {
                 name: "Yukeo",
-                id: "",
+                id: "76561198374703623",
                 sub: 0
             }
         ]
@@ -362,17 +362,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "AyyJayy",
-                id: "",
+                id: "76561198105072499",
                 sub: 0
             },
             {
                 name: "PrimeThunder",
-                id: "",
+                id: "76561198076486170",
                 sub: 0
             },
             {
                 name: "Wonder",
-                id: "",
+                id: "76561198219259227",
                 sub: 0
             }
         ]
@@ -388,7 +388,7 @@ const teams: Team[] = [
             },
             {
                 name: "MummiSnow",
-                id: "",
+                id: "76561197995699131",
                 sub: 0
             },
             {
@@ -404,12 +404,12 @@ const teams: Team[] = [
         players: [
             {
                 name: "JKnaps",
-                id: "",
+                id: "76561198061585314",
                 sub: 0
             },
             {
                 name: "Kronovi",
-                id: "",
+                id: "76561198076736523",
                 sub: 0
             },
             {
@@ -419,7 +419,7 @@ const teams: Team[] = [
             },
             {
                 name: "Rizzo",
-                id: "",
+                id: "76561198044109673",
                 sub: 0
             }
         ]
@@ -430,17 +430,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Lethamyr",
-                id: "",
+                id: "76561198085868465",
                 sub: 0
             },
             {
                 name: "Memory",
-                id: "",
+                id: "76561198073484045",
                 sub: 0
             },
             {
                 name: "Zanejackey",
-                id: "",
+                id: "76561198065217357",
                 sub: 0
             }
         ]
@@ -483,7 +483,7 @@ const teams: Team[] = [
             },
             {
                 name: "Daze",
-                id: "",
+                id: "['DazedDreamer3', [70, 108, 174, 206, 14",
                 sub: 0
             },
             {
@@ -499,17 +499,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "ayjacks",
-                id: "",
+                id: "76561198412918093",
                 sub: 0
             },
             {
                 name: "Malakiss",
-                id: "",
+                id: "76561198163289208",
                 sub: 0
             },
             {
                 name: "Tmon",
-                id: "",
+                id: "76561198104680859",
                 sub: 0
             }
         ]
@@ -520,12 +520,12 @@ const teams: Team[] = [
         players: [
             {
                 name: "Borito B",
-                id: "",
+                id: "76561198311129338",
                 sub: 0
             },
             {
                 name: "Kassio",
-                id: "",
+                id: "76561198285093463",
                 sub: 0
             },
             {
@@ -562,17 +562,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Alex161",
-                id: "",
+                id: "76561198301423321",
                 sub: 0
             },
             {
                 name: "Skyline",
-                id: "",
+                id: "76561198075792637",
                 sub: 0
             },
             {
                 name: "Tigreee",
-                id: "",
+                id: "76561198306168245",
                 sub: 0
             }
         ]
@@ -583,17 +583,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Al Dente",
-                id: "",
+                id: "76561198018922320",
                 sub: 0
             },
             {
                 name: "Data",
-                id: "",
+                id: "76561198012554181",
                 sub: 0
             },
             {
                 name: "Godsmilla",
-                id: "",
+                id: "76561198078625479",
                 sub: 0
             }
         ]
@@ -604,17 +604,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Fireburner",
-                id: "",
+                id: "76561198070392546",
                 sub: 0
             },
             {
                 name: "GarrettG",
-                id: "",
+                id: "76561198136523266",
                 sub: 0
             },
             {
                 name: "JSTN",
-                id: "",
+                id: "76561198299709908",
                 sub: 0
             }
         ]
@@ -635,7 +635,7 @@ const teams: Team[] = [
             },
             {
                 name: "ZeN",
-                id: "",
+                id: "76561198090443035",
                 sub: 0
             }
         ]
@@ -672,17 +672,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Chausette45",
-                id: "",
+                id: "76561198183899729",
                 sub: 0
             },
             {
                 name: "Ferra",
-                id: "",
+                id: "76561198071457340",
                 sub: 0
             },
             {
                 name: "fruity",
-                id: "",
+                id: "76561198010679645",
                 sub: 0
             }
         ]
@@ -693,7 +693,7 @@ const teams: Team[] = [
         players: [
             {
                 name: "Ronaky",
-                id: "",
+                id: "76561198112703866",
                 sub: 0
             },
             {
@@ -703,7 +703,7 @@ const teams: Team[] = [
             },
             {
                 name: "Tadpole",
-                id: "",
+                id: "76561198348804468",
                 sub: 0
             }
         ]
@@ -714,7 +714,7 @@ const teams: Team[] = [
         players: [
             {
                 name: "Jacob",
-                id: "",
+                id: "76561198043445470",
                 sub: 0
             },
             {
@@ -724,12 +724,12 @@ const teams: Team[] = [
             },
             {
                 name: "Matt",
-                id: "",
+                id: "76561198042521842",
                 sub: 1
             },
             {
                 name: "Sizz",
-                id: "",
+                id: "76561198011269283",
                 sub: 0
             }
         ]
@@ -740,12 +740,12 @@ const teams: Team[] = [
         players: [
             {
                 name: "Alpha54",
-                id: "",
+                id: "76561198353133370",
                 sub: 0
             },
             {
                 name: "Bluey",
-                id: "",
+                id: "76561198090715652",
                 sub: 0
             },
             {
@@ -787,12 +787,12 @@ const teams: Team[] = [
             },
             {
                 name: "JWismont",
-                id: "",
+                id: "76561198140386409",
                 sub: 0
             },
             {
                 name: "Karma",
-                id: "",
+                id: "76561198015727607",
                 sub: 0
             }
         ]
@@ -850,7 +850,7 @@ const teams: Team[] = [
             },
             {
                 name: "FreaKii",
-                id: "",
+                id: "76561198080342535",
                 sub: 0
             },
             {
@@ -866,17 +866,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Fairy Peak",
-                id: "",
+                id: "76561198213713880",
                 sub: 0
             },
             {
                 name: "Paschy90",
-                id: "",
+                id: "76561198218283141",
                 sub: 0
             },
             {
                 name: "Scrub Killa",
-                id: "",
+                id: "76561198089298636",
                 sub: 0
             }
         ]
@@ -887,17 +887,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Didris",
-                id: "",
+                id: "76561198149588664",
                 sub: 0
             },
             {
                 name: "Friis",
-                id: "",
+                id: "76561198062839628",
                 sub: 0
             },
             {
                 name: "Shakahron",
-                id: "",
+                id: "76561198064355007",
                 sub: 0
             }
         ]
@@ -908,17 +908,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Calix",
-                id: "",
+                id: "76561198126554140",
                 sub: 0
             },
             {
                 name: "Oscillon",
-                id: "",
+                id: "76561198323139029",
                 sub: 0
             },
             {
                 name: "PetricK",
-                id: "",
+                id: "76561198046013638",
                 sub: 0
             }
         ]
@@ -929,17 +929,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Chrome",
-                id: "",
+                id: "76561198032576032",
                 sub: 0
             },
             {
                 name: "Insolences",
-                id: "",
+                id: "76561198114648253",
                 sub: 0
             },
             {
                 name: "Timi",
-                id: "",
+                id: "76561198356049718",
                 sub: 0
             }
         ]
@@ -950,17 +950,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Halcyon",
-                id: "",
+                id: "76561198349786030",
                 sub: 0
             },
             {
                 name: "Rapid",
-                id: "",
+                id: "76561198309249467",
                 sub: 0
             },
             {
                 name: "Vince",
-                id: "",
+                id: "76561198055313043",
                 sub: 0
             }
         ]
@@ -971,17 +971,17 @@ const teams: Team[] = [
         players: [
             {
                 name: "Arsenal",
-                id: "",
+                id: "76561198368482029",
                 sub: 0
             },
             {
                 name: "Gyro",
-                id: "",
+                id: "76561198153124313",
                 sub: 0
             },
             {
                 name: "Pirates",
-                id: "",
+                id: "76561198116539951",
                 sub: 0
             }
         ]
@@ -1041,6 +1041,23 @@ const teams: Team[] = [
     }
 ]
 
+interface EsportsPlayerProps {
+    player: Player
+    team: string
+}
+
+class EsportsPlayerListItem extends React.PureComponent<EsportsPlayerProps, {}> {
+    public render() {
+        const {player, team} = this.props
+        return <Link to={PLAYER_PAGE_LINK(player.id)} style={{textDecoration: "none"}}>
+            <ListItem button key={player.id}>
+                <Avatar src={`/team-logos/${team}.png`}/>
+                <ListItemText primary={player.name}/>
+            </ListItem>
+        </Link>
+    }
+}
+
 export class EsportsTeamPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
@@ -1054,6 +1071,8 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
         // const matchUrl = this.props.match.url
         const teamId = this.props.match.params.id
         const team = teams.filter((t) => t.name === teamId)[0]
+        const starters = team.players.filter((player) => player.sub === 0)
+        const subs = team.players.filter((player) => player.sub === 1)
         const {classes} = this.props
         return (
             <BasePage>
@@ -1083,14 +1102,19 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
                             <CardHeader title="Players" subheader=""/>
                             <Divider/>
                             <List>
-                                {team.players.map((player) =>
-                                    <Link to={PLAYER_PAGE_LINK(player.id)} style={{textDecoration: "none"}}>
-                                        <ListItem button key={player.id}>
-                                            <Avatar src={`/team-logos/${teamId}.png`}/>
-                                            <ListItemText primary={player.name}/>
-                                        </ListItem>
-                                    </Link>
+                                <Typography>Starters</Typography>
+                                {starters.map((player) =>
+                                    <EsportsPlayerListItem player={player} team={teamId}/>
                                 )}
+                                {subs.length > 0 ? <>
+                                        <Divider/>
+                                        <Typography>Subs</Typography>
+                                        {subs.map((player) =>
+                                            <EsportsPlayerListItem player={player} team={teamId}/>
+                                        )}
+                                    </>
+                                    :
+                                    ""}
                             </List>
                         </Card>
                     </Grid>

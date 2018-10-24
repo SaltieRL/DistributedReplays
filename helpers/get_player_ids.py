@@ -3,6 +3,8 @@ import os
 
 import sys
 
+from sqlalchemy import func
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend.database.objects import PlayerGame
 from backend.database.startup import startup
@@ -15,7 +17,7 @@ def main(sess):
     mapping = {}
     for player in players:
         game: PlayerGame = session.query(PlayerGame).filter(
-            PlayerGame.name.like("%{}%".format(player))).first()
+            func.lower(PlayerGame.name).like("%{}%".format(player.lower()))).first()
         if game is not None:
             id_ = game.player
             mapping[player] = id_
