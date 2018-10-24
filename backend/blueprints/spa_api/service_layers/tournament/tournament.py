@@ -8,6 +8,7 @@ from backend.blueprints.spa_api.service_layers.tournament.tournament_stage impor
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player as DBPlayer, Tournament as DBTournament
 from backend.database.wrapper.tournament_wrapper import TournamentWrapper
+from backend.utils.checks import get_checks
 
 
 class Tournament:
@@ -19,7 +20,8 @@ class Tournament:
         self.name = name
         self.participants = [player.__dict__ for player in participants]
         self.stages = [stage.__dict__ for stage in stages]
-        if (g.user is not None and g.user.platformid is owner) or g.admin:
+        is_admin, is_alpha, is_beta = get_checks(g)
+        if (g.user is not None and g.user.platformid == owner) or is_admin:
             self.admins = [admin.__dict__ for admin in admins]
 
     @staticmethod

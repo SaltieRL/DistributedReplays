@@ -7,6 +7,7 @@ from sqlalchemy import func
 from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.database.objects import Game, TournamentPlayer, TournamentSeries, SeriesGame, PlayerGame, TournamentStage,\
      Tournament, Player, TournamentSeriesStatus
+from backend.utils.checks import get_checks
 
 DEFAULT_SERIES_NAME = "Unknown Series"
 DEFAULT_STAGE_NAME = "Unknown Stage"
@@ -51,7 +52,7 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
                 session.close()
                 raise CalculatedError(404, "Tournament not found.")  # TODO create a sub class for that error
 
-            is_site_admin = g.admin
+            is_site_admin, is_alpha, is_beta = get_checks(g)
             is_owner = sender == tournament.owner
             is_tournament_admin = False
 
