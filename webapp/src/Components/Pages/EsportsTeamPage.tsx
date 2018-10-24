@@ -53,7 +53,7 @@ interface Player {
 const teams: Team[] = [
     {
         name: "1NE eSports",
-        link: "",
+        link: "http://1neesports.com/",
         players: [
             {
                 name: "GonFreecs",
@@ -74,7 +74,7 @@ const teams: Team[] = [
     },
     {
         name: "1NE Glory Stone",
-        link: "",
+        link: "http://1neesports.com/",
         players: [
             {
                 name: "Kanra",
@@ -95,7 +95,7 @@ const teams: Team[] = [
     },
     {
         name: "Allegiance",
-        link: "",
+        link: "http://www.allegiance.team/",
         players: [
             {
                 name: "Allushin",
@@ -137,7 +137,7 @@ const teams: Team[] = [
     },
     {
         name: "Avant Gaming",
-        link: "",
+        link: "http://www.avantgaming.com.au/",
         players: [
             {
                 name: "Bango",
@@ -179,7 +179,7 @@ const teams: Team[] = [
     },
     {
         name: "Chiefs Esports",
-        link: "",
+        link: "http://chiefsesc.com/",
         players: [
             {
                 name: "Drippay",
@@ -221,7 +221,7 @@ const teams: Team[] = [
     },
     {
         name: "Cloud9",
-        link: "",
+        link: "http://cloud9.gg/",
         players: [
             {
                 name: "Gimmick",
@@ -230,7 +230,7 @@ const teams: Team[] = [
             },
             {
                 name: "SquishyMuffinz",
-                id: "76561198286759507",
+                id: "",
                 sub: 0
             },
             {
@@ -263,7 +263,7 @@ const teams: Team[] = [
     },
     {
         name: "compLexity Gaming",
-        link: "",
+        link: "http://www.complexitygaming.com/",
         players: [
             {
                 name: "al0t",
@@ -284,7 +284,7 @@ const teams: Team[] = [
     },
     {
         name: "Epsilon eSports",
-        link: "",
+        link: "http://www.epsilon-esports.com/",
         players: [
             {
                 name: "FaykoW",
@@ -295,7 +295,7 @@ const teams: Team[] = [
     },
     {
         name: "Evil Geniuses",
-        link: "",
+        link: "http://www.evilgeniuses.gg/",
         players: [
             {
                 name: "Chicago",
@@ -316,7 +316,7 @@ const teams: Team[] = [
     },
     {
         name: "exceL Esports",
-        link: "",
+        link: "http://www.excelesports.com/",
         players: [
             {
                 name: "Markydooda",
@@ -337,7 +337,7 @@ const teams: Team[] = [
     },
     {
         name: "FlipSid3 Tactics",
-        link: "",
+        link: "http://www.flipsidetactics.com/",
         players: [
             {
                 name: "kuxir97",
@@ -358,7 +358,7 @@ const teams: Team[] = [
     },
     {
         name: "FlyQuest",
-        link: "",
+        link: "http://www.flyquest.gg/",
         players: [
             {
                 name: "AyyJayy",
@@ -379,7 +379,7 @@ const teams: Team[] = [
     },
     {
         name: "Fnatic",
-        link: "",
+        link: "http://www.fnatic.com/",
         players: [
             {
                 name: "Maestro",
@@ -400,7 +400,7 @@ const teams: Team[] = [
     },
     {
         name: "G2 Esports",
-        link: "",
+        link: "http://www.g2esports.com/",
         players: [
             {
                 name: "JKnaps",
@@ -474,7 +474,7 @@ const teams: Team[] = [
     },
     {
         name: "Legacy Esports",
-        link: "",
+        link: "https://legacyesports.com.au/",
         players: [
             {
                 name: "cyrix",
@@ -516,7 +516,7 @@ const teams: Team[] = [
     },
     {
         name: "Method",
-        link: "",
+        link: "https://www.method.gg",
         players: [
             {
                 name: "Borito B",
@@ -537,7 +537,7 @@ const teams: Team[] = [
     },
     {
         name: "Mock-It eSports Asia",
-        link: "",
+        link: "http://mockit.gg/",
         players: [
             {
                 name: "Juxta",
@@ -600,7 +600,7 @@ const teams: Team[] = [
     },
     {
         name: "NRG Esports",
-        link: "",
+        link: "http://www.nrg.gg/",
         players: [
             {
                 name: "Fireburner",
@@ -642,7 +642,7 @@ const teams: Team[] = [
     },
     {
         name: "Paradox Gaming",
-        link: "",
+        link: "https://paradoxgaming.com.au/",
         players: [
             {
                 name: "dore52x",
@@ -668,7 +668,7 @@ const teams: Team[] = [
     },
     {
         name: "PSG eSports",
-        link: "",
+        link: "http://www.psg-esports.com/home/",
         players: [
             {
                 name: "Chausette45",
@@ -710,7 +710,7 @@ const teams: Team[] = [
     },
     {
         name: "Rogue",
-        link: "",
+        link: "http://www.rogue.gg/",
         players: [
             {
                 name: "Jacob",
@@ -757,7 +757,7 @@ const teams: Team[] = [
     },
     {
         name: "Senix Esports",
-        link: "",
+        link: "http://senixesports.net/",
         players: [
             {
                 name: "Broski",
@@ -799,7 +799,7 @@ const teams: Team[] = [
     },
     {
         name: "Tainted Minds",
-        link: "",
+        link: "http://www.taintedminds.org/",
         players: [
             {
                 name: "CJCJ",
@@ -820,7 +820,7 @@ const teams: Team[] = [
     },
     {
         name: "Team Dignitas",
-        link: "",
+        link: "http://team-dignitas.net/",
         players: [
             {
                 name: "Kaydop",
@@ -841,7 +841,7 @@ const teams: Team[] = [
     },
     {
         name: "Team Secret",
-        link: "",
+        link: "http://www.teamsecret.gg",
         players: [
             {
                 name: "FlamE",
@@ -862,7 +862,7 @@ const teams: Team[] = [
     },
     {
         name: "Team Vitality",
-        link: "",
+        link: "https://vitality.gg/en/",
         players: [
             {
                 name: "Fairy Peak",
@@ -988,7 +988,7 @@ const teams: Team[] = [
     },
     {
         name: "Vapour Esports",
-        link: "",
+        link: "https://vapouresports.com/",
         players: [
             {
                 name: "EPIIC",
@@ -1004,7 +1004,7 @@ const teams: Team[] = [
     },
     {
         name: "Vapour Quantum",
-        link: "",
+        link: "https://vapouresports.com/",
         players: [
             {
                 name: "Ayro14",
