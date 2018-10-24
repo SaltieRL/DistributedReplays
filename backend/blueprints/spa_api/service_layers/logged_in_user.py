@@ -5,15 +5,6 @@ from backend.utils.checks import is_local_dev
 from ..errors.errors import CalculatedError
 
 
-def require_user(func):
-    def wrapper_require_user(*args, **kwargs):
-        if g.user is None:
-            raise CalculatedError(404, "User is not logged in.")
-        func(*args, **kwargs)
-
-    return wrapper_require_user
-
-
 class LoggedInUser:
     def __init__(self, name: str, id_: str, avatar_link: str, admin: bool, alpha: bool, beta: bool):
         self.name = name
