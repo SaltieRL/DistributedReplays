@@ -92,12 +92,12 @@ class TagWrapper:
     @staticmethod
     def get_tagged_games(user_id: str, names):
         session = current_app.config['db']()
-        game_tags = session.query(GameTag.game_id). \
-            join(Tag). \
-            filter(Tag.owner == user_id). \
-            filter(Tag.name.in_(names)). \
-            group_by(GameTag.game_id). \
-            having(func.count(GameTag.game_id) == len(names)).all()
+        game_tags = session.query(GameTag.game_id) \
+            .join(Tag) \
+            .filter(Tag.owner == user_id) \
+            .filter(Tag.name.in_(names)) \
+            .group_by(GameTag.game_id) \
+            .having(func.count(GameTag.game_id) == len(names)).all()
         session.close()
 
         if len(game_tags) == 0:
