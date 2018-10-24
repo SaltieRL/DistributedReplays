@@ -6,9 +6,9 @@ import { PlayStyleProgressionPoint } from "src/Models"
 import { getProgression } from "../../../../Requests/Player/getProgression"
 import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 import { ClearableDatePicker } from "../../../Shared/ClearableDatePicker"
+import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { FieldSelect } from "./FieldSelect"
 import { ProgressionChart } from "./ProgressionChart"
-import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 
 interface Props {
     players: Player[]
