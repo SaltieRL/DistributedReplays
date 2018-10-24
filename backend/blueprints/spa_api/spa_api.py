@@ -142,7 +142,8 @@ def api_get_player_play_style(id_):
 def api_get_player_play_style_all(id_):
     accepted_query_params = [
         QueryParam(name='rank', optional=True, type_=int),
-        QueryParam(name='replay_ids', optional=True)
+        QueryParam(name='replay_ids', optional=True),
+        QueryParam(name='playlist', optional=True, type_=int),
     ]
     query_params = get_query_params(accepted_query_params, request)
 
