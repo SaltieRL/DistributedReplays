@@ -1,5 +1,5 @@
 import * as React from "react"
-import { BasicStat } from "../../../Models/ChartData"
+import { BasicStat } from "src/Models"
 import { ColoredBarChart } from "./ColoredBarChart"
 import { ColoredPieChart } from "./ColoredPieChart"
 import { ColoredRadarChart } from "./ColoredRadarChart"

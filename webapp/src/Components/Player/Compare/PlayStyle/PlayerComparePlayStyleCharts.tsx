@@ -1,6 +1,6 @@
-import { Checkbox, FormControlLabel, Grid, Typography } from "@material-ui/core"
+import { FormControlLabel, Grid, Switch, Typography } from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleRawResponse, PlayStyleResponse } from "../../../../Models/Player/PlayStyle"
+import { PlayStyleRawResponse, PlayStyleResponse } from "src/Models"
 import { getPlayStyle, getPlayStyleRaw } from "../../../../Requests/Player/getPlayStyle"
 import { RankSelect } from "../../../Shared/Selects/RankSelect"
 import { PlayerPlayStyleChart } from "../../Overview/PlayStyle/PlayerPlayStyleChart"
@@ -40,7 +40,6 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                         indicesToRemove.push(i)
                     }
                 })
-            console.log(indicesToRemove)
             this.handleRemovePlayers(indicesToRemove)
         }
 
@@ -63,8 +62,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
         const chartTitles = playerPlayStyles[0].chartDatas.map((chartData) => chartData.title)
         const checkbox = (
             <FormControlLabel
-                control={<Checkbox
-                    onChange={this.handleHeatmapChange}/>}
+                control={<Switch onChange={this.handleHeatmapChange}/>}
                 label="Heatmap mode"
             />
         )
@@ -93,10 +91,10 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                     <Grid item xs={12} style={{textAlign: "center"}}>
                         {checkbox}
                     </Grid>
-                    <Grid item xs={"auto"}>
+                    <Grid item xs="auto">
                         <PlayerCompareTable names={players.map((player) => player.name)}
                                             rawPlayers={playerPlayStylesRaw}
-                        heatmap={this.state.heatmapMode}/>
+                                            heatmap={this.state.heatmapMode}/>
                     </Grid>
                 </Grid>
             </>

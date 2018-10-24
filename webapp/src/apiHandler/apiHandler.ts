@@ -1,4 +1,3 @@
-import { AppError } from "../Models/Error"
 import { baseUrl } from "../Requests/Config"
 
 export const doGet = (destination: string): Promise<any> => {

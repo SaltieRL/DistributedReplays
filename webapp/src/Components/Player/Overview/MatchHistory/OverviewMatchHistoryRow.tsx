@@ -16,8 +16,9 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
+import { ColouredGameScore } from "src/Components/Shared/ColouredGameScore"
+import { getReplayResult, Replay } from "src/Models"
 import { REPLAY_PAGE_LINK } from "../../../../Globals"
-import { getColouredGameScore, getReplayResult, Replay } from "../../../../Models/Replay/Replay"
 import { ReplayBoxScore } from "../../../Replay/ReplayBoxScore"
 import { ReplayChart } from "../../../Replay/ReplayChart"
 
@@ -48,7 +49,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
             </Tooltip>
         )
         const replayGameMode = replay.gameMode
-        const replayScore = getColouredGameScore(replay)
+        const replayScore = <ColouredGameScore replay={replay}/>
         const replayResult = getReplayResult(replay, player)
         const chartIcon = (
             <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>

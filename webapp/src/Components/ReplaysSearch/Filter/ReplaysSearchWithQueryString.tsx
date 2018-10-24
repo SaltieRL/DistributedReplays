@@ -5,7 +5,7 @@ import {
     parseReplaySearchFromQueryString,
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
-} from "../../../Models/ReplaysSearchQueryParams"
+} from "src/Models"
 import { ReplaysSearchFilter } from "./ReplaysSearchFilter"
 
 interface OwnProps {
