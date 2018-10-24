@@ -21,7 +21,7 @@ class Tournament:
         self.participants = [player.__dict__ for player in participants]
         self.stages = [stage.__dict__ for stage in stages]
         is_admin, is_alpha, is_beta = get_checks(g)
-        if (g.user is not None and g.user.platformid == owner) or is_admin:
+        if (g.user is not None and g.user.platformid == owner) or is_admin():
             self.admins = [admin.__dict__ for admin in admins]
 
     @staticmethod

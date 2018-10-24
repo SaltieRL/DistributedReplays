@@ -52,7 +52,8 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
                 session.close()
                 raise CalculatedError(404, "Tournament not found.")  # TODO create a sub class for that error
 
-            is_site_admin, is_alpha, is_beta = get_checks(g)
+            is_admin_check, is_alpha_check, is_beta_check = get_checks(g)
+            is_site_admin = is_admin_check()
             is_owner = sender == tournament.owner
             is_tournament_admin = False
 
