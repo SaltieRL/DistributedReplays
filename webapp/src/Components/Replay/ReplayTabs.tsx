@@ -10,6 +10,7 @@ import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay
+    explanations: Record<string, any> | undefined
 }
 
 type Props = OwnProps
@@ -50,10 +51,10 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     }
                 </Tabs>
                 {this.state.selectedTab === "playerStats" &&
-                <PlayerStatsContent replay={this.props.replay}/>
+                <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations} />
                 }
                 {this.state.selectedTab === "teamStats" &&
-                <TeamStatsContent replay={this.props.replay}/>
+                <TeamStatsContent replay={this.props.replay} explanations={this.props.explanations}/>
                 }
                 {this.state.selectedTab === "replayViewer" &&
                     <ReplayViewer replay={this.props.replay} />

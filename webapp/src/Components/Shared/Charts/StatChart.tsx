@@ -1,3 +1,4 @@
+import { Tooltip } from "@material-ui/core"
 import * as React from "react"
 import { BasicStat } from "src/Models"
 import { ColoredBarChart } from "./ColoredBarChart"
@@ -6,14 +7,24 @@ import { ColoredRadarChart } from "./ColoredRadarChart"
 
 interface Props {
     basicStat: BasicStat
+    explanations: Record<string, any> | undefined
 }
 
 export class StatChart extends React.PureComponent<Props> {
     public render() {
         const Chart = this.getChartType()
-        return (
-            <Chart basicStat={this.props.basicStat}/>
-        )
+        const title = this.props.basicStat.title//.replace(/\s/g, "_")
+        console.log(title, this.props.explanations)
+        return <>
+            {this.props.explanations && (this.props.explanations.hasOwnProperty(title) ?
+                <Tooltip title={this.props.explanations[this.props.basicStat.title].simple_explanation}>
+                    <div>
+                    <Chart basicStat={this.props.basicStat}/>
+                    </div>
+                </Tooltip>
+                :
+                <Chart basicStat={this.props.basicStat}/>)}
+        </>
     }
 
     private readonly getChartType = (): React.ComponentType<{ basicStat: BasicStat }> => {

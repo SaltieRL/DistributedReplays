@@ -75,7 +75,7 @@ class SharedStatCreation:
 
         for i in range(len(stat_list)):
             zipped_stats[stat_list[i].get_field_name()] = stats[i]
-
+        print(zipped_stats)
         return zipped_stats
 
     def get_stat_list(self):

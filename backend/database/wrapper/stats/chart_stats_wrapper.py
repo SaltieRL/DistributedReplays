@@ -25,7 +25,6 @@ class ChartStatsWrapper(SharedStatsWrapper):
             DatabaseObjectDataPoint(id=playergame[0], is_orange=playergame[1], name=playergame[2],
                                     stats=self.get_wrapped_stats(playergame[3:], self.player_stats))
             for playergame in playergames]
-
         wrapped_playergames = sorted(sorted(wrapped_playergames, key=lambda x: x.id), key=lambda x: x.is_orange)
 
         return wrapped_playergames
@@ -55,6 +54,7 @@ class ChartStatsWrapper(SharedStatsWrapper):
         for basic_stats_metadata in chart_metadata_list:
             data_points = []
             for player_game in database_data_point:
+                # print(basic_stats_metadata.stat_name, player_game.stats.keys())
                 if basic_stats_metadata.stat_name in player_game.stats:
                     value = float(player_game.stats[basic_stats_metadata.stat_name])
                 else:
@@ -74,6 +74,7 @@ class ChartStatsWrapper(SharedStatsWrapper):
             )
             if all(chart_data_point['value'] is None or chart_data_point['value'] == 0 for chart_data_point in
                    chart_data.chartDataPoints):
+                print(basic_stats_metadata.stat_name, 'is zero')
                 continue
             all_chart_data.append(chart_data)
         return all_chart_data

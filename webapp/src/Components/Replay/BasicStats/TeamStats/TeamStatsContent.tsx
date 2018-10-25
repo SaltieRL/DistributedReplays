@@ -6,6 +6,7 @@ import { TeamStatsTabs } from "./TeamStatsTabs"
 
 interface Props {
     replay: Replay
+    explanations: Record<string, any> | undefined
 }
 
 interface State {
@@ -25,7 +26,7 @@ export class TeamStatsContent extends React.PureComponent<Props, State> {
                 <TeamStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
                 <CardContent>
                     <Grid container spacing={32}>
-                        <TeamStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab}/>
+                        <TeamStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab} explanations={this.props.explanations}/>
                     </Grid>
                 </CardContent>
             </>
