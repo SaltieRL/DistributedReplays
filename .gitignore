@@ -78,6 +78,7 @@ fabric.properties
 config.cfg
 .DS_Store
 *.iml
+data/postgres/
 
 parsed/
 rlreplays/
