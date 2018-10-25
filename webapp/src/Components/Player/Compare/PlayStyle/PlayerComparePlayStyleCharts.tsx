@@ -80,7 +80,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
         const dropDown = (
             <PlaylistSelect
-                selectedPlaylists={[this.props.playlist]}
+                selectedPlaylist={this.props.playlist}
                 handleChange={this.handlePlaylistsChange}
                 inputLabel="Playlist"
                 helperText="Select playlist to use"
