@@ -1,4 +1,5 @@
 from typing import List
+from .player.player_profile_stats import player_wrapper, player_stat_wrapper
 
 
 class DataPoint:
@@ -20,3 +21,7 @@ class PlayerDataPoint:
     def __init__(self, name: str, data_points: List[DataPoint]):
         self.name = name
         self.dataPoints = [data_point.__dict__ for data_point in data_points]
+
+
+def get_explanations():
+    return {name: stat.to_dict() for name, stat in player_stat_wrapper.player_stats.stat_explanation_map.items()}
