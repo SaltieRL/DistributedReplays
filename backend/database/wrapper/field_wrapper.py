@@ -90,7 +90,7 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Boost collected that goes beyond 100%. '
                          'ex: if you were at 95% and collect a full 100 boost pad you just wasted 95 collected boost.'),
         FieldExplanation('wasted_usage',
-                         'Boost used while when supersonic.'),
+                         'Boost used when supersonic.'),
         FieldExplanation('time_full_boost',
                          'Time in the game with 100 boost.'),
         FieldExplanation('time_low_boost',
