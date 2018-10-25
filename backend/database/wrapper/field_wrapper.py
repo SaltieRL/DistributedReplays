@@ -55,84 +55,83 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
 
         # turnovers
         FieldExplanation('turnovers',
-                         'when the opposite team hits the ball twice after you had hit it,'
-                         ' and therefore have lost possession'),
+                         'Lost possession to the other team. Exactly defined as the other team hitting the ball twice'
+                         ' in a row'),
         FieldExplanation('turnovers_on_my_half',
-                         'When a turnover occurs but on the defending half'),
+                         'Turnovers that occur on the defending half'),
         FieldExplanation('turnovers_on_their_half',
-                         'When a turnover occurs but on the opponents half'),
+                         'Turnovers that occur on the opponents half'),
         FieldExplanation('won_turnovers',
-                         'You are the first hit that caused a turnover of the other team', field_rename='takeaways'),
+                         'This player is the first hit that gained possession back from the other team',
+                         field_rename='takeaways'),
         FieldExplanation('possession_time',
-                         'Time you as a player had the ball.  This does continue until someone not you hits the ball'
+                         'Time this player had the ball. This continues until another hits the ball'
                          'or play is stopped.', field_rename='possession'),
 
         # averages
         FieldExplanation('average_speed',
-                         'The average speed of your car over the entire game.', field_rename='speed'),
+                         'The average speed of your car during the entire game', field_rename='speed'),
         FieldExplanation('average_hit_distance',
-                         'Average distance the ball went after being hit before being touched by another player',
+                         'Average distance the ball went after being hit, before being touched by another player',
                          field_rename='avg hit dist'),
         FieldExplanation('average_distance_from_center',
-                         'Average distance for this player from the team\'s center.'),
+                         'Average distance from the team\'s positional center.'),
 
         # boost
         FieldExplanation('boost_usage',
-                         'Total boost used over a game.  Accurate within 3% in the worst case.'),
+                         'Total boost used during game.  Accurate within 3% in the worst case.'),
         FieldExplanation('num_small_boosts',
-                         'The number of small boost pads you collect.'),
+                         'The number of small boost pads collected.'),
         FieldExplanation('num_large_boosts',
-                         'The number of large boost pads you collect.'),
+                         'The number of large boost pads collected.'),
         FieldExplanation('num_stolen_boosts',
-                         'The number of large pads you take on the enemy\'s half (note this is not context specific).'),
+                         'The number of large pads collected on the enemy\'s half.'),
         FieldExplanation('wasted_collection',
-                         'Boost that goes beyond 100%'
-                         'ex: if you were at 95% and collect a 100 pad you just wasted 95 boost'),
+                         'Boost collected that goes beyond 100%. '
+                         'ex: if you were at 95% and collect a full 100 boost pad you just wasted 95 collected boost.'),
         FieldExplanation('wasted_usage',
-                         'Boost used while you are supersonic'),
+                         'Boost used while when supersonic.'),
         FieldExplanation('time_full_boost',
-                         'Time in the game where you have 100 boost on your meter'),
+                         'Time in the game with 100 boost.'),
         FieldExplanation('time_low_boost',
-                         'Time in the game where you have <25 boost on your meter'),
+                         'Time in the game with <25 boost.'),
         FieldExplanation('time_no_boost',
-                         'Time in the game where you have 0 boost on your meter'),
+                         'Time in the game with 0 boost.'),
 
         # tendencies
         FieldExplanation('time_on_ground',
-                         'Time in the game where you are on the ground'),
+                         'Total time spent on the ground'),
         FieldExplanation('time_low_in_air',
-                         'Time you spent above ground but below the max height of double jumping (roughly goal height)'),
+                         'Total time spent above ground but below the max height of '
+                         'double jumping (roughly goal height)'),
         FieldExplanation('time_in_defending_half',
-                         'Time the car is in your defending half'),
+                         'Total time the player is in the defending half'),
         FieldExplanation('time_in_attacking_half',
-                         'Time the car is in your opponents half'),
+                         'Total time the player is in the opponents\' half'),
         FieldExplanation('time_in_defending_third',
-                         'Time the car is in your defending third.'),
+                         'Total time the player is in the defending third of the field.'),
         FieldExplanation('time_in_neutral_third',
-                         'Time you spent in the midfield'),
+                         'Total time the player is in the midfield.'),
         FieldExplanation('time_in_attacking_third',
-                         'Time you spent in the enemy third of the field.'),
+                         'Total time the player is in the enemy third of the field.'),
         FieldExplanation('time_behind_ball',
-                         '(< ball) Time you are between the ball and your own goal.'),
+                         '(< ball) Time the player is between the ball and their own goal.'),
         FieldExplanation('time_in_font_of_ball',
-                         '(> ball) Time you are between the ball and the enemy goal.'),
+                         '(> ball) Time the player is between the ball and the opponents\' goal.'),
         FieldExplanation('time_closest_to_ball',
-                         'No one is closer to the ball than you.'),
+                         'Time spent closer to the ball than any other player.'),
         FieldExplanation('time_furthest_from_ball',
-                         'No one is further from the ball than you.'),
+                         'Time spent farther from the ball than any other player.'),
         FieldExplanation('time_close_to_ball',
-                         'This distance is equivalent to the width of the goal. It is essentially a ball chase timer.'),
+                         'Time the player is near the ball (equivalent to half the length of a goal)'),
         FieldExplanation('time_closest_to_team_center',
-                         'Time when a player is closest to the center of a team'),
+                         'Time when a player is closest to the positional center of their team'),
         FieldExplanation('time_furthest_from_team_center',
-                         'Time when a player is furthest to the center of a team'),
+                         'Time when a player is furthest to the positional center of their team'),
 
         # distance
         FieldExplanation('ball_hit_forward',
                          'Summed distance of hits towards opponent goal.'),
-        FieldExplanation('ball_hit_backward',
-                         'Summed distance of hits towards own goal.'),
-
         FieldExplanation('ball_hit_backward',
                          'Summed distance of hits towards own goal.'),
 
@@ -143,16 +142,28 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('time_at_boost_speed',
                          'Time at a speed only reachable by using boost (or flips).'),
         FieldExplanation('time_at_slow_speed',
-                         'Half max car speed without boost.'),
+                         'Time at car speed reachable by just driving.'),
         FieldExplanation('time_at_super_sonic',
-                         'time at max car speed. Trail is showing.'),
+                         'Time at max car speed. Trail is showing.'),
 
-
-
+        FieldExplanation('boost ratio',
+                         'Ratio of small boost pad pickups to large pickups.'),
+        FieldExplanation('collection boost efficiency',
+                         '1 - wasted collected boost / total boost collected'),
+        FieldExplanation('used boost efficiency',
+                         '1 - wasted used boost / total boost usage'),
+        FieldExplanation('total boost efficiency',
+                         '1 - total wasted / total boost collected'),
+        FieldExplanation('turnover efficiency',
+                         'Percentage of hits that were not turnovers.'),
+        FieldExplanation('turnover efficiency',
+                         'Percentage of hits that were not turnovers'),
 
     ]
     explanation_map = dict()
     for field in field_list:
+        if field.field_rename is None:
+            field.field_rename = field.field_name.replace('_', ' ')
         explanation_map[field.field_name] = field
 
     for field in dynamic_field_list:
