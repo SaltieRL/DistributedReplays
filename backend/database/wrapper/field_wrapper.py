@@ -142,7 +142,7 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('time_at_boost_speed',
                          'Time at a speed only reachable by using boost (or flips).'),
         FieldExplanation('time_at_slow_speed',
-                         'Time at car speed reachable by just driving.'),
+                         'Time at half the car speed reachable by just driving.'),
         FieldExplanation('time_at_super_sonic',
                          'Time at max car speed. Trail is showing.'),
 
@@ -156,8 +156,6 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          '1 - total wasted / total boost collected'),
         FieldExplanation('turnover efficiency',
                          'Percentage of hits that were not turnovers.'),
-        FieldExplanation('turnover efficiency',
-                         'Percentage of hits that were not turnovers'),
 
     ]
     explanation_map = dict()
