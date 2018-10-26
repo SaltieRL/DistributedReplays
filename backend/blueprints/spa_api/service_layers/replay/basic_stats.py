@@ -14,7 +14,11 @@ class PlayerStatsChart:
     @staticmethod
     def create_from_id(id_: str) -> List[OutputChartData]:
         session = current_app.config['db']()
-        wrapped_player_games = wrapper.get_chart_stats_for_player(session, id_)
+        try:
+            wrapped_player_games = wrapper.get_chart_stats_for_player(session, id_)
+        except Exception as e:
+            session.close()
+            raise e
         session.close()
         return wrapper.wrap_chart_stats(wrapped_player_games, player_stats_metadata)
 
