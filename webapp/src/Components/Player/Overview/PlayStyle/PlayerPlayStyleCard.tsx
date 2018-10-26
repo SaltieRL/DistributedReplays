@@ -6,6 +6,7 @@ import { PlayStyleActions } from "./PlayStyleActions"
 interface Props {
     player: Player
     handlePlaylistChange?: (playlist: number) => void
+    handleWinsLossesChange?: (winLossMode: boolean) => void
 }
 
 export class PlayerPlayStyleCard extends React.PureComponent<Props> {
@@ -25,7 +26,9 @@ export class PlayerPlayStyleCard extends React.PureComponent<Props> {
                             action={
                                 <PlayStyleActions
                                     player={this.props.player}
-                                    handlePlaylistChange={this.props.handlePlaylistChange}/>
+                                    handlePlaylistChange={this.props.handlePlaylistChange}
+                                    handleWinsLossesChange={this.props.handleWinsLossesChange}
+                                />
                             }/>
                 <CardContent>
                     {this.props.children}

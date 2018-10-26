@@ -1,4 +1,13 @@
-import { Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, Tooltip } from "@material-ui/core"
+import {
+    Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    FormControlLabel,
+    Grid,
+    IconButton, Switch,
+    Tooltip
+} from "@material-ui/core"
 import CompareArrows from "@material-ui/icons/CompareArrows"
 import * as React from "react"
 import { Link } from "react-router-dom"
@@ -11,6 +20,7 @@ interface OwnProps {
     player: Player
     useFullSizeCompareButton?: boolean
     handlePlaylistChange?: (playlist: number) => void
+    handleWinsLossesChange?: (winLossMode: boolean) => void
 }
 
 type Props = OwnProps
@@ -18,12 +28,13 @@ type Props = OwnProps
 interface State {
     dialogOpen: boolean
     playlist: number
+    winLossMode: boolean
 }
 
 export class PlayStyleActions extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {dialogOpen: false, playlist: 13}
+        this.state = {dialogOpen: false, playlist: 13, winLossMode: false}
     }
 
     public render() {
@@ -43,7 +54,7 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
         )
         const dropDown = (
             <PlaylistSelect
-                selectedPlaylists={[this.state.playlist]}
+                selectedPlaylist={this.state.playlist}
                 handleChange={this.handlePlaylistsChange}
                 inputLabel="Playlist"
                 helperText="Select playlist to use"
@@ -52,8 +63,18 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                 multiple={false}/>
         )
 
+        const toggleWinsLosses = (
+            <FormControlLabel
+                control={<Switch onChange={this.handleWinsLossesChange}/>}
+                label="Wins/Losses mode"
+            />
+        )
+
         return (
             <Grid container justify="center" spacing={8}>
+                <Grid item xs="auto" style={{margin: "auto"}}>
+                    {toggleWinsLosses}
+                </Grid>
                 <Grid item xs="auto" style={{margin: "auto"}}>
                     {dropDown}
                 </Grid>
@@ -95,6 +116,13 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
         this.setState({playlist: selectedPlaylist})
         if (this.props.handlePlaylistChange) {
             this.props.handlePlaylistChange(selectedPlaylist)
+        }
+    }
+
+    private readonly handleWinsLossesChange = (event: React.ChangeEvent<HTMLInputElement>, winLossMode: boolean) => {
+        this.setState({winLossMode})
+        if (this.props.handleWinsLossesChange) {
+            this.props.handleWinsLossesChange(winLossMode)
         }
     }
 }

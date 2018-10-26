@@ -23,12 +23,13 @@ const playerViewTabs = ["Profile", "Playstyle", "Match History"]
 interface State {
     selectedMobileTab?: PlayerViewTab
     playlist?: number
+    winLossMode: boolean
 }
 
 class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedMobileTab: "Profile", playlist: 13}
+        this.state = {selectedMobileTab: "Profile", playlist: 13, winLossMode: false}
     }
 
     public render() {
@@ -39,7 +40,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
         }
 
         const playerSideBar = <PlayerSideBar player={this.props.player}/>
-        const playerPlayStyle = <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}/>
+        const playerPlayStyle = (
+            <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}
+                             winLossMode={this.state.winLossMode}/>
+        )
         const playerMatchHistory = (
             <OverviewMatchHistory
                 player={this.props.player}
@@ -57,7 +61,9 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
                                 <PlayerPlayStyleCard player={this.props.player}
-                                                     handlePlaylistChange={this.handlePlaylistChange}>
+                                                     handlePlaylistChange={this.handlePlaylistChange}
+                                                     handleWinsLossesChange={this.handleWinsLossesChange}
+                                >
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
                             </Grid>
@@ -89,6 +95,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 <>
                                     <PlayStyleActions player={this.props.player}
                                                       handlePlaylistChange={this.handlePlaylistChange}
+                                                      handleWinsLossesChange={this.handleWinsLossesChange}
                                                       useFullSizeCompareButton/>
                                     {playerPlayStyle}
                                 </>
@@ -110,6 +117,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
     private readonly handlePlaylistChange = (playlist: number) => {
         this.setState({playlist})
+    }
+
+    private readonly handleWinsLossesChange = (winLossMode: boolean) => {
+        this.setState({winLossMode})
     }
 }
 
