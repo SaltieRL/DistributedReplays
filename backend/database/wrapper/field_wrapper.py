@@ -39,12 +39,12 @@ class QueryFieldWrapper:
 
 def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[FieldExplanation]):
     field_list = [
-        FieldExplanation('total_passes', 'Total passes that took place in a game', field_rename='passes'),
-        FieldExplanation('total_hits', 'Total number of hits that took place in a game (using hit detection*)',
+        FieldExplanation('total_passes', 'Hit that was next hit by a teammate.', field_rename='passes'),
+        FieldExplanation('total_hits', 'Total number of hits (using hit detection).',
                          field_rename='hits'),
-        FieldExplanation('total_dribble_conts ', 'This is the second, third, … touch of a dribble'),
-        FieldExplanation('total_aerials', 'Total number of aerials that took place in a game', field_rename='aerials'),
-        FieldExplanation('total_dribbles', 'Total number of dribbles that took place in a game',
+        FieldExplanation('total_dribble_conts ', 'The second, third, … touch of a dribble.'),
+        FieldExplanation('total_aerials', 'Number of hits > than the height of the goal.', field_rename='aerials'),
+        FieldExplanation('total_dribbles', 'Number of dribbles.',
                          field_rename='dribbles'),
         FieldExplanation('useful hits',
                          'Average distance the ball went after being hit before being touched by another player',
