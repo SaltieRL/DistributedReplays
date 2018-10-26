@@ -56,7 +56,10 @@ class ChartStatsWrapper(SharedStatsWrapper):
             data_points = []
             for player_game in database_data_point:
                 if basic_stats_metadata.stat_name in player_game.stats:
-                    value = float(player_game.stats[basic_stats_metadata.stat_name])
+                    val = player_game.stats[basic_stats_metadata.stat_name]
+                    if val is None:
+                        val = 0.0
+                    value = float(val)
                 else:
                     value = 0.0
                 point = StatDataPoint(
