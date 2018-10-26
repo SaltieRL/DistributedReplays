@@ -47,10 +47,10 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
         return (
             <div style={{paddingRight: 8}}>
                 {isWidthUp("sm", this.props.width) ?
-                    <>
+                    <div style={{display: "flex"}}>
                         {checkbox}
                         {linkButton}
-                    </>
+                    </div>
                     :
                     <>
                         <IconButton

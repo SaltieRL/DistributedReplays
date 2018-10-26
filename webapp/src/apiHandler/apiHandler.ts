@@ -17,6 +17,11 @@ export const doPost = (destination: string, body: BodyInit): Promise<any> => {
     }).then(handleResponse)
 }
 
+export const doRequest = (destination: string, requestInit: RequestInit): Promise<any> => {
+    return fetch(baseUrl + destination, requestInit)
+        .then(handleResponse)
+}
+
 const handleResponse = (response: Response): Promise<any> => {
     if (!response.ok) {
         const code = response.status
@@ -34,6 +39,9 @@ const handleResponse = (response: Response): Promise<any> => {
                 throw {code, message} as AppError
             })
     } else {
-        return response.json()
+        if (response.status !== 204) {
+            return response.json()
+        }
+        return Promise.resolve()
     }
 }

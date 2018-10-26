@@ -7,12 +7,10 @@ import re
 import shutil
 import uuid
 
-import pandas as pd
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory, send_file
+from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
@@ -21,7 +19,6 @@ from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
-from .query_params_handler import QueryParam, convert_to_datetime, get_query_params, convert_to_enum
 from .service_layers.global_stats import GlobalStatsGraph
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
@@ -30,10 +27,15 @@ from .service_layers.player.player import Player
 from .service_layers.player.player_profile_stats import PlayerProfileStats
 from .service_layers.player.player_ranks import PlayerRanks
 from .service_layers.queue_status import QueueStatus
+from .service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
 from .service_layers.replay.groups import ReplayGroupChartData
 from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 from .service_layers.replay.replay_positions import ReplayPositions
+from .service_layers.replay.tag import Tag
+from .utils.decorators import require_user
+from .utils.query_params_handler import QueryParam, convert_to_datetime, get_query_params, \
+    convert_to_enum
 
 logger = logging.getLogger(__name__)
 
@@ -338,6 +340,53 @@ def api_upload_proto():
         shutil.move(id_replay_path, guid_replay_path)
 
     return jsonify({'Success': True})
+
+
+### TAG
+
+@require_user
+@bp.route('/tag/<name>', methods=["PUT"])
+def api_create_tag(name: str):
+    tag = Tag.create(name)
+    return better_jsonify(tag), 201
+
+
+@require_user
+@bp.route('/tag/<current_name>', methods=["PATCH"])
+def api_rename_tag(current_name: str):
+    accepted_query_params = [QueryParam(name='new_name')]
+    query_params = get_query_params(accepted_query_params, request)
+
+    tag = Tag.rename(current_name, query_params['new_name'])
+    return better_jsonify(tag), 200
+
+
+@require_user
+@bp.route('/tag/<name>', methods=['DELETE'])
+def api_delete_tag(name: str):
+    Tag.delete(name)
+    return '', 204
+
+
+@require_user
+@bp.route('/tag')
+def api_get_tags():
+    tags = Tag.get_all()
+    return better_jsonify(tags)
+
+
+@require_user
+@bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
+def api_add_tag_to_game(name: str, id_: str):
+    Tag.add_tag_to_game(name, id_)
+    return '', 204
+
+
+@require_user
+@bp.route('/tag/<name>/replay/<id_>', methods=["DELETE"])
+def api_remove_tag_from_game(name: str, id_: str):
+    Tag.remove_tag_from_game(name, id_)
+    return '', 204
 
 
 @bp.errorhandler(CalculatedError)
