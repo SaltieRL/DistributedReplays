@@ -9,7 +9,7 @@ export const getPlayStyle = (id: string, rank?: number, playlist?: number,
     if (useMockData) {
         return Promise.resolve(MOCK_PLAY_STYLE)
     }
-    let params = undefined
+    let params
     if (result === undefined) {
         params = {rank, playlist}
     } else {
