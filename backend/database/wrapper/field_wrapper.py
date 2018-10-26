@@ -34,7 +34,7 @@ class QueryFieldWrapper:
         if self.explanation is not None and self.explanation.field_rename is not None:
             return self.explanation.field_rename
         else:
-            return self.dynamic_field.field_name
+            return self.dynamic_field.field_name.replace('_', ' ')
 
 
 def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[FieldExplanation]):
