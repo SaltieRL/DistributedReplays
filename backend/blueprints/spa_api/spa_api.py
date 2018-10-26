@@ -129,8 +129,12 @@ def api_get_player_play_style(id_):
         playlist = request.args['playlist']
     else:
         playlist = 13  # standard
-    if 'win' in request.args:
-        win = bool(int(request.args['win']))
+    if 'result' in request.args:
+        result = request.args['result']
+        if result == 'win':
+            win = True
+        elif result == 'loss':
+            win = False
     else:
         win = None
     play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank, playlist=playlist,
