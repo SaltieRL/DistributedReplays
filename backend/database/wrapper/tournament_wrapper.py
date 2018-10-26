@@ -46,34 +46,11 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
                 stage: TournamentStage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).one()
                 tournament_id = stage.tournament_id
 
-            tournament = session.query(Tournament).filter(Tournament.id == tournament_id).one()
-
-            if tournament_id is None or tournament is None:
+            if TournamentWrapper.has_permission(session, tournament_id, sender, permission_level):
                 session.close()
-                raise CalculatedError(404, "Tournament not found.")  # TODO create a sub class for that error
-
-            is_admin_check, is_alpha_check, is_beta_check = get_checks(g)
-            is_site_admin = is_admin_check()
-            is_owner = sender == tournament.owner
-            is_tournament_admin = False
-
-            # if the sender is the owner or site admin, we can skip going through admins
-            if not is_site_admin and not is_owner:
-                for admin in tournament.admins:
-                    if admin.platformid == sender:
-                        is_tournament_admin = True
-                        break
-
-            session.close()
-
-            if permission_level is TournamentPermissions.SITE_ADMIN and is_site_admin:
-                return decorated_function(*args, **kwargs)
-            elif permission_level is TournamentPermissions.TOURNAMENT_OWNER and (is_owner or is_site_admin):
-                return decorated_function(*args, **kwargs)
-            elif permission_level is TournamentPermissions.TOURNAMENT_ADMIN and (is_owner or is_site_admin or
-                                                                                 is_tournament_admin):
                 return decorated_function(*args, **kwargs)
             else:
+                session.close()
                 raise CalculatedError(403, 'User not authorized.')
         return permission_wrapper
     return perm_arg_wrapper
@@ -263,6 +240,32 @@ class TournamentWrapper:
         session.commit()
 
     @staticmethod
+    def has_permission(session, tournament_id: int, platform_id: str, permission_level: TournamentPermissions):
+        tournament = None
+        if tournament_id is not None:
+            tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
+
+        if tournament is None:
+            raise CalculatedError(404, "Tournament not found.")  # TODO create a sub class for that error
+
+        is_admin_check, is_alpha_check, is_beta_check = get_checks(g)
+        is_site_admin = is_admin_check()
+        is_owner = platform_id == tournament.owner
+        is_tournament_admin = False
+
+        # if the sender is the owner or site admin, we can skip going through admins
+        if not is_site_admin and not is_owner:
+            for admin in tournament.admins:
+                if admin.platformid == platform_id:
+                    is_tournament_admin = True
+                    break
+
+        return (permission_level is TournamentPermissions.SITE_ADMIN and is_site_admin) \
+               or (permission_level is TournamentPermissions.TOURNAMENT_OWNER and (is_owner or is_site_admin)) \
+               or (permission_level is TournamentPermissions.TOURNAMENT_ADMIN and (is_owner or is_site_admin or
+                                                                                   is_tournament_admin))
+
+    @staticmethod
     def start_auto_tournament_adding(session, game_hash):
         game = session.query(Game).filter(Game.hash == game_hash).first()
         if game is None:
@@ -324,4 +327,3 @@ class TournamentWrapper:
             if matched_count < game.teamsize * 2:
                 series.status = TournamentSeriesStatus.REVIEW_NEEDED
                 session.commit()
-        session.close()

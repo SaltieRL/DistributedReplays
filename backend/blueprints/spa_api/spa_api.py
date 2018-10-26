@@ -319,6 +319,12 @@ def api_delete_tournament(tournament_id):
     return '', 204
 
 
+@bp.route('tournament/<tournament_id>/admins')
+def api_get_tournament_admins(tournament_id):
+    admins = Tournament.get_admins(tournament_id)
+    return better_jsonify(admins), 200
+
+
 @bp.route('tournament/<tournament_id>/admin/<player_id>', methods=["PUT"])
 def api_add_tournament_admin(tournament_id, player_id):
     player = Tournament.add_admin(tournament_id, player_id)
@@ -329,6 +335,12 @@ def api_add_tournament_admin(tournament_id, player_id):
 def api_remove_tournament_admin(tournament_id, player_id):
     Tournament.remove_admin(tournament_id, player_id)
     return '', 204
+
+
+@bp.route('tournament/<tournament_id>/participants')
+def api_get_tournament_participants(tournament_id):
+    admins = Tournament.get_participants(tournament_id)
+    return better_jsonify(admins), 200
 
 
 @bp.route('tournament/<tournament_id>/participant/<player_id>', methods=["PUT"])

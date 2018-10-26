@@ -7,22 +7,25 @@ from backend.blueprints.spa_api.service_layers.player.player import Player
 from backend.blueprints.spa_api.service_layers.tournament.tournament_stage import TournamentStage
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player as DBPlayer, Tournament as DBTournament
-from backend.database.wrapper.tournament_wrapper import TournamentWrapper
-from backend.utils.checks import get_checks
+from backend.database.wrapper.tournament_wrapper import TournamentWrapper, TournamentPermissions
 
 
 class Tournament:
-    def __init__(self, id_: int, owner: str, name: str, participants: List[Player], stages: List[TournamentStage],
-                 admins: List[Player]):
-        # TODO consider changing player for better performance
+    def __init__(self, id_: int, owner: str, name: str, participants: List[str], stages: List[TournamentStage],
+                 admins: List[str]):
         self.id = id_
         self.owner = owner
         self.name = name
-        self.participants = [player.__dict__ for player in participants]
+        self.participants = participants
         self.stages = [stage.__dict__ for stage in stages]
-        is_admin, is_alpha, is_beta = get_checks(g)
-        if (g.user is not None and g.user.platformid == owner) or is_admin():
-            self.admins = [admin.__dict__ for admin in admins]
+        if g.user is not None:
+            session = current_app.config['db']()
+            try:
+                if TournamentWrapper.has_permission(session, id_, g.user.platformid,
+                                                    TournamentPermissions.TOURNAMENT_OWNER):
+                    self.admins = admins
+            finally:
+                session.close
 
     @staticmethod
     @with_session
@@ -35,9 +38,9 @@ class Tournament:
     @staticmethod
     def create_from_db_object(tournament: DBTournament) -> 'Tournament':
         return Tournament(tournament.id, tournament.owner, tournament.name,
-                          [Player.create_from_id(player.platformid) for player in tournament.participants],
+                          [player.platformid for player in tournament.participants],
                           [TournamentStage.create_from_db_object(stage) for stage in tournament.stages],
-                          [Player.create_from_id(admin.platformid) for admin in tournament.admins])
+                          [admin.platformid for admin in tournament.admins])
 
     @staticmethod
     @with_session
@@ -83,6 +86,16 @@ class Tournament:
 
     @staticmethod
     @with_session
+    def get_admins(tournament_id, session=None):
+        if TournamentWrapper.has_permission(session, tournament_id, g.user.platformid,
+                                            TournamentPermissions.TOURNAMENT_OWNER):
+            tournament = TournamentWrapper.get_tournament(session, tournament_id=tournament_id)
+            return [Player.create_from_id(player.platformid) for player in tournament.admins]
+        else:
+            raise CalculatedError(403, "User not authorized.")
+
+    @staticmethod
+    @with_session
     def add_participant(tournament_id: int, platformid: str, session=None):
         TournamentWrapper.add_tournament_participant(session, participant_platformid=platformid,
                                                      tournament_id=tournament_id, sender=g.user.platformid)
@@ -93,3 +106,9 @@ class Tournament:
     def remove_participant(tournament_id: int, platformid: str, session=None):
         TournamentWrapper.remove_tournament_participant(session, participant_platformid=platformid,
                                                         tournament_id=tournament_id, sender=g.user.platformid)
+
+    @staticmethod
+    @with_session
+    def get_participants(tournament_id, session=None):
+        tournament = TournamentWrapper.get_tournament(session, tournament_id=tournament_id)
+        return [Player.create_from_id(player.platformid) for player in tournament.participants]
