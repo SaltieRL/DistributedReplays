@@ -12,9 +12,6 @@ class FieldExplanation:
         self.math_explanation = math_explanation
         self.file_creation = file_creation
 
-    def to_dict(self):
-        return self.__dict__
-
 
 class QueryFieldWrapper:
     def __init__(self, query: any, dynamic_field: DynamicFieldResult,

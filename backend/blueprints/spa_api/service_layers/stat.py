@@ -24,5 +24,5 @@ class PlayerDataPoint:
 
 
 def get_explanations():
-    return {stat.field_rename if stat.field_rename is not None else stat.field_name: stat.to_dict() for name, stat in
+    return {stat.field_rename if stat.field_rename is not None else stat.field_name: stat.__dict__ for name, stat in
             player_stat_wrapper.player_stats.stat_explanation_map.items()}
