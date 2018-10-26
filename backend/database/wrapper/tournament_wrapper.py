@@ -236,13 +236,16 @@ class TournamentWrapper:
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
     def add_game_to_series(session, game_hash, series_id=None, sender=None):
-        series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
+        series: TournamentSeries = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
             raise CalculatedError(404, "Stage not found.")
         game = session.query(Game).filter(Game.hash == game_hash).first()
         if game is None:
             raise CalculatedError(404, "Game not found.")
         series.games.append(game)
+        for player in game.players:
+            if player not in series.stage.tournament.participants:
+                series.stage.tournament.participants.append(player)
         session.commit()
         return game
 
