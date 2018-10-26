@@ -28,10 +28,7 @@ class TagWrapper:
 
     @staticmethod
     def delete_tag(session, user_id: str, name: str):
-        try:
-            tag = TagWrapper.get_tag(session, user_id, name)
-        except DBTagNotFound:
-            raise DBTagNotFound()
+        tag = TagWrapper.get_tag(session, user_id, name)
         session.delete(tag)
         session.commit()
 
@@ -57,10 +54,7 @@ class TagWrapper:
 
     @staticmethod
     def remove_tag_from_game(session, game_id: str, user_id: str, tag_name: str) -> None:
-        try:
-            tag = TagWrapper.get_tag(session, user_id, tag_name)
-        except DBTagNotFound:
-            raise DBTagNotFound()
+        tag = TagWrapper.get_tag(session, user_id, tag_name)
         game = session.query(Game).filter(Game.hash == game_id).first()
         if game is None:
             raise ReplayNotFound()
