@@ -90,7 +90,7 @@ def api_get_current_user():
 def api_get_player(id_or_name):
     if len(id_or_name) != 17 or re.match(re.compile('\d{17}'), id_or_name) is None:
         # Treat as name
-        response = get_vanity_to_steam_id_or_random_response(id_or_name, current_app)
+        response = get_vanity_to_steam_id_or_random_response(id_or_name)
         if response is None:
             raise CalculatedError(404, "User not found")
         steam_id = response['response']['steamid']

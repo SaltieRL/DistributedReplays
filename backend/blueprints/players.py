@@ -21,7 +21,7 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 def view_player(id_):
     print(id_, request.remote_addr)
     if len(id_) != 17 or re.match(regex, id_) is None:
-        r = get_vanity_to_steam_id_or_random_response(id_, current_app)
+        r = get_vanity_to_steam_id_or_random_response(id_)
         if r is None:
             return redirect(url_for('home'))
         id_ = r['response']['steamid']
@@ -51,7 +51,7 @@ def compare_player_redir(id_):
     print(request.form)
     other = request.form['other']
     if len(other) != 17 or re.match(regex, other) is None:
-        r = get_vanity_to_steam_id_or_random_response(other, current_app)
+        r = get_vanity_to_steam_id_or_random_response(other)
         if r is None:
             return redirect(url_for('players.view_player', id_=id_))
         other = r['response']['steamid']
@@ -89,7 +89,7 @@ def render_player_history(id_, page_number):
     page_number = int(page_number)
     print(re.match(regex, id_))
     if len(id_) != 17 or re.match(regex, id_) is None:
-        r = get_vanity_to_steam_id_or_random_response(id_, current_app)
+        r = get_vanity_to_steam_id_or_random_response(id_)
         if r is None:
             return redirect(url_for('home'))
         id_ = r['response']['steamid']

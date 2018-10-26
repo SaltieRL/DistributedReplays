@@ -60,14 +60,14 @@ class TagWrapperCreateTagTest(unittest.TestCase):
         self.session.close()
 
     def test_create_tag_success(self):
-        TagWrapper.create_tag(self.test_user_id, self.tag_name)
+        TagWrapper.create_tag(self.session, self.test_user_id, self.tag_name)
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
         self.assertIsNotNone(tag)
 
     def test_create_tag_tag_already_exists(self):
-        TagWrapper.create_tag(self.test_user_id, self.tag_name)
+        TagWrapper.create_tag(self.session, self.test_user_id, self.tag_name)
         with self.assertRaises(CalculatedError):
-            TagWrapper.create_tag(self.test_user_id, self.tag_name)
+            TagWrapper.create_tag(self.session, self.test_user_id, self.tag_name)
 
 
 class TagWrapperRemoveTagTest(unittest.TestCase):
@@ -110,7 +110,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
         self.session.add(tag)
         self.session.commit()
 
-        TagWrapper.delete_tag(self.test_user_id, self.tag_name)
+        TagWrapper.delete_tag(self.session, self.test_user_id, self.tag_name)
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
 
         self.assertIsNone(tag)
@@ -124,7 +124,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
             self.session.commit()
 
         with self.assertRaises(TagNotFound):
-            TagWrapper.delete_tag(self.test_user_id, self.tag_name)
+            TagWrapper.delete_tag(self.session, self.test_user_id, self.tag_name)
 
 
 class TagWrapperRenameTagTest(unittest.TestCase):
@@ -169,7 +169,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
         self.session.add(tag)
         self.session.commit()
 
-        TagWrapper.rename_tag(self.test_user_id, self.tag_name, self.tag_name_new)
+        TagWrapper.rename_tag(self.session, self.test_user_id, self.tag_name, self.tag_name_new)
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name_new).first()
 
         self.assertIsNotNone(tag)
@@ -184,7 +184,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
             self.session.commit()
 
         with self.assertRaises(TagNotFound):
-            TagWrapper.rename_tag(self.test_user_id, self.tag_name, self.tag_name_new)
+            TagWrapper.rename_tag(self.session, self.test_user_id, self.tag_name, self.tag_name_new)
 
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
         self.assertIsNone(tag)
@@ -197,7 +197,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
         self.session.commit()
 
         with self.assertRaises(CalculatedError):
-            TagWrapper.rename_tag(self.test_user_id, self.tag_name, self.tag_name_new)
+            TagWrapper.rename_tag(self.session, self.test_user_id, self.tag_name, self.tag_name_new)
 
 
 class TagWrapperGetTagTest(unittest.TestCase):
@@ -240,7 +240,7 @@ class TagWrapperGetTagTest(unittest.TestCase):
         self.session.add(tag)
         self.session.commit()
 
-        tag = TagWrapper.get_tag(self.test_user_id, self.tag_name)
+        tag = TagWrapper.get_tag(self.session, self.session, self.test_user_id, self.tag_name)
 
         self.assertIsNotNone(tag)
 
@@ -252,7 +252,7 @@ class TagWrapperGetTagTest(unittest.TestCase):
             self.session.commit()
 
         with self.assertRaises(TagNotFound):
-            TagWrapper.get_tag(self.test_user_id, self.tag_name)
+            TagWrapper.get_tag(self.session, self.session, self.test_user_id, self.tag_name)
 
 
 class TagWrapperAddTagToGameTest(unittest.TestCase):
@@ -308,7 +308,7 @@ class TagWrapperAddTagToGameTest(unittest.TestCase):
         self.session.close()
 
     def test_add_tag_to_replay_success(self):
-        TagWrapper.add_tag_to_game(self.test_game_id, self.test_user_id, self.tag_name)
+        TagWrapper.add_tag_to_game(self.session, self.test_game_id, self.test_user_id, self.tag_name)
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
         game = self.session.query(Game).filter(Game.hash == self.test_game_id).first()
         self.assertIsNotNone(tag)
@@ -317,7 +317,7 @@ class TagWrapperAddTagToGameTest(unittest.TestCase):
 
     def test_add_tag_to_replay_tag_not_found(self):
         with self.assertRaises(TagNotFound):
-            TagWrapper.add_tag_to_game(self.test_game_id, self.test_user_id, TAGS[1])
+            TagWrapper.add_tag_to_game(self.session, self.test_game_id, self.test_user_id, TAGS[1])
 
 
 class TagWrapperRemoveTagFromGameTest(unittest.TestCase):
@@ -374,8 +374,8 @@ class TagWrapperRemoveTagFromGameTest(unittest.TestCase):
 
     def test_remove_tag_from_replay_success(self):
         # a bit dirty to do it like this...
-        TagWrapper.add_tag_to_game(self.test_game_id, self.test_user_id, self.tag_name)
-        TagWrapper.remove_tag_from_game(self.test_game_id, self.test_user_id, self.tag_name)
+        TagWrapper.add_tag_to_game(self.session, self.test_game_id, self.test_user_id, self.tag_name)
+        TagWrapper.remove_tag_from_game(self.session, self.test_game_id, self.test_user_id, self.tag_name)
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
         game = self.session.query(Game).filter(Game.hash == self.test_game_id).first()
         self.assertIsNotNone(tag)
@@ -424,7 +424,7 @@ class TagWrapperGetTaggedGamesTest(unittest.TestCase):
         for i in range(len(self.test_game_ids)):
             game_id = self.test_game_ids[i]
             for j in range(len(self.test_game_ids) - i):
-                TagWrapper.add_tag_to_game(game_id, self.test_user_id, self.all_tags[j])
+                TagWrapper.add_tag_to_game(self.session, game_id, self.test_user_id, self.all_tags[j])
 
     def tearDown(self):
         # remove tag if necessary
@@ -450,7 +450,7 @@ class TagWrapperGetTaggedGamesTest(unittest.TestCase):
     def test_get_tagged_games(self):
         for i in range(2, len(self.test_game_ids)):
             tags = [self.all_tags[x] for x in range(len(self.test_game_ids) - i)]
-            games = TagWrapper.get_tagged_games(self.test_user_id, tags)
+            games = TagWrapper.get_tagged_games(self.session, self.test_user_id, tags)
             for game in games:
                 self.assertIn(game, [self.test_game_ids[j] for j in range(i + 1)])
 
