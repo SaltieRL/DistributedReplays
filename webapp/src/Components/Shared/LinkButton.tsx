@@ -58,7 +58,12 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
         if (tooltip) {
             button = (
                 <Tooltip title={tooltip} placement="bottom" PopperProps={{className: classes.tooltip}}>
-                    {button}
+                    {disabled ? (
+                        <div>
+                            {button}
+                        </div>
+                    ) : button
+                    }
                 </Tooltip>
             )
         }

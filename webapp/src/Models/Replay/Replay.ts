@@ -14,6 +14,7 @@ export interface Replay {
     gameMode: GameMode
     gameScore: GameScore
     players: ReplayPlayer[]
+    tags: Tag[]
 }
 
 export const parseReplay = (data: any) => {

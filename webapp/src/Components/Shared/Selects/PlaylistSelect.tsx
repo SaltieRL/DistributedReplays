@@ -243,7 +243,6 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                     onChange={handleChange}
                     autoWidth
                     input={
-
                         <Input
                             endAdornment={
                                 this.props.multiple && selectedPlaylists.length > 0 &&
@@ -308,7 +307,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 {!this.props.dropdownOnly &&
                 <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
                     <ExpansionPanelSummary
-                        classes={classes}
+                        classes={{root: classes.root, content: classes.content}}
                         expandIcon={
                             <Tooltip title="Playlist options">
                                 <ExpandMore/>
