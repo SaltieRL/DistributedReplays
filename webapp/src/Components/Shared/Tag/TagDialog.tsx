@@ -1,27 +1,31 @@
-import { Dialog, DialogContent, DialogTitle, Divider, Tab, Tabs } from "@material-ui/core"
+import { Dialog, DialogContent, DialogTitle, Divider, Tab, Tabs, Tooltip } from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models/Replay/Replay"
+import { connect } from "react-redux"
+import { Replay } from "../../../Models"
+import { StoreState } from "../../../Redux"
 import { deleteTag, getAllTags } from "../../../Requests/Tag"
 import { LoadableWrapper } from "../LoadableWrapper"
 import { ReplayTagDisplay } from "./ReplayTagDisplay"
 import { UserTagDisplay } from "./UserTagDisplay"
 
 type TagTab = "Replay" | "My tags"
-const tagTabs: TagTab[] = ["Replay", "My tags"]
 
-interface Props {
+interface OwnProps {
     open: boolean,
     onClose: React.ReactEventHandler<{}>
     replay: Replay
     handleUpdateTags: (tags: Tag[]) => void
 }
 
+type Props = OwnProps
+    & ReturnType<typeof mapStateToProps>
+
 interface State {
     selectedTab: TagTab
     userTags?: Tag[]
 }
 
-export class TagDialog extends React.PureComponent<Props, State> {
+class TagDialogComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedTab: "Replay"}
@@ -41,30 +45,42 @@ export class TagDialog extends React.PureComponent<Props, State> {
                         onChange={this.handleTabChange}
                         centered
                     >
-                        {tagTabs.map((tagTab) =>
-                            <Tab label={tagTab} value={tagTab} key={tagTab}/>
+                        <Tab label={"Replay"} value={"Replay"}/>
+                        {this.props.loggedInUser !== null ? (
+                            <Tab label={"My tags"} value={"My tags"}/>
+                        ) : (
+                            <Tooltip title="Log in to view your tabs">
+                                <div>
+                                    <Tab label={"My tags"} value={"My tags"} disabled/>
+                                </div>
+                            </Tooltip>
                         )}
                     </Tabs>
                     <Divider/>
                 </DialogTitle>
                 <DialogContent>
-                    <LoadableWrapper load={this.loadUserTags}>
-                        {this.state.userTags &&
-                        (this.state.selectedTab === "Replay" ?
-                                <ReplayTagDisplay
-                                    replay={this.props.replay}
-                                    userTags={this.state.userTags}
-                                    handleUpdateTags={this.props.handleUpdateTags}
-                                />
-                                :
-                                <UserTagDisplay
-                                    tags={this.state.userTags}
-                                    handleCreate={this.handleCreateUserTag}
-                                    deleteTag={this.deleteTag}
-                                />
-                        )
-                        }
-                    </LoadableWrapper>
+                    {this.props.loggedInUser !== null ? (
+                        <LoadableWrapper load={this.loadUserTags}>
+                            {this.state.userTags && (
+                                this.state.selectedTab === "Replay" ?
+                                    <ReplayTagDisplay
+                                        replay={this.props.replay}
+                                        userTagProps={{
+                                            userTags: this.state.userTags,
+                                            handleUpdateTags: this.props.handleUpdateTags
+                                        }}
+                                    />
+                                    :
+                                    <UserTagDisplay
+                                        tags={this.state.userTags}
+                                        handleCreate={this.handleCreateUserTag}
+                                        deleteTag={this.deleteTag}
+                                    />
+                            )}
+                        </LoadableWrapper>
+                    ) : (
+                        <ReplayTagDisplay replay={this.props.replay}/>
+                    )}
                 </DialogContent>
             </Dialog>
         )
@@ -104,3 +120,9 @@ export class TagDialog extends React.PureComponent<Props, State> {
         }
     }
 }
+
+export const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
+export const TagDialog = connect(mapStateToProps)(TagDialogComponent)
