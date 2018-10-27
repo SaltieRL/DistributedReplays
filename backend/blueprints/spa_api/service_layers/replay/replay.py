@@ -1,6 +1,6 @@
 from typing import List, cast
 
-from flask import current_app
+from flask import current_app, g
 
 from backend.database.objects import Game, PlayerGame
 from data.constants.playlist import get_playlist
@@ -57,6 +57,6 @@ class Replay:
             ],
             tags=[
                 Tag.create_from_dbtag(tag)
-                for tag in game.tags
+                for tag in game.tags if tag.owner == g.user.platformid
             ]
         )
