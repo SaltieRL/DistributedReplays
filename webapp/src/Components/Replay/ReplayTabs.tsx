@@ -1,10 +1,12 @@
-import {Card, Tab, Tabs, withWidth} from "@material-ui/core"
-import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
+import { Card, Tab, Tabs, withWidth } from "@material-ui/core"
+import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import {connect} from "react-redux"
-import {Replay} from "../../Models/Replay/Replay"
-import {StoreState} from "../../Redux"
-import {BasicStatsContent} from "./BasicStats/BasicStatsContent"
+import { connect } from "react-redux"
+import { Replay } from "src/Models"
+import { StoreState } from "../../Redux"
+import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
+import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
+import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay
@@ -14,7 +16,7 @@ type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type ReplayTab = "basicStats" | "advancedStats" | "replayViewer"
+type ReplayTab = "playerStats" | "teamStats" | "advancedStats" | "replayViewer"
 
 interface State {
     selectedTab: ReplayTab
@@ -23,27 +25,38 @@ interface State {
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedTab: "basicStats"}
+        this.state = {selectedTab: "playerStats"}
     }
 
     public render() {
+        const isWidthSm = isWidthDown("sm", this.props.width)
+
         return (
             <Card square style={{width: "100%"}}>
                 <Tabs value={this.state.selectedTab}
                       onChange={this.handleSelectTab}
-                      centered
-                      scrollable={isWidthDown("sm", this.props.width)}
+                      centered={!isWidthSm}
+                      scrollable={isWidthSm}
                 >
-                    <Tab label="Basic Stats" value="basicStats"/>
+                    <Tab key="basicStats" label="Player Stats" value="playerStats"/>
+                    {this.props.loggedInUser && this.props.loggedInUser.beta &&
+                    <Tab key="teamStats" label="Team Stats" value="teamStats"/>
+                    }
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
-                    <>
-                        <Tab label="Advanced Stats" value="advancedStats"/>
-                        < Tab label="Replay Viewer" value="replayViewer"/>
-                    </>
+                    [
+                        <Tab key="advancedStats" label="Advanced Stats" value="advancedStats"/>,
+                        <Tab key="replayViewer" label="Replay Viewer" value="replayViewer"/>
+                    ]
                     }
                 </Tabs>
-                {this.state.selectedTab === "basicStats" &&
-                <BasicStatsContent replay={this.props.replay}/>
+                {this.state.selectedTab === "playerStats" &&
+                <PlayerStatsContent replay={this.props.replay}/>
+                }
+                {this.state.selectedTab === "teamStats" &&
+                <TeamStatsContent replay={this.props.replay}/>
+                }
+                {this.state.selectedTab === "replayViewer" &&
+                <ReplayViewer replay={this.props.replay}/>
                 }
             </Card>
         )

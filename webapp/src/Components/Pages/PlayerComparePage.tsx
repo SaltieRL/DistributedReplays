@@ -1,14 +1,15 @@
-import {Divider, Grid} from "@material-ui/core"
+import { Divider, Grid } from "@material-ui/core"
 import * as _ from "lodash"
 import * as qs from "qs"
 import * as React from "react"
-import {RouteComponentProps} from "react-router-dom"
-import {getPlayer, resolvePlayerNameOrId} from "../../Requests/Player"
-import {AddPlayerInput} from "../Player/Compare/AddPlayerInput"
-import {PlayerChip} from "../Player/Compare/PlayerChip"
-import {PlayerCompareContent} from "../Player/Compare/PlayerCompareContent"
-import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
-import {BasePage} from "./BasePage"
+import { RouteComponentProps } from "react-router-dom"
+import { getPlayer } from "../../Requests/Player/getPlayer"
+import { resolvePlayerNameOrId } from "../../Requests/Player/resolvePlayerNameOrId"
+import { AddPlayerInput } from "../Player/Compare/AddPlayerInput"
+import { PlayerChip } from "../Player/Compare/PlayerChip"
+import { PlayerCompareContent } from "../Player/Compare/PlayerCompareContent"
+import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
+import { BasePage } from "./BasePage"
 
 interface PlayerCompareQueryParams {
     ids: string[]
@@ -54,7 +55,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
             <BasePage>
                 <Grid container spacing={24} justify="center">
                     <Grid item xs={12} container justify="center">
-                        <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
+                        <Grid item xs={12} container justify="center">
                             <AddPlayerInput onSubmit={this.attemptToAddPlayer}
                                             value={this.state.inputId}
                                             onChange={this.handleInputChange}/>
@@ -62,7 +63,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                     </Grid>
                     <Grid item xs={12} sm={11} md={10} lg={9} xl={8} container spacing={8}>
                         {playerChips.map((playerChip) => (
-                            <Grid item key={playerChip.key as string}>
+                            <Grid item key={playerChip.key as string} style={{maxWidth: "100%"}}>
                                 {playerChip}
                             </Grid>
                         ))}

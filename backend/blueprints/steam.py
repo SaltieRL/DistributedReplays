@@ -5,6 +5,7 @@ import traceback
 import requests
 from flask import jsonify, request, redirect, url_for, Blueprint, current_app
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.wrapper.player_wrapper import get_random_player, create_default_player
 
 try:
@@ -21,7 +22,7 @@ bp = Blueprint('steam', __name__, url_prefix='/steam')
 def resolve_steam():
     if 'name' not in request.form:
         return jsonify({})
-    r = get_vanity_to_steam_id_or_random_response(request.form['name'], current_app)
+    r = get_vanity_to_steam_id_or_random_response(request.form['name'])
     if r is None:
         steamid = request.form['name']
     else:
@@ -73,13 +74,13 @@ def steam_id_to_profile(steam_id):
         return resp.json()
 
 
-def get_vanity_to_steam_id_or_random_response(vanity, current_app):
+@with_session
+def get_vanity_to_steam_id_or_random_response(vanity, session=None):
     try:
         return vanity_to_steam_id(vanity)
     except BaseException as e:
         logger.warning(e)
         traceback.print_exc()
-        session = current_app.config['db']()
         player = get_random_player(session)
         return {
             'response': {

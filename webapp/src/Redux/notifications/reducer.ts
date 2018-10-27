@@ -1,5 +1,5 @@
-import {Reducer} from "redux"
-import {NotificationsActionTypes, NotificationsState} from "./actions"
+import { Reducer } from "redux"
+import { NotificationsActionTypes, NotificationsState } from "./actions"
 
 export const notificationsReducer: Reducer<NotificationsState, NotificationsActionTypes> = (
     state = [], action) => {

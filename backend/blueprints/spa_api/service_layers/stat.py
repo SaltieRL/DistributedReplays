@@ -10,9 +10,10 @@ class DataPoint:
 
 
 class ProgressionDataPoint:
-    def __init__(self, date: str, data_points: List[DataPoint]):
+    def __init__(self, date: str, data_points: List[DataPoint], count=None):
         self.date = date
         self.dataPoints = [data_point.__dict__ for data_point in data_points]
+        self.replayCount = count
 
 
 class PlayerDataPoint:

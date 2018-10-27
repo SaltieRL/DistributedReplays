@@ -1,1 +1,1 @@
-sudo -u postgres /home/postgres/venv/bin/gunicorn -c gunicorn.conf RLBotServer:app
+sudo -u postgres /home/postgres/venv3.6/bin/gunicorn -c gunicorn.conf RLBotServer:app

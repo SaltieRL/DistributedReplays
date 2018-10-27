@@ -1,5 +1,5 @@
-import {MuiThemeProvider} from "@material-ui/core"
-import {createMuiTheme} from "@material-ui/core/styles"
+import { MuiThemeProvider } from "@material-ui/core"
+import { createMuiTheme } from "@material-ui/core/styles"
 import * as React from "react"
 
 const theme = createMuiTheme({
@@ -30,7 +30,10 @@ const theme = createMuiTheme({
     },
     typography: {
         fontFamily: "Lato",
-        fontWeightRegular: 300
+        fontWeightRegular: 300,
+        caption: {
+            fontWeight: 400
+        }
     }
 })
 

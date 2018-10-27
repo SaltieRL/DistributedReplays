@@ -1,7 +1,7 @@
-import {Grid, TextField} from "@material-ui/core"
+import { Grid, TextField } from "@material-ui/core"
 import * as _ from "lodash"
 import * as React from "react"
-import {convertSnakeAndCamelCaseToReadable} from "../../../Utils/String"
+import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
 
 interface Props {
     loadout: Loadout

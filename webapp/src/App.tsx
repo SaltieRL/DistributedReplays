@@ -1,17 +1,18 @@
-import {createStyles, WithStyles, withStyles} from "@material-ui/core"
+import { createStyles, WithStyles, withStyles } from "@material-ui/core"
 import * as React from "react"
-import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
-import {AboutPage} from "./Components/Pages/AboutPage"
-import {GlobalStatsPage} from "./Components/Pages/GlobalStatsPage"
-import {HomePage} from "./Components/Pages/HomePage"
-import {PlayerComparePage} from "./Components/Pages/PlayerComparePage"
-import {PlayerPage} from "./Components/Pages/PlayerPage"
-import {PluginsPage} from "./Components/Pages/PluginsPage"
-import {ReplayPage} from "./Components/Pages/ReplayPage"
-import {ReplaysDetailsPage} from "./Components/Pages/ReplaysDetailsPage"
-import {UploadPage} from "./Components/Pages/UploadPage"
-import {ReplayViewer} from "./Components/Replay/ReplayViewer/ReplayViewer"
-import {Notifications} from "./Components/Shared/Notification/Notifications"
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom"
+import { AboutPage } from "./Components/Pages/AboutPage"
+import { GlobalStatsPage } from "./Components/Pages/GlobalStatsPage"
+import { HomePage } from "./Components/Pages/HomePage"
+import { PlayerComparePage } from "./Components/Pages/PlayerComparePage"
+import { PlayerPage } from "./Components/Pages/PlayerPage"
+import { PluginsPage } from "./Components/Pages/PluginsPage"
+import { ReplayPage } from "./Components/Pages/ReplayPage"
+import { ReplaysGroupPage } from "./Components/Pages/ReplaysGroupPage"
+import { ReplaysSearchPage } from "./Components/Pages/ReplaysSearchPage"
+import { StatusPage } from "./Components/Pages/StatusPage"
+import { UploadPage } from "./Components/Pages/UploadPage"
+import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
     ABOUT_LINK,
     GLOBAL_STATS_LINK,
@@ -19,7 +20,9 @@ import {
     PLAYER_PAGE_LINK,
     PLUGINS_LINK,
     REPLAY_PAGE_LINK,
-    REPLAYS_DETAILS_PAGE_LINK,
+    REPLAYS_GROUP_PAGE_LINK,
+    REPLAYS_SEARCH_PAGE_LINK,
+    STATUS_PAGE_LINK,
     UPLOAD_LINK
 } from "./Globals"
 
@@ -39,13 +42,13 @@ class AppComponent extends React.Component<Props> {
                         <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                         <Route path={PLAYER_COMPARE_PAGE_LINK} component={PlayerComparePage}/>
                         <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
-                        <Route path={REPLAYS_DETAILS_PAGE_LINK} component={ReplaysDetailsPage}/>
-                        <Route exact path="/replay_viewer" component={ReplayViewer}/>
+                        <Route path={REPLAYS_GROUP_PAGE_LINK} component={ReplaysGroupPage}/>
+                        <Route path={REPLAYS_SEARCH_PAGE_LINK()} component={ReplaysSearchPage}/>
                         <Route exact path={ABOUT_LINK} component={AboutPage}/>
                         <Route exact path={UPLOAD_LINK} component={UploadPage}/>
                         <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
                         <Route exact path={PLUGINS_LINK} component={PluginsPage}/>
-
+                        <Route exact path={STATUS_PAGE_LINK} component={StatusPage}/>
                         {/*Redirect unknowns to root*/}
                         <Redirect from="*" to="/"/>
                     </Switch>

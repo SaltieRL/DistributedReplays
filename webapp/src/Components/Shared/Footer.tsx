@@ -1,5 +1,5 @@
-import {faDiscord, faGithub, faTwitter, IconDefinition} from "@fortawesome/free-brands-svg-icons"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import { faDiscord, faGithub, faReddit, faTwitter, IconDefinition } from "@fortawesome/free-brands-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
     ButtonBase,
     createStyles,
@@ -12,10 +12,18 @@ import {
     WithStyles,
     withWidth
 } from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import {Link} from "react-router-dom"
-import {ABOUT_LINK, DISCORD_LINK, GITHUB_LINK, GLOBAL_STATS_LINK, TWITTER_LINK} from "../../Globals"
+import { Link } from "react-router-dom"
+import {
+    ABOUT_LINK,
+    DISCORD_LINK,
+    GITHUB_LINK,
+    GLOBAL_STATS_LINK,
+    REDDIT_LINK,
+    STATUS_PAGE_LINK,
+    TWITTER_LINK
+} from "../../Globals"
 
 interface ButtonData {
     to: string
@@ -43,6 +51,11 @@ class FooterComponent extends React.PureComponent<Props> {
                 to: GITHUB_LINK,
                 icon: faGithub,
                 text: "Github"
+            },
+            {
+                to: REDDIT_LINK,
+                icon: faReddit,
+                text: "Reddit"
             }
         ]
 
@@ -92,6 +105,16 @@ class FooterComponent extends React.PureComponent<Props> {
                                     <ButtonBase>
                                         <Typography align={isWidthUpMd ? "left" : "center"}>
                                             About Us
+                                        </Typography>
+                                    </ButtonBase>
+                                </Link>
+                            </Grid>
+                            <Grid item> | </Grid>
+                            <Grid item>
+                                <Link to={STATUS_PAGE_LINK} style={{textDecoration: "none"}}>
+                                    <ButtonBase>
+                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                            Status
                                         </Typography>
                                     </ButtonBase>
                                 </Link>

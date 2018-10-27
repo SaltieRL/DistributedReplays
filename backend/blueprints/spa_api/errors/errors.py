@@ -27,6 +27,14 @@ class ReplayNotFound(CalculatedError):
     message = "Replay not found."
 
 
+class ErrorOpeningGame(CalculatedError):
+    status_code = 500
+
+    def __init__(self, error: str):
+        message = f'Error opening game: {error}'
+        super().__init__(self.status_code, message)
+
+
 class PlayerNotFound(CalculatedError):
     status_code = 404
     message = "Player not found"
@@ -40,3 +48,8 @@ class MissingQueryParams(CalculatedError):
         joined_missing_params = " and ".join(missing_params)
         message = f'Query parameter{conditional_s} {joined_missing_params} are required.'
         super().__init__(self.status_code, message)
+
+
+class TagNotFound(CalculatedError):
+    status_code = 404
+    message = "Tag not found"

@@ -1,8 +1,8 @@
-import {Grid} from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import * as React from "react"
-import {PlayerProfile} from "./PlayerProfile"
-import {PlayerRanksCard} from "./PlayerRanksCard"
-import {PlayerStatsCard} from "./PlayerStatsCard"
+import { PlayerProfile } from "./PlayerProfile"
+import { PlayerRanksCard } from "./PlayerRanksCard"
+import { PlayerStatsCard } from "./PlayerStatsCard"
 
 interface Props {
     player: Player

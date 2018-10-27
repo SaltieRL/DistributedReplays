@@ -11,7 +11,7 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
+import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 
 interface OwnProps {
     fields: string[]
@@ -69,7 +69,8 @@ class FieldSelectComponent extends React.PureComponent<Props> {
 
 const styles = (theme: Theme) => createStyles({
     formControl: {
-        minWidth: 300
+        minWidth: 250,
+        width: "90%"
     },
     chipWrapper: {
         display: "flex",

@@ -3,6 +3,8 @@ from typing import List, cast
 from flask import current_app
 
 from backend.database.objects import Game, PlayerGame
+from data.constants.playlist import get_playlist
+from .tag import Tag
 from .replay_player import ReplayPlayer
 from ..utils import sort_player_games_by_team_then_id
 from ...errors.errors import ReplayNotFound
@@ -21,13 +23,14 @@ class GameScore:
 class Replay:
     def __init__(self, id_: str, name: str, date: str,
                  game_mode: str, game_score: GameScore,
-                 players: List[ReplayPlayer]):
+                 players: List[ReplayPlayer], tags: List[Tag]):
         self.id = id_
         self.name = name
         self.date = date
         self.gameMode = game_mode
         self.gameScore = game_score.__dict__
         self.players = [player.__dict__ for player in players]
+        self.tags = [tag.__dict__ for tag in tags]
 
     @staticmethod
     def create_from_id(id_: str) -> 'Replay':
@@ -45,11 +48,15 @@ class Replay:
             id_=game.hash,
             name=game.name,
             date=game.match_date.isoformat(),
-            game_mode=f"{game.teamsize}'s",
+            game_mode=get_playlist(game.playlist, game.teamsize),
             game_score=GameScore.create_from_game(game),
             players=[
                 ReplayPlayer.create_from_player_game(player_game)
                 for player_game in sort_player_games_by_team_then_id(
                     cast(List[PlayerGame], game.playergames))
+            ],
+            tags=[
+                Tag.create_from_dbtag(tag)
+                for tag in game.tags
             ]
         )

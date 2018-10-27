@@ -63,6 +63,7 @@ venv.bak/
 .mypy_cache/
 replays/
 .idea/
+.vscode
 *.iws
 out/
 .idea_modules/
@@ -77,6 +78,7 @@ fabric.properties
 config.cfg
 .DS_Store
 *.iml
+data/postgres/
 
 parsed/
 rlreplays/

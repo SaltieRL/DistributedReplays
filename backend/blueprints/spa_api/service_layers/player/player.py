@@ -26,6 +26,10 @@ class Player:
         try:
             steam_profile = get_steam_profile_or_random_response(id_)['response']['players'][0]
         except TypeError:
+            if len(names_and_counts) > 0:
+                return Player(id_=id_, name=names_and_counts[0][0], past_names=names_and_counts, profile_link="",
+                              avatar_link="/psynet.jpg" if not id_.startswith(
+                                  'b') else "/ai.jpg")
             raise PlayerNotFound
         session.close()
         return Player(id_=id_, name=steam_profile['personaname'], past_names=names_and_counts,

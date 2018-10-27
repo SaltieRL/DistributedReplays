@@ -6,7 +6,7 @@ from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
 from backend.blueprints.spa_api.service_layers.stat import DataPoint, PlayerDataPoint
 from backend.utils.psyonix_api_handler import get_rank
 from .player_profile_stats import player_stat_wrapper, player_wrapper
-from ..chart_data import ChartData, ChartDataPoint
+from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 
 
 class PlayStyleChartData(ChartData):
@@ -21,7 +21,7 @@ class PlayStyleResponse:
         self.showWarning = show_warning
 
     @classmethod
-    def create_from_id(cls, id_: str, raw=False, rank=None, replay_ids=None):
+    def create_from_id(cls, id_: str, raw=False, rank=None, replay_ids=None, playlist=13, win=None):
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
@@ -30,7 +30,8 @@ class PlayStyleResponse:
             rank = get_rank(id_)
         averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                               redis=current_app.config['r'], raw=raw,
-                                                                              rank=rank, replay_ids=replay_ids)
+                                                                              rank=rank, replay_ids=replay_ids,
+                                                                              playlist=playlist, win=win)
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
 
         play_style_chart_datas: List[PlayStyleChartData] = []
@@ -49,7 +50,8 @@ class PlayStyleResponse:
         )
 
     @staticmethod
-    def create_all_stats_from_id(id_: str, rank=None, replay_ids=None) -> PlayerDataPoint:
+    def create_all_stats_from_id(id_: str, rank: int = None, replay_ids: List[str] = None, playlist: int = 13,
+                                 win: bool = None) -> PlayerDataPoint:
         session = current_app.config['db']()
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
@@ -58,11 +60,12 @@ class PlayStyleResponse:
             rank = get_rank(id_)
         averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                               redis=current_app.config['r'], raw=True,
-                                                                              rank=rank, replay_ids=replay_ids)
+                                                                              rank=rank, replay_ids=replay_ids,
+                                                                              playlist=playlist, win=win)
         playstyle_data_raw: PlayerDataPoint = PlayerDataPoint(name=id_,
                                                               data_points=[
                                                                   DataPoint(k, averaged_stats[k])
                                                                   for k in averaged_stats
                                                               ])
-
+        session.close()
         return playstyle_data_raw

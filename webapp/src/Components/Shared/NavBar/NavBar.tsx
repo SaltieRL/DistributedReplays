@@ -1,5 +1,5 @@
-import {faGlobeAmericas} from "@fortawesome/free-solid-svg-icons"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import { faGlobeAmericas } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
     AppBar,
     createStyles,
@@ -12,19 +12,19 @@ import {
     WithStyles,
     withWidth
 } from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import {connect} from "react-redux"
-import {Link} from "react-router-dom"
-import {Dispatch} from "redux"
-import {GLOBAL_STATS_LINK} from "../../../Globals"
-import {StoreState} from "../../../Redux"
-import {setLoggedInUserAction} from "../../../Redux/loggedInUser/actions"
-import {getLoggedInUser} from "../../../Requests/Global"
-import {Logo} from "../Logo/Logo"
-import {Search} from "../Search"
-import {UploadModalWrapper} from "../Upload/UploadModalWrapper"
-import {AccountMenu} from "./AccountMenu"
+import { connect } from "react-redux"
+import { Link } from "react-router-dom"
+import { Dispatch } from "redux"
+import { GLOBAL_STATS_LINK } from "../../../Globals"
+import { StoreState } from "../../../Redux"
+import { setLoggedInUserAction } from "../../../Redux/loggedInUser/actions"
+import { getLoggedInUser } from "../../../Requests/Global"
+import { Logo } from "../Logo/Logo"
+import { Search } from "../Search"
+import { UploadDialogWrapper } from "../Upload/UploadDialogWrapper"
+import { AccountMenu } from "./AccountMenu"
 
 type Props = ReturnType<typeof mapStateToProps>
     & ReturnType<typeof mapDispatchToProps>
@@ -72,7 +72,7 @@ class NavBarComponent extends React.PureComponent<Props> {
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <UploadModalWrapper buttonStyle="icon"/>
+                                <UploadDialogWrapper buttonStyle="icon"/>
                             </Grid>
                             <Grid item xs="auto" className={classes.accountMenuGridItem}>
                                 {/*TODO: Show AccountMenu even on mobile, but as a 3 dots icon.*/}
