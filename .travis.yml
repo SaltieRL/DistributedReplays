@@ -17,7 +17,7 @@ addons:
 
 # command to install dependencies (docker in this case)
 before_install:
-- systemctl status postgres
+- service postgresql status
 - docker-compose up
 - docker ps
 
