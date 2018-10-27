@@ -53,9 +53,7 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
                     </div>
                     :
                     <>
-                        <IconButton
-                            onClick={this.handleOpen}
-                        >
+                        <IconButton onClick={this.handleOpen}>
                             <MoreVert/>
                         </IconButton>
                         <Menu

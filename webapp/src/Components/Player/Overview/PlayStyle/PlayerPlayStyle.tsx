@@ -72,9 +72,11 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                             {chartDataResponse.title}
                                         </Typography>
                                         {this.state.winLossData &&
-                                        <PlayerPlayStyleChart names={["Win", "Loss"]}
-                                                              data={this.state.winLossData.map((data) =>
-                                                                  data.chartDatas[i])}/>}
+                                        <PlayerPlayStyleChart
+                                            names={["Win", "Loss"]}
+                                            data={this.state.winLossData.map((data) => data.chartDatas[i])}
+                                        />
+                                        }
                                     </Grid>
                                 )
                             })
@@ -89,7 +91,8 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                         <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>
                                     </Grid>
                                 )
-                            })}
+                            })
+                        }
                     </>
                     }
                 </LoadableWrapper>
