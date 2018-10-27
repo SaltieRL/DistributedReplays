@@ -20,11 +20,18 @@ before_install:
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
+- cd webapp
+- npm install
+
 # command to run tests
 script:
-- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
+- cd ~
 - cd webapp
+- npm install
 - npm start &
+- cd ~
+- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
+
 - pytest --cov=./ --ignore=protobuf-2.6.1/
 
 after_success:
