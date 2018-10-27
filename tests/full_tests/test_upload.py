@@ -18,8 +18,5 @@ class RunningServerTest(unittest.TestCase):
         for replay_url in get_complex_replay_list():
             cls.replay_status.append(requests.post('http://localhost:8000/api/upload', files={'file': download_replay_discord(replay_url)}))
 
-    def tearDownClass(cls):
-        cls.thread.
-
     def test_replays_status(self):
         print(self.replay_status)
