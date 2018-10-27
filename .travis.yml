@@ -11,12 +11,10 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
-    packages:
-    - libstdc++6
-    - gcc-4.8
 
 # command to install dependencies (docker in this case)
 before_install:
+- netstat -tlpn | grep 5432
 - service postgresql status
 - docker-compose up
 - docker ps
