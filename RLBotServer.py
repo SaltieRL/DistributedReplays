@@ -8,6 +8,7 @@ from redis import Redis
 
 from backend.blueprints import steam, auth, debug, admin, api
 from backend.blueprints.spa_api import spa_api
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
 from backend.database.startup import startup
 from backend.database.wrapper.player_wrapper import create_default_player
@@ -82,12 +83,7 @@ def set_up_app_config(app: Flask):
 
 
 def register_blueprints(app: Flask):
-    # app.register_blueprint(celery_tasks.bp)
-    # app.register_blueprint(players.bp)
     app.register_blueprint(steam.bp)
-    # app.register_blueprint(replays.bp)
-    # app.register_blueprint(saltie.bp)
-    # app.register_blueprint(stats.bp)
     app.register_blueprint(api.bp)
     app.register_blueprint(spa_api.bp)
     app.register_blueprint(auth.bp)
@@ -136,15 +132,15 @@ except ImportError:
 
 
 @app.before_request
-def lookup_current_user():
-    s = current_app.config['db']()
+@with_session
+def lookup_current_user(session=None):
     g.user = None
     if 'openid' in session:
         openid = session['openid']
         if len(ALLOWED_STEAM_ACCOUNTS) > 0 and openid not in ALLOWED_STEAM_ACCOUNTS:
             return render_template('login.html')
 
-        g.user = s.query(Player).filter(Player.platformid == openid).first()
+        g.user = session.query(Player).filter(Player.platformid == openid).first()
         if g.user is None:
             del session['openid']
             return redirect('/')
@@ -154,7 +150,6 @@ def lookup_current_user():
     elif is_local_dev():
         g.user = create_default_player()
         g.admin = True
-    s.close()
 
 
 # Serve React App

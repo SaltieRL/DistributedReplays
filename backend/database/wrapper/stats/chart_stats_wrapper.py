@@ -3,6 +3,7 @@ from typing import List
 from sqlalchemy import func
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame, Game, TeamStat
 from backend.database.wrapper.chart.chart_data import ChartStatsMetadata
 from backend.database.wrapper.chart.stat_point import DatabaseObjectDataPoint, StatDataPoint, OutputChartData
@@ -11,7 +12,8 @@ from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapp
 
 class ChartStatsWrapper(SharedStatsWrapper):
 
-    def get_chart_stats_for_player(self, session, id_: str) -> List[DatabaseObjectDataPoint]:
+    @with_session
+    def get_chart_stats_for_player(self, id_: str, session=None) -> List[DatabaseObjectDataPoint]:
         game: Game = session.query(Game).filter(Game.hash == id_).first()
         if game is None:
             raise ReplayNotFound()
@@ -30,7 +32,8 @@ class ChartStatsWrapper(SharedStatsWrapper):
 
         return wrapped_playergames
 
-    def get_chart_stats_for_team(self, session, id_: str) -> List[DatabaseObjectDataPoint]:
+    @with_session
+    def get_chart_stats_for_team(self, id_: str, session=None) -> List[DatabaseObjectDataPoint]:
         game: Game = session.query(Game).filter(Game.hash == id_).first()
         if game is None:
             raise ReplayNotFound()

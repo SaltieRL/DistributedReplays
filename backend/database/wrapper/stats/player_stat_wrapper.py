@@ -8,6 +8,7 @@ from typing import Tuple, List
 from sqlalchemy import func, cast
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame, Game
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
@@ -183,7 +184,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
                     s is not None}
         return {'average': average, 'std_dev': std_devs}
 
-    def get_group_stats(self, session, replay_ids):
+    @with_session
+    def get_group_stats(self, replay_ids, session=None):
         return_obj = {}
         # Players
         player_tuples: List[Tuple[str, str, int]] = session.query(PlayerGame.player, func.min(PlayerGame.name),

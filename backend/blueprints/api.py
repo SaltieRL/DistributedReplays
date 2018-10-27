@@ -9,6 +9,7 @@ from google.protobuf.json_format import MessageToJson
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
 
@@ -38,7 +39,9 @@ def api_v1():
 
 @bp.route('/replays')
 @key_required
-def api_v1_get_replays():
+
+@with_session
+def api_v1_get_replays(session=None):
     if 'key' in request.args:
         api_key = request.args['key']
     else:
@@ -51,7 +54,6 @@ def api_v1_get_replays():
         page = int(args['page']) - 1
     if page < 0:
         page = 0
-    session = current_app.config['db']()
     games = session.query(Game)
     # RANK STUFF
     if 'rankany' in args:
@@ -123,7 +125,6 @@ def api_v1_get_replays():
     response['page'] = page + 1
     response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2, key=api_key)
     response['version'] = 1
-    session.close()
     return jsonify(response)
 
 
@@ -136,12 +137,11 @@ def api_v1_get_ranks():
 
 @bp.route('/stats')
 @key_required
-def api_v1_get_stats():
+@with_session
+def api_v1_get_stats(session=None):
     # TODO: stats?
-    session = current_app.config['db']()
     ct = session.query(Game).count()
     dct = len([f for f in os.listdir(current_app.config['PARSED_DIR']) if f.endswith('pts')])
-    session.close()
     return jsonify({'db_count': ct, 'count': dct})
 
 
