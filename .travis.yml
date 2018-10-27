@@ -22,8 +22,7 @@ install:
 - pip install -r requirements-test.txt
 # command to run tests
 script:
-- sudo bash ./celery2.sh
-- sudo bash ./celerycron.sh
+- sudo celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info
 - python init.py
 - pytest --cov=./ --ignore=protobuf-2.6.1/
 
