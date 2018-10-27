@@ -22,9 +22,8 @@ install:
 - pip install -r requirements-test.txt
 # command to run tests
 script:
-- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info
-- npm start
-- python init.py
+- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
+- npm start &
 - pytest --cov=./ --ignore=protobuf-2.6.1/
 
 after_success:
