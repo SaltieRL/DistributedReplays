@@ -1,3 +1,4 @@
+sudo: required
 language: python
 python:
 - "3.6"
@@ -21,8 +22,8 @@ install:
 - pip install -r requirements-test.txt
 # command to run tests
 script:
-- sudo ./celery2.sh
-- sudo ./celerycron.sh
+- ./celery2.sh
+- ./celerycron.sh
 - python init.py
 - pytest --cov=./ --ignore=protobuf-2.6.1/
 
