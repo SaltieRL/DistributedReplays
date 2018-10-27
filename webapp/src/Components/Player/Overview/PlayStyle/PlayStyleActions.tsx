@@ -106,7 +106,6 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                         <MenuItem>
                             {toggleWinsLosses}
                         </MenuItem>
-
                     </Menu>
                 </>
 
