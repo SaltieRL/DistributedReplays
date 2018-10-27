@@ -33,7 +33,11 @@ script:
 - cd $TRAVIS_BUILD_DIR
 - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
 
+# test python
 - pytest --cov=./ --ignore=protobuf-2.6.1/
+# test react
+- cd webapp
+- npm test
 
 after_success:
 - codecov
