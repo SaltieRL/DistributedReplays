@@ -2,6 +2,9 @@ language: python
 python:
 - "3.6"
 
+services:
+- docker
+
 addons:
   apt:
     sources:
@@ -12,6 +15,7 @@ addons:
 
 # command to install dependencies
 before_install:
+- docker-compose up
 
 install:
 - pip install -r requirements.txt
