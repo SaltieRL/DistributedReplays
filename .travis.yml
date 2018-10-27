@@ -13,9 +13,10 @@ addons:
     - libstdc++6
     - gcc-4.8
 
-# command to install dependencies
+# command to install dependencies (docker in this case)
 before_install:
 - docker-compose up
+- docker ps
 
 install:
 - pip install -r requirements.txt
