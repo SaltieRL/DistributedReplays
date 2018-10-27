@@ -21,8 +21,8 @@ install:
 - pip install -r requirements-test.txt
 # command to run tests
 script:
-- ./celery2.sh
-- ./celerycron.sh
+- sudo ./celery2.sh
+- sudo ./celerycron.sh
 - python init.py
 - pytest --cov=./ --ignore=protobuf-2.6.1/
 
