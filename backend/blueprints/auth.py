@@ -2,7 +2,8 @@ import re
 from urllib.parse import urlencode
 
 import requests
-from flask import Blueprint, current_app, redirect, request, url_for, jsonify, session
+from flask import Blueprint, current_app, redirect, request, url_for, jsonify
+from flask import session as flask_session
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_steam_profile_or_random_response
@@ -86,15 +87,15 @@ def steam_process(session=None):
             u = Player(platformid=user_id, platformname=profile['personaname'], avatar=profile['avatarfull'], groups=[])
             session.add(u)
         session.commit()
-        session['openid'] = user_id
+        flask_session['openid'] = user_id
         return redirect(url_for('home'))
     return jsonify({'error': 'invalid openid credentials'})
 
 
 @bp.route('/logout')
 def logout():
-    if 'openid' in session:
-        del session['openid']
+    if 'openid' in flask_session:
+        del flask_session['openid']
         return redirect('/')
     else:
         return redirect('/')
