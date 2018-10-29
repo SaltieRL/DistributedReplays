@@ -5,40 +5,39 @@ python:
 
 services:
 - docker
-#- postgresql
-#- redis-server
+- postgresql
+- redis-server
 
-#addons:
-#  apt:
-#    sources:
-#    - ubuntu-toolchain-r-test
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
 
 # command to install dependencies (docker in this case)
 before_install:
 
 
 install:
-#- pip install -r requirements.txt
-#- pip install -r requirements-test.txt
-#- ls
-#- cd webapp
-#- npm install
+- pip install -r requirements.txt
+- pip install -r requirements-test.txt
+- ls
+- cd webapp
+- npm install
 
 # command to run tests
 script:
-- docker-compose up
-#- cd $TRAVIS_BUILD_DIR
-#- cd webapp
-#- npm install
-#- npm start &
-#- cd $TRAVIS_BUILD_DIR
-#- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
+- cd $TRAVIS_BUILD_DIR
+- cd webapp
+- npm install
+- npm start &
+- cd $TRAVIS_BUILD_DIR
+- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
 #
 ## test python
-#- pytest --cov=./ --ignore=protobuf-2.6.1/
+- pytest --cov=./
 ## test react
-#- cd webapp
-#- npm test
+- cd webapp
+- npm test
 
 after_success:
 - codecov
