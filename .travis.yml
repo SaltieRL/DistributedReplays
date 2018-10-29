@@ -36,8 +36,8 @@ script:
 ## test python
 - pytest --cov=./
 ## test react
-- cd webapp
-- npm test
+#- cd webapp
+#- npm test
 
 after_success:
 - codecov
