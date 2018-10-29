@@ -1,11 +1,9 @@
 import unittest
 
-from flask import current_app
-
-from backend.blueprints.spa_api.errors.errors import CalculatedError, TagNotFound
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.database.objects import Player, Tag, Game
 from backend.database.startup import startup
-from backend.database.wrapper.tag_wrapper import TagWrapper
+from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 
 TAGS = ["salt", "pepper", "peppermint", "allspice", "cinnamon", "coriander", "basil", "holy basil", "fennel",
         "cayenne pepper", "horseradish", "ginger", "curry", "celery", "chili", "chili pepper", "dill", "fingerroot",
@@ -126,7 +124,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
             self.session.delete(tag)
             self.session.commit()
 
-        with self.assertRaises(TagNotFound):
+        with self.assertRaises(DBTagNotFound):
             TagWrapper.delete_tag(self.session, self.test_user_id, self.tag_name)
 
 
@@ -187,7 +185,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
             self.session.delete(tag)
             self.session.commit()
 
-        with self.assertRaises(TagNotFound):
+        with self.assertRaises(DBTagNotFound):
             TagWrapper.rename_tag(self.session, self.test_user_id, self.tag_name, self.tag_name_new)
 
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
@@ -322,7 +320,7 @@ class TagWrapperAddTagToGameTest(unittest.TestCase):
         self.assertIn(tag, game.tags)
 
     def test_add_tag_to_replay_tag_not_found(self):
-        with self.assertRaises(TagNotFound):
+        with self.assertRaises(DBTagNotFound):
             TagWrapper.add_tag_to_game(self.session, self.test_game_id, self.test_user_id, TAGS[1])
 
 
