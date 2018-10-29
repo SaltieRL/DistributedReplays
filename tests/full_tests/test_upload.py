@@ -3,7 +3,7 @@ import requests
 
 from tests.utils import get_complex_replay_list, download_replay_discord
 
-LOCAL_URL = 'https://localhost:8000'
+LOCAL_URL = 'http://localhost:8000'
 
 class RunningServerTest(unittest.TestCase):
     replay_status = []
