@@ -1,8 +1,7 @@
 import unittest
 
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
-objects import Player, Tag, Game
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+
 from backend.database.objects import Player, Tag, Game
 from backend.database.startup import startup
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
