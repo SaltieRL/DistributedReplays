@@ -87,8 +87,6 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
                [{'platformId': get_platform_id(i), 'uniqueId': i} for i in ids_to_find]))
     post_data = {'player_ids': [p['uniqueId'] for p in ids_dict]}
     data = requests.post(url, headers=headers, json=post_data)
-
-    logger.debug(data.text)
     if data.status_code >= 300:
         return {**rank_datas_for_players, **get_empty_data(ids_to_find)}
     try:

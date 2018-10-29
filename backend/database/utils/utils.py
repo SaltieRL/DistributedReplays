@@ -59,7 +59,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                 kwargs[k] = 0.0
         t = TeamStat(game=replay_id, is_orange=team.is_orange, **kwargs)
         teamstats.append(t)
-        print(t)
+
     for p in player_objs:  # type: GamePlayer
         fields = create_and_filter_proto_field(p, ['name', 'title_id', 'is_orange'],
                                                ['api.metadata.CameraSettings', 'api.metadata.PlayerLoadout',
