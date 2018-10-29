@@ -18,9 +18,7 @@ class ReplayGroupChartData(ChartData):
 
     @staticmethod
     def create_from_ids(ids: List[str]) -> List['ReplayGroupChartData']:
-        session = current_app.config['db']()
-        stats = wrapper.get_group_stats(session, ids)
-        session.close()
+        stats = wrapper.get_group_stats(ids)
 
         players = list(stats['playerStats'].keys())
         if 'ensembleStats' in stats:

@@ -4,6 +4,7 @@ from typing import List
 
 from carball.generated.api import game_pb2
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame, Player, TeamStat
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
 from backend.database.wrapper.rank_wrapper import get_rank_obj_by_mapping
@@ -180,3 +181,9 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
         session.add(pg)
     for team in teamstats:
         session.add(team)
+
+@with_session
+def add_objects(protobuf_game, session=None):
+    game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
+    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date=True)
+    session.commit()
