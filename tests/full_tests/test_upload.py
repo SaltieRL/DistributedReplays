@@ -21,6 +21,7 @@ class RunningServerTest(unittest.TestCase):
     def test_replays_status(self):
         for replay_url in get_complex_replay_list()[:1]:
             print('Testing:', replay_url)
-            requests.post(LOCAL_URL + '/api/upload', files={'file': download_replay_discord(replay_url)})
+            r = requests.post(LOCAL_URL + '/api/upload', files={'file': download_replay_discord(replay_url)})
+            r.raise_for_status()
 
         print(self.replay_status)
