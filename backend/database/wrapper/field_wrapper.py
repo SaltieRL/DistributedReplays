@@ -33,6 +33,7 @@ class QueryFieldWrapper:
         """
         :return: The field name or the rename
         """
+        return self.dynamic_field.field_name
         if self.explanation is not None and self.explanation.field_rename is not None:
             return self.explanation.field_rename
         else:
@@ -41,6 +42,8 @@ class QueryFieldWrapper:
 
 def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[FieldExplanation]):
     field_list = [
+        FieldExplanation('assists', 'Total number of passes that led to goals'),
+        FieldExplanation('shots', 'Total number of hits towards the enemy goal'),
         FieldExplanation('total_passes', 'Hit that was next hit by a teammate.', field_rename='passes'),
         FieldExplanation('total_hits', 'Total number of hits (using hit detection).',
                          field_rename='hits'),
@@ -48,8 +51,8 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('total_aerials', 'Number of hits > than the height of the goal.', field_rename='aerials'),
         FieldExplanation('total_dribbles', 'Number of dribbles.',
                          field_rename='dribbles'),
-        FieldExplanation('useful hits',
-                         'Average distance the ball went after being hit before being touched by another player',
+        FieldExplanation('useful/hits',
+                         'Number of shots/passes/saves per',
                          field_rename='avg hit dist'),
 
         # turnovers
@@ -65,14 +68,14 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          field_rename='takeaways'),
         FieldExplanation('possession_time',
                          'Time this player had the ball. This continues until another hits the ball'
-                         'or play is stopped.', field_rename='possession'),
+                         'or play is stopped.', field_rename='possession time', short_name='possession'),
 
         # averages
         FieldExplanation('average_speed',
                          'The average speed of your car during the entire game', field_rename='speed'),
         FieldExplanation('average_hit_distance',
                          'Average distance the ball went after being hit, before being touched by another player',
-                         field_rename='avg hit dist'),
+                         short_name='avg hit dist'),
         FieldExplanation('average_distance_from_center',
                          'Average distance from the team\'s positional center.'),
 
@@ -104,19 +107,26 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Total time spent above ground but below the max height of '
                          'double jumping (roughly goal height)'),
         FieldExplanation('time_in_defending_half',
-                         'Total time the player is in the defending half'),
+                         'Total time the player is in the defending half',
+                         short_name='def 1/2'),
         FieldExplanation('time_in_attacking_half',
-                         'Total time the player is in the opponents\' half'),
+                         'Total time the player is in the opponents\' half',
+                         short_name='att 1/2'),
         FieldExplanation('time_in_defending_third',
-                         'Total time the player is in the defending third of the field.'),
+                         'Total time the player is in the defending third of the field.',
+                         short_name='def 1/3'),
         FieldExplanation('time_in_neutral_third',
-                         'Total time the player is in the midfield.'),
+                         'Total time the player is in the midfield.',
+                         short_name='mid 1/3'),
         FieldExplanation('time_in_attacking_third',
-                         'Total time the player is in the enemy third of the field.'),
+                         'Total time the player is in the enemy third of the field.',
+                         short_name='att 1/3'),
         FieldExplanation('time_behind_ball',
-                         '(< ball) Time the player is between the ball and their own goal.'),
-        FieldExplanation('time_in_font_of_ball',
-                         '(> ball) Time the player is between the ball and the opponents\' goal.'),
+                         '(< ball) Time the player is between the ball and their own goal.',
+                         short_name='< ball'),
+        FieldExplanation('time_in_front_ball',
+                         '(> ball) Time the player is between the ball and the opponents\' goal.',
+                         short_name='> ball'),
         FieldExplanation('time_closest_to_ball',
                          'Time spent closer to the ball than any other player.'),
         FieldExplanation('time_furthest_from_ball',
@@ -148,19 +158,39 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('boost ratio',
                          'Ratio of small boost pad pickups to large pickups.'),
         FieldExplanation('collection boost efficiency',
-                         '1 - wasted collected boost / total boost collected'),
+                         '1 - wasted collected boost / total boost collected',
+                         short_name='bst clct eff'),
         FieldExplanation('used boost efficiency',
-                         '1 - wasted used boost / total boost usage'),
+                         '1 - wasted used boost / total boost usage',
+                         short_name='bst use eff'),
         FieldExplanation('total boost efficiency',
-                         '1 - total wasted / total boost collected'),
+                         '1 - total wasted / total boost collected',
+                         short_name='boost efficiency'),
         FieldExplanation('turnover efficiency',
                          'Percentage of hits that were not turnovers.'),
+        FieldExplanation('average_boost_level',
+                         'Average amount of boost this player possessed over the entire game'),
+        FieldExplanation('wasted_big',
+                         'Amount of wasted boost from big boosts'),
+        FieldExplanation('wasted_small',
+                         'Amount of wasted boost from small boosts'),
+        FieldExplanation('aerial efficiency',
+                         'Ratio of aerials to time in the air',
+                         short_name='aerial eff'),
+        FieldExplanation('turnover efficiency',
+                         'Ratio of turnovers to number of hits',
+                         short_name='turnover eff'),
+        FieldExplanation('shot %',
+                         'Ratio of goals to shots')
+
 
     ]
     explanation_map = dict()
     for field in field_list:
         if field.field_rename is None:
             field.field_rename = field.field_name.replace('_', ' ')
+        if field.short_name is None:
+            field.short_name = field.field_rename
         explanation_map[field.field_name] = field
 
     for field in dynamic_field_list:
