@@ -2,12 +2,14 @@ import logging
 import os
 from typing import Optional, Dict, List, Tuple
 
-from flask import Flask, render_template, g, current_app, session, request, redirect, send_from_directory
+from flask import Flask, render_template, g, request, redirect, send_from_directory
+from flask import session as flask_session
 from flask_cors import CORS
 from redis import Redis
 
 from backend.blueprints import steam, auth, debug, admin, api
 from backend.blueprints.spa_api import spa_api
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
 from backend.database.startup import startup
 from backend.database.wrapper.player_wrapper import create_default_player
@@ -82,12 +84,7 @@ def set_up_app_config(app: Flask):
 
 
 def register_blueprints(app: Flask):
-    # app.register_blueprint(celery_tasks.bp)
-    # app.register_blueprint(players.bp)
     app.register_blueprint(steam.bp)
-    # app.register_blueprint(replays.bp)
-    # app.register_blueprint(saltie.bp)
-    # app.register_blueprint(stats.bp)
     app.register_blueprint(api.bp)
     app.register_blueprint(spa_api.bp)
     app.register_blueprint(auth.bp)
@@ -136,17 +133,17 @@ except ImportError:
 
 
 @app.before_request
-def lookup_current_user():
-    s = current_app.config['db']()
+@with_session
+def lookup_current_user(session=None):
     g.user = None
-    if 'openid' in session:
-        openid = session['openid']
+    if 'openid' in flask_session:
+        openid = flask_session['openid']
         if len(ALLOWED_STEAM_ACCOUNTS) > 0 and openid not in ALLOWED_STEAM_ACCOUNTS:
             return render_template('login.html')
 
-        g.user = s.query(Player).filter(Player.platformid == openid).first()
+        g.user = session.query(Player).filter(Player.platformid == openid).first()
         if g.user is None:
-            del session['openid']
+            del flask_session['openid']
             return redirect('/')
         g.admin = ids['admin'] in g.user.groups
         g.alpha = ids['alpha'] in g.user.groups
@@ -154,7 +151,6 @@ def lookup_current_user():
     elif is_local_dev():
         g.user = create_default_player()
         g.admin = True
-    s.close()
 
 
 # Serve React App
@@ -173,5 +169,8 @@ def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
 
 
-if __name__ == '__main__':
+def start_server():
     app.run(host='0.0.0.0', port=8000)
+
+if __name__ == '__main__':
+    start_server()

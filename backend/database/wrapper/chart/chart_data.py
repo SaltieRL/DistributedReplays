@@ -34,7 +34,7 @@ class ChartStatsMetadata:
     def __init__(self, stat_name: str, type_: ChartType, subcategory: ChartSubcatagory):
         self.stat_name = stat_name
         self.type = type_.name
-        self.subcategory = subcategory.name
+        self.subcategory = subcategory.name.replace('_', ' ')
 
 
 def convert_to_csv(chart_data):
