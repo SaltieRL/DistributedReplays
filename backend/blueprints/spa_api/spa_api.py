@@ -11,9 +11,10 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
-from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db
+from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db, add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
@@ -61,10 +62,9 @@ def better_jsonify(response: object):
 ### GLOBAL
 
 @bp.route('/global/replay_count')
-def api_get_replay_count():
-    s = current_app.config['db']()
-    count = s.query(Game.hash).count()
-    s.close()
+@with_session
+def api_get_replay_count(session=None):
+    count = session.query(Game.hash).count()
     return jsonify(count)
 
 
@@ -321,11 +321,7 @@ def api_upload_proto():
     guid_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays', filename)
 
     # Process
-    session = current_app.config['db']()
-    game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
-    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date=True)
-    session.commit()
-    session.close()
+    add_objects(protobuf_game)
 
     # Write to disk
     proto_in_memory.seek(0)

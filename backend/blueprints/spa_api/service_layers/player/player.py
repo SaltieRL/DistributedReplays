@@ -3,6 +3,7 @@ from typing import List, Tuple
 from flask import current_app
 from sqlalchemy import func, desc
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.database.objects import PlayerGame
 from ...errors.errors import PlayerNotFound
@@ -18,8 +19,8 @@ class Player:
         self.avatarLink = avatar_link
 
     @staticmethod
-    def create_from_id(id_: str) -> 'Player':
-        session = current_app.config['db']()
+    @with_session
+    def create_from_id(id_: str, session=None) -> 'Player':
         names_and_counts: List[Tuple[str, int]] = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')) \
                                                       .filter(PlayerGame.player == id_) \
                                                       .group_by(PlayerGame.name).order_by(desc('c'))[:5]
@@ -31,7 +32,6 @@ class Player:
                               avatar_link="/psynet.jpg" if not id_.startswith(
                                   'b') else "/ai.jpg")
             raise PlayerNotFound
-        session.close()
         return Player(id_=id_, name=steam_profile['personaname'], past_names=names_and_counts,
                       profile_link=steam_profile['profileurl'],
                       avatar_link=steam_profile['avatarfull'])

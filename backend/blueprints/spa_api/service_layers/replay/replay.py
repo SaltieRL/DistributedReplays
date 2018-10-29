@@ -6,7 +6,7 @@ from backend.database.objects import Game, PlayerGame
 from data.constants.playlist import get_playlist
 from .tag import Tag
 from .replay_player import ReplayPlayer
-from ..utils import sort_player_games_by_team_then_id
+from ..utils import sort_player_games_by_team_then_id, with_session
 from ...errors.errors import ReplayNotFound
 
 
@@ -33,13 +33,12 @@ class Replay:
         self.tags = [tag.__dict__ for tag in tags]
 
     @staticmethod
-    def create_from_id(id_: str) -> 'Replay':
-        session = current_app.config['db']()
+    @with_session
+    def create_from_id(id_: str, session=None) -> 'Replay':
         game = session.query(Game).filter(Game.hash == id_).first()
         if game is None:
             raise ReplayNotFound()
         replay = Replay.create_from_game(game)
-        session.close()
         return replay
 
     @staticmethod
