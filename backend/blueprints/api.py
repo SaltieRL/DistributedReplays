@@ -39,7 +39,6 @@ def api_v1():
 
 @bp.route('/replays')
 @key_required
-
 @with_session
 def api_v1_get_replays(session=None):
     if 'key' in request.args:

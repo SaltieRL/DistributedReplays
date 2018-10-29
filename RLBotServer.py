@@ -2,7 +2,8 @@ import logging
 import os
 from typing import Optional, Dict, List, Tuple
 
-from flask import Flask, render_template, g, current_app, session, request, redirect, send_from_directory
+from flask import Flask, render_template, g, request, redirect, send_from_directory
+from flask import session as flask_session
 from flask_cors import CORS
 from redis import Redis
 
@@ -135,14 +136,14 @@ except ImportError:
 @with_session
 def lookup_current_user(session=None):
     g.user = None
-    if 'openid' in session:
-        openid = session['openid']
+    if 'openid' in flask_session:
+        openid = flask_session['openid']
         if len(ALLOWED_STEAM_ACCOUNTS) > 0 and openid not in ALLOWED_STEAM_ACCOUNTS:
             return render_template('login.html')
 
         g.user = session.query(Player).filter(Player.platformid == openid).first()
         if g.user is None:
-            del session['openid']
+            del flask_session['openid']
             return redirect('/')
         g.admin = ids['admin'] in g.user.groups
         g.alpha = ids['alpha'] in g.user.groups
