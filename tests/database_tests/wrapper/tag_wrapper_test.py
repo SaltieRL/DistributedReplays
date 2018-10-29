@@ -1,5 +1,7 @@
 import unittest
 
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
+objects import Player, Tag, Game
 from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.database.objects import Player, Tag, Game
 from backend.database.startup import startup
@@ -47,7 +49,12 @@ class TagWrapperCreateTagTest(unittest.TestCase):
 
     def tearDown(self):
         # remove tag if necessary
-        tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
+        try:
+            tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
+        except InvalidRequestError:
+            self.session.rollback()
+            tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
+
         if tag is not None:
             self.session.delete(tag)
             self.session.commit()
@@ -66,7 +73,7 @@ class TagWrapperCreateTagTest(unittest.TestCase):
 
     def test_create_tag_tag_already_exists(self):
         TagWrapper.create_tag(self.session, self.test_user_id, self.tag_name)
-        with self.assertRaises(CalculatedError):
+        with self.assertRaises(IntegrityError):
             TagWrapper.create_tag(self.session, self.test_user_id, self.tag_name)
 
 
@@ -154,7 +161,11 @@ class TagWrapperRenameTagTest(unittest.TestCase):
     def tearDown(self):
         # remove tag if necessary
         for tag_name in [self.tag_name, self.tag_name_new]:
-            tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == tag_name).first()
+            try:
+                tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == tag_name).first()
+            except InvalidRequestError:
+                self.session.rollback()
+                tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == tag_name).first()
             if tag is not None:
                 self.session.delete(tag)
                 self.session.commit()
@@ -198,7 +209,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
         self.session.add(tag2)
         self.session.commit()
 
-        with self.assertRaises(CalculatedError):
+        with self.assertRaises(IntegrityError):
             TagWrapper.rename_tag(self.session, self.test_user_id, self.tag_name, self.tag_name_new)
 
 
@@ -243,7 +254,7 @@ class TagWrapperGetTagTest(unittest.TestCase):
         self.session.add(tag)
         self.session.commit()
 
-        tag = TagWrapper.get_tag(self.session, self.session, self.test_user_id, self.tag_name)
+        tag = TagWrapper.get_tag(self.session, self.test_user_id, self.tag_name)
 
         self.assertIsNotNone(tag)
 
@@ -254,8 +265,8 @@ class TagWrapperGetTagTest(unittest.TestCase):
             self.session.delete(tag)
             self.session.commit()
 
-        with self.assertRaises(TagNotFound):
-            TagWrapper.get_tag(self.session, self.session, self.test_user_id, self.tag_name)
+        with self.assertRaises(DBTagNotFound):
+            TagWrapper.get_tag(self.session, self.test_user_id, self.tag_name)
 
 
 class TagWrapperAddTagToGameTest(unittest.TestCase):
@@ -454,7 +465,7 @@ class TagWrapperGetTaggedGamesTest(unittest.TestCase):
         self.session.close()
 
     def test_get_tagged_games(self):
-        for i in range(2, len(self.test_game_ids)):
+        for i in range(0, len(self.test_game_ids)):
             tags = [self.all_tags[x] for x in range(len(self.test_game_ids) - i)]
             games = TagWrapper.get_tagged_games(self.session, self.test_user_id, tags)
             for game in games:
