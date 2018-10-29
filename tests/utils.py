@@ -3,8 +3,8 @@ import requests
 
 def download_replay_discord(url):
     file = requests.get(url, stream=True)
-    replay = file.raw.data
-    return replay
+    replay = file.raw
+    return replay.data
 
 
 def get_complex_replay_list():
