@@ -5,12 +5,14 @@ from backend.database.utils.dynamic_field_manager import DynamicFieldResult
 
 class FieldExplanation:
     def __init__(self, field_name: str, simple_explanation: str,
-                 field_rename: str = None, math_explanation: str = None, file_creation: str = None):
+                 field_rename: str = None, math_explanation: str = None, file_creation: str = None,
+                 short_name: str = None):
         self.field_rename = field_rename
         self.field_name = field_name
         self.simple_explanation = simple_explanation
         self.math_explanation = math_explanation
         self.file_creation = file_creation
+        self.short_name = short_name
 
 
 class QueryFieldWrapper:
