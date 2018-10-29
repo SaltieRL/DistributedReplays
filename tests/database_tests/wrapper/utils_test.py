@@ -1,3 +1,5 @@
+import time
+
 from carball import analyze_replay_file
 import unittest
 import tempfile
@@ -25,6 +27,30 @@ class UtilsTest(unittest.TestCase):
         match = self.session.query(PlayerGame).filter(PlayerGame.game == self.guid).first()
         self.assertIsNotNone(match)
 
+    def test_same_upload_date(self):
+        add_objects(self.proto, session=self.session)
+        match: Game = self.session.query(Game).filter(Game.hash == self.guid).first()
+        self.assertIsNotNone(match)
+
+        upload_date = match.upload_date
+
+        time.sleep(1)
+        add_objects(self.proto, session=self.session)
+        match: Game = self.session.query(Game).filter(Game.hash == self.guid).first()
+        self.assertEqual(upload_date, match.upload_date)
+
+    def test_same_ranks(self):
+        add_objects(self.proto, session=self.session)
+        match: PlayerGame = self.session.query(PlayerGame).filter(PlayerGame.game == self.guid).first()
+        self.assertIsNotNone(match)
+
+        rank = match.rank
+
+        time.sleep(1)
+        add_objects(self.proto, session=self.session)
+        match: PlayerGame = self.session.query(PlayerGame).filter(PlayerGame.game == self.guid).first()
+        self.assertEqual(rank, match.rank)
+
     def tearDown(self):
         playergames = self.session.query(PlayerGame).filter(PlayerGame.game == self.guid).all()
         for obj in playergames:
@@ -38,5 +64,3 @@ class UtilsTest(unittest.TestCase):
         for obj in games:
             self.session.delete(obj)
         self.session.commit()
-
-
