@@ -201,7 +201,11 @@ def api_v1_get_playergames_by_rank(session=None):
         rank = request.args['rank']
     else:
         return jsonify({'error': 'No rank supplied'}), 401
-    games = session.query(PlayerGame).filter(PlayerGame.rank == int(rank)).order_by(func.random())[:1000]
+    games = session.query(PlayerGame).filter(PlayerGame.rank == int(rank)).order_by(func.random())
+
+    if 'playlist' in request.args:
+        games = games.filter(Game.playlist == int(request.args['playlist']))
+    games = games[:1000]
     columns = [c.name for c in games[0].__table__.columns]
     data = {
         'data': [[getattr(g, c.name) for c in g.__table__.columns] for g in games],
