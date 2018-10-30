@@ -94,6 +94,8 @@ def api_v1_get_replays(session=None):
         games = games.filter(Game.map == args['map'])
     if 'teamsize' in args:
         games = games.filter(Game.teamsize == int(args['teamsize']))
+    if 'playlist' in args:
+        games = games.filter(Game.playlist == int(args['playlist']))
     pagesize = 50
     if 'num' in args:
         pagesize = int(args['num'])
