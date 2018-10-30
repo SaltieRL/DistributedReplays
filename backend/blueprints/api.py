@@ -201,10 +201,15 @@ def api_v1_get_playergames_by_rank(session=None):
         rank = request.args['rank']
     else:
         return jsonify({'error': 'No rank supplied'}), 401
+    if 'days' in request.args:
+        days = int(request.args['days'])
+    else:
+        days = 3 * 30
+    date_range = datetime.datetime.now() - datetime.timedelta(days=days)
     games = session.query(PlayerGame).filter(PlayerGame.rank == int(rank))
-
     if 'playlist' in request.args:
-        games = games.join(Game).filter(Game.playlist == int(request.args['playlist']))
+        games = games.join(Game).filter(Game.playlist == int(request.args['playlist'])).filter(
+            Game.match_date > date_range)
     games = games.order_by(func.random())[:1000]
     columns = [c.name for c in games[0].__table__.columns]
     data = {
