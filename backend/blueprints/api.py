@@ -11,6 +11,7 @@ from sqlalchemy.sql import operators
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
+from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
@@ -197,20 +198,13 @@ def api_v1_get_rank(id_):
 @key_required
 @with_session
 def api_v1_get_playergames_by_rank(session=None):
-    if 'rank' in request.args:
-        rank = request.args['rank']
-    else:
-        return jsonify({'error': 'No rank supplied'}), 401
     if 'days' in request.args:
         days = int(request.args['days'])
     else:
         days = 3 * 30
-    date_range = datetime.datetime.now() - datetime.timedelta(days=days)
-    games = session.query(PlayerGame).filter(PlayerGame.rank == int(rank))
-    if 'playlist' in request.args:
-        games = games.join(Game).filter(Game.playlist == int(request.args['playlist'])).filter(
-            Game.match_date > date_range)
-    games = games.order_by(func.random())[:1000]
+    builder = QueryFilterBuilder().with_stat_query([PlayerGame]).with_relative_start_time(days)
+    QueryFilterBuilder.apply_arguments_to_query(builder, request.args)
+    games = builder.build_query(session).order_by(func.random())[:1000]
     columns = [c.name for c in games[0].__table__.columns]
     data = {
         'data': [[getattr(g, c.name) for c in g.__table__.columns] for g in games],
