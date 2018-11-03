@@ -9,13 +9,14 @@ from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 
 
 class Tag:
-    def __init__(self, name: str, owner: str):
+    def __init__(self, id_: int, name: str, owner: str):
+        self.id = id_
         self.name = name
         self.ownerId = owner
 
     @staticmethod
     def create_from_dbtag(tag: DBTag):
-        return Tag(tag.name, tag.owner)
+        return Tag(tag.id, tag.name, tag.owner)
 
     @staticmethod
     @with_session
