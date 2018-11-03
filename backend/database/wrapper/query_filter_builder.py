@@ -1,10 +1,10 @@
 import datetime
 from typing import List
 
-from sqlalchemy import cast, String
+from sqlalchemy import cast, String, func
 from sqlalchemy.dialects import postgresql
 
-from backend.database.objects import Game, PlayerGame
+from backend.database.objects import Game, PlayerGame, GameTag, Tag
 
 
 class QueryFilterBuilder:
@@ -17,7 +17,7 @@ class QueryFilterBuilder:
         self.end_time: datetime.datetime = None
         self.players: List[str] = None
         self.contains_all_players: List[str] = None
-        self.tags = None  # TODO: Add tags
+        self.tags = None
         self.stats_query = None
         self.rank: int = None
         self.initial_query = None  # This is a query that is created with initial values
@@ -84,7 +84,7 @@ class QueryFilterBuilder:
         self.contains_all_players = player_ids
         return self
 
-    def with_tags(self, tags) -> 'QueryFilterBuilder':
+    def with_tags(self,  tags: List[int]) -> 'QueryFilterBuilder':
         self.tags = tags
         return self
 
@@ -166,7 +166,19 @@ class QueryFilterBuilder:
                 filtered_query = filtered_query.filter(self.handle_list(Game.hash, self.replay_ids))
             else:
                 filtered_query = filtered_query.filter(self.handle_list(PlayerGame.game, self.replay_ids))
-        # Todo: implement tags remember to handle table joins correctly
+
+        if self.tags is not None and len(self.tags) > 0:
+            if self.is_game or has_joined_game:
+                filtered_query = filtered_query.join(GameTag)\
+                                               .join(Tag) \
+                                               .filter(self.handle_list(Tag.id, self.tags)) \
+                                               .group_by(GameTag.game_id, Game.hash) \
+                                               .having(func.count(GameTag.game_id) == len(self.tags))
+            else:
+                filtered_query = filtered_query.join(GameTag, GameTag.game_id == PlayerGame.game).join(Tag) \
+                                               .filter(self.handle_list(Tag.id, self.tags)) \
+                                               .group_by(GameTag.game_id) \
+                                               .having(func.count(GameTag.game_id) == len(self.tags))
 
         return filtered_query
 
@@ -245,3 +257,5 @@ class QueryFilterBuilder:
             builder.with_timeframe(start_time=args['date_after'])
         if 'player_ids' in args:
             builder.with_all_players(args['player_ids'])
+        if 'tags' in args:
+            builder.with_tags(args['tags'])

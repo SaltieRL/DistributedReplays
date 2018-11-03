@@ -258,6 +258,7 @@ def api_search_replays():
         QueryParam(name='min_length', optional=True, type_=float),
         QueryParam(name='max_length', optional=True, type_=float),
         QueryParam(name='map', optional=True),
+        QueryParam(name='tags', optional=True, is_list=True, type_=int),
     ]
     query_params = get_query_params(accepted_query_params, request)
     match_history = MatchHistory.create_with_filters(**query_params)
