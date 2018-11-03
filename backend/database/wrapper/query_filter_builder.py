@@ -177,7 +177,7 @@ class QueryFilterBuilder:
             else:
                 filtered_query = filtered_query.join(GameTag, GameTag.game_id == PlayerGame.game).join(Tag) \
                                                .filter(self.handle_list(Tag.id, self.tags)) \
-                                               .group_by(GameTag.game_id) \
+                                               .group_by(GameTag.game_id, PlayerGame.id) \
                                                .having(func.count(GameTag.game_id) == len(self.tags))
 
         return filtered_query
