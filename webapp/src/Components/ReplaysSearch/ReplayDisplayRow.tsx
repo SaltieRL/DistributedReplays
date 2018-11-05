@@ -23,6 +23,7 @@ import { REPLAY_PAGE_LINK } from "../../Globals"
 import { ReplayBoxScore } from "../Replay/ReplayBoxScore"
 import { ReplayChart } from "../Replay/ReplayChart"
 import { ColouredGameScore } from "../Shared/ColouredGameScore"
+import { TagDialogWrapper } from "../Shared/Tag/TagDialogWrapper"
 
 interface SelectProps {
     selected: boolean
@@ -31,6 +32,7 @@ interface SelectProps {
 
 interface OwnProps {
     replay: Replay
+    handleUpdateTags: (tag: Tag[]) => void
     useBoxScore?: boolean
     selectProps?: SelectProps
 }
@@ -54,7 +56,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                               color="secondary"/>
                 </Grid>
                 }
-                <Grid item xs={selectProps ? 3 : 4} md={selectProps ? 4 : 5} zeroMinWidth
+                <Grid item xs={selectProps ? 2 : 3} md={selectProps ? 3 : 4} zeroMinWidth
                       className={classes.listGridItem}>
                     <Typography variant={typographyVariant} noWrap>
                         {replay.name}
@@ -67,6 +69,12 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                         }
                     </Typography>
                     }
+                </Grid>
+                <Grid item xs={1} className={classes.listGridItem}>
+                    <TagDialogWrapper
+                        replay={this.props.replay}
+                        handleUpdateTags={this.props.handleUpdateTags}
+                        small/>
                 </Grid>
                 <Grid item xs={2} sm={3} md={2} className={classes.listGridItem}>
                     <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
@@ -86,7 +94,11 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                     </Typography>
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
-                    <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
+                    <IconButton
+                        href={REPLAY_PAGE_LINK(replay.id)}
+                        className={classes.iconButton}
+                        onClick={(event) => event.stopPropagation()}
+                    >
                         <InsertChart/>
                     </IconButton>
                 </Grid>

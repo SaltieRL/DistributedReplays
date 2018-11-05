@@ -5,7 +5,7 @@
 - `pip3 install -r requirements.txt`
 - Install and run Redis with default port + settings (Windows is included, [Ubuntu](https://redis.io/topics/quickstart))
 - Install postgreSQL ([Windows](https://www.enterprisedb.com/thank-you-downloading-postgresql?anid=1255928), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04), [Mac](https://stackoverflow.com/a/35308200/2187510))
-- If only for local development [change the password in Unbuntu](https://blog.2ndquadrant.com/how-to-safely-change-the-postgres-user-password-via-psql/) to `postgres`
+- If only for local development [change the password in Ubuntu](https://blog.2ndquadrant.com/how-to-safely-change-the-postgres-user-password-via-psql/) to `postgres`
 - Ensure you have the latest LTS version of node and npm installed
 - Run `cd webapp`, `npm install`
 
@@ -47,68 +47,20 @@ The structure of the server is split into different directories:
 
 ### Basic Dependencies
 
-- Install Python 3.6/pip
-- (Recommended) Create a virtual environment. todo(kcolton): finish + Pipfile
 - [Docker Community Edition (Stable)](https://docs.docker.com/install/)
   
-  Docker will run Postgres and Redis inside linux based "Containers" on most platforms. 
-  Download and install Docker for your platform:    
+  Docker will run Postgres, Redis, Flask, Celery, and Node inside linux based "Containers" on most platforms. 
+  Download and install Docker and Docker Compose for your platform:    
   - [Mac/Windows: Docker Desktop](https://www.docker.com/products/docker-desktop)
   - [Ubuntu/Debian-ish: Docker CLI](https://docs.docker.com/install/linux/docker-ce/debian/#install-docker-ce)
-- Start Postgres and Redis containers:
 
-    ```bash
-    # Start Postgres and Redis. Anytime ran will automatically download latest versions.
-    # Should be in project root directory (where docker-compose.yml is)
-    docker-compose up
-    
-    # See your containers running
-    docker ps
-    ```
-    
-    todo(kcolton): extended Docker docs
-- Install [NodeJS](https://nodejs.org/en/) - 8 LTS Recommended (10 likely works as well).
-
-
-### Python Requirements
-
-- (Recommended) Activate virtual environment. todo(kcolton): finish 
-- Install python requirements
-
-    ```bash
-    pip3 install -r requirements.txt
-    ```
-    
-### React Webapp requirements via `npm` (Node Package Manager)
-
+### Run Everything
 ```bash
-cd webapp
-# if not found, upgrade npm or use: npm install
-npm ci
+# Start containers. Should be in project root directory (where docker-compose.yml is)
+docker-compose up
+
+# See your containers running
+docker ps
 ```
 
-### Start Application
-
-todo(kcolton): alternative start methods
-
-- Flask (Web framework for Backend API)
-
-    ```bash
-    # inside activated virtual environment if cerated
-    python3 RLBotServer.py
-    ```
-    
-- Celery (Background workers required for parsing replays and other tasks)
-
-    ```bash
-    # inside activated virtual environment if created
-    celery -A backend.tasks.celery_tasks.celery worker --loglevel=INFO
-    ```
-    
-- React Web Frontend (Run on separate port, make calls to Backend API for data)
-
-    ```bash
-    cd webapp
-    npm run start
-    ```
-
+Now go to `localhost:3000` and the site should be running.

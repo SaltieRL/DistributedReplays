@@ -9,7 +9,9 @@ from google.protobuf.json_format import MessageToJson
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
-from backend.database.objects import Game
+from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.database.objects import Game, PlayerGame
+from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
@@ -38,7 +40,8 @@ def api_v1():
 
 @bp.route('/replays')
 @key_required
-def api_v1_get_replays():
+@with_session
+def api_v1_get_replays(session=None):
     if 'key' in request.args:
         api_key = request.args['key']
     else:
@@ -51,7 +54,6 @@ def api_v1_get_replays():
         page = int(args['page']) - 1
     if page < 0:
         page = 0
-    session = current_app.config['db']()
     games = session.query(Game)
     # RANK STUFF
     if 'rankany' in args:
@@ -93,6 +95,8 @@ def api_v1_get_replays():
         games = games.filter(Game.map == args['map'])
     if 'teamsize' in args:
         games = games.filter(Game.teamsize == int(args['teamsize']))
+    if 'playlist' in args:
+        games = games.filter(Game.playlist == int(args['playlist']))
     pagesize = 50
     if 'num' in args:
         pagesize = int(args['num'])
@@ -123,7 +127,6 @@ def api_v1_get_replays():
     response['page'] = page + 1
     response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2, key=api_key)
     response['version'] = 1
-    session.close()
     return jsonify(response)
 
 
@@ -136,12 +139,11 @@ def api_v1_get_ranks():
 
 @bp.route('/stats')
 @key_required
-def api_v1_get_stats():
+@with_session
+def api_v1_get_stats(session=None):
     # TODO: stats?
-    session = current_app.config['db']()
     ct = session.query(Game).count()
     dct = len([f for f in os.listdir(current_app.config['PARSED_DIR']) if f.endswith('pts')])
-    session.close()
     return jsonify({'db_count': ct, 'count': dct})
 
 
@@ -190,6 +192,25 @@ def api_v1_download_parsed(fn):
 @key_required
 def api_v1_get_rank(id_):
     return jsonify(get_rank(id_))
+
+
+@bp.route('/playergames')
+@key_required
+@with_session
+def api_v1_get_playergames_by_rank(session=None):
+    if 'days' in request.args:
+        days = int(request.args['days'])
+    else:
+        days = 3 * 30
+    builder = QueryFilterBuilder().with_stat_query([PlayerGame]).with_relative_start_time(days)
+    QueryFilterBuilder.apply_arguments_to_query(builder, request.args)
+    games = builder.build_query(session).order_by(func.random())[:1000]
+    columns = [c.name for c in games[0].__table__.columns]
+    data = {
+        'data': [[getattr(g, c.name) for c in g.__table__.columns] for g in games],
+        'columns': columns
+    }
+    return jsonify(data)
 
 
 def convert_proto_to_json(proto):

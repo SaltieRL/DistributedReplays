@@ -187,16 +187,25 @@ const playlists: PlaylistMetadata[] = [
 ]
 
 interface OwnProps {
-    selectedPlaylists: number[]
-    handleChange: React.ChangeEventHandler<HTMLSelectElement>
     helperText: string
     inputLabel: string
     dropdownOnly?: boolean
     currentPlaylistsOnly?: boolean
-    multiple: boolean
 }
 
-type Props = OwnProps
+interface MultiplePlaylistProps {
+    multiple: true
+    selectedPlaylists: number[]
+    handleChange: React.ChangeEventHandler<HTMLSelectElement>
+}
+
+interface SinglePlaylistProps {
+    multiple: false
+    selectedPlaylist: number
+    handleChange: React.ChangeEventHandler<HTMLSelectElement>
+}
+
+type Props = (SinglePlaylistProps | MultiplePlaylistProps) & OwnProps
     & WithStyles<typeof styles>
 
 interface State {
@@ -224,29 +233,29 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
             || (this.state.filterStandardMode !== prevState.filterStandardMode)
             || (this.state.filterCurrent !== prevState.filterCurrent)) {
             const filteredPlaylists = this.getFilteredPlaylists().map((playlist) => playlist.value)
-            const filteredSelectedPlaylists = _.intersection(this.props.selectedPlaylists, filteredPlaylists)
-            if (!_.isEqual(this.props.selectedPlaylists, filteredSelectedPlaylists)) {
+            const selectedPlaylists = this.props.multiple ? this.props.selectedPlaylists : [this.props.selectedPlaylist]
+            const filteredSelectedPlaylists = _.intersection(selectedPlaylists, filteredPlaylists)
+            if (!_.isEqual(selectedPlaylists, filteredSelectedPlaylists)) {
                 this.setSelectedPlaylists(filteredSelectedPlaylists)
             }
         }
     }
 
     public render() {
-        const {classes, selectedPlaylists, handleChange, inputLabel, helperText} = this.props
+        const {classes, handleChange, inputLabel, helperText} = this.props
 
         const playlistsMultiSelect = (
             <FormControl className={classes.formControl}>
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
                     multiple={this.props.multiple}
-                    value={this.props.multiple ? selectedPlaylists : selectedPlaylists[0]}
+                    value={this.props.multiple ? this.props.selectedPlaylists : this.props.selectedPlaylist}
                     onChange={handleChange}
                     autoWidth
                     input={
-
                         <Input
                             endAdornment={
-                                this.props.multiple && selectedPlaylists.length > 0 &&
+                                this.props.multiple && this.props.selectedPlaylists.length > 0 &&
                                 <IconButton onClick={this.clearSelection}>
                                     <Tooltip title="Clear selection">
                                         <Clear/>
@@ -308,7 +317,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 {!this.props.dropdownOnly &&
                 <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
                     <ExpansionPanelSummary
-                        classes={classes}
+                        classes={{root: classes.root, content: classes.content}}
                         expandIcon={
                             <Tooltip title="Playlist options">
                                 <ExpandMore/>

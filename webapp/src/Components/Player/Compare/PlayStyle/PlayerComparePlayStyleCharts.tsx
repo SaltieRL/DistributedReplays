@@ -2,12 +2,15 @@ import { FormControlLabel, Grid, Switch, Typography } from "@material-ui/core"
 import * as React from "react"
 import { PlayStyleRawResponse, PlayStyleResponse } from "src/Models"
 import { getPlayStyle, getPlayStyleRaw } from "../../../../Requests/Player/getPlayStyle"
+import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { RankSelect } from "../../../Shared/Selects/RankSelect"
 import { PlayerPlayStyleChart } from "../../Overview/PlayStyle/PlayerPlayStyleChart"
 import { PlayerCompareTable } from "./PlayerCompareTable"
 
 interface Props {
     players: Player[]
+    playlist: number
+    handlePlaylistChange?: (playlist: number) => void
 }
 
 interface State {
@@ -20,7 +23,12 @@ interface State {
 export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {playerPlayStyles: [], playerPlayStylesRaw: [], rank: -1, heatmapMode: false}
+        this.state = {
+            playerPlayStyles: [],
+            playerPlayStylesRaw: [],
+            rank: -1,
+            heatmapMode: false
+        }
     }
 
     public componentDidMount() {
@@ -46,6 +54,9 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
         if (this.state.rank !== prevState.rank) {
             this.handleAddPlayers(this.props.players, true)
         }
+        if (this.props.playlist !== prevProps.playlist) {
+            this.handleAddPlayers(this.props.players, true)
+        }
     }
 
     public render() {
@@ -66,6 +77,17 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                 label="Heatmap mode"
             />
         )
+
+        const dropDown = (
+            <PlaylistSelect
+                selectedPlaylist={this.props.playlist}
+                handleChange={this.handlePlaylistsChange}
+                inputLabel="Playlist"
+                helperText="Select playlist to use"
+                dropdownOnly
+                currentPlaylistsOnly
+                multiple={false}/>
+        )
         return (
             <>
                 <Grid item xs={12} style={{textAlign: "center"}}>
@@ -74,6 +96,9 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                                 inputLabel="Rank to compare"
                                 helperText="Select the rank to plot as average"
                                 noneLabel="Default"/>
+                </Grid>
+                <Grid item xs={12} style={{textAlign: "center"}}>
+                    {dropDown}
                 </Grid>
                 {chartTitles.map((chartTitle, i) => {
                     return (
@@ -103,7 +128,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     private readonly handleAddPlayers = (players: Player[], reload: boolean = false) => {
         const rank = this.state.rank === -1 ? undefined : this.state.rank
-        Promise.all(players.map((player) => getPlayStyle(player.id, rank)))
+        Promise.all(players.map((player) => getPlayStyle(player.id, rank, this.props.playlist)))
             .then((playerPlayStyles) => {
                 if (reload) {
                     this.setState({playerPlayStyles})
@@ -113,7 +138,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                     })
                 }
             })
-        Promise.all(players.map((player) => getPlayStyleRaw(player.id)))
+        Promise.all(players.map((player) => getPlayStyleRaw(player.id, this.props.playlist)))
             .then((playerPlayStylesRaw) => {
                 if (reload) {
                     this.setState({playerPlayStylesRaw})
@@ -141,5 +166,12 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
     private readonly handleHeatmapChange = (event: React.ChangeEvent<HTMLInputElement>,
                                             heatmapMode: boolean) => {
         this.setState({heatmapMode})
+    }
+
+    private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
+        const selectedPlaylist = event.target.value as any as number
+        if (this.props.handlePlaylistChange) {
+            this.props.handlePlaylistChange(selectedPlaylist)
+        }
     }
 }

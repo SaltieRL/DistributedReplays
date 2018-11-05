@@ -153,7 +153,8 @@ export const getReplay = (id: string): Promise<Replay> => {
                         car: "Octane"
                     }
                 }
-            ]
+            ],
+            tags: []
         })
     }
     return doGet(`/replay/${id}`)

@@ -122,8 +122,15 @@ class GlobalStatWrapper(SharedStatsWrapper):
                     if playlist not in stats_dict:
                         raise CalculatedError(404, 'Playlist does not exist in global stats')
                     stats_dict = stats_dict[playlist]
-                    global_stats = [stats_dict[stat.get_field_name()][rank_index]['mean'] for stat in stat_list]
-                    global_stds = [stats_dict[stat.get_field_name()][rank_index]['std'] for stat in stat_list]
+                    global_stats = []
+                    global_stds = []
+                    for stat in stat_list:
+                        if stat.get_field_name() in stats_dict:
+                            global_stats.append(stats_dict[stat.get_field_name()][rank_index]['mean'])
+                            global_stds.append(stats_dict[stat.get_field_name()][rank_index]['std'])
+                        else:
+                            global_stats.append(1)
+                            global_stds.append(1)
                     return global_stats, global_stds
             if is_local_dev():
                 rank_index = 0
