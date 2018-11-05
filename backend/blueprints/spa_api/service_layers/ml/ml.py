@@ -86,7 +86,6 @@ class RankPredictor:
 
     def predict_rank(self, x: PlayerGame) -> int:
         x = self.convert_sql_object_to_numpy(x)
-        print(x)
         result = pd.DataFrame(index=list(range(len(x))))
         for rank, m in self.models.items():
             result = result.merge(
