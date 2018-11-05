@@ -4,7 +4,9 @@ import os
 import torch
 import torch.nn as nn
 import pandas as pd
-from backend.database.objects import PlayerGame
+
+from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.database.objects import PlayerGame, Game
 from sqlalchemy import inspect
 
 
@@ -30,21 +32,25 @@ class RankPredictorEnsemble(nn.Module):
         )
 
     def forward(self, game_state):
-        game_state = torch.from_numpy(game_state).float().cuda()
+        game_state = torch.from_numpy(game_state).float()
         return self.layers(game_state)
 
 
 class RankPredictor:
     # Loading
-    MODEL_DIR = os.path.abspath(os.path.join('..', '..', '..', '..', '..', 'data', 'models'))
+    # MODEL_DIR = os.path.abspath(os.path.join('..', '..', '..', '..', '..', 'data', 'models'))
+    MODEL_DIR = os.path.abspath(os.path.join('data', 'models'))
     models = {}
     maxs = None
     mins = None
 
     def __init__(self):
         # Load models
-        for model in glob.glob(os.path.join(self.MODEL_DIR, '*.mdl')):
-            self.models[os.path.basename(model).split('.')[0]] = torch.load(model)
+        for model in sorted(glob.glob(os.path.join(self.MODEL_DIR, '*.mdl'))):
+            state = torch.load(model)
+            m = RankPredictorEnsemble()
+            m.load_state_dict(state)
+            self.models[os.path.basename(model).split('.')[0]] = m
         self.maxs = pd.read_csv(os.path.join(self.MODEL_DIR, 'maxs.csv'), index_col=0, squeeze=True, header=None)
         self.mins = pd.read_csv(os.path.join(self.MODEL_DIR, 'mins.csv'), index_col=0, squeeze=True, header=None)
 
@@ -58,7 +64,8 @@ class RankPredictor:
         input_columns = list(input_.axes[0][-num_columns - len(ignore):])
         nonzero = input_  # [input_['time_in_game'] > 0]
         input = nonzero[input_columns].div(nonzero['time_in_game'], axis=0)
-        input = input.drop(ignore)
+        input = input.drop(ignore).fillna(0)
+        # assert all([c1 == c2 for c1, c2 in zip(input.axes[0], columns)])
         #     for c in input.columns:
         #         if (input[c].max()-input[c].min()) == 0:
         #             print(c)
@@ -79,13 +86,29 @@ class RankPredictor:
 
     def predict_rank(self, x: PlayerGame) -> int:
         x = self.convert_sql_object_to_numpy(x)
+        print(x)
         result = pd.DataFrame(index=list(range(len(x))))
         for rank, m in self.models.items():
             result = result.merge(
                 pd.Series(100 * m(x.astype(float)).detach().cpu().numpy(),
                           name=str(rank)).to_frame(), left_index=True, right_index=True)
+        # print(result)
         result = (result > 50).apply(lambda x: int(x.idxmin()), axis=1).values
-        return result[0]
+        return int(result[0])
+
+
+model_holder = RankPredictor()
+
+
+class RankPredictionAPI:
+    @staticmethod
+    @with_session
+    def create_from_id(id_, session=None):
+        playergames = session.query(PlayerGame).filter(PlayerGame.game == id_).all()
+        ranks = {}
+        for pg in playergames:
+            ranks[pg.player] = model_holder.predict_rank(pg)
+        return ranks
 
 
 if __name__ == '__main__':

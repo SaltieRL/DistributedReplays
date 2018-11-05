@@ -11,6 +11,7 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+from backend.blueprints.spa_api.service_layers.ml.ml import RankPredictor, RankPredictionAPI
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
@@ -242,6 +243,12 @@ def api_download_group():
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
     return send_from_directory(current_app.config['REPLAY_DIR'], id_ + ".replay", as_attachment=True)
+
+
+@bp.route('replay/<id_>/predict')
+def api_predict_ranks(id_):
+    ranks = RankPredictionAPI.create_from_id(id_)
+    return jsonify(ranks)
 
 
 @bp.route('/replay')
