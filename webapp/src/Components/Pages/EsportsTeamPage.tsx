@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import { RouteComponentProps } from "react-router-dom"
-import { MatchHistoryResponse, ReplaysSearchQueryParams } from "../../Models"
+import { MatchHistoryResponse, Replay, ReplaysSearchQueryParams } from "../../Models"
 import { searchReplays } from "../../Requests/Replay"
 import { EsportsPlayerListItem } from "../Esports/EsportsPlayerListItem"
 import { ReplaysSearchResultDisplay } from "../ReplaysSearch/ReplaysSearchResultDisplay"
@@ -1104,7 +1104,7 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
                     <Grid item xs={12}>
                         <LoadableWrapper load={this.loadMatchHistory} reloadSignal={this.state.reloadSignal}>
                             {this.state.matchHistory ?
-                                <ReplaysSearchResultDisplay page={0} limit={0}
+                                <ReplaysSearchResultDisplay page={0} limit={0} handleUpdateTags={this.handleUpdateTags}
                                                             replaySearchResult={this.state.matchHistory}/>
                                 :
                                 ""}
@@ -1127,6 +1127,29 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
         }
 
         return searchReplays(searchParams).then((matchHistory) => this.setState({matchHistory}))
+    }
+
+
+    private readonly handleUpdateTags = (replay: Replay) => (tags: Tag[]) => {
+        if (this.state.matchHistory) {
+            this.setState({
+                matchHistory: {
+                    ...this.state.matchHistory,
+                    replays: [
+                        ...this.state.matchHistory.replays
+                            .map((searchResultReplay): Replay => {
+                                if (searchResultReplay.id === replay.id) {
+                                    return {
+                                        ...searchResultReplay,
+                                        tags
+                                    }
+                                }
+                                return searchResultReplay
+                            })
+                    ]
+                }
+            })
+        }
     }
 }
 
