@@ -188,3 +188,7 @@ export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<Ma
             replays: data.replays.map(parseReplay)
         }))
 }
+
+export const getPredictedRanks = (id: string): Promise<any> => {
+    return doGet(`/replay/${id}/predict`)
+}
