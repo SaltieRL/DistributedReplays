@@ -2,7 +2,7 @@ from typing import List
 
 from flask import current_app, g
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, SeriesNotFound
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import TournamentSeries as DBSeries
@@ -21,7 +21,7 @@ class TournamentSeries:
     def create_from_id(series_id: int, session=None) -> 'TournamentSeries':
         series: DBSeries = TournamentWrapper.get_series(session, series_id)
         if series is None:
-            raise CalculatedError(404, "Series not found.")
+            raise SeriesNotFound()
         return TournamentSeries.create_from_db_object(series)
 
     @staticmethod

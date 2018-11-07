@@ -2,7 +2,7 @@ from typing import List
 
 from flask import g
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, StageNotFound
 from backend.blueprints.spa_api.service_layers.tournament.tournament_series import TournamentSeries
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import TournamentStage as DBStage
@@ -21,7 +21,7 @@ class TournamentStage:
     def create_from_id(stage_id: int, session=None) -> 'TournamentStage':
         stage: DBStage = TournamentWrapper.get_stage(session, stage_id)
         if stage is None:
-            raise CalculatedError(404, "Stage not found.")
+            raise StageNotFound
         return TournamentStage.create_from_db_object(stage)
 
     @staticmethod

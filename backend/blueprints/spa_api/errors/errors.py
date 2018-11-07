@@ -53,3 +53,28 @@ class MissingQueryParams(CalculatedError):
 class TagNotFound(CalculatedError):
     status_code = 404
     message = "Tag not found"
+
+
+class UserNotAuthorizedError(CalculatedError):
+    message = "User not authorized"
+    status_code = 403
+
+
+class UserNotAuthenticatedError(CalculatedError):
+    message = "User not authenticated"
+    status_code = 401
+
+
+class TournamentNotFound(CalculatedError):
+    status_code = 404
+    message = "Tournament not found"
+
+
+class StageNotFound(CalculatedError):
+    status_code = 404
+    message = "Stage not found"
+
+
+class SeriesNotFound(CalculatedError):
+    status_code = 404
+    message = "Series not found"

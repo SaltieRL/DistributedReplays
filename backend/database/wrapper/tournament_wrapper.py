@@ -4,7 +4,8 @@ import enum
 from flask import current_app, g
 from sqlalchemy import func
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, UserNotAuthenticatedError, UserNotAuthorizedError, \
+    PlayerNotFound, TournamentNotFound, StageNotFound, ReplayNotFound
 from backend.database.objects import Game, TournamentPlayer, TournamentSeries, SeriesGame, PlayerGame, TournamentStage,\
      Tournament, Player, TournamentSeriesStatus
 from backend.utils.checks import get_checks
@@ -24,7 +25,7 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
         def permission_wrapper(*args, **kwargs):
             sender = kwargs['sender']
             if sender is None:
-                raise CalculatedError(401, 'User not authenticated.')
+                raise UserNotAuthenticatedError
 
             tournament_id = None
             stage_id = None
@@ -51,7 +52,7 @@ def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
                 return decorated_function(*args, **kwargs)
             else:
                 session.close()
-                raise CalculatedError(403, 'User not authorized.')
+                raise UserNotAuthorizedError
         return permission_wrapper
     return perm_arg_wrapper
 
@@ -71,7 +72,7 @@ class TournamentWrapper:
         # better hide this from users, you do not really need to delete tournaments
         tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")
+            raise TournamentNotFound
         session.delete(tournament)
         session.commit()
 
@@ -80,7 +81,7 @@ class TournamentWrapper:
     def rename_tournament(session, new_name, tournament_id=None, sender=None):
         tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")
+            raise TournamentNotFound
         tournament.name = new_name
         session.commit()
         return tournament
@@ -95,7 +96,7 @@ class TournamentWrapper:
     def add_tournament_admin(session, admin_platformid, tournament_id=None, sender=None):
         tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")
+            raise TournamentNotFound
         player = session.query(Player).filter(Player.platformid == admin_platformid).first()
         if tournament is None:
             raise CalculatedError(404, "Player not found.")  # TODO add player to DB instead
@@ -107,10 +108,10 @@ class TournamentWrapper:
     def remove_tournament_admin(session, admin_platformid, tournament_id=None, sender=None):
         tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")
+            raise TournamentNotFound
         player = session.query(Player).filter(Player.platformid == admin_platformid).first()
         if tournament is None:
-            raise CalculatedError(404, "Player not found.")
+            raise PlayerNotFound
         if player in tournament.admins:
             tournament.admins.remove(player)
             session.commit()
@@ -120,7 +121,7 @@ class TournamentWrapper:
     def add_tournament_participant(session, participant_platformid, tournament_id=None, sender=None):
         tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")
+            raise TournamentNotFound
         player = session.query(Player).filter(Player.platformid == participant_platformid).first()
         if tournament is None:
             raise CalculatedError(404, "Player not found.")  # TODO add player to DB instead
@@ -132,10 +133,10 @@ class TournamentWrapper:
     def remove_tournament_participant(session, participant_platformid, tournament_id=None, sender=None):
         tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")
+            raise TournamentNotFound
         player = session.query(Player).filter(Player.platformid == participant_platformid).first()
         if tournament is None:
-            raise CalculatedError(404, "Player not found.")
+            raise PlayerNotFound
         if player in tournament.participants:
             tournament.participants.remove(player)
             session.commit()
@@ -145,7 +146,7 @@ class TournamentWrapper:
     def add_tournament_stage(session, stage_name, tournament_id=None, sender=None):
         tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")
+            raise TournamentNotFound
         stage = TournamentStage(tournament_id=tournament_id, name=stage_name)
         session.add(stage)
         session.commit()
@@ -161,7 +162,7 @@ class TournamentWrapper:
     def remove_tournament_stage(session, stage_id=None, sender=None):
         stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).first()
         if stage is None:
-            raise CalculatedError(404, "Stage not found.")
+            raise StageNotFound
         session.delete(stage)
         session.commit()
 
@@ -170,7 +171,7 @@ class TournamentWrapper:
     def rename_tournament_stage(session, new_name, stage_id=None, sender=None):
         stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).first()
         if stage is None:
-            raise CalculatedError(404, "Stage not found.")
+            raise StageNotFound
         stage.name = new_name
         session.commit()
         return stage
@@ -180,7 +181,7 @@ class TournamentWrapper:
     def add_series_to_stage(session, series_name, stage_id=None, sender=None):
         stage = session.query(TournamentStage).filter(TournamentStage.id == stage_id).first()
         if stage is None:
-            raise CalculatedError(404, "Stage not found.")
+            raise StageNotFound
         series = TournamentSeries(name=series_name, stage_id=stage_id)
         session.add(series)
         session.commit()
@@ -196,7 +197,7 @@ class TournamentWrapper:
     def remove_series(session, series_id=None, sender=None):
         series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
-            raise CalculatedError(404, "Stage not found.")
+            raise StageNotFound
         session.delete(series)
         session.close()
 
@@ -205,7 +206,7 @@ class TournamentWrapper:
     def rename_series(session, new_name, series_id=None, sender=None):
         series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
-            raise CalculatedError(404, "Stage not found.")
+            raise StageNotFound
         series.name = new_name
         session.commit()
         return series
@@ -215,10 +216,10 @@ class TournamentWrapper:
     def add_game_to_series(session, game_hash, series_id=None, sender=None):
         series: TournamentSeries = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
-            raise CalculatedError(404, "Stage not found.")
+            raise StageNotFound
         game = session.query(Game).filter(Game.hash == game_hash).first()
         if game is None:
-            raise CalculatedError(404, "Game not found.")
+            raise ReplayNotFound
         series.games.append(game)
         for player in game.players:
             if player not in series.stage.tournament.participants:
@@ -231,10 +232,10 @@ class TournamentWrapper:
     def remove_game_from_series(session, game_hash, series_id=None, sender=None):
         series = session.query(TournamentSeries).filter(TournamentSeries.id == series_id).first()
         if series is None:
-            raise CalculatedError(404, "Stage not found.")
+            raise StageNotFound
         game = session.query(Game).filter(Game.hash == game_hash).first()
         if game is None:
-            raise CalculatedError(404, "Game not found.")
+            raise ReplayNotFound
         if game in series.games:
             series.games.remove(game)
         session.commit()
@@ -246,7 +247,7 @@ class TournamentWrapper:
             tournament = session.query(Tournament).filter(Tournament.id == tournament_id).first()
 
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")  # TODO create a sub class for that error
+            raise TournamentNotFound
 
         is_admin_check, is_alpha_check, is_beta_check = get_checks(g)
         is_site_admin = is_admin_check()
@@ -269,7 +270,7 @@ class TournamentWrapper:
     def start_auto_tournament_adding(session, game_hash):
         game = session.query(Game).filter(Game.hash == game_hash).first()
         if game is None:
-            raise CalculatedError(404, "Game not found.")
+            raise ReplayNotFound
 
         unmatched_players_tolerance = 0
         if game.teamsize > 1:
@@ -327,3 +328,5 @@ class TournamentWrapper:
             if matched_count < game.teamsize * 2:
                 series.status = TournamentSeriesStatus.REVIEW_NEEDED
                 session.commit()
+
+

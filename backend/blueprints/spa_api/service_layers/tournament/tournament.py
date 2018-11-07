@@ -2,7 +2,8 @@ from typing import List
 
 from flask import current_app, g
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, PlayerNotFound, UserNotAuthorizedError, \
+    TournamentNotFound
 from backend.blueprints.spa_api.service_layers.player.player import Player
 from backend.blueprints.spa_api.service_layers.tournament.tournament_stage import TournamentStage
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -32,7 +33,7 @@ class Tournament:
     def create_from_id(tournament_id: int, session=None) -> 'Tournament':
         tournament: DBTournament = TournamentWrapper.get_tournament(session, tournament_id)
         if tournament is None:
-            raise CalculatedError(404, "Tournament not found.")
+            raise TournamentNotFound
         return Tournament.create_from_db_object(tournament)
 
     @staticmethod
@@ -48,7 +49,7 @@ class Tournament:
         player: DBPlayer = session.query(DBPlayer).filter(DBPlayer.platformid == platform_id).first()
         if player is None:
             session.close()
-            raise CalculatedError(404, "Player does not exist.")
+            raise PlayerNotFound()
         return [Tournament.create_from_db_object(tournament) for tournament in player.owned_tournaments]
 
     @staticmethod
@@ -92,7 +93,7 @@ class Tournament:
             tournament = TournamentWrapper.get_tournament(session, tournament_id=tournament_id)
             return [Player.create_from_id(player.platformid) for player in tournament.admins]
         else:
-            raise CalculatedError(403, "User not authorized.")
+            raise UserNotAuthorizedError()
 
     @staticmethod
     @with_session
