@@ -389,17 +389,18 @@ def api_remove_tag_from_game(name: str, id_: str):
 
 
 ### Tournament
-# TODO add require user for all tournament routes
 @bp.route('tournament/<id_>')
 def api_get_tournament(id_):
     return better_jsonify(Tournament.create_from_id(id_))
 
 
+@require_user
 @bp.route('tournament/<name>', methods=["PUT"])
 def api_create_tournament(name):
     return better_jsonify(Tournament.create(name)), 201
 
 
+@require_user
 @bp.route('tournament/<tournament_id>', methods=["PATCH"])
 def api_rename_tournament(tournament_id):
     accepted_query_params = [QueryParam(name='new_name')]
@@ -408,6 +409,7 @@ def api_rename_tournament(tournament_id):
     return better_jsonify(tournament), 200
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/', methods=["DELETE"])
 def api_delete_tournament(tournament_id):
     # keep in mind that this operation is only allowed for site admins
@@ -415,18 +417,21 @@ def api_delete_tournament(tournament_id):
     return '', 204
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/admins')
 def api_get_tournament_admins(tournament_id):
     admins = Tournament.get_admins(tournament_id)
     return better_jsonify(admins), 200
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/admin/<player_id>', methods=["PUT"])
 def api_add_tournament_admin(tournament_id, player_id):
     player = Tournament.add_admin(tournament_id, player_id)
     return better_jsonify(player), 201
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/admin/<player_id>', methods=["DELETE"])
 def api_remove_tournament_admin(tournament_id, player_id):
     Tournament.remove_admin(tournament_id, player_id)
@@ -439,12 +444,14 @@ def api_get_tournament_participants(tournament_id):
     return better_jsonify(admins), 200
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/participant/<player_id>', methods=["PUT"])
 def api_add_tournament_participant(tournament_id, player_id):
     player = Tournament.add_participant(tournament_id, player_id)
     return better_jsonify(player), 201
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/participant/<player_id>', methods=["DELETE"])
 def api_remove_tournament_participant(tournament_id, player_id):
     Tournament.remove_participant(tournament_id, player_id)
@@ -456,11 +463,13 @@ def api_get_tournament_stage(tournament_id, stage_id):
     return better_jsonify(TournamentStage.create_from_id(stage_id))
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/stage/<name>', methods=["PUT"])
 def api_create_tournament_stage(tournament_id, name):
     return better_jsonify(TournamentStage.create(name, tournament_id=tournament_id)), 201
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/stage/<stage_id>', methods=["PATCH"])
 def api_rename_tournament_stage(tournament_id, stage_id):
     accepted_query_params = [QueryParam(name='new_name')]
@@ -469,6 +478,7 @@ def api_rename_tournament_stage(tournament_id, stage_id):
     return better_jsonify(stage), 200
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/stage/<stage_id>', methods=["DELETE"])
 def api_delete_tournament_stage(tournament_id, stage_id):
     TournamentStage.delete(stage_id)
@@ -480,11 +490,13 @@ def api_get_tournament_series(tournament_id, stage_id, series_id):
     return better_jsonify(TournamentSeries.create_from_id(series_id))
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<name>', methods=["PUT"])
 def api_create_tournament_series(tournament_id, stage_id, name):
     return better_jsonify(TournamentSeries.create(name, stage_id)), 201
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>', methods=["PATCH"])
 def api_rename_tournament_series(tournament_id, stage_id, series_id):
     accepted_query_params = [QueryParam(name='new_name')]
@@ -493,18 +505,21 @@ def api_rename_tournament_series(tournament_id, stage_id, series_id):
     return better_jsonify(tournament_series), 200
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>', methods=["DELETE"])
 def api_delete_tournament_series(tournament_id, stage_id, series_id):
     TournamentSeries.delete(series_id)
     return '', 204
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>/<game_hash>', methods=["PUT"])
 def api_add_game_to_series(tournament_id, stage_id, series_id, game_hash):
     replay = TournamentSeries.add_game(series_id, game_hash)
     return better_jsonify(replay), 201
 
 
+@require_user
 @bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>/<game_hash>', methods=["DELETE"])
 def api_remove_game_from_series(tournament_id, stage_id, series_id, game_hash):
     TournamentSeries.remove_game(series_id, game_hash)
