@@ -1,10 +1,10 @@
-import {Grid} from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import * as React from "react"
-import {getPlayer} from "../../../Requests/Player/getPlayer"
-import {resolvePlayerNameOrId} from "../../../Requests/Player/resolvePlayerNameOrId"
-import {AddPlayerInput} from "../../Player/Compare/AddPlayerInput"
-import {PlayerChip} from "../../Player/Compare/PlayerChip"
-import {WithNotifications, withNotifications} from "../../Shared/Notification/NotificationUtils"
+import { getPlayer } from "../../../Requests/Player/getPlayer"
+import { resolvePlayerNameOrId } from "../../../Requests/Player/resolvePlayerNameOrId"
+import { AddPlayerInput } from "../../Player/Compare/AddPlayerInput"
+import { PlayerChip } from "../../Player/Compare/PlayerChip"
+import { WithNotifications, withNotifications } from "../../Shared/Notification/NotificationUtils"
 
 interface OwnProps {
     handleChange: (players: Player[]) => void

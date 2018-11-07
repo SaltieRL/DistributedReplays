@@ -4,8 +4,10 @@ from typing import List
 
 from carball.generated.api import game_pb2
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame, Player, TeamStat
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
+from backend.database.wrapper.rank_wrapper import get_rank_obj_by_mapping
 from backend.utils.psyonix_api_handler import get_rank_batch
 
 
@@ -21,20 +23,10 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
     ranks = get_rank_batch([p.id.id for p in player_objs], offline_redis=offline_redis)
     rank_list = []
     mmr_list = []
-    gamemode = -1
-    if teamsize == 1:
-        gamemode = 0
-    elif teamsize == 2:
-        gamemode = 1
-    elif teamsize == 3:
-        gamemode = 3
-    if gamemode in [0, 1, 2, 3]:
-        for r in ranks.values():
-            if len(r) > gamemode:
-                if 'tier' in r[gamemode]:
-                    rank_list.append(r[gamemode]['tier'])
-                if 'rank_points' in r[gamemode]:
-                    mmr_list.append(r[gamemode]['rank_points'])
+    for player, rank in ranks.items():
+        r = get_rank_obj_by_mapping(rank, playlist=game.game_metadata.playlist)
+        rank_list.append(r['tier'])
+        mmr_list.append(r['rank_points'])
     replay_id = game.game_metadata.match_guid
     if replay_id == '' or replay_id is None:
         replay_id = game.game_metadata.id
@@ -95,16 +87,15 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
         mmr = None
         division = None
         if pid in ranks:
-            if gamemode in [0, 1, 2, 3]:
-                try:
-                    rank_obj = ranks[pid][gamemode]
-                    rank = rank_obj['tier']
-                    division = rank_obj['division']
-                    mmr = rank_obj['rank_points']
-                except:
-                    rank = 0
-                    division = 0
-                    mmr = 0
+            try:
+                r = get_rank_obj_by_mapping(ranks[pid], playlist=game.game_metadata.playlist)
+                rank = r['tier']
+                division = r['division']
+                mmr = r['rank_points']
+            except:
+                rank = 0
+                division = 0
+                mmr = 0
 
         if is_orange:
             win = orange_score > blue_score
@@ -127,13 +118,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
 def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], teamstats: List[TeamStat],
                    session,
                    preserve_upload_date=False, preserve_ranks=True):
-    # Team stats
-
-    matches = session.query(TeamStat).filter(TeamStat.game == game.hash).all()
-    if matches is not None:
-        for match in matches:
-            session.delete(match)
-
+    # delete playergames/teamstats first, to prevent orphans
     for pg in player_games:
         match = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
             PlayerGame.game == pg.game).first()
@@ -153,6 +138,11 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
                     pg.division = match.division
                     pg.mmr = match.mmr
                 session.delete(match)
+
+    matches = session.query(TeamStat).filter(TeamStat.game == game.hash).all()
+    if matches is not None:
+        for match in matches:
+            session.delete(match)
 
     try:
         matches = session.query(Game).filter(Game.hash == game.hash).all()
@@ -191,3 +181,9 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
         session.add(pg)
     for team in teamstats:
         session.add(team)
+
+@with_session
+def add_objects(protobuf_game, session=None):
+    game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
+    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date=True)
+    session.commit()

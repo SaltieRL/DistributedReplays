@@ -2,8 +2,10 @@ import re
 from urllib.parse import urlencode
 
 import requests
-from flask import Blueprint, current_app, redirect, request, url_for, jsonify, session
+from flask import Blueprint, current_app, redirect, request, url_for, jsonify
+from flask import session as flask_session
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.database.objects import Player
 
@@ -72,29 +74,28 @@ def steam_auth():
 
 
 @bp.route('/steam/process')
-def steam_process():
+@with_session
+def steam_process(session=None):
     if validate_openid(request.args):
         user_id = request.args['openid.claimed_id'].split('/')[-1]
         profile = get_steam_profile_or_random_response(user_id)['response']['players'][0]
-        s = current_app.config['db']()
-        match = s.query(Player).filter(Player.platformid == user_id).first()
+        match = session.query(Player).filter(Player.platformid == user_id).first()
         if match:
             match.platformname = profile['personaname']
             match.avatar = profile['avatarfull']
         else:
             u = Player(platformid=user_id, platformname=profile['personaname'], avatar=profile['avatarfull'], groups=[])
-            s.add(u)
-        s.commit()
-        s.close()
-        session['openid'] = user_id
+            session.add(u)
+        session.commit()
+        flask_session['openid'] = user_id
         return redirect(url_for('home'))
     return jsonify({'error': 'invalid openid credentials'})
 
 
 @bp.route('/logout')
 def logout():
-    if 'openid' in session:
-        del session['openid']
+    if 'openid' in flask_session:
+        del flask_session['openid']
         return redirect('/')
     else:
         return redirect('/')

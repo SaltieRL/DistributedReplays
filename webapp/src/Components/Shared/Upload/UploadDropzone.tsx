@@ -1,7 +1,7 @@
-import {ButtonBase, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
+import { ButtonBase, createStyles, Typography, WithStyles, withStyles } from "@material-ui/core"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import * as React from "react"
-import Dropzone, {DropFilesEventHandler} from "react-dropzone"
+import Dropzone, { DropFilesEventHandler } from "react-dropzone"
 
 interface OwnProps {
     files: File[]
@@ -68,18 +68,18 @@ const styles = createStyles({
         backgroundColor: "#ccc"
     },
     default: {
-        width: "550px",
-        height: "430px",
-        maxWidth: "90vw",
-        maxHeight: "90vh",
-        borderWidth: 2,
-        borderColor: "#666",
-        borderStyle: "dashed",
-        borderRadius: 5,
-        cursor: "pointer",
-        backgroundColor: "#eee",
-        display: "flex",
-        alignItems: "center",
+        "width": 550,
+        "height": 430,
+        "maxWidth": "80vw",
+        "maxHeight": "90vh",
+        "borderWidth": 2,
+        "borderColor": "#666",
+        "borderStyle": "dashed",
+        "borderRadius": 5,
+        "cursor": "pointer",
+        "backgroundColor": "#eee",
+        "display": "flex",
+        "alignItems": "center",
         "&:hover": {
             backgroundColor: "#ddd"
         }
@@ -87,7 +87,8 @@ const styles = createStyles({
     dropzoneContent: {
         position: "absolute",
         width: "100%",
-        textAlign: "center"
+        textAlign: "center",
+        padding: 20
     }
 })
 

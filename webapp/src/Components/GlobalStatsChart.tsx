@@ -1,9 +1,9 @@
-import {ChartData, ChartDataSets, ChartOptions, ChartTooltipItem} from "chart.js"
+import { ChartData, ChartDataSets, ChartOptions, ChartTooltipItem } from "chart.js"
 import * as _ from "lodash"
 import * as React from "react"
-import {Bar} from "react-chartjs-2"
-import {roundLabelToMaxDPCallback} from "../Utils/Chart"
-import {colorsForPlaylists, convertHexToRgba} from "../Utils/Color"
+import { Bar } from "react-chartjs-2"
+import { roundLabelToMaxDPCallback } from "../Utils/Chart"
+import { colorsForPlaylists, convertHexToRgba } from "../Utils/Color"
 
 interface Props {
     graph: GlobalStatsGraph

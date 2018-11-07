@@ -1,11 +1,16 @@
 import * as moment from "moment"
 import * as qs from "qs"
-import {doGet} from "../apiHandler/apiHandler"
-import {BasicStat} from "../Models/ChartData"
-import {MatchHistoryResponse} from "../Models/Player/MatchHistory"
-import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
-import {ReplaysSearchQueryParams, stringifyReplaySearchQueryParam} from "../Models/ReplaysSearchQueryParams"
-import {useMockData} from "./Config"
+import {
+    BasicStat,
+    GameMode,
+    MatchHistoryResponse,
+    parseReplay,
+    Replay,
+    ReplaysSearchQueryParams,
+    stringifyReplaySearchQueryParam
+} from "src/Models"
+import { doGet } from "../apiHandler/apiHandler"
+import { useMockData } from "./Config"
 
 export const getReplay = (id: string): Promise<Replay> => {
     if (useMockData) {
@@ -148,19 +153,20 @@ export const getReplay = (id: string): Promise<Replay> => {
                         car: "Octane"
                     }
                 }
-            ]
+            ],
+            tags: []
         })
     }
     return doGet(`/replay/${id}`)
         .then(parseReplay)
 }
 
-export const getReplayBasicStats = (id: string): Promise<BasicStat[]> => {
-    return doGet(`/replay/${id}/basic_stats`)
+export const getReplayPlayerStats = (id: string): Promise<BasicStat[]> => {
+    return doGet(`/replay/${id}/basic_player_stats`)
 }
 
 export const getReplayTeamStats = (id: string): Promise<BasicStat[]> => {
-    return doGet(`/replay/${id}/team_stats`)
+    return doGet(`/replay/${id}/basic_team_stats`)
 }
 
 export const getReplayViewerData = (id: string): Promise<any> => {

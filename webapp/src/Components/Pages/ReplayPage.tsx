@@ -1,11 +1,11 @@
-import {Grid} from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import * as React from "react"
-import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
-import {Replay} from "../../Models/Replay/Replay"
-import {getReplay} from "../../Requests/Replay"
-import {ReplayView} from "../Replay/ReplayView"
-import {LoadableWrapper} from "../Shared/LoadableWrapper"
-import {BasePage} from "./BasePage"
+import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
+import { Replay } from "src/Models"
+import { getReplay } from "../../Requests/Replay"
+import { ReplayView } from "../Replay/ReplayView"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
+import { BasePage } from "./BasePage"
 
 interface RouteParams {
     id: string
@@ -33,8 +33,15 @@ export class ReplayPage extends React.PureComponent<Props, State> {
                     <LoadableWrapper load={this.getReplay}>
                         {replay &&
                         <Switch>
-                            <Route exact path={matchUrl}
-                                   component={() => <ReplayView replay={replay}/>}/>
+                            <Route
+                                exact path={matchUrl}
+                                render={() => (
+                                    <ReplayView
+                                        replay={replay}
+                                        handleUpdateTags={this.handleUpdateTags}
+                                    />
+                                )}
+                            />
                             <Redirect from="*" to={matchUrl}/>
                         </Switch>
                         }
@@ -47,5 +54,13 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     private readonly getReplay = (): Promise<void> => {
         return getReplay(this.props.match.params.id)
             .then((replay) => this.setState({replay}))
+    }
+
+    private readonly handleUpdateTags = (tags: Tag[]) => {
+        const replay = {
+            ...this.state.replay!,
+            tags
+        }
+        this.setState({replay})
     }
 }

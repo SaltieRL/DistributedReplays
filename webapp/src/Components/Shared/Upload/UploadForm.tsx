@@ -1,11 +1,9 @@
 import {
     Button,
-    Card,
-    CardActions,
-    CardContent,
-    CardHeader,
     CircularProgress,
     createStyles,
+    DialogActions,
+    DialogContent,
     Theme,
     Typography,
     WithStyles,
@@ -14,11 +12,12 @@ import {
 import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
-import {DropFilesEventHandler} from "react-dropzone"
-import {uploadReplays} from "../../../Requests/Global"
-import {WithNotifications, withNotifications} from "../Notification/NotificationUtils"
-import {BakkesModAd} from "./BakkesModAd"
-import {UploadDropzone} from "./UploadDropzone"
+import { DropFilesEventHandler } from "react-dropzone"
+import { uploadReplays } from "../../../Requests/Global"
+import { WithNotifications, withNotifications } from "../Notification/NotificationUtils"
+import { BakkesModAd } from "./BakkesModAd"
+import { addTaskIds } from "./StatusUtils"
+import { UploadDropzone } from "./UploadDropzone"
 
 type Props = WithStyles<typeof styles>
     & WithNotifications
@@ -40,52 +39,51 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         const hasFilesSelected = this.state.files.length !== 0
         return (
             <>
-                <Card>
-                    <CardHeader title={"Upload Replays"}/>
-                    {this.state.uploadingStage !== "pressedUpload" ?
-                        <>
-                            <CardContent>
-                                <BakkesModAd/>
-                                <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
-                                {this.state.rejected.length !== 0 &&
-                                <Typography color="error">
-                                    {this.state.rejected.length} file(s) were not selected as they do not end in
-                                    ".replay".
-                                </Typography>
-                                }
-                            </CardContent>
-                            < CardActions>
-                                < Button variant="outlined"
-                                         onClick={this.clearFiles}
-                                         disabled={!hasFilesSelected}
-                                >
-                                    <Clear className={classes.leftIcon}/>
-                                    Clear
-                                </Button>
+                {this.state.uploadingStage !== "pressedUpload" ?
+                    <>
+                        <DialogContent>
+                            <BakkesModAd/>
+                            <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
+                            {this.state.rejected.length !== 0 &&
+                            <Typography color="error">
+                                {this.state.rejected.length} file(s) were not selected as they do not end in
+                                ".replay".
+                            </Typography>
+                            }
+                        </DialogContent>
+                        <DialogActions>
+                            <Button variant="outlined"
+                                    onClick={this.clearFiles}
+                                    disabled={!hasFilesSelected}
+                            >
+                                <Clear className={classes.leftIcon}/>
+                                Clear
+                            </Button>
 
-                                <Button variant="contained"
-                                        color="secondary"
-                                        onClick={this.handleUpload}
-                                        disabled={!hasFilesSelected}
-                                        className={classes.uploadButton}
-                                >
-                                    <CloudUpload className={classes.leftIcon}/>
-                                    Upload
-                                </Button>
-                            </CardActions>
-                        </>
-                        :
-                        <div style={{margin: "auto", textAlign: "center", padding: 20}}>
-                            <CircularProgress/>
-                        </div>
-                    }
-                </Card>
+                            <Button variant="contained"
+                                    color="secondary"
+                                    onClick={this.handleUpload}
+                                    disabled={!hasFilesSelected}
+                                    className={classes.uploadButton}
+                            >
+                                <CloudUpload className={classes.leftIcon}/>
+                                Upload
+                            </Button>
+                        </DialogActions>
+                    </>
+                    :
+                    <div style={{margin: "auto", textAlign: "center", padding: 20}}>
+                        <CircularProgress/>
+                    </div>
+                }
             </>
         )
     }
+
     private readonly handleUpload = () => {
         this.setState({uploadingStage: "pressedUpload"})
         uploadReplays(this.state.files)
+            .then(addTaskIds)
             .then(this.clearFiles)
             .then(() => {
                 this.setState({uploadingStage: "uploaded"})

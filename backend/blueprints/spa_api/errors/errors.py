@@ -48,3 +48,8 @@ class MissingQueryParams(CalculatedError):
         joined_missing_params = " and ".join(missing_params)
         message = f'Query parameter{conditional_s} {joined_missing_params} are required.'
         super().__init__(self.status_code, message)
+
+
+class TagNotFound(CalculatedError):
+    status_code = 404
+    message = "Tag not found"

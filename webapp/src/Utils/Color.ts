@@ -1,4 +1,4 @@
-import {ChartDataSets} from "chart.js"
+import { ChartDataSets } from "chart.js"
 
 export const convertHexToRgba = (hex: string, alpha: number = 1) => {
     const r = parseInt(hex.slice(1, 3), 16)
@@ -83,7 +83,7 @@ const chartColors: ChartColors = {
     }))
 }
 
-export const colorsForPlaylists = ["#F9A782", "#71EFAF", "#88C6F9", "#E888F7"]
+export const colorsForPlaylists = ["#71EFAF", "#F9A782", "#88C6F9", "#E888F7"]
 
 export const primaryColours = [
     "#33B8A5",

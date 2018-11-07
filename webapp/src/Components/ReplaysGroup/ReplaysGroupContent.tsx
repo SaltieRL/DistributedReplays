@@ -1,8 +1,8 @@
-import {Card, Divider, Tab, Tabs} from "@material-ui/core"
+import { Card, Divider, Tab, Tabs } from "@material-ui/core"
 import * as React from "react"
-import {Replay} from "../../Models/Replay/Replay"
-import {ReplaysGroupChartsWrapper} from "./Charts/ReplaysGroupChartsWrapper"
-import {ReplaysGroupTable} from "./Table/ReplaysGroupTable"
+import { Replay } from "src/Models"
+import { ReplaysGroupChartsWrapper } from "./Charts/ReplaysGroupChartsWrapper"
+import { ReplaysGroupTable } from "./Table/ReplaysGroupTable"
 
 interface Props {
     replays: Replay[]

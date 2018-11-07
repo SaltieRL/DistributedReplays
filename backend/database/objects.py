@@ -2,7 +2,7 @@
 import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
@@ -155,6 +155,9 @@ class PlayerGame(DBObjectBase):
     time_full_boost = Column(Float)
     time_low_boost = Column(Float)
     time_no_boost = Column(Float)
+    average_boost_level = Column(Float)
+    wasted_big = Column(Float)
+    wasted_small = Column(Float)
 
     # tendencies
     time_on_ground = Column(Float)
@@ -170,6 +173,8 @@ class PlayerGame(DBObjectBase):
     time_closest_to_ball = Column(Float)
     time_furthest_from_ball = Column(Float)
     time_close_to_ball = Column(Float)
+    time_near_wall = Column(Float)
+    time_in_corner = Column(Float)
 
     # distance
     ball_hit_forward = Column(Float)
@@ -191,6 +196,13 @@ class PlayerGame(DBObjectBase):
     is_bot = Column(Boolean)
     first_frame_in_game = Column(Integer)
     time_in_game = Column(Float)
+
+    # relative positioning
+    time_in_front_of_center_of_mass = Column(Float)
+    time_behind_center_of_mass = Column(Float)
+    time_most_forward_player = Column(Float)
+    time_most_back_player = Column(Float)
+    time_between_players = Column(Float)
 
     @validates('player')
     def validate_code(self, key, value):
@@ -221,6 +233,8 @@ class Game(DBObjectBase):
     frames = Column(Integer)
     serieses = relationship('TournamentSeries', secondary='series_games', back_populates='games')
 
+    tags = relationship('Tag', secondary='game_tags', back_populates='games')
+
     # metadata
     version = Column(Integer)
     length = Column(Float, default=300.0)
@@ -246,6 +260,7 @@ class Player(DBObjectBase):
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
     games = relationship('PlayerGame')
     groups = Column(postgresql.ARRAY(Integer, dimensions=1), default=[])
+    owned_tags = relationship('Tag')
     owned_tournaments = relationship('Tournament')
     participating_tournaments = relationship('Tournament',
                                                 secondary='tournament_players', back_populates='participants')
@@ -300,6 +315,21 @@ class TeamStat(DBObjectBase):
     time_in_attacking_third = Column(Float)
     time_behind_ball = Column(Float)
     time_in_front_ball = Column(Float)
+
+
+class Tag(DBObjectBase):
+    __tablename__ = 'tags'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(40))
+    owner = Column(String(40), ForeignKey('players.platformid'), index=True)
+    games = relationship('Game', secondary='game_tags', back_populates='tags')
+    __table_args_ = (UniqueConstraint(name, owner, name='unique_names'))
+
+
+class GameTag(DBObjectBase):
+    __tablename__ = 'game_tags'
+    game_id = Column(String(40), ForeignKey('games.hash'), primary_key=True)
+    tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
 
 
 class Tournament(DBObjectBase):

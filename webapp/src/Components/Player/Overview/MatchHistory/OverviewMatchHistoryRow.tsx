@@ -12,14 +12,15 @@ import {
     withStyles,
     withWidth
 } from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
-import {REPLAY_PAGE_LINK} from "../../../../Globals"
-import {getColouredGameScore, getReplayResult, Replay} from "../../../../Models/Replay/Replay"
-import {ReplayBoxScore} from "../../../Replay/ReplayBoxScore"
-import {ReplayChart} from "../../../Replay/ReplayChart"
+import { ColouredGameScore } from "src/Components/Shared/ColouredGameScore"
+import { getReplayResult, Replay } from "src/Models"
+import { REPLAY_PAGE_LINK } from "../../../../Globals"
+import { ReplayBoxScore } from "../../../Replay/ReplayBoxScore"
+import { ReplayChart } from "../../../Replay/ReplayChart"
 
 interface OwnProps {
     replay: Replay
@@ -48,14 +49,15 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
             </Tooltip>
         )
         const replayGameMode = replay.gameMode
-        const replayScore = getColouredGameScore(replay)
+        const replayScore = <ColouredGameScore replay={replay}/>
         const replayResult = getReplayResult(replay, player)
-        const chartIcon =
+        const chartIcon = (
             <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
                 <InsertChart/>
             </IconButton>
+        )
 
-        const expansionPanelSummary =
+        const expansionPanelSummary = (
             <ExpansionPanelSummary
                 expandIcon={<ExpandMore/>}
             >
@@ -90,6 +92,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>
+        )
 
         return (
             <ExpansionPanel>
@@ -108,9 +111,9 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {
-        height: 20,
-        width: 20,
-        color: theme.palette.secondary.main,
+        "height": 20,
+        "width": 20,
+        "color": theme.palette.secondary.main,
         "&:hover": {
             transitionProperty: "transform",
             transitionDuration: "100ms",

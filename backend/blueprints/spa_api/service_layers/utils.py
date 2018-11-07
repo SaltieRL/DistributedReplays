@@ -1,3 +1,4 @@
+from functools import wraps
 from typing import List
 
 from flask import current_app
@@ -6,7 +7,8 @@ from backend.database.objects import PlayerGame
 
 
 def with_session(decorated_function):
-    def wrapper_func(*args, **kwargs):
+    @wraps(decorated_function)
+    def func(*args, **kwargs):
         session = current_app.config['db']()
         try:
             kwargs['session'] = session
@@ -14,7 +16,7 @@ def with_session(decorated_function):
         finally:
             session.close()
         return result
-    return wrapper_func
+    return func
 
 
 def sort_player_games_by_team_then_id(player_games: List[PlayerGame]) -> List[PlayerGame]:
