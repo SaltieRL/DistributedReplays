@@ -31,7 +31,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
 
     public render() {
         const isWidthSm = isWidthDown("sm", this.props.width)
-        const url = `https://calculated.gg/replays/${this.props.replay.id}`
+        const url = `https://calculated.gg/api/replay/${this.props.replay.id}/positions`
         const qrcode = (
             <CardContent>
                 <Grid container justify="center" alignContent="center" spacing={32}>
