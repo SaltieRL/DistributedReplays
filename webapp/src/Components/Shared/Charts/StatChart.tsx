@@ -13,18 +13,20 @@ interface Props {
 export class StatChart extends React.PureComponent<Props> {
     public render() {
         const Chart = this.getChartType()
-        const title = this.props.basicStat.title//.replace(/\s/g, "_")
+        const title = this.props.basicStat.title// .replace(/\s/g, "_")
         console.log(title, this.props.explanations)
-        return <>
+        return (
+            <>
             {this.props.explanations && (this.props.explanations.hasOwnProperty(title) ?
                 <Tooltip title={this.props.explanations[this.props.basicStat.title].simple_explanation}>
                     <div>
-                    <Chart basicStat={this.props.basicStat}/>
+                        <Chart basicStat={this.props.basicStat}/>
                     </div>
                 </Tooltip>
                 :
                 <Chart basicStat={this.props.basicStat}/>)}
         </>
+        )
     }
 
     private readonly getChartType = (): React.ComponentType<{ basicStat: BasicStat }> => {

@@ -16,7 +16,7 @@ interface State {
 export class PlayerStatsContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = { selectedTab: PlayerStatsSubcategory.HITS }
+        this.state = {selectedTab: PlayerStatsSubcategory.HITS}
     }
 
     public render() {
@@ -26,7 +26,8 @@ export class PlayerStatsContent extends React.PureComponent<Props, State> {
                 <PlayerStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
                 <CardContent>
                     <Grid container spacing={32}>
-                        <PlayerStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab}  explanations={this.props.explanations}/>
+                        <PlayerStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab}
+                                           explanations={this.props.explanations}/>
                     </Grid>
                 </CardContent>
             </>
@@ -34,6 +35,6 @@ export class PlayerStatsContent extends React.PureComponent<Props, State> {
     }
 
     private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: PlayerStatsSubcategory) => {
-        this.setState({ selectedTab })
+        this.setState({selectedTab})
     }
 }

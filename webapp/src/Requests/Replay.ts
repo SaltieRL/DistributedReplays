@@ -189,7 +189,6 @@ export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<Ma
         }))
 }
 
-
 export const getExplanations = (): Promise<any> => {
     return doGet("/stats/explanations")
 }
