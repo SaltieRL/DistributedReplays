@@ -20,6 +20,9 @@ import { EsportsPlayerListItem } from "../Esports/EsportsPlayerListItem"
 import { ReplaysSearchResultDisplay } from "../ReplaysSearch/ReplaysSearchResultDisplay"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
+import Link from "@material-ui/icons/Link"
+import { faTwitter } from "@fortawesome/free-brands-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 interface RouteParams {
     id: string
@@ -1065,18 +1068,26 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
                             <CardMedia className={classes.avatar} image={`/team-logos/${teamId}.png`}/>
 
                             <CardContent className={classes.content}>
-                                <div className={classes.nameWrapper}>
-                                    <Typography variant="headline" noWrap>
-                                        {team.name}
-                                    </Typography>
-                                </div>
-                                <List>
-                                    <ListItem>
-                                        <Typography>Link: <a style={{textDecoration: "none"}}
-                                                             href={team.link}> {team.link} </a></Typography>
-                                    </ListItem>
-                                </List>
-
+                                <Grid container xs={12}>
+                                    <Grid item xs={12}>
+                                        <div className={classes.nameWrapper}>
+                                            <Typography variant="headline" noWrap>
+                                                {team.name}
+                                            </Typography>
+                                        </div>
+                                    </Grid>
+                                    <Grid container item xs={12} spacing={32} style={{padding: "30px"}}>
+                                        <Grid item xs={6}>
+                                            <Typography><a style={{textDecoration: "none"}}
+                                                           href={team.link}><Link/> </a></Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Typography><a style={{textDecoration: "none"}}
+                                                           href={team.link}> <FontAwesomeIcon icon={faTwitter}/>
+                                            </a></Typography>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
                             </CardContent>
                         </Card>
                     </Grid>
@@ -1085,7 +1096,8 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
                             <CardHeader title="Players" subheader=""/>
                             <Divider/>
                             <List>
-                                <Typography>Starters</Typography>
+                                <ListItem><Typography
+                                    style={{fontSize: "1.3em", fontWeight: 400}}>Starters</Typography></ListItem>
                                 {starters.map((player) =>
                                     <EsportsPlayerListItem player={player} team={teamId} key={player.name}/>
                                 )}
@@ -1129,7 +1141,6 @@ export class EsportsTeamPageComponent extends React.PureComponent<Props, State> 
         return searchReplays(searchParams).then((matchHistory) => this.setState({matchHistory}))
     }
 
-
     private readonly handleUpdateTags = (replay: Replay) => (tags: Tag[]) => {
         if (this.state.matchHistory) {
             this.setState({
@@ -1158,7 +1169,8 @@ const styles = createStyles({
         display: "flex"
     },
     avatar: {
-        flex: "0 0 128px"
+        paddingTop: "56.25%",
+        height: 0
     },
     content: {
         width: "calc(100% - 128px)"
