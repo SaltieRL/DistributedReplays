@@ -4,6 +4,7 @@ from flask import current_app
 from sqlalchemy import func, desc, cast, String, literal_column
 from sqlalchemy.dialects import postgresql
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame, Game, Player
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
@@ -29,12 +30,10 @@ class PlayerProfileStats:
         self.playersInCommon = [player_in_common.__dict__ for player_in_common in players_in_common]
 
     @staticmethod
-    def create_from_id(id_: str) -> 'PlayerProfileStats':
-        session = current_app.config['db']()
-
+    @with_session
+    def create_from_id(id_: str, session=None) -> 'PlayerProfileStats':
         favourite_car, car_percentage = PlayerProfileStats._get_favourite_car(id_, session)
         players_in_common = PlayerProfileStats._get_most_played_with(id_, session)
-        session.close()
         return PlayerProfileStats(favourite_car=favourite_car, car_percentage=car_percentage,
                                   players_in_common=players_in_common)
 

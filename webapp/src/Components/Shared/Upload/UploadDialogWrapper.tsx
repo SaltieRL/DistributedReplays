@@ -30,16 +30,7 @@ class UploadDialogWrapperComponent extends React.PureComponent<Props, State> {
 
     public componentDidMount() {
         this.getPendingUploads()
-        // TODO: Create refresh capability
         // TODO: Create proper UI display for progress.
-    }
-
-    public handleOpen = () => {
-        this.setState({open: true})
-    }
-
-    public handleClose = () => {
-        this.setState({open: false})
     }
 
     public render() {
@@ -79,6 +70,14 @@ class UploadDialogWrapperComponent extends React.PureComponent<Props, State> {
                     .length
             }))
         // TODO: Move taskIds to redux store? Clear SUCCESSes? Store statuses in redux store?
+    }
+
+    private readonly handleOpen = () => {
+        this.setState({open: true})
+    }
+
+    private readonly handleClose = () => {
+        this.setState({open: false})
     }
 }
 

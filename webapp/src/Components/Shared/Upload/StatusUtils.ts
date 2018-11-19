@@ -2,6 +2,7 @@ import * as moment from "moment"
 import { getUploadStatuses } from "../../../Requests/Global"
 
 const SESSION_STORAGE_UPLOADS_KEY = "uploadTasks"
+
 // TODO: Check if this is the right place for this and if this should be in redux.
 
 export interface UploadTask {
@@ -9,14 +10,21 @@ export interface UploadTask {
     dateCreated: moment.Moment
 }
 
-const stringifyUploadTasks = (uploadTasks: UploadTask[]) => {
+interface StoredUploadTask {
+    id: string
+    dateCreated: number
+}
+
+const stringifyUploadTasks = (uploadTasks: (UploadTask | StoredUploadTask)[]) => {
     return JSON.stringify(
-        uploadTasks.map((uploadTask) => (
-            {
-                ...uploadTask,
-                dateCreated: uploadTask.dateCreated.unix()
-            }
-        ))
+        uploadTasks.map((uploadTask) => {
+            return moment.isMoment(uploadTask.dateCreated) ? (
+                {
+                    ...uploadTask,
+                    dateCreated: uploadTask.dateCreated.unix()
+                }
+            ) : uploadTask
+        })
     )
 }
 
@@ -41,7 +49,7 @@ const createNewUploadTask = (taskId: string): UploadTask => (
 )
 
 export const addTaskIds = (taskIds: string[]) => {
-    const currentTasks: UploadTask[] = JSON.parse(sessionStorage.getItem(SESSION_STORAGE_UPLOADS_KEY) || "[]")
+    const currentTasks: StoredUploadTask[] = JSON.parse(sessionStorage.getItem(SESSION_STORAGE_UPLOADS_KEY) || "[]")
     sessionStorage.setItem(SESSION_STORAGE_UPLOADS_KEY, stringifyUploadTasks(
         [
             ...currentTasks,

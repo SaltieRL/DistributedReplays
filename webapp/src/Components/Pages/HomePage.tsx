@@ -1,4 +1,4 @@
-import { faDiscord, faGithub, faSteam, faTwitter } from "@fortawesome/free-brands-svg-icons"
+import { faDiscord, faGithub, faRedditAlien, faSteam, faTwitter } from "@fortawesome/free-brands-svg-icons"
 import { faChartBar } from "@fortawesome/free-solid-svg-icons"
 import { Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth } from "@material-ui/core"
 import { GridProps } from "@material-ui/core/Grid"
@@ -16,6 +16,7 @@ import {
     GLOBAL_STATS_LINK,
     LOCAL_LINK,
     PLAYER_PAGE_LINK,
+    REDDIT_LINK,
     STEAM_LOGIN_LINK,
     TWITTER_LINK,
     UPLOAD_LINK
@@ -139,11 +140,17 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
                     iconType="fontawesome" icon={faGithub}
                     tooltip="Github"/>
     )
+    const redditLinkButton = (
+        <LinkButton to={REDDIT_LINK} isExternalLink
+                    iconType="fontawesome" icon={faRedditAlien}
+                    tooltip="Reddit"/>
+    )
 
     return (
         <Grid container justify="center" spacing={16}>
             {isWidthUp("md", props.width) ?
-                [globalStatsLinkButton, aboutLinkButton, twitterLinkButton, discordLinkButton, githubLinkButton]
+                [globalStatsLinkButton, aboutLinkButton, twitterLinkButton, discordLinkButton,
+                    githubLinkButton, redditLinkButton]
                     .map((linkButton, i) => (
                         <Grid item xs={3} md={2} style={{textAlign: "center"}} key={i}>
                             {linkButton}
@@ -154,7 +161,7 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
                     {
                         [
                             [globalStatsLinkButton, aboutLinkButton],
-                            [twitterLinkButton, discordLinkButton, githubLinkButton]
+                            [twitterLinkButton, discordLinkButton, githubLinkButton, redditLinkButton]
                         ]
                             .map((linkButtonRow, i) => (
                                 <Grid item xs={12} container justify="space-around" key={i}>

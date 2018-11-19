@@ -34,8 +34,16 @@ export class ReplayPage extends React.PureComponent<Props, State> {
                     <LoadableWrapper load={this.getReplay}>
                         {replay &&
                         <Switch>
-                            <Route exact path={matchUrl}
-                                   component={() => <ReplayView replay={replay} explanations={explanations}/>}/>
+                            <Route
+                                exact path={matchUrl}
+                                render={() => (
+                                    <ReplayView
+                                        replay={replay}
+                                        explanations={explanations}
+                                        handleUpdateTags={this.handleUpdateTags}
+                                    />
+                                )}
+                            />
                             <Redirect from="*" to={matchUrl}/>
                         </Switch>
                         }
@@ -48,5 +56,13 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     private readonly getReplay = (): Promise<void> => {
         return Promise.all([getReplay(this.props.match.params.id), getExplanations()])
             .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
+    }
+
+    private readonly handleUpdateTags = (tags: Tag[]) => {
+        const replay = {
+            ...this.state.replay!,
+            tags
+        }
+        this.setState({replay})
     }
 }

@@ -4,6 +4,7 @@ from typing import List
 
 from carball.generated.api import game_pb2
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame, Player, TeamStat
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
 from backend.database.wrapper.rank_wrapper import get_rank_obj_by_mapping
@@ -41,7 +42,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
              team1possession=team1poss.possession_time, name='' if match_name is None else match_name,
              frames=game.game_metadata.frames, length=game.game_metadata.length,
              playlist=game.game_metadata.playlist,
-             game_server_id=game.game_metadata.game_server_id,
+             game_server_id=0 if game.game_metadata.game_server_id == '' else game.game_metadata.game_server_id,
              server_name=game.game_metadata.server_name,
              replay_id=game.game_metadata.id)
 
@@ -180,3 +181,9 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
         session.add(pg)
     for team in teamstats:
         session.add(team)
+
+@with_session
+def add_objects(protobuf_game, session=None):
+    game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
+    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date=True)
+    session.commit()

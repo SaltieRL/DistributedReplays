@@ -59,7 +59,8 @@ export const getMatchHistory = (id: string, page: number, limit: number): Promis
                                 car: "Octane"
                             }
                         }
-                    ]
+                    ],
+                    tags: []
                 }
             ]
         })

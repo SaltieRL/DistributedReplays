@@ -5,6 +5,7 @@ import * as React from "react"
 import { Replay } from "src/Models"
 import { LOCAL_LINK } from "../../Globals"
 import { ColouredGameScore } from "../Shared/ColouredGameScore"
+import { TagDialogWrapper } from "../Shared/Tag/TagDialogWrapper"
 import { ReplayChart } from "./ReplayChart"
 import { ReplayTabs } from "./ReplayTabs"
 import { ReplayTeamCard } from "./ReplayTeamCard/ReplayTeamCard"
@@ -12,6 +13,7 @@ import { ReplayTeamCard } from "./ReplayTeamCard/ReplayTeamCard"
 interface OwnProps {
     replay: Replay
     explanations: Record<string, any> | undefined
+    handleUpdateTags: (tags: Tag[]) => void
 }
 
 type Props = OwnProps
@@ -26,7 +28,6 @@ class ReplayViewComponent extends React.PureComponent<Props> {
         const downloadButton = (
             <Tooltip title="Download replay">
                 <IconButton
-                    style={{position: "absolute", right: 16, top: 16}}
                     href={LOCAL_LINK + `/api/replay/${replay.id}/download`}
                     download
                 >
@@ -42,9 +43,13 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                     titleTypographyProps={{align: "center"}}
                     subheaderTypographyProps={{align: "center", variant: "subheading"}}
                     action={
-                        isWidthUp("sm", width) &&
-                        <div style={{position: "relative", width: 0}}>{downloadButton}</div>
-                    }
+                        <div style={{position: "relative", width: 0, right: 16, top: 16}}>
+                            <div style={{display: "flex", float: "right"}}>
+                                <TagDialogWrapper replay={replay} handleUpdateTags={this.props.handleUpdateTags}/>
+                                {isWidthUp("sm", width) && downloadButton
+                                }
+                            </div>
+                        </div>}
                 />
                 <CardContent style={{overflowX: "auto"}}>
                     <ReplayChart replay={replay}/>

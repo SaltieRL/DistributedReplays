@@ -11,7 +11,7 @@ class BasicStatSubcategory(ChartSubcatagory):
     Positioning = auto()
     Boosts = auto()
     Efficiency = auto()
-    TeamPositioning = auto()
+    Team_Positioning = auto()
 
 
 SubCat = BasicStatSubcategory
@@ -79,9 +79,9 @@ player_stats_metadata = [
     Metadata('aerial efficiency', ChartType.radar, SubCat.Efficiency),
 
     # team positioning
-    Metadata('time in front of center of mass', ChartType.radar, SubCat.TeamPositioning),
-    Metadata('time behind center of mass', ChartType.radar, SubCat.TeamPositioning),
-    Metadata('time most forward player', ChartType.bar, SubCat.TeamPositioning),
-    Metadata('time most back player', ChartType.bar, SubCat.TeamPositioning),
-    Metadata('time between players', ChartType.bar, SubCat.TeamPositioning),
+    Metadata('time in front of center of mass', ChartType.radar, SubCat.Team_Positioning),
+    Metadata('time behind center of mass', ChartType.radar, SubCat.Team_Positioning),
+    Metadata('time most forward player', ChartType.bar, SubCat.Team_Positioning),
+    Metadata('time most back player', ChartType.bar, SubCat.Team_Positioning),
+    Metadata('time between players', ChartType.bar, SubCat.Team_Positioning),
 ]
