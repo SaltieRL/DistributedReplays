@@ -53,7 +53,7 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          field_rename='dribbles'),
         FieldExplanation('useful/hits',
                          'Percentage of shots/passes/saves per hit',
-                         math_explanation='\\frac{100 * (shots + passes + saves + goals)}{total\ hits - total\ dribble\ hits}'),
+                         math_explanation='\\frac{100 \\times (\\textrm{shots} + \\textrm{passes} + \\textrm{saves} + \\textrm{goals})}{\\textrm{total hits} - \\textrm{total dribble hits}}'),
 
         # turnovers
         FieldExplanation('turnovers',
@@ -75,7 +75,7 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'The average speed of your car during the entire game', field_rename='speed'),
         FieldExplanation('average_hit_distance',
                          'Average distance the ball went after being hit, before being touched by another player',
-                         math_explanation='\\frac{total\ hit\ distance}{total\ hits}',
+                         math_explanation='\\frac{\\textrm{total hit distance}}{\\textrm{total hits}}',
                          short_name='avg hit dist'),
         FieldExplanation('average_distance_from_center',
                          'Average distance from the team\'s positional center.'),
@@ -158,18 +158,18 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
 
         FieldExplanation('boost ratio',
                          'Ratio of small boost pad pickups to large pickups.',
-                         math_explanation='\\frac{num\ small\ boosts}{num\ large\ boosts}'),
+                         math_explanation='\\frac{\\textrm{num small boosts}}{\\textrm{num large boosts}}'),
         FieldExplanation('collection boost efficiency',
                          'How efficient the player is at collecting boost',
-                         math_explanation='1 - \\frac{wasted\ collected\ boost}{total\ boost\ collected}',
+                         math_explanation='1 - \\frac{\\textrm{wasted collected boost}}{\\textrm{total boost collected}}',
                          short_name='bst clct eff'),
         FieldExplanation('used boost efficiency',
                          'How efficient the player is at using boost',
-                         math_explanation='1 - \\frac{wasted\ used\ boost}{total\ boost\ usage}',
+                         math_explanation='1 - \\frac{\\textrm{wasted used boost}}{\\textrm{total boost usage}}',
                          short_name='bst use eff'),
         FieldExplanation('total boost efficiency',
                          'How efficient the player is at using and collecting boost',
-                         math_explanation='1 - \\frac{wasted\ used\ boost + wasted\ collected\ boost}{100 * num\ large\ boosts + 12 * num\ small\ boosts}',
+                         math_explanation='1 - \\frac{\\textrm{wasted used boost} + \\textrm{wasted collected boost}}{100 \\times \\textrm{num large boosts} + 12 \\times \\textrm{num small boosts}}',
                          short_name='boost efficiency'),
         FieldExplanation('turnover efficiency',
                          'Percentage of hits that were not turnovers.'),
@@ -177,19 +177,19 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Average amount of boost this player possessed over the entire game'),
         FieldExplanation('wasted_big',
                          'Amount of wasted boost from big boosts',
-                         math_explanation='100 - amount\ of\ boost\ in\ tank'),
+                         math_explanation='100 - amount of boost in tank'),
         FieldExplanation('wasted_small',
                          'Amount of wasted boost from small boosts'),
         FieldExplanation('aerial efficiency',
                          'Ratio of aerials to time in the air',
-                         math_explanation='\\frac{total\ aerials}{time\ high\ in\ air + time\ low\ in\ air}',
+                         math_explanation='\\frac{\\textrm{total aerials}}{\\textrm{time high in air + time low in air}}',
                          short_name='aerial eff'),
         FieldExplanation('turnover efficiency',
                          'Ratio of turnovers to number of hits',
                          short_name='turnover eff'),
         FieldExplanation('shot %',
                          'Ratio of goals to shots',
-                         math_explanation='\\frac{total\ goals}{total\ shots}')
+                         math_explanation='\\frac{\\textrm{total goals}}{\\textrm{total shots}}')
 
     ]
     explanation_map = dict()
