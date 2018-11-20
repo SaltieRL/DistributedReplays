@@ -10,7 +10,8 @@ from sqlalchemy import func
 from sqlalchemy.sql import operators
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.database.objects import Game
+from backend.database.objects import Game, PlayerGame
+from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
@@ -94,6 +95,8 @@ def api_v1_get_replays(session=None):
         games = games.filter(Game.map == args['map'])
     if 'teamsize' in args:
         games = games.filter(Game.teamsize == int(args['teamsize']))
+    if 'playlist' in args:
+        games = games.filter(Game.playlist == int(args['playlist']))
     pagesize = 50
     if 'num' in args:
         pagesize = int(args['num'])
@@ -189,6 +192,25 @@ def api_v1_download_parsed(fn):
 @key_required
 def api_v1_get_rank(id_):
     return jsonify(get_rank(id_))
+
+
+@bp.route('/playergames')
+@key_required
+@with_session
+def api_v1_get_playergames_by_rank(session=None):
+    if 'days' in request.args:
+        days = int(request.args['days'])
+    else:
+        days = 3 * 30
+    builder = QueryFilterBuilder().with_stat_query([PlayerGame]).with_relative_start_time(days)
+    QueryFilterBuilder.apply_arguments_to_query(builder, request.args)
+    games = builder.build_query(session).order_by(func.random())[:1000]
+    columns = [c.name for c in games[0].__table__.columns]
+    data = {
+        'data': [[getattr(g, c.name) for c in g.__table__.columns] for g in games],
+        'columns': columns
+    }
+    return jsonify(data)
 
 
 def convert_proto_to_json(proto):
