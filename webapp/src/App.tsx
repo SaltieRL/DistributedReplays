@@ -14,7 +14,7 @@ import { StatusPage } from "./Components/Pages/StatusPage"
 import { UploadPage } from "./Components/Pages/UploadPage"
 import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
-    ABOUT_LINK,
+    ABOUT_LINK, EXPLANATIONS_LINK,
     GLOBAL_STATS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_PAGE_LINK,
@@ -25,6 +25,7 @@ import {
     STATUS_PAGE_LINK,
     UPLOAD_LINK
 } from "./Globals"
+import { ExplanationsPage } from "./Components/Pages/ExplanationsPage"
 
 type Props = WithStyles<typeof styles>
 
@@ -49,6 +50,7 @@ class AppComponent extends React.Component<Props> {
                         <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
                         <Route exact path={PLUGINS_LINK} component={PluginsPage}/>
                         <Route exact path={STATUS_PAGE_LINK} component={StatusPage}/>
+                        <Route exact path={EXPLANATIONS_LINK} component={ExplanationsPage}/>
                         {/*Redirect unknowns to root*/}
                         <Redirect from="*" to="/"/>
                     </Switch>
