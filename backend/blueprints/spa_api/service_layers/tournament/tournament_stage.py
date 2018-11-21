@@ -3,6 +3,7 @@ from typing import List
 from flask import g
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError, StageNotFound
+from backend.blueprints.spa_api.service_layers.replay.groups import ReplayGroupChartData
 from backend.blueprints.spa_api.service_layers.tournament.tournament_series import TournamentSeries
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import TournamentStage as DBStage
@@ -46,3 +47,16 @@ class TournamentStage:
     @with_session
     def delete(stage_id: int, session=None):
         TournamentWrapper.remove_tournament_stage(session, stage_id=stage_id, sender=g.user.platformid)
+
+    @staticmethod
+    @with_session
+    def get_game_hashes(stage_id: int, session=None):
+        stage: DBStage = TournamentWrapper.get_stage(session, stage_id)
+        ids = []
+        for series in stage.serieses:
+            ids += TournamentSeries.get_game_hashes(series.id)
+        return ids
+
+    @staticmethod
+    def get_stats(stage_id: int) -> 'List[ReplayGroupChartData]':
+        return ReplayGroupChartData.create_from_ids(TournamentStage.get_game_hashes(stage_id))

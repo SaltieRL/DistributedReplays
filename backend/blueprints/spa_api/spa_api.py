@@ -463,6 +463,11 @@ def api_get_tournament_stage(tournament_id, stage_id):
     return better_jsonify(TournamentStage.create_from_id(stage_id))
 
 
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/stats')
+def api_get_tournament_stage_stats(tournament_id, stage_id):
+    return better_jsonify(TournamentStage.get_stats(stage_id))
+
+
 @require_user
 @bp.route('tournament/<tournament_id>/stage/<name>', methods=["PUT"])
 def api_create_tournament_stage(tournament_id, name):

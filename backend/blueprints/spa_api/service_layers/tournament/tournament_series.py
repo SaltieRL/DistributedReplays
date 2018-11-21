@@ -60,7 +60,10 @@ class TournamentSeries:
 
     @staticmethod
     @with_session
-    def get_stats(series_id: int, session=None) -> 'List[ReplayGroupChartData]':
+    def get_game_hashes(series_id: int, session=None) -> 'List[str]':
         series: DBSeries = TournamentWrapper.get_series(session, series_id)
-        ids = [game.hash for game in series.games]
-        return ReplayGroupChartData.create_from_ids(ids)
+        return [game.hash for game in series.games]
+
+    @staticmethod
+    def get_stats(series_id: int) -> 'List[ReplayGroupChartData]':
+        return ReplayGroupChartData.create_from_ids(TournamentSeries.get_game_hashes(series_id))

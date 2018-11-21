@@ -4,6 +4,7 @@ from backend.database.wrapper.chart.chart_data import ChartType, ChartSubcatagor
 
 
 class BasicStatSubcategory(ChartSubcatagory):
+    Scoreboard = auto()
     Hits = auto()
     Ball = auto()
     Playstyles = auto()
@@ -18,6 +19,12 @@ SubCat = BasicStatSubcategory
 Metadata = ChartStatsMetadata
 
 player_stats_metadata = [
+    # Scoreboard
+    Metadata('score', ChartType.bar, SubCat.Scoreboard),
+    Metadata('goals', ChartType.bar, SubCat.Scoreboard),
+    Metadata('assists', ChartType.bar, SubCat.Scoreboard),
+    Metadata('shots', ChartType.bar, SubCat.Scoreboard),
+
     # Hits
     Metadata('hits', ChartType.radar, SubCat.Hits),
     Metadata('avg hit dist', ChartType.radar, SubCat.Hits),
