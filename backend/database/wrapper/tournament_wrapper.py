@@ -7,7 +7,7 @@ from sqlalchemy import func
 from backend.blueprints.spa_api.errors.errors import CalculatedError, UserNotAuthenticatedError, UserNotAuthorizedError, \
     PlayerNotFound, TournamentNotFound, StageNotFound, ReplayNotFound
 from backend.database.objects import Game, TournamentPlayer, TournamentSeries, SeriesGame, PlayerGame, TournamentStage,\
-     Tournament, Player, TournamentSeriesStatus
+     Tournament, Player, SeriesGameStatus
 from backend.utils.checks import get_checks
 
 DEFAULT_SERIES_NAME = "Unknown Series"
@@ -327,7 +327,9 @@ class TournamentWrapper:
             TournamentWrapper.add_game_to_series(session, game.hash, series.id)
 
             if matched_count < game.teamsize * 2:
-                series.status = TournamentSeriesStatus.REVIEW_NEEDED
+                added_series_game: SeriesGame = session.query(SeriesGame).filter(SeriesGame.game_hash == game_hash,
+                                                                                 SeriesGame.series_id == series.id)
+                added_series_game.status = SeriesGameStatus.REVIEW_NEEDED
                 session.commit()
 
 

@@ -43,7 +43,7 @@ class Playlist(enum.Enum):
     RANKED_SNOW_DAY = 30
 
 
-class TournamentSeriesStatus(enum.Enum):
+class SeriesGameStatus(enum.Enum):
     OFFICIAL_MATCH = 1
     REVIEW_NEEDED = 2
     SCRIM = 3
@@ -371,11 +371,11 @@ class TournamentSeries(DBObjectBase):
     stage_id = Column(Integer, ForeignKey('tournament_stages.id'))
     stage = relationship('TournamentStage', back_populates='serieses')
     games = relationship('Game', secondary='series_games', back_populates='serieses')
-    status = Column(Enum(TournamentSeriesStatus))
 
 
 class SeriesGame(DBObjectBase):
     __tablename__ = 'series_games'
     series_id = Column(Integer, ForeignKey('tournament_serieses.id'), primary_key=True)
     game_hash = Column(String(40), ForeignKey('games.hash'), primary_key=True)
+    status = Column(Enum(SeriesGameStatus))
 
