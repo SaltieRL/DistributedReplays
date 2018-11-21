@@ -5,7 +5,7 @@ import { NotificationProps } from "./NotificationSnackbar"
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     showNotification: (notificationProps: NotificationProps) =>
-    dispatch(NotificationActions.showNotifictionAction(notificationProps))
+        dispatch(NotificationActions.showNotifictionAction(notificationProps))
 })
 
 export type WithNotifications = ReturnType<typeof mapDispatchToProps>
