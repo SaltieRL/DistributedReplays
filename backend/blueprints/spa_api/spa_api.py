@@ -490,6 +490,12 @@ def api_get_tournament_series(tournament_id, stage_id, series_id):
     return better_jsonify(TournamentSeries.create_from_id(series_id))
 
 
+@bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>/stats')
+def api_get_tournament_series_stats(tournament_id, stage_id, series_id):
+    # returns stats as ReplayGroupChartData
+    return better_jsonify(TournamentSeries.get_stats(series_id))
+
+
 @require_user
 @bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<name>', methods=["PUT"])
 def api_create_tournament_series(tournament_id, stage_id, name):

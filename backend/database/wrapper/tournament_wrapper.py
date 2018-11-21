@@ -222,8 +222,9 @@ class TournamentWrapper:
             raise ReplayNotFound
         series.games.append(game)
         for player in game.players:
-            if player not in series.stage.tournament.participants:
-                series.stage.tournament.participants.append(player)
+            db_player = session.query(Player).filter(Player.platformid == player).first()
+            if db_player is not None and db_player not in series.stage.tournament.participants:
+                series.stage.tournament.participants.append(db_player)
         session.commit()
         return game
 

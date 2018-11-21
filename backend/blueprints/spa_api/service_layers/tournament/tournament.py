@@ -26,7 +26,7 @@ class Tournament:
                                                     TournamentPermissions.TOURNAMENT_OWNER):
                     self.admins = admins
             finally:
-                session.close
+                session.close()
 
     @staticmethod
     @with_session

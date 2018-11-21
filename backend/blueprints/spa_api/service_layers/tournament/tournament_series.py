@@ -3,6 +3,7 @@ from typing import List
 from flask import current_app, g
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError, SeriesNotFound
+from backend.blueprints.spa_api.service_layers.replay.groups import ReplayGroupChartData
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import TournamentSeries as DBSeries
@@ -56,3 +57,10 @@ class TournamentSeries:
     @with_session
     def remove_game(series_id: int, game_hash: str, session=None):
         TournamentWrapper.remove_game_from_series(session, game_hash, series_id=series_id, sender=g.user.platformid)
+
+    @staticmethod
+    @with_session
+    def get_stats(series_id: int, session=None) -> 'List[ReplayGroupChartData]':
+        series: DBSeries = TournamentWrapper.get_series(session, series_id)
+        ids = [game.hash for game in series.games]
+        return ReplayGroupChartData.create_from_ids(ids)
