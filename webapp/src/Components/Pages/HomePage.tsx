@@ -9,6 +9,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
+import { LoggedInUserActions, StoreState } from "src/Redux"
 import {
     ABOUT_LINK,
     DISCORD_LINK,
@@ -21,8 +22,6 @@ import {
     TWITTER_LINK,
     UPLOAD_LINK
 } from "../../Globals"
-import { StoreState } from "../../Redux"
-import { setLoggedInUserAction } from "../../Redux/loggedInUser/actions"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { LinkButton } from "../Shared/LinkButton"
 import { Logo } from "../Shared/Logo/Logo"
@@ -209,7 +208,7 @@ export const mapStateToProps = (state: StoreState) => ({
 })
 
 export const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(setLoggedInUserAction(loggedInUser))
+    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(LoggedInUserActions.setLoggedInUserAction(loggedInUser))
 })
 
 export const HomePage = withWidth()(withStyles(styles)(
