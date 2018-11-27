@@ -2,6 +2,7 @@ import { createStyles, WithStyles, withStyles } from "@material-ui/core"
 import * as React from "react"
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom"
 import { AboutPage } from "./Components/Pages/AboutPage"
+import { ExplanationsPage } from "./Components/Pages/ExplanationsPage"
 import { GlobalStatsPage } from "./Components/Pages/GlobalStatsPage"
 import { HomePage } from "./Components/Pages/HomePage"
 import { PlayerComparePage } from "./Components/Pages/PlayerComparePage"
@@ -14,7 +15,8 @@ import { StatusPage } from "./Components/Pages/StatusPage"
 import { UploadPage } from "./Components/Pages/UploadPage"
 import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
-    ABOUT_LINK, EXPLANATIONS_LINK,
+    ABOUT_LINK,
+    EXPLANATIONS_LINK,
     GLOBAL_STATS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_PAGE_LINK,
@@ -25,7 +27,6 @@ import {
     STATUS_PAGE_LINK,
     UPLOAD_LINK
 } from "./Globals"
-import { ExplanationsPage } from "./Components/Pages/ExplanationsPage"
 
 type Props = WithStyles<typeof styles>
 

@@ -1,6 +1,6 @@
 import { Card, CardHeader, Divider, Grid, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
-import * as React from "react"
 import "mathjax"
+import * as React from "react"
 import { getExplanations } from "../../Requests/Replay"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
@@ -46,7 +46,8 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
                                         <TableRow>
                                             <TableCell>{key}</TableCell>
                                             <TableCell>{explanations[key].simple_explanation}</TableCell>
-                                            <TableCell>{explanations[key].math_explanation !== null ? `$$${explanations[key].math_explanation}$$` : ""}</TableCell>
+                                            <TableCell>{explanations[key].math_explanation !== null ?
+                                                `$$${explanations[key].math_explanation}$$` : ""}</TableCell>
 
                                         </TableRow>
                                     </>
@@ -75,11 +76,11 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
     }
 
     private readonly getExplanations = (): Promise<any> => {
-        const data = getExplanations().then((data) => {
+        const explanations = getExplanations().then((data) => {
                 this.setState({explanations: data})
             }
         )
         MathJax.Hub.Queue(["Typeset", MathJax.Hub])
-        return data
+        return explanations
     }
 }
