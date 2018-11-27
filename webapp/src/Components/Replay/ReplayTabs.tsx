@@ -7,16 +7,18 @@ import { StoreState } from "../../Redux"
 import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
 import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
+import { PredictionsContent } from "./PredictionsContent"
 
 interface OwnProps {
     replay: Replay
+    predictedRanks: any
 }
 
 type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type ReplayTab = "playerStats" | "teamStats" | "advancedStats" | "replayViewer"
+type ReplayTab = "playerStats" | "teamStats" | "advancedStats" | "replayViewer" | "predictions"
 
 interface State {
     selectedTab: ReplayTab
@@ -29,6 +31,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const {predictedRanks} = this.props
         const isWidthSm = isWidthDown("sm", this.props.width)
 
         return (
@@ -39,6 +42,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                       scrollable={isWidthSm}
                 >
                     <Tab key="basicStats" label="Player Stats" value="playerStats"/>
+                    <Tab key="predictions" label="Predictions" value="predictions"/>
                     {this.props.loggedInUser && this.props.loggedInUser.beta &&
                     <Tab key="teamStats" label="Team Stats" value="teamStats"/>
                     }
@@ -51,6 +55,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 </Tabs>
                 {this.state.selectedTab === "playerStats" &&
                 <PlayerStatsContent replay={this.props.replay}/>
+                }
+                {this.state.selectedTab === "predictions" &&
+                <PredictionsContent replay={this.props.replay} predictedRanks={predictedRanks}/>
                 }
                 {this.state.selectedTab === "teamStats" &&
                 <TeamStatsContent replay={this.props.replay}/>

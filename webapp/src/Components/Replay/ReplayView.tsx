@@ -88,7 +88,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                     </>
                 }
                 <Grid item xs={12}>
-                    <ReplayTabs replay={replay}/>
+                    <ReplayTabs replay={replay} predictedRanks={predictedRanks}/>
                 </Grid>
             </Grid>
         )
