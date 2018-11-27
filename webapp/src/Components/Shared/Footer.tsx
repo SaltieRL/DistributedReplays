@@ -17,7 +17,7 @@ import * as React from "react"
 import { Link } from "react-router-dom"
 import {
     ABOUT_LINK,
-    DISCORD_LINK,
+    DISCORD_LINK, EXPLANATIONS_LINK,
     GITHUB_LINK,
     GLOBAL_STATS_LINK,
     REDDIT_LINK,
@@ -115,6 +115,16 @@ class FooterComponent extends React.PureComponent<Props> {
                                     <ButtonBase>
                                         <Typography align={isWidthUpMd ? "left" : "center"}>
                                             Status
+                                        </Typography>
+                                    </ButtonBase>
+                                </Link>
+                            </Grid>
+                            <Grid item> | </Grid>
+                            <Grid item>
+                                <Link to={EXPLANATIONS_LINK} style={{textDecoration: "none"}}>
+                                    <ButtonBase>
+                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                            Stat Explanations
                                         </Typography>
                                     </ButtonBase>
                                 </Link>

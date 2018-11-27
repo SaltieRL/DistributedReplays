@@ -12,6 +12,7 @@ import { ReplayTeamCard } from "./ReplayTeamCard/ReplayTeamCard"
 
 interface OwnProps {
     replay: Replay
+    explanations: Record<string, any> | undefined
     handleUpdateTags: (tags: Tag[]) => void
 }
 
@@ -20,7 +21,7 @@ type Props = OwnProps
 
 class ReplayViewComponent extends React.PureComponent<Props> {
     public render() {
-        const {width, replay} = this.props
+        const {width, replay, explanations} = this.props
         const blueCard = <ReplayTeamCard replay={replay} isOrange={false}/>
         const orangeCard = <ReplayTeamCard replay={replay} isOrange={true}/>
 
@@ -87,7 +88,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                     </>
                 }
                 <Grid item xs={12}>
-                    <ReplayTabs replay={replay}/>
+                    <ReplayTabs replay={replay} explanations={explanations}/>
                 </Grid>
             </Grid>
         )
