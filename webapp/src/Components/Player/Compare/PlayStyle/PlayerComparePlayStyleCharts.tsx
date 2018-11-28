@@ -91,15 +91,15 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
         if (playerPlayStyles.length === 0) {
             return (
-	            <>
+              <>
                 <Grid item xs={12} style={{textAlign: "center"}}>
                     {rankSelect}
                 </Grid>
                 <Grid item xs={12} style={{textAlign: "center"}}>
                     {dropDown}
                 </Grid>
-	           </>
-	        )
+              </>
+            )
         }
 
         const compareChartDatas = playerPlayStyles[0].chartDatas
