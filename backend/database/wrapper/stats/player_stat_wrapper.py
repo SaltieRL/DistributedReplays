@@ -163,7 +163,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
             ['total boost efficiency', 'assists', 'passes/hit', 'total_passes', 'assists/hit'],  # chemistry
             ['turnover efficiency', 'useful/hits', 'total_aerials', 'won_turnovers', 'average_hit_distance'],  # skill
             ['time_in_attacking_third', 'time_in_attacking_half', 'time_in_defending_half', 'time_in_defending_third',
-             'time_in_front_ball', 'time_behind_ball']]  # ,  # tendencies
+             'time_behind_ball', 'time_in_front_ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
