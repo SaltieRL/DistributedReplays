@@ -54,6 +54,15 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('useful/hits',
                          'Percentage of shots/passes/saves per hit',
                          math_explanation='\\frac{100 \\times (\\textrm{shots} + \\textrm{passes} + \\textrm{saves} + \\textrm{goals})}{\\textrm{total hits} - \\textrm{total dribble hits}}'),
+        FieldExplanation('shots/hit',
+                         'Percentage of shots per hit',
+                         math_explanation='\\frac{100 \\times \\textrm{shots}}{\\textrm{total hits} - \\textrm{total dribble hits}}'),
+        FieldExplanation('assists/hit',
+                         'Percentage of assists per hit',
+                         math_explanation='\\frac{100 \\times \\textrm{assists}}{\\textrm{total hits} - \\textrm{total dribble hits}}'),
+        FieldExplanation('passes/hit',
+                         'Percentage of passes per hit',
+                         math_explanation='\\frac{100 \\times \\textrm{passes}}{\\textrm{total hits} - \\textrm{total dribble hits}}'),
 
         # turnovers
         FieldExplanation('turnovers',

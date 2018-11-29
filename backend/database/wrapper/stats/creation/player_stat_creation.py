@@ -37,7 +37,6 @@ class PlayerStatCreation(SharedStatCreation):
     @staticmethod
     def get_math_queries() ->List[QueryFieldWrapper]:
         return [
-            QueryFieldWrapper(stat_math.get_hits_non_dribbles(), DynamicFieldResult('hits')),
             QueryFieldWrapper(stat_math.get_shots_per_non_dribble(), DynamicFieldResult('shots/hit'), is_percent=True),
             QueryFieldWrapper(stat_math.get_passes_per_non_dribble(), DynamicFieldResult('passes/hit'),
                               is_percent=True),
