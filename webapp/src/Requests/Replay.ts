@@ -188,3 +188,7 @@ export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<Ma
             replays: data.replays.map(parseReplay)
         }))
 }
+
+export const getExplanations = (): Promise<any> => {
+    return doGet("/stats/explanations")
+}

@@ -12,6 +12,8 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
+from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db, add_objects
@@ -204,7 +206,7 @@ def api_get_replay_basic_player_stats(id_):
 @bp.route('replay/<id_>/basic_player_stats/download')
 def api_get_replay_basic_player_stats_download(id_):
     basic_stats = PlayerStatsChart.create_from_id(id_)
-    return convert_to_csv(basic_stats)
+    return convert_to_csv(basic_stats, id_ + '.csv')
 
 
 @bp.route('replay/<id_>/basic_team_stats')
@@ -216,7 +218,7 @@ def api_get_replay_basic_team_stats(id_):
 @bp.route('replay/<id_>/basic_team_stats/download')
 def api_get_replay_basic_team_stats_download(id_):
     basic_stats = TeamStatsChart.create_from_id(id_)
-    return convert_to_csv(basic_stats)
+    return convert_to_csv(basic_stats, id_ + '.csv')
 
 
 @bp.route('replay/<id_>/positions')
@@ -262,6 +264,13 @@ def api_search_replays():
     query_params = get_query_params(accepted_query_params, request)
     match_history = MatchHistory.create_with_filters(**query_params)
     return better_jsonify(match_history)
+
+
+## Other
+
+@bp.route('/stats/explanations')
+def api_get_stat_explanations():
+    return jsonify(get_explanations())
 
 
 @bp.route('/upload', methods=['POST'])
