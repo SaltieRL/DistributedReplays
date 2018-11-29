@@ -29,7 +29,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
 
     public async componentDidMount() {
         await this.getReplayPositions()
-        console.log(this.state.replayData)
+        // console.log(this.state.replayData)
     }
 
     public render() {

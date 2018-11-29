@@ -14,7 +14,6 @@ export class StatChart extends React.PureComponent<Props> {
     public render() {
         const Chart = this.getChartType()
         const title = this.props.basicStat.title// .replace(/\s/g, "_")
-        console.log(title, this.props.explanations)
         return (
             <>
             {this.props.explanations && (this.props.explanations.hasOwnProperty(title) ?
