@@ -206,7 +206,7 @@ def api_get_replay_basic_player_stats(id_):
 @bp.route('replay/<id_>/basic_player_stats/download')
 def api_get_replay_basic_player_stats_download(id_):
     basic_stats = PlayerStatsChart.create_from_id(id_)
-    return convert_to_csv(basic_stats)
+    return convert_to_csv(basic_stats, id_ + '.csv')
 
 
 @bp.route('replay/<id_>/basic_team_stats')
@@ -218,7 +218,7 @@ def api_get_replay_basic_team_stats(id_):
 @bp.route('replay/<id_>/basic_team_stats/download')
 def api_get_replay_basic_team_stats_download(id_):
     basic_stats = TeamStatsChart.create_from_id(id_)
-    return convert_to_csv(basic_stats)
+    return convert_to_csv(basic_stats, id_ + '.csv')
 
 
 @bp.route('replay/<id_>/positions')
