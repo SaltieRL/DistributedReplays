@@ -38,6 +38,7 @@
         "no-empty": true,
         "no-empty-interface": false,
         "no-invalid-this": true,
+        "no-namespace": false,
         "no-require-imports": true,
         "no-this-assignment": true,
         "no-trailing-whitespace": true,
