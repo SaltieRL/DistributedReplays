@@ -49,7 +49,7 @@ export class ReplaysGroupCharts extends React.PureComponent<Props, State> {
                                             <Typography variant="subheading" align="center">
                                                 {convertSnakeAndCamelCaseToReadable(basicStat.title)}
                                             </Typography>
-                                            <StatChart basicStat={basicStat}/>
+                                            <StatChart basicStat={basicStat} explanations={{}}/>
                                         </Grid>
                                     )
                                 })
