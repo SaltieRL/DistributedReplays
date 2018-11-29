@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, Grid, IconButton, Tooltip, withWidth } from "@material-ui/core"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import CloudDownload from "@material-ui/icons/CloudDownload"
 import * as React from "react"
 import { Replay } from "src/Models"
@@ -35,6 +36,19 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                 </IconButton>
             </Tooltip>
         )
+
+        const dataExportButton = (
+            <Tooltip title="Download data .csv">
+                <IconButton
+                    href={LOCAL_LINK + `/api/replay/${replay.id}/basic_player_stats/download`}
+                    download
+                >
+                    <ArrowDownward/>
+                </IconButton>
+            </Tooltip>
+
+        )
+
         const replayChartCard = (
             <Card>
                 <CardHeader
@@ -46,6 +60,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                         <div style={{position: "relative", width: 0, right: 16, top: 16}}>
                             <div style={{display: "flex", float: "right"}}>
                                 <TagDialogWrapper replay={replay} handleUpdateTags={this.props.handleUpdateTags}/>
+                                {isWidthUp("sm", width) && dataExportButton}
                                 {isWidthUp("sm", width) && downloadButton
                                 }
                             </div>

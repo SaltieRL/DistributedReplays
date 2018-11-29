@@ -37,7 +37,7 @@ class ChartStatsMetadata:
         self.subcategory = subcategory.name.replace('_', ' ')
 
 
-def convert_to_csv(chart_data):
+def convert_to_csv(chart_data, filename='test.csv'):
     mem = io.StringIO()
     df = pd.DataFrame(columns=["Player"] + [c.title for c in chart_data])
     df["Player"] = pd.Series([c["name"] for c in chart_data[0].chartDataPoints])
@@ -51,6 +51,6 @@ def convert_to_csv(chart_data):
     return send_file(
         csv,
         as_attachment=True,
-        attachment_filename='test.csv',
+        attachment_filename=filename,
         mimetype='text/csv'
     )
