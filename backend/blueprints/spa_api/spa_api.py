@@ -14,7 +14,7 @@ from werkzeug.utils import secure_filename
 from backend.blueprints.spa_api.service_layers.user.settings.settings import SettingsHandler
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
-from backend.blueprints.spa_api.service_layers.stat import get_explanations
+from backend.blueprints.spa_api.service_layers.stat import get_explanations, get_statlist
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db, add_objects
@@ -273,6 +273,11 @@ def api_search_replays():
 @bp.route('/stats/explanations')
 def api_get_stat_explanations():
     return jsonify(get_explanations())
+
+
+@bp.route('/stats/list')
+def api_get_stat_list():
+    return jsonify(get_statlist())
 
 
 @bp.route('/upload', methods=['POST'])
