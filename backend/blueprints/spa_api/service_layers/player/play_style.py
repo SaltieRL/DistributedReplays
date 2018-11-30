@@ -40,7 +40,7 @@ class PlayStyleResponse:
         :param session: Database session (automatically populated if not set)
         :return: PlayStyleResponse
         """
-        print("User id:", user_id)
+
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
             raise UserHasNoReplays()
@@ -51,7 +51,7 @@ class PlayStyleResponse:
                                                                               rank=rank, replay_ids=replay_ids,
                                                                               playlist=playlist, win=win)
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts(user_id, session=session)
-        print(averaged_stats)
+
         play_style_chart_datas: List[PlayStyleChartData] = []
         for spider_chart_group in spider_charts_groups:
             title = spider_chart_group['title']

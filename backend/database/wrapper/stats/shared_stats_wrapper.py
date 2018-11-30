@@ -28,7 +28,6 @@ class SharedStatsWrapper:
         :return: A list of stats that have been modified
         """
         stat_list = self.get_player_stat_list()
-        print("Global stats", global_stats)
         for i, s in enumerate(stats):
             player_stat = s
             if player_stat is None:
