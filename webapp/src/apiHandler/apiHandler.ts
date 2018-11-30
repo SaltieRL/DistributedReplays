@@ -17,6 +17,17 @@ export const doPost = (destination: string, body: BodyInit): Promise<any> => {
     }).then(handleResponse)
 }
 
+export const doPut = (destination: string, body: string): Promise<any> => {
+    return fetch(baseUrl + destination, {
+        method: "PUT",
+        body,
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+    }).then(handleResponse)
+}
+
 export const doRequest = (destination: string, requestInit: RequestInit): Promise<any> => {
     return fetch(baseUrl + destination, requestInit)
         .then(handleResponse)

@@ -10,6 +10,7 @@ interface OwnProps {
     player: Player
     playlist?: number
     winLossMode?: boolean
+    reloadSignal: boolean
 }
 
 type Props = OwnProps
@@ -35,6 +36,9 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
             this.triggerReload()
         }
         if (prevProps.winLossMode !== this.props.winLossMode) {
+            this.triggerReload()
+        }
+        if (prevProps.reloadSignal !== this.props.reloadSignal) {
             this.triggerReload()
         }
     }

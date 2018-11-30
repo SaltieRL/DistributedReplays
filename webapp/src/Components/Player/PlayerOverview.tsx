@@ -24,12 +24,13 @@ interface State {
     selectedMobileTab?: PlayerViewTab
     playlist?: number
     winLossMode: boolean
+    reloadSignal: boolean
 }
 
 class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedMobileTab: "Profile", playlist: 13, winLossMode: false}
+        this.state = {selectedMobileTab: "Profile", playlist: 13, winLossMode: false, reloadSignal: false}
     }
 
     public render() {
@@ -42,7 +43,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
         const playerSideBar = <PlayerSideBar player={this.props.player}/>
         const playerPlayStyle = (
             <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}
-                             winLossMode={this.state.winLossMode}/>
+                             winLossMode={this.state.winLossMode} reloadSignal={this.state.reloadSignal}/>
         )
         const playerMatchHistory = (
             <OverviewMatchHistory
@@ -63,6 +64,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 <PlayerPlayStyleCard player={this.props.player}
                                                      handlePlaylistChange={this.handlePlaylistChange}
                                                      handleWinsLossesChange={this.handleWinsLossesChange}
+                                                     handleChartChange={this.handleChartChange}
                                 >
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
@@ -121,6 +123,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
     private readonly handleWinsLossesChange = (winLossMode: boolean) => {
         this.setState({winLossMode})
+    }
+
+    private readonly handleChartChange = () => {
+        this.setState({reloadSignal: !this.state.reloadSignal})
     }
 }
 

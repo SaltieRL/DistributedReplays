@@ -23,6 +23,7 @@ interface OwnProps {
     useFullSizeCompareButton?: boolean
     handlePlaylistChange?: (playlist: number) => void
     handleWinsLossesChange?: (winLossMode: boolean) => void
+    handleChartChange?: () => void
 }
 
 type Props = OwnProps
@@ -116,7 +117,7 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                 >
                     <DialogTitle>Edit charts</DialogTitle>
                     <DialogContent>
-                        <PlayStyleEdit/>
+                        <PlayStyleEdit onUpdate={this.onChartUpdate}/>
                     </DialogContent>
                 </Dialog>
             </Grid>
@@ -129,6 +130,13 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
 
     private readonly handleClose = () => {
         this.setState({dialogOpen: false})
+    }
+
+    private readonly onChartUpdate = () => {
+        this.handleClose()
+        if (this.props.handleChartChange) {
+            this.props.handleChartChange()
+        }
     }
 
     private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {

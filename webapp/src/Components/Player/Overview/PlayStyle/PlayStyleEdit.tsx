@@ -1,17 +1,33 @@
-import { Grid, IconButton, MenuItem, Select, Table, TableBody, TableCell, TableRow, TextField } from "@material-ui/core"
+import {
+    Button,
+    Grid,
+    IconButton,
+    MenuItem,
+    Select,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    TextField
+} from "@material-ui/core"
+import Add from "@material-ui/icons/Add"
 import * as React from "react"
 import { arrayMove, SortableContainer, SortableElement, SortableHandle, SortEnd } from "react-sortable-hoc"
+import { doPut } from "../../../../apiHandler/apiHandler"
 import { StatDescription } from "../../../../Models/Player"
 import { SettingsResponse } from "../../../../Models/Player/Settings"
 import { getChartSettings } from "../../../../Requests/Player/getPlayStyle"
 import { getStatsList } from "../../../../Requests/Replay"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
-import Add from "@material-ui/icons/Add"
 
 interface State {
     settings?: SettingsResponse
     sorted?: string[][]
     stats?: StatDescription[]
+}
+
+interface Props {
+    onUpdate: () => void
 }
 
 //  Component which uses drag-n-drop activation when clicking inside the component
@@ -39,9 +55,9 @@ const Row = SortableElement(({name, children}) => {
     )
 })
 
-export class PlayStyleEdit extends React.PureComponent<{}, State> {
+export class PlayStyleEdit extends React.PureComponent<Props, State> {
 
-    constructor(props: {}) {
+    constructor(props: Props) {
         super(props)
         this.state = {}
     }
@@ -61,17 +77,22 @@ export class PlayStyleEdit extends React.PureComponent<{}, State> {
                                     <Grid item xs={12}>
                                         <Table>
                                             <TableBodySortable onSortEnd={this.createSortEnd(i)} useDragHandle>
-                                                {this.state.sorted && this.state.sorted[i].map((name: string, idx: number) => <>
-                                                        {this.state.stats && <>
+                                                {this.state.sorted &&
+                                                this.state.sorted[i].map((name: string, idx: number) => <>
+                                                        {this.state.stats &&
+                                                        <>
                                                             <Row index={idx}
-                                                                 children={<Select multiple={false} value={name}>
-                                                                     {this.state.stats &&
-                                                                     this.state.stats.map((stat: StatDescription) =>
-                                                                         <MenuItem value={stat.field_name}
-                                                                                   key={stat.field_name}>
-                                                                             {stat.field_rename}
-                                                                         </MenuItem>)}
-                                                                 </Select>}/>
+                                                                 children={
+                                                                     <Select multiple={false} value={name}
+                                                                             onChange={
+                                                                                 this.createChangeHandler(i, idx)}>
+                                                                         {this.state.stats &&
+                                                                         this.state.stats.map((stat: StatDescription) =>
+                                                                             <MenuItem value={stat.field_name}
+                                                                                       key={stat.field_name}>
+                                                                                 {stat.field_rename}
+                                                                             </MenuItem>)}
+                                                                     </Select>}/>
 
                                                         </>}
                                                     </>
@@ -86,27 +107,36 @@ export class PlayStyleEdit extends React.PureComponent<{}, State> {
                             )
                         )}
                     </Grid>
+                    <Grid item xs={12}>
+                        <Button variant={"raised"} onClick={this.onSubmit}>
+                            Submit
+                        </Button>
+                    </Grid>
                     {/*)}*/}
                 </LoadableWrapper>
             </>
         )
     }
 
-    private createSortEnd = (idx: number) => {
+    private readonly createChangeHandler = (chartIndex: number, pointIndex: number): (something: any) => void => {
+        return (something: any) => {
+            const {sorted} = this.state
+            if (sorted) {
+                sorted[chartIndex][pointIndex] = something.target.value
+                this.forceUpdate()
+            }
+        }
+    }
+
+    private readonly createSortEnd = (idx: number) => {
         return (sort: SortEnd) => {
             const {sorted} = this.state
             if (sorted) {
-                console.log(idx, sort.oldIndex, sort.newIndex, sorted[idx])
                 sorted[idx] = arrayMove(sorted[idx], sort.oldIndex, sort.newIndex)
                 this.setState({
                     sorted
                 })
-
                 this.forceUpdate()
-                if (this.state.sorted) {
-                    console.log(this.state.sorted[idx])
-                }
-
             }
         }
     }
@@ -127,7 +157,6 @@ export class PlayStyleEdit extends React.PureComponent<{}, State> {
         }
     }
 
-
     private readonly getData = (): Promise<any> => {
         return Promise.all([getChartSettings(), getStatsList()]).then((data) => {
             this.setState({
@@ -135,5 +164,10 @@ export class PlayStyleEdit extends React.PureComponent<{}, State> {
                     item.key === "spider_groups")[0].value
             })
         })
+    }
+
+    private readonly onSubmit = () => {
+        doPut("/settings/set", JSON.stringify({spider_groups: this.state.sorted})).then((result) => null)
+        this.props.onUpdate()
     }
 }
