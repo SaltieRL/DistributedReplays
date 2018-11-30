@@ -6,7 +6,7 @@ import {
     MatchHistoryResponse,
     parseReplay,
     Replay,
-    ReplaysSearchQueryParams,
+    ReplaysSearchQueryParams, StatDescription,
     stringifyReplaySearchQueryParam
 } from "src/Models"
 import { doGet } from "../apiHandler/apiHandler"
@@ -191,4 +191,8 @@ export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<Ma
 
 export const getExplanations = (): Promise<any> => {
     return doGet("/stats/explanations")
+}
+
+export const getStatsList = (): Promise<StatDescription[]> => {
+    return doGet("/stats/list")
 }

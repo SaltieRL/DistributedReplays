@@ -3,6 +3,7 @@ import { PlayStyleRawResponse, PlayStyleResponse } from "src/Models"
 import { doGet } from "../../apiHandler/apiHandler"
 import { useMockData } from "../Config"
 import { MOCK_PLAY_STYLE, MOCK_PLAY_STYLE_RAW } from "../Mock"
+import { SettingsResponse } from "../../Models/Player/Settings"
 
 export const getPlayStyle = (id: string, rank?: number, playlist?: number,
                              result?: boolean): Promise<PlayStyleResponse> => {
@@ -25,4 +26,9 @@ export const getPlayStyleRaw = (id: string, playlist?: number): Promise<PlayStyl
     }
     const url = qs.stringify({playlist}, {addQueryPrefix: true, indices: false})
     return doGet(`/player/${id}/play_style/all` + url)
+}
+
+
+export const getChartSettings = (): Promise<SettingsResponse> => {
+    return doGet(`/settings/get`)
 }

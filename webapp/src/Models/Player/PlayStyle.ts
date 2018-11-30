@@ -33,3 +33,12 @@ export const parsePlayStyleProgression = (data: any) => {
         date: moment(data.date)
     }
 }
+
+export interface StatDescription {
+    field_name: string | undefined
+    field_rename: string | undefined
+    file_creation: string | undefined
+    math_explanation: string | undefined
+    short_name: string | undefined
+    simple_explanation: string | undefined
+}

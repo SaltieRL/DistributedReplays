@@ -1,20 +1,22 @@
 import {
-    Button,
     Dialog,
     DialogContent,
     DialogTitle,
     FormControlLabel,
     Grid,
-    IconButton, Switch,
+    IconButton,
+    Switch,
     Tooltip
 } from "@material-ui/core"
 import CompareArrows from "@material-ui/icons/CompareArrows"
+import Edit from "@material-ui/icons/Edit"
+import Help from "@material-ui/icons/Help"
 import * as React from "react"
 import { Link } from "react-router-dom"
-import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
+import { EXPLANATIONS_LINK, PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
 import { LinkButton } from "../../../Shared/LinkButton"
 import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
-import { PlayStyleExplanationTable } from "./PlayStyleExplanationTable"
+import { PlayStyleEdit } from "./PlayStyleEdit"
 
 interface OwnProps {
     player: Player
@@ -70,6 +72,18 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
             />
         )
 
+        const editSpiderCharts = (
+            <IconButton onClick={this.handleOpen}>
+                <Edit/>
+            </IconButton>
+        )
+        const whatAreTheseStats = (
+            <Link to={EXPLANATIONS_LINK}>
+                <IconButton>
+                    <Help/>
+                </IconButton>
+            </Link>
+        )
         return (
             <Grid container justify="center" spacing={8}>
                 <Grid item xs="auto" style={{margin: "auto"}}>
@@ -82,21 +96,27 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                     {compareButton}
                 </Grid>
                 <Grid item xs="auto" style={{margin: "auto"}}>
-                    <Button variant="outlined"
-                            onClick={this.handleOpen}
-                            style={{marginRight: 8, height: "100%"}}
-                    >
-                        What are these stats?
-                    </Button>
+                    {whatAreTheseStats}
+                </Grid>
+                {/*<Grid item xs="auto" style={{margin: "auto"}}>*/}
+                {/*<Button variant="outlined"*/}
+                {/*onClick={this.handleOpen}*/}
+                {/*style={{marginRight: 8, height: "100%"}}*/}
+                {/*>*/}
+                {/*What are these stats?*/}
+                {/*</Button>*/}
+                {/*</Grid>*/}
+                <Grid item xs="auto" style={{margin: "auto"}}>
+                    {editSpiderCharts}
                 </Grid>
 
                 <Dialog open={this.state.dialogOpen}
                         onClose={this.handleClose}
                         scroll="paper"
                 >
-                    <DialogTitle>Explanation of terms</DialogTitle>
+                    <DialogTitle>Edit charts</DialogTitle>
                     <DialogContent>
-                        <PlayStyleExplanationTable/>
+                        <PlayStyleEdit/>
                     </DialogContent>
                 </Dialog>
             </Grid>
