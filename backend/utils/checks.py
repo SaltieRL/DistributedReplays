@@ -50,4 +50,4 @@ def is_local_dev():
 
 
 def ignore_filtering():
-    return False
+    return True

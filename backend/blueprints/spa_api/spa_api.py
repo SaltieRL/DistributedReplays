@@ -8,9 +8,10 @@ import shutil
 import uuid
 
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from flask import jsonify, Blueprint, current_app, request, send_from_directory, g
 from werkzeug.utils import secure_filename
 
+from backend.blueprints.spa_api.service_layers.user.settings.settings import SettingsHandler
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
@@ -142,7 +143,8 @@ def api_get_player_play_style(id_):
     else:
         win = None
     play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank, playlist=playlist,
-                                                           win=win)
+                                                           win=win,
+                                                           user_id=g.user.platformid if g.user is not None else None)
     return better_jsonify(play_style_response)
 
 
@@ -399,3 +401,12 @@ def api_handle_error(error: CalculatedError):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+# Settings
+
+@require_user
+@bp.route('/settings/get')
+def api_get_settings():
+    settings = SettingsHandler.create_from_id(g.user.platformid)
+    return better_jsonify(settings)

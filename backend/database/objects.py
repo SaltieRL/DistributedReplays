@@ -4,6 +4,7 @@ import enum
 
 from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
 
@@ -323,9 +324,17 @@ class GameTag(DBObjectBase):
 
 # User settings
 
-class Settings:
+class Settings(DBObjectBase):
+    @classmethod
+    def create(cls, key, value, user):
+        settings = Settings()
+        settings.key = key
+        settings.value = value
+        settings.user = user
+        return settings
+
     __tablename__ = 'settings'
     id = Column(Integer, primary_key=True, autoincrement=True)
     key = Column(String(40))
-    value = Column(String(1024))
+    value = Column(JSON)
     user = Column(String(40), ForeignKey('players.platformid'), index=True)

@@ -25,7 +25,22 @@ class PlayStyleResponse:
 
     @classmethod
     @with_session
-    def create_from_id(cls, id_: str, raw=False, rank=None, replay_ids=None, playlist=13, win=None, session=None):
+    def create_from_id(cls, id_: str, raw=False, rank=None, replay_ids: List[str] = None, playlist=13, win: bool = None,
+                       user_id: str = None, session=None):
+        """
+
+
+        :param id_: User id to lookup for stats (i.e. what profile we are looking at
+        :param raw: If the values should be sent back without normalizing by rank
+        :param rank: What rank to normalize against
+        :param replay_ids: List of replay ids to pull from. Empty means all
+        :param playlist: What playlist to normalize against
+        :param win: If set, true means use only wins, false means use only losses
+        :param user_id: User id to pull chart settings from
+        :param session: Database session (automatically populated if not set)
+        :return: PlayStyleResponse
+        """
+        print("User id:", user_id)
         game_count = player_wrapper.get_total_games(session, id_)
         if game_count == 0:
             raise UserHasNoReplays()
@@ -35,8 +50,8 @@ class PlayStyleResponse:
                                                                               redis=current_app.config['r'], raw=raw,
                                                                               rank=rank, replay_ids=replay_ids,
                                                                               playlist=playlist, win=win)
-        spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
-
+        spider_charts_groups = player_stat_wrapper.get_stat_spider_charts(user_id, session=session)
+        print(averaged_stats)
         play_style_chart_datas: List[PlayStyleChartData] = []
         for spider_chart_group in spider_charts_groups:
             title = spider_chart_group['title']
