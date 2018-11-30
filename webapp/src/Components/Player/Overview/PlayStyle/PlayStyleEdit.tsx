@@ -167,6 +167,7 @@ export class PlayStyleEdit extends React.PureComponent<Props, State> {
     }
 
     private readonly onSubmit = () => {
-        doPut("/settings/set", JSON.stringify({spider_groups: this.state.sorted})).then((result) => this.props.onUpdate())
+        doPut("/settings/set", JSON.stringify({spider_groups: this.state.sorted})).then(
+            (result) => this.props.onUpdate())
     }
 }
