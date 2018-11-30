@@ -319,3 +319,13 @@ class GameTag(DBObjectBase):
     __tablename__ = 'game_tags'
     game_id = Column(String(40), ForeignKey('games.hash'), primary_key=True)
     tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
+
+
+# User settings
+
+class Settings:
+    __tablename__ = 'settings'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    key = Column(String(40))
+    value = Column(String(1024))
+    user = Column(String(40), ForeignKey('players.platformid'), index=True)
