@@ -1,4 +1,4 @@
-import { Grid, MenuItem, Select, Table, TableBody, TableCell, TableRow, TextField } from "@material-ui/core"
+import { Grid, IconButton, MenuItem, Select, Table, TableBody, TableCell, TableRow, TextField } from "@material-ui/core"
 import * as React from "react"
 import { arrayMove, SortableContainer, SortableElement, SortableHandle, SortEnd } from "react-sortable-hoc"
 import { StatDescription } from "../../../../Models/Player"
@@ -6,6 +6,7 @@ import { SettingsResponse } from "../../../../Models/Player/Settings"
 import { getChartSettings } from "../../../../Requests/Player/getPlayStyle"
 import { getStatsList } from "../../../../Requests/Replay"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
+import Add from "@material-ui/icons/Add"
 
 interface State {
     settings?: SettingsResponse
@@ -76,6 +77,9 @@ export class PlayStyleEdit extends React.PureComponent<{}, State> {
                                                     </>
                                                 )}
                                             </TableBodySortable>
+                                            <IconButton onClick={this.addRow(i)}>
+                                                <Add/>
+                                            </IconButton>
                                         </Table>
                                     </Grid>
                                 </Grid>
@@ -103,6 +107,22 @@ export class PlayStyleEdit extends React.PureComponent<{}, State> {
                     console.log(this.state.sorted[idx])
                 }
 
+            }
+        }
+    }
+
+    private readonly addRow = (idx: number) => {
+        return () => {
+            if (this.state.stats) {
+                const {sorted} = this.state
+                if (sorted) {
+                    const newStat = this.state.stats[0].field_name
+                    if (newStat !== undefined) {
+                        sorted[idx].push(newStat)
+                    }
+                    this.setState({sorted})
+                    this.forceUpdate()
+                }
             }
         }
     }
