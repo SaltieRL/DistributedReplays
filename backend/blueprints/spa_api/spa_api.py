@@ -410,3 +410,10 @@ def api_handle_error(error: CalculatedError):
 def api_get_settings():
     settings = SettingsHandler.create_from_id(g.user.platformid)
     return better_jsonify(settings)
+
+
+@require_user
+@bp.route('/settings/set', methods=["PUT"])
+def api_set_settings():
+    settings = SettingsHandler.set(g.user.platformid, request.get_json())
+    return better_jsonify(settings)

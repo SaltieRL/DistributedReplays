@@ -8,6 +8,7 @@ from typing import Tuple, List
 from sqlalchemy import func, cast
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.service_layers.user.settings.spider_charts_settings import SpiderChartsHandler
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame, Game, Settings
 from backend.database.wrapper.player_wrapper import PlayerWrapper
@@ -156,44 +157,9 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
     @staticmethod
     def get_stat_spider_charts(user_id: str = None, session=None):
-        print(user_id)
-        result = session.query(Settings) \
-            .filter(Settings.user == user_id).filter(Settings.key.startswith("spider_"))
-        if result.count() > 1:
-            titles: Settings = result.filter(Settings.key == "spider_titles").first().value
-            groups: Settings = result.filter(Settings.key == "spider_groups").first().value
-
-        else:
-            titles, groups = PlayerStatWrapper.get_default_spider_charts()
-            if user_id is not None:
-                already_exists = None
-                if result.count() == 1:
-                    already_exists = result.first().key
-
-                if already_exists != "spider_titles":
-                    titles_key = Settings.create("spider_titles", titles, user_id)
-                    session.add(titles_key)
-                if already_exists != "spider_groups":
-                    groups_key = Settings.create("spider_groups", groups, user_id)
-                    session.add(groups_key)
-                session.commit()
+        titles, groups = SpiderChartsHandler.get_spider_chart_data(user_id, session)
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
 
-    @staticmethod
-    def get_default_spider_charts():
-        titles = [  # 'Basic',
-            'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
-        groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
-            ['shots', 'possession_time', 'total_hits', 'shots/hit', 'boost_usage', 'average_speed'],  # agressive
-            ['total boost efficiency', 'assists', 'passes/hit', 'total_passes', 'assists/hit'],  # chemistry
-            ['turnover efficiency', 'useful/hits', 'total_aerials', 'won_turnovers', 'average_hit_distance'],
-            # skill
-            ['time_in_attacking_third', 'time_in_attacking_half', 'time_in_defending_half',
-             'time_in_defending_third',
-             'time_behind_ball', 'time_in_front_ball']]  # ,  # tendencies
-
-        # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
-        return titles, groups
 
     def _create_stats(self, session, player_filter=None, replay_ids=None):
         average = QueryFilterBuilder().with_stat_query(self.get_player_stat_query())
