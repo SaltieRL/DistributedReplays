@@ -1,0 +1,44 @@
+sudo: required
+language: python
+python:
+- "3.6"
+
+services:
+- postgresql
+- redis-server
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+
+# command to install dependencies (docker in this case)
+before_install:
+
+
+install:
+- pip install -r requirements.txt
+- pip install -r requirements-test.txt
+- ls
+- cd webapp
+- npm install
+
+# command to run tests
+script:
+- cd $TRAVIS_BUILD_DIR
+- cd webapp
+- npm install
+- npm start &
+- cd $TRAVIS_BUILD_DIR
+- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
+- python3 RLBotServer.py &
+#
+## test python
+- pytest --cov=./
+## test react
+- chmod 777 .travis/tslint.sh && .travis/tslint.sh
+#- cd webapp
+#- npm test
+
+after_success:
+- codecov
