@@ -11,6 +11,7 @@ import {
     TextField
 } from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
+import Delete from "@material-ui/icons/Delete"
 import * as React from "react"
 import { arrayMove, SortableContainer, SortableElement, SortableHandle, SortEnd } from "react-sortable-hoc"
 import { doPut } from "../../../../apiHandler/apiHandler"
@@ -42,14 +43,19 @@ const TableBodySortable = SortableContainer(({children, displayRowCheckbox}) => 
     </TableBody>
 ))
 
-const Row = SortableElement(({name, children}) => {
+const Row = SortableElement(({children}) => {
     return (
         <TableRow>
             <TableCell>
                 <DragHandle/>
             </TableCell>
             <TableCell>
-                {children}
+                {children.children}
+            </TableCell>
+            <TableCell>
+                <IconButton onClick={children.onDelete}>
+                    <Delete/>
+                </IconButton>
             </TableCell>
         </TableRow>
     )
@@ -81,27 +87,34 @@ export class PlayStyleEdit extends React.PureComponent<Props, State> {
                                                 this.state.sorted[i].map((name: string, idx: number) => <>
                                                         {this.state.stats &&
                                                         <>
-                                                            <Row index={idx}
-                                                                 children={
-                                                                     <Select multiple={false} value={name}
-                                                                             onChange={
-                                                                                 this.createChangeHandler(i, idx)}>
+                                                            <Row key={idx}
+                                                                 index={idx}
+                                                                 children={{
+                                                                     children: <Select
+                                                                         multiple={false} value={name}
+
+                                                                         onChange={
+                                                                             this.createChangeHandler(i, idx)}>
                                                                          {this.state.stats &&
                                                                          this.state.stats.map((stat: StatDescription) =>
                                                                              <MenuItem value={stat.field_name}
                                                                                        key={stat.field_name}>
                                                                                  {stat.field_rename}
                                                                              </MenuItem>)}
-                                                                     </Select>}/>
+                                                                     </Select>,
+                                                                     onDelete: this.deleteRow(i, idx)
+
+                                                                 }}
+                                                            />
 
                                                         </>}
                                                     </>
                                                 )}
                                             </TableBodySortable>
-                                            <IconButton onClick={this.addRow(i)}>
-                                                <Add/>
-                                            </IconButton>
                                         </Table>
+                                        <IconButton onClick={this.addRow(i)}>
+                                            <Add/>
+                                        </IconButton>
                                     </Grid>
                                 </Grid>
                             )
@@ -123,6 +136,15 @@ export class PlayStyleEdit extends React.PureComponent<Props, State> {
             const {sorted} = this.state
             if (sorted) {
                 sorted[chartIndex][pointIndex] = something.target.value
+                this.forceUpdate()
+            }
+        }
+    }
+    private readonly deleteRow = (chartIndex: number, pointIndex: number): () => void => {
+        return () => {
+            const {sorted} = this.state
+            if (sorted) {
+                sorted[chartIndex].splice(pointIndex, 1)
                 this.forceUpdate()
             }
         }
