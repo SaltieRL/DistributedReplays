@@ -1,6 +1,5 @@
 import * as React from "react"
 
-// I blam
 import {
     AmbientLight,
     AxesHelper,
@@ -19,7 +18,6 @@ import {
     WebGLRenderer
 } from "three"
 
-import { MTLLoader } from "../../../lib/MTLLoader"
 import { OBJLoader } from "../../../lib/OBJLoader"
 
 export interface Props {
@@ -160,18 +158,22 @@ export class ThreeScene extends React.PureComponent<Props> {
         // Hemisphere light
         this.scene.add( new HemisphereLight( 0xffffbb, 0x080820, 1 ) )
 
-        const mtlLoader = new MTLLoader(this.loadingManager)
-        const objLoader = new OBJLoader(this.loadingManager)
-        mtlLoader.load("/assets/Field2.mtl", (materials: any) => {
+        const objLoader = new OBJLoader()
+        objLoader.load("/assets/Octane.obj", (object: any) => {
             const w = window as any
-            w.materials = materials
-            // materials.preload()
-            // objLoader.setMaterials(materials)
-            objLoader.load("/assets/Field2.obj", (field: Group) => {
-                    w.field = field
-                    this.scene.add(field)
-                })
+            w.obj = object
+            this.scene.add(object)
         })
+        // mtlLoader.load("/assets/Field2.mtl", (materials: any) => {
+        //     const w = window as any
+        //     w.materials = materials
+        //     // materials.preload()
+        //     // objLoader.setMaterials(materials)
+        //     objLoader.load("/assets/Field2.obj", (field: Group) => {
+        //             w.field = field
+        //             this.scene.add(field)
+        //         })
+        // })
     }
 
     private readonly generateBall = () => {
@@ -189,12 +191,12 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     private readonly generatePlayers = (players: string[]) => {
         const loader = new OBJLoader(this.loadingManager)
+        this.players = []
         loader.load("/assets/Octane.obj", (object: Group) => {
             const w = window as any
             w.car = object
             this.scene.add(object)
 
-            this.players = []
             for (let i = 0; i < players.length; i++) {
                 // const playerName = players[i]
 
