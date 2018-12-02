@@ -25,19 +25,27 @@ export interface Props {
     frame: any
 }
 
+interface FieldScene {
+    scene: Scene
+    camera: PerspectiveCamera
+    ball: Mesh
+    ground: Mesh
+    players: Mesh[]
+}
+
 export class ThreeScene extends React.PureComponent<Props> {
     private loadingManager: LoadingManager
     private renderer: WebGLRenderer
     private mount: HTMLDivElement
     private frameId: number
-    private scene: Scene
-    private camera: PerspectiveCamera
-    private ball: Mesh
-    private cube: Mesh
-    private players: Mesh[]
+
+    private readonly threeField: FieldScene
 
     constructor(props: Props) {
         super(props)  // Don't think this is needed if not using state.
+        this.threeField = {} as any
+        const w = window as any
+        w.field = this.threeField
     }
 
     public componentDidMount() {
@@ -45,6 +53,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.loadingManager.onProgress = (item, loaded, total) => {
             console.log(item, loaded, total)
         }
+
         // Generate the lighting
         this.generateScene()
 
@@ -103,7 +112,7 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly renderScene = () => {
-        this.renderer.render(this.scene, this.camera)
+        this.renderer.render(this.threeField.scene, this.threeField.camera)
     }
 
     private readonly generateScene = () => {
@@ -111,21 +120,23 @@ export class ThreeScene extends React.PureComponent<Props> {
         const height = this.mount.clientHeight
 
         // Add scene
-        this.scene = new Scene()
+        this.threeField.scene = new Scene()
 
         // Add camera
-        this.camera = new PerspectiveCamera(
+        this.threeField.camera = new PerspectiveCamera(
             75,
             width / height,
             0.1,
             20000
         )
-        // TODO: Fix
+
+        // TODO: We are keeping these in window to discover better camera angles. This allows us to edit offsets
+        // without reloading the page every time.
         this.setCameraView(0)
         const w = window as any
-        w.camera = this.camera
+        w.camera = this.threeField.camera
 
-        this.camera.rotation.x -= 7 * Math.PI / 180
+        this.threeField.camera.rotation.x -= 7 * Math.PI / 180
 
         // Add renderer
         this.renderer = new WebGLRenderer({antialias: true})
@@ -135,35 +146,39 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly generatePlayfield = () => {
+        const field = this.threeField
+
         const geometry = new PlaneBufferGeometry(8192, 10240, 1, 1)
         const material = new MeshPhongMaterial({color: "#4CAF50"})
-        this.cube = new Mesh(geometry, material)
-        this.cube.rotation.x = -Math.PI / 2
-        this.scene.add(this.cube)
+        field.ground = new Mesh(geometry, material)
+        field.ground.rotation.x = -Math.PI / 2
+        field.scene.add(field.ground)
 
         const goalPlane = new PlaneBufferGeometry(1786, 642.775, 1, 1)
         const blueGoalMaterial = new MeshPhongMaterial({color: "#2196f3", side: DoubleSide})
         const orangeGoalMaterial = new MeshPhongMaterial({color: "#ff9800", side: DoubleSide})
         const blueGoal = new Mesh(goalPlane, blueGoalMaterial)
         blueGoal.position.z = -5120
-        this.scene.add(blueGoal)
+        field.scene.add(blueGoal)
         const orangeGoal = new Mesh(goalPlane, orangeGoalMaterial)
         orangeGoal.position.z = 5120
         orangeGoal.rotation.y = Math.PI
-        this.scene.add(orangeGoal)
+        field.scene.add(orangeGoal)
 
         // Ambient light
-        this.scene.add(new AmbientLight(0x444444))
+        field.scene.add(new AmbientLight(0x444444))
 
         // Hemisphere light
-        this.scene.add( new HemisphereLight( 0xffffbb, 0x080820, 1 ) )
+        field.scene.add( new HemisphereLight( 0xffffbb, 0x080820, 1 ) )
 
-        const objLoader = new OBJLoader()
-        objLoader.load("/assets/Octane.obj", (object: any) => {
+        // TODO: Fix offsets
+        const objLoader = new OBJLoader(this.loadingManager)
+        objLoader.load("/assets/Octane2.obj", (object: any) => {
             const w = window as any
             w.obj = object
-            this.scene.add(object)
+            field.scene.add(object)
         })
+
         // mtlLoader.load("/assets/Field2.mtl", (materials: any) => {
         //     const w = window as any
         //     w.materials = materials
@@ -177,11 +192,13 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly generateBall = () => {
+        const field = this.threeField
+
         const ballGeometry = new SphereBufferGeometry(92.75, 32, 32)
         const ballMaterial = new MeshPhongMaterial()
-        this.ball = new Mesh(ballGeometry, ballMaterial)
-        this.ball.add(new AxesHelper(150))
-        this.scene.add(this.ball)
+        field.ball = new Mesh(ballGeometry, ballMaterial)
+        field.ball.add(new AxesHelper(150))
+        field.scene.add(field.ball)
 
         const loader = new TextureLoader(this.loadingManager)
         loader.load("/assets/test.jpg", (texture) => {
@@ -190,12 +207,14 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly generatePlayers = (players: string[]) => {
+        const field = this.threeField
+
         const loader = new OBJLoader(this.loadingManager)
-        this.players = []
-        loader.load("/assets/Octane.obj", (object: Group) => {
+        field.players = []
+        loader.load("/assets/Octane2.obj", (object: Group) => {
             const w = window as any
             w.car = object
-            this.scene.add(object)
+            field.scene.add(object)
 
             for (let i = 0; i < players.length; i++) {
                 // const playerName = players[i]
@@ -204,27 +223,30 @@ export class ThreeScene extends React.PureComponent<Props> {
                 const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
                 const carMaterial = new MeshPhongMaterial({color: carColor})
                 const player = new Mesh(carGeometry, carMaterial)
+                player.name = players[i]
                 player.add(new AxesHelper(150))
 
-                this.scene.add(player)
-                this.players.push(player)
+                field.scene.add(player)
+                field.players.push(player)
             }
         })
     }
 
     private readonly updateBall = () => {
-        const ballPosition = this.props.replayData.ball[this.props.frame]
-        this.ball.position.x = ballPosition[0]
-        this.ball.position.y = ballPosition[2]
-        this.ball.position.z = ballPosition[1]
+        const field = this.threeField
 
-        this.ball.rotation.x = ballPosition[3]
-        this.ball.rotation.y = ballPosition[4]
-        this.ball.rotation.z = ballPosition[5]
+        const ballPosition = this.props.replayData.ball[this.props.frame]
+        field.ball.position.x = ballPosition[0]
+        field.ball.position.y = ballPosition[2]
+        field.ball.position.z = ballPosition[1]
+
+        field.ball.rotation.x = ballPosition[3]
+        field.ball.rotation.y = ballPosition[4]
+        field.ball.rotation.z = ballPosition[5]
     }
 
     private readonly updatePlayers = () => {
-        this.players.forEach((player: any, i: number) => {
+        this.threeField.players.forEach((player: any, i: number) => {
             const playerPosition = this.props.replayData.players[i][this.props.frame]
 
             player.position.x = playerPosition[0]
@@ -238,22 +260,23 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly updateCamera = () => {
-        this.camera.lookAt(this.ball.position)
+        this.threeField.camera.lookAt(this.threeField.ball.position)
     }
 
     private readonly setCameraView = (viewId: number) => {
+        const field = this.threeField
         switch (viewId) {
             case 0:
-                this.camera.position.z = 5750
-                this.camera.position.y = 750
+                field.camera.position.z = 5750
+                field.camera.position.y = 750
                 break
             case 1:
-                this.camera.position.z = -5750
-                this.camera.position.y = 750
+                field.camera.position.z = -5750
+                field.camera.position.y = 750
                 break
             case 2:
-                this.camera.position.z = 0
-                this.camera.position.y = 750
+                field.camera.position.z = 0
+                field.camera.position.y = 750
                 break
             default:
                 throw new Error(`Unknown viewId: ${viewId}`)
