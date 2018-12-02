@@ -1,20 +1,26 @@
 import * as React from "react"
+
+// I blam
 import {
     AmbientLight,
     AxesHelper,
     BoxBufferGeometry,
     DoubleSide,
+    Group,
     HemisphereLight,
     LoadingManager,
     Mesh,
-    MeshBasicMaterial,
+    MeshPhongMaterial,
     PerspectiveCamera,
     PlaneBufferGeometry,
     Scene,
     SphereBufferGeometry,
     TextureLoader,
-    WebGLRenderer,
-  } from "three"
+    WebGLRenderer
+} from "three"
+
+import { MTLLoader } from "../../../lib/MTLLoader"
+import { OBJLoader } from "../../../lib/OBJLoader"
 
 export interface Props {
     replayData: any
@@ -23,16 +29,16 @@ export interface Props {
 
 export class ThreeScene extends React.PureComponent<Props> {
     private loadingManager: LoadingManager
-    private renderer: any
-    private mount: any
-    private frameId: any
-    private scene: any
-    private camera: any
-    private ball: any
-    private cube: any
-    private players: any
+    private renderer: WebGLRenderer
+    private mount: HTMLDivElement
+    private frameId: number
+    private scene: Scene
+    private camera: PerspectiveCamera
+    private ball: Mesh
+    private cube: Mesh
+    private players: Mesh[]
 
-    constructor(props: any) {
+    constructor(props: Props) {
         super(props)  // Don't think this is needed if not using state.
     }
 
@@ -65,7 +71,9 @@ export class ThreeScene extends React.PureComponent<Props> {
                 <div
                     style={{width: "100%", height: "600px", margin: "auto"}}
                     ref={(mount) => {
-                        this.mount = mount
+                        if (mount) {
+                            this.mount = mount
+                        }
                     }}
                 />
                 <div style={{position: "absolute", top: "0", left: "0", margin: ".5rem"}}>
@@ -116,6 +124,8 @@ export class ThreeScene extends React.PureComponent<Props> {
         )
         // TODO: Fix
         this.setCameraView(0)
+        const w = window as any
+        w.camera = this.camera
 
         this.camera.rotation.x -= 7 * Math.PI / 180
 
@@ -128,14 +138,14 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     private readonly generatePlayfield = () => {
         const geometry = new PlaneBufferGeometry(8192, 10240, 1, 1)
-        const material = new MeshBasicMaterial({color: "#4CAF50"})
+        const material = new MeshPhongMaterial({color: "#4CAF50"})
         this.cube = new Mesh(geometry, material)
         this.cube.rotation.x = -Math.PI / 2
         this.scene.add(this.cube)
 
         const goalPlane = new PlaneBufferGeometry(1786, 642.775, 1, 1)
-        const blueGoalMaterial = new MeshBasicMaterial({color: "#2196f3", side: DoubleSide})
-        const orangeGoalMaterial = new MeshBasicMaterial({color: "#ff9800", side: DoubleSide})
+        const blueGoalMaterial = new MeshPhongMaterial({color: "#2196f3", side: DoubleSide})
+        const orangeGoalMaterial = new MeshPhongMaterial({color: "#ff9800", side: DoubleSide})
         const blueGoal = new Mesh(goalPlane, blueGoalMaterial)
         blueGoal.position.z = -5120
         this.scene.add(blueGoal)
@@ -149,11 +159,24 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         // Hemisphere light
         this.scene.add( new HemisphereLight( 0xffffbb, 0x080820, 1 ) )
+
+        const mtlLoader = new MTLLoader(this.loadingManager)
+        const objLoader = new OBJLoader(this.loadingManager)
+        mtlLoader.load("/assets/Field2.mtl", (materials: any) => {
+            const w = window as any
+            w.materials = materials
+            // materials.preload()
+            // objLoader.setMaterials(materials)
+            objLoader.load("/assets/Field2.obj", (field: Group) => {
+                    w.field = field
+                    this.scene.add(field)
+                })
+        })
     }
 
     private readonly generateBall = () => {
         const ballGeometry = new SphereBufferGeometry(92.75, 32, 32)
-        const ballMaterial = new MeshBasicMaterial()
+        const ballMaterial = new MeshPhongMaterial()
         this.ball = new Mesh(ballGeometry, ballMaterial)
         this.ball.add(new AxesHelper(150))
         this.scene.add(this.ball)
@@ -165,19 +188,26 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly generatePlayers = (players: string[]) => {
-        this.players = []
-        for (let i = 0; i < players.length; i++) {
-            // const playerName = players[i]
+        const loader = new OBJLoader(this.loadingManager)
+        loader.load("/assets/Octane.obj", (object: Group) => {
+            const w = window as any
+            w.car = object
+            this.scene.add(object)
 
-            const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
-            const carColor = this.props.replayData.colors[i] ? "#ff9800": "#2196f3"
-            const carMaterial = new MeshBasicMaterial({color: carColor})
-            const player = new Mesh(carGeometry, carMaterial)
-            player.add(new AxesHelper(150))
+            this.players = []
+            for (let i = 0; i < players.length; i++) {
+                // const playerName = players[i]
 
-            this.scene.add(player)
-            this.players.push(player)
-        }
+                const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
+                const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
+                const carMaterial = new MeshPhongMaterial({color: carColor})
+                const player = new Mesh(carGeometry, carMaterial)
+                player.add(new AxesHelper(150))
+
+                this.scene.add(player)
+                this.players.push(player)
+            }
+        })
     }
 
     private readonly updateBall = () => {
@@ -212,12 +242,12 @@ export class ThreeScene extends React.PureComponent<Props> {
     private readonly setCameraView = (viewId: number) => {
         switch (viewId) {
             case 0:
-                this.camera.position.z = 4200
-                this.camera.position.y = 300
+                this.camera.position.z = 5750
+                this.camera.position.y = 750
                 break
             case 1:
-                this.camera.position.z = -4200
-                this.camera.position.y = 300
+                this.camera.position.z = -5750
+                this.camera.position.y = 750
                 break
             case 2:
                 this.camera.position.z = 0

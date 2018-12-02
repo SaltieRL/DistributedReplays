@@ -1,7 +1,9 @@
 import { Button, CardContent, Grid, TextField, Typography } from "@material-ui/core"
+import Slider from "@material-ui/lab/Slider"
 import * as React from "react"
 import { Replay } from "src/Models"
 import { getReplayViewerData, getReplayViewerProto } from "../../../Requests/Replay"
+import { Scoreboard } from "./Scoreboard"
 import { ThreeScene } from "./ThreeScene"
 
 interface OwnProps {
@@ -64,20 +66,12 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
             <CardContent>
                 <Grid container spacing={24}>
                     <Grid item xs={12}>
-                        <Grid item xs={12} container style={{position: "absolute"}}>
-                            <Grid item xs={3}>
-                                <Typography align="center" style={{color: "#ff9800"}}>
-                                    {this.state.team0Score}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Typography align="center" style={{color: "#2196f3"}}>
-                                    {this.state.team1Score}
-                                </Typography>
-                            </Grid>
-                        </Grid>
                         {this.state.replayData ? (
-                            <ThreeScene replayData={this.state.replayData} frame={this.state.currentFrame} />
+                            <>
+                                <Scoreboard team0Score={this.state.team0Score} team1Score={this.state.team1Score}
+                                            gameTime={this.getGameTimeString()} />
+                                <ThreeScene replayData={this.state.replayData} frame={this.state.currentFrame} />
+                            </>
                         ) : (
                             <Typography variant="title" align="center">Loading...</Typography>
                         )}
@@ -87,10 +81,6 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                             <Typography align="center">Playback Controls</Typography>
                             <Button variant="outlined" onClick={this.startPlayback}>Play</Button>
                             <Button variant="outlined" onClick={this.stopPlayback}>Pause</Button>
-                            <Typography>
-                                {/*We should use padStart on seconds, but that is in es2017, not es6*/}
-                                Game Time: {this.getGameTimeString()}
-                            </Typography>
                         </Grid>
                         <Grid item xs={4}>
                             <Typography>Frame:</Typography>
@@ -104,7 +94,15 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                                 {this.state.replayData && this.state.replayData.ball[this.state.currentFrame][2]}
                             </Typography>
                         </Grid>
-
+                    </Grid>
+                    <Grid item xs={12}>
+                    {this.state.replayData && <Slider
+                        value={this.state.currentFrame}
+                        min={0}
+                        max={this.state.replayData.frames.length - 1}
+                        step={1}
+                        onChange={this.onSliderChange}
+                    />}
                     </Grid>
                 </Grid>
             </CardContent>
@@ -148,7 +146,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         const minutes: number = (this.state.gameTime - seconds) / 60
 
         const secondsString: string = seconds < 10 ? `0${seconds.toString()}` : seconds.toString()
-        const minutesString: string = minutes < 10 ? `0${minutes.toString()}` : minutes.toString()
+        const minutesString: string = minutes.toString()
 
         return `${minutesString}:${secondsString}`
     }
@@ -192,5 +190,9 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
             const delta = frame[0]
             setTimeout(() => this.playLoop(), delta * 1000)
         }
+    }
+
+    private readonly onSliderChange = (event: any, value: number): void => {
+        this.setState({currentFrame: value})
     }
 }
