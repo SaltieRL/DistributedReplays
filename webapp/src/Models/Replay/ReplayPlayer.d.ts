@@ -24,3 +24,12 @@ interface CameraSettings {
 interface Loadout {
     car: string
 }
+
+interface ReplayDataResponse {
+    ball: number[][]  // [pos_x, pos_y, pos_z, rot_x, rot_y, rot_z]
+    colors: number[]
+    frames: number[][]
+    names: string[]
+    id: string
+    players: any[][]
+}

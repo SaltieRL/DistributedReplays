@@ -3,13 +3,14 @@ import * as React from "react"
 import {
     AmbientLight,
     AxesHelper,
-    BoxBufferGeometry,
+    // BoxBufferGeometry,
     DoubleSide,
     Group,
     HemisphereLight,
     LoadingManager,
     Mesh,
     MeshPhongMaterial,
+    Object3D,
     PerspectiveCamera,
     PlaneBufferGeometry,
     Scene,
@@ -21,28 +22,29 @@ import {
 import { OBJLoader } from "../../../lib/OBJLoader"
 
 export interface Props {
-    replayData: any
-    frame: any
+    replayData: ReplayDataResponse
+    frame: number
+    play: boolean
 }
 
 interface FieldScene {
     scene: Scene
     camera: PerspectiveCamera
     ball: Mesh
-    ground: Mesh
-    players: Mesh[]
+    ground: Object3D
+    players: Object3D[]
 }
 
 export class ThreeScene extends React.PureComponent<Props> {
     private loadingManager: LoadingManager
     private renderer: WebGLRenderer
     private mount: HTMLDivElement
-    private frameId: number
+    private hasStarted: boolean
 
     private readonly threeField: FieldScene
 
     constructor(props: Props) {
-        super(props)  // Don't think this is needed if not using state.
+        super(props)
         this.threeField = {} as any
         const w = window as any
         w.field = this.threeField
@@ -93,22 +95,25 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     public readonly start = () => {
-        if (!this.frameId) {
-            this.frameId = requestAnimationFrame(this.animate)
+        console.log("Starting...")
+        if (!this.hasStarted) {
+            this.hasStarted = true
+            requestAnimationFrame(this.animate)
         }
     }
 
-    public readonly stop = () => {
-        cancelAnimationFrame(this.frameId)
+    private readonly stop = () => {
+        cancelAnimationFrame(0)
     }
 
-    public readonly animate = () => {
+    private readonly animate = () => {
         this.updateBall()
         this.updatePlayers()
         this.updateCamera()
-
+        // Paints the new scene
         this.renderScene()
-        this.frameId = window.requestAnimationFrame(this.animate)
+        // This callback similar to using a setTimeout function
+        requestAnimationFrame(this.animate)
     }
 
     private readonly renderScene = () => {
@@ -154,9 +159,11 @@ export class ThreeScene extends React.PureComponent<Props> {
         field.ground.rotation.x = -Math.PI / 2
         field.scene.add(field.ground)
 
-        const goalPlane = new PlaneBufferGeometry(1786, 642.775, 1, 1)
-        const blueGoalMaterial = new MeshPhongMaterial({color: "#2196f3", side: DoubleSide})
-        const orangeGoalMaterial = new MeshPhongMaterial({color: "#ff9800", side: DoubleSide})
+        const goalPlane = new PlaneBufferGeometry(2000, 1284.5, 1, 1)
+        const blueGoalMaterial = new MeshPhongMaterial({color: "#2196f3", side: DoubleSide,
+            opacity: 0.75, transparent: true})
+        const orangeGoalMaterial = new MeshPhongMaterial({color: "#ff9800", side: DoubleSide,
+            opacity: 0.75, transparent: true})
         const blueGoal = new Mesh(goalPlane, blueGoalMaterial)
         blueGoal.position.z = -5120
         field.scene.add(blueGoal)
@@ -171,12 +178,13 @@ export class ThreeScene extends React.PureComponent<Props> {
         // Hemisphere light
         field.scene.add( new HemisphereLight( 0xffffbb, 0x080820, 1 ) )
 
-        // TODO: Fix offsets
         const objLoader = new OBJLoader(this.loadingManager)
-        objLoader.load("/assets/Octane2.obj", (object: any) => {
+        objLoader.load("/assets/Field2.obj", (arena: Group) => {
             const w = window as any
-            w.obj = object
-            field.scene.add(object)
+            w.arena = arena
+            arena.scale.setScalar(1000)
+            arena.rotation.set(0, Math.PI / 2, 0)
+            this.threeField.scene.add(arena)
         })
 
         // mtlLoader.load("/assets/Field2.mtl", (materials: any) => {
@@ -211,20 +219,22 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         const loader = new OBJLoader(this.loadingManager)
         field.players = []
-        loader.load("/assets/Octane2.obj", (object: Group) => {
+        loader.load("/assets/Octane2.obj", (octane: Group) => {
             const w = window as any
-            w.car = object
-            field.scene.add(object)
+            w.car = octane
+            octane.scale.setScalar(30)
+            field.scene.add(octane)
 
             for (let i = 0; i < players.length; i++) {
                 // const playerName = players[i]
-
-                const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
+                // const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
                 const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
-                const carMaterial = new MeshPhongMaterial({color: carColor})
-                const player = new Mesh(carGeometry, carMaterial)
+                console.log(carColor)
+                // const carMaterial = new MeshPhongMaterial({color: carColor})
+                // const player = new Mesh(carGeometry, carMaterial)
+                const player = octane.clone()
                 player.name = players[i]
-                player.add(new AxesHelper(150))
+                player.add(new AxesHelper(2))
 
                 field.scene.add(player)
                 field.players.push(player)

@@ -1,7 +1,7 @@
 import { Button, CardContent, Grid, TextField, Typography } from "@material-ui/core"
 import Slider from "@material-ui/lab/Slider"
 import * as React from "react"
-import { Replay } from "src/Models"
+import { FPSClock, Replay } from "src/Models"
 import { getReplayViewerData, getReplayViewerProto } from "../../../Requests/Replay"
 import { Scoreboard } from "./Scoreboard"
 import { ThreeScene } from "./ThreeScene"
@@ -16,6 +16,7 @@ interface State {
     replayData?: ReplayDataResponse
     replayProto?: any
     currentFrame: number
+    clock: FPSClock
     gameTime: number
     play: boolean
     team0Score: number
@@ -23,20 +24,12 @@ interface State {
     playerTeamMap: Record<string, number>
 }
 
-interface ReplayDataResponse {
-    ball: number[][]  // [pos_x, pos_y, pos_z, rot_x, rot_y, rot_z]
-    colors: number[]
-    frames: number[][]
-    names: string[]
-    id: string
-    players: any[][]
-}
-
 export class ReplayViewer extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
             currentFrame: 0,
+            clock: new FPSClock(60),
             gameTime: 300,
             team0Score: 0,
             team1Score: 0,
@@ -48,6 +41,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     public async componentDidMount() {
         await this.getReplayPositions()
         await this.getReplayProto()
+        this.state.clock.setCallback(this.onFrameUpdate)
         // console.log(this.state.replayData)
     }
 
@@ -70,7 +64,8 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                             <>
                                 <Scoreboard team0Score={this.state.team0Score} team1Score={this.state.team1Score}
                                             gameTime={this.getGameTimeString()} />
-                                <ThreeScene replayData={this.state.replayData} frame={this.state.currentFrame} />
+                                <ThreeScene play={this.state.play} frame={this.state.currentFrame}
+                                            replayData={this.state.replayData} />
                             </>
                         ) : (
                             <Typography variant="title" align="center">Loading...</Typography>
@@ -79,8 +74,8 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                     <Grid item xs={12} container>
                         <Grid item xs={4} container justify="space-around">
                             <Typography align="center">Playback Controls</Typography>
-                            <Button variant="outlined" onClick={this.startPlayback}>Play</Button>
-                            <Button variant="outlined" onClick={this.stopPlayback}>Pause</Button>
+                            <Button variant="outlined" onClick={() => this.setPlayback(true)}>Play</Button>
+                            <Button variant="outlined" onClick={() => this.setPlayback(false)}>Pause</Button>
                         </Grid>
                         <Grid item xs={4}>
                             <Typography>Frame:</Typography>
@@ -129,9 +124,26 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         this.setState({playerTeamMap})
     }
 
+    private readonly onFrameUpdate = (frame: number) => {
+        if (this.state.replayData) {
+            if (frame >= this.state.replayData.frames.length) {
+                this.setState({ play: false })
+                this.state.clock.stop()
+            } else {
+                this.setState({ currentFrame: frame })
+                this.updateGameTime()
+                this.updateGameScore()
+            }
+        }
+    }
+
     private readonly setCurrentFrame: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const currentFrame: number = Number(event.target.value)
-        this.setState({currentFrame})
+        this.state.clock.setFrame(currentFrame)
+    }
+
+    private readonly onSliderChange = (_: any, value: number): void => {
+        this.state.clock.setFrame(value)
     }
 
     private readonly updateGameTime = (): void => {
@@ -168,31 +180,12 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         this.setState({team0Score, team1Score})
     }
 
-    private readonly startPlayback = (): void => {
-        if (!this.state.play) {
-            this.setState({ play: true })
-            setTimeout(() => this.playLoop(), 0)
+    private readonly setPlayback = (play: boolean): void => {
+        if (!this.state.play && play) {
+            this.state.clock.resume()
+        } else if (!play) {
+            this.state.clock.pause()
         }
-    }
-
-    private readonly stopPlayback = (): void => {
-        this.setState({ play: false })
-    }
-
-    private readonly playLoop = (): void => {
-        if (this.state.play && this.state.replayData) {  // TODO: Tell user it's loading.
-            if (this.state.currentFrame === this.state.replayData.frames.length) {
-                this.setState({ play: false })
-            }
-            this.setState({ currentFrame: this.state.currentFrame + 1 })
-
-            const frame = this.state.replayData.frames[this.state.currentFrame]
-            const delta = frame[0]
-            setTimeout(() => this.playLoop(), delta * 1000)
-        }
-    }
-
-    private readonly onSliderChange = (event: any, value: number): void => {
-        this.setState({currentFrame: value})
+        this.setState({ play })
     }
 }
