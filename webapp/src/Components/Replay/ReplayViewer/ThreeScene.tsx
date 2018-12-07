@@ -16,7 +16,8 @@ import {
     Scene,
     SphereBufferGeometry,
     TextureLoader,
-    WebGLRenderer
+    WebGLRenderer,
+    BoxBufferGeometry
 } from "three"
 
 import { OBJLoader } from "../../../lib/OBJLoader"
@@ -223,16 +224,14 @@ export class ThreeScene extends React.PureComponent<Props> {
             const w = window as any
             w.car = octane
             octane.scale.setScalar(30)
-            field.scene.add(octane)
 
             for (let i = 0; i < players.length; i++) {
                 // const playerName = players[i]
-                // const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
+                const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
                 const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
-                console.log(carColor)
-                // const carMaterial = new MeshPhongMaterial({color: carColor})
-                // const player = new Mesh(carGeometry, carMaterial)
-                const player = octane.clone()
+                const carMaterial = new MeshPhongMaterial({color: i ? carColor : "#333333"})
+                const player = i ? new Mesh(carGeometry, carMaterial) : octane.clone()
+                // const player = octane.clone()
                 player.name = players[i]
                 player.add(new AxesHelper(2))
 
@@ -263,9 +262,9 @@ export class ThreeScene extends React.PureComponent<Props> {
             player.position.y = playerPosition[2]
             player.position.z = playerPosition[1]
 
-            player.rotation.x = playerPosition[3]
-            player.rotation.y = playerPosition[4]
-            player.rotation.z = playerPosition[5]
+            player.rotation.x = playerPosition[5]
+            player.rotation.y = Math.PI - playerPosition[4]
+            player.rotation.z = playerPosition[3]
         })
     }
 
