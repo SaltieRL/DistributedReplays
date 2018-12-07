@@ -3,7 +3,7 @@ import * as React from "react"
 import {
     AmbientLight,
     AxesHelper,
-    // BoxBufferGeometry,
+    BoxBufferGeometry,
     DoubleSide,
     Group,
     HemisphereLight,
@@ -16,8 +16,7 @@ import {
     Scene,
     SphereBufferGeometry,
     TextureLoader,
-    WebGLRenderer,
-    BoxBufferGeometry
+    WebGLRenderer
 } from "three"
 
 import { OBJLoader } from "../../../lib/OBJLoader"
@@ -162,9 +161,9 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         const goalPlane = new PlaneBufferGeometry(2000, 1284.5, 1, 1)
         const blueGoalMaterial = new MeshPhongMaterial({color: "#2196f3", side: DoubleSide,
-            opacity: 0.75, transparent: true})
+            opacity: 0.3, transparent: true})
         const orangeGoalMaterial = new MeshPhongMaterial({color: "#ff9800", side: DoubleSide,
-            opacity: 0.75, transparent: true})
+            opacity: 0.3, transparent: true})
         const blueGoal = new Mesh(goalPlane, blueGoalMaterial)
         blueGoal.position.z = -5120
         field.scene.add(blueGoal)
@@ -179,14 +178,14 @@ export class ThreeScene extends React.PureComponent<Props> {
         // Hemisphere light
         field.scene.add( new HemisphereLight( 0xffffbb, 0x080820, 1 ) )
 
-        const objLoader = new OBJLoader(this.loadingManager)
-        objLoader.load("/assets/Field2.obj", (arena: Group) => {
-            const w = window as any
-            w.arena = arena
-            arena.scale.setScalar(1000)
-            arena.rotation.set(0, Math.PI / 2, 0)
-            this.threeField.scene.add(arena)
-        })
+        // const objLoader = new OBJLoader(this.loadingManager)
+        // objLoader.load("/assets/Field2.obj", (arena: Group) => {
+        //     const w = window as any
+        //     w.arena = arena
+        //     arena.scale.setScalar(1000)
+        //     arena.rotation.set(0, Math.PI / 2, 0)
+        //     this.threeField.scene.add(arena)
+        // })
 
         // mtlLoader.load("/assets/Field2.mtl", (materials: any) => {
         //     const w = window as any
@@ -223,14 +222,14 @@ export class ThreeScene extends React.PureComponent<Props> {
         loader.load("/assets/Octane2.obj", (octane: Group) => {
             const w = window as any
             w.car = octane
-            octane.scale.setScalar(30)
+            octane.scale.setScalar(80) // TODO: This size is 20
 
             for (let i = 0; i < players.length; i++) {
                 // const playerName = players[i]
                 const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
                 const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
                 const carMaterial = new MeshPhongMaterial({color: i ? carColor : "#333333"})
-                const player = i ? new Mesh(carGeometry, carMaterial) : octane.clone()
+                const player = i > 2 ? new Mesh(carGeometry, carMaterial) : octane.clone()
                 // const player = octane.clone()
                 player.name = players[i]
                 player.add(new AxesHelper(2))
@@ -257,6 +256,9 @@ export class ThreeScene extends React.PureComponent<Props> {
     private readonly updatePlayers = () => {
         this.threeField.players.forEach((player: any, i: number) => {
             const playerPosition = this.props.replayData.players[i][this.props.frame]
+            if (i === 1) {
+                console.log(playerPosition)
+            }
 
             player.position.x = playerPosition[0]
             player.position.y = playerPosition[2]
