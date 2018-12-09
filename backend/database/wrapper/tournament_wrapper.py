@@ -23,7 +23,9 @@ class TournamentPermissions(enum.Enum):
 def require_permission(permission_level=TournamentPermissions.SITE_ADMIN):
     def perm_arg_wrapper(decorated_function):
         def permission_wrapper(*args, **kwargs):
-            sender = kwargs['sender']
+            if 'sender' in kwargs:
+                sender = kwargs['sender']
+
             if sender is None:
                 raise UserNotAuthenticatedError
 
@@ -98,8 +100,10 @@ class TournamentWrapper:
         if tournament is None:
             raise TournamentNotFound
         player = session.query(Player).filter(Player.platformid == admin_platformid).first()
-        if tournament is None:
-            raise CalculatedError(404, "Player not found.")  # TODO add player to DB instead
+        if player is None:
+            player = Player(platformid=admin_platformid, platformname="", avatar="", ranks=[], groups=[])
+            session.add(player)
+            # raise CalculatedError(404, "Player not found.")  # TODO consider getting player details from steam
         tournament.admins.append(player)
         session.commit()
 
@@ -110,7 +114,7 @@ class TournamentWrapper:
         if tournament is None:
             raise TournamentNotFound
         player = session.query(Player).filter(Player.platformid == admin_platformid).first()
-        if tournament is None:
+        if player is None:
             raise PlayerNotFound
         if player in tournament.admins:
             tournament.admins.remove(player)
@@ -123,8 +127,10 @@ class TournamentWrapper:
         if tournament is None:
             raise TournamentNotFound
         player = session.query(Player).filter(Player.platformid == participant_platformid).first()
-        if tournament is None:
-            raise CalculatedError(404, "Player not found.")  # TODO add player to DB instead
+        if player is None:
+            player = Player(platformid=participant_platformid, platformname="", avatar="", ranks=[], groups=[])
+            session.add(player)
+            # raise CalculatedError(404, "Player not found.")  # TODO consider getting player details from steam
         tournament.participants.append(player)
         session.commit()
 
@@ -135,7 +141,7 @@ class TournamentWrapper:
         if tournament is None:
             raise TournamentNotFound
         player = session.query(Player).filter(Player.platformid == participant_platformid).first()
-        if tournament is None:
+        if player is None:
             raise PlayerNotFound
         if player in tournament.participants:
             tournament.participants.remove(player)
@@ -199,7 +205,7 @@ class TournamentWrapper:
         if series is None:
             raise StageNotFound
         session.delete(series)
-        session.close()
+        session.commit()
 
     @staticmethod
     @require_permission(TournamentPermissions.TOURNAMENT_ADMIN)
