@@ -8,7 +8,7 @@ import shutil
 import uuid
 
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from flask import jsonify, Blueprint, current_app, request, send_from_directory, g
 from werkzeug.utils import secure_filename
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -20,6 +20,7 @@ from backend.database.objects import Game
 from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db, add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
+from backend.database.wrapper.tournament_wrapper import TournamentWrapper
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
@@ -534,6 +535,16 @@ def api_add_game_to_series(tournament_id, stage_id, series_id, game_hash):
 @bp.route('tournament/<tournament_id>/stage/<stage_id>/series/<series_id>/<game_hash>', methods=["DELETE"])
 def api_remove_game_from_series(tournament_id, stage_id, series_id, game_hash):
     TournamentSeries.remove_game(series_id, game_hash)
+    return '', 204
+
+
+@require_user
+@bp.route('tournament/add_game/<game_hash>', methods=["PUT"])
+@with_session
+def api_tournament_auto_add_game(game_hash, session=None):
+    # mostly for testing the method
+    if g.admin:
+        TournamentWrapper.add_game_to_matching_tournaments(session, game_hash)
     return '', 204
 
 

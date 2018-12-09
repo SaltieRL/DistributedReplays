@@ -274,7 +274,7 @@ class TournamentWrapper:
                                                                                    is_tournament_admin))
 
     @staticmethod
-    def start_auto_tournament_adding(session, game_hash):
+    def add_game_to_matching_tournaments(session, game_hash):
         game = session.query(Game).filter(Game.hash == game_hash).first()
         if game is None:
             raise ReplayNotFound
@@ -283,37 +283,41 @@ class TournamentWrapper:
         if game.teamsize > 1:
             unmatched_players_tolerance = 1
         # TODO make this configurable but for now 1s should not have any tolerance
-        tournaments = session.query(TournamentPlayer, func.count(TournamentPlayer.tournament_id)).\
+        tournaments = session.query(TournamentPlayer.tournament_id, func.count(TournamentPlayer.tournament_id)).\
             filter(TournamentPlayer.player_id.in_(game.players)).\
             group_by(TournamentPlayer.tournament_id).\
-            having(func.count(TournamentPlayer.tournament_id) >= game.teamsize * 2 - unmatched_players_tolerance).all()
+            having(func.count(TournamentPlayer.tournament_id) >= game.teamsize * 2 - unmatched_players_tolerance).\
+            all()
 
         if len(tournaments) is 0:
             return  # no matching tournaments found
 
-        tournament_ids = [player.tournament_id for player, count in tournaments]
+        tournament_ids = [tournament_id for tournament_id, count in tournaments]
         serieses = session.query(TournamentStage, TournamentSeries).\
             filter(TournamentStage.tournament_id.in_(tournament_ids)).\
             join(TournamentSeries).\
             join(SeriesGame).\
             join(PlayerGame, PlayerGame.game == SeriesGame.game_hash).\
             filter(PlayerGame.player.in_(game.players)).\
-            group_by(SeriesGame.series_id, SeriesGame.game_hash).\
-            having(func.count(SeriesGame.series_id, SeriesGame.game_hash)
-                   >= game.teamsize * 2 - unmatched_players_tolerance).all()
+            group_by(TournamentStage.id, TournamentSeries.id, SeriesGame.series_id, SeriesGame.game_hash).\
+            having(func.count(SeriesGame.series_id) >= game.teamsize * 2 - unmatched_players_tolerance).all()
 
-        for tourney_player, matched_count in tournaments:
-            time_between_matches = datetime.timedelta(minutes=15)  # TODO make this tournament specific
+        for tournament_id, matched_count in tournaments:
+            # time between matches can be very long: if we have a Bo5 that goes to game 5 there might be about 30-45
+            # minutes between the first and the last game. So if we parse them in certain orders there might be a lot
+            # of time between the games, which is why 60 minutes seems reasonable
+            time_between_matches = datetime.timedelta(minutes=60)  # TODO make this tournament specific
             # find matching series
             series: TournamentSeries = None
             for tournament_stage, tournament_series in serieses:
-                if tournament_stage.tournament_id is tourney_player.tournament_id:
+                if tournament_stage.tournament_id is tournament_id:
                     series = tournament_series
                     matched = False
                     for series_game in series.games:
                         series_game_finished = series_game.match_date + \
                                                datetime.timedelta(seconds=round(series_game.length))
-                        if abs(series_game_finished - game.match_date) <= time_between_matches:
+                        time_diff = abs(series_game_finished - game.match_date)
+                        if time_diff <= time_between_matches:
                             matched = True
                             break
                     if matched:
@@ -323,14 +327,18 @@ class TournamentWrapper:
             if series is None:  # create new series because we could not match the game with an existing one
                 # try to find first stage
                 stage = session.query(TournamentStage).\
-                    filter(TournamentStage.tournament_id == tourney_player.tournament_id).first()
+                    filter(TournamentStage.tournament_id == tournament_id).first()
                 if stage is None:
-                    stage = TournamentWrapper.add_tournament_stage(session, tourney_player.tournament_id,
-                                                                   DEFAULT_STAGE_NAME)
+                    stage = TournamentStage(tournament_id=tournament_id, name=DEFAULT_STAGE_NAME)
+                    session.add(stage)
+                    session.commit()
 
-                series = TournamentWrapper.add_series_to_stage(session, stage.id, DEFAULT_SERIES_NAME)
+                series = TournamentSeries(stage_id=stage.id, name=DEFAULT_SERIES_NAME)
+                session.add(series)
+                session.commit()
 
-            TournamentWrapper.add_game_to_series(session, game.hash, series.id)
+            series.games.append(game)
+            session.commit()
 
             if matched_count < game.teamsize * 2:
                 added_series_game: SeriesGame = session.query(SeriesGame).filter(SeriesGame.game_hash == game_hash,

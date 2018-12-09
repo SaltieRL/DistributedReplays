@@ -22,6 +22,7 @@ from backend.database.objects import Game, PlayerGame
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
+from backend.database.wrapper.tournament_wrapper import TournamentWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.middleware import DBTask
 
@@ -129,6 +130,11 @@ def parse_replay_task(self, fn, preserve_upload_date=False):
     game, player_games, players, teamstats = convert_pickle_to_db(g)
     add_objs_to_db(game, player_games, players, teamstats, sess, preserve_upload_date=preserve_upload_date)
     sess.commit()
+    try:
+        TournamentWrapper.add_game_to_matching_tournaments(sess, game.hash)
+    except Exception as e:
+        # TODO log exceptions
+        pass
     sess.close()
 
     replay_id = g.game_metadata.match_guid
