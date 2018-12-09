@@ -264,8 +264,8 @@ export class ThreeScene extends React.PureComponent<Props> {
             player.position.y = playerPosition[2]
             player.position.z = playerPosition[1]
 
-            player.rotation.x = playerPosition[5]
-            player.rotation.y = Math.PI - playerPosition[4]
+            player.rotation.x = -playerPosition[5]
+            player.rotation.y = -playerPosition[4]
             player.rotation.z = playerPosition[3]
         })
     }
