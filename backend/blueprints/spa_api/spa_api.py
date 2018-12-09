@@ -410,7 +410,7 @@ def api_rename_tournament(tournament_id):
 
 
 @require_user
-@bp.route('tournament/<tournament_id>/', methods=["DELETE"])
+@bp.route('tournament/<tournament_id>', methods=["DELETE"])
 def api_delete_tournament(tournament_id):
     # keep in mind that this operation is only allowed for site admins
     Tournament.delete(tournament_id)
