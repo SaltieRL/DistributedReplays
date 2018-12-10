@@ -2,8 +2,12 @@ import * as React from "react"
 
 import {
     AmbientLight,
+    AnimationAction,
+    AnimationClip,
+    AnimationMixer,
     AxesHelper,
     BoxBufferGeometry,
+    Clock,
     DoubleSide,
     Euler,
     Group,
@@ -14,10 +18,15 @@ import {
     Object3D,
     PerspectiveCamera,
     PlaneBufferGeometry,
+    Quaternion,
+    QuaternionKeyframeTrack,
     Scene,
     SphereBufferGeometry,
     TextureLoader,
-    WebGLRenderer
+    Vector3,
+    VectorKeyframeTrack,
+    WebGLRenderer,
+    NumberKeyframeTrack
 } from "three"
 
 import { OBJLoader } from "../../../lib/OBJLoader"
@@ -36,12 +45,20 @@ interface FieldScene {
     players: Object3D[]
 }
 
+interface Animator {
+    playerMixers: AnimationMixer[]
+    playerActions: AnimationAction[]
+    playerClips: AnimationClip[]
+}
+
 export class ThreeScene extends React.PureComponent<Props> {
+    private clock: Clock
     private loadingManager: LoadingManager
     private renderer: WebGLRenderer
     private mount: HTMLDivElement
     private hasStarted: boolean
     private frameID: number
+    private animator: Animator
 
     private readonly threeField: FieldScene
 
@@ -50,6 +67,11 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.threeField = {} as any
         const w = window as any
         w.field = this.threeField
+        this.animator = {
+            playerActions: [],
+            playerClips: [],
+            playerMixers: []
+        }
     }
 
     public componentDidMount() {
@@ -57,6 +79,8 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.loadingManager.onProgress = (item, loaded, total) => {
             console.log(item, loaded, total)
         }
+
+        this.clock = new Clock(false)
 
         // Generate the lighting
         this.generateScene()
@@ -69,6 +93,7 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         // Add players
         this.generatePlayers(this.props.replayData.names)
+        this.createAnimationClips()
     }
 
     public componentWillUnmount() {
@@ -100,19 +125,36 @@ export class ThreeScene extends React.PureComponent<Props> {
         console.log("Starting...")
         if (!this.hasStarted) {
             this.hasStarted = true
+            this.clock.start()
+            for (let player = 0; player < this.animator.playerClips.length; player++) {
+                const clip = this.animator.playerClips[player]
+                const mixer = this.animator.playerMixers[player]
+                const action = mixer.clipAction(clip)
+                this.animator.playerActions[player] = action
+                action.play()
+            }
+            (window as any).animator = this.animator
             requestAnimationFrame(this.animate)
         }
     }
 
     private readonly stop = () => {
+        this.clock.stop()
         cancelAnimationFrame(0)
     }
 
     private readonly animate = () => {
+        const delta = this.clock.getDelta()
+
         // No reason to keep adjusting this data when we pause on a frame
-        if (this.frameID !== this.props.frame) {
+        if (this.frameID !== this.props.frame && this.frameID < 0) {
             this.updateBall()
             this.updatePlayers()
+        }
+        else {
+            for (let player = 0; player < this.animator.playerClips.length; player++) {
+                this.animator.playerMixers[player].update(delta)
+            }
         }
         this.updateCamera()
         // Paints the new scene
@@ -246,8 +288,54 @@ export class ThreeScene extends React.PureComponent<Props> {
 
                 field.scene.add(player)
                 field.players.push(player)
+                this.animator.playerMixers.push(new AnimationMixer(player))
             }
         })
+    }
+
+    private readonly createAnimationClips = () => {
+        const dataToVector = (data: number[]) => {
+            const x = data[0]
+            const y = data[2]
+            const z = data[1]
+            return new Vector3(x, y, z)
+        }
+        const dataToQuaternion = (data: number[]) => {
+            const q = new Quaternion()
+            const x = -data[3]
+            const y = -data[5]
+            const z = -data[4]
+            q.setFromEuler(new Euler(y, z, x, "YZX"))
+            return q
+        }
+
+        for (let player = 0; player < this.props.replayData.players.length; player++) {
+            const playerData = this.props.replayData.players[player]
+            const positions: number[] = []
+            const angles: number[] = []
+            playerData.forEach((data: number[]) => {
+                dataToVector(data).toArray(positions, positions.length)
+                dataToQuaternion(data).toArray(angles, angles.length)
+            })
+
+            // Calculates the elapsed duration of each frame as an array
+            let totalDuration = 0
+            const times = this.props.replayData.frames.map((frameData: number[]) => {
+                const dur = totalDuration
+                // Add the delta
+                totalDuration += frameData[0]
+                return dur
+            })
+
+            const playerName = `${this.props.replayData.names[player]}`
+
+            const positionKeyframes = new VectorKeyframeTrack(`${playerName}.position`, times, positions)
+            const rotationKeyframes = new QuaternionKeyframeTrack(`${playerName}.quaternion`, times, angles)
+
+            const clip = new AnimationClip(`${playerName}Action`, totalDuration, [positionKeyframes, rotationKeyframes])
+            this.animator.playerClips.push(clip)
+        }
+
     }
 
     private readonly updateBall = () => {
