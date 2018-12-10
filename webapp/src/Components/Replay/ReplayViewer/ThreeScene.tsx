@@ -25,8 +25,7 @@ import {
     TextureLoader,
     Vector3,
     VectorKeyframeTrack,
-    WebGLRenderer,
-    NumberKeyframeTrack
+    WebGLRenderer
 } from "three"
 
 import { OBJLoader } from "../../../lib/OBJLoader"
