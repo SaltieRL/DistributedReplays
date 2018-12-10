@@ -5,6 +5,7 @@ import {
     AxesHelper,
     BoxBufferGeometry,
     DoubleSide,
+    Euler,
     Group,
     HemisphereLight,
     LoadingManager,
@@ -40,6 +41,7 @@ export class ThreeScene extends React.PureComponent<Props> {
     private renderer: WebGLRenderer
     private mount: HTMLDivElement
     private hasStarted: boolean
+    private frameID: number
 
     private readonly threeField: FieldScene
 
@@ -107,13 +109,17 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly animate = () => {
-        this.updateBall()
-        this.updatePlayers()
+        // No reason to keep adjusting this data when we pause on a frame
+        if (this.frameID !== this.props.frame) {
+            this.updateBall()
+            this.updatePlayers()
+        }
         this.updateCamera()
         // Paints the new scene
         this.renderScene()
         // This callback similar to using a setTimeout function
         requestAnimationFrame(this.animate)
+        this.frameID = this.props.frame
     }
 
     private readonly renderScene = () => {
@@ -222,7 +228,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         loader.load("/assets/Octane2.obj", (octane: Group) => {
             const w = window as any
             w.car = octane
-            octane.scale.setScalar(80) // TODO: This size is 20
+            octane.scale.setScalar(40) // TODO: This size is 20
 
             for (let i = 0; i < players.length; i++) {
                 // const playerName = players[i]
@@ -232,7 +238,11 @@ export class ThreeScene extends React.PureComponent<Props> {
                 const player = i > 2 ? new Mesh(carGeometry, carMaterial) : octane.clone()
                 // const player = octane.clone()
                 player.name = players[i]
-                player.add(new AxesHelper(2))
+                player.add(new AxesHelper(20))
+
+                if (this.props.replayData.names[i] === "Sciguymjm") {
+                    w.player = player
+                }
 
                 field.scene.add(player)
                 field.players.push(player)
@@ -241,33 +251,45 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly updateBall = () => {
-        const field = this.threeField
-
         const ballPosition = this.props.replayData.ball[this.props.frame]
-        field.ball.position.x = ballPosition[0]
-        field.ball.position.y = ballPosition[2]
-        field.ball.position.z = ballPosition[1]
-
-        field.ball.rotation.x = ballPosition[3]
-        field.ball.rotation.y = ballPosition[4]
-        field.ball.rotation.z = ballPosition[5]
+        this.setPositionAndRotation(ballPosition, this.threeField.ball as Object3D)
     }
 
     private readonly updatePlayers = () => {
-        this.threeField.players.forEach((player: any, i: number) => {
+        this.threeField.players.forEach((player: Group, i: number) => {
             const playerPosition = this.props.replayData.players[i][this.props.frame]
-            if (i === 1) {
-                console.log(playerPosition)
-            }
-
-            player.position.x = playerPosition[0]
-            player.position.y = playerPosition[2]
-            player.position.z = playerPosition[1]
-
-            player.rotation.x = -playerPosition[5]
-            player.rotation.y = -playerPosition[4]
-            player.rotation.z = playerPosition[3]
+            this.setPositionAndRotation(playerPosition, player)
         })
+    }
+
+    /**
+     * Replay data is of this form:
+     * [posX, posZ, posY, rotX, rotZ, royY]
+     *
+     * For parsed data information, see:
+     * https://github.com/SaltieRL/carball/blob/master/carball/json_parser/actor_parsing.py#L107
+     *
+     * @param {ReplayDataResponse} data The [posX, posZ, posY, rotX, rotZ, royY] data to set the
+     *                                  given object
+     * @param {Object3D} object Three.JS object group to modify
+     */
+    private readonly setPositionAndRotation = (data: number[], object: Object3D) => {
+        object.position.x = data[0]
+        object.position.y = data[2]
+        object.position.z = data[1]
+
+        // Three is RH as opposed to Unreal/Unity's LH axes and uses y as the up axis. All angles
+        // are in the range -PI to PI.
+
+        // On the AxesHelper:
+        // X is red -- forward
+        // Y is green -- up
+        // Z is blue -- right
+
+        const x = -data[3]
+        const y = -data[5]
+        const z = -data[4]
+        object.setRotationFromEuler(new Euler(y, z, x, "YZX"))
     }
 
     private readonly updateCamera = () => {

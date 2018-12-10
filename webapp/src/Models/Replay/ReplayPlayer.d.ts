@@ -26,7 +26,7 @@ interface Loadout {
 }
 
 interface ReplayDataResponse {
-    ball: number[][]  // [pos_x, pos_y, pos_z, rot_x, rot_y, rot_z]
+    ball: number[][]  // [pos_x, pos_z, pos_y, rot_x, rot_z, rot_y]
     colors: number[]
     frames: number[][]
     names: string[]
