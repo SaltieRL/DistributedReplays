@@ -1,0 +1,29 @@
+name: calculated
+# root: ./
+
+# Runs when the user first executes tmuxinator
+on_project_first_start:
+  # - python3 -m pip install --user virtualenv
+  # - python3 -m virtualenv env
+  # - . env/bin/activate
+  # - pip install -r requirements.txt
+
+# Runs before everything. Use it to start daemons etc.
+on_project_start: . env/bin/activate
+on_project_stop: deactivate
+
+# Runs in each window and pane before window/pane specific commands
+# pre_window: echo Hello
+
+windows:
+  - frontend_api:
+      layout: even-horizontal
+      panes:
+        - cd webapp && npm start
+        - python RLBotServer.py
+  - backend:
+      layout: even-horizontal
+      panes:
+        - redis/redis-server.exe
+        - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info
+        - flower --port=5555
