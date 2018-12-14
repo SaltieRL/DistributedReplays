@@ -16,7 +16,7 @@ interface State {
     replayData?: ReplayDataResponse
     replayProto?: any
     currentFrame: number
-    clock: FPSClock
+    clock?: FPSClock
     gameTime: number
     play: boolean
     team0Score: number
@@ -29,7 +29,6 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         super(props)
         this.state = {
             currentFrame: 0,
-            clock: new FPSClock(60),
             gameTime: 300,
             team0Score: 0,
             team1Score: 0,
@@ -41,7 +40,11 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     public async componentDidMount() {
         await this.getReplayPositions()
         await this.getReplayProto()
-        this.state.clock.setCallback(this.onFrameUpdate)
+        if (this.state.replayData) {
+            const clock = FPSClock.convertReplayToClock(this.state.replayData)
+            clock.addCallback(this.onFrameUpdate)
+            this.setState({ clock })
+        }
         // console.log(this.state.replayData)
     }
 
@@ -60,11 +63,11 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
             <CardContent>
                 <Grid container spacing={24}>
                     <Grid item xs={12}>
-                        {this.state.replayData ? (
+                        {this.state.replayData && this.state.clock ? (
                             <>
                                 <Scoreboard team0Score={this.state.team0Score} team1Score={this.state.team1Score}
                                             gameTime={this.getGameTimeString()} />
-                                <ThreeScene play={this.state.play} frame={this.state.currentFrame}
+                                <ThreeScene clock={this.state.clock}
                                             replayData={this.state.replayData} />
                             </>
                         ) : (
@@ -125,8 +128,8 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     }
 
     private readonly onFrameUpdate = (frame: number) => {
-        if (this.state.replayData) {
-            if (frame >= this.state.replayData.frames.length) {
+        if (this.state.replayData && this.state.clock) {
+            if (frame >= this.state.replayData.frames.length - 1) {
                 this.setState({ play: false })
                 this.state.clock.stop()
             } else {
@@ -139,11 +142,11 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
 
     private readonly setCurrentFrame: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         const currentFrame: number = Number(event.target.value)
-        this.state.clock.setFrame(currentFrame)
+        this.state.clock!.setFrame(currentFrame)
     }
 
     private readonly onSliderChange = (_: any, value: number): void => {
-        this.state.clock.setFrame(value)
+        this.state.clock!.setFrame(value)
     }
 
     private readonly updateGameTime = (): void => {
@@ -181,10 +184,11 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     }
 
     private readonly setPlayback = (play: boolean): void => {
+        console.log("PAUSE")
         if (!this.state.play && play) {
-            this.state.clock.resume()
+            this.state.clock!.resume()
         } else if (!play) {
-            this.state.clock.pause()
+            this.state.clock!.pause()
         }
         this.setState({ play })
     }

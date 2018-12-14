@@ -1,5 +1,5 @@
 import * as React from "react"
-
+import { FPSClock } from "src/Models"
 import {
     AmbientLight,
     AnimationAction,
@@ -7,7 +7,6 @@ import {
     AnimationMixer,
     AxesHelper,
     BoxBufferGeometry,
-    Clock,
     DoubleSide,
     Euler,
     Group,
@@ -27,13 +26,11 @@ import {
     VectorKeyframeTrack,
     WebGLRenderer
 } from "three"
-
 import { OBJLoader } from "../../../lib/OBJLoader"
 
 export interface Props {
     replayData: ReplayDataResponse
-    frame: number
-    play: boolean
+    clock: FPSClock
 }
 
 interface FieldScene {
@@ -51,12 +48,10 @@ interface Animator {
 }
 
 export class ThreeScene extends React.PureComponent<Props> {
-    private clock: Clock
     private loadingManager: LoadingManager
     private renderer: WebGLRenderer
     private mount: HTMLDivElement
     private hasStarted: boolean
-    private frameID: number
     private animator: Animator
 
     private readonly threeField: FieldScene
@@ -78,8 +73,6 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.loadingManager.onProgress = (item, loaded, total) => {
             console.log(item, loaded, total)
         }
-
-        this.clock = new Clock(false)
 
         // Generate the lighting
         this.generateScene()
@@ -124,7 +117,6 @@ export class ThreeScene extends React.PureComponent<Props> {
         console.log("Starting...")
         if (!this.hasStarted) {
             this.hasStarted = true
-            this.clock.start()
             for (let player = 0; player < this.animator.playerClips.length; player++) {
                 const clip = this.animator.playerClips[player]
                 const mixer = this.animator.playerMixers[player]
@@ -133,34 +125,29 @@ export class ThreeScene extends React.PureComponent<Props> {
                 action.play()
             }
             (window as any).animator = this.animator
-            requestAnimationFrame(this.animate)
+            this.props.clock.addCallback(this.animate)
         }
     }
 
     private readonly stop = () => {
-        this.clock.stop()
+        this.props.clock.stop()
         cancelAnimationFrame(0)
     }
 
-    private readonly animate = () => {
-        const delta = this.clock.getDelta()
-
-        // No reason to keep adjusting this data when we pause on a frame
-        if (this.frameID !== this.props.frame && this.frameID < 0) {
-            this.updateBall()
-            this.updatePlayers()
+    private readonly animate = (frame: number) => {
+        // console.log(frame)
+        const delta = this.props.clock.getDelta()
+        if (delta > 0.5) {
+            console.log(delta)
         }
-        else {
-            for (let player = 0; player < this.animator.playerClips.length; player++) {
-                this.animator.playerMixers[player].update(delta)
-            }
+        for (let player = 0; player < this.animator.playerClips.length; player++) {
+            this.animator.playerMixers[player].update(delta)
         }
         this.updateCamera()
         // Paints the new scene
         this.renderScene()
         // This callback similar to using a setTimeout function
         requestAnimationFrame(this.animate)
-        this.frameID = this.props.frame
     }
 
     private readonly renderScene = () => {
@@ -337,17 +324,17 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     }
 
-    private readonly updateBall = () => {
-        const ballPosition = this.props.replayData.ball[this.props.frame]
-        this.setPositionAndRotation(ballPosition, this.threeField.ball as Object3D)
-    }
+    // private readonly updateBall = () => {
+    //     const ballPosition = this.props.replayData.ball[this.props.frame]
+    //     this.setPositionAndRotation(ballPosition, this.threeField.ball as Object3D)
+    // }
 
-    private readonly updatePlayers = () => {
-        this.threeField.players.forEach((player: Group, i: number) => {
-            const playerPosition = this.props.replayData.players[i][this.props.frame]
-            this.setPositionAndRotation(playerPosition, player)
-        })
-    }
+    // private readonly updatePlayers = () => {
+    //     this.threeField.players.forEach((player: Group, i: number) => {
+    //         const playerPosition = this.props.replayData.players[i][this.props.frame]
+    //         this.setPositionAndRotation(playerPosition, player)
+    //     })
+    // }
 
     /**
      * Replay data is of this form:
@@ -360,24 +347,24 @@ export class ThreeScene extends React.PureComponent<Props> {
      *                                  given object
      * @param {Object3D} object Three.JS object group to modify
      */
-    private readonly setPositionAndRotation = (data: number[], object: Object3D) => {
-        object.position.x = data[0]
-        object.position.y = data[2]
-        object.position.z = data[1]
+    // private readonly setPositionAndRotation = (data: number[], object: Object3D) => {
+    //     object.position.x = data[0]
+    //     object.position.y = data[2]
+    //     object.position.z = data[1]
 
-        // Three is RH as opposed to Unreal/Unity's LH axes and uses y as the up axis. All angles
-        // are in the range -PI to PI.
+    //     // Three is RH as opposed to Unreal/Unity's LH axes and uses y as the up axis. All angles
+    //     // are in the range -PI to PI.
 
-        // On the AxesHelper:
-        // X is red -- forward
-        // Y is green -- up
-        // Z is blue -- right
+    //     // On the AxesHelper:
+    //     // X is red -- forward
+    //     // Y is green -- up
+    //     // Z is blue -- right
 
-        const x = -data[3]
-        const y = -data[5]
-        const z = -data[4]
-        object.setRotationFromEuler(new Euler(y, z, x, "YZX"))
-    }
+    //     const x = -data[3]
+    //     const y = -data[5]
+    //     const z = -data[4]
+    //     object.setRotationFromEuler(new Euler(y, z, x, "YZX"))
+    // }
 
     private readonly updateCamera = () => {
         this.threeField.camera.lookAt(this.threeField.ball.position)
