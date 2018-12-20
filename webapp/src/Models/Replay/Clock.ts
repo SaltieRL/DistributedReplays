@@ -39,7 +39,7 @@ export class FPSClock {
     // Used to play "catch-up" in the delta function
     private lastFrame: number
     private currentFrame: number
-    private lastUpdate: number
+    private started: number
 
     private paused: boolean
     private animation: NodeJS.Timer
@@ -48,7 +48,7 @@ export class FPSClock {
     constructor(frameToDuration: number[]) {
         this.frameToDuration = frameToDuration
         this.paused = true
-        this.lastUpdate = performance.now()
+        this.started = performance.now()
         this.lastFrame = this.currentFrame = 0
         this.callback = []
         this.timeout()
@@ -60,6 +60,7 @@ export class FPSClock {
 
     public setFrame(frame: number) {
         this.currentFrame = frame
+        this.started = performance.now() - (this.frameToDuration[this.currentFrame] * 1000)
         for (const callback of this.callback) {
             callback(frame)
         }
@@ -67,7 +68,7 @@ export class FPSClock {
 
     public play() {
         if (this.paused) {
-            this.lastUpdate = performance.now()
+            this.started = performance.now() - (this.frameToDuration[this.currentFrame] * 1000)
             this.paused = false
             this.timeout()
         }
@@ -104,17 +105,15 @@ export class FPSClock {
 
     private getElapsedFrames() {
         const now = performance.now()
-        const diff = (now - this.lastUpdate) / 1000
-        do {
+        const elapsed = (now - this.started) / 1000
+        while (this.frameToDuration[this.currentFrame + 1] < elapsed) {
             this.currentFrame += 1
         }
-        while (this.frameToDuration[this.currentFrame] < diff)
-        this.lastUpdate = now
     }
 
     private timeout(enable: boolean = true) {
         if (enable) {
-            this.animation = setInterval(this.update, 60 / 1000)
+            this.animation = setInterval(this.update, 1000 / 60)
         } else {
             clearInterval(this.animation)
         }
