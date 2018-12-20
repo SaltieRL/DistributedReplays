@@ -130,16 +130,13 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly stop = () => {
-        this.props.clock.stop()
+        this.props.clock.pause()
         cancelAnimationFrame(0)
     }
 
     private readonly animate = (frame: number) => {
         // console.log(frame)
         const delta = this.props.clock.getDelta()
-        if (delta > 0.5) {
-            console.log(delta)
-        }
         for (let player = 0; player < this.animator.playerClips.length; player++) {
             this.animator.playerMixers[player].update(delta)
         }

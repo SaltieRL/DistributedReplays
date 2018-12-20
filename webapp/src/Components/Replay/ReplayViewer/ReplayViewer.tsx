@@ -131,7 +131,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         if (this.state.replayData && this.state.clock) {
             if (frame >= this.state.replayData.frames.length - 1) {
                 this.setState({ play: false })
-                this.state.clock.stop()
+                this.state.clock.pause()
             } else {
                 this.setState({ currentFrame: frame })
                 this.updateGameTime()
@@ -184,9 +184,8 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     }
 
     private readonly setPlayback = (play: boolean): void => {
-        console.log("PAUSE")
         if (!this.state.play && play) {
-            this.state.clock!.resume()
+            this.state.clock!.play()
         } else if (!play) {
             this.state.clock!.pause()
         }

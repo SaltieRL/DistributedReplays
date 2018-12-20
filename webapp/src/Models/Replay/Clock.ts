@@ -36,20 +36,20 @@ export class FPSClock {
     // Represented as an index in the array to the elapsed time at that frame
     private readonly frameToDuration: number[]
 
-    private lastDelta: number
-    private startTime: number
-    private stopped: number | null
-    private animation: NodeJS.Timer | null
+    // Used to play "catch-up" in the delta function
     private lastFrame: number
+    private currentFrame: number
+    private lastUpdate: number
+
+    private paused: boolean
+    private animation: NodeJS.Timer
     private callback: ((frame: number) => void)[]
 
     constructor(frameToDuration: number[]) {
         this.frameToDuration = frameToDuration
-        console.log(frameToDuration)
-        this.lastDelta = this.getNow()
-        this.startTime = this.getNow()
-        this.stopped = null
-        this.lastFrame = 0
+        this.paused = true
+        this.lastUpdate = performance.now()
+        this.lastFrame = this.currentFrame = 0
         this.callback = []
         this.timeout()
     }
@@ -59,99 +59,64 @@ export class FPSClock {
     }
 
     public setFrame(frame: number) {
-        const now = this.getNow()
-        this.startTime = now - (this.frameToDuration[frame] * 1000)
-        this.lastDelta = now - (this.frameToDuration[frame] - this.frameToDuration[this.lastFrame]) * 1000
-        console.log(this.lastFrame, this.lastDelta)
-        if (this.stopped) {
-            this.stopped = now
-        }
-        this.lastFrame = frame
+        this.currentFrame = frame
         for (const callback of this.callback) {
             callback(frame)
         }
     }
 
-    public start() {
-        this.resume()
-        this.startTime = this.getNow()
-    }
-
-    public resume() {
-        if (this.stopped) {
-            const now = this.getNow()
-            this.startTime = now - (this.frameToDuration[this.lastFrame] * 1000)
-            this.lastDelta = now
-        }
-        this.stopped = null
-        if (!this.timeout) {
+    public play() {
+        if (this.paused) {
+            this.lastUpdate = performance.now()
+            this.paused = false
             this.timeout()
         }
     }
 
     public pause() {
-        if (!this.stopped) {
-            this.stop()
-        }
-    }
-
-    public stop() {
-        if (this.animation) {
-            clearTimeout(this.animation)
-            this.animation = null
-        }
-        this.stopped = this.getNow()
-    }
-
-    public getElapsedTime() {
-        const now = this.getNow()
-        return now - this.startTime
-    }
-
-    public getElapsedFrames() {
-        const eTime = this.stopped || this.getNow()
-        // Time since beginning in seconds
-        const diff = (eTime - this.startTime) / 1000
-        let curFrame = this.frameToDuration[this.lastFrame] < diff ? this.lastFrame : 0
-        while (this.frameToDuration[curFrame] < diff) {
-            curFrame += 1
-            if (curFrame >= this.frameToDuration.length - 1) {
-                break
-            }
-        }
-        return curFrame
+        this.paused = true
+        this.timeout(false)
     }
 
     /**
-     * Returns the number of millseconds elapsed since the last time getDelta was called.
+     * Returns the number of millseconds elapsed since the last time getDelta was called. Note that
+     * this may not be the true time since getDelta was called but this is the elapsed "frame time",
+     * that is, the elapsed time relative to the number of frames that have passed since last
+     * calling this method.
      *
      * @returns {number} milliseconds
      */
-    public getDelta() {
-        const now = this.stopped || this.getNow()
-        const diff = now - this.lastDelta
-        this.lastDelta = now
-        return diff / 1000
+    public getDelta(): number {
+        const now = this.frameToDuration[this.currentFrame]
+        const last = this.frameToDuration[this.lastFrame]
+        this.lastFrame = this.currentFrame
+        return now - last
     }
 
     private readonly update = () => {
-        if (this.callback && !this.stopped) {
-            const frames = this.getElapsedFrames()
-            if (frames !== this.lastFrame) {
-                for (const callback of this.callback) {
-                    callback(frames)
-                }
-                this.lastFrame = frames
+        if (!this.paused) {
+            this.getElapsedFrames()
+            for (const callback of this.callback) {
+                callback(this.currentFrame)
             }
         }
-        this.timeout()
     }
 
-    private getNow() {
-        return performance.now()
+    private getElapsedFrames() {
+        const now = performance.now()
+        const diff = (now - this.lastUpdate) / 1000
+        do {
+            this.currentFrame += 1
+        }
+        while (this.frameToDuration[this.currentFrame] < diff)
+        this.lastUpdate = now
     }
 
-    private timeout() {
-        this.animation = setTimeout(this.update, this.frameToDuration[this.lastFrame])
+    private timeout(enable: boolean = true) {
+        if (enable) {
+            this.animation = setInterval(this.update, 60 / 1000)
+        } else {
+            clearInterval(this.animation)
+        }
     }
 }
