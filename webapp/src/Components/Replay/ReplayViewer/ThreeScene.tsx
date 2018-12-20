@@ -131,7 +131,6 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     private readonly stop = () => {
         this.props.clock.pause()
-        cancelAnimationFrame(0)
     }
 
     private readonly animate = (frame: number) => {
@@ -143,8 +142,6 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.updateCamera()
         // Paints the new scene
         this.renderScene()
-        // This callback similar to using a setTimeout function
-        requestAnimationFrame(this.animate)
     }
 
     private readonly renderScene = () => {
