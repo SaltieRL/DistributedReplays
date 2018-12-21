@@ -43,7 +43,7 @@ export class FPSClock {
 
     private paused: boolean
     private animation: NodeJS.Timer
-    private callback: ((frame: number) => void)[]
+    private readonly callback: ((frame: number) => void)[]
 
     constructor(frameToDuration: number[]) {
         this.frameToDuration = frameToDuration

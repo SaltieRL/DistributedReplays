@@ -1,4 +1,5 @@
 import * as React from "react"
+import { OBJLoader, Stats } from "src/lib"
 import { FPSClock } from "src/Models"
 import {
     AmbientLight,
@@ -26,7 +27,6 @@ import {
     VectorKeyframeTrack,
     WebGLRenderer
 } from "three"
-import { OBJLoader } from "../../../lib/OBJLoader"
 
 export interface Props {
     replayData: ReplayDataResponse
@@ -52,7 +52,8 @@ export class ThreeScene extends React.PureComponent<Props> {
     private renderer: WebGLRenderer
     private mount: HTMLDivElement
     private hasStarted: boolean
-    private animator: Animator
+    private readonly animator: Animator
+    private readonly stats: Stats
 
     private readonly threeField: FieldScene
 
@@ -66,6 +67,10 @@ export class ThreeScene extends React.PureComponent<Props> {
             playerClips: [],
             playerMixers: []
         }
+        // TODO: REMOVE THIS IN PROD. DOCUMENT APPEND = BAD
+        this.stats = new Stats()
+        this.stats.showPanel(0)
+        document.body.appendChild(this.stats.dom)
     }
 
     public componentDidMount() {
@@ -135,6 +140,7 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     private readonly animate = (frame: number) => {
         // console.log(frame)
+        this.stats.begin()
         const delta = this.props.clock.getDelta()
         for (let player = 0; player < this.animator.playerClips.length; player++) {
             this.animator.playerMixers[player].update(delta)
@@ -142,6 +148,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.updateCamera()
         // Paints the new scene
         this.renderScene()
+        this.stats.end()
     }
 
     private readonly renderScene = () => {
