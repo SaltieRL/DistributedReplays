@@ -53,7 +53,7 @@ export class ThreeScene extends React.PureComponent<Props> {
     private mount: HTMLDivElement
     private hasStarted: boolean
     private readonly animator: Animator
-    private readonly stats: Stats
+    private readonly stats: Stats | null
 
     private readonly threeField: FieldScene
 
@@ -67,10 +67,12 @@ export class ThreeScene extends React.PureComponent<Props> {
             playerClips: [],
             playerMixers: []
         }
-        // TODO: REMOVE THIS IN PROD. DOCUMENT APPEND = BAD
-        this.stats = new Stats()
-        this.stats.showPanel(0)
-        document.body.appendChild(this.stats.dom)
+        // Logs framerate
+        if (process.env.NODE_ENV === "development") {
+            this.stats = new Stats()
+            this.stats.showPanel(0)
+            document.body.appendChild(this.stats.dom)
+        }
     }
 
     public componentDidMount() {
@@ -140,9 +142,13 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.props.clock.pause()
     }
 
-    private readonly animate = (frame: number) => {
-        // console.log(frame)
-        this.stats.begin()
+    /**
+     * Called with a frame number from the FPSClock.
+     */
+    private readonly animate = (_: number) => {
+        if (this.stats) {
+            this.stats.begin()
+        }
         const delta = this.props.clock.getDelta()
         for (let player = 0; player < this.animator.playerClips.length; player++) {
             this.animator.playerMixers[player].update(delta)
@@ -150,7 +156,9 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.updateCamera()
         // Paints the new scene
         this.renderScene()
-        this.stats.end()
+        if (this.stats) {
+            this.stats.end()
+        }
     }
 
     private readonly renderScene = () => {
@@ -283,6 +291,17 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly createAnimationClips = () => {
+        /**
+         * Replay data is of this form:
+         * [posX, posZ, posY, rotX, rotZ, royY]
+         *
+         * Three is RH as opposed to Unreal/Unity's LH axes and uses y as the up axis. All angles
+         * are in the range -PI to PI.
+         *
+         * For parsed data information, see:
+         * https://github.com/SaltieRL/carball/blob/master/carball/json_parser/actor_parsing.py#L107
+         *
+         */
         const dataToVector = (data: any[]) => {
             const x = data[0]
             const y = data[2]
@@ -327,6 +346,7 @@ export class ThreeScene extends React.PureComponent<Props> {
             let prevVector = new Vector3(0, 0, 0)
             let prevQuat = new Quaternion(0, 0, 0)
             playerData.forEach((data, index) => {
+                // Apply position frame
                 const newVector = dataToVector(data)
                 const lastVectorFrame = vectorTimes.length ? vectorTimes[vectorTimes.length - 1] : 0
                 if (!newVector.equals(prevVector) || totalDuration - lastVectorFrame > 2.9) {
@@ -334,6 +354,7 @@ export class ThreeScene extends React.PureComponent<Props> {
                     vectorTimes.push(totalDuration)
                     prevVector = newVector
                 }
+                // Apply rotation frame
                 const newQuat = dataToQuaternion(data)
                 const lastQuatFrame = quatTimes.length ? quatTimes[quatTimes.length - 1] : 0
                 if (!newQuat.equals(prevQuat) || totalDuration - lastQuatFrame > 2.9) {
@@ -347,6 +368,8 @@ export class ThreeScene extends React.PureComponent<Props> {
 
             const playerName = `${this.props.replayData.names[player]}`
 
+            // Note that Three.JS requires this .position/.quaternion naming convention, and that
+            // the object we wish to modify must have this associated name.
             const positionKeyframes = new VectorKeyframeTrack(`${playerName}.position`, vectorTimes, positions)
             const rotationKeyframes = new QuaternionKeyframeTrack(`${playerName}.quaternion`, quatTimes, angles)
 
@@ -359,43 +382,6 @@ export class ThreeScene extends React.PureComponent<Props> {
     // private readonly updateBall = () => {
     //     const ballPosition = this.props.replayData.ball[this.props.frame]
     //     this.setPositionAndRotation(ballPosition, this.threeField.ball as Object3D)
-    // }
-
-    // private readonly updatePlayers = () => {
-    //     this.threeField.players.forEach((player: Group, i: number) => {
-    //         const playerPosition = this.props.replayData.players[i][this.props.frame]
-    //         this.setPositionAndRotation(playerPosition, player)
-    //     })
-    // }
-
-    /**
-     * Replay data is of this form:
-     * [posX, posZ, posY, rotX, rotZ, royY]
-     *
-     * For parsed data information, see:
-     * https://github.com/SaltieRL/carball/blob/master/carball/json_parser/actor_parsing.py#L107
-     *
-     * @param {ReplayDataResponse} data The [posX, posZ, posY, rotX, rotZ, royY] data to set the
-     *                                  given object
-     * @param {Object3D} object Three.JS object group to modify
-     */
-    // private readonly setPositionAndRotation = (data: number[], object: Object3D) => {
-    //     object.position.x = data[0]
-    //     object.position.y = data[2]
-    //     object.position.z = data[1]
-
-    //     // Three is RH as opposed to Unreal/Unity's LH axes and uses y as the up axis. All angles
-    //     // are in the range -PI to PI.
-
-    //     // On the AxesHelper:
-    //     // X is red -- forward
-    //     // Y is green -- up
-    //     // Z is blue -- right
-
-    //     const x = -data[3]
-    //     const y = -data[5]
-    //     const z = -data[4]
-    //     object.setRotationFromEuler(new Euler(y, z, x, "YZX"))
     // }
 
     private readonly updateCamera = () => {
