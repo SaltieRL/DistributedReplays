@@ -132,6 +132,8 @@ export class ThreeScene extends React.PureComponent<Props> {
             (window as any).animator = this.animator
             this.props.clock.addCallback(this.animate)
         }
+        // Render the field
+        this.animate(0)
     }
 
     private readonly stop = () => {

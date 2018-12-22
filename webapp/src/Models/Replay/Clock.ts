@@ -59,6 +59,8 @@ export class FPSClock {
     }
 
     public setFrame(frame: number) {
+        // Prevent negative frames
+        frame = frame < 0 ? 0 : frame
         this.currentFrame = frame
         this.started = performance.now() - (this.frameToDuration[this.currentFrame] * 1000)
         for (const callback of this.callback) {
