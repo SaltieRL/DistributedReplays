@@ -28,6 +28,8 @@ import {
     WebGLRenderer
 } from "three"
 
+const BALL_NAME = "ball"
+
 export interface Props {
     replayData: ReplayDataResponse
     clock: FPSClock
@@ -45,6 +47,9 @@ interface Animator {
     playerMixers: AnimationMixer[]
     playerActions: AnimationAction[]
     playerClips: AnimationClip[]
+    ballMixer: AnimationMixer
+    ballAction: AnimationAction
+    ballClip: AnimationClip
 }
 
 export class ThreeScene extends React.PureComponent<Props> {
@@ -66,7 +71,7 @@ export class ThreeScene extends React.PureComponent<Props> {
             playerActions: [],
             playerClips: [],
             playerMixers: []
-        }
+        } as any
         // Logs framerate
         if (process.env.NODE_ENV === "development") {
             this.stats = new Stats()
@@ -123,7 +128,9 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     public readonly start = () => {
         if (!this.hasStarted) {
+            (window as any).animator = this.animator
             this.hasStarted = true
+            // Play the player actions
             for (let player = 0; player < this.animator.playerClips.length; player++) {
                 const clip = this.animator.playerClips[player]
                 const mixer = this.animator.playerMixers[player]
@@ -131,7 +138,11 @@ export class ThreeScene extends React.PureComponent<Props> {
                 this.animator.playerActions[player] = action
                 action.play()
             }
-            (window as any).animator = this.animator
+            // Play the ball action
+            const ballAction = this.animator.ballMixer.clipAction(this.animator.ballClip)
+            this.animator.ballAction = ballAction
+            ballAction.play()
+            // Store the updater function as a callback
             this.props.clock.addCallback(this.animate)
         }
         // Render the field
@@ -150,9 +161,13 @@ export class ThreeScene extends React.PureComponent<Props> {
             this.stats.begin()
         }
         const delta = this.props.clock.getDelta()
+        // Update player transformations
         for (let player = 0; player < this.animator.playerClips.length; player++) {
             this.animator.playerMixers[player].update(delta)
         }
+        // Update ball transformation
+        this.animator.ballMixer.update(delta)
+        // Point the camera
         this.updateCamera()
         // Paints the new scene
         this.renderScene()
@@ -249,9 +264,13 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         const ballGeometry = new SphereBufferGeometry(92.75, 32, 32)
         const ballMaterial = new MeshPhongMaterial()
-        field.ball = new Mesh(ballGeometry, ballMaterial)
-        field.ball.add(new AxesHelper(150))
-        field.scene.add(field.ball)
+        const ball = new Mesh(ballGeometry, ballMaterial)
+        ball.name = BALL_NAME
+        ball.add(new AxesHelper(150))
+        this.animator.ballMixer = new AnimationMixer(ball)
+
+        field.ball = ball
+        field.scene.add(ball)
 
         const loader = new TextureLoader(this.loadingManager)
         loader.load("/assets/test.jpg", (texture) => {
@@ -316,9 +335,7 @@ export class ThreeScene extends React.PureComponent<Props> {
             q.setFromEuler(new Euler(y, z, x, "YZX"))
             return q
         }
-
-        for (let player = 0; player < this.props.replayData.players.length; player++) {
-            const playerData = this.props.replayData.players[player]
+        const generateClip = (posRotData: any[], objectName: string) => {
             const positions: number[] = []
             const angles: number[] = []
             /**
@@ -345,7 +362,7 @@ export class ThreeScene extends React.PureComponent<Props> {
             const quatTimes: number[] = []
             let prevVector = new Vector3(0, 0, 0)
             let prevQuat = new Quaternion(0, 0, 0)
-            playerData.forEach((data, index) => {
+            posRotData.forEach((data, index) => {
                 // Apply position frame
                 const newVector = dataToVector(data)
                 const lastVectorFrame = vectorTimes.length ? vectorTimes[vectorTimes.length - 1] : 0
@@ -366,23 +383,24 @@ export class ThreeScene extends React.PureComponent<Props> {
                 totalDuration += this.props.replayData.frames[index][0]
             })
 
-            const playerName = `${this.props.replayData.names[player]}`
-
             // Note that Three.JS requires this .position/.quaternion naming convention, and that
             // the object we wish to modify must have this associated name.
-            const positionKeyframes = new VectorKeyframeTrack(`${playerName}.position`, vectorTimes, positions)
-            const rotationKeyframes = new QuaternionKeyframeTrack(`${playerName}.quaternion`, quatTimes, angles)
+            const positionKeyframes = new VectorKeyframeTrack(`${objectName}.position`, vectorTimes, positions)
+            const rotationKeyframes = new QuaternionKeyframeTrack(`${objectName}.quaternion`, quatTimes, angles)
 
-            const clip = new AnimationClip(`${playerName}Action`, totalDuration, [positionKeyframes, rotationKeyframes])
+            return new AnimationClip(`${objectName}Action`, totalDuration, [positionKeyframes, rotationKeyframes])
+        }
+        // First, generate player clips
+        for (let player = 0; player < this.props.replayData.players.length; player++) {
+            const playerData = this.props.replayData.players[player]
+            const playerName = `${this.props.replayData.names[player]}`
+            const clip = generateClip(playerData, playerName)
             this.animator.playerClips.push(clip)
         }
-
+        // Then, generate the ball clip
+        const ballData = this.props.replayData.ball
+        this.animator.ballClip = generateClip(ballData, BALL_NAME)
     }
-
-    // private readonly updateBall = () => {
-    //     const ballPosition = this.props.replayData.ball[this.props.frame]
-    //     this.setPositionAndRotation(ballPosition, this.threeField.ball as Object3D)
-    // }
 
     private readonly updateCamera = () => {
         this.threeField.camera.lookAt(this.threeField.ball.position)
