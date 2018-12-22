@@ -76,7 +76,8 @@ export class ThreeScene extends React.PureComponent<Props> {
     public componentDidMount() {
         this.loadingManager = new LoadingManager(this.start)
         this.loadingManager.onProgress = (item, loaded, total) => {
-            console.log(item, loaded, total)
+            // TODO: Show loader animation that prints what is getting loaded and progress
+            // console.log(item, loaded, total)
         }
 
         // Generate the lighting
@@ -119,7 +120,6 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     public readonly start = () => {
-        console.log("Starting...")
         if (!this.hasStarted) {
             this.hasStarted = true
             for (let player = 0; player < this.animator.playerClips.length; player++) {
