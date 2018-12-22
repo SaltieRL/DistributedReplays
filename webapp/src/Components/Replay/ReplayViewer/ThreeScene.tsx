@@ -281,13 +281,13 @@ export class ThreeScene extends React.PureComponent<Props> {
     }
 
     private readonly createAnimationClips = () => {
-        const dataToVector = (data: number[]) => {
+        const dataToVector = (data: any[]) => {
             const x = data[0]
             const y = data[2]
             const z = data[1]
             return new Vector3(x, y, z)
         }
-        const dataToQuaternion = (data: number[]) => {
+        const dataToQuaternion = (data: any[]) => {
             const q = new Quaternion()
             const x = -data[3]
             const y = -data[5]
@@ -300,24 +300,53 @@ export class ThreeScene extends React.PureComponent<Props> {
             const playerData = this.props.replayData.players[player]
             const positions: number[] = []
             const angles: number[] = []
-            playerData.forEach((data: number[]) => {
-                dataToVector(data).toArray(positions, positions.length)
-                dataToQuaternion(data).toArray(angles, angles.length)
-            })
-
-            // Calculates the elapsed duration of each frame as an array
+            /**
+             * We are calculating vector and quaternion times independently because there are often
+             * cases where the data of a frame might coincide with the data of the next frame. The
+             * replays may not contain data for every frame, so carball inserts the previous frame
+             * data into the following frame as to avoid any missing frames. Here, we assume the
+             * entire duration of that missing frame must be animated.
+             *
+             * For example, if a car's position at 1.1 seconds reads (45, 100, 500), at 1.2 seconds
+             * reads (45, 100, 500), and at 1.3 seconds reads (50, 110, 400), we can assume the
+             * middle frame was skipped and so we need to perform animation between 1.1 seconds and
+             * 1.3 seconds instead of including the jitter of the car remaining in position from 1.1
+             * seconds to 1.2 seconds.
+             *
+             * We perform the second duration vs. last frame calculation check because we considers
+             * kickoffs as a valid reason to not treat the first position traveled to as a valid
+             * three second animation. Otherwise, the car will slowly creep forward during kickoff.
+             * A kickoff occurs for about three seconds, so 2.9 ensures we break off just before a
+             * kickoff occurs.
+             */
             let totalDuration = 0
-            const times = this.props.replayData.frames.map((frameData: number[]) => {
-                const dur = totalDuration
+            const vectorTimes: number[] = []
+            const quatTimes: number[] = []
+            let prevVector = new Vector3(0, 0, 0)
+            let prevQuat = new Quaternion(0, 0, 0)
+            playerData.forEach((data, index) => {
+                const newVector = dataToVector(data)
+                const lastVectorFrame = vectorTimes.length ? vectorTimes[vectorTimes.length - 1] : 0
+                if (!newVector.equals(prevVector) || totalDuration - lastVectorFrame > 2.9) {
+                    newVector.toArray(positions, positions.length)
+                    vectorTimes.push(totalDuration)
+                    prevVector = newVector
+                }
+                const newQuat = dataToQuaternion(data)
+                const lastQuatFrame = quatTimes.length ? quatTimes[quatTimes.length - 1] : 0
+                if (!newQuat.equals(prevQuat) || totalDuration - lastQuatFrame > 2.9) {
+                    newQuat.toArray(angles, angles.length)
+                    quatTimes.push(totalDuration)
+                    prevQuat = newQuat
+                }
                 // Add the delta
-                totalDuration += frameData[0]
-                return dur
+                totalDuration += this.props.replayData.frames[index][0]
             })
 
             const playerName = `${this.props.replayData.names[player]}`
 
-            const positionKeyframes = new VectorKeyframeTrack(`${playerName}.position`, times, positions)
-            const rotationKeyframes = new QuaternionKeyframeTrack(`${playerName}.quaternion`, times, angles)
+            const positionKeyframes = new VectorKeyframeTrack(`${playerName}.position`, vectorTimes, positions)
+            const rotationKeyframes = new QuaternionKeyframeTrack(`${playerName}.quaternion`, quatTimes, angles)
 
             const clip = new AnimationClip(`${playerName}Action`, totalDuration, [positionKeyframes, rotationKeyframes])
             this.animator.playerClips.push(clip)
