@@ -65,8 +65,7 @@ export class ThreeScene extends React.PureComponent<Props> {
     constructor(props: Props) {
         super(props)
         this.threeField = {} as any
-        const w = window as any
-        w.field = this.threeField
+        this.addToWindow(this.threeField, "field")
         this.animator = {
             playerActions: [],
             playerClips: [],
@@ -83,6 +82,7 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         // Generate the lighting
         this.generateScene()
+        window.addEventListener("resize", this.updateSize)
 
         // Add field
         this.generatePlayfield()
@@ -108,6 +108,7 @@ export class ThreeScene extends React.PureComponent<Props> {
             this.mount.removeChild(this.stats.dom)
         }
         this.mount.removeChild(this.renderer.domElement)
+        window.removeEventListener("resize", this.updateSize)
     }
 
     public render() {
@@ -132,7 +133,6 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     public readonly start = () => {
         if (!this.hasStarted) {
-            (window as any).animator = this.animator
             this.hasStarted = true
             // Play the player actions
             for (let player = 0; player < this.animator.playerClips.length; player++) {
@@ -184,6 +184,14 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.renderer.render(this.threeField.scene, this.threeField.camera)
     }
 
+    private readonly updateSize = () => {
+        const width = this.mount.clientWidth
+        const height = this.mount.clientHeight
+        this.threeField.camera.aspect = width / height
+        this.threeField.camera.updateProjectionMatrix()
+        this.renderer.setSize(width, height)
+    }
+
     private readonly generateScene = () => {
         const width = this.mount.clientWidth
         const height = this.mount.clientHeight
@@ -202,8 +210,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         // TODO: We are keeping these in window to discover better camera angles. This allows us to edit offsets
         // without reloading the page every time.
         this.setCameraView(0)
-        const w = window as any
-        w.camera = this.threeField.camera
+        this.addToWindow(this.threeField.camera, "camera")
 
         this.threeField.camera.rotation.x -= 7 * Math.PI / 180
 
@@ -212,7 +219,6 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.renderer.setClearColor("#000000")
         this.renderer.setSize(width, height)
         this.mount.appendChild(this.renderer.domElement)
-        console.log(this.mount)
     }
 
     private readonly generatePlayfield = () => {
@@ -289,8 +295,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         const loader = new OBJLoader(this.loadingManager)
         field.players = []
         loader.load("/assets/Octane2.obj", (octane: Group) => {
-            const w = window as any
-            w.car = octane
+            this.addToWindow(octane, "car")
             octane.scale.setScalar(40) // TODO: This size is 20
 
             for (let i = 0; i < players.length; i++) {
@@ -301,10 +306,10 @@ export class ThreeScene extends React.PureComponent<Props> {
                 const player = i > 2 ? new Mesh(carGeometry, carMaterial) : octane.clone()
                 // const player = octane.clone()
                 player.name = players[i]
-                player.add(new AxesHelper(20))
+                player.add(new AxesHelper(10))
 
                 if (this.props.replayData.names[i] === "Sciguymjm") {
-                    w.player = player
+                    this.addToWindow(player, "player")
                 }
 
                 field.scene.add(player)
@@ -429,5 +434,10 @@ export class ThreeScene extends React.PureComponent<Props> {
             default:
                 throw new Error(`Unknown viewId: ${viewId}`)
         }
+    }
+
+    private readonly addToWindow = (object: any, name: string) => {
+        const w = window as any
+        w[name] = object
     }
 }
