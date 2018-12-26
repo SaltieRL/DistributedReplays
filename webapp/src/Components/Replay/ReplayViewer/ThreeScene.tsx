@@ -297,26 +297,32 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         const materialLoader = new MTLLoader(this.loadingManager)
         materialLoader.load("/assets/Octane2.mtl", (mtlc) => {
-            mtlc.preload()
+            // mtlc.preload()
             const loader = new OBJLoader(this.loadingManager)
             loader.setMaterials(mtlc)
             field.players = []
             loader.load("/assets/Octane2.obj", (octane: Group) => {
                 this.addToWindow(octane, "car")
                 octane.scale.setScalar(100) // TODO: This size is 20
-
-                const car = octane.children[0] as Mesh
-                const body = car.material[0] as MeshPhongMaterial
-                const chassis = car.material[1] as MeshPhongMaterial
+                const chassis = (octane.children[0] as Mesh).material[1] as MeshPhongMaterial
                 chassis.color.setHex(0x555555)
 
                 for (let i = 0; i < players.length; i++) {
-                    // const playerName = players[i]
+                    // Clone the octane and rename it to the player
+                    const player = octane.clone(true)
+                    player.name = players[i]
+                    // Grab the existing car mesh
+                    const mesh = player.children[0] as Mesh
+                    // Clone all materials
+                    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+                    mesh.material = materials.map((material) => material.clone())
+                    mesh.name = `${players[i]}-mesh`
+                    // The top half of the car
+                    const body = mesh.material[0] as MeshPhongMaterial
+                    body.name = `${players[i]}-body`
                     const carColor = this.props.replayData.colors[i] ? 0xff9800 : 0x2196f3
                     body.color.setHex(carColor)
-                    const player = octane.clone()
-                    // const player = octane.clone()
-                    player.name = players[i]
+                    // Debugging
                     player.add(new AxesHelper(10))
 
                     if (this.props.replayData.names[i] === "Sciguymjm") {
