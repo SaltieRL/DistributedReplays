@@ -1,5 +1,5 @@
 import * as React from "react"
-import { OBJLoader, Stats } from "src/lib"
+import { MTLLoader, OBJLoader, Stats } from "src/lib"
 import { FPSClock } from "src/Models"
 import { isDevelopment } from "src/Utils"
 import {
@@ -8,7 +8,6 @@ import {
     AnimationClip,
     AnimationMixer,
     AxesHelper,
-    BoxBufferGeometry,
     DoubleSide,
     Euler,
     Group,
@@ -296,30 +295,39 @@ export class ThreeScene extends React.PureComponent<Props> {
     private readonly generatePlayers = (players: string[]) => {
         const field = this.threeField
 
-        const loader = new OBJLoader(this.loadingManager)
-        field.players = []
-        loader.load("/assets/Octane2.obj", (octane: Group) => {
-            this.addToWindow(octane, "car")
-            octane.scale.setScalar(40) // TODO: This size is 20
+        const materialLoader = new MTLLoader(this.loadingManager)
+        materialLoader.load("/assets/Octane2.mtl", (mtlc) => {
+            mtlc.preload()
+            const loader = new OBJLoader(this.loadingManager)
+            loader.setMaterials(mtlc)
+            field.players = []
+            loader.load("/assets/Octane2.obj", (octane: Group) => {
+                this.addToWindow(octane, "car")
+                octane.scale.setScalar(100) // TODO: This size is 20
 
-            for (let i = 0; i < players.length; i++) {
-                // const playerName = players[i]
-                const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
-                const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
-                const carMaterial = new MeshPhongMaterial({ color: i ? carColor : "#333333" })
-                const player = i > 2 ? new Mesh(carGeometry, carMaterial) : octane.clone()
-                // const player = octane.clone()
-                player.name = players[i]
-                player.add(new AxesHelper(10))
+                const car = octane.children[0] as Mesh
+                const body = car.material[0] as MeshPhongMaterial
+                const chassis = car.material[1] as MeshPhongMaterial
+                chassis.color.setHex(0x555555)
 
-                if (this.props.replayData.names[i] === "Sciguymjm") {
-                    this.addToWindow(player, "player")
+                for (let i = 0; i < players.length; i++) {
+                    // const playerName = players[i]
+                    const carColor = this.props.replayData.colors[i] ? 0xff9800 : 0x2196f3
+                    body.color.setHex(carColor)
+                    const player = octane.clone()
+                    // const player = octane.clone()
+                    player.name = players[i]
+                    player.add(new AxesHelper(10))
+
+                    if (this.props.replayData.names[i] === "Sciguymjm") {
+                        this.addToWindow(player, "player")
+                    }
+
+                    field.scene.add(player)
+                    field.players.push(player)
+                    this.animator.playerMixers.push(new AnimationMixer(player))
                 }
-
-                field.scene.add(player)
-                field.players.push(player)
-                this.animator.playerMixers.push(new AnimationMixer(player))
-            }
+            })
         })
     }
 
