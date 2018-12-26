@@ -113,16 +113,16 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     public render() {
         return (
-            <div style={{position: "relative"}}>
+            <div style={{ position: "relative" }}>
                 <div
-                    style={{width: "100%", height: "600px", margin: "auto"}}
+                    style={{ width: "100%", height: "600px", margin: "auto" }}
                     ref={(mount) => {
                         if (mount) {
                             this.mount = mount
                         }
                     }}
                 />
-                <div style={{position: "absolute", top: "0", left: "0", margin: ".5rem"}}>
+                <div style={{ position: "absolute", top: "0", left: "0", margin: ".5rem" }}>
                     <button onClick={() => this.setCameraView(0)}>Orange Goal</button>
                     <button onClick={() => this.setCameraView(2)}>Mid Field</button>
                     <button onClick={() => this.setCameraView(1)}>Blue Goal</button>
@@ -190,6 +190,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.threeField.camera.aspect = width / height
         this.threeField.camera.updateProjectionMatrix()
         this.renderer.setSize(width, height)
+        this.renderScene()
     }
 
     private readonly generateScene = () => {
@@ -200,22 +201,17 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.threeField.scene = new Scene()
 
         // Add camera
-        this.threeField.camera = new PerspectiveCamera(
-            75,
-            width / height,
-            0.1,
-            20000
-        )
+        this.threeField.camera = new PerspectiveCamera(75, width / height, 0.1, 20000)
 
         // TODO: We are keeping these in window to discover better camera angles. This allows us to edit offsets
         // without reloading the page every time.
         this.setCameraView(0)
         this.addToWindow(this.threeField.camera, "camera")
 
-        this.threeField.camera.rotation.x -= 7 * Math.PI / 180
+        this.threeField.camera.rotation.x -= (7 * Math.PI) / 180
 
         // Add renderer
-        this.renderer = new WebGLRenderer({antialias: true})
+        this.renderer = new WebGLRenderer({ antialias: true })
         this.renderer.setClearColor("#000000")
         this.renderer.setSize(width, height)
         this.mount.appendChild(this.renderer.domElement)
@@ -225,16 +221,24 @@ export class ThreeScene extends React.PureComponent<Props> {
         const field = this.threeField
 
         const geometry = new PlaneBufferGeometry(8192, 10240, 1, 1)
-        const material = new MeshPhongMaterial({color: "#4CAF50"})
+        const material = new MeshPhongMaterial({ color: "#4CAF50" })
         field.ground = new Mesh(geometry, material)
         field.ground.rotation.x = -Math.PI / 2
         field.scene.add(field.ground)
 
         const goalPlane = new PlaneBufferGeometry(2000, 1284.5, 1, 1)
-        const blueGoalMaterial = new MeshPhongMaterial({color: "#2196f3", side: DoubleSide,
-            opacity: 0.3, transparent: true})
-        const orangeGoalMaterial = new MeshPhongMaterial({color: "#ff9800", side: DoubleSide,
-            opacity: 0.3, transparent: true})
+        const blueGoalMaterial = new MeshPhongMaterial({
+            color: "#2196f3",
+            side: DoubleSide,
+            opacity: 0.3,
+            transparent: true
+        })
+        const orangeGoalMaterial = new MeshPhongMaterial({
+            color: "#ff9800",
+            side: DoubleSide,
+            opacity: 0.3,
+            transparent: true
+        })
         const blueGoal = new Mesh(goalPlane, blueGoalMaterial)
         blueGoal.position.z = -5120
         field.scene.add(blueGoal)
@@ -247,7 +251,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         field.scene.add(new AmbientLight(0x444444))
 
         // Hemisphere light
-        field.scene.add( new HemisphereLight( 0xffffbb, 0x080820, 1 ) )
+        field.scene.add(new HemisphereLight(0xffffbb, 0x080820, 1))
 
         // const objLoader = new OBJLoader(this.loadingManager)
         // objLoader.load("/assets/Field2.obj", (arena: Group) => {
@@ -302,7 +306,7 @@ export class ThreeScene extends React.PureComponent<Props> {
                 // const playerName = players[i]
                 const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
                 const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
-                const carMaterial = new MeshPhongMaterial({color: i ? carColor : "#333333"})
+                const carMaterial = new MeshPhongMaterial({ color: i ? carColor : "#333333" })
                 const player = i > 2 ? new Mesh(carGeometry, carMaterial) : octane.clone()
                 // const player = octane.clone()
                 player.name = players[i]
@@ -395,10 +399,21 @@ export class ThreeScene extends React.PureComponent<Props> {
 
             // Note that Three.JS requires this .position/.quaternion naming convention, and that
             // the object we wish to modify must have this associated name.
-            const positionKeyframes = new VectorKeyframeTrack(`${objectName}.position`, vectorTimes, positions)
-            const rotationKeyframes = new QuaternionKeyframeTrack(`${objectName}.quaternion`, quatTimes, angles)
+            const positionKeyframes = new VectorKeyframeTrack(
+                `${objectName}.position`,
+                vectorTimes,
+                positions
+            )
+            const rotationKeyframes = new QuaternionKeyframeTrack(
+                `${objectName}.quaternion`,
+                quatTimes,
+                angles
+            )
 
-            return new AnimationClip(`${objectName}Action`, totalDuration, [positionKeyframes, rotationKeyframes])
+            return new AnimationClip(`${objectName}Action`, totalDuration, [
+                positionKeyframes,
+                rotationKeyframes
+            ])
         }
         // First, generate player clips
         for (let player = 0; player < this.props.replayData.players.length; player++) {
