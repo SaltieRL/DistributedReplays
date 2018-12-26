@@ -27,7 +27,7 @@ interface State {
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedTab: "playerStats"}
+        this.state = {selectedTab: "replayViewer"}
     }
 
     public render() {

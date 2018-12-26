@@ -173,6 +173,10 @@ export const getReplayViewerData = (id: string): Promise<any> => {
     return doGet(`/replay/${id}/positions`)
 }
 
+export const getReplayViewerProto = (id: string): Promise<any> => {
+    return doGet(`/v1/replay/${id}?key=1`)
+}
+
 export const getReplayGroupStats = (ids: string[]): Promise<BasicStat[]> => {
     return doGet(`/replay/group` +
         qs.stringify({ids},

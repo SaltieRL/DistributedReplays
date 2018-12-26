@@ -4,6 +4,7 @@
     "linterOptions": {
         "exclude": [
             "config/**/*.js",
+            "src/lib/*.js",
             "node_modules/**/*.ts",
             "coverage/lcov-report/*.js",
             "src/registerServiceWorker.ts"

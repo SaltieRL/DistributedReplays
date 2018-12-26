@@ -1,0 +1,32 @@
+# Expects a python 3 virtualenv to be set up and pip requirements to be installed to the virtualenv
+
+# Before running for the first time run these:
+# python3 -m pip install --user virtualenv
+# python3 -m virtualenv env
+# source env/bin/activate
+# pip install -r requirements.txt
+# deactivate
+# cd webapp && npm install && cd ..
+
+name: calculated
+
+windows:
+  - frontend_api:
+      layout: even-horizontal
+      panes:
+        - webapp:
+          - cd webapp
+          - npm start
+        - rlbot_server:
+          - source env/bin/activate
+          - python RLBotServer.py
+  - backend:
+      layout: main-vertical
+      panes:
+        - celery:
+          - source env/bin/activate
+          - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info
+        - flower:
+          - source env/bin/activate
+          - flower --port=5555
+        - redis/redis-server.exe

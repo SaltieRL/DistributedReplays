@@ -45,7 +45,7 @@ class ReplayPositions:
         rot_cs = ['rot_x', 'rot_y', 'rot_z']
 
         ball = data_frame['ball']
-        ball_df = ball[cs].fillna(-100).values.tolist()
+        ball_df = ball[cs + rot_cs].fillna(-100).values.tolist()
         players = protobuf_game.players
         names = [player.name for player in players]
 
