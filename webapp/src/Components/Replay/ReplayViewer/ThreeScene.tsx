@@ -296,10 +296,10 @@ export class ThreeScene extends React.PureComponent<Props> {
         field.players = []
 
         const materialLoader = new MTLLoader(this.loadingManager)
-        materialLoader.load("/assets/Octane2.mtl", (mtlc) => {
+        materialLoader.load("/assets/Octane.mtl", (mtlc) => {
             const objectLoader = new OBJLoader(this.loadingManager)
             objectLoader.setMaterials(mtlc)
-            objectLoader.load("/assets/Octane2.obj", (octane: Group) => {
+            objectLoader.load("/assets/Octane.obj", (octane: Group) => {
                 this.addToWindow(octane, "car")
                 octane.scale.setScalar(40) // TODO: This size is 20
                 const chassis = (octane.children[0] as Mesh).material[1] as MeshPhongMaterial
