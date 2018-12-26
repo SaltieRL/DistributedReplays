@@ -1,6 +1,7 @@
 import * as React from "react"
 import { OBJLoader, Stats } from "src/lib"
 import { FPSClock } from "src/Models"
+import { isDevelopment } from "src/Utils"
 import {
     AmbientLight,
     AnimationAction,
@@ -56,10 +57,9 @@ export class ThreeScene extends React.PureComponent<Props> {
     private loadingManager: LoadingManager
     private renderer: WebGLRenderer
     private mount: HTMLDivElement
+    private stats: Stats | null
     private hasStarted: boolean
     private readonly animator: Animator
-    private readonly stats: Stats | null
-
     private readonly threeField: FieldScene
 
     constructor(props: Props) {
@@ -72,12 +72,6 @@ export class ThreeScene extends React.PureComponent<Props> {
             playerClips: [],
             playerMixers: []
         } as any
-        // Logs framerate
-        if (process.env.NODE_ENV === "development") {
-            this.stats = new Stats()
-            this.stats.showPanel(0)
-            document.body.appendChild(this.stats.dom)
-        }
     }
 
     public componentDidMount() {
@@ -99,10 +93,20 @@ export class ThreeScene extends React.PureComponent<Props> {
         // Add players
         this.generatePlayers(this.props.replayData.names)
         this.createAnimationClips()
+
+        // Logs framerate
+        if (isDevelopment()) {
+            this.stats = new Stats()
+            this.stats.showPanel(0)
+            this.mount.appendChild(this.stats.dom)
+        }
     }
 
     public componentWillUnmount() {
         this.stop()
+        if (this.stats) {
+            this.mount.removeChild(this.stats.dom)
+        }
         this.mount.removeChild(this.renderer.domElement)
     }
 
@@ -208,6 +212,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.renderer.setClearColor("#000000")
         this.renderer.setSize(width, height)
         this.mount.appendChild(this.renderer.domElement)
+        console.log(this.mount)
     }
 
     private readonly generatePlayfield = () => {
