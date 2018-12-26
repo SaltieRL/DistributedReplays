@@ -15,6 +15,7 @@ import {
     HemisphereLight,
     LoadingManager,
     Mesh,
+    MeshNormalMaterial,
     MeshPhongMaterial,
     Object3D,
     PerspectiveCamera,
@@ -315,16 +316,27 @@ export class ThreeScene extends React.PureComponent<Props> {
                 const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
                 const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
                 const carMaterial = new MeshPhongMaterial({ color: i ? carColor : "#333333" })
-                const player = new Group()
+                const playerMesh = new Group()
+                playerMesh.name = `${players[i]}-car`
                 if (i > 2) {
-                    player.add(new Mesh(carGeometry, carMaterial))
+                    playerMesh.add(new Mesh(carGeometry, carMaterial))
                 } else {
-                    player.add(octane.clone())
+                    playerMesh.add(octane.clone())
                 }
-                player.add(new AxesHelper(150))
-                player.name = players[i]
+                playerMesh.add(new AxesHelper(150))
 
-                if (this.props.replayData.names[i] === "Sciguymjm") {
+                const player = new Group()
+                player.name = players[i]
+                player.add(playerMesh)
+
+                const indicator = new Mesh(
+                    new BoxBufferGeometry(30, 30, 100),
+                    new MeshNormalMaterial()
+                )
+                indicator.position.y = 200
+                player.add(indicator)
+
+                if (i === 0) {
                     this.addToWindow(player, "player")
                 }
 
@@ -441,7 +453,7 @@ export class ThreeScene extends React.PureComponent<Props> {
                 positionValues
             )
             const playerRotKeyframes = new QuaternionKeyframeTrack(
-                `${playerName}.quaternion`,
+                `${playerName}-car.quaternion`,
                 rotationTimes,
                 rotationValues
             )
