@@ -8,6 +8,7 @@ import {
     AnimationClip,
     AnimationMixer,
     AxesHelper,
+    BackSide,
     DoubleSide,
     Euler,
     Group,
@@ -21,8 +22,6 @@ import {
     Quaternion,
     QuaternionKeyframeTrack,
     Scene,
-    SphereBufferGeometry,
-    TextureLoader,
     Vector3,
     VectorKeyframeTrack,
     WebGLRenderer
@@ -38,7 +37,7 @@ export interface Props {
 interface FieldScene {
     scene: Scene
     camera: PerspectiveCamera
-    ball: Mesh
+    ball: Object3D
     ground: Object3D
     players: Object3D[]
 }
@@ -275,35 +274,34 @@ export class ThreeScene extends React.PureComponent<Props> {
 
     private readonly generateBall = () => {
         const field = this.threeField
-
-        const ballGeometry = new SphereBufferGeometry(92.75, 32, 32)
-        const ballMaterial = new MeshPhongMaterial()
-        const ball = new Mesh(ballGeometry, ballMaterial)
-        ball.name = BALL_NAME
-        ball.add(new AxesHelper(150))
-        this.animator.ballMixer = new AnimationMixer(ball)
-
-        field.ball = ball
-        field.scene.add(ball)
-
-        const loader = new TextureLoader(this.loadingManager)
-        loader.load("/assets/test.jpg", (texture) => {
-            ballMaterial.map = texture
+        const materialLoader = new MTLLoader(this.loadingManager)
+        materialLoader.setPath("/assets/")
+        materialLoader.setMaterialOptions({side: BackSide})
+        materialLoader.load("Ball.mtl", (mtlc) => {
+            const objectLoader = new OBJLoader(this.loadingManager)
+            objectLoader.setMaterials(mtlc)
+            objectLoader.load("/assets/Ball.obj", (ball: Object3D) => {
+                ball.name = BALL_NAME
+                ball.scale.setScalar(92.75)
+                ball.add(new AxesHelper(5))
+                this.animator.ballMixer = new AnimationMixer(ball)
+                field.ball = ball
+                field.scene.add(ball)
+            })
         })
     }
 
     private readonly generatePlayers = (players: string[]) => {
         const field = this.threeField
+        field.players = []
 
         const materialLoader = new MTLLoader(this.loadingManager)
         materialLoader.load("/assets/Octane2.mtl", (mtlc) => {
-            // mtlc.preload()
-            const loader = new OBJLoader(this.loadingManager)
-            loader.setMaterials(mtlc)
-            field.players = []
-            loader.load("/assets/Octane2.obj", (octane: Group) => {
+            const objectLoader = new OBJLoader(this.loadingManager)
+            objectLoader.setMaterials(mtlc)
+            objectLoader.load("/assets/Octane2.obj", (octane: Group) => {
                 this.addToWindow(octane, "car")
-                octane.scale.setScalar(100) // TODO: This size is 20
+                octane.scale.setScalar(40) // TODO: This size is 20
                 const chassis = (octane.children[0] as Mesh).material[1] as MeshPhongMaterial
                 chassis.color.setHex(0x555555)
 
@@ -320,11 +318,12 @@ export class ThreeScene extends React.PureComponent<Props> {
                     // The top half of the car
                     const body = mesh.material[0] as MeshPhongMaterial
                     body.name = `${players[i]}-body`
+                    // 0xff9800 is orange, 0x2196f3 is blue
                     const carColor = this.props.replayData.colors[i] ? 0xff9800 : 0x2196f3
                     body.color.setHex(carColor)
-                    // Debugging
-                    player.add(new AxesHelper(10))
 
+                    // Debugging
+                    player.add(new AxesHelper(5))
                     if (this.props.replayData.names[i] === "Sciguymjm") {
                         this.addToWindow(player, "player")
                     }
