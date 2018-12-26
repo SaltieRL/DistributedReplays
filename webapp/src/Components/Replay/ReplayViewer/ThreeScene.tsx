@@ -281,7 +281,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         const ballMaterial = new MeshPhongMaterial()
         const ball = new Mesh(ballGeometry, ballMaterial)
         ball.name = BALL_NAME
-        ball.add(new AxesHelper(150))
+        ball.add(new AxesHelper(200))
         this.animator.ballMixer = new AnimationMixer(ball)
 
         field.ball = ball
@@ -307,10 +307,14 @@ export class ThreeScene extends React.PureComponent<Props> {
                 const carGeometry = new BoxBufferGeometry(84.2, 117, 36.16)
                 const carColor = this.props.replayData.colors[i] ? "#ff9800" : "#2196f3"
                 const carMaterial = new MeshPhongMaterial({ color: i ? carColor : "#333333" })
-                const player = i > 2 ? new Mesh(carGeometry, carMaterial) : octane.clone()
-                // const player = octane.clone()
+                const player = new Group()
+                if (i > 2) {
+                    player.add(new Mesh(carGeometry, carMaterial))
+                } else {
+                    player.add(octane.clone())
+                }
+                player.add(new AxesHelper(150))
                 player.name = players[i]
-                player.add(new AxesHelper(10))
 
                 if (this.props.replayData.names[i] === "Sciguymjm") {
                     this.addToWindow(player, "player")
