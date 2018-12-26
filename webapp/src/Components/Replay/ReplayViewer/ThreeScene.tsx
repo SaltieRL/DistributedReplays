@@ -426,9 +426,9 @@ export class ThreeScene extends React.PureComponent<Props> {
             })
 
             return {
+                duration: totalDuration,
                 positionTimes,
                 positionValues: positions,
-                duration: totalDuration,
                 rotationTimes,
                 rotationValues: rotations
             }
@@ -437,57 +437,47 @@ export class ThreeScene extends React.PureComponent<Props> {
         for (let player = 0; player < this.props.replayData.players.length; player++) {
             const playerData = this.props.replayData.players[player]
             const playerName = `${this.props.replayData.names[player]}`
-            const {
-                duration,
-                positionTimes,
-                positionValues,
-                rotationTimes,
-                rotationValues
-            } = generateKeyframeData(playerData)
+            const playerKeyframeData = generateKeyframeData(playerData)
 
             // Note that Three.JS requires this .position/.quaternion naming convention, and that
             // the object we wish to modify must have this associated name.
             const playerPosKeyframes = new VectorKeyframeTrack(
                 `${playerName}.position`,
-                positionTimes,
-                positionValues
+                playerKeyframeData.positionTimes,
+                playerKeyframeData.positionValues
             )
             const playerRotKeyframes = new QuaternionKeyframeTrack(
                 `${playerName}-car.quaternion`,
-                rotationTimes,
-                rotationValues
+                playerKeyframeData.rotationTimes,
+                playerKeyframeData.rotationValues
             )
 
-            const playerClip = new AnimationClip(`${playerName}Action`, duration, [
-                playerPosKeyframes,
-                playerRotKeyframes
-            ])
+            const playerClip = new AnimationClip(
+                `${playerName}Action`,
+                playerKeyframeData.duration,
+                [playerPosKeyframes, playerRotKeyframes]
+            )
             this.animator.playerClips.push(playerClip)
         }
         // Then, generate the ball clip
         const ballData = this.props.replayData.ball
-        const {
-            duration,
-            positionTimes,
-            positionValues,
-            rotationTimes,
-            rotationValues
-        } = generateKeyframeData(ballData)
+        const ballKeyframeData = generateKeyframeData(ballData)
 
         const ballPosKeyframes = new VectorKeyframeTrack(
             `${BALL_NAME}.position`,
-            positionTimes,
-            positionValues
+            ballKeyframeData.positionTimes,
+            ballKeyframeData.positionValues
         )
         const ballRotKeyframes = new QuaternionKeyframeTrack(
             `${BALL_NAME}.quaternion`,
-            rotationTimes,
-            rotationValues
+            ballKeyframeData.rotationTimes,
+            ballKeyframeData.rotationValues
         )
-        this.animator.ballClip = new AnimationClip(`${BALL_NAME}Action`, duration, [
-            ballPosKeyframes,
-            ballRotKeyframes
-        ])
+        this.animator.ballClip = new AnimationClip(
+            `${BALL_NAME}Action`,
+            ballKeyframeData.duration,
+            [ballPosKeyframes, ballRotKeyframes]
+        )
     }
 
     private readonly updateCamera = () => {
