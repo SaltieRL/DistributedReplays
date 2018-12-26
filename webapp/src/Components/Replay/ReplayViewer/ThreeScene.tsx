@@ -355,7 +355,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         }
         const generateClip = (posRotData: any[], objectName: string) => {
             const positions: number[] = []
-            const angles: number[] = []
+            const rotations: number[] = []
             /**
              * We are calculating vector and quaternion times independently because there are often
              * cases where the data of a frame might coincide with the data of the next frame. The
@@ -376,25 +376,25 @@ export class ThreeScene extends React.PureComponent<Props> {
              * kickoff occurs.
              */
             let totalDuration = 0
-            const vectorTimes: number[] = []
-            const quatTimes: number[] = []
+            const positionTimes: number[] = []
+            const rotationTimes: number[] = []
             let prevVector = new Vector3(0, 0, 0)
-            let prevQuat = new Quaternion(0, 0, 0)
+            let prevQuat = new Quaternion(0, 0, 0, 0)
             posRotData.forEach((data, index) => {
                 // Apply position frame
                 const newVector = dataToVector(data)
-                const lastVectorFrame = vectorTimes.length ? vectorTimes[vectorTimes.length - 1] : 0
+                const lastVectorFrame = positionTimes.length ? positionTimes[positionTimes.length - 1] : 0
                 if (!newVector.equals(prevVector) || totalDuration - lastVectorFrame > 2.9) {
                     newVector.toArray(positions, positions.length)
-                    vectorTimes.push(totalDuration)
+                    positionTimes.push(totalDuration)
                     prevVector = newVector
                 }
                 // Apply rotation frame
                 const newQuat = dataToQuaternion(data)
-                const lastQuatFrame = quatTimes.length ? quatTimes[quatTimes.length - 1] : 0
+                const lastQuatFrame = rotationTimes.length ? rotationTimes[rotationTimes.length - 1] : 0
                 if (!newQuat.equals(prevQuat) || totalDuration - lastQuatFrame > 2.9) {
-                    newQuat.toArray(angles, angles.length)
-                    quatTimes.push(totalDuration)
+                    newQuat.toArray(rotations, rotations.length)
+                    rotationTimes.push(totalDuration)
                     prevQuat = newQuat
                 }
                 // Add the delta
@@ -405,13 +405,13 @@ export class ThreeScene extends React.PureComponent<Props> {
             // the object we wish to modify must have this associated name.
             const positionKeyframes = new VectorKeyframeTrack(
                 `${objectName}.position`,
-                vectorTimes,
+                positionTimes,
                 positions
             )
             const rotationKeyframes = new QuaternionKeyframeTrack(
                 `${objectName}.quaternion`,
-                quatTimes,
-                angles
+                rotationTimes,
+                rotations
             )
 
             return new AnimationClip(`${objectName}Action`, totalDuration, [
