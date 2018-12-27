@@ -4,14 +4,10 @@ import { FPSClock } from "src/Models"
 import { isDevelopment } from "src/Utils"
 import {
     AmbientLight,
-    AnimationAction,
-    AnimationClip,
-    AnimationMixer,
     AxesHelper,
     BackSide,
     BoxBufferGeometry,
     DoubleSide,
-    Euler,
     Group,
     HemisphereLight,
     LinearMipMapLinearFilter,
@@ -23,18 +19,13 @@ import {
     Object3D,
     PerspectiveCamera,
     PlaneBufferGeometry,
-    Quaternion,
-    QuaternionKeyframeTrack,
     Scene,
     Sprite,
     SpriteMaterial,
     Texture,
-    Vector3,
-    VectorKeyframeTrack,
     WebGLRenderer
 } from "three"
-
-const BALL_NAME = "ball"
+import { BALL_NAME, CAR_SUFFIX, ThreeHelper } from "./ThreeHelper"
 
 export interface Props {
     replayData: ReplayDataResponse
@@ -49,41 +40,20 @@ interface FieldScene {
     players: Object3D[]
 }
 
-interface Animator {
-    playerMixers: AnimationMixer[]
-    playerActions: AnimationAction[]
-    playerClips: AnimationClip[]
-    ballMixer: AnimationMixer
-    ballAction: AnimationAction
-    ballClip: AnimationClip
-}
-
-interface KeyframeData {
-    duration: number
-    positionValues: number[]
-    positionTimes: number[]
-    rotationValues: number[]
-    rotationTimes: number[]
-}
-
 export class ThreeScene extends React.PureComponent<Props> {
     private loadingManager: LoadingManager
     private renderer: WebGLRenderer
     private mount: HTMLDivElement
     private stats: Stats | null
     private hasStarted: boolean
-    private readonly animator: Animator
+    private readonly helper: ThreeHelper
     private readonly threeField: FieldScene
 
     constructor(props: Props) {
         super(props)
+        this.helper = new ThreeHelper(props.replayData)
         this.threeField = {} as any
         this.addToWindow(this.threeField, "field")
-        this.animator = {
-            playerActions: [],
-            playerClips: [],
-            playerMixers: []
-        } as any
     }
 
     public componentDidMount() {
@@ -105,7 +75,6 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         // Add players
         this.generatePlayers(this.props.replayData.names)
-        this.createAnimationClips()
 
         // Logs framerate
         if (isDevelopment()) {
@@ -147,18 +116,7 @@ export class ThreeScene extends React.PureComponent<Props> {
     public readonly start = () => {
         if (!this.hasStarted) {
             this.hasStarted = true
-            // Play the player actions
-            for (let player = 0; player < this.animator.playerClips.length; player++) {
-                const clip = this.animator.playerClips[player]
-                const mixer = this.animator.playerMixers[player]
-                const action = mixer.clipAction(clip)
-                this.animator.playerActions[player] = action
-                action.play()
-            }
-            // Play the ball action
-            const ballAction = this.animator.ballMixer.clipAction(this.animator.ballClip)
-            this.animator.ballAction = ballAction
-            ballAction.play()
+            this.helper.playAnimationClips()
             // Store the updater function as a callback
             this.props.clock.addCallback(this.animate)
         }
@@ -177,13 +135,9 @@ export class ThreeScene extends React.PureComponent<Props> {
         if (this.stats) {
             this.stats.begin()
         }
+        // Send delta to the helper for clip position updates
         const delta = this.props.clock.getDelta()
-        // Update player transformations
-        for (let player = 0; player < this.animator.playerClips.length; player++) {
-            this.animator.playerMixers[player].update(delta)
-        }
-        // Update ball transformation
-        this.animator.ballMixer.update(delta)
+        this.helper.updateAnimationClips(delta)
         // Point the camera
         this.updateCamera()
         // Paints the new scene
@@ -197,6 +151,9 @@ export class ThreeScene extends React.PureComponent<Props> {
         this.renderer.render(this.threeField.scene, this.threeField.camera)
     }
 
+    /**
+     * Should be called whenever the canvas dimensions are changed (i.e. window resize).
+     */
     private readonly updateSize = () => {
         const width = this.mount.clientWidth
         const height = this.mount.clientHeight
@@ -215,12 +172,8 @@ export class ThreeScene extends React.PureComponent<Props> {
 
         // Add camera
         this.threeField.camera = new PerspectiveCamera(75, width / height, 0.1, 20000)
-
-        // TODO: We are keeping these in window to discover better camera angles. This allows us to edit offsets
-        // without reloading the page every time.
         this.setCameraView(0)
         this.addToWindow(this.threeField.camera, "camera")
-
         this.threeField.camera.rotation.x -= (7 * Math.PI) / 180
 
         // Add renderer
@@ -233,12 +186,14 @@ export class ThreeScene extends React.PureComponent<Props> {
     private readonly generatePlayfield = () => {
         const field = this.threeField
 
+        // Add green ground. TODO: Replace with field model
         const geometry = new PlaneBufferGeometry(8192, 10240, 1, 1)
         const material = new MeshPhongMaterial({ color: "#4CAF50" })
         field.ground = new Mesh(geometry, material)
         field.ground.rotation.x = -Math.PI / 2
         field.scene.add(field.ground)
 
+        // Add goals. TODO: Replace with field model
         const goalPlane = new PlaneBufferGeometry(2000, 1284.5, 1, 1)
         const blueGoalMaterial = new MeshPhongMaterial({
             color: "#2196f3",
@@ -299,7 +254,7 @@ export class ThreeScene extends React.PureComponent<Props> {
                 ball.name = BALL_NAME
                 ball.scale.setScalar(92.75)
                 ball.add(new AxesHelper(5))
-                this.animator.ballMixer = new AnimationMixer(ball)
+                this.helper.addBallMixer(ball)
                 field.ball = ball
                 field.scene.add(ball)
             })
@@ -377,7 +332,7 @@ export class ThreeScene extends React.PureComponent<Props> {
                 for (let i = 0; i < players.length; i++) {
                     // Clone the octane and rename it to the player
                     const playerMesh = octane.clone(true)
-                    playerMesh.name = `${players[i]}-car`
+                    playerMesh.name = `${players[i]}${CAR_SUFFIX}`
                     // Grab the existing car mesh
                     const mesh = playerMesh.children[0] as Mesh
                     // Clone all materials
@@ -414,143 +369,10 @@ export class ThreeScene extends React.PureComponent<Props> {
 
                     field.scene.add(player)
                     field.players.push(player)
-                    this.animator.playerMixers.push(new AnimationMixer(player))
+                    this.helper.addPlayerMixer(player)
                 }
             })
         })
-    }
-
-    private readonly createAnimationClips = () => {
-        /**
-         * Replay data is of this form:
-         * [posX, posZ, posY, rotX, rotZ, royY]
-         *
-         * Three is RH as opposed to Unreal/Unity's LH axes and uses y as the up axis. All angles
-         * are in the range -PI to PI.
-         *
-         * For parsed data information, see:
-         * https://github.com/SaltieRL/carball/blob/master/carball/json_parser/actor_parsing.py#L107
-         *
-         */
-        const dataToVector = (data: any[]) => {
-            const x = data[0]
-            const y = data[2]
-            const z = data[1]
-            return new Vector3(x, y, z)
-        }
-        const dataToQuaternion = (data: any[]) => {
-            const q = new Quaternion()
-            const x = -data[3]
-            const y = -data[5]
-            const z = -data[4]
-            q.setFromEuler(new Euler(y, z, x, "YZX"))
-            return q
-        }
-        const generateKeyframeData = (posRotData: any[]): KeyframeData => {
-            const positions: number[] = []
-            const rotations: number[] = []
-            /**
-             * We are calculating vector and quaternion times independently because there are often
-             * cases where the data of a frame might coincide with the data of the next frame. The
-             * replays may not contain data for every frame, so carball inserts the previous frame
-             * data into the following frame as to avoid any missing frames. Here, we assume the
-             * entire duration of that missing frame must be animated.
-             *
-             * For example, if a car's position at 1.1 seconds reads (45, 100, 500), at 1.2 seconds
-             * reads (45, 100, 500), and at 1.3 seconds reads (50, 110, 400), we can assume the
-             * middle frame was skipped and so we need to perform animation between 1.1 seconds and
-             * 1.3 seconds instead of including the jitter of the car remaining in position from 1.1
-             * seconds to 1.2 seconds.
-             *
-             * We perform the second duration vs. last frame calculation check because we considers
-             * kickoffs as a valid reason to not treat the first position traveled to as a valid
-             * three second animation. Otherwise, the car will slowly creep forward during kickoff.
-             * A kickoff occurs for about three seconds, so 2.9 ensures we break off just before a
-             * kickoff occurs.
-             */
-            let totalDuration = 0
-            const positionTimes: number[] = []
-            const rotationTimes: number[] = []
-            let prevVector = new Vector3(0, 0, 0)
-            let prevQuat = new Quaternion(0, 0, 0, 0)
-            posRotData.forEach((data, index) => {
-                // Apply position frame
-                const newVector = dataToVector(data)
-                const lastVectorFrame = positionTimes.length
-                    ? positionTimes[positionTimes.length - 1]
-                    : 0
-                if (!newVector.equals(prevVector) || totalDuration - lastVectorFrame > 2.9) {
-                    newVector.toArray(positions, positions.length)
-                    positionTimes.push(totalDuration)
-                    prevVector = newVector
-                }
-                // Apply rotation frame
-                const newQuat = dataToQuaternion(data)
-                const lastQuatFrame = rotationTimes.length
-                    ? rotationTimes[rotationTimes.length - 1]
-                    : 0
-                if (!newQuat.equals(prevQuat) || totalDuration - lastQuatFrame > 2.9) {
-                    newQuat.toArray(rotations, rotations.length)
-                    rotationTimes.push(totalDuration)
-                    prevQuat = newQuat
-                }
-                // Add the delta
-                totalDuration += this.props.replayData.frames[index][0]
-            })
-
-            return {
-                duration: totalDuration,
-                positionTimes,
-                positionValues: positions,
-                rotationTimes,
-                rotationValues: rotations
-            }
-        }
-        // First, generate player clips
-        for (let player = 0; player < this.props.replayData.players.length; player++) {
-            const playerData = this.props.replayData.players[player]
-            const playerName = `${this.props.replayData.names[player]}`
-            const playerKeyframeData = generateKeyframeData(playerData)
-
-            // Note that Three.JS requires this .position/.quaternion naming convention, and that
-            // the object we wish to modify must have this associated name.
-            const playerPosKeyframes = new VectorKeyframeTrack(
-                `${playerName}.position`,
-                playerKeyframeData.positionTimes,
-                playerKeyframeData.positionValues
-            )
-            const playerRotKeyframes = new QuaternionKeyframeTrack(
-                `${playerName}-car.quaternion`,
-                playerKeyframeData.rotationTimes,
-                playerKeyframeData.rotationValues
-            )
-
-            const playerClip = new AnimationClip(
-                `${playerName}Action`,
-                playerKeyframeData.duration,
-                [playerPosKeyframes, playerRotKeyframes]
-            )
-            this.animator.playerClips.push(playerClip)
-        }
-        // Then, generate the ball clip
-        const ballData = this.props.replayData.ball
-        const ballKeyframeData = generateKeyframeData(ballData)
-
-        const ballPosKeyframes = new VectorKeyframeTrack(
-            `${BALL_NAME}.position`,
-            ballKeyframeData.positionTimes,
-            ballKeyframeData.positionValues
-        )
-        const ballRotKeyframes = new QuaternionKeyframeTrack(
-            `${BALL_NAME}.quaternion`,
-            ballKeyframeData.rotationTimes,
-            ballKeyframeData.rotationValues
-        )
-        this.animator.ballClip = new AnimationClip(
-            `${BALL_NAME}Action`,
-            ballKeyframeData.duration,
-            [ballPosKeyframes, ballRotKeyframes]
-        )
     }
 
     private readonly updateCamera = () => {
