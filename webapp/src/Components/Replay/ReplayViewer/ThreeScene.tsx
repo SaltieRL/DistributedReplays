@@ -266,6 +266,9 @@ export class ThreeScene extends React.PureComponent<Props> {
         field.players = []
 
         const generatePlayernameSprite = (name: string, orangeTeam: boolean) => {
+            // All nametag names are uppercase
+            name = name.toUpperCase()
+
             const border = 10
             const fontSize = 60
             const canvasSize = 480
@@ -275,8 +278,14 @@ export class ThreeScene extends React.PureComponent<Props> {
             const context = canvas.getContext("2d")
 
             // Rectangle prototyping
-            const roundRect = (ct: CanvasRenderingContext2D, x: number, y: number, w: number,
-            h: number, radius: number) => {
+            const roundRect = (
+                ct: CanvasRenderingContext2D,
+                x: number,
+                y: number,
+                w: number,
+                h: number,
+                radius: number
+            ) => {
                 if (w > h) {
                     radius = h / 2
                 } else {
@@ -301,11 +310,11 @@ export class ThreeScene extends React.PureComponent<Props> {
                 roundRect(context, border, border, canvasSize, fontSize + border * 2, fontSize * 2).stroke()
                 context.fillStyle = "#fff"
                 const measure = context.measureText(name)
-                const padding = (border / 2) + (fontSize / 2)
-                const maxWidth = canvasSize - (padding * 2)
+                const padding = border / 2 + fontSize / 2
+                const maxWidth = canvasSize - padding * 2
                 const width = maxWidth > measure.width ? measure.width : maxWidth
-                const x = (canvasSize / 2) + (border / 2) - (width / 2)
-                context.fillText(name, x, fontSize + border, maxWidth)
+                const x = canvasSize / 2 + border / 2 - width / 2
+                context.fillText(name, x, fontSize + border / 2, maxWidth)
             }
 
             const texture = new Texture(canvas)
