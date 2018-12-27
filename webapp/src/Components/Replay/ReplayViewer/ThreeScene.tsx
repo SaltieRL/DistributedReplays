@@ -314,7 +314,7 @@ export class ThreeScene extends React.PureComponent<Props> {
                 const maxWidth = canvasSize - padding * 2
                 const width = maxWidth > measure.width ? measure.width : maxWidth
                 const x = canvasSize / 2 + border / 2 - width / 2
-                context.fillText(name, x, fontSize + border / 2, maxWidth)
+                context.fillText(name, x, fontSize + border, maxWidth)
             }
 
             const texture = new Texture(canvas)
