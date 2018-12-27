@@ -184,11 +184,13 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     }
 
     private readonly setPlayback = (play: boolean): void => {
-        if (!this.state.play && play) {
-            this.state.clock!.play()
-        } else if (!play) {
-            this.state.clock!.pause()
+        if (this.state.clock) {
+            if (!this.state.play && play) {
+                this.state.clock.play()
+            } else if (!play) {
+                this.state.clock.pause()
+            }
+            this.setState({ play })
         }
-        this.setState({ play })
     }
 }
