@@ -38,7 +38,7 @@
         "build": "react-scripts-ts build",
         "test": "react-scripts-ts test --env=jsdom",
         "eject": "react-scripts-ts eject",
-        "submodule": "git submodule update --init",
+        "submodule": "git submodule update --remote",
         "tslint-prettier-check": "tslint-config-prettier-check ./tslint.json"
     },
     "devDependencies": {
