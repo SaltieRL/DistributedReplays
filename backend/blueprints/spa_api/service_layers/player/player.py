@@ -29,8 +29,8 @@ class Player:
         except TypeError:
             if len(names_and_counts) > 0:
                 return Player(id_=id_, name=names_and_counts[0][0], past_names=names_and_counts, profile_link="",
-                              avatar_link="/psynet.jpg" if not id_.startswith(
-                                  'b') else "/ai.jpg")
+                              avatar_link="/assets/shared/psynet.jpg" if not id_.startswith(
+                                  'b') else "/assets/shared/ai.jpg")
             raise PlayerNotFound
         return Player(id_=id_, name=steam_profile['personaname'], past_names=names_and_counts,
                       profile_link=steam_profile['profileurl'],
