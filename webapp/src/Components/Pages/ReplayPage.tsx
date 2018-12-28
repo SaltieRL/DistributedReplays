@@ -29,7 +29,7 @@ export class ReplayPage extends React.PureComponent<Props, State> {
         const {replay, explanations} = this.state
 
         return (
-            <BasePage backgroundImage={"/replay_page_background.png"}>
+            <BasePage backgroundImage={"/assets/replay_page_background.png"}>
                 <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
                     <LoadableWrapper load={this.getReplay}>
                         {replay &&

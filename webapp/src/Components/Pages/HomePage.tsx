@@ -199,7 +199,7 @@ const styles = createStyles({
         display: "flex",
         backgroundSize: "cover",
         backgroundAttachment: "fixed",
-        backgroundImage: 'url("/splash.png")'
+        backgroundImage: 'url("/assets/splash.png")'
     }
 })
 

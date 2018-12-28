@@ -276,7 +276,7 @@ export class AboutPage extends React.PureComponent {
         )
 
         return (
-            <BasePage backgroundImage={"/splash.png"}>
+            <BasePage backgroundImage={"/assets/splash.png"}>
                 <Grid container justify="center">
                     <Grid item xs={12} lg={10} xl={8}>
                         <Grid container spacing={16} justify="center">
