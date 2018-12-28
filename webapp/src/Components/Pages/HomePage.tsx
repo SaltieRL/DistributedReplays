@@ -24,7 +24,7 @@ import {
 } from "../../Globals"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { LinkButton } from "../Shared/LinkButton"
-import { Logo } from "../Shared/Logo/Logo"
+import { Logo } from "../Shared/Logo"
 import { Search } from "../Shared/Search"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
 
