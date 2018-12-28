@@ -18,7 +18,7 @@ export class GlobalStatsPage extends React.PureComponent<{}, State> {
 
     public render() {
         return (
-            <BasePage backgroundImage={"/splash.png"}>
+            <BasePage backgroundImage={"/assets/splash.png"}>
                 <Grid container spacing={16} alignItems="center" justify="center">
                     <Grid item xs={12}>
                         <Typography variant="title" align="center">

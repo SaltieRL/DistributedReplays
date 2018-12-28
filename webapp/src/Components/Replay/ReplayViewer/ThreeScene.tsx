@@ -222,7 +222,7 @@ export class ThreeScene extends React.PureComponent<Props> {
         field.scene.add(new HemisphereLight(0xffffbb, 0x080820, 1))
 
         // const objLoader = new OBJLoader(this.loadingManager)
-        // objLoader.load("/assets/Field2.obj", (arena: Group) => {
+        // objLoader.load("/assets/shared/models/Field2.obj", (arena: Group) => {
         //     const w = window as any
         //     w.arena = arena
         //     arena.scale.setScalar(1000)
@@ -230,12 +230,12 @@ export class ThreeScene extends React.PureComponent<Props> {
         //     this.threeField.scene.add(arena)
         // })
 
-        // mtlLoader.load("/assets/Field2.mtl", (materials: any) => {
+        // mtlLoader.load("/assets/shared/models/Field2.mtl", (materials: any) => {
         //     const w = window as any
         //     w.materials = materials
         //     // materials.preload()
         //     // objLoader.setMaterials(materials)
-        //     objLoader.load("/assets/Field2.obj", (field: Group) => {
+        //     objLoader.load("/assets/shared/models/Field2.obj", (field: Group) => {
         //             w.field = field
         //             this.scene.add(field)
         //         })
@@ -245,12 +245,12 @@ export class ThreeScene extends React.PureComponent<Props> {
     private readonly generateBall = () => {
         const field = this.threeField
         const materialLoader = new MTLLoader(this.loadingManager)
-        materialLoader.setPath("/assets/")
+        materialLoader.setPath("/assets/shared/models/")
         materialLoader.setMaterialOptions({side: BackSide})
         materialLoader.load("Ball.mtl", (mtlc) => {
             const objectLoader = new OBJLoader(this.loadingManager)
             objectLoader.setMaterials(mtlc)
-            objectLoader.load("/assets/Ball.obj", (ball: Object3D) => {
+            objectLoader.load("/assets/shared/models/Ball.obj", (ball: Object3D) => {
                 ball.name = BALL_NAME
                 ball.scale.setScalar(92.75)
                 ball.add(new AxesHelper(5))
@@ -329,10 +329,10 @@ export class ThreeScene extends React.PureComponent<Props> {
         }
 
         const materialLoader = new MTLLoader(this.loadingManager)
-        materialLoader.load("/assets/Octane.mtl", (mtlc) => {
+        materialLoader.load("/assets/shared/models/Octane.mtl", (mtlc) => {
             const objectLoader = new OBJLoader(this.loadingManager)
             objectLoader.setMaterials(mtlc)
-            objectLoader.load("/assets/Octane.obj", (octane: Group) => {
+            objectLoader.load("/assets/shared/models/Octane.obj", (octane: Group) => {
                 this.addToWindow(octane, "car")
                 octane.scale.setScalar(40) // TODO: This size is 20
                 const chassis = (octane.children[0] as Mesh).material[1] as MeshPhongMaterial
