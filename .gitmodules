@@ -1,3 +1,4 @@
 [submodule "webapp/public/assets/shared"]
 	path = webapp/public/assets/shared
 	url = https://github.com/SaltieRL/SharedAssets.git
+	branch = master
