@@ -84,6 +84,10 @@ export class ThreeScene extends React.PureComponent<Props> {
         }
     }
 
+    public componentWillUpdate() {
+        console.log("Updating")
+    }
+
     public componentWillUnmount() {
         this.stop()
         if (this.stats) {

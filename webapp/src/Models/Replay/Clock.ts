@@ -33,13 +33,13 @@ export class FPSClock {
         return new FPSClock(frames)
     }
 
+    // Used to play "catch-up" in the delta function
+    public currentFrame: number
+    private lastFrame: number
+    private started: number
+
     // Represented as an index in the array to the elapsed time at that frame
     private readonly frameToDuration: number[]
-
-    // Used to play "catch-up" in the delta function
-    private lastFrame: number
-    private currentFrame: number
-    private started: number
 
     private paused: boolean
     private animation: NodeJS.Timer

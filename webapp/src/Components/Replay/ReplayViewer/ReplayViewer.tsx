@@ -15,8 +15,7 @@ type Props = OwnProps
 interface State {
     replayData?: ReplayDataResponse
     replayProto?: any
-    currentFrame: number
-    clock?: FPSClock
+    clock: FPSClock
     gameTime: number
     play: boolean
     team0Score: number
@@ -28,7 +27,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
-            currentFrame: 0,
+            clock: new FPSClock([]),
             gameTime: 300,
             team0Score: 0,
             team1Score: 0,
@@ -48,13 +47,9 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
         // console.log(this.state.replayData)
     }
 
-    public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
+    public componentDidUpdate(_: Readonly<Props>, prevState: Readonly<State>) {
         if (this.state.replayProto !== prevState.replayProto) {
             this.getPlayerTeamMap()
-        }
-        if (this.state.currentFrame !== prevState.currentFrame) {
-            this.updateGameTime()
-            this.updateGameScore()
         }
     }
 
@@ -82,20 +77,21 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={4}>
                             <Typography>Frame:</Typography>
-                            <TextField type="number" value={this.state.currentFrame} onChange={this.setCurrentFrame} />
+                            <TextField type="number" value={this.state.clock.currentFrame}
+                                       onChange={this.setCurrentFrame} />
                         </Grid>
                         <Grid item xs={4}>
                             <Typography>
                                 Ball Position:
-                                {this.state.replayData && this.state.replayData.ball[this.state.currentFrame][0]},
-                                {this.state.replayData && this.state.replayData.ball[this.state.currentFrame][1]},
-                                {this.state.replayData && this.state.replayData.ball[this.state.currentFrame][2]}
+                                {this.state.replayData && this.state.replayData.ball[this.state.clock.currentFrame][0]},
+                                {this.state.replayData && this.state.replayData.ball[this.state.clock.currentFrame][1]},
+                                {this.state.replayData && this.state.replayData.ball[this.state.clock.currentFrame][2]}
                             </Typography>
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
                     {this.state.replayData && <Slider
-                        value={this.state.currentFrame}
+                        value={this.state.clock.currentFrame}
                         min={0}
                         max={this.state.replayData.frames.length - 1}
                         step={1}
@@ -133,7 +129,6 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                 this.setState({ play: false })
                 this.state.clock.pause()
             } else {
-                this.setState({ currentFrame: frame })
                 this.updateGameTime()
                 this.updateGameScore()
             }
@@ -151,23 +146,22 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
 
     private readonly updateGameTime = (): void => {
         // Update game time
-        const frame: any = this.state.replayData!.frames[this.state.currentFrame] // Specify any.
+        const frame: any = this.state.replayData!.frames[this.state.clock.currentFrame] // Specify any.
         const time: number = parseFloat(frame[1])
-        this.setState({ gameTime: time })
+        if (time !== this.state.gameTime) {
+            this.setState({ gameTime: time })
+        }
     }
 
     private readonly getGameTimeString = (): string => {
         const seconds: number = this.state.gameTime % 60
         const minutes: number = (this.state.gameTime - seconds) / 60
-
-        const secondsString: string = seconds < 10 ? `0${seconds.toString()}` : seconds.toString()
-        const minutesString: string = minutes.toString()
-
-        return `${minutesString}:${secondsString}`
+        const secondsString: string | number = seconds < 10 ? `0${seconds}` : seconds
+        return `${minutes}:${secondsString}`
     }
 
     private readonly updateGameScore = (): void => {
-        const currentFrame = this.state.currentFrame
+        const currentFrame = this.state.clock.currentFrame
         const goals = this.state.replayProto.gameMetadata.goals
         let team0Score = 0
         let team1Score = 0
@@ -180,7 +174,9 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
                 }
             }
         })
-        this.setState({team0Score, team1Score})
+        if (team0Score !== this.state.team0Score || team1Score !== this.state.team1Score) {
+            this.setState({team0Score, team1Score})
+        }
     }
 
     private readonly setPlayback = (play: boolean): void => {
