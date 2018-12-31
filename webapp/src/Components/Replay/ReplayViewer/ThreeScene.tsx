@@ -84,10 +84,6 @@ export class ThreeScene extends React.PureComponent<Props> {
         }
     }
 
-    public componentWillUpdate() {
-        console.log("Updating")
-    }
-
     public componentDidUpdate() {
         this.addToWindow(this.props.clock, "clock")
     }
