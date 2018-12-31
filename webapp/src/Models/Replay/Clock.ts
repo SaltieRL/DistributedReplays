@@ -35,12 +35,12 @@ export class FPSClock {
         return new FPSClock(frames)
     }
 
-    // Used to play "catch-up" in the delta function
     public currentFrame: number
-    // private lastFrame: number
-
-    private lastTime: number
-    private started: number
+    private startTime: number
+    // Both represent the elapsed amount of time. The lastDelta field follows the elapsedTime field
+    // so that each call to getDelta is always accurate
+    private elapsedTime: number
+    private lastDelta: number
 
     // Represented as an index in the array to the elapsed time at that frame
     private readonly frameToDuration: number[]
@@ -52,10 +52,10 @@ export class FPSClock {
     constructor(frameToDuration: number[]) {
         this.frameToDuration = frameToDuration
         this.paused = true
-        this.currentFrame = 0
-        this.lastTime = 0
         this.callback = []
-        this.timeout(!this.paused)
+        this.currentFrame = 0
+        this.elapsedTime = this.lastDelta = 0
+        this.timeout()
     }
 
     public addCallback(callback: (frame: number) => void) {
@@ -65,25 +65,16 @@ export class FPSClock {
     public setFrame(frame: number) {
         // Prevent negative frames
         frame = frame < 0 ? 0 : frame
-        // Get that "little bit" of real time beyond the frame's saved time
-        const littleDiff = this.lastTime - this.started - (this.frameToDuration[this.currentFrame])
-        const frameDiff = this.frameToDuration[this.currentFrame] - this.frameToDuration[frame]
-        console.log(littleDiff)
-        // A lower frame means the animation needs to roll back, so the last time will become
-        // greater than current time, and thus the delta is negative
-        this.lastTime = performance.now() + frameDiff
-        this.started = this.lastTime - this.frameToDuration[frame] - littleDiff
+        const diff = this.frameToDuration[frame] - this.frameToDuration[this.currentFrame]
+        this.startTime += diff
+        this.elapsedTime = (performance.now() - this.startTime)
         this.currentFrame = frame
         this.doCallbacks()
     }
 
     public play() {
         if (this.paused) {
-            // First, find out how much "true time" has elapsed while paused
-            const now = performance.now()
-            const diff = this.lastTime - this.started
-            this.lastTime = now
-            this.started = now - diff
+            this.startTime = performance.now() - this.elapsedTime
             this.paused = false
             this.timeout()
         }
@@ -92,10 +83,6 @@ export class FPSClock {
     public pause() {
         this.paused = true
         this.timeout(false)
-    }
-
-    public getElapsedTime() {
-        return (this.lastTime - this.started) / 1000
     }
 
     /**
@@ -107,30 +94,24 @@ export class FPSClock {
      * @returns {number} seconds
      */
     public getDelta(): number {
-        const now = performance.now()
-        if (!this.lastTime) {
-            this.lastTime = now
-        }
-        const last = this.lastTime
-        this.lastTime = now
-        console.log("delta:", (now - last) / 1000)
-        return (now - last) / 1000
+        const now = this.elapsedTime
+        const last = this.lastDelta
+        this.lastDelta = now
+        const delta = now - last
+        console.log("delta:", delta)
+        return delta / 1000
     }
 
     private readonly update = () => {
         if (!this.paused) {
-            if (!this.started) {
-                this.started = this.lastTime
-            }
             this.getElapsedFrames()
             this.doCallbacks()
         }
     }
 
     private getElapsedFrames() {
-        const now = performance.now()
-        const secondsElapsed = (now - this.started)
-        while (this.frameToDuration[this.currentFrame + 1] < secondsElapsed) {
+        this.elapsedTime = (performance.now() - this.startTime)
+        while (this.frameToDuration[this.currentFrame + 1] < this.elapsedTime) {
             this.currentFrame += 1
         }
     }
