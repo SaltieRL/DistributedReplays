@@ -36,11 +36,12 @@ export class FPSClock {
     }
 
     public currentFrame: number
-    private startTime: number
-    // Both represent the elapsed amount of time. The lastDelta field follows the elapsedTime field
-    // so that each call to getDelta is always accurate
-    private elapsedTime: number
+    // Used only to keep track of the elapsed time between getDelta calls
     private lastDelta: number
+    // Stores a queue of deltas that get applied and returned by getDelta. See getDelta for why
+    private readonly deltaQueue: number[]
+    // Used only to determine which frame we should be on during updates
+    private elapsedTime: number
 
     // Represented as an index in the array to the elapsed time at that frame
     private readonly frameToDuration: number[]
@@ -53,8 +54,9 @@ export class FPSClock {
         this.frameToDuration = frameToDuration
         this.paused = true
         this.callback = []
+        this.deltaQueue = []
+        this.elapsedTime = 0
         this.currentFrame = 0
-        this.elapsedTime = this.lastDelta = 0
         this.timeout()
     }
 
@@ -66,15 +68,14 @@ export class FPSClock {
         // Prevent negative frames
         frame = frame < 0 ? 0 : frame
         const diff = this.frameToDuration[frame] - this.frameToDuration[this.currentFrame]
-        this.startTime += diff
-        this.elapsedTime = (performance.now() - this.startTime)
+        this.deltaQueue.push(diff)
         this.currentFrame = frame
         this.doCallbacks()
     }
 
     public play() {
         if (this.paused) {
-            this.startTime = performance.now() - this.elapsedTime
+            this.lastDelta = performance.now()
             this.paused = false
             this.timeout()
         }
@@ -86,19 +87,35 @@ export class FPSClock {
     }
 
     /**
-     * Returns the number of seconds elapsed since the last time getDelta was called. Note that
-     * this may not be the true time since getDelta was called but this is the elapsed "frame time",
-     * that is, the elapsed time relative to the number of frames that have passed since last
-     * calling this method.
+     * Returns the number of seconds elapsed since the last time getDelta was called. This function
+     * uses a combination of the performance.now() functionality when animations are rolling,
+     * combined with a small queue of delta modifications made by the setFrame function. This will
+     * allow us to apply delta factors quite easily and in one spot (i.e. 2x speed) as opposed to
+     * scattering arithmetic throughout the code.
      *
      * @returns {number} seconds
      */
     public getDelta(): number {
-        const now = this.elapsedTime
-        const last = this.lastDelta
+        const now = performance.now()
+        // Initialize empty delta
+        if (!this.lastDelta) {
+            this.lastDelta = now
+        }
+        // Only apply "now" when not paused
+        if (!this.paused) {
+            this.deltaQueue.push(now - this.lastDelta)
+        }
         this.lastDelta = now
-        const delta = now - last
-        console.log("delta:", delta)
+        // Process every delta contributer
+        let delta = 0
+        while (this.deltaQueue.length) {
+            const time = this.deltaQueue.pop()
+            if (time) {
+                delta += time
+            }
+        }
+        // Use the elapsed deltas for bookkeeping
+        this.elapsedTime += delta
         return delta / 1000
     }
 
@@ -110,7 +127,9 @@ export class FPSClock {
     }
 
     private getElapsedFrames() {
-        this.elapsedTime = (performance.now() - this.startTime)
+        if (this.frameToDuration[this.currentFrame] >= this.elapsedTime) {
+            this.currentFrame = 0
+        }
         while (this.frameToDuration[this.currentFrame + 1] < this.elapsedTime) {
             this.currentFrame += 1
         }
