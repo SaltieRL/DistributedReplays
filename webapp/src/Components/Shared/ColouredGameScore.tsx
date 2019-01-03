@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Replay } from "src/Models"
+import { Replay } from "../../Models"
 
 export interface Props {
     replay: Replay
