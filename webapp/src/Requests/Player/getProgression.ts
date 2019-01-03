@@ -1,4 +1,4 @@
-import * as moment from "moment"
+import moment from "moment"
 import { parsePlayStyleProgression, PlayStyleProgressionPoint } from "../../Models"
 import { doGet } from "../../apiHandler/apiHandler"
 import { TimeUnit } from "../../Components/Player/Compare/Progression/PlayerProgressionCharts"
