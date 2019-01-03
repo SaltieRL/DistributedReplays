@@ -1,5 +1,5 @@
 import * as moment from "moment"
-import { GameMode, MatchHistoryResponse, parseReplay } from "src/Models"
+import { GameMode, MatchHistoryResponse, parseReplay } from "../../Models"
 import { doGet } from "../../apiHandler/apiHandler"
 import { useMockData } from "../Config"
 

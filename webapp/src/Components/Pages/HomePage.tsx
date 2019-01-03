@@ -9,7 +9,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
-import { LoggedInUserActions, StoreState } from "src/Redux"
+import { LoggedInUserActions, StoreState } from "../../Redux"
 import {
     ABOUT_LINK,
     DISCORD_LINK,

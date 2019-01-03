@@ -8,7 +8,7 @@ import {
     Replay,
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
-} from "src/Models"
+} from "../Models"
 import { doGet } from "../apiHandler/apiHandler"
 import { useMockData } from "./Config"
 
