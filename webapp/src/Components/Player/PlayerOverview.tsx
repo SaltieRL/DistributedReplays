@@ -18,7 +18,7 @@ type Props = OwnProps
     & WithWidth
 
 type PlayerViewTab = "Profile" | "Playstyle" | "Match History"
-const playerViewTabs = ["Profile", "Playstyle", "Match History"]
+const playerViewTabs: PlayerViewTab[] = ["Profile", "Playstyle", "Match History"]
 
 interface State {
     selectedMobileTab?: PlayerViewTab
@@ -111,7 +111,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleSelectMobileTab = (event: React.ChangeEvent, selectedMobileTab: PlayerViewTab) => {
+    private readonly handleSelectMobileTab = (_: React.ChangeEvent<{}>, selectedMobileTab: PlayerViewTab) => {
         this.setState({selectedMobileTab})
     }
 

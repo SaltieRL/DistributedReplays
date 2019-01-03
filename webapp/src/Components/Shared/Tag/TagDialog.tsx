@@ -70,7 +70,7 @@ export class TagDialog extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleTabChange = (event: React.ChangeEvent, selectedTab: TagTab) => {
+    private readonly handleTabChange = (_: React.ChangeEvent<{}>, selectedTab: TagTab) => {
         this.setState({selectedTab})
     }
 

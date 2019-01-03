@@ -33,10 +33,10 @@ class FieldSelectComponent extends React.PureComponent<Props> {
                     value={selectedFields}
                     onChange={handleChange}
                     autoWidth
-                    renderValue={(selectedFieldsToRender: string[]) => {
+                    renderValue={(selectedFieldsToRender: any) => {
                         return (
                             <div className={classes.chipWrapper}>
-                                {selectedFieldsToRender.map((field) => (
+                                {selectedFieldsToRender.map((field: string) => (
                                     <Chip key={field} label={convertSnakeAndCamelCaseToReadable(field)}
                                           onDelete={this.handleChipDelete(field)}
                                           className={classes.chip}

@@ -50,7 +50,7 @@ export class PlayerCompareContent extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: PlayerCompareTab) => {
+    private readonly handleSelectTab = (_: React.ChangeEvent<{}>, selectedTab: PlayerCompareTab) => {
         this.setState({selectedTab})
     }
 
