@@ -1,5 +1,7 @@
 import { combineReducers, createStore, Reducer } from "redux"
 import { devToolsEnhancer } from "redux-devtools-extension"
+import * as LoggedInUserActions from "./loggedInUser/actions"
+import * as NotificationsActions from "./notifications/actions"
 import { loggedInUserReducer, LoggedInUserState } from "./loggedInUser/reducer"
 import { notificationsReducer, NotificationsState } from "./notifications/reducer"
 
@@ -9,13 +11,10 @@ export interface StoreState {
 }
 
 const rootReducer: Reducer<StoreState> = combineReducers<StoreState>({
-    loggedInUser: loggedInUserReducer,
-    notifications: notificationsReducer
+    loggedInUser: loggedInUserReducer as any,
+    notifications: notificationsReducer as any
 })
 
-export const store = createStore(
-    rootReducer, devToolsEnhancer({})
-)
+export const store = createStore(rootReducer, devToolsEnhancer({}))
 
-export * from "./loggedInUser/actions"
-export * from "./notifications/actions"
+export { LoggedInUserActions, NotificationsActions }
