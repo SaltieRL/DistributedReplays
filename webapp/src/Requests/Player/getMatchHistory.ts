@@ -1,4 +1,4 @@
-import * as moment from "moment"
+import moment from "moment"
 import { GameMode, MatchHistoryResponse, parseReplay } from "../../Models"
 import { doGet } from "../../apiHandler/apiHandler"
 import { useMockData } from "../Config"

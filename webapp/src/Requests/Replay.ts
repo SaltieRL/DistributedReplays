@@ -1,5 +1,5 @@
-import * as moment from "moment"
-import * as qs from "qs"
+import moment from "moment"
+import qs from "qs"
 import {
     BasicStat,
     GameMode,
