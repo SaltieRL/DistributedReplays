@@ -17,9 +17,9 @@ import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
 import { REPLAY_PAGE_LINK } from "../../../../Globals"
+import { getReplayResult, Replay } from "../../../../Models"
 import { ReplayBoxScore } from "../../../Replay/ReplayBoxScore"
 import { ReplayChart } from "../../../Replay/ReplayChart"
-import { Replay, getReplayResult } from "../../../../Models"
 import { ColouredGameScore } from "../../../Shared/ColouredGameScore"
 
 interface OwnProps {

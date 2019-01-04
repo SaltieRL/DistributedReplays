@@ -54,6 +54,7 @@
         "@types/redux-actions": "^2.3.1",
         "source-map-explorer": "^1.6.0",
         "tslint": "^5.11.0",
+        "tslint-react": "^3.6.0",
         "typescript": "^3.2.2"
     },
     "proxy": "http://localhost:8000",

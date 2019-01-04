@@ -1,6 +1,6 @@
 import moment from "moment"
-import { GameMode, MatchHistoryResponse, parseReplay } from "../../Models"
 import { doGet } from "../../apiHandler/apiHandler"
+import { GameMode, MatchHistoryResponse, parseReplay } from "../../Models"
 import { useMockData } from "../Config"
 
 export const getMatchHistory = (id: string, page: number, limit: number): Promise<MatchHistoryResponse> => {

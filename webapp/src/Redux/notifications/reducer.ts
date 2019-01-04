@@ -1,6 +1,6 @@
 import { Action, handleActions } from "redux-actions"
-import { NotificationActions } from "./actions"
 import { NotificationProps } from "../../Components/Shared/Notification/NotificationSnackbar"
+import { NotificationActions } from "./actions"
 
 export type NotificationsState = NotificationProps[]
 

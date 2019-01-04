@@ -1,5 +1,6 @@
 import moment from "moment"
 import qs from "qs"
+import { doGet } from "../apiHandler/apiHandler"
 import {
     BasicStat,
     GameMode,
@@ -9,7 +10,6 @@ import {
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../Models"
-import { doGet } from "../apiHandler/apiHandler"
 import { useMockData } from "./Config"
 
 export const getReplay = (id: string): Promise<Replay> => {
