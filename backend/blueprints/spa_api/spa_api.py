@@ -11,7 +11,10 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename, redirect
 
-import config
+try:
+    import config
+except ImportError:
+    config = None
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
@@ -247,7 +250,7 @@ def download_replay(id_):
     path = os.path.join(current_app.config['REPLAY_DIR'], filename)
     if os.path.isfile(path):
         return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
-    elif hasattr(config, 'GCP_BUCKET_URL'):
+    elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):
         return redirect(config.GCP_BUCKET_URL + filename)
     return "Replay not found", 404
 
