@@ -61,7 +61,7 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     // }
 
     private readonly getBoth = (): Promise<void> => {
-        return Promise.all([getReplay(this.props.match.params.id), getPredictedRanks(this.props.match.params.id)])
+        return Promise.all([getReplay(this.props.match.params.id), getPredictedRanks(this.props.match.params.id)]) // TODO: when predictions 404, don't show the tab (?)
             .then((data) => this.setState({replay: data[0], predictedRanks: data[1]}))
     }
     // private getPredictedRanks = (): Promise<void> => {
