@@ -9,6 +9,9 @@ from backend.database.objects import PlayerGame
 def with_session(decorated_function):
     @wraps(decorated_function)
     def func(*args, **kwargs):
+        if 'session' in kwargs:
+            if kwargs['session'] is not None:
+                return decorated_function(*args, **kwargs)
         session = current_app.config['db']()
         try:
             kwargs['session'] = session

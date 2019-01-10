@@ -9,6 +9,8 @@ from backend.utils.psyonix_api_handler import get_rank
 from .player_profile_stats import player_stat_wrapper, player_wrapper
 from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 
+explanations = player_stat_wrapper.player_stats.stat_explanation_map
+
 
 class PlayStyleChartData(ChartData):
     pass
@@ -39,7 +41,8 @@ class PlayStyleResponse:
         for spider_chart_group in spider_charts_groups:
             title = spider_chart_group['title']
             chart_data_points = [
-                ChartDataPoint(name=name.title(), value=averaged_stats[name], average=global_stats[name])
+                ChartDataPoint(name=explanations[name].short_name if name in explanations else name,
+                               value=averaged_stats[name], average=global_stats[name])
                 for name in spider_chart_group['group']
             ]
             play_style_chart_datas.append(PlayStyleChartData(title, chart_data_points))
@@ -64,7 +67,9 @@ class PlayStyleResponse:
                                                                               playlist=playlist, win=win)
         playstyle_data_raw: PlayerDataPoint = PlayerDataPoint(name=id_,
                                                               data_points=[
-                                                                  DataPoint(k, averaged_stats[k])
+                                                                  DataPoint(explanations[
+                                                                                k].field_rename if k in explanations else k,
+                                                                            averaged_stats[k])
                                                                   for k in averaged_stats
                                                               ])
         return playstyle_data_raw

@@ -9,6 +9,7 @@ import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 interface Props {
     replay: Replay
     selectedTab: PlayerStatsSubcategory
+    explanations: Record<string, any> | undefined
 }
 
 interface State {
@@ -40,7 +41,7 @@ export class PlayerStatsCharts extends React.PureComponent<Props, State> {
                                     <Typography variant="subheading" align="center">
                                         {convertSnakeAndCamelCaseToReadable(playerStat.title)}
                                     </Typography>
-                                    <StatChart basicStat={playerStat}/>
+                                    <StatChart basicStat={playerStat} explanations={this.props.explanations}/>
                                 </Grid>
                             )
                         })

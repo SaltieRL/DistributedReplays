@@ -149,7 +149,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                 .then(this.handleAddPlayer)
                 .then(() => this.setState({inputId: ""}))
                 .catch((e: any) => {
-                    console.log(e) // TypeError expected here when above .catch catches something.
+                    // console.log(e) // TypeError expected here when above .catch catches something.
                     // TODO: Figure out what the right thing to do here is.
                 })
         } else {

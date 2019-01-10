@@ -9,13 +9,18 @@ import uuid
 
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, redirect
 
+try:
+    import config
+except ImportError:
+    config = None
+from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.ml.ml import RankPredictor, RankPredictionAPI
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
-from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db, add_objects
+from backend.database.utils.utils import add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
@@ -205,7 +210,7 @@ def api_get_replay_basic_player_stats(id_):
 @bp.route('replay/<id_>/basic_player_stats/download')
 def api_get_replay_basic_player_stats_download(id_):
     basic_stats = PlayerStatsChart.create_from_id(id_)
-    return convert_to_csv(basic_stats)
+    return convert_to_csv(basic_stats, id_ + '.csv')
 
 
 @bp.route('replay/<id_>/basic_team_stats')
@@ -217,7 +222,7 @@ def api_get_replay_basic_team_stats(id_):
 @bp.route('replay/<id_>/basic_team_stats/download')
 def api_get_replay_basic_team_stats_download(id_):
     basic_stats = TeamStatsChart.create_from_id(id_)
-    return convert_to_csv(basic_stats)
+    return convert_to_csv(basic_stats, id_ + '.csv')
 
 
 @bp.route('replay/<id_>/positions')
@@ -242,7 +247,13 @@ def api_download_group():
 
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
-    return send_from_directory(current_app.config['REPLAY_DIR'], id_ + ".replay", as_attachment=True)
+    filename = id_ + ".replay"
+    path = os.path.join(current_app.config['REPLAY_DIR'], filename)
+    if os.path.isfile(path):
+        return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
+    elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):
+        return redirect(config.GCP_BUCKET_URL + filename)
+    return "Replay not found", 404
 
 
 @bp.route('replay/<id_>/predict')
@@ -269,6 +280,13 @@ def api_search_replays():
     query_params = get_query_params(accepted_query_params, request)
     match_history = MatchHistory.create_with_filters(**query_params)
     return better_jsonify(match_history)
+
+
+## Other
+
+@bp.route('/stats/explanations')
+def api_get_stat_explanations():
+    return jsonify(get_explanations())
 
 
 @bp.route('/upload', methods=['POST'])

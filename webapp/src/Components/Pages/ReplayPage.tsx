@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core"
 import * as React from "react"
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
 import { Replay } from "src/Models"
-import { getPredictedRanks, getReplay } from "../../Requests/Replay"
+import { getPredictedRanks, getExplanations, getReplay } from "../../Requests/Replay"
 import { ReplayView } from "../Replay/ReplayView"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
@@ -15,6 +15,7 @@ type Props = RouteComponentProps<RouteParams>
 
 interface State {
     replay?: Replay
+    explanations?: Record<string, any> | undefined
     predictedRanks?: any
 }
 
@@ -26,7 +27,7 @@ export class ReplayPage extends React.PureComponent<Props, State> {
 
     public render() {
         const matchUrl = this.props.match.url
-        const {replay, predictedRanks} = this.state
+        const {replay, explanations, predictedRanks} = this.state
 
         return (
             <BasePage backgroundImage={"/replay_page_background.png"}>
@@ -40,6 +41,7 @@ export class ReplayPage extends React.PureComponent<Props, State> {
                                     <ReplayView
                                         replay={replay}
                                         predictedRanks={predictedRanks}
+                                        explanations={explanations}
                                         handleUpdateTags={this.handleUpdateTags}
                                     />
                                 )}
@@ -54,8 +56,8 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     }
 
     // private readonly getReplay = (): Promise<void> => {
-    //     return getReplay(this.props.match.params.id)
-    //         .then((replay) => this.setState({replay}))
+    //     return Promise.all([getReplay(this.props.match.params.id), getExplanations()])
+    //         .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
     // }
 
     private readonly getBoth = (): Promise<void> => {
