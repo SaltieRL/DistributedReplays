@@ -49,6 +49,7 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
                 </IconButton>
             </Tooltip>
         )
+        const showRankImg = false
         const rankImg = (
             <img src={`${window.location.origin}/ranks/${predictedRank}.png`}
                  style={{width: 48, height: 48, margin: "auto"}}/>
@@ -58,7 +59,7 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
             <>
                 <ListItem button key={player.id}
                           component={this.createLink}>
-                    {rankImg}
+                    {showRankImg && rankImg}
                     <ListItemText primary={player.name} primaryTypographyProps={{noWrap: true}}
                                   style={{padding: "0 64px 0 0"}}/>
                     <ListItemSecondaryAction>
