@@ -47,7 +47,7 @@ class RankPredictor:
     def __init__(self):
         # Load models
         for model in sorted(glob.glob(os.path.join(self.MODEL_DIR, '*.mdl'))):
-            state = torch.load(model)
+            state = torch.load(model, map_location='cpu')
             m = RankPredictorEnsemble()
             m.load_state_dict(state)
             self.models[os.path.basename(model).split('.')[0]] = m
