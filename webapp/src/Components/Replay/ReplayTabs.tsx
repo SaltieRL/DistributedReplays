@@ -7,8 +7,8 @@ import { Replay } from "src/Models"
 import { StoreState } from "../../Redux"
 import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
-import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
 import { PredictionsContent } from "./PredictionsContent"
+import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay

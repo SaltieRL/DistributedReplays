@@ -22,16 +22,31 @@ export class PredictionsContent extends React.PureComponent<Props, State> {
         const {replay, predictedRanks} = this.props
         const ranksEmpty = Object.keys(predictedRanks).length === 0 && predictedRanks.constructor === Object
         const blueTeam =
-            replay.players.filter((player) => !player.isOrange).map(this.createRow.bind(this))
+            replay.players.filter((player) => !player.isOrange)
         const orangeTeam =
-            replay.players.filter((player) => player.isOrange).map(this.createRow.bind(this))
+            replay.players.filter((player) => player.isOrange)
+        const maxLength = Math.max(blueTeam.length, orangeTeam.length)
+        const rows = []
+        for (let i = 0; i < maxLength; i++) {
+            if (i < blueTeam.length) {
+                if (i < orangeTeam.length) {
+                    rows.push(this.createRow(blueTeam[i], orangeTeam[i]))
+                } else {
+                    rows.push(this.createRow(blueTeam[i], null))
+                }
+            } else {
+                if (i < orangeTeam.length) {
+                    rows.push(this.createRow(null, orangeTeam[i]))
+                }
+            }
+        }
         return (
             <>
             <Divider/>
             <CardContent>
-                <Grid container spacing={32}>
+                <Grid container spacing={32} justify="center">
                     <Grid item xs={4}>
-                        {!ranksEmpty ? this.createTable(blueTeam, orangeTeam)
+                        {!ranksEmpty ? this.createTable(rows)
                             :
                             <Typography>No predictions for this gamemode are available.</Typography>}
                     </Grid>
@@ -41,51 +56,59 @@ export class PredictionsContent extends React.PureComponent<Props, State> {
         )
     }
 
-    private createRow(player: any) {
+    private createRow(player: any, playerRight: any) {
         const {predictedRanks} = this.props
         return (
             <TableRow>
-                <TableCell>
-                    <Typography>{player.name}</Typography>
+                <TableCell align="left">
+                    {player !== null && <Typography>{player.name}</Typography>}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
 
-                    <img alt={`Rank image ${predictedRanks[player.id]}`}
-                         src={`${window.location.origin}/ranks/${predictedRanks[player.id]}.png`}
-                         style={{width: 48, height: 48, margin: "auto"}}/>
+                    {player !== null && <img alt={`Rank image ${predictedRanks[player.id]}`}
+                                             src={`${window.location.origin}/ranks/${predictedRanks[player.id]}.png`}
+                                             style={{width: 48, height: 48, margin: "auto"}}/>}
                 </TableCell>
-            </TableRow>
-        )
-    }
-
-    private createTeamTitle(title: string) {
-        return (
-            <TableRow>
-                <TableCell>
-                    <Typography variant="h4">{title}</Typography>
+                <TableCell align="center">
+                    {playerRight !== null && <img alt={`Rank image ${predictedRanks[playerRight.id]}`}
+                         src={`${window.location.origin}/ranks/${predictedRanks[playerRight.id]}.png`}
+                         style={{width: 48, height: 48, margin: "auto"}}/>}
+                </TableCell>
+                <TableCell align="right">
+                    {playerRight !== null && <Typography>{playerRight.name}</Typography>}
                 </TableCell>
             </TableRow>
         )
     }
 
-    private createTable(playersBlue: any, playersOrange: any) {
+    // private createTeamTitle(title: string) {
+    //     return (
+    //         <TableRow>
+    //             <TableCell>
+    //                 <Typography variant="h4">{title}</Typography>
+    //             </TableCell>
+    //         </TableRow>
+    //     )
+    // }
+
+    private createTable(rows: any) {
         return (
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>
-                            Player
+                        <TableCell align="left">
+                            Player (Blue)
                         </TableCell>
-                        <TableCell>
+                        <TableCell colSpan={2} align="center">
                             Predicted Play Level
+                        </TableCell>
+                        <TableCell align="right">
+                            Player (Orange)
                         </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.createTeamTitle("Blue")}
-                    {playersBlue}
-                    {this.createTeamTitle("Orange")}
-                    {playersOrange}
+                    {rows}
                 </TableBody>
             </Table>
         )
