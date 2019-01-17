@@ -19,7 +19,8 @@ export class PredictionsContent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {replay} = this.props
+        const {replay, predictedRanks} = this.props
+        const ranksEmpty = Object.keys(predictedRanks).length === 0 && predictedRanks.constructor === Object
         const blueTeam =
             replay.players.filter((player) => !player.isOrange).map(this.createRow.bind(this))
         const orangeTeam =
@@ -30,7 +31,9 @@ export class PredictionsContent extends React.PureComponent<Props, State> {
             <CardContent>
                 <Grid container spacing={32}>
                     <Grid item xs={4}>
-                        {this.createTable(blueTeam, orangeTeam)}
+                        {!ranksEmpty ? this.createTable(blueTeam, orangeTeam)
+                            :
+                            <Typography>No predictions for this gamemode are available.</Typography>}
                     </Grid>
                 </Grid>
             </CardContent>
