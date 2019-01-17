@@ -104,7 +104,7 @@ class RankPredictionAPI:
     @with_session
     def create_from_id(id_, session=None):
         game: Game = session.query(Game).filter(Game.hash == id_).first()
-        if game.playlist != 13:
+        if game.playlist != 13 and game.playlist != 3: # standard and unranked standard
             return {}
         playergames = session.query(PlayerGame).filter(PlayerGame.game == id_).all()
         ranks = {}
