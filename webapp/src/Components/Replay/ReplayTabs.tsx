@@ -7,10 +7,12 @@ import { Replay } from "src/Models"
 import { StoreState } from "../../Redux"
 import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
+import { PredictionsContent } from "./PredictionsContent"
 import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay
+    predictedRanks: any
     explanations: Record<string, any> | undefined
 }
 
@@ -18,7 +20,7 @@ type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type ReplayTab = "playerStats" | "teamStats" | "advancedStats" | "replayViewer" | "qrCode"
+type ReplayTab = "playerStats" | "teamStats" | "advancedStats" | "replayViewer" | "predictions" | "qrCode"
 
 interface State {
     selectedTab: ReplayTab
@@ -31,6 +33,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const {predictedRanks} = this.props
         const isWidthSm = isWidthDown("sm", this.props.width)
         const url = `https://calculated.gg/replays/${this.props.replay.id}`
         const qrcode = (
@@ -59,6 +62,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                       scrollable={isWidthSm}
                 >
                     <Tab key="basicStats" label="Player Stats" value="playerStats"/>
+                    <Tab key="predictions" label="Predictions" value="predictions"/>
                     {this.props.loggedInUser && this.props.loggedInUser.beta &&
                     <Tab key="teamStats" label="Team Stats" value="teamStats"/>
                     }
@@ -73,6 +77,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 </Tabs>
                 {this.state.selectedTab === "playerStats" &&
                 <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations} />
+                }
+                {this.state.selectedTab === "predictions" &&
+                <PredictionsContent replay={this.props.replay} predictedRanks={predictedRanks}/>
                 }
                 {this.state.selectedTab === "teamStats" &&
                 <TeamStatsContent replay={this.props.replay} explanations={this.props.explanations}/>

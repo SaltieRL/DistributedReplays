@@ -1,7 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test webapp" type="JavaScriptTestRunnerJest" factoryName="Jest">
+  <configuration default="false" name="Test webapp" type="JavaScriptTestRunnerJest">
     <node-interpreter value="project" />
     <node-options value="" />
+    <jest-package value="$PROJECT_DIR$/webapp/node_modules/react-scripts-ts" />
     <working-dir value="$PROJECT_DIR$/webapp" />
     <jest-options value="--env=jsdom" />
     <envs />
