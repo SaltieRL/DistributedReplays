@@ -92,9 +92,9 @@ def api_v1_get_replays(session=None):
 
     # DATE stuff
     if 'start_timestamp' in args:
-        games = games.filter(Game.match_date > datetime.datetime.fromtimestamp(args['start_timestamp']))
+        games = games.filter(Game.match_date > datetime.datetime.fromtimestamp(int(args['start_timestamp'])))
     if 'end_timestamp' in args:
-        games = games.filter(Game.match_date < datetime.datetime.fromtimestamp(args['end_timestamp']))
+        games = games.filter(Game.match_date < datetime.datetime.fromtimestamp(int(args['end_timestamp'])))
 
     # GAME stuff
     if 'map' in args:
