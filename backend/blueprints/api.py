@@ -54,7 +54,7 @@ def api_v1_get_replays(session=None):
         page = int(args['page']) - 1
     if page < 0:
         page = 0
-    games = session.query(Game)
+    games = session.query(Game).order_by(Game.match_date)
     # RANK STUFF
     if 'rankany' in args:
         rank_opt = 'any'
