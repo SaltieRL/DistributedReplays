@@ -110,6 +110,7 @@ def api_v1_get_replays(session=None):
             pagesize = 200
     response = {}
     data = []
+    total_count = games.count()
     games = games[page * pagesize:(page + 1) * pagesize]
     game: Game
     for game in games:
@@ -132,6 +133,7 @@ def api_v1_get_replays(session=None):
     response['data'] = data
     response['page'] = page + 1
     response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2, key=api_key)
+    response['total_count'] = total_count
     response['version'] = 1
     return jsonify(response)
 
