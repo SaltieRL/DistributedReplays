@@ -109,7 +109,7 @@ def parse_replay_task(self, fn, preserve_upload_date=False):
         return
     # try:
     try:
-        analysis_manager = analyze_replay_file(fn, output)  # type: ReplayGame
+        analysis_manager = analyze_replay_file(fn)  # type: ReplayGame
     except Exception as e:
         if not os.path.isdir(failed_dir):
             os.makedirs(failed_dir)

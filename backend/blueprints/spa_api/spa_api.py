@@ -9,14 +9,25 @@ import uuid
 
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, redirect
 
-from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
+
+
+try:
+    import config
+except ImportError:
+    config = None
+
+try:
+    from backend.blueprints.spa_api.service_layers.ml.ml import RankPredictionAPI
+except ModuleNotFoundError:
+    RankPredictionAPI = None
+    print("Not using ML because required packages are not installed. Run `pip install -r requirements-ml.txt` to use ML.")
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game
-from backend.database.utils.utils import add_objs_to_db, convert_pickle_to_db, add_objects
+from backend.database.utils.utils import add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
@@ -243,7 +254,21 @@ def api_download_group():
 
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
-    return send_from_directory(current_app.config['REPLAY_DIR'], id_ + ".replay", as_attachment=True)
+    filename = id_ + ".replay"
+    path = os.path.join(current_app.config['REPLAY_DIR'], filename)
+    if os.path.isfile(path):
+        return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
+    elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):
+        return redirect(config.GCP_BUCKET_URL + filename)
+    return "Replay not found", 404
+
+
+@bp.route('replay/<id_>/predict')
+def api_predict_ranks(id_):
+    if RankPredictionAPI is None:
+        return 404, "Module not loaded"
+    ranks = RankPredictionAPI.create_from_id(id_)
+    return jsonify(ranks)
 
 
 @bp.route('/replay')

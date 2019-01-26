@@ -15,6 +15,7 @@ interface OwnProps {
     replay: Replay
     explanations: Record<string, any> | undefined
     handleUpdateTags: (tags: Tag[]) => void
+    predictedRanks: any
 }
 
 type Props = OwnProps
@@ -22,9 +23,9 @@ type Props = OwnProps
 
 class ReplayViewComponent extends React.PureComponent<Props> {
     public render() {
-        const {width, replay, explanations} = this.props
-        const blueCard = <ReplayTeamCard replay={replay} isOrange={false}/>
-        const orangeCard = <ReplayTeamCard replay={replay} isOrange={true}/>
+        const {width, replay, explanations, predictedRanks} = this.props
+        const blueCard = <ReplayTeamCard replay={replay} predictedRanks={predictedRanks} isOrange={false}/>
+        const orangeCard = <ReplayTeamCard replay={replay} predictedRanks={predictedRanks} isOrange={true}/>
 
         const downloadButton = (
             <Tooltip title="Download replay">
@@ -103,7 +104,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                     </>
                 }
                 <Grid item xs={12}>
-                    <ReplayTabs replay={replay} explanations={explanations}/>
+                    <ReplayTabs replay={replay} explanations={explanations} predictedRanks={predictedRanks}/>
                 </Grid>
             </Grid>
         )

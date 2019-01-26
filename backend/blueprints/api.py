@@ -54,7 +54,7 @@ def api_v1_get_replays(session=None):
         page = int(args['page']) - 1
     if page < 0:
         page = 0
-    games = session.query(Game)
+    games = session.query(Game).order_by(Game.match_date)
     # RANK STUFF
     if 'rankany' in args:
         rank_opt = 'any'
@@ -90,6 +90,12 @@ def api_v1_get_replays(session=None):
         games = games.filter(Game.match_date > datetime.date(int(args['year']), 1, 1)).filter(
             Game.match_date < datetime.date(int(args['year']) + 1, 1, 1))
 
+    # DATE stuff
+    if 'start_timestamp' in args:
+        games = games.filter(Game.match_date > datetime.datetime.fromtimestamp(int(args['start_timestamp'])))
+    if 'end_timestamp' in args:
+        games = games.filter(Game.match_date < datetime.datetime.fromtimestamp(int(args['end_timestamp'])))
+
     # GAME stuff
     if 'map' in args:
         games = games.filter(Game.map == args['map'])
@@ -104,6 +110,7 @@ def api_v1_get_replays(session=None):
             pagesize = 200
     response = {}
     data = []
+    total_count = games.count()
     games = games[page * pagesize:(page + 1) * pagesize]
     game: Game
     for game in games:
@@ -126,6 +133,7 @@ def api_v1_get_replays(session=None):
     response['data'] = data
     response['page'] = page + 1
     response['next'] = url_for('apiv1.api_v1_get_replays', page=page + 2, key=api_key)
+    response['total_count'] = total_count
     response['version'] = 1
     return jsonify(response)
 

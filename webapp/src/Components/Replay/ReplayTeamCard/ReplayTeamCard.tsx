@@ -6,6 +6,7 @@ import { TeamCardPlayer } from "./TeamCardPlayer"
 interface OwnProps {
     replay: Replay
     isOrange: boolean
+    predictedRanks: any
 }
 
 type Props = OwnProps
@@ -13,7 +14,7 @@ type Props = OwnProps
 
 class ReplayTeamCardComponent extends React.PureComponent<Props> {
     public render() {
-        const {replay, isOrange, classes} = this.props
+        const {replay, isOrange, classes, predictedRanks} = this.props
 
         const title = isOrange ? "Orange" : "Blue"
         const headerClassName = isOrange ? classes.orangeCard : classes.blueCard
@@ -29,7 +30,8 @@ class ReplayTeamCardComponent extends React.PureComponent<Props> {
                     <List>
                         {replay.players
                             .filter((player) => player.isOrange === isOrange)
-                            .map((player) => <TeamCardPlayer player={player} key={player.id}/>)
+                            .map((player) => <TeamCardPlayer player={player} predictedRank={predictedRanks[player.id]}
+                                                             key={player.id}/>)
                         }
                     </List>
                 </CardContent>

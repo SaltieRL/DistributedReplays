@@ -17,6 +17,7 @@ import { LoadoutDisplay } from "./LoadoutDisplay"
 
 interface Props {
     player: ReplayPlayer
+    predictedRank: number
 }
 
 interface State {
@@ -31,7 +32,7 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {player} = this.props
+        const {player, predictedRank} = this.props
 
         const carButton = (
             <Tooltip title="Loadout">
@@ -48,11 +49,17 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
                 </IconButton>
             </Tooltip>
         )
+        const showRankImg = false
+        const rankImg = (
+            <img src={`${window.location.origin}/ranks/${predictedRank}.png`}
+                 style={{width: 48, height: 48, margin: "auto"}}/>
+        )
 
         return (
             <>
                 <ListItem button key={player.id}
                           component={this.createLink}>
+                    {showRankImg && rankImg}
                     <ListItemText primary={player.name} primaryTypographyProps={{noWrap: true}}
                                   style={{padding: "0 64px 0 0"}}/>
                     <ListItemSecondaryAction>
