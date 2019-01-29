@@ -63,12 +63,13 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 >
                     <Tab key="basicStats" label="Player Stats" value="playerStats"/>
                     <Tab key="predictions" label="Predictions" value="predictions"/>
+
+                    <Tab key="advancedStats" label="Advanced Stats" value="advancedStats"/>
                     {this.props.loggedInUser && this.props.loggedInUser.beta &&
                     <Tab key="teamStats" label="Team Stats" value="teamStats"/>
                     }
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
                     [
-                        <Tab key="advancedStats" label="Advanced Stats" value="advancedStats"/>,
                         <Tab key="replayViewer" label="Replay Viewer" value="replayViewer"/>
                     ]
                     }
@@ -76,7 +77,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     <Tab key="qrCode" label="QR Code" value="qrCode"/>
                 </Tabs>
                 {this.state.selectedTab === "playerStats" &&
-                <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations} />
+                <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations}/>
                 }
                 {this.state.selectedTab === "predictions" &&
                 <PredictionsContent replay={this.props.replay} predictedRanks={predictedRanks}/>

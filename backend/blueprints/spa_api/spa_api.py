@@ -11,7 +11,7 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename, redirect
 
-
+from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 
 try:
     import config
@@ -22,7 +22,8 @@ try:
     from backend.blueprints.spa_api.service_layers.ml.ml import RankPredictionAPI
 except ModuleNotFoundError:
     RankPredictionAPI = None
-    print("Not using ML because required packages are not installed. Run `pip install -r requirements-ml.txt` to use ML.")
+    print(
+        "Not using ML because required packages are not installed. Run `pip install -r requirements-ml.txt` to use ML.")
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
@@ -235,6 +236,12 @@ def api_get_replay_basic_team_stats_download(id_):
 @bp.route('replay/<id_>/positions')
 def api_get_replay_positions(id_):
     positions = ReplayPositions.create_from_id(id_)
+    return better_jsonify(positions)
+
+
+@bp.route('replay/<id_>/heatmaps')
+def api_get_replay_heatmaps(id_):
+    positions = ReplayHeatmaps.create_from_id(id_)
     return better_jsonify(positions)
 
 
