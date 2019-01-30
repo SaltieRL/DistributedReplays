@@ -9,6 +9,7 @@ import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
 import { PredictionsContent } from "./PredictionsContent"
 import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
+import { AdvancedStatsContent } from "./AdvancedStats/AdvancedStatsContent"
 
 interface OwnProps {
     replay: Replay
@@ -78,6 +79,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 </Tabs>
                 {this.state.selectedTab === "playerStats" &&
                 <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations}/>
+                }
+                {this.state.selectedTab === "advancedStats" &&
+                <AdvancedStatsContent replay={this.props.replay}/>
                 }
                 {this.state.selectedTab === "predictions" &&
                 <PredictionsContent replay={this.props.replay} predictedRanks={predictedRanks}/>

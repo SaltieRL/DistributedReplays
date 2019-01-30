@@ -1,6 +1,7 @@
 import gzip
 from typing import List
 
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -31,19 +32,23 @@ class ReplayHeatmaps:
             raise ErrorOpeningGame(str(e))
         output = generate_heatmaps(data_frame)
         data = {}
+        maxs = {}
+        max_ = 0
         for player in output:
             arr = output[player]
             player_data = []
-            for x in range(len(arr)):
-                for y in range(len(arr[x])):
+            for x in range(len(arr[0])):
+                for y in range(len(arr[0][x])):
                     player_data.append({
-                        'x': x,
-                        'y': y,
-                        'data': arr[x, y]
+                        'x': math.floor(arr[1][x] * 200/6000 + 250),
+                        'y': math.floor(arr[2][y] * 200/6000 + 250),
+                        'value': max(0, math.log(arr[0][x, y] + 1e-3))
                     })
+                    max_ = max(math.log(arr[0][x, y] + 1e-3), max_)
             data[player] = player_data
+            maxs[player] = max_
 
-        return data
+        return {'data': data, 'maxs': maxs}
 
 # will go into carball at some point
 def generate_heatmaps(df):
@@ -62,5 +67,5 @@ def generate_heatmaps(df):
         # plt.colorbar()
         # plt.title(player)
         # plt.show()
-        data[player] = H
+        data[player] = (H, x, y)
     return data
