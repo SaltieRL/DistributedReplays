@@ -95,7 +95,6 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
                 inputLabel="Playlist"
                 helperText="Select playlist to use"
                 dropdownOnly
-                currentPlaylistsOnly
                 multiple={false}/>
         )
         return (
