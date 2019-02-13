@@ -1,10 +1,10 @@
 import Grid from "@material-ui/core/Grid"
+import Typography from "@material-ui/core/Typography"
 import * as React from "react"
 import { Replay } from "src/Models"
 import { getHeatmaps } from "../../../Requests/Replay"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
 import { ReactHeatmap } from "./Heatmap"
-import Typography from "@material-ui/core/Typography"
 
 interface Props {
     replay: Replay
@@ -36,12 +36,12 @@ export class AdvancedStatsContent extends React.PureComponent<Props, State> {
 
         return (
             <Grid container>
-                    <LoadableWrapper load={this.getHeatmapsData}>
-                        {this.state.heatmapData !== null ?
-                            blueTeam.map((player) =>
-                                <Grid item key={player.name} xs={12} style={{height: "500px"}}>
-                                    <Typography>{player.name}</Typography>
-                                    <ReactHeatmap data={{
+                <LoadableWrapper load={this.getHeatmapsData}>
+                    {this.state.heatmapData !== null ?
+                        blueTeam.map((player) =>
+                            <Grid item key={player.name} xs={12} style={{height: "500px"}}>
+                                <Typography>{player.name}</Typography>
+                                <ReactHeatmap data={{
                                     max: this.state.heatmapData.maxs[player.name],
                                     // max: 1,
                                     data: this.state.heatmapData.data[player.name]
@@ -50,22 +50,39 @@ export class AdvancedStatsContent extends React.PureComponent<Props, State> {
                                               config={{
                                                   radius: 22
                                               }}/>
-                                </Grid>) : undefined}
-                                {this.state.heatmapData !== null ?
-                            orangeTeam.map((player) =>
-                                <Grid item key={player.name} xs={12} style={{height: "500px"}}>
-                                    <Typography>{player.name}</Typography>
-                                    <ReactHeatmap data={{
-                                    max: this.state.heatmapData.maxs[player.name],
-                                    // max: 1,
-                                    data: this.state.heatmapData.data[player.name]
-                                }}
-                                              style={{width: "500px", height: "500px"}}
-                                              config={{
-                                                  radius: 22
-                                              }}/>
-                                </Grid>) : undefined}
-                    </LoadableWrapper>
+                            </Grid>) : undefined}
+                    {this.state.heatmapData !== null ?
+                        orangeTeam.map((player) =>
+                            <Grid item key={player.name} xs={12} style={{height: "500px"}}>
+                                <Typography>{player.name}</Typography>
+                                <ReactHeatmap
+                                    data={{
+                                        max: this.state.heatmapData.maxs[player.name],
+                                        // max: 1,
+                                        data: this.state.heatmapData.data[player.name]
+                                    }}
+                                    style={{width: "500px", height: "500px"}}
+                                    config={{
+                                        radius: 22
+                                    }}/>
+                            </Grid>) : undefined}
+                    {(this.state.heatmapData !== null && "ball" in this.state.heatmapData.data) ?
+                        <Grid item xs={12} style={{height: "500px"}}>
+                                <Typography>Ball</Typography>
+                                <ReactHeatmap
+                                    data={{
+                                        max: this.state.heatmapData.maxs.ball,
+                                        // max: 1,
+                                        data: this.state.heatmapData.data.ball
+                                    }}
+                                    style={{width: "500px", height: "500px"}}
+                                    config={{
+                                        radius: 22
+                                    }}/>
+                            </Grid>
+                        : undefined}
+
+                </LoadableWrapper>
             </Grid>
         )
 

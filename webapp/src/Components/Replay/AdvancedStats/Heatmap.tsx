@@ -48,7 +48,9 @@ export class ReactHeatmap extends React.PureComponent<Props, State> {
     public render() {
 
         return (
-            <div ref={"react-heatmap"} />
+            <>
+                <div ref={"react-heatmap"}/>
+            </>
         )
 
     }
