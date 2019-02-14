@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import { BasicStat, PlayerStatsSubcategory, Replay } from "src/Models"
+import { BasicStat, PlayerStatsSubcategory, Replay } from "../../../../Models"
 import { getReplayPlayerStats } from "../../../../Requests/Replay"
 import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 import { StatChart } from "../../../Shared/Charts/StatChart"

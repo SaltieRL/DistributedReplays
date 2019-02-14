@@ -9,7 +9,6 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
-import { LoggedInUserActions, StoreState } from "src/Redux"
 import {
     ABOUT_LINK,
     DISCORD_LINK,
@@ -22,6 +21,7 @@ import {
     TWITTER_LINK,
     UPLOAD_LINK
 } from "../../Globals"
+import { LoggedInUserActions, StoreState } from "../../Redux"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { LinkButton } from "../Shared/LinkButton"
 import { Logo } from "../Shared/Logo/Logo"

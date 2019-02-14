@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import { NotificationActions } from "src/Redux/notifications/actions"
+import { NotificationActions } from "../../../Redux"
 import { NotificationProps } from "./NotificationSnackbar"
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core"
 import Grid from "@material-ui/core/Grid/Grid"
 import * as React from "react"
-import { Replay } from "src/Models"
+import { Replay } from "../../Models"
 
 interface BoxScoreData {
     name: "Blue" | "Orange",

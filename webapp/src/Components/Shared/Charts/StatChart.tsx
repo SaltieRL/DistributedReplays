@@ -1,6 +1,6 @@
 import { Tooltip } from "@material-ui/core"
 import * as React from "react"
-import { BasicStat } from "src/Models"
+import { BasicStat } from "../../../Models"
 import { ColoredBarChart } from "./ColoredBarChart"
 import { ColoredPieChart } from "./ColoredPieChart"
 import { ColoredRadarChart } from "./ColoredRadarChart"

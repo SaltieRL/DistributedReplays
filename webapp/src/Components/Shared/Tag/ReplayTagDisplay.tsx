@@ -21,10 +21,10 @@ export class ReplayTagDisplay extends React.PureComponent<Props> {
                         value={replay.tags.map((tag) => tag.name)}
                         onChange={this.handleChange}
                         autoWidth
-                        renderValue={(tagNames: string[]) => {
+                        renderValue={(tagNames: any) => {
                             return (
                                 <div style={{display: "flex", flexWrap: "wrap"}}>
-                                    {tagNames.map((tagName) => (
+                                    {tagNames.map((tagName: string) => (
                                         <Chip
                                             key={tagName} label={tagName}
                                             onDelete={this.handleChipDelete(tagName)}

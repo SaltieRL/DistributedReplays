@@ -1,7 +1,7 @@
 import * as React from "react"
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import { NotificationActions, StoreState } from "src/Redux"
+import { NotificationActions, StoreState } from "../../../Redux"
 import { NotificationProps, NotificationSnackbar } from "./NotificationSnackbar"
 
 type Props = ReturnType<typeof mapStateToProps>
