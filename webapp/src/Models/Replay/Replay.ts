@@ -1,4 +1,4 @@
-import * as moment from "moment"
+import moment from "moment"
 
 export type GameMode = "1's" | "2's" | "3's"
 

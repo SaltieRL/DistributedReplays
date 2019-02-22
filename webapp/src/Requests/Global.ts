@@ -1,4 +1,4 @@
-import * as qs from "qs"
+import qs from "qs"
 import { doGet, doPost } from "../apiHandler/apiHandler"
 import { useMockData } from "./Config"
 

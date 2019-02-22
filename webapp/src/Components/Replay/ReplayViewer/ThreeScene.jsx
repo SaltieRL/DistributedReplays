@@ -2,10 +2,6 @@ import React, {Component} from "react";
 import * as THREE from "three";
 
 export class ThreeScene extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         const width = this.mount.clientWidth;
         const height = this.mount.clientHeight;

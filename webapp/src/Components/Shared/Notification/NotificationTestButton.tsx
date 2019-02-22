@@ -2,7 +2,7 @@ import { Button } from "@material-ui/core"
 import * as React from "react"
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import { NotificationActions } from "src/Redux"
+import { NotificationActions } from "../../../Redux"
 import { NotificationProps } from "./NotificationSnackbar"
 
 type Props = ReturnType<typeof mapDispatchToProps>

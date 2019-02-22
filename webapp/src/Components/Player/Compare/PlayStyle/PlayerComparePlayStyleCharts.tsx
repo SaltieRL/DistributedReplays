@@ -1,6 +1,6 @@
 import { FormControlLabel, Grid, Switch, Typography } from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleRawResponse, PlayStyleResponse } from "src/Models"
+import { PlayStyleRawResponse, PlayStyleResponse } from "../../../../Models"
 import { getPlayStyle, getPlayStyleRaw } from "../../../../Requests/Player/getPlayStyle"
 import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { RankSelect } from "../../../Shared/Selects/RankSelect"

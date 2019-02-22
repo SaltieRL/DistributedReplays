@@ -1,7 +1,7 @@
 import { createStyles, Grid, Theme, Typography, withStyles, WithStyles } from "@material-ui/core"
 import Warning from "@material-ui/icons/Warning"
 import * as React from "react"
-import { PlayStyleResponse } from "src/Models"
+import { PlayStyleResponse } from "../../../../Models"
 import { getPlayStyle } from "../../../../Requests/Player/getPlayStyle"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 import { PlayerPlayStyleChart } from "./PlayerPlayStyleChart"

@@ -1,7 +1,7 @@
 import { CardContent, Divider, Grid, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
 import * as React from "react"
-import { PlayerStatsSubcategory, Replay } from "src/Models"
+import { PlayerStatsSubcategory, Replay } from "../../Models"
 
 interface Props {
     replay: Replay

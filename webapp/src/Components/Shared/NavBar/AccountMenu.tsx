@@ -14,8 +14,8 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import { Link } from "react-router-dom"
-import { LoggedInUserState } from "src/Redux/loggedInUser/reducer"
 import { LOCAL_LINK, LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK } from "../../../Globals"
+import { LoggedInUserState } from "../../../Redux/loggedInUser/reducer"
 import { LinkButton } from "../LinkButton"
 
 interface OwnProps {

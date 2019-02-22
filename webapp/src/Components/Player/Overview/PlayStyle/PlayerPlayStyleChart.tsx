@@ -2,7 +2,7 @@ import { withTheme, WithTheme } from "@material-ui/core"
 import { ChartData, ChartDataSets, LinearTickOptions, RadialChartOptions } from "chart.js"
 import * as React from "react"
 import { Radar } from "react-chartjs-2"
-import { ChartDataPoint, ChartDataResponse } from "src/Models"
+import { ChartDataPoint, ChartDataResponse } from "../../../../Models"
 import { roundLabelToMaxDPCallback } from "../../../../Utils/Chart"
 import { colorsForPlaylists, convertHexToRgba } from "../../../../Utils/Color"
 

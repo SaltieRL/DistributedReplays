@@ -1,9 +1,9 @@
 import { Card, CardContent, Grid, Tab, Tabs, Typography, withWidth } from "@material-ui/core"
 import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
-import * as QRCode from "qrcode.react"
+import QRCode from "qrcode.react"
 import * as React from "react"
 import { connect } from "react-redux"
-import { Replay } from "src/Models"
+import { Replay } from "../../Models"
 import { StoreState } from "../../Redux"
 import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
@@ -98,7 +98,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: ReplayTab) => {
+    private readonly handleSelectTab = (_: React.ChangeEvent<{}>, selectedTab: ReplayTab) => {
         this.setState({selectedTab})
     }
 }
