@@ -7,12 +7,11 @@ import { Replay } from "../../Models"
 import { StoreState } from "../../Redux"
 import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
-import { PredictionsContent } from "./PredictionsContent"
+import { Predictions } from "./Predictions/Predictions"
 import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
 
 interface OwnProps {
     replay: Replay
-    predictedRanks: any
     explanations: Record<string, any> | undefined
 }
 
@@ -33,7 +32,6 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {predictedRanks} = this.props
         const isWidthSm = isWidthDown("sm", this.props.width)
         const url = `https://calculated.gg/replays/${this.props.replay.id}`
         const qrcode = (
@@ -79,7 +77,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations} />
                 }
                 {this.state.selectedTab === "predictions" &&
-                <PredictionsContent replay={this.props.replay} predictedRanks={predictedRanks}/>
+                <Predictions replay={this.props.replay}/>
                 }
                 {this.state.selectedTab === "teamStats" &&
                 <TeamStatsContent replay={this.props.replay} explanations={this.props.explanations}/>
