@@ -1,66 +1,65 @@
 import {
-    Button,
     Dialog,
     DialogContent,
     DialogTitle,
     FormControlLabel,
-    Grid,
-    IconButton, Switch,
-    Tooltip
+    IconButton,
+    ListItemIcon,
+    ListItemText,
+    Menu,
+    MenuItem,
+    Switch
 } from "@material-ui/core"
 import CompareArrows from "@material-ui/icons/CompareArrows"
+import Info from "@material-ui/icons/Info"
+import MoreVert from "@material-ui/icons/MoreVert"
 import * as React from "react"
-import { Link } from "react-router-dom"
-import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
-import { LinkButton } from "../../../Shared/LinkButton"
 import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { PlayStyleExplanationTable } from "./PlayStyleExplanationTable"
 
 interface OwnProps {
     player: Player
-    useFullSizeCompareButton?: boolean
     handlePlaylistChange?: (playlist: number) => void
     handleWinsLossesChange?: (winLossMode: boolean) => void
 }
 
 type Props = OwnProps
 
-interface State {
+interface MenuState {
+    menuOpen: boolean
+    anchorElement?: HTMLElement
+}
+
+interface ActionsState {
     dialogOpen: boolean
     playlist: number
     winLossMode: boolean
 }
 
+type State = MenuState & ActionsState
+
 export class PlayStyleActions extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {dialogOpen: false, playlist: 13, winLossMode: false}
+        this.state = {
+            menuOpen: false,
+            dialogOpen: false,
+            playlist: 13,
+            winLossMode: false
+        }
     }
 
     public render() {
-        const compareButton = this.props.useFullSizeCompareButton ? (
-            <LinkButton icon={CompareArrows} iconType="mui"
-                        to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
-                Compare
-            </LinkButton>
-        ) : (
-            <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)}>
-                <Tooltip title="Compare with...">
-                    <IconButton style={{marginRight: 8, top: -3}}>
-                        <CompareArrows/>
-                    </IconButton>
-                </Tooltip>
-            </Link>
-        )
-        const dropDown = (
+        const playlistSelect = (
             <PlaylistSelect
                 selectedPlaylist={this.state.playlist}
                 handleChange={this.handlePlaylistsChange}
-                inputLabel="Playlist"
-                helperText="Select playlist to use"
+                inputLabel=""
+                helperText=""
                 dropdownOnly
                 currentPlaylistsOnly
-                multiple={false}/>
+                multiple={false}
+            />
         )
 
         const toggleWinsLosses = (
@@ -70,44 +69,70 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
             />
         )
 
-        return (
-            <Grid container justify="center" spacing={8}>
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    {toggleWinsLosses}
-                </Grid>
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    {dropDown}
-                </Grid>
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    {compareButton}
-                </Grid>
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    <Button variant="outlined"
-                            onClick={this.handleOpen}
-                            style={{marginRight: 8, height: "100%"}}
-                    >
-                        What are these stats?
-                    </Button>
-                </Grid>
+        const explanationsDialog = (
+            <Dialog open={this.state.dialogOpen}
+                    onClose={this.handleExplanationsClose}
+                    scroll="paper"
+            >
+                <DialogTitle>Explanation of terms</DialogTitle>
+                <DialogContent>
+                    <PlayStyleExplanationTable/>
+                </DialogContent>
+            </Dialog>
+        )
 
-                <Dialog open={this.state.dialogOpen}
+        return (
+            <>
+                <>
+                    <IconButton onClick={this.handleOpen} style={{marginRight: 8}}>
+                        <MoreVert/>
+                    </IconButton>
+                    <Menu
+                        open={this.state.menuOpen}
+                        anchorEl={this.state.anchorElement}
                         onClose={this.handleClose}
-                        scroll="paper"
-                >
-                    <DialogTitle>Explanation of terms</DialogTitle>
-                    <DialogContent>
-                        <PlayStyleExplanationTable/>
-                    </DialogContent>
-                </Dialog>
-            </Grid>
+                    >
+                        <MenuItem onClick={this.handleExplanationsOpen}>
+                            <ListItemIcon><Info/></ListItemIcon>
+                            <ListItemText primary="Stats explanations"/>
+                        </MenuItem>
+                        <MenuItem>
+                            <ListItemIcon><CompareArrows/></ListItemIcon>
+                            <ListItemText primary="Compare with other players"/>
+                        </MenuItem>
+                        <MenuItem style={{justifyContent: "center"}}>
+                            {playlistSelect}
+                        </MenuItem>
+                        <MenuItem>
+                            {toggleWinsLosses}
+                        </MenuItem>
+                    </Menu>
+                </>
+
+                {explanationsDialog}
+            </>
         )
     }
 
-    private readonly handleOpen = () => {
-        this.setState({dialogOpen: true})
+    private readonly handleOpen: React.MouseEventHandler<HTMLElement> = (event) => {
+        this.setState({
+            menuOpen: true,
+            anchorElement: event.currentTarget
+        })
     }
 
     private readonly handleClose = () => {
+        this.setState({
+            menuOpen: false,
+            anchorElement: undefined
+        })
+    }
+
+    private readonly handleExplanationsOpen = () => {
+        this.setState({dialogOpen: true})
+    }
+
+    private readonly handleExplanationsClose = () => {
         this.setState({dialogOpen: false})
     }
 

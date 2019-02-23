@@ -93,10 +93,11 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
                                 <>
-                                    <PlayStyleActions player={this.props.player}
-                                                      handlePlaylistChange={this.handlePlaylistChange}
-                                                      handleWinsLossesChange={this.handleWinsLossesChange}
-                                                      useFullSizeCompareButton/>
+                                    <PlayStyleActions
+                                        player={this.props.player}
+                                        handlePlaylistChange={this.handlePlaylistChange}
+                                        handleWinsLossesChange={this.handleWinsLossesChange}
+                                    />
                                     {playerPlayStyle}
                                 </>
                                 }
