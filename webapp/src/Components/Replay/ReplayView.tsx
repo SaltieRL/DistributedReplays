@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, Grid, IconButton, Tooltip, withWidth } from "@material-ui/core"
+import { Card, CardContent, CardHeader, Grid, IconButton, Tooltip, Typography, withWidth } from "@material-ui/core"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import CloudDownload from "@material-ui/icons/CloudDownload"
@@ -52,7 +52,11 @@ class ReplayViewComponent extends React.PureComponent<Props> {
         const replayChartCard = (
             <Card>
                 <CardHeader
-                    title={replay.name ? replay.name : "Unnamed replay"}
+                    title={
+                        <Tooltip title={"Map: " + replay.map + ", Date: " + replay.date.format("LLLL")} enterDelay={100}
+                                 placement="bottom">
+                            <Typography variant="h5"> {replay.name} </Typography>
+                        </Tooltip>}
                     subheader={<ColouredGameScore replay={replay}/>}
                     titleTypographyProps={{align: "center"}}
                     subheaderTypographyProps={{align: "center", variant: "subheading"}}
