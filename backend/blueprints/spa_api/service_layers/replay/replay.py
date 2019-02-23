@@ -21,12 +21,13 @@ class GameScore:
 
 
 class Replay:
-    def __init__(self, id_: str, name: str, date: str,
+    def __init__(self, id_: str, name: str, date: str, map: str,
                  game_mode: str, game_score: GameScore,
                  players: List[ReplayPlayer], tags: List[Tag]):
         self.id = id_
         self.name = name
         self.date = date
+        self.map = map
         self.gameMode = game_mode
         self.gameScore = game_score.__dict__
         self.players = [player.__dict__ for player in players]
@@ -47,6 +48,7 @@ class Replay:
             id_=game.hash,
             name=game.name,
             date=game.match_date.isoformat(),
+            map=game.map,
             game_mode=get_playlist(game.playlist, game.teamsize),
             game_score=GameScore.create_from_game(game),
             players=[
