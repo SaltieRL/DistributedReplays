@@ -1,8 +1,9 @@
 import * as React from "react"
 
-import { createStyles, Toolbar, WithStyles, withStyles } from "@material-ui/core"
+import { createStyles, Toolbar, WithStyles, withStyles, withWidth } from "@material-ui/core"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 
-type Props = WithStyles<typeof styles>
+type Props = WithStyles<typeof styles> & WithWidth
 
 class PageContentComponent extends React.PureComponent<Props> {
     public render() {
@@ -10,7 +11,7 @@ class PageContentComponent extends React.PureComponent<Props> {
         return (
             <div className={classes.content}>
                 <Toolbar/>
-                <div style={{padding: 20, minHeight: "100%"}}>
+                <div style={{padding: isWidthUp("sm", this.props.width) ? 20 : 3, minHeight: "100%"}}>
                     {this.props.children}
                 </div>
             </div>
@@ -27,4 +28,4 @@ const styles = createStyles({
     }
 })
 
-export const PageContent = withStyles(styles)(PageContentComponent)
+export const PageContent = withWidth()(withStyles(styles)(PageContentComponent))
