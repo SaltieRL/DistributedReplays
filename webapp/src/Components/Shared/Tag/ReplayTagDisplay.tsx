@@ -1,6 +1,6 @@
 import { Chip, FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models/Replay/Replay"
+import { Replay } from "../../../Models"
 import { addTagToGame, removeTagFromGame } from "../../../Requests/Tag"
 
 interface UserTagProps {
@@ -55,10 +55,10 @@ export class ReplayTagDisplay extends React.PureComponent<Props> {
                     multiple
                     value={replay.tags.map((tag) => tag.name)}
                     autoWidth
-                    renderValue={(tagNames: string[]) => {
+                    renderValue={(tagNames: any) => {
                         return (
                             <div style={{display: "flex", flexWrap: "wrap"}}>
-                                {tagNames.map((tagName) => (
+                                {tagNames.map((tagName: string) => (
                                     <Chip
                                         key={tagName} label={tagName}
                                         style={{margin: 4}}

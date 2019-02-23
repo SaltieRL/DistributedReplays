@@ -2,7 +2,7 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    FormControlLabel,
+    Divider,
     IconButton,
     ListItemIcon,
     ListItemText,
@@ -16,9 +16,13 @@ import MoreVert from "@material-ui/icons/MoreVert"
 import * as React from "react"
 import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { PlayStyleExplanationTable } from "./PlayStyleExplanationTable"
+import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
+import { Link } from "react-router-dom"
 
 interface OwnProps {
     player: Player
+    playlist: number
+    winLossMode: boolean
     handlePlaylistChange?: (playlist: number) => void
     handleWinsLossesChange?: (winLossMode: boolean) => void
 }
@@ -32,8 +36,6 @@ interface MenuState {
 
 interface ActionsState {
     dialogOpen: boolean
-    playlist: number
-    winLossMode: boolean
 }
 
 type State = MenuState & ActionsState
@@ -43,29 +45,20 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
         super(props)
         this.state = {
             menuOpen: false,
-            dialogOpen: false,
-            playlist: 13,
-            winLossMode: false
+            dialogOpen: false
         }
     }
 
     public render() {
         const playlistSelect = (
             <PlaylistSelect
-                selectedPlaylist={this.state.playlist}
+                selectedPlaylist={this.props.playlist}
                 handleChange={this.handlePlaylistsChange}
                 inputLabel=""
                 helperText=""
                 dropdownOnly
                 currentPlaylistsOnly
                 multiple={false}
-            />
-        )
-
-        const toggleWinsLosses = (
-            <FormControlLabel
-                control={<Switch onChange={this.handleWinsLossesChange}/>}
-                label="Wins/Losses mode"
             />
         )
 
@@ -96,15 +89,21 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                             <ListItemIcon><Info/></ListItemIcon>
                             <ListItemText primary="Stats explanations"/>
                         </MenuItem>
-                        <MenuItem>
-                            <ListItemIcon><CompareArrows/></ListItemIcon>
-                            <ListItemText primary="Compare with other players"/>
-                        </MenuItem>
+                        <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)} style={{textDecoration: "none"}}>
+                            <MenuItem>
+                                <ListItemIcon><CompareArrows/></ListItemIcon>
+                                <ListItemText primary="Compare with other players"/>
+                            </MenuItem>
+                        </Link>
+                        <Divider component={"li" as any}/>
                         <MenuItem style={{justifyContent: "center"}}>
                             {playlistSelect}
                         </MenuItem>
-                        <MenuItem>
-                            {toggleWinsLosses}
+                        <MenuItem onClick={this.toggleWinsLossesMode}>
+                            <ListItemIcon>
+                                <Switch checked={this.props.winLossMode}/>
+                            </ListItemIcon>
+                            <ListItemText primary="Wins/Losses mode"/>
                         </MenuItem>
                     </Menu>
                 </>
@@ -138,16 +137,14 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
 
     private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
         const selectedPlaylist = event.target.value as any as number
-        this.setState({playlist: selectedPlaylist})
         if (this.props.handlePlaylistChange) {
             this.props.handlePlaylistChange(selectedPlaylist)
         }
     }
 
-    private readonly handleWinsLossesChange = (event: React.ChangeEvent<HTMLInputElement>, winLossMode: boolean) => {
-        this.setState({winLossMode})
+    private readonly toggleWinsLossesMode: React.MouseEventHandler = () => {
         if (this.props.handleWinsLossesChange) {
-            this.props.handleWinsLossesChange(winLossMode)
+            this.props.handleWinsLossesChange(!this.props.winLossMode)
         }
     }
 }
