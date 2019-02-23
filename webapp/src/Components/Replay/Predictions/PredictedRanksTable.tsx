@@ -20,9 +20,10 @@ export class PredictedRanksTable extends React.PureComponent<Props> {
         for (let i = 0; i < maxLength; i++) {
             const playerLeft = i < blueTeam.length ? blueTeam[i] : undefined
             const playerRight = i < orangeTeam.length ? orangeTeam[i] : undefined
-            const row = <PredictedRanksRow predictedRanks={predictedRanks}
-                                           playerLeft={playerLeft} playerRight={playerRight}/>
-            rows.push(row)
+            rows.push((
+                <PredictedRanksRow predictedRanks={predictedRanks}
+                                   playerLeft={playerLeft} playerRight={playerRight}/>)
+            )
         }
 
         return (

@@ -44,7 +44,7 @@ export class Predictions extends React.PureComponent<Props, State> {
         )
     }
 
-    private getPredictedRanks = (): Promise<void> => {
+    private readonly getPredictedRanks = (): Promise<void> => {
         return getPredictedRanks(this.props.replay.id)
             .then((predictedRanks) => this.setState({predictedRanks}))
     }

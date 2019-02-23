@@ -10,8 +10,12 @@ interface Props {
 export class PredictedRanksRow extends React.PureComponent<Props> {
     public render() {
         const {predictedRanks, playerLeft, playerRight} = this.props
-        const playerLeftRank = playerLeft && predictedRanks.find((predictedRank: PredictedRank) => predictedRank.id === playerLeft.id)!.predictedRank
-        const playerRightRank = playerRight && predictedRanks.find((predictedRank: PredictedRank) => predictedRank.id === playerRight.id)!.predictedRank
+        const playerLeftRank = playerLeft && predictedRanks.find(
+            (predictedRank: PredictedRank) => predictedRank.id === playerLeft.id
+        )!.predictedRank
+        const playerRightRank = playerRight && predictedRanks.find(
+            (predictedRank: PredictedRank) => predictedRank.id === playerRight.id
+        )!.predictedRank
 
         return (
             <TableRow>

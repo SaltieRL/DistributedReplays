@@ -14,10 +14,10 @@ import CompareArrows from "@material-ui/icons/CompareArrows"
 import Info from "@material-ui/icons/Info"
 import MoreVert from "@material-ui/icons/MoreVert"
 import * as React from "react"
+import { Link } from "react-router-dom"
+import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
 import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { PlayStyleExplanationTable } from "./PlayStyleExplanationTable"
-import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
-import { Link } from "react-router-dom"
 
 interface OwnProps {
     player: Player
