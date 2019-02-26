@@ -1,9 +1,8 @@
 import * as React from "react"
-import {connect} from "react-redux"
-import {Dispatch} from "redux"
-import {StoreState} from "../../../Redux"
-import {dismissNotificationAction} from "../../../Redux/notifications/actions"
-import {NotificationProps, NotificationSnackbar} from "./NotificationSnackbar"
+import { connect } from "react-redux"
+import { Dispatch } from "redux"
+import { NotificationActions, StoreState } from "../../../Redux"
+import { NotificationProps, NotificationSnackbar } from "./NotificationSnackbar"
 
 type Props = ReturnType<typeof mapStateToProps>
     & ReturnType<typeof mapDispatchToProps>
@@ -53,7 +52,7 @@ export const mapStateToProps = (state: StoreState) => ({
 })
 
 export const mapDispatchToProps = (dispatch: Dispatch) => ({
-    dismissNotification: () => dispatch(dismissNotificationAction())
+    dismissNotification: () => dispatch(NotificationActions.dismissNotificationAction())
 })
 
 export const Notifications = connect(mapStateToProps, mapDispatchToProps)(NotificationsComponent)

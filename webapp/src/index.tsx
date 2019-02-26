@@ -1,14 +1,14 @@
-import {CssBaseline} from "@material-ui/core"
-import {MuiPickersUtilsProvider} from "material-ui-pickers"
-import MomentUtils from "material-ui-pickers/utils/moment-utils"
+import MomentUtils from "@date-io/moment"
+import CssBaseline from "@material-ui/core/CssBaseline"
+import { MuiPickersUtilsProvider } from "material-ui-pickers"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
-import {Provider} from "react-redux"
-import {App} from "./App"
+import { Provider } from "react-redux"
+import { App } from "./App"
 import "./index.css"
-import {store} from "./Redux"
-import {unregister} from "./registerServiceWorker"
-import {Theme} from "./Theme"
+import { store } from "./Redux"
+import { unregister } from "./registerServiceWorker"
+import { Theme } from "./Theme"
 
 ReactDOM.render(
     <Provider store={store}>

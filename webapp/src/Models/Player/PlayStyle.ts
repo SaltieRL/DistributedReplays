@@ -1,9 +1,19 @@
-import * as moment from "moment"
-import {ChartDataResponse} from "../ChartData"
+import moment from "moment"
+import { ChartDataResponse } from "../ChartData"
 
 export interface PlayStyleResponse {
     showWarning: boolean
     chartDatas: ChartDataResponse[]
+}
+
+export interface PlayStyleRawResponse {
+    dataPoints: RawDataPoint[]
+    name: string
+}
+
+interface RawDataPoint {
+    name: string
+    average: number
 }
 
 interface DataPoint {

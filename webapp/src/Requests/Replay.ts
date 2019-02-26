@@ -1,11 +1,16 @@
-import * as moment from "moment"
-import * as qs from "qs"
-import {doGet} from "../apiHandler/apiHandler"
-import {BasicStat} from "../Models/ChartData"
-import {MatchHistoryResponse} from "../Models/Player/MatchHistory"
-import {GameMode, parseReplay, Replay} from "../Models/Replay/Replay"
-import {ReplaysSearchQueryParams, stringifyReplaySearchQueryParam} from "../Models/ReplaysSearchQueryParams"
-import {useMockData} from "./Config"
+import moment from "moment"
+import qs from "qs"
+import { doGet } from "../apiHandler/apiHandler"
+import {
+    BasicStat,
+    GameMode,
+    MatchHistoryResponse,
+    parseReplay,
+    Replay,
+    ReplaysSearchQueryParams,
+    stringifyReplaySearchQueryParam
+} from "../Models"
+import { useMockData } from "./Config"
 
 export const getReplay = (id: string): Promise<Replay> => {
     if (useMockData) {
@@ -13,6 +18,7 @@ export const getReplay = (id: string): Promise<Replay> => {
             id: "21312512515FAB213",
             name: "Name",
             date: moment(),
+            map: "TESTMAP",
             gameMode: "1's" as GameMode,
             gameScore: {team0Score: 5, team1Score: 6},
             players: [
@@ -148,19 +154,20 @@ export const getReplay = (id: string): Promise<Replay> => {
                         car: "Octane"
                     }
                 }
-            ]
+            ],
+            tags: []
         })
     }
     return doGet(`/replay/${id}`)
         .then(parseReplay)
 }
 
-export const getReplayBasicStats = (id: string): Promise<BasicStat[]> => {
-    return doGet(`/replay/${id}/basic_stats`)
+export const getReplayPlayerStats = (id: string): Promise<BasicStat[]> => {
+    return doGet(`/replay/${id}/basic_player_stats`)
 }
 
 export const getReplayTeamStats = (id: string): Promise<BasicStat[]> => {
-    return doGet(`/replay/${id}/team_stats`)
+    return doGet(`/replay/${id}/basic_team_stats`)
 }
 
 export const getReplayViewerData = (id: string): Promise<any> => {
@@ -181,4 +188,12 @@ export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<Ma
             ...data,
             replays: data.replays.map(parseReplay)
         }))
+}
+
+export const getExplanations = (): Promise<any> => {
+    return doGet("/stats/explanations")
+}
+
+export const getPredictedRanks = (id: string): Promise<any> => {
+    return doGet(`/replay/${id}/predict`)
 }

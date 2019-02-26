@@ -1,12 +1,12 @@
 import * as qs from "qs"
 import * as React from "react"
-import {RouteComponentProps, withRouter} from "react-router-dom"
+import { RouteComponentProps, withRouter } from "react-router-dom"
 import {
     parseReplaySearchFromQueryString,
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
-} from "../../../Models/ReplaysSearchQueryParams"
-import {ReplaysSearchFilter} from "./ReplaysSearchFilter"
+} from "../../../Models"
+import { ReplaysSearchFilter } from "./ReplaysSearchFilter"
 
 interface OwnProps {
     handleChange: (queryParams: ReplaysSearchQueryParams) => void

@@ -1,11 +1,11 @@
-import {Grid} from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import * as React from "react"
-import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
-import {REPLAYS_SEARCH_PAGE_LINK} from "../../Globals"
-import {getPlayer} from "../../Requests/Player/getPlayer"
-import {PlayerOverview} from "../Player/PlayerOverview"
-import {LoadableWrapper} from "../Shared/LoadableWrapper"
-import {BasePage} from "./BasePage"
+import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
+import { REPLAYS_SEARCH_PAGE_LINK } from "../../Globals"
+import { getPlayer } from "../../Requests/Player/getPlayer"
+import { PlayerOverview } from "../Player/PlayerOverview"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
+import { BasePage } from "./BasePage"
 
 interface RouteParams {
     id: string

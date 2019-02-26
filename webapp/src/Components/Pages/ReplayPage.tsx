@@ -1,11 +1,11 @@
-import {Grid} from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import * as React from "react"
-import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
-import {Replay} from "../../Models/Replay/Replay"
-import {getReplay} from "../../Requests/Replay"
-import {ReplayView} from "../Replay/ReplayView"
-import {LoadableWrapper} from "../Shared/LoadableWrapper"
-import {BasePage} from "./BasePage"
+import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
+import { Replay } from "../../Models"
+import { getExplanations, getReplay } from "../../Requests/Replay"
+import { ReplayView } from "../Replay/ReplayView"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
+import { BasePage } from "./BasePage"
 
 interface RouteParams {
     id: string
@@ -15,6 +15,8 @@ type Props = RouteComponentProps<RouteParams>
 
 interface State {
     replay?: Replay
+    explanations?: Record<string, any> | undefined
+    predictedRanks?: any
 }
 
 export class ReplayPage extends React.PureComponent<Props, State> {
@@ -25,7 +27,7 @@ export class ReplayPage extends React.PureComponent<Props, State> {
 
     public render() {
         const matchUrl = this.props.match.url
-        const {replay} = this.state
+        const {replay, explanations} = this.state
 
         return (
             <BasePage backgroundImage={"/replay_page_background.png"}>
@@ -33,8 +35,16 @@ export class ReplayPage extends React.PureComponent<Props, State> {
                     <LoadableWrapper load={this.getReplay}>
                         {replay &&
                         <Switch>
-                            <Route exact path={matchUrl}
-                                   component={() => <ReplayView replay={replay}/>}/>
+                            <Route
+                                exact path={matchUrl}
+                                render={() => (
+                                    <ReplayView
+                                        replay={replay}
+                                        explanations={explanations}
+                                        handleUpdateTags={this.handleUpdateTags}
+                                    />
+                                )}
+                            />
                             <Redirect from="*" to={matchUrl}/>
                         </Switch>
                         }
@@ -45,7 +55,15 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     }
 
     private readonly getReplay = (): Promise<void> => {
-        return getReplay(this.props.match.params.id)
-            .then((replay) => this.setState({replay}))
+        return Promise.all([getReplay(this.props.match.params.id), getExplanations()])
+            .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
+    }
+
+    private readonly handleUpdateTags = (tags: Tag[]) => {
+        const replay = {
+            ...this.state.replay!,
+            tags
+        }
+        this.setState({replay})
     }
 }

@@ -1,7 +1,7 @@
-import {Grid, TextField} from "@material-ui/core"
+import { Grid, TextField } from "@material-ui/core"
 import * as _ from "lodash"
 import * as React from "react"
-import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../../Utils/String"
+import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../../Utils/String"
 
 interface Props {
     cameraSettings: CameraSettings

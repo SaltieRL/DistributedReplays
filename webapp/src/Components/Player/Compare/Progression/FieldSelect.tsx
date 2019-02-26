@@ -11,7 +11,7 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
+import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 
 interface OwnProps {
     fields: string[]
@@ -33,10 +33,10 @@ class FieldSelectComponent extends React.PureComponent<Props> {
                     value={selectedFields}
                     onChange={handleChange}
                     autoWidth
-                    renderValue={(selectedFieldsToRender: string[]) => {
+                    renderValue={(selectedFieldsToRender: any) => {
                         return (
                             <div className={classes.chipWrapper}>
-                                {selectedFieldsToRender.map((field) => (
+                                {selectedFieldsToRender.map((field: string) => (
                                     <Chip key={field} label={convertSnakeAndCamelCaseToReadable(field)}
                                           onDelete={this.handleChipDelete(field)}
                                           className={classes.chip}

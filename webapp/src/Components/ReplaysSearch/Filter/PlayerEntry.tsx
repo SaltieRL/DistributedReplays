@@ -1,10 +1,10 @@
-import {Grid} from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import * as React from "react"
-import {getPlayer} from "../../../Requests/Player/getPlayer"
-import {resolvePlayerNameOrId} from "../../../Requests/Player/resolvePlayerNameOrId"
-import {AddPlayerInput} from "../../Player/Compare/AddPlayerInput"
-import {PlayerChip} from "../../Player/Compare/PlayerChip"
-import {WithNotifications, withNotifications} from "../../Shared/Notification/NotificationUtils"
+import { getPlayer } from "../../../Requests/Player/getPlayer"
+import { resolvePlayerNameOrId } from "../../../Requests/Player/resolvePlayerNameOrId"
+import { AddPlayerInput } from "../../Player/Compare/AddPlayerInput"
+import { PlayerChip } from "../../Player/Compare/PlayerChip"
+import { WithNotifications, withNotifications } from "../../Shared/Notification/NotificationUtils"
 
 interface OwnProps {
     handleChange: (players: Player[]) => void
@@ -89,6 +89,8 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
         if (this.props.playerIds.indexOf(inputId) === -1) {
             resolvePlayerNameOrId(inputId)
                 .then(getPlayer)
+                .then(this.handleAddPlayer)
+                .then(() => this.setState({inputId: ""}))
                 .catch(() => {
                     this.props.showNotification({
                         variant: "error",
@@ -96,10 +98,8 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
                         timeout: 3000
                     })
                 })
-                .then(this.handleAddPlayer)
-                .then(() => this.setState({inputId: ""}))
                 .catch((e: any) => {
-                    console.log(e) // TypeError expected here when above .catch catches something.
+                    // console.log(e) // TypeError expected here when above .catch catches something.
                     // TODO: Figure out what the right thing to do here is.
                 })
         } else {

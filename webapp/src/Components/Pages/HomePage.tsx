@@ -1,14 +1,14 @@
-import {faDiscord, faGithub, faSteam, faTwitter} from "@fortawesome/free-brands-svg-icons"
-import {faChartBar} from "@fortawesome/free-solid-svg-icons"
-import {Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth} from "@material-ui/core"
-import {GridProps} from "@material-ui/core/Grid"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { faDiscord, faGithub, faRedditAlien, faSteam, faTwitter } from "@fortawesome/free-brands-svg-icons"
+import { faChartBar } from "@fortawesome/free-solid-svg-icons"
+import { Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth } from "@material-ui/core"
+import { GridProps } from "@material-ui/core/Grid"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import Info from "@material-ui/icons/Info"
 import * as React from "react"
-import {connect} from "react-redux"
-import {Link} from "react-router-dom"
-import {Dispatch} from "redux"
+import { connect } from "react-redux"
+import { Link } from "react-router-dom"
+import { Dispatch } from "redux"
 import {
     ABOUT_LINK,
     DISCORD_LINK,
@@ -16,17 +16,17 @@ import {
     GLOBAL_STATS_LINK,
     LOCAL_LINK,
     PLAYER_PAGE_LINK,
+    REDDIT_LINK,
     STEAM_LOGIN_LINK,
     TWITTER_LINK,
     UPLOAD_LINK
 } from "../../Globals"
-import {StoreState} from "../../Redux"
-import {setLoggedInUserAction} from "../../Redux/loggedInUser/actions"
-import {getLoggedInUser, getReplayCount} from "../../Requests/Global"
-import {LinkButton} from "../Shared/LinkButton"
-import {Logo} from "../Shared/Logo/Logo"
-import {Search} from "../Shared/Search"
-import {UploadModalWrapper} from "../Shared/Upload/UploadModalWrapper"
+import { LoggedInUserActions, StoreState } from "../../Redux"
+import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
+import { LinkButton } from "../Shared/LinkButton"
+import { Logo } from "../Shared/Logo/Logo"
+import { Search } from "../Shared/Search"
+import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
 
 type Props = ReturnType<typeof mapStateToProps>
     & ReturnType<typeof mapDispatchToProps>
@@ -57,7 +57,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
         const alignCenterProps: GridProps = {container: true, justify: "center", alignItems: "center"}
         return (
             <div className={classes.backgroundContainer}>
-                <UploadModalWrapper buttonStyle="floating">
+                <UploadDialogWrapper buttonStyle="floating">
                     <div className={classes.root}>
                         <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}>
                             <Grid item xs={12} {...alignCenterProps} style={{minHeight: "300px"}} direction="column">
@@ -106,7 +106,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         </Grid>
                     </div>
-                </UploadModalWrapper>
+                </UploadDialogWrapper>
             </div>
         )
     }
@@ -114,31 +114,42 @@ class HomePageComponent extends React.PureComponent<Props, State> {
 
 const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
 
-    const globalStatsLinkButton =
+    const globalStatsLinkButton = (
         <LinkButton to={GLOBAL_STATS_LINK}
                     iconType="fontawesome" icon={faChartBar}
                     tooltip="Global stats"/>
-    const aboutLinkButton =
+    )
+    const aboutLinkButton = (
         <LinkButton to={ABOUT_LINK}
                     iconType="mui" icon={Info}
                     tooltip="About"/>
-    const twitterLinkButton =
+    )
+    const twitterLinkButton = (
         <LinkButton to={TWITTER_LINK} isExternalLink
                     iconType="fontawesome" icon={faTwitter}
                     tooltip="Twitter"/>
-    const discordLinkButton =
+    )
+    const discordLinkButton = (
         <LinkButton to={DISCORD_LINK} isExternalLink
                     iconType="fontawesome" icon={faDiscord}
                     tooltip="Discord"/>
-    const githubLinkButton =
+    )
+    const githubLinkButton = (
         <LinkButton to={GITHUB_LINK} isExternalLink
                     iconType="fontawesome" icon={faGithub}
                     tooltip="Github"/>
+    )
+    const redditLinkButton = (
+        <LinkButton to={REDDIT_LINK} isExternalLink
+                    iconType="fontawesome" icon={faRedditAlien}
+                    tooltip="Reddit"/>
+    )
 
     return (
         <Grid container justify="center" spacing={16}>
             {isWidthUp("md", props.width) ?
-                [globalStatsLinkButton, aboutLinkButton, twitterLinkButton, discordLinkButton, githubLinkButton]
+                [globalStatsLinkButton, aboutLinkButton, twitterLinkButton, discordLinkButton,
+                    githubLinkButton, redditLinkButton]
                     .map((linkButton, i) => (
                         <Grid item xs={3} md={2} style={{textAlign: "center"}} key={i}>
                             {linkButton}
@@ -149,7 +160,7 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
                     {
                         [
                             [globalStatsLinkButton, aboutLinkButton],
-                            [twitterLinkButton, discordLinkButton, githubLinkButton]
+                            [twitterLinkButton, discordLinkButton, githubLinkButton, redditLinkButton]
                         ]
                             .map((linkButtonRow, i) => (
                                 <Grid item xs={12} container justify="space-around" key={i}>
@@ -197,7 +208,7 @@ export const mapStateToProps = (state: StoreState) => ({
 })
 
 export const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(setLoggedInUserAction(loggedInUser))
+    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(LoggedInUserActions.setLoggedInUserAction(loggedInUser))
 })
 
 export const HomePage = withWidth()(withStyles(styles)(

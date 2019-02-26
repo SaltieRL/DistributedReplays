@@ -34,7 +34,7 @@ def get_item_dict():
     return item_dict
 
 
-def get_rank_batch(ids, offline_redis=None):
+def get_rank_batch(ids, offline_redis=None, use_redis=True):
     """
     Gets a batch of ranks based on ids. Returns fake data if there is no API key available.
 
@@ -51,7 +51,7 @@ def get_rank_batch(ids, offline_redis=None):
         r = None
         ids_to_find = ids
     except RuntimeError:  # we're not in application context, use our own redis
-        if offline_redis is None:
+        if offline_redis is None and use_redis:
             offline_redis = redis.Redis(
                 host='localhost',
                 port=6379)
@@ -77,6 +77,8 @@ def get_rank_batch(ids, offline_redis=None):
             return rank_datas_for_players
         else:
             logger.debug(ids_to_find)
+    else:
+        ids_to_find = ids
     url = "https://api.rocketleague.com/api/v1/steam/playerskills/"
     headers = {'Authorization': f'Token {RL_API_KEY}', 'Referer': 'http://api.rocketleague.com'}
 
@@ -85,8 +87,6 @@ def get_rank_batch(ids, offline_redis=None):
                [{'platformId': get_platform_id(i), 'uniqueId': i} for i in ids_to_find]))
     post_data = {'player_ids': [p['uniqueId'] for p in ids_dict]}
     data = requests.post(url, headers=headers, json=post_data)
-
-    logger.debug(data.text)
     if data.status_code >= 300:
         return {**rank_datas_for_players, **get_empty_data(ids_to_find)}
     try:
@@ -97,9 +97,10 @@ def get_rank_batch(ids, offline_redis=None):
     if 'detail' in data:
         return {str(i): {} for i in ids}
     for player in data:
-        rank_datas = []
+        rank_datas = {}
         unique_id = player['user_id']
-        names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+        names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo',
+                 '27': 'hoops', '28': 'rumble', '29': 'dropshot', '30': 'snowday'}
         if 'player_skills' in player:
             found_modes = []
             for playlist in player['player_skills']:
@@ -107,19 +108,19 @@ def get_rank_batch(ids, offline_redis=None):
                     mode = names[str(playlist['playlist'])]
                     found_modes.append(mode)
                     rank_data = {'mode': mode, 'rank_points': playlist['skill'],
-                         'tier': playlist['tier'],
-                         'division': playlist['division'],
-                         'string': tier_div_to_string(playlist['tier'], playlist['division'])}
-                    rank_datas.append(rank_data)
+                                 'tier': playlist['tier'],
+                                 'division': playlist['division'],
+                                 'string': tier_div_to_string(playlist['tier'], playlist['division'])}
+                    rank_datas[str(playlist['playlist'])] = rank_data
 
-            for mode in names.values():
+            for idx, mode in names.items():
                 if mode not in found_modes:
-                    rank_datas.append({
+                    rank_datas[idx] = {
                         'mode': mode, 'rank_points': 0,
                         'tier': 0,
                         'division': 0,
                         'string': tier_div_to_string(None)
-                    })
+                    }
 
             if r is not None:
                 r.set(unique_id, json.dumps(rank_datas), ex=30 * 60)
@@ -162,14 +163,15 @@ def get_empty_data(ids):
 
 def get_formatted_rank_data(rank, div):
     modes = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
-    return [
-        {'mode': mode,
-         'rank_points': rank * random.randint(60, 75) + 15 * div,
-         'tier': rank,
-         'division': div,
-         'string': tier_div_to_string(rank, div)}
-        for mode in modes.values()
-    ]
+    return {
+        id_:
+            {'mode': mode,
+             'rank_points': rank * random.randint(60, 75) + 15 * div,
+             'tier': rank,
+             'division': div,
+             'string': tier_div_to_string(rank, div)}
+        for id_, mode in modes.items()
+    }
 
 
 def tier_div_to_string(rank: Union[int, None], div: int = -1):
@@ -199,5 +201,6 @@ def get_platform_id(i):
     else:
         return '-1'
 
+
 if __name__ == '__main__':
-    print(get_rank('76561198374703623'))
+    print(get_rank_batch(['76561198374703623'], use_redis=False))

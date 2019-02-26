@@ -1,14 +1,14 @@
-import {faCarSide, faHistory, faUserCircle, IconDefinition} from "@fortawesome/free-solid-svg-icons"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Card, CardContent, Divider, Grid, Tab, Tabs, withWidth} from "@material-ui/core"
-import {isWidthDown, isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { faCarSide, faHistory, faUserCircle, IconDefinition } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Card, CardContent, Divider, Grid, Tab, Tabs, withWidth } from "@material-ui/core"
+import { isWidthDown, isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import {OverviewMatchHistory} from "./Overview/MatchHistory/OverviewMatchHistory"
-import {PlayerMatchHistoryCard} from "./Overview/MatchHistory/PlayerMatchHistoryCard"
-import {PlayerPlayStyle} from "./Overview/PlayStyle/PlayerPlayStyle"
-import {PlayerPlayStyleCard} from "./Overview/PlayStyle/PlayerPlayStyleCard"
-import {PlayStyleActions} from "./Overview/PlayStyle/PlayStyleActions"
-import {PlayerSideBar} from "./Overview/SideBar/PlayerSideBar"
+import { OverviewMatchHistory } from "./Overview/MatchHistory/OverviewMatchHistory"
+import { PlayerMatchHistoryCard } from "./Overview/MatchHistory/PlayerMatchHistoryCard"
+import { PlayerPlayStyle } from "./Overview/PlayStyle/PlayerPlayStyle"
+import { PlayerPlayStyleCard } from "./Overview/PlayStyle/PlayerPlayStyleCard"
+import { PlayStyleActions } from "./Overview/PlayStyle/PlayStyleActions"
+import { PlayerSideBar } from "./Overview/SideBar/PlayerSideBar"
 
 interface OwnProps {
     player: Player
@@ -18,16 +18,18 @@ type Props = OwnProps
     & WithWidth
 
 type PlayerViewTab = "Profile" | "Playstyle" | "Match History"
-const playerViewTabs = ["Profile", "Playstyle", "Match History"]
+const playerViewTabs: PlayerViewTab[] = ["Profile", "Playstyle", "Match History"]
 
 interface State {
     selectedMobileTab?: PlayerViewTab
+    playlist: number
+    winLossMode: boolean
 }
 
 class PlayerOverviewComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedMobileTab: "Profile"}
+        this.state = {selectedMobileTab: "Profile", playlist: 13, winLossMode: false}
     }
 
     public render() {
@@ -38,9 +40,16 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
         }
 
         const playerSideBar = <PlayerSideBar player={this.props.player}/>
-        const playerPlayStyle = <PlayerPlayStyle player={this.props.player}/>
-        const playerMatchHistory = <OverviewMatchHistory player={this.props.player}
-                                                         useBoxScore={isWidthDown("sm", this.props.width)}/>
+        const playerPlayStyle = (
+            <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}
+                             winLossMode={this.state.winLossMode}/>
+        )
+        const playerMatchHistory = (
+            <OverviewMatchHistory
+                player={this.props.player}
+                useBoxScore={isWidthDown("sm", this.props.width)}
+            />
+        )
 
         return (
             <>
@@ -51,7 +60,13 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
-                                <PlayerPlayStyleCard player={this.props.player}>
+                                <PlayerPlayStyleCard
+                                    player={this.props.player}
+                                    playlist={this.state.playlist}
+                                    winLossMode={this.state.winLossMode}
+                                    handlePlaylistChange={this.handlePlaylistChange}
+                                    handleWinsLossesChange={this.handleWinsLossesChange}
+                                >
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
                             </Grid>
@@ -81,7 +96,15 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
                                 <>
-                                    <PlayStyleActions player={this.props.player} useFullSizeCompareButton/>
+                                    <div style={{width: "100%", textAlign: "right"}}>
+                                        <PlayStyleActions
+                                            player={this.props.player}
+                                            playlist={this.state.playlist}
+                                            winLossMode={this.state.winLossMode}
+                                            handlePlaylistChange={this.handlePlaylistChange}
+                                            handleWinsLossesChange={this.handleWinsLossesChange}
+                                        />
+                                    </div>
                                     {playerPlayStyle}
                                 </>
                                 }
@@ -96,8 +119,16 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleSelectMobileTab = (event: React.ChangeEvent, selectedMobileTab: PlayerViewTab) => {
+    private readonly handleSelectMobileTab = (_: React.ChangeEvent<{}>, selectedMobileTab: PlayerViewTab) => {
         this.setState({selectedMobileTab})
+    }
+
+    private readonly handlePlaylistChange = (playlist: number) => {
+        this.setState({playlist})
+    }
+
+    private readonly handleWinsLossesChange = (winLossMode: boolean) => {
+        this.setState({winLossMode})
     }
 }
 
