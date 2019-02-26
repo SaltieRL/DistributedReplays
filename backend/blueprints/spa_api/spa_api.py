@@ -12,6 +12,7 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.blueprints.spa_api.service_layers.replay.visibility import change_replay_visibility
 
 try:
     import config
@@ -22,7 +23,7 @@ except ImportError:
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game
+from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.utils.utils import add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
@@ -283,6 +284,18 @@ def api_search_replays():
     query_params = get_query_params(accepted_query_params, request)
     match_history = MatchHistory.create_with_filters(**query_params)
     return better_jsonify(match_history)
+
+
+@bp.route('replay/<id_>/visibility/<visibility>', methods=['PUT'])
+def api_update_replay_visibility(id_: str, visibility: str):
+    try:
+        visibility_setting = GameVisibilitySetting(int(visibility))
+    except Exception as e:
+        logger.error(e)
+        return "Visibility setting not provided or incorrect", 400
+
+    updated_visibility_setting = change_replay_visibility(game_hash=id_, visibility=visibility_setting)
+    return f"Visibility setting updated successfully. Now: {updated_visibility_setting.name}", 200
 
 
 ## Other

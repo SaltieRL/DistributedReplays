@@ -2,14 +2,14 @@ import logging
 import random
 from typing import List
 
+from flask import g
 from sqlalchemy import func, cast, String, desc, or_
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
-from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting
-
-from flask import g, current_app
+from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting, GameVisibility
 
 logger = logging.getLogger(__name__)
 
@@ -85,24 +85,33 @@ class PlayerWrapper:
         return self.get_player_games(session, id_, replay_ids=replay_ids, filter_private=filter_private).count()
 
     @staticmethod
-    def change_game_visibility(game_hash: str, visibility: GameVisibilitySetting):
-        session = current_app.config['db']()
-        if g.admin:
-            game = session.query(Game).filter(Game.hash == game_hash)
+    @with_session
+    def change_game_visibility(game_hash: str, visibility: GameVisibilitySetting, session=None) -> GameVisibilitySetting:
+        # g.user.platformid = "76561198065217357"
+        entry = session.query(GameVisibility).filter(GameVisibility.player == g.user.platformid,
+                                                     GameVisibility.game == game_hash).first()
+        if entry is None:
+            # Check if user has right to change visibility:
+            game = session.query(Game).filter(Game.hash == game_hash, Game.players.any(g.user.platformid)).first()
+            if game is not None:
+                entry = GameVisibility(player=g.user.platformid, game=game_hash, visibility=visibility)
+                session.add(entry)
+            else:
+                # Replay might actually exist, but user should not know.
+                raise ReplayNotFound()
         else:
-            game = session.query(Game).filter(Game.hash == game_hash).filter(
-                or_(Game.visibility != GameVisibilitySetting.PRIVATE, Game.players.any(g.user.platformid))
-            ).first()
-
-        if game is None:
-            # Replay may actually exist, but user does not have permission to know this.
-            raise ReplayNotFound()
-
-        # TODO maybe check if replay and player exist
-        # dbms will do it anyway but it might be better to raise a more specific exception
-
-        game.visibility = visibility
-
+            entry.visibility = visibility
         session.commit()
-        session.close()
-        return
+
+        updated_visibility_setting = PlayerWrapper.update_game_visibility(game_hash, session)
+        return updated_visibility_setting
+
+    @staticmethod
+    def update_game_visibility(game_hash, session) -> GameVisibilitySetting:
+        game = session.query(Game).filter(Game.hash == game_hash).first()
+        lowest_visibility_setting = session.query(
+            func.min(GameVisibility.visibility)).filter(GameVisibility.game == game_hash).scalar()
+
+        game.visibility = lowest_visibility_setting
+        session.commit()
+        return lowest_visibility_setting
