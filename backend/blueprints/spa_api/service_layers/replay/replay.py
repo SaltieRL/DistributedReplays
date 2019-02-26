@@ -1,11 +1,11 @@
 from typing import List, cast
 
-from flask import current_app, g
+from flask import g
 
-from backend.database.objects import Game, PlayerGame
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
 from data.constants.playlist import get_playlist
-from .tag import Tag
 from .replay_player import ReplayPlayer
+from .tag import Tag
 from ..utils import sort_player_games_by_team_then_id, with_session
 from ...errors.errors import ReplayNotFound
 
@@ -23,7 +23,7 @@ class GameScore:
 class Replay:
     def __init__(self, id_: str, name: str, date: str, map: str,
                  game_mode: str, game_score: GameScore,
-                 players: List[ReplayPlayer], tags: List[Tag]):
+                 players: List[ReplayPlayer], tags: List[Tag], visibility: GameVisibilitySetting):
         self.id = id_
         self.name = name
         self.date = date
@@ -32,6 +32,7 @@ class Replay:
         self.gameScore = game_score.__dict__
         self.players = [player.__dict__ for player in players]
         self.tags = [tag.__dict__ for tag in tags]
+        self.visibility = visibility.value
 
     @staticmethod
     @with_session
@@ -59,5 +60,6 @@ class Replay:
             tags=[
                 Tag.create_from_dbtag(tag)
                 for tag in game.tags if tag.owner == g.user.platformid
-            ]
+            ],
+            visibility=game.visibility
         )

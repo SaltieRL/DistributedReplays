@@ -44,7 +44,6 @@ class Playlist(enum.Enum):
 
 
 class GameVisibilitySetting(enum.Enum):
-    DEFAULT = 0
     PUBLIC = 1
     PRIVATE = 2
 
@@ -231,7 +230,7 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
-    visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.DEFAULT)
+    visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.PUBLIC)
     # to update the DB
     # ALTER TABLE games
     # ADD COLUMN visibility gamevisibilitysetting NULL
@@ -330,3 +329,11 @@ class GameTag(DBObjectBase):
     __tablename__ = 'game_tags'
     game_id = Column(String(40), ForeignKey('games.hash'), primary_key=True)
     tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
+
+
+class GameVisibility(DBObjectBase):
+    __tablename__ = "game_visibility"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    game = Column(String(40), ForeignKey('games.hash'), index=True)
+    player = Column(String(40), ForeignKey('players.platformid'))
+    visibility = Column(Enum(GameVisibilitySetting))
