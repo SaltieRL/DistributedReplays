@@ -330,11 +330,3 @@ class GameTag(DBObjectBase):
     __tablename__ = 'game_tags'
     game_id = Column(String(40), ForeignKey('games.hash'), primary_key=True)
     tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
-
-
-class GameVisibility(DBObjectBase):
-    __tablename__ = "game_visibility"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    game = Column(String(40), ForeignKey('games.hash'), index=True)
-    player = Column(String(40), ForeignKey('players.platformid'))
-    visibility = Column(Enum(GameVisibilitySetting))

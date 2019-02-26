@@ -6,8 +6,8 @@ from sqlalchemy import func, cast, String, desc, or_
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError
-from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting, GameVisibility
+from backend.blueprints.spa_api.errors.errors import ReplayNotFound
+from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting
 
 from flask import g, current_app
 
@@ -69,7 +69,6 @@ class PlayerWrapper:
         return self.get_paginated_match_history(query, page=page, limit=limit)
 
     def get_paginated_match_history(self, existing_query, page: int, limit: int) -> List[PlayerGame]:
-
         limit = limit if limit is not None else self.limit
         return existing_query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
 
@@ -86,37 +85,24 @@ class PlayerWrapper:
         return self.get_player_games(session, id_, replay_ids=replay_ids, filter_private=filter_private).count()
 
     @staticmethod
-    def change_game_visibility(platformid, game_hash, visibility: GameVisibilitySetting):
+    def change_game_visibility(game_hash: str, visibility: GameVisibilitySetting):
         session = current_app.config['db']()
-        entry = session.query(GameVisibility).filter(GameVisibility.player == platformid,
-                                                     GameVisibility.game == game_hash).first()
+        if g.admin:
+            game = session.query(Game).filter(Game.hash == game_hash)
+        else:
+            game = session.query(Game).filter(Game.hash == game_hash).filter(
+                or_(Game.visibility != GameVisibilitySetting.PRIVATE, Game.players.any(g.user.platformid))
+            ).first()
+
+        if game is None:
+            # Replay may actually exist, but user does not have permission to know this.
+            raise ReplayNotFound()
+
         # TODO maybe check if replay and player exist
         # dbms will do it anyway but it might be better to raise a more specific exception
-        if entry is None:
-                entry = GameVisibility(player=platformid, game=game_hash, visibility=visibility)
-                session.add(entry)
-        else:
-            entry.visibility = visibility
+
+        game.visibility = visibility
+
         session.commit()
-        result = PlayerWrapper.update_game_visibility(game_hash, session)
         session.close()
-        return result
-
-    @staticmethod
-    def update_game_visibility(game_hash, session):
-        visibility_setting = GameVisibilitySetting.DEFAULT
-        game = session.query(Game).filter(Game.hash == game_hash).first()
-        if game is None:
-            raise CalculatedError(404, "Replay not found")  # very unlikely that this will ever happen
-
-        settings = session.query(GameVisibility).filter(GameVisibility.game == game_hash).all()
-
-        for setting in settings:
-            if setting.visibility is GameVisibilitySetting.PRIVATE:
-                visibility_setting = GameVisibilitySetting.PRIVATE
-            elif setting.visibility is GameVisibilitySetting.PUBLIC:
-                visibility_setting = GameVisibilitySetting.PUBLIC
-
-        game.visibility = visibility_setting
-        session.commit()
-        return visibility_setting
+        return

@@ -1,10 +1,11 @@
 import datetime
 from typing import List
 
-from sqlalchemy import cast, String
+from flask import g
+from sqlalchemy import cast, String, or_
 from sqlalchemy.dialects import postgresql
 
-from backend.database.objects import Game, PlayerGame
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
 
 
 class QueryFilterBuilder:
@@ -134,6 +135,12 @@ class QueryFilterBuilder:
             if not self.is_game:
                 filtered_query = filtered_query.join(Game)
             has_joined_game = True
+
+        if self.is_game or has_joined_game:
+            # Do visibility check
+            if not g.admin:
+                filtered_query = filtered_query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
+                                     Game.players.any(g.user.platformid)))
 
         if self.start_time is not None:
             filtered_query = filtered_query.filter(
