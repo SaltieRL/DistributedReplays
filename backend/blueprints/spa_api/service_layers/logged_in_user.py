@@ -1,17 +1,8 @@
 from flask import g
 
 from backend.blueprints.steam import get_steam_profile_or_random_response
-from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.utils.checks import is_local_dev
 from ..errors.errors import CalculatedError
-
-
-def require_user(func):
-    def wrapper_require_user(*args, **kwargs):
-        if g.user is None:
-            raise CalculatedError(404, "User is not logged in.")
-        func(*args, **kwargs)
-    return wrapper_require_user
 
 
 class LoggedInUser:
@@ -34,8 +25,3 @@ class LoggedInUser:
         if g.user is None:
             raise CalculatedError(404, "User is not logged in.")
         return LoggedInUser(g.user.platformname, g.user.platformid, g.user.avatar, g.admin, g.alpha, g.beta)
-
-    @staticmethod
-    @require_user
-    def change_replay_visibility(game_hash, visibility):
-        PlayerWrapper.change_game_visibility(game_hash, g.user.platformid, visibility)
