@@ -14,9 +14,11 @@ from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySet
 logger = logging.getLogger(__name__)
 
 
-def create_default_player():
-    player = Player()
-    player.platformid = "3678"
+@with_session
+def create_default_player(session=None):
+    player = session.query(Player).first()
+
+    player.platformid = "LOCAL_PLATFORMID" if player is None else player.platformid
     player.platformname = 'test user with a really long name but even longer'
     if bool(random.getrandbits(1)):
         player.avatar = "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
@@ -30,11 +32,11 @@ def get_random_player(session):
     try:
         player = session.query(Player).one()
     except MultipleResultsFound as e:
-        logger.warning(e)
-        player = session.query(Player).order_by(func.random()).limit(1).first()
+        # logger.warning(e)
+        player = session.query(Player).order_by(func.random()).first()
     except NoResultFound as e:
-        logger.warning(e)
-        player = create_default_player()
+        # logger.warning(e)
+        player = create_default_player(session=session)
     return player
 
 

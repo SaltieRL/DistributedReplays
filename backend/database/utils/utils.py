@@ -182,6 +182,7 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
     for team in teamstats:
         session.add(team)
 
+
 @with_session
 def add_objects(protobuf_game, session=None):
     game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)

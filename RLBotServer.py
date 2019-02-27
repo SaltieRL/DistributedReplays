@@ -149,7 +149,7 @@ def lookup_current_user(session=None):
         g.alpha = ids['alpha'] in g.user.groups
         g.beta = ids['beta'] in g.user.groups
     elif is_local_dev():
-        g.user = create_default_player()
+        g.user = create_default_player(session=session)
         g.admin = True
 
 
