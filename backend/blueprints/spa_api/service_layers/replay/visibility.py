@@ -3,8 +3,14 @@ from backend.database.objects import GameVisibilitySetting
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 
 
-@require_user
-def change_replay_visibility(game_hash: str, visibility: GameVisibilitySetting) -> GameVisibilitySetting:
-    updated_visibility_setting = PlayerWrapper.change_game_visibility(game_hash, visibility)
-    return updated_visibility_setting
+class ReplayVisibility:
+    def __init__(self, id_: str, visibility: GameVisibilitySetting):
+        self.id = id_
+        self.visibility = visibility.value
 
+    @staticmethod
+    @require_user
+    def change_replay_visibility(game_hash: str, visibility: GameVisibilitySetting) -> 'ReplayVisibility':
+        updated_visibility_setting = PlayerWrapper.change_game_visibility(game_hash, visibility)
+
+        return ReplayVisibility(game_hash, updated_visibility_setting)

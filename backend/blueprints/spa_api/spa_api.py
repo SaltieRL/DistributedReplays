@@ -12,13 +12,12 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
-from backend.blueprints.spa_api.service_layers.replay.visibility import change_replay_visibility
+from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 
 try:
     import config
 except ImportError:
     config = None
-
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -294,8 +293,8 @@ def api_update_replay_visibility(id_: str, visibility: str):
         logger.error(e)
         return "Visibility setting not provided or incorrect", 400
 
-    updated_visibility_setting = change_replay_visibility(game_hash=id_, visibility=visibility_setting)
-    return f"Visibility setting updated successfully. Now: {updated_visibility_setting.name}", 200
+    replay_visibiltiy = ReplayVisibility.change_replay_visibility(game_hash=id_, visibility=visibility_setting)
+    return better_jsonify(replay_visibiltiy)
 
 
 ## Other
@@ -307,6 +306,14 @@ def api_get_stat_explanations():
 
 @bp.route('/upload', methods=['POST'])
 def api_upload_replays():
+    # TODO (sciguymjm): Create endpoint/query param for private replay upload
+    # that adds an entry to the GameVisibility table for the replay
+    accepted_query_params = [
+        QueryParam(name='player_id', optional=True, type_=str),
+        QueryParam(name='visibility', optional=True, type_=int),
+    ]
+    query_params = get_query_params(accepted_query_params, request)
+
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:

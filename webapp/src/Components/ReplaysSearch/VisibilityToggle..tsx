@@ -33,6 +33,7 @@ export class VisibilityToggle extends React.PureComponent<Props, State> {
     private readonly getIcon = (): React.ComponentType<SvgIconProps> => {
         const visibility: GameVisibility = this.state.overwriteVisibility || this.props.replay.visibility
         switch (visibility) {
+            case GameVisibility.DEFAULT:
             case GameVisibility.PUBLIC:
                 return Visibility
             case GameVisibility.PRIVATE:
@@ -45,8 +46,8 @@ export class VisibilityToggle extends React.PureComponent<Props, State> {
 
     private readonly toggleVisibility = () => {
         const visibility: GameVisibility = this.state.overwriteVisibility || this.props.replay.visibility
-        const newVisibility = visibility === GameVisibility.PUBLIC ? GameVisibility.PRIVATE : GameVisibility.PUBLIC
+        const newVisibility = visibility === GameVisibility.PRIVATE ? GameVisibility.PUBLIC : GameVisibility.PRIVATE
         setVisibility(this.props.replay.id, newVisibility)
-            .then(() => this.setState({overwriteVisibility: newVisibility}))
+            .then((visibilityResponse) => this.setState({overwriteVisibility: visibilityResponse.visibility}))
     }
 }

@@ -8,6 +8,7 @@ interface GameScore {
 }
 
 export enum GameVisibility {
+    DEFAULT = 0,
     PUBLIC = 1,
     PRIVATE = 2
 }

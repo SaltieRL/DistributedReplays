@@ -1,13 +1,15 @@
 import qs from "qs"
 import { doGet, doRequest } from "../apiHandler/apiHandler"
 import {
-    BasicStat, GameVisibility,
+    BasicStat,
+    GameVisibility,
     MatchHistoryResponse,
     parseReplay,
     Replay,
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../Models"
+import { VisibilityResponse } from "../Models/types/VisibilityResponse"
 import { useMockData } from "./Config"
 import { MOCK_REPLAY_1 } from "./Mock"
 
@@ -55,6 +57,6 @@ export const getPredictedRanks = (id: string): Promise<any> => {
     return doGet(`/replay/${id}/predict`)
 }
 
-export const setVisibility = (id: string, gameVisibility: GameVisibility) => {
+export const setVisibility = (id: string, gameVisibility: GameVisibility): Promise<VisibilityResponse> => {
     return doRequest(`/replay/${id}/visibility/${gameVisibility}`, {method: "PUT"})
 }

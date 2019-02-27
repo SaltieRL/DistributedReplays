@@ -109,9 +109,13 @@ class PlayerWrapper:
     @staticmethod
     def update_game_visibility(game_hash, session) -> GameVisibilitySetting:
         game = session.query(Game).filter(Game.hash == game_hash).first()
+
         lowest_visibility_setting = session.query(
             func.min(GameVisibility.visibility)).filter(GameVisibility.game == game_hash).scalar()
-
-        game.visibility = lowest_visibility_setting
-        session.commit()
+        if lowest_visibility_setting is not None:
+            game.visibility = lowest_visibility_setting
+            session.commit()
+        else:
+            # Nothing updated - setting remains default
+            lowest_visibility_setting = GameVisibilitySetting.DEFAULT
         return lowest_visibility_setting

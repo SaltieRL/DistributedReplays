@@ -44,6 +44,7 @@ class Playlist(enum.Enum):
 
 
 class GameVisibilitySetting(enum.Enum):
+    DEFAULT = 0  # i.e. Unset
     PUBLIC = 1
     PRIVATE = 2
 
@@ -230,7 +231,7 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
-    visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.PUBLIC)
+    visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.DEFAULT)
     # to update the DB
     # ALTER TABLE games
     # ADD COLUMN visibility gamevisibilitysetting NULL
