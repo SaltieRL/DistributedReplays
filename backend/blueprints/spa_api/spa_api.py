@@ -132,6 +132,7 @@ def api_get_player_ranks(id_):
 
 @bp.route('player/<id_>/play_style')
 def api_get_player_play_style(id_):
+    # TODO: Use get_query_params
     if 'rank' in request.args:
         rank = int(request.args['rank'])
     else:
@@ -310,9 +311,14 @@ def api_upload_replays():
     # that adds an entry to the GameVisibility table for the replay
     accepted_query_params = [
         QueryParam(name='player_id', optional=True, type_=str),
-        QueryParam(name='visibility', optional=True, type_=int),
+        QueryParam(name='visibility', optional=True, type_=lambda param: GameVisibilitySetting(int(param))),
     ]
     query_params = get_query_params(accepted_query_params, request)
+    if "visibility" in query_params or "player_id" in query_params:
+        if "visibility" not in query_params:
+            return MissingQueryParams(["visibility"])
+        elif "player_id" not in query_params:
+            return MissingQueryParams(["player_id"])
 
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
@@ -333,9 +339,9 @@ def api_upload_replays():
         file.save(filename)
         lengths = get_queue_length()  # priority 0,3,6,9
         if lengths[1] > 1000:
-            result = celery_tasks.parse_replay_gcp(os.path.abspath(filename))
+            result = celery_tasks.parse_replay_gcp(os.path.abspath(filename))  # TODO: Add queryparams support
         else:
-            result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+            result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename, **query_params))
         task_ids.append(result.id)
     return jsonify(task_ids), 202
 

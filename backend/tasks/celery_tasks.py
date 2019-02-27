@@ -18,7 +18,7 @@ from sqlalchemy import func, Numeric, cast
 
 from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsMetadata, GlobalStatsGraph, \
     GlobalStatsGraphDataset
-from backend.database.objects import Game, PlayerGame
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, GameVisibility, Player
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
@@ -101,7 +101,17 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
-def parse_replay_task(self, fn, preserve_upload_date=False):
+def parse_replay_task(self, fn,
+                      player_id: str = None, game_visibility: GameVisibilitySetting = None,
+                      preserve_upload_date=False):
+    """
+    :param self:
+    :param fn: filename
+    :param player_id: Must be provided if game_visibility is provided.
+    :param game_visibility: Must be provided if player_id is provided.
+    :param preserve_upload_date:
+    :return:
+    """
     output = fn + '.json'
     pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
     failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
@@ -128,6 +138,15 @@ def parse_replay_task(self, fn, preserve_upload_date=False):
     sess = self.session()
     game, player_games, players, teamstats = convert_pickle_to_db(g)
     add_objs_to_db(game, player_games, players, teamstats, sess, preserve_upload_date=preserve_upload_date)
+
+    # Add game visibility option
+    if game_visibility:
+        player = sess.query(Player).filter(Player.platformid == player_id).first()
+        if player is not None:
+            game_visibility_entry = GameVisibility(game=game.hash, player=player_id, visibility=game_visibility)
+            sess.add(game_visibility_entry)
+        # GameVisibility fails silently - does not do anything if player_id does not exist.
+
     sess.commit()
     sess.close()
 
