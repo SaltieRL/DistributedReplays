@@ -112,7 +112,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                         <TableRow key={player.id}>
                             {Array.from(labelToKeys, ([label, key]) => (
                                 <TableCell key={key}
-                                           align={key !== "name" ? "right" : "inherit"}
+                                           align={key !== "name" ? "right" : undefined}
                                            className={this.props.classes.tableData}
                                            padding="dense"
                                 >
