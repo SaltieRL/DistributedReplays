@@ -22,6 +22,7 @@
         "interface-name": false,
         "jsx-alignment": false,
         "jsx-boolean-value": false,
+        "jsx-curly-spacing": false,
         "jsx-no-lambda": false,
         "jsx-no-multiline-js": false,
         "jsx-space-before-trailing-slash": false,
@@ -47,7 +48,14 @@
         "no-var-keyword": true,
         "no-void-expression": [true, "ignore-arrow-function-shorthand"],
         "object-literal-sort-keys": false,
-        "one-line": [true, "check-catch", "check-else", "check-finally", "check-open-brace", "check-whitespace"],
+        "one-line": [
+            true,
+            "check-catch",
+            "check-else",
+            "check-finally",
+            "check-open-brace",
+            "check-whitespace"
+        ],
         "only-arrow-functions": true,
         "ordered-imports": true,
         "prefer-conditional-expression": false,
@@ -57,10 +65,13 @@
         "quotemark": [true, "double", "avoid-escape", "jsx-double"],
         "semicolon": [true, "never"],
         "space-before-function-paren": [true, "never"],
-        "trailing-comma": [true, {
-            "multiline": "never",
-            "singleline": "never"
-        }],
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "never",
+                "singleline": "never"
+            }
+        ],
         "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
         "whitespace": [
             true,

@@ -40,7 +40,7 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
             <Tabs value={this.props.selectedTab}
                   onChange={this.props.handleChange}
                   centered
-                  scrollable={isWidthDown("xs", this.props.width)}
+                  variant={isWidthDown("xs", this.props.width) ? "scrollable" : "fullWidth"}
                   scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
             >
                 {Object.keys(PlayerStatsSubcategory).map((subcategory) => {

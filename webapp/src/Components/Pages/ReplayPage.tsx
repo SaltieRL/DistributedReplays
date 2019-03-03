@@ -16,7 +16,7 @@ type Props = RouteComponentProps<RouteParams>
 interface State {
     replay?: Replay
     explanations?: Record<string, any> | undefined
-    predictedRanks?: any
+    predictedRanks?: Predictions
 }
 
 export class ReplayPage extends React.PureComponent<Props, State> {
@@ -25,30 +25,35 @@ export class ReplayPage extends React.PureComponent<Props, State> {
         this.state = {}
     }
 
+    public componentDidMount() {
+        this.getPredictedRanks()
+    }
+
     public render() {
         const matchUrl = this.props.match.url
-        const {replay, explanations, predictedRanks} = this.state
+        const { replay, explanations, predictedRanks } = this.state
 
         return (
             <BasePage backgroundImage={"/replay_page_background.png"}>
-                <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
+                <Grid container spacing={24} justify="center" style={{ minHeight: "100%" }}>
                     <LoadableWrapper load={this.getBoth}>
-                        {replay &&
-                        <Switch>
-                            <Route
-                                exact path={matchUrl}
-                                render={() => (
-                                    <ReplayView
-                                        replay={replay}
-                                        predictedRanks={predictedRanks}
-                                        explanations={explanations}
-                                        handleUpdateTags={this.handleUpdateTags}
-                                    />
-                                )}
-                            />
-                            <Redirect from="*" to={matchUrl}/>
-                        </Switch>
-                        }
+                        {replay && (
+                            <Switch>
+                                <Route
+                                    exact
+                                    path={matchUrl}
+                                    render={() => (
+                                        <ReplayView
+                                            replay={replay}
+                                            predictedRanks={predictedRanks}
+                                            explanations={explanations}
+                                            handleUpdateTags={this.handleUpdateTags}
+                                        />
+                                    )}
+                                />
+                                <Redirect from="*" to={matchUrl} />
+                            </Switch>
+                        )}
                     </LoadableWrapper>
                 </Grid>
             </BasePage>
@@ -60,22 +65,24 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     //         .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
     // }
 
-    private readonly getBoth = (): Promise<void> => {
+    private readonly getBoth = async() => {
         // TODO: when predictions 404, don't show the tab (?)
-        return Promise.all([getReplay(this.props.match.params.id), getPredictedRanks(this.props.match.params.id),
-            getExplanations()])
-            .then((data) => this.setState({replay: data[0], predictedRanks: data[1], explanations: data[2]}))
+        return Promise.all([getReplay(this.props.match.params.id), getExplanations()]).then(
+            (data) => this.setState({ replay: data[0], explanations: data[1] })
+        )
     }
-    // private getPredictedRanks = (): Promise<void> => {
-    //     return getPredictedRanks(this.props.match.params.id)
-    //         .then((predictedRanks) => this.setState({predictedRanks}))
-    // }
+
+    private readonly getPredictedRanks = async() => {
+        return getPredictedRanks(this.props.match.params.id).then((predictedRanks) =>
+            this.setState({ predictedRanks })
+        )
+    }
 
     private readonly handleUpdateTags = (tags: Tag[]) => {
         const replay = {
             ...this.state.replay!,
             tags
         }
-        this.setState({replay})
+        this.setState({ replay })
     }
 }
