@@ -66,7 +66,6 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     // }
 
     private readonly getBoth = async() => {
-        // TODO: when predictions 404, don't show the tab (?)
         return Promise.all([getReplay(this.props.match.params.id), getExplanations()]).then(
             (data) => this.setState({ replay: data[0], explanations: data[1] })
         )
