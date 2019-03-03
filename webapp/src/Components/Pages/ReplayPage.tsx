@@ -60,11 +60,6 @@ export class ReplayPage extends React.PureComponent<Props, State> {
         )
     }
 
-    // private readonly getReplay = (): Promise<void> => {
-    //     return Promise.all([getReplay(this.props.match.params.id), getExplanations()])
-    //         .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
-    // }
-
     private readonly getBoth = async() => {
         return Promise.all([getReplay(this.props.match.params.id), getExplanations()]).then(
             (data) => this.setState({ replay: data[0], explanations: data[1] })
