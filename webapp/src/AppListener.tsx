@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Cookies as ReactCookies } from "react-cookie"
 import { RouteComponentProps, withRouter } from "react-router"
-import { Grid, IconButton, Typography } from "@material-ui/core"
+import { Grid, IconButton, Modal, Typography } from "@material-ui/core"
 import Close from "@material-ui/icons/Close"
 import ReactGA from "react-ga"
 import { GOOGLE_ANALYTICS_ID } from "./Globals"
@@ -48,11 +48,12 @@ class AppListenerComponent extends React.Component<Props, State> {
             <>
                 {this.props.children}
                 {this.state.notificationOpen ?
-                    <div style={{
-                        position: "fixed", bottom: "0", left: "0",
-                        width: "100vw", height: "7vh", backgroundColor: "#ddd",
-                        paddingLeft: "15vw", paddingTop: "1vh"
-                    }}>
+                    <Modal open={this.state.notificationOpen}>
+                        {/*<div style={{*/}
+                        {/*position: "fixed", bottom: "0", left: "0",*/}
+                        {/*width: "100vw", height: "7vh", backgroundColor: "#ddd",*/}
+                        {/*paddingLeft: "15vw", paddingTop: "1vh"*/}
+                        {/*}}>*/}
                         <Grid container>
                             <Grid item xs={9}>
                                 <Typography>{msg}</Typography>
@@ -61,7 +62,9 @@ class AppListenerComponent extends React.Component<Props, State> {
                                 {closeButton}
                             </Grid>
                         </Grid>
-                    </div> : null}
+                        {/*</div>*/}
+                    </Modal>
+                    : null}
             </>
         )
     }
