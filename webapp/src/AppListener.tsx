@@ -1,9 +1,8 @@
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core"
 import * as React from "react"
 import { Cookies as ReactCookies } from "react-cookie"
-import { RouteComponentProps, withRouter } from "react-router"
-import { Grid, IconButton, Modal, Typography } from "@material-ui/core"
-import Close from "@material-ui/icons/Close"
 import ReactGA from "react-ga"
+import { RouteComponentProps, withRouter } from "react-router"
 import { GOOGLE_ANALYTICS_ID } from "./Globals"
 
 interface State {
@@ -31,39 +30,33 @@ class AppListenerComponent extends React.Component<Props, State> {
     }
 
     public render() {
-        const msg = "This site uses cookies for analytics purposes. " +
-            "By continuing to use the site, you agree to this use."
-
-        const closeButton = (
-            <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={this.handleClose}
-            >
-                <Close/>
-            </IconButton>
-        )
         return (
             <>
                 {this.props.children}
                 {this.state.notificationOpen ?
-                    <Modal open={this.state.notificationOpen}>
+                    <Dialog open={this.state.notificationOpen}>
                         {/*<div style={{*/}
                         {/*position: "fixed", bottom: "0", left: "0",*/}
                         {/*width: "100vw", height: "7vh", backgroundColor: "#ddd",*/}
                         {/*paddingLeft: "15vw", paddingTop: "1vh"*/}
                         {/*}}>*/}
-                        <Grid container>
-                            <Grid item xs={9}>
-                                <Typography>{msg}</Typography>
-                            </Grid>
-                            <Grid item xs={3}>
-                                {closeButton}
-                            </Grid>
-                        </Grid>
+
+                        <DialogTitle id="alert-dialog-title">We've updated our Privacy Policy.</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                <p>This site uses cookies for analytics purposes. By continuing to use the site, you
+                                    agree to this use.</p>
+                                <p> Additionally, by uploading data to this website, you agree to allow calculated.gg to
+                                    have full control of that data. <a href={"#"}>Learn more.</a></p>
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.handleClose} color="primary" autoFocus>
+                                Agree
+                            </Button>
+                        </DialogActions>
                         {/*</div>*/}
-                    </Modal>
+                    </Dialog>
                     : null}
             </>
         )
