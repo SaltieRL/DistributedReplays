@@ -25,8 +25,6 @@ class AppListenerComponent extends React.Component<Props, State> {
         this.handleClose = this.handleClose.bind(this)
         this.onChange(this.props.history.location, this.props.history.action)
         this.props.history.listen(this.onChange)
-        console.log("Render")
-        // todo:
     }
 
     public render() {
@@ -63,7 +61,6 @@ class AppListenerComponent extends React.Component<Props, State> {
     }
 
     public handleClose() {
-        console.log("Closing!")
         this.setState({notificationOpen: false})
         const cookies = new ReactCookies()
         cookies.set("rcl_consent_given", true)
@@ -87,7 +84,6 @@ class AppListenerComponent extends React.Component<Props, State> {
                     }]
                 )
                 ReactGA.pageview(loc)
-                console.log(location.pathname + location.search)
                 this.state = {
                     location: loc,
                     notificationOpen: this.state.notificationOpen
