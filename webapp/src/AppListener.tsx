@@ -71,9 +71,7 @@ class AppListenerComponent extends React.Component<Props, State> {
         const cookies = new ReactCookies()
 
         if (cookies !== undefined) {
-            console.log(cookies.get("rcl_consent_given"))
             if (this.state.location !== loc && cookies.get("rcl_consent_given") !== undefined) {
-                console.log("on route change")
                 ReactGA.initialize([{
                         trackingId: GOOGLE_ANALYTICS_ID,
                         debug: true,
