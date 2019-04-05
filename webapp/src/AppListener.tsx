@@ -46,7 +46,7 @@ class AppListenerComponent extends React.Component<Props, State> {
                                 <p>This site uses cookies for analytics purposes. By continuing to use the site, you
                                     agree to this use.</p>
                                 <p> Additionally, by uploading data to this website, you agree to allow calculated.gg to
-                                    have full control of that data. <a href={"#"}>Learn more.</a></p>
+                                    have full control of that data. <a href={PRIVACY_POLICY_LINK}>Learn more.</a></p>
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
