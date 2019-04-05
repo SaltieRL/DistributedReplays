@@ -28,7 +28,8 @@ class ReplayHeatmaps:
             raise ReplayNotFound()
         if not os.path.isfile(gzip_path):
             if GCP_BUCKET_GZIP_URL != "":
-                gz = gzip.GzipFile(fileobj=io.BytesIO(requests.get(GCP_BUCKET_GZIP_URL + id_ + '.replay.gzip').content), mode='rb')
+                gz = gzip.GzipFile(fileobj=io.BytesIO(requests.get(GCP_BUCKET_GZIP_URL + id_ + '.replay.gzip').content),
+                                   mode='rb')
             else:
                 raise ReplayNotFound()
         else:
@@ -59,7 +60,11 @@ class ReplayHeatmaps:
         #             max_ = max(math.log(arr[0][x, y] + 1e-3), max_)
         #     data[player] = player_data
         #     maxs[player] = max_
-        log_scale = True
+        if type_ in ['hits']:
+            log_scale = False
+        else:
+            log_scale = True
+        width = 400 / 500
         for player in output:
             arr = output[player]
             player_data = []
@@ -72,8 +77,8 @@ class ReplayHeatmaps:
                     if value == 0:
                         continue
                     player_data.append({
-                        'x': math.floor(arr[1][x] * 200 / 6000 + 250),
-                        'y': math.floor(arr[2][y] * 200 / 6000 + 250),
+                        'x': math.floor(arr[1][x] * width * 200 / 6000 + 125),
+                        'y': math.floor(arr[2][y] * width * 200 / 6000 + 175),
                         'value': max(0, value)
                     })
                     max_ = max(value, max_)
@@ -109,7 +114,6 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
         players.remove("ball")
     players.remove("game")
     data = {}
-    print(df.columns)
     for player in players:
         if type == 'positioning':
             # player = players[1]
@@ -123,16 +127,21 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
                     player_id = proto_player.id.id
             if player_id is None:
                 continue
-            proto_hits = proto.game_stats.hits
+            proto_hits = [hit for hit in proto.game_stats.hits if hit.player_id.id == player_id]
 
             # find hits
             hit_frames = [hit.frame_number for hit in proto_hits]
+            print(player, hit_frames)
             # player = players[1]
             df_adjusted = df.iloc[hit_frames]
         elif type == 'boost':
             df_adjusted = df[df[player]["boost_active"] == True]
         elif type == 'boost collect':
             df_adjusted = df[df[player]["boost_collect"] == True]
+        elif type == 'boost speed':
+            df_adjusted = df[(df[player]["vel_x"] ** 2 + df[player]["vel_y"]) ** 0.5 > 14000]
+        elif type == 'slow speed':
+            df_adjusted = df[(df[player]["vel_x"] ** 2 + df[player]["vel_y"]) ** 0.5 < 7000]
         else:
             df_adjusted = df
 

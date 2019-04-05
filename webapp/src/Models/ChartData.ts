@@ -38,7 +38,9 @@ export enum TeamStatsSubcategory {
 export enum HeatmapSubcategory {
     POSITIONING = "Positioning",
     HITS = "Hits",
-    BOOST = "Boost"
+    BOOST = "Boost",
+    BOOST_SPEED = "Boost Speed",
+    SLOW_SPEED = "Slow Speed"
 }
 
 export type StatsSubcategory = PlayerStatsSubcategory | TeamStatsSubcategory
