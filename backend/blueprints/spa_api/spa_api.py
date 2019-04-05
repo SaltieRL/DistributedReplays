@@ -246,7 +246,11 @@ def api_get_replay_positions(id_):
 
 @bp.route('replay/<id_>/heatmaps')
 def api_get_replay_heatmaps(id_):
-    positions = ReplayHeatmaps.create_from_id(id_)
+    if 'type' in request.args:
+        type_ = request.args['type'].lower()
+    else:
+        type_ = 'positioning'
+    positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
     return better_jsonify(positions)
 
 

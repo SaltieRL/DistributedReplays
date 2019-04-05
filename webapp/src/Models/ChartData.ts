@@ -35,4 +35,10 @@ export enum TeamStatsSubcategory {
     CENTER_OF_MASS = "Center of Mass"
 }
 
+export enum HeatmapSubcategory {
+    POSITIONING = "Positioning",
+    HITS = "Hits",
+    BOOST = "Boost"
+}
+
 export type StatsSubcategory = PlayerStatsSubcategory | TeamStatsSubcategory

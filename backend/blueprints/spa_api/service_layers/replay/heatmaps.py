@@ -1,34 +1,48 @@
 import gzip
+import io
 import math
 import os
 
 import numpy as np
+import requests
 from carball.analysis.utils import pandas_manager, proto_manager
 from carball.generated.api.game_pb2 import Game
 from flask import current_app
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
 
+try:
+    from config import GCP_BUCKET_GZIP_URL
+except:
+    GCP_BUCKET_GZIP_URL = ""
+
 
 class ReplayHeatmaps:
 
     @staticmethod
-    def create_from_id(id_: str) -> 'ReplayHeatmaps':
+    def create_from_id(id_: str, type_="positioning") -> 'ReplayHeatmaps':
         pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
         gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
         replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
         if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
             raise ReplayNotFound()
-
+        if not os.path.isfile(gzip_path):
+            if GCP_BUCKET_GZIP_URL != "":
+                gz = gzip.GzipFile(fileobj=io.BytesIO(requests.get(GCP_BUCKET_GZIP_URL + id_ + '.replay.gzip').content), mode='rb')
+            else:
+                raise ReplayNotFound()
+        else:
+            gz = gzip.open(gzip_path, 'rb')
         try:
-            with gzip.open(gzip_path, 'rb') as f:
-                data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
+            data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(gz)
             with open(pickle_path, 'rb') as f:
                 protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
         except Exception as e:
             raise ErrorOpeningGame(str(e))
+        finally:
+            gz.close()
         # output = generate_heatmaps(data_frame, protobuf_game, type="hits")
-        output = generate_heatmaps(data_frame, protobuf_game, type="position")
+        output = generate_heatmaps(data_frame, protobuf_game, type=type_)
         data = {}
         maxs = {}
         max_ = 0
@@ -97,7 +111,7 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
     data = {}
     print(df.columns)
     for player in players:
-        if type == 'position':
+        if type == 'positioning':
             # player = players[1]
             df_adjusted = df
         elif type == 'hits':
@@ -115,7 +129,7 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
             hit_frames = [hit.frame_number for hit in proto_hits]
             # player = players[1]
             df_adjusted = df.iloc[hit_frames]
-        elif type == 'boost usage':
+        elif type == 'boost':
             df_adjusted = df[df[player]["boost_active"] == True]
         elif type == 'boost collect':
             df_adjusted = df[df[player]["boost_collect"] == True]

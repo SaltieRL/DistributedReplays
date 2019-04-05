@@ -9,7 +9,7 @@ import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
 import { PredictionsContent } from "./PredictionsContent"
 import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
-import { AdvancedStatsContent } from "./AdvancedStats/AdvancedStatsContent"
+import { HeatmapTabsWrapper } from "./Heatmap/HeatmapTabsWrapper"
 
 interface OwnProps {
     replay: Replay
@@ -21,7 +21,7 @@ type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type ReplayTab = "playerStats" | "teamStats" | "advancedStats" | "replayViewer" | "predictions" | "qrCode"
+type ReplayTab = "playerStats" | "teamStats" | "heatmaps" | "replayViewer" | "predictions" | "qrCode"
 
 interface State {
     selectedTab: ReplayTab
@@ -65,7 +65,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     <Tab key="basicStats" label="Player Stats" value="playerStats"/>
                     <Tab key="predictions" label="Predictions" value="predictions"/>
 
-                    <Tab key="advancedStats" label="Advanced Stats" value="advancedStats"/>
+                    <Tab key="heatmaps" label="Heatmaps" value="heatmaps"/>
                     {this.props.loggedInUser && this.props.loggedInUser.beta &&
                     <Tab key="teamStats" label="Team Stats" value="teamStats"/>
                     }
@@ -80,8 +80,8 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 {this.state.selectedTab === "playerStats" &&
                 <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations}/>
                 }
-                {this.state.selectedTab === "advancedStats" &&
-                <AdvancedStatsContent replay={this.props.replay}/>
+                {this.state.selectedTab === "heatmaps" &&
+                <HeatmapTabsWrapper replay={this.props.replay}/>
                 }
                 {this.state.selectedTab === "predictions" &&
                 <PredictionsContent replay={this.props.replay} predictedRanks={predictedRanks}/>

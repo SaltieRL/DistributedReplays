@@ -28,8 +28,20 @@ export class ReactHeatmap extends React.PureComponent<Props, State> {
         if (container !== null) {
             const defaultCfg = {
                 width: style.width.replace("px", ""),
-                height: style.height.replace("px", "")
+                height: style.height.replace("px", ""),
+                // >>> {str(i/20 + 0.5): matplotlib.colors.to_hex(cmap(i/10)) for i in range(0, 12, 2)}
+                // {'0.5': '#440154', '1.0': '#fde725', '0.7': '#2a788e',
+                // '0.9': '#7ad151', '0.6': '#414487', '0.8': '#22a884'}
+                gradient: {
+                    "0.5": "#440154",
+                    "1.0": "#fde725",
+                    "0.7": "#2a788e",
+                    "0.9": "#7ad151",
+                    "0.6": "#414487",
+                    "0.8": "#22a884"
+                }
             }
+
             const localCfg = _.merge(defaultCfg, c)
             localCfg.container = container
             const heatmapInstance = h337.create(localCfg)
@@ -48,9 +60,7 @@ export class ReactHeatmap extends React.PureComponent<Props, State> {
     public render() {
 
         return (
-            <>
                 <div ref={"react-heatmap"}/>
-            </>
         )
 
     }
