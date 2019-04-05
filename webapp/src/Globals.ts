@@ -33,5 +33,6 @@ export const ABOUT_LINK = "/about"
 export const UPLOAD_LINK = "/upload"
 export const PLUGINS_LINK = "/plugins"
 export const EXPLANATIONS_LINK = "/explanations"
+export const PRIVACY_POLICY_LINK = "/privacy"
 
 export const GOOGLE_ANALYTICS_ID = "UA-000000000-1"

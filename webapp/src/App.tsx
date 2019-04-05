@@ -9,6 +9,7 @@ import { HomePage } from "./Components/Pages/HomePage"
 import { PlayerComparePage } from "./Components/Pages/PlayerComparePage"
 import { PlayerPage } from "./Components/Pages/PlayerPage"
 import { PluginsPage } from "./Components/Pages/PluginsPage"
+import { PrivacyPolicyPage } from "./Components/Pages/PrivacyPolicyPage"
 import { ReplayPage } from "./Components/Pages/ReplayPage"
 import { ReplaysGroupPage } from "./Components/Pages/ReplaysGroupPage"
 import { ReplaysSearchPage } from "./Components/Pages/ReplaysSearchPage"
@@ -21,7 +22,7 @@ import {
     GLOBAL_STATS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_PAGE_LINK,
-    PLUGINS_LINK,
+    PLUGINS_LINK, PRIVACY_POLICY_LINK,
     REPLAY_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
@@ -54,6 +55,7 @@ class AppComponent extends React.Component<Props> {
                             <Route exact path={PLUGINS_LINK} component={PluginsPage}/>
                             <Route exact path={STATUS_PAGE_LINK} component={StatusPage}/>
                             <Route exact path={EXPLANATIONS_LINK} component={ExplanationsPage}/>
+                            <Route exact path={PRIVACY_POLICY_LINK} component={PrivacyPolicyPage}/>
                             {/*Redirect unknowns to root*/}
                             <Redirect from="*" to="/"/>
                         </Switch>

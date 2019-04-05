@@ -3,7 +3,7 @@ import * as React from "react"
 import { Cookies as ReactCookies } from "react-cookie"
 import ReactGA from "react-ga"
 import { RouteComponentProps, withRouter } from "react-router"
-import { GOOGLE_ANALYTICS_ID } from "./Globals"
+import { GOOGLE_ANALYTICS_ID, PRIVACY_POLICY_LINK } from "./Globals"
 
 interface State {
     location: string
@@ -25,6 +25,7 @@ class AppListenerComponent extends React.Component<Props, State> {
         this.handleClose = this.handleClose.bind(this)
         this.onChange(this.props.history.location, this.props.history.action)
         this.props.history.listen(this.onChange)
+        console.log(this.props.history.location.pathname)
     }
 
     public render() {
@@ -32,7 +33,8 @@ class AppListenerComponent extends React.Component<Props, State> {
             <>
                 {this.props.children}
                 {this.state.notificationOpen ?
-                    <Dialog open={this.state.notificationOpen}>
+                    <Dialog open={this.state.notificationOpen &&
+                    this.props.history.location.pathname !== PRIVACY_POLICY_LINK}>
                         {/*<div style={{*/}
                         {/*position: "fixed", bottom: "0", left: "0",*/}
                         {/*width: "100vw", height: "7vh", backgroundColor: "#ddd",*/}
