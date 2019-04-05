@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, Divider, Grid } from "@material-ui/core"
+import Typography from "@material-ui/core/Typography"
 import * as React from "react"
 import { BasePage } from "./BasePage"
-import Typography from "@material-ui/core/Typography"
 
 export class PrivacyPolicyPage extends React.PureComponent {
     public render() {

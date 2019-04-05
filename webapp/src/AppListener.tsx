@@ -25,7 +25,6 @@ class AppListenerComponent extends React.Component<Props, State> {
         this.handleClose = this.handleClose.bind(this)
         this.onChange(this.props.history.location, this.props.history.action)
         this.props.history.listen(this.onChange)
-        console.log(this.props.history.location.pathname)
     }
 
     public render() {
