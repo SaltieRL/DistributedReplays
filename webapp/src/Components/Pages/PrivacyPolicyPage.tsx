@@ -103,10 +103,11 @@ export class PrivacyPolicyPage extends React.PureComponent {
                                             2019.</p>
 
                                         <h3>How to contact us</h3>
-                                        <p>If you have any questions about Our
-                                            Company’s privacy policy, the data we hold on you, or you would like to
+                                        <p>If you have any questions about Calculated.gg’s privacy policy, the data we
+                                            hold on you, or you would like to
                                             exercise one of your data protection rights, please do not hesitate to
-                                            contact us.</p><p>Email us at: saltie.calculated.gg_at_gmail_dot_com</p>
+                                            contact us.</p>
+                                        <p>Email us at: saltie.calculated.gg_at_gmail_dot_com</p>
                                     </Typography>
                                 </CardContent>
                             </Card>
