@@ -12,6 +12,7 @@ export const getMatchHistory = (id: string, page: number, limit: number): Promis
                     id: "215989AB4EF314212",
                     name: "Replay1",
                     date: moment(),
+                    map: "TESTMAP",
                     gameMode: "1's" as GameMode,
                     gameScore: {team0Score: 1, team1Score: 2},
                     players: [

@@ -12,18 +12,14 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename, redirect
 
-
+from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 
 try:
     import config
 except ImportError:
     config = None
 
-try:
-    from backend.blueprints.spa_api.service_layers.ml.ml import RankPredictionAPI
-except ModuleNotFoundError:
-    RankPredictionAPI = None
-    print("Not using ML because required packages are not installed. Run `pip install -r requirements-ml.txt` to use ML.")
+
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
@@ -270,10 +266,8 @@ def download_replay(id_):
 
 @bp.route('replay/<id_>/predict')
 def api_predict_ranks(id_):
-    if RankPredictionAPI is None:
-        return "Module not loaded", 404
-    ranks = RankPredictionAPI.create_from_id(id_)
-    return jsonify(ranks)
+    ranks = PredictedRank.create_from_id(id_)
+    return better_jsonify(ranks)
 
 
 @bp.route('/replay')

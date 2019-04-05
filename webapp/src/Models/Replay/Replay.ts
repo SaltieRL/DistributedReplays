@@ -11,6 +11,7 @@ export interface Replay {
     id: string
     name: string
     date: moment.Moment
+    map: string
     gameMode: GameMode
     gameScore: GameScore
     players: ReplayPlayer[]

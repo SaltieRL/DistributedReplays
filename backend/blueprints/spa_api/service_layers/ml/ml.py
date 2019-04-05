@@ -5,8 +5,7 @@ import torch
 import torch.nn as nn
 import pandas as pd
 
-from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.database.objects import PlayerGame, Game
+from backend.database.objects import PlayerGame
 from sqlalchemy import inspect
 
 
@@ -97,20 +96,6 @@ class RankPredictor:
 
 
 model_holder = RankPredictor()
-
-
-class RankPredictionAPI:
-    @staticmethod
-    @with_session
-    def create_from_id(id_, session=None):
-        game: Game = session.query(Game).filter(Game.hash == id_).first()
-        if game.playlist != 13 and game.playlist != 3 and game.playlist != 6: # standard and unranked standard and customs
-            return {}
-        playergames = session.query(PlayerGame).filter(PlayerGame.game == id_).all()
-        ranks = {}
-        for pg in playergames:
-            ranks[pg.player] = model_holder.predict_rank(pg)
-        return ranks
 
 
 if __name__ == '__main__':
