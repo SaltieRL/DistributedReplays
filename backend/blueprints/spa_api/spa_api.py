@@ -1,5 +1,6 @@
 import base64
 import gzip
+import hashlib
 import io
 import logging
 import os
@@ -67,6 +68,8 @@ def better_jsonify(response: object):
         else:
             return jsonify(response.__dict__)
 
+def encode_bot_name(w):
+    return 'b' + hashlib.md5(w.lower().encode()).hexdigest()[:9] + 'b'
 
 ### GLOBAL
 
@@ -97,7 +100,9 @@ def api_get_current_user():
 
 @bp.route('player/<id_or_name>')
 def api_get_player(id_or_name):
-    if len(id_or_name) != 17 or re.match(re.compile('\d{17}'), id_or_name) is None:
+    if id_or_name.startswith("(bot)"):
+        return jsonify(encode_bot_name(id_or_name[5:]))
+    elif len(id_or_name) != 17 or re.match(re.compile('\d{17}'), id_or_name) is None:
         # Treat as name
         response = get_vanity_to_steam_id_or_random_response(id_or_name)
         if response is None:
