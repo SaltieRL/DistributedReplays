@@ -1,4 +1,4 @@
-import { faBraille, faBullseye, faEuroSign, faFlagUsa, IconDefinition } from "@fortawesome/free-solid-svg-icons"
+import { faBraille, faBullseye, faFastForward, faHourglass, IconDefinition } from "@fortawesome/free-solid-svg-icons"
 import { faRocket } from "@fortawesome/free-solid-svg-icons/faRocket"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Tab, Tabs, withWidth } from "@material-ui/core"
@@ -20,8 +20,8 @@ class HeatmapTabsComponent extends React.PureComponent<Props> {
             "Hits": faBullseye,
             "Positioning": faBraille,
             "Boost": faRocket,
-            "Boost Speed": faFlagUsa,
-            "Slow Speed": faEuroSign
+            "Boost Speed": faFastForward,
+            "Slow Speed": faHourglass
         }
 
         return (
