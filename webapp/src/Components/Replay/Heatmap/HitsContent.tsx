@@ -91,7 +91,10 @@ export class HitsContent extends React.PureComponent<Props, State> {
     private createHeatmap(player: any) {
         const data = this.props.heatmapData.data[player.name]
         return (
-            <Grid item key={player.name} xs={12} md={6} lg={4} style={{height: "375px", width: WIDTH}}>
+            <Grid item key={player.name} xs={12} md={6} lg={6} style={{
+                width: "400px",
+                height: "500px"
+            }}>
                 <Typography>{player.name}</Typography>
                 <Scatter data={{
                     datasets: [
@@ -107,6 +110,8 @@ export class HitsContent extends React.PureComponent<Props, State> {
                     ]
                 }}
                          options={{
+                             responsive: true,
+                             maintainAspectRatio: false,
                              scales: {
                                  xAxes: [{
                                      ticks: {
