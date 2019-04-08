@@ -60,6 +60,9 @@ class ReplayHeatmaps:
         #             max_ = max(math.log(arr[0][x, y] + 1e-3), max_)
         #     data[player] = player_data
         #     maxs[player] = max_
+        if type_ == 'hits':
+            return {'data': output, 'maxs': maxs}
+
         if type_ in ['hits']:
             log_scale = False
         else:
@@ -114,11 +117,12 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
         players.remove("ball")
     players.remove("game")
     data = {}
+    width = 400 / 500
     for player in players:
         if type == 'positioning':
             # player = players[1]
             df_adjusted = df
-        elif type == 'hits':
+        elif type in ['shots', 'hits']:
             if proto is None:
                 raise Exception("Proto is none")
             player_id = None
@@ -127,8 +131,10 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
                     player_id = proto_player.id.id
             if player_id is None:
                 continue
-            proto_hits = [hit for hit in proto.game_stats.hits if hit.player_id.id == player_id]
-
+            if type == 'hits':
+                proto_hits = [hit for hit in proto.game_stats.hits if hit.player_id.id == player_id]
+            else:
+                proto_hits = [hit for hit in proto.game_stats.hits if hit.player_id.id == player_id and hit.shot]
             # find hits
             hit_frames = [hit.frame_number for hit in proto_hits]
             print(player, hit_frames)
@@ -149,9 +155,11 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
             df_p = df_adjusted['ball'][['pos_x', 'pos_y', 'pos_z']].dropna()
             val_x = df_p['pos_x']
             val_y = df_p['pos_y']
-            val_z = df_p['pos_z']
-            H, x, y = np.histogram2d(val_x, val_y, bins=[20, 30])
-            data[player] = (H, x, y)
+            data[player] = [{
+                'x': math.floor(x * width * 200 / 6000 + 125),
+                'y': math.floor(y * width * 200 / 6000 + 175),
+                'value': 1
+            } for x, y in zip(val_x, val_y)]
         else:
             df_p = df_adjusted[player][['pos_x', 'pos_y', 'pos_z']].dropna()
             val_x = df_p['pos_x']

@@ -43,7 +43,9 @@ export class HeatmapTabsWrapper extends React.PureComponent<Props, State> {
                 <HeatmapTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
                 <CardContent>
                     <Grid container spacing={32}>
-                        <HeatmapContent replay={this.props.replay} heatmapData={this.state.heatmapData}/>
+                        {this.state.selectedTab === "Hits" ?
+                            <HeatmapContent replay={this.props.replay} heatmapData={this.state.heatmapData}/> :
+                            <HeatmapContent replay={this.props.replay} heatmapData={this.state.heatmapData}/>}
                     </Grid>
                 </CardContent>
             </LoadableWrapper>
