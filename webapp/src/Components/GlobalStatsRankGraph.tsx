@@ -33,7 +33,7 @@ export class GlobalStatsRankGraph extends React.PureComponent<Props> {
             datasets: [{
                 label: "Data",
                 data: data.map((point: any) => {
-                    return point.mean === null ? Math.random() * 10 : data.mean
+                    return point.mean === null ? Math.random() * 10 : point.mean
                 }),
                 pointBackgroundColor: pointBackgroundColors
             }]
