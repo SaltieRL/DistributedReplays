@@ -75,6 +75,6 @@ export class GlobalStatsPage extends React.PureComponent<{}, State> {
 
     private readonly getRankGraphs = (): Promise<void> => {
         return getGlobalRankGraphs()
-            .then((stats) => this.setState({globalRankGraphs: stats["result"]}))
+            .then((stats) => this.setState({globalRankGraphs: stats.result}))
     }
 }
