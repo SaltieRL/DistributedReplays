@@ -1,39 +1,42 @@
-import { ChartData, ChartDataSets, ChartOptions, ChartTooltipItem } from "chart.js"
-import * as _ from "lodash"
+import { ChartData, ChartOptions, ChartTooltipItem } from "chart.js"
 import * as React from "react"
-import { Bar } from "react-chartjs-2"
+import { Line } from "react-chartjs-2"
 import { roundLabelToMaxDPCallback } from "../Utils/Chart"
-import { colorsForPlaylists, convertHexToRgba } from "../Utils/Color"
 
 interface Props {
-    graph: GlobalStatsGraph
+    graph: any
 }
 
 export class GlobalStatsRankGraph extends React.PureComponent<Props> {
     public render() {
         return (
-            <Bar data={this.getChartData()} options={this.getChartOptions()}/>
+            <Line data={this.getChartData()} options={this.getChartOptions()}/>
         )
     }
 
     private readonly getChartData = (): ChartData => {
-        const datasets = this.props.graph.data
-        const labels = _.union(...datasets.map((dataset) => dataset.keys)).sort((a, b) => a - b)
-
+        const pointBackgroundColors = [
+            "#000000", // unranked
+            "#a56113", "#a56113", "#a56113", // bronze
+            "#b7b7b6", "#b7b7b6", "#b7b7b6", // silver
+            "#fae550", "#fae550", "#fae550", // gold
+            "#93e0f6", "#93e0f6", "#93e0f6", // platinum
+            "#52aeee", "#52aeee", "#52aeee", // diamond
+            "#d9bef8", "#d9bef8", "#d9bef8", // champ
+            "#c19dee" // GC BTW
+        ]
+        const data = this.props.graph
         return {
-            labels: labels.map((value) => value.toString()),
-            datasets: datasets.map((dataset, i): ChartDataSets => ({
-                label: dataset.name,
-                data: labels.map((label) => {
-                    // TODO: Make this not really unoptimal. Maybe by changing backend return type.
-                    const index = dataset.keys.findIndex((key) => key === label)
-                    if (index === -1) {
-                        return 0
-                    }
-                    return dataset.values[index]
+            labels: ["Unranked", "Bronze I", "Bronze II", "Bronze III", "Silver I", "Silver II", "Silver III", "Gold I",
+                "Gold II", "Gold III", "Platinum I", "Platinum II", "Platinum III", "Diamond I", "Diamond II",
+                "Diamond III", "Champion I", "Champion II", "Champion III", "Grand Champion"],
+            datasets: [{
+                label: "Data",
+                data: data.map((point: any) => {
+                    return point.mean === null ? Math.random() * 10 : data.mean
                 }),
-                backgroundColor: convertHexToRgba(colorsForPlaylists[i], 0.8)
-            }))
+                pointBackgroundColor: pointBackgroundColors
+            }]
         }
     }
 
@@ -42,27 +45,19 @@ export class GlobalStatsRankGraph extends React.PureComponent<Props> {
             responsive: true,
             scales: {
                 xAxes: [{
-                    stacked: true,
-                    barPercentage: 1,
-                    categoryPercentage: 1,
                     ticks: {
-                        autoSkip: true,
-                        maxTicksLimit: 6
-                    }
-                }],
-                yAxes: [{
-                    stacked: false,
-                    ticks: {
-                        beginAtZero: true,
-                        autoSkip: true,
-                        maxTicksLimit: 8
+                        display: false //this will remove only the label
                     }
                 }]
+            },
+
+            legend: {
+                display: false
             },
             tooltips: {
                 callbacks: {
                     label: (tooltipItem: ChartTooltipItem, data: ChartData) =>
-                        roundLabelToMaxDPCallback(tooltipItem, data, 4)
+                        roundLabelToMaxDPCallback(tooltipItem, data, 3)
                 }
             }
         }
