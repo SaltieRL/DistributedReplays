@@ -1,11 +1,11 @@
+import { CardContent, Divider } from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import * as React from "react"
 import { HeatmapSubcategory, Replay } from "../../../Models"
 import { getHeatmaps } from "../../../Requests/Replay"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
-import { HeatmapTabs } from "./HeatmapTabs"
-import { CardContent, Divider } from "@material-ui/core"
 import { HeatmapContent } from "./HeatmapContent"
+import { HeatmapTabs } from "./HeatmapTabs"
 
 interface Props {
     replay: Replay

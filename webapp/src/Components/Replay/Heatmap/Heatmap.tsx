@@ -45,11 +45,8 @@ export class ReactHeatmap extends React.PureComponent<Props, State> {
             const localCfg = _.merge(defaultCfg, c)
             localCfg.container = container
             const heatmapInstance = h337.create(localCfg)
-            console.log("data", data)
             heatmapInstance.setData(data)
             this.setState({cfg: localCfg, heatmapInstance})
-        } else {
-            console.log("null")
         }
     }
 
@@ -60,7 +57,8 @@ export class ReactHeatmap extends React.PureComponent<Props, State> {
     public render() {
 
         return (
-                <div ref={"react-heatmap"}/>
+            // tslint:disable-next-line
+                <div ref="react-heatmap"/>
         )
 
     }

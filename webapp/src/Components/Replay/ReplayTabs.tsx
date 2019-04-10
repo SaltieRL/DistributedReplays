@@ -7,9 +7,9 @@ import { Replay } from "../../Models"
 import { StoreState } from "../../Redux"
 import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
+import { HeatmapTabsWrapper } from "./Heatmap/HeatmapTabsWrapper"
 import { PredictionsContent } from "./PredictionsContent"
 import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
-import { HeatmapTabsWrapper } from "./Heatmap/HeatmapTabsWrapper"
 
 interface OwnProps {
     replay: Replay
