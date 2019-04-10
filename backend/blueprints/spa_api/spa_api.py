@@ -13,7 +13,7 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
-from backend.utils.checks import is_local_dev
+from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 
 try:
     import config
@@ -243,6 +243,16 @@ def api_get_replay_basic_team_stats_download(id_):
 @bp.route('replay/<id_>/positions')
 def api_get_replay_positions(id_):
     positions = ReplayPositions.create_from_id(id_)
+    return better_jsonify(positions)
+
+
+@bp.route('replay/<id_>/heatmaps')
+def api_get_replay_heatmaps(id_):
+    if 'type' in request.args:
+        type_ = request.args['type'].lower()
+    else:
+        type_ = 'positioning'
+    positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
     return better_jsonify(positions)
 
 
