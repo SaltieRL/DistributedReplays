@@ -7,14 +7,18 @@ interface Props {
     graph: any
 }
 
+
 export class GlobalStatsRankGraph extends React.PureComponent<Props> {
     public render() {
         return (
-            <Line data={this.getChartData()} options={this.getChartOptions()}/>
+            <div style={{width: "95%"}}>
+                <Line data={this.getChartData()} options={this.getChartOptions()}/>
+            </div>
         )
     }
 
     private readonly getChartData = (): ChartData => {
+        const SLICE_START = 4
         const pointBackgroundColors = [
             "#000000", // unranked
             "#a56113", "#a56113", "#a56113", // bronze
@@ -24,15 +28,16 @@ export class GlobalStatsRankGraph extends React.PureComponent<Props> {
             "#52aeee", "#52aeee", "#52aeee", // diamond
             "#d9bef8", "#d9bef8", "#d9bef8", // champ
             "#c19dee" // GC BTW
-        ]
+        ].slice(SLICE_START)
+
         const data = this.props.graph
         return {
             labels: ["Unranked", "Bronze I", "Bronze II", "Bronze III", "Silver I", "Silver II", "Silver III", "Gold I",
                 "Gold II", "Gold III", "Platinum I", "Platinum II", "Platinum III", "Diamond I", "Diamond II",
-                "Diamond III", "Champion I", "Champion II", "Champion III", "Grand Champion"],
+                "Diamond III", "Champion I", "Champion II", "Champion III", "Grand Champion", "null"].slice(SLICE_START),
             datasets: [{
                 label: "Data",
-                data: data.map((point: any) => {
+                data: data.slice(SLICE_START).map((point: any) => {
                     // return point.mean === null ? Math.random() * 10 : point.mean
                     return point.mean
                 }),
@@ -47,7 +52,13 @@ export class GlobalStatsRankGraph extends React.PureComponent<Props> {
             scales: {
                 xAxes: [{
                     ticks: {
-                        display: false //this will remove only the label
+                        display: false // this will remove only the label
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+
+                        maxTicksLimit: 5
                     }
                 }]
             },

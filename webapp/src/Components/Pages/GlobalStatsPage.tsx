@@ -2,23 +2,33 @@ import { Card, CardContent, CardHeader, Grid, Typography } from "@material-ui/co
 import * as React from "react"
 import { getGlobalRankGraphs, getGlobalStats } from "../../Requests/Global"
 import { GlobalStatsChart } from "../GlobalStatsChart"
+import { GlobalStatsRankGraph } from "../GlobalStatsRankGraph"
 import { IconTooltip } from "../Shared/IconTooltip"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
-import { GlobalStatsRankGraph } from "../GlobalStatsRankGraph"
+import { StoreState } from "../../Redux"
+import { connect } from "react-redux"
 
 interface State {
     globalStats?: GlobalStatsGraph[]
     globalRankGraphs?: any
 }
 
-export class GlobalStatsPage extends React.PureComponent<{}, State> {
-    constructor(props: {}) {
+interface OwnProps {
+
+}
+
+type Props = OwnProps
+    & ReturnType<typeof mapStateToProps>
+
+export class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
+    constructor(props: Props) {
         super(props)
         this.state = {}
     }
 
     public render() {
+        const removedStats = ["first_frame_in_game", "is_keyboard", "time_in_game", "total_saves"]
         return (
             <BasePage backgroundImage={"/splash.png"}>
                 <Grid container spacing={16} alignItems="center" justify="center">
@@ -43,25 +53,27 @@ export class GlobalStatsPage extends React.PureComponent<{}, State> {
                             )
                         })}
                     </LoadableWrapper>
-
-                    <LoadableWrapper load={this.getRankGraphs}>
-                        {this.state.globalRankGraphs && Object.keys(this.state.globalRankGraphs["13"]).map((key: any) => {
-                            const globalStatsGraph = this.state.globalRankGraphs["13"][key];
-                            return (
-                                <Grid item xs={12} sm={6} md={4} key={key}>
-                                    <Card>
-                                        <CardHeader title={key}
-                                                    titleTypographyProps={{align: "center"}}/>
-                                        <CardContent>
-                                            <GlobalStatsRankGraph graph={globalStatsGraph}/>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            )
-                        })}
-
-
-                    </LoadableWrapper>
+                    {this.props.loggedInUser && this.props.loggedInUser.beta ?
+                        <LoadableWrapper load={this.getRankGraphs}>
+                            {this.state.globalRankGraphs && Object.keys(this.state.globalRankGraphs["13"]).map((key: any) => {
+                                const globalStatsGraph = this.state.globalRankGraphs["13"][key]
+                                if (removedStats.indexOf(key) !== -1) {
+                                    return null
+                                }
+                                return (
+                                    <Grid item xs={12} sm={6} md={4} key={key}>
+                                        <Card>
+                                            <CardHeader title={this.titleCase(key.replace(/_/g, " "))}
+                                                        titleTypographyProps={{align: "center"}}/>
+                                            <CardContent>
+                                                <GlobalStatsRankGraph graph={globalStatsGraph}/>
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                )
+                            })}
+                        </LoadableWrapper> : null
+                    }
                 </Grid>
             </BasePage>
         )
@@ -72,9 +84,19 @@ export class GlobalStatsPage extends React.PureComponent<{}, State> {
             .then((globalStats) => this.setState({globalStats}))
     }
 
-
     private readonly getRankGraphs = (): Promise<void> => {
         return getGlobalRankGraphs()
             .then((stats) => this.setState({globalRankGraphs: stats.result}))
     }
+
+    private titleCase(str: string) {
+        return str.toLowerCase().split(" ").map((word) => word.replace(word[0],
+            word[0].toUpperCase())).join(" ")
+    }
 }
+
+
+export const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+export const GlobalStatsPage = connect(mapStateToProps)(GlobalStatsPageComponent)
