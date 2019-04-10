@@ -31,7 +31,7 @@ from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
-from .service_layers.global_stats import GlobalStatsGraph
+from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
 from .service_layers.player.play_style_progression import PlayStyleProgression
@@ -90,6 +90,12 @@ def api_get_queue_length():
 def api_get_global_stats():
     global_stats_graphs = GlobalStatsGraph.create()
     return better_jsonify(global_stats_graphs)
+
+
+@bp.route('/global/graphs')
+def api_get_global_graphs():
+    global_stats_charts = GlobalStatsChart.create()
+    return better_jsonify(global_stats_charts)
 
 
 @bp.route('/me')
