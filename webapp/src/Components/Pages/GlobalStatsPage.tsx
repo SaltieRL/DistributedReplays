@@ -55,23 +55,24 @@ export class GlobalStatsPageComponent extends React.PureComponent<Props, State> 
                     </LoadableWrapper>
                     {this.props.loggedInUser && this.props.loggedInUser.beta ?
                         <LoadableWrapper load={this.getRankGraphs}>
-                            {this.state.globalRankGraphs && Object.keys(this.state.globalRankGraphs["13"]).map((key: any) => {
-                                const globalStatsGraph = this.state.globalRankGraphs["13"][key]
-                                if (removedStats.indexOf(key) !== -1) {
-                                    return null
-                                }
-                                return (
-                                    <Grid item xs={12} sm={6} md={4} key={key}>
-                                        <Card>
-                                            <CardHeader title={this.titleCase(key.replace(/_/g, " "))}
-                                                        titleTypographyProps={{align: "center"}}/>
-                                            <CardContent>
-                                                <GlobalStatsRankGraph graph={globalStatsGraph}/>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                )
-                            })}
+                            {this.state.globalRankGraphs && Object.keys(this.state.globalRankGraphs["13"])
+                                .map((key: any) => {
+                                    const globalStatsGraph = this.state.globalRankGraphs["13"][key]
+                                    if (removedStats.indexOf(key) !== -1) {
+                                        return null
+                                    }
+                                    return (
+                                        <Grid item xs={12} sm={6} md={4} key={key}>
+                                            <Card>
+                                                <CardHeader title={this.titleCase(key.replace(/_/g, " "))}
+                                                            titleTypographyProps={{align: "center"}}/>
+                                                <CardContent>
+                                                    <GlobalStatsRankGraph graph={globalStatsGraph}/>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    )
+                                })}
                         </LoadableWrapper> : null
                     }
                 </Grid>
