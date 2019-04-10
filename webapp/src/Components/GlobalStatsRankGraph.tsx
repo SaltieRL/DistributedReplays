@@ -7,7 +7,6 @@ interface Props {
     graph: any
 }
 
-
 export class GlobalStatsRankGraph extends React.PureComponent<Props> {
     public render() {
         return (
@@ -34,7 +33,8 @@ export class GlobalStatsRankGraph extends React.PureComponent<Props> {
         return {
             labels: ["Unranked", "Bronze I", "Bronze II", "Bronze III", "Silver I", "Silver II", "Silver III", "Gold I",
                 "Gold II", "Gold III", "Platinum I", "Platinum II", "Platinum III", "Diamond I", "Diamond II",
-                "Diamond III", "Champion I", "Champion II", "Champion III", "Grand Champion", "null"].slice(SLICE_START),
+                "Diamond III", "Champion I", "Champion II", "Champion III", "Grand Champion",
+                "null"].slice(SLICE_START),
             datasets: [{
                 label: "Data",
                 data: data.slice(SLICE_START).map((point: any) => {

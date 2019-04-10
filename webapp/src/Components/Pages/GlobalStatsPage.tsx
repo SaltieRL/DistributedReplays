@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader, Grid, Typography } from "@material-ui/core"
 import * as React from "react"
+import { connect } from "react-redux"
+import { StoreState } from "../../Redux"
 import { getGlobalRankGraphs, getGlobalStats } from "../../Requests/Global"
 import { GlobalStatsChart } from "../GlobalStatsChart"
 import { GlobalStatsRankGraph } from "../GlobalStatsRankGraph"
 import { IconTooltip } from "../Shared/IconTooltip"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
-import { StoreState } from "../../Redux"
-import { connect } from "react-redux"
 
 interface State {
     globalStats?: GlobalStatsGraph[]
@@ -94,7 +94,6 @@ export class GlobalStatsPageComponent extends React.PureComponent<Props, State> 
             word[0].toUpperCase())).join(" ")
     }
 }
-
 
 export const mapStateToProps = (state: StoreState) => ({
     loggedInUser: state.loggedInUser
