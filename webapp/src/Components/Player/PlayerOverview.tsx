@@ -22,7 +22,7 @@ const playerViewTabs: PlayerViewTab[] = ["Profile", "Playstyle", "Match History"
 
 interface State {
     selectedMobileTab?: PlayerViewTab
-    playlist?: number
+    playlist: number
     winLossMode: boolean
 }
 
@@ -60,9 +60,12 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={7} md={9} container spacing={24}>
                             <Grid item xs={12}>
-                                <PlayerPlayStyleCard player={this.props.player}
-                                                     handlePlaylistChange={this.handlePlaylistChange}
-                                                     handleWinsLossesChange={this.handleWinsLossesChange}
+                                <PlayerPlayStyleCard
+                                    player={this.props.player}
+                                    playlist={this.state.playlist}
+                                    winLossMode={this.state.winLossMode}
+                                    handlePlaylistChange={this.handlePlaylistChange}
+                                    handleWinsLossesChange={this.handleWinsLossesChange}
                                 >
                                     {playerPlayStyle}
                                 </PlayerPlayStyleCard>
@@ -93,10 +96,15 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 }
                                 {this.state.selectedMobileTab === "Playstyle" &&
                                 <>
-                                    <PlayStyleActions player={this.props.player}
-                                                      handlePlaylistChange={this.handlePlaylistChange}
-                                                      handleWinsLossesChange={this.handleWinsLossesChange}
-                                                      useFullSizeCompareButton/>
+                                    <div style={{width: "100%", textAlign: "right"}}>
+                                        <PlayStyleActions
+                                            player={this.props.player}
+                                            playlist={this.state.playlist}
+                                            winLossMode={this.state.winLossMode}
+                                            handlePlaylistChange={this.handlePlaylistChange}
+                                            handleWinsLossesChange={this.handleWinsLossesChange}
+                                        />
+                                    </div>
                                     {playerPlayStyle}
                                 </>
                                 }

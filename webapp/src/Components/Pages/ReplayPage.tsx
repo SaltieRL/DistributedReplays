@@ -2,7 +2,7 @@ import { Grid } from "@material-ui/core"
 import * as React from "react"
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
 import { Replay } from "../../Models"
-import { getExplanations, getPredictedRanks, getReplay } from "../../Requests/Replay"
+import { getExplanations, getReplay } from "../../Requests/Replay"
 import { ReplayView } from "../Replay/ReplayView"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
@@ -27,12 +27,12 @@ export class ReplayPage extends React.PureComponent<Props, State> {
 
     public render() {
         const matchUrl = this.props.match.url
-        const {replay, explanations, predictedRanks} = this.state
+        const {replay, explanations} = this.state
 
         return (
             <BasePage backgroundImage={"/replay_page_background.png"}>
                 <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
-                    <LoadableWrapper load={this.getBoth}>
+                    <LoadableWrapper load={this.getReplay}>
                         {replay &&
                         <Switch>
                             <Route
@@ -40,7 +40,6 @@ export class ReplayPage extends React.PureComponent<Props, State> {
                                 render={() => (
                                     <ReplayView
                                         replay={replay}
-                                        predictedRanks={predictedRanks}
                                         explanations={explanations}
                                         handleUpdateTags={this.handleUpdateTags}
                                     />
@@ -55,21 +54,10 @@ export class ReplayPage extends React.PureComponent<Props, State> {
         )
     }
 
-    // private readonly getReplay = (): Promise<void> => {
-    //     return Promise.all([getReplay(this.props.match.params.id), getExplanations()])
-    //         .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
-    // }
-
-    private readonly getBoth = (): Promise<void> => {
-        // TODO: when predictions 404, don't show the tab (?)
-        return Promise.all([getReplay(this.props.match.params.id), getPredictedRanks(this.props.match.params.id),
-            getExplanations()])
-            .then((data) => this.setState({replay: data[0], predictedRanks: data[1], explanations: data[2]}))
+    private readonly getReplay = (): Promise<void> => {
+        return Promise.all([getReplay(this.props.match.params.id), getExplanations()])
+            .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
     }
-    // private getPredictedRanks = (): Promise<void> => {
-    //     return getPredictedRanks(this.props.match.params.id)
-    //         .then((predictedRanks) => this.setState({predictedRanks}))
-    // }
 
     private readonly handleUpdateTags = (tags: Tag[]) => {
         const replay = {

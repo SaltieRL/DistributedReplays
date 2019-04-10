@@ -115,7 +115,9 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                     :
                     <ExpansionPanel>
                         <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
-                            {contents}
+                            <div onClick={this.stopPropagation} style={{width: "100%"}}>
+                                {contents}
+                            </div>
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails className={classes.panelDetails}>
                             {!this.props.useBoxScore ?
@@ -132,6 +134,10 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
 
     private readonly toggleSelect = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         this.props.selectProps!.handleSelectChange(checked)
+    }
+
+    private readonly stopPropagation: React.MouseEventHandler = (event) => {
+        event.stopPropagation()
     }
 }
 

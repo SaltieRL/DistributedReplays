@@ -333,7 +333,6 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                         {filterRankedCheckbox}
                     </ExpansionPanelDetails>
                 </ExpansionPanel>
-
                 }
                 {this.props.dropdownOnly && playlistsMultiSelect}
             </>

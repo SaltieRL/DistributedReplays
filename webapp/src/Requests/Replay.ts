@@ -18,6 +18,7 @@ export const getReplay = (id: string): Promise<Replay> => {
             id: "21312512515FAB213",
             name: "Name",
             date: moment(),
+            map: "TESTMAP",
             gameMode: "1's" as GameMode,
             gameScore: {team0Score: 5, team1Score: 6},
             players: [
