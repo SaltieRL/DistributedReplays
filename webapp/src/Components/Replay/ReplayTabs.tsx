@@ -10,6 +10,7 @@ import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
 import { HeatmapTabsWrapper } from "./Heatmap/HeatmapTabsWrapper"
 import { Predictions } from "./Predictions/Predictions"
 import { ReplayViewer } from "./ReplayViewer/ReplayViewer"
+import { VisualizationsContent } from "./Visualizations/VisualizationsContent"
 
 interface OwnProps {
     replay: Replay
@@ -20,7 +21,7 @@ type Props = OwnProps
     & ReturnType<typeof mapStateToProps>
     & WithWidth
 
-type ReplayTab = "playerStats" | "teamStats" | "heatmaps" | "replayViewer" | "predictions" | "qrCode"
+type ReplayTab = "playerStats" | "teamStats" | "heatmaps" | "visualizations" | "replayViewer" | "predictions" | "qrCode"
 
 interface State {
     selectedTab: ReplayTab
@@ -29,7 +30,7 @@ interface State {
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedTab: "playerStats"}
+        this.state = {selectedTab: "visualizations"}
     }
 
     public render() {
@@ -67,6 +68,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     <Tab key="heatmaps" label="Heatmaps" value="heatmaps"/>
                     }
                     {this.props.loggedInUser && this.props.loggedInUser.beta &&
+                    <Tab key="visualizations" label="Visualizations" value="visualizations"/>
+                    }
+                    {this.props.loggedInUser && this.props.loggedInUser.beta &&
                     <Tab key="teamStats" label="Team Stats" value="teamStats"/>
                     }
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
@@ -94,6 +98,8 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 }
                 {this.state.selectedTab === "qrCode" &&
                 qrcode}
+                {this.state.selectedTab === "visualizations" &&
+                <VisualizationsContent replay={this.props.replay} />}
             </Card>
         )
     }
