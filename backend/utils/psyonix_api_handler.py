@@ -7,6 +7,9 @@ from typing import Union
 import redis
 import requests
 from flask import current_app
+from backend.utils.braacket_connection import Braacket
+from backend.database.objects import Player
+from backend.database.startup import startup
 
 fake_data = False
 try:
@@ -137,6 +140,28 @@ def get_rank(steam_id):
     :param steam_id: steamid to get
     :return: rank, if it exists
     """
+    if len(steam_id) == 11 and steam_id[0] == 'b' and steam_id[-1] == 'b':
+        engine, Session = startup()
+        bot = Session().query(Player).filter(Player.platformid == steam_id).first().platformname
+        league = Braacket()
+        braacket_id = league.player_cache.get(bot)
+        unranked = get_empty_data([steam_id])
+        if braacket_id is not None:
+            ranking_info, rank_points = league.get_ranking(braacket_id)
+            unranked.get(steam_id).get('10')['string'] = ranking_info[0] + ranking_info[1] + " " + ranking_info[2] + " " + ranking_info[3]
+            unranked.get(steam_id).get('10')['rank_points'] = rank_points
+            rank = int(ranking_info[0])
+            if rank <= 6:
+                unranked.get(steam_id).get('10')['tier'] = 21
+            elif rank <= 12:
+                unranked.get(steam_id).get('10')['tier'] = 22
+            elif rank <= 18:
+                unranked.get(steam_id).get('10')['tier'] = 23
+            elif rank <= 24:
+                unranked.get(steam_id).get('10')['tier'] = 24
+            else:
+                unranked.get(steam_id).get('10')['tier'] = 25
+        return unranked[list(unranked.keys())[0]]
     rank = get_rank_batch([steam_id])
     if rank is None or len(rank) <= 0:
         return None
