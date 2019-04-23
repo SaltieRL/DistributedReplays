@@ -1,6 +1,7 @@
 amqp==2.3.2
 arrow==0.12.1
 Babel==2.6.0
+beautifulsoup4==4.7.1
 billiard==3.5.0.4
 carball
 celery==4.2.1
