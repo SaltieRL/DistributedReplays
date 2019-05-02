@@ -38,7 +38,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         pitch: -3,
                         stiffness: 0.699999988079071,
                         swivelSpeed: 3,
-                        transitionSpeed: 1
+                        transitionSpeed: 1.0
                     },
                     loadout: {
                         car: "Road Hog"
@@ -60,7 +60,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         pitch: -3,
                         stiffness: 0.449999988079071,
                         swivelSpeed: 5,
-                        transitionSpeed: 1
+                        transitionSpeed: 1.0
                     },
                     loadout: {
                         car: "Octane"
@@ -82,7 +82,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         pitch: -3,
                         stiffness: 0.5,
                         swivelSpeed: 9,
-                        transitionSpeed: 1
+                        transitionSpeed: 1.0
                     },
                     loadout: {
                         car: "Octane"
@@ -104,7 +104,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         pitch: -4,
                         stiffness: 0.449999988079071,
                         swivelSpeed: 6,
-                        transitionSpeed: 2
+                        transitionSpeed: 2.0
                     },
                     loadout: {
                         car: "Batmobile '16"
@@ -126,7 +126,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         pitch: -3,
                         stiffness: 0.449999988079071,
                         swivelSpeed: 5,
-                        transitionSpeed: 1
+                        transitionSpeed: 1.0
                     },
                     loadout: {
                         car: "Octane"
@@ -148,7 +148,7 @@ export const getReplay = (id: string): Promise<Replay> => {
                         pitch: -3,
                         stiffness: 0.449999988079071,
                         swivelSpeed: 4,
-                        transitionSpeed: 1
+                        transitionSpeed: 1.0
                     },
                     loadout: {
                         car: "Octane"
