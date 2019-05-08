@@ -9,6 +9,7 @@ import shutil
 import uuid
 import zlib
 
+import requests
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename, redirect
@@ -20,6 +21,13 @@ try:
 except ImportError:
     config = None
 
+try:
+    import config
+
+    GCP_URL = config.GCP_URL
+except:
+    print('Not using GCP')
+    GCP_URL = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -318,8 +326,10 @@ def api_upload_replays():
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
         lengths = get_queue_length()  # priority 0,3,6,9
-        if lengths[1] > 1000:
-            result = celery_tasks.parse_replay_gcp(os.path.abspath(filename))
+        if lengths[1] > 1000 and GCP_URL is not None:
+            with open(os.path.abspath(filename), 'rb') as f:
+                encoded_file = base64.b64encode(f.read())
+            r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
         else:
             result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
         task_ids.append(result.id)
