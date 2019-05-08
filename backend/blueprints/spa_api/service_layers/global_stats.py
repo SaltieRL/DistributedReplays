@@ -29,3 +29,14 @@ class GlobalStatsGraph:
     def create() -> List['GlobalStatsGraph']:
         r = current_app.config['r']
         return json.loads(r.get('global_distributions'))
+
+
+class GlobalStatsChart:
+    def __init__(self, name: str, datasets: List[GlobalStatsGraphDataset]):
+        self.name = name
+        self.data = [dataset.__dict__ for dataset in datasets]
+
+    @staticmethod
+    def create() -> List['GlobalStatsGraph']:
+        r = current_app.config['r']
+        return json.loads(r.get('global_stats'))
