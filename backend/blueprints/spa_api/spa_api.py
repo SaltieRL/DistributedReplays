@@ -16,6 +16,7 @@ from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 
 try:
     import config
@@ -40,7 +41,7 @@ from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
-from .service_layers.global_stats import GlobalStatsGraph
+from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
 from .service_layers.player.play_style_progression import PlayStyleProgression
@@ -99,6 +100,12 @@ def api_get_queue_length():
 def api_get_global_stats():
     global_stats_graphs = GlobalStatsGraph.create()
     return better_jsonify(global_stats_graphs)
+
+
+@bp.route('/global/graphs')
+def api_get_global_graphs():
+    global_stats_charts = GlobalStatsChart.create()
+    return better_jsonify(global_stats_charts)
 
 
 @bp.route('/me')
@@ -246,6 +253,16 @@ def api_get_replay_basic_team_stats_download(id_):
 @bp.route('replay/<id_>/positions')
 def api_get_replay_positions(id_):
     positions = ReplayPositions.create_from_id(id_)
+    return better_jsonify(positions)
+
+
+@bp.route('replay/<id_>/heatmaps')
+def api_get_replay_heatmaps(id_):
+    if 'type' in request.args:
+        type_ = request.args['type'].lower()
+    else:
+        type_ = 'positioning'
+    positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
     return better_jsonify(positions)
 
 
