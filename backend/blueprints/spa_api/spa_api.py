@@ -12,6 +12,7 @@ import zlib
 import requests
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
@@ -329,10 +330,13 @@ def api_upload_replays():
         if lengths[1] > 1000 and GCP_URL is not None:
             with open(os.path.abspath(filename), 'rb') as f:
                 encoded_file = base64.b64encode(f.read())
-            r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
+            try:
+                r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
+            except ReadTimeout as e:
+                pass # we don't care, it's given
         else:
             result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-        task_ids.append(result.id)
+            task_ids.append(result.id)
     return jsonify(task_ids), 202
 
 
