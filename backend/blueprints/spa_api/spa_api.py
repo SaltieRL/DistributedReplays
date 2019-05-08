@@ -348,7 +348,7 @@ def api_upload_replays():
             with open(os.path.abspath(filename), 'rb') as f:
                 encoded_file = base64.b64encode(f.read())
             try:
-                r = requests.post(GCP_URL, data=encoded_file, timeout=0.5)
+                r = requests.post(GCP_URL + '&uuid=' + str(ud), data=encoded_file, timeout=0.5)
             except ReadTimeout as e:
                 pass # we don't care, it's given
         else:
@@ -399,6 +399,9 @@ def api_upload_proto():
     # Cleanup
     if os.path.isfile(id_replay_path):
         shutil.move(id_replay_path, guid_replay_path)
+    if 'uuid' in response:
+        uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
+        shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename)) # rename replay properly
 
     return jsonify({'Success': True})
 
