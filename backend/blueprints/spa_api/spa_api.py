@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import uuid
+import zlib
 
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
@@ -338,8 +339,8 @@ def api_upload_proto():
 
     # Convert to byte files from base64
     response = request.get_json()
-    proto_in_memory = io.BytesIO(base64.b64decode(gzip.decompress(response['proto'])))
-    pandas_in_memory = io.BytesIO(base64.b64decode(gzip.decompress(response['pandas'])))
+    proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
+    pandas_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['pandas'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
