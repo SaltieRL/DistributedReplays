@@ -14,6 +14,7 @@ export const getQueueStatuses = (): Promise<QueueStatus[]> => {
 }
 
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
+export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
 
 // @return taskIds of uploaded replays
 export const uploadReplays = (replays: File[]): Promise<string[]> => {
