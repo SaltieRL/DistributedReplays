@@ -419,7 +419,7 @@ def api_upload_proto():
         uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
         shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename))  # rename replay properly
         if REPLAY_BUCKET != '':
-            upload_to_bucket(filename, filename, REPLAY_BUCKET)
+            upload_to_bucket(filename, os.path.join(os.path.dirname(uuid_fn), filename), REPLAY_BUCKET)
             upload_to_bucket(filename + '.pts', parsed_path + '.pts', PROTO_BUCKET)
             upload_to_bucket(filename + '.gzip', parsed_path + '.gzip', PARSED_BUCKET)
     return jsonify({'Success': True})
