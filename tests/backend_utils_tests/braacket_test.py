@@ -22,6 +22,7 @@ class BraacketTest(unittest.TestCase):
         self.assertIsNone(get_bot_by_steam_id("notABot"))
         self.assertIsNone(self.league.player_cache.get("notABot"))
         self.assertIsNone(self.league.get_ranking("notABot"))
+        self.assertIsNone(get_bot_by_steam_id("bNotABotb"))
 
     def test_get_bot_by_steam_id_allstars(self):
         bot = get_bot_by_steam_id("bcfe70a272b")

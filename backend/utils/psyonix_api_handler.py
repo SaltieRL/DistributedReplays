@@ -40,11 +40,13 @@ def get_item_dict():
 def get_bot_by_steam_id(steam_id):
     if steam_id[0] == 'b' and steam_id[-1] == 'b':
         if len(steam_id) < 6:
-            bot = "Allstar"
+            return "Allstar"
         else:
             engine, Session = startup()
-            bot = Session().query(Player).filter(Player.platformid == steam_id).first().platformname
-        return bot
+            bot = Session().query(Player).filter(Player.platformid == steam_id).first()
+            if bot is None:
+                return None
+        return bot.platformname
     return None
 
 
