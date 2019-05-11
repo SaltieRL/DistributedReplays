@@ -101,7 +101,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
-def parse_replay_task(self, fn, preserve_upload_date=False, custom_file_location:str=None):
+def parse_replay_task(self, fn, preserve_upload_date=False, custom_file_location:str=None, force_reparse=False):
     if custom_file_location is None:
         pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
     else:
@@ -110,11 +110,11 @@ def parse_replay_task(self, fn, preserve_upload_date=False, custom_file_location
         failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
     else:
         failed_dir = custom_file_location
-    if os.path.isfile(pickled):
+    if os.path.isfile(pickled) and not force_reparse:
         return
     # try:
     try:
-        analysis_manager = analyze_replay_file(fn)  # type: ReplayGame
+         analysis_manager = analyze_replay_file(fn)  # type: ReplayGame
     except Exception as e:
         if not os.path.isdir(failed_dir):
             os.makedirs(failed_dir)
@@ -142,6 +142,7 @@ def parse_replay_task(self, fn, preserve_upload_date=False, custom_file_location
     shutil.move(fn, os.path.join(os.path.dirname(fn), replay_id + '.replay'))
     shutil.move(pickled + '.pts', os.path.join(os.path.dirname(pickled), replay_id + '.replay.pts'))
     shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip'))
+    return replay_id
 
 
 @celery.task(base=DBTask, bind=True, priority=9)

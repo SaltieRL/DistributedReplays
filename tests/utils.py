@@ -8,6 +8,15 @@ import requests
 folder_location = os.path.join(os.path.dirname(__file__), 'test_data')
 
 
+def get_test_folder():
+    return folder_location
+
+
+
+def get_test_file(file_name):
+    return os.path.join(folder_location, file_name)
+
+
 def download_replay_discord(url):
     file = requests.get(url, stream=True)
     replay = file.raw
@@ -41,7 +50,16 @@ def write_files_to_disk(replays):
             real_file.write(f)
 
 def clear_dir():
-    os.remove(folder_location)
+    try:
+        os.remove(folder_location)
+    except:
+        pass
+    for root, dirs, files in os.walk(folder_location):
+        for file in files:
+            try:
+                os.remove(file)
+            except:
+                pass
 
 def _async_raise(tid, exctype):
     '''Raises an exception in the threads with id tid'''
