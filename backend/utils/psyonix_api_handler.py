@@ -37,6 +37,17 @@ def get_item_dict():
     return item_dict
 
 
+def get_bot_by_steam_id(steam_id):
+    if steam_id[0] == 'b' and steam_id[-1] == 'b':
+        if len(steam_id) < 6:
+            bot = "Allstar"
+        else:
+            engine, Session = startup()
+            bot = Session().query(Player).filter(Player.platformid == steam_id).first().platformname
+        return bot
+    return None
+
+
 def get_rank_batch(ids, offline_redis=None, use_redis=True):
     """
     Gets a batch of ranks based on ids. Returns fake data if there is no API key available.
@@ -140,14 +151,10 @@ def get_rank(steam_id):
     :param steam_id: steamid to get
     :return: rank, if it exists
     """
-    if steam_id[0] == 'b' and steam_id[-1] == 'b':
-        if len(steam_id) < 6:
-            bot = "Allstar"
-        else:
-            engine, Session = startup()
-            bot = Session().query(Player).filter(Player.platformid == steam_id).first().platformname
+    bot_id = get_bot_by_steam_id(steam_id)
+    if bot_id is not None:
         league = Braacket()
-        braacket_id = league.player_cache.get(bot)
+        braacket_id = league.player_cache.get(bot_id)
         unranked = get_empty_data([steam_id])
         if braacket_id is not None:
             ranking_info, rank_points = league.get_ranking(braacket_id)
