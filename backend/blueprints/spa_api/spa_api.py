@@ -26,9 +26,11 @@ try:
     import config
 
     GCP_URL = config.GCP_URL
+    CLOUD_THRESHOLD = config.CLOUD_THRESHOLD
 except:
     print('Not using GCP')
-    GCP_URL = ''
+    GCP_URL = None
+    CLOUD_THRESHOLD = 100 # threshold of queue size for cloud parsing
 
 try:
     import config
@@ -358,7 +360,7 @@ def api_upload_replays():
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
         lengths = get_queue_length()  # priority 0,3,6,9
-        if lengths[1] > 1000 and GCP_URL is not None:
+        if lengths[1] > CLOUD_THRESHOLD and GCP_URL is not None:
             with open(os.path.abspath(filename), 'rb') as f:
                 encoded_file = base64.b64encode(f.read())
             try:
