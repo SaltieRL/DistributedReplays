@@ -19,7 +19,7 @@ coverage:
         website:
           threshold: 0.5
           paths:
-            - backend/*
+            - webapp/*
     patch: off
     changes: no
 
@@ -37,7 +37,6 @@ comment:
   require_changes: no
 
 ingore:
-  - "*.txt"
   - "helpers/*"
   - "data/*"
   - "redis/*"

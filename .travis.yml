@@ -24,6 +24,7 @@ install:
 - ls
 - cd webapp
 - npm install
+- cd $TRAVIS_BUILD_DIR
 
 # command to run tests
 script:
