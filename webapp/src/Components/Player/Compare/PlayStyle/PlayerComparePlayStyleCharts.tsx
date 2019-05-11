@@ -1,6 +1,6 @@
 import { FormControlLabel, Grid, Switch, Typography } from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleRawResponse, PlayStyleResponse } from "src/Models"
+import { PlayStyleRawResponse, PlayStyleResponse } from "../../../../Models"
 import { getPlayStyle, getPlayStyleRaw } from "../../../../Requests/Player/getPlayStyle"
 import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { RankSelect } from "../../../Shared/Selects/RankSelect"
@@ -62,15 +62,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
     public render() {
         const {players} = this.props
         const {playerPlayStyles, playerPlayStylesRaw} = this.state
-        if (playerPlayStyles.length === 0) {
-            return null
-        }
 
-        const compareChartDatas = playerPlayStyles[0].chartDatas
-            .map((_, i) => playerPlayStyles
-                .map((playStyleResponse) => playStyleResponse.chartDatas[i])
-            )
-        const chartTitles = playerPlayStyles[0].chartDatas.map((chartData) => chartData.title)
         const checkbox = (
             <FormControlLabel
                 control={<Switch onChange={this.handleHeatmapChange}/>}
@@ -88,14 +80,39 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                 currentPlaylistsOnly
                 multiple={false}/>
         )
+
+        const rankSelect = (
+            <RankSelect selectedRank={this.state.rank || -1}
+                        handleChange={this.handleRankChange}
+                        inputLabel="Rank to compare"
+                        helperText="Select the rank to plot as average"
+                        noneLabel="Default"/>
+        )
+
+        if (playerPlayStyles.length === 0) {
+            return (
+              <>
+                <Grid item xs={12} style={{textAlign: "center"}}>
+                    {rankSelect}
+                </Grid>
+                <Grid item xs={12} style={{textAlign: "center"}}>
+                    {dropDown}
+                </Grid>
+              </>
+            )
+        }
+
+        const compareChartDatas = playerPlayStyles[0].chartDatas
+            .map((_, i) => playerPlayStyles
+                .map((playStyleResponse) => playStyleResponse.chartDatas[i])
+            )
+
+        const chartTitles = playerPlayStyles[0].chartDatas.map((chartData) => chartData.title)
+
         return (
             <>
                 <Grid item xs={12} style={{textAlign: "center"}}>
-                    <RankSelect selectedRank={this.state.rank || -1}
-                                handleChange={this.handleRankChange}
-                                inputLabel="Rank to compare"
-                                helperText="Select the rank to plot as average"
-                                noneLabel="Default"/>
+                    {rankSelect}
                 </Grid>
                 <Grid item xs={12} style={{textAlign: "center"}}>
                     {dropDown}

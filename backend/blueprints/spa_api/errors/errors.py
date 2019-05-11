@@ -53,3 +53,8 @@ class MissingQueryParams(CalculatedError):
 class TagNotFound(CalculatedError):
     status_code = 404
     message = "Tag not found"
+
+
+class UnsupportedPlaylist(CalculatedError):
+    status_code = 501
+    message = "Playlist not supported"

@@ -1,22 +1,13 @@
-import { Action } from "redux"
+import { createAction } from "redux-actions"
 import { NotificationProps } from "../../Components/Shared/Notification/NotificationSnackbar"
 
-interface ShowNotifictionAction extends Action<"SHOW_NOTIFICATION"> {
-    notification: NotificationProps
+enum Type {
+    SHOW_NOTIFICATION = "SHOW_NOTIFICATION",
+    DISMISS_NOTIFICATION = "DISMISS_NOTIFICATION"
 }
 
-export const showNotifictionAction = (notification: NotificationProps): ShowNotifictionAction => ({
-    notification,
-    type: "SHOW_NOTIFICATION"
-})
-
-type DismissNotificationAction = Action<"DISMISS_NOTIFICATION">
-
-export const dismissNotificationAction = (): DismissNotificationAction => ({
-    type: "DISMISS_NOTIFICATION"
-})
-
-export type NotificationsActionTypes = ShowNotifictionAction
-    | DismissNotificationAction
-
-export type NotificationsState = NotificationProps[]
+export const NotificationActions = {
+    Type,
+    showNotifictionAction: createAction<NotificationProps>(Type.SHOW_NOTIFICATION),
+    dismissNotificationAction: createAction(Type.DISMISS_NOTIFICATION)
+}

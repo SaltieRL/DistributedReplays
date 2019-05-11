@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import { BasicStat, PlayerStatsSubcategory, Replay } from "src/Models"
+import { BasicStat, PlayerStatsSubcategory, Replay } from "../../../Models"
 import { getReplayGroupStats } from "../../../Requests/Replay"
 import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
 import { StatChart } from "../../Shared/Charts/StatChart"
@@ -49,7 +49,7 @@ export class ReplaysGroupCharts extends React.PureComponent<Props, State> {
                                             <Typography variant="subheading" align="center">
                                                 {convertSnakeAndCamelCaseToReadable(basicStat.title)}
                                             </Typography>
-                                            <StatChart basicStat={basicStat}/>
+                                            <StatChart basicStat={basicStat} explanations={{}}/>
                                         </Grid>
                                     )
                                 })

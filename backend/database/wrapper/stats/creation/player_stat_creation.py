@@ -37,7 +37,6 @@ class PlayerStatCreation(SharedStatCreation):
     @staticmethod
     def get_math_queries() ->List[QueryFieldWrapper]:
         return [
-            QueryFieldWrapper(stat_math.get_hits_non_dribbles(), DynamicFieldResult('hits')),
             QueryFieldWrapper(stat_math.get_shots_per_non_dribble(), DynamicFieldResult('shots/hit'), is_percent=True),
             QueryFieldWrapper(stat_math.get_passes_per_non_dribble(), DynamicFieldResult('passes/hit'),
                               is_percent=True),
@@ -47,15 +46,6 @@ class PlayerStatCreation(SharedStatCreation):
                               is_percent=True),
             QueryFieldWrapper(stat_math.get_shot_percent(),
                               DynamicFieldResult('shot %'), is_percent=True, is_cumulative=True),
-            QueryFieldWrapper(PlayerGame.time_in_attacking_half, DynamicFieldResult('att 1/2')),
-            QueryFieldWrapper(PlayerGame.time_in_attacking_third, DynamicFieldResult('att 1/3')),
-            QueryFieldWrapper(PlayerGame.time_in_defending_half, DynamicFieldResult('def 1/2')),
-            QueryFieldWrapper(PlayerGame.time_in_defending_third, DynamicFieldResult('def 1/3')),
-            QueryFieldWrapper(PlayerGame.time_behind_ball, DynamicFieldResult('< ball')),
-            QueryFieldWrapper(PlayerGame.time_in_front_ball, DynamicFieldResult('> ball')),
-            QueryFieldWrapper(func.random(), DynamicFieldResult('luck')),
-            QueryFieldWrapper(stat_math.get_total_boost_efficiency(),
-                              DynamicFieldResult('raw total boost efficiency'), is_percent=True),
             QueryFieldWrapper(stat_math.get_collection_boost_efficiency(),
                               DynamicFieldResult('collection boost efficiency'), is_percent=True),
             QueryFieldWrapper(stat_math.get_used_boost_efficiency(),
@@ -67,6 +57,6 @@ class PlayerStatCreation(SharedStatCreation):
             QueryFieldWrapper(stat_math.get_boost_ratio(),
                               DynamicFieldResult('boost ratio'), is_percent=True),
             QueryFieldWrapper(stat_math.get_aerial_efficiency(),
-                              DynamicFieldResult('aerial_efficiency'), is_percent=True),
+                              DynamicFieldResult('aerial efficiency'), is_percent=True),
 
         ]

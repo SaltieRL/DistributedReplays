@@ -1,6 +1,6 @@
-import * as qs from "qs"
-import { PlayStyleRawResponse, PlayStyleResponse } from "src/Models"
+import qs from "qs"
 import { doGet } from "../../apiHandler/apiHandler"
+import { PlayStyleRawResponse, PlayStyleResponse } from "../../Models"
 import { useMockData } from "../Config"
 import { MOCK_PLAY_STYLE, MOCK_PLAY_STYLE_RAW } from "../Mock"
 

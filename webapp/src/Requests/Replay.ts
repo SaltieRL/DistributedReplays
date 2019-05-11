@@ -1,5 +1,6 @@
-import * as moment from "moment"
-import * as qs from "qs"
+import moment from "moment"
+import qs from "qs"
+import { doGet } from "../apiHandler/apiHandler"
 import {
     BasicStat,
     GameMode,
@@ -8,8 +9,7 @@ import {
     Replay,
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
-} from "src/Models"
-import { doGet } from "../apiHandler/apiHandler"
+} from "../Models"
 import { useMockData } from "./Config"
 
 export const getReplay = (id: string): Promise<Replay> => {
@@ -18,6 +18,7 @@ export const getReplay = (id: string): Promise<Replay> => {
             id: "21312512515FAB213",
             name: "Name",
             date: moment(),
+            map: "TESTMAP",
             gameMode: "1's" as GameMode,
             gameScore: {team0Score: 5, team1Score: 6},
             players: [
@@ -187,4 +188,15 @@ export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<Ma
             ...data,
             replays: data.replays.map(parseReplay)
         }))
+}
+
+export const getExplanations = (): Promise<any> => {
+    return doGet("/stats/explanations")
+}
+
+export const getPredictedRanks = (id: string): Promise<any> => {
+    return doGet(`/replay/${id}/predict`)
+}
+export const getHeatmaps = (id: string, type: string = "position"): Promise<any> => {
+    return doGet(`/replay/${id}/heatmaps?type=${type}`)
 }

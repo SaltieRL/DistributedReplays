@@ -1,14 +1,10 @@
-import { Action } from "redux"
+import { createAction } from "redux-actions"
 
-interface SetLoggedInUserAction extends Action<"SET_LOGGED_IN_USER"> {
-    loggedInUser: LoggedInUser
+enum Type {
+    SET_LOGGED_IN_USER = "SET_LOGGED_IN_USER"
 }
 
-export const setLoggedInUserAction = (loggedInUser: LoggedInUser): SetLoggedInUserAction => ({
-    loggedInUser,
-    type: "SET_LOGGED_IN_USER"
-})
-
-export type LoggedInUserActionTypes = SetLoggedInUserAction
-
-export type LoggedInUserState = LoggedInUser | null
+export const LoggedInUserActions = {
+    Type,
+    setLoggedInUserAction: createAction<LoggedInUser>(Type.SET_LOGGED_IN_USER)
+}

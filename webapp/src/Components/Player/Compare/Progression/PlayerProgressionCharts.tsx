@@ -2,7 +2,7 @@ import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, Typogr
 import * as _ from "lodash"
 import * as moment from "moment"
 import * as React from "react"
-import { PlayStyleProgressionPoint } from "src/Models"
+import { PlayStyleProgressionPoint } from "../../../../Models"
 import { getProgression } from "../../../../Requests/Player/getProgression"
 import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 import { ClearableDatePicker } from "../../../Shared/ClearableDatePicker"
@@ -95,7 +95,6 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
                 inputLabel="Playlist"
                 helperText="Select playlist to use"
                 dropdownOnly
-                currentPlaylistsOnly
                 multiple={false}/>
         )
         return (

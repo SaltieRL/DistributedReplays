@@ -6,7 +6,7 @@ const uploadTabs: UploadTab[] = ["Upload Replays", "Previous Uploads"]
 
 interface Props {
     selectedTab: UploadTab
-    handleChange: (event: React.ChangeEvent, selectedTab: UploadTab) => void
+    handleChange: (event: React.ChangeEvent<{}>, selectedTab: UploadTab) => void
 }
 
 export class UploadTabs extends React.PureComponent<Props> {

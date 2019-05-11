@@ -18,8 +18,8 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
-import { Replay } from "src/Models"
 import { REPLAY_PAGE_LINK } from "../../Globals"
+import { Replay } from "../../Models"
 import { ReplayBoxScore } from "../Replay/ReplayBoxScore"
 import { ReplayChart } from "../Replay/ReplayChart"
 import { ColouredGameScore } from "../Shared/ColouredGameScore"
@@ -115,7 +115,9 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                     :
                     <ExpansionPanel>
                         <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
-                            {contents}
+                            <div onClick={this.stopPropagation} style={{width: "100%"}}>
+                                {contents}
+                            </div>
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails className={classes.panelDetails}>
                             {!this.props.useBoxScore ?
@@ -132,6 +134,10 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
 
     private readonly toggleSelect = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         this.props.selectProps!.handleSelectChange(checked)
+    }
+
+    private readonly stopPropagation: React.MouseEventHandler = (event) => {
+        event.stopPropagation()
     }
 }
 
