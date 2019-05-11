@@ -101,25 +101,34 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
-def parse_replay_task(self, fn,
+def parse_replay_task(self, fn, preserve_upload_date=False, 
+                      # private replays parameters
                       player_id: str = None, game_visibility: GameVisibilitySetting = None,
-                      preserve_upload_date=False):
-    """
+                      # test parameters
+                      custom_file_location:str=None, force_reparse=False):
+  """
     :param self:
     :param fn: filename
+    :param preserve_upload_date: If true the upload date is retained
     :param player_id: Must be provided if game_visibility is provided.
     :param game_visibility: Must be provided if player_id is provided.
-    :param preserve_upload_date:
+    :param custom_file_location: If a custom file path should be used instead
+    :param force_reparse: if true parsing will happen even if a file already exists.
     :return:
-    """
-    output = fn + '.json'
-    pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
-    failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
-    if os.path.isfile(pickled):
+  """
+    if custom_file_location is None:
+        pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
+    else:
+        pickled = os.path.join(custom_file_location, os.path.basename(fn))
+    if custom_file_location is None:
+        failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
+    else:
+        failed_dir = custom_file_location
+    if os.path.isfile(pickled) and not force_reparse:
         return
     # try:
     try:
-        analysis_manager = analyze_replay_file(fn)  # type: ReplayGame
+         analysis_manager = analyze_replay_file(fn)  # type: ReplayGame
     except Exception as e:
         if not os.path.isdir(failed_dir):
             os.makedirs(failed_dir)
@@ -156,6 +165,7 @@ def parse_replay_task(self, fn,
     shutil.move(fn, os.path.join(os.path.dirname(fn), replay_id + '.replay'))
     shutil.move(pickled + '.pts', os.path.join(os.path.dirname(pickled), replay_id + '.replay.pts'))
     shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip'))
+    return replay_id
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
