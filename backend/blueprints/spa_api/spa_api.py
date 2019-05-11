@@ -1,5 +1,4 @@
 import base64
-import gzip
 import hashlib
 import io
 import logging
@@ -12,11 +11,12 @@ import zlib
 import requests
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from google.auth.credentials import Credentials
 from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
-from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
+from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 
 try:
     import config
@@ -30,6 +30,19 @@ try:
 except:
     print('Not using GCP')
     GCP_URL = ''
+
+try:
+    import config
+    from google.cloud import storage
+
+    REPLAY_BUCKET = ''
+    PARSED_BUCKET = ''
+    GZIP_BUCKET = ''
+except:
+    print('Not uploading to buckets')
+    REPLAY_BUCKET = ''
+    PARSED_BUCKET = ''
+    GZIP_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -79,8 +92,10 @@ def better_jsonify(response: object):
         else:
             return jsonify(response.__dict__)
 
+
 def encode_bot_name(w):
     return 'b' + hashlib.md5(w.lower().encode()).hexdigest()[:9] + 'b'
+
 
 ### GLOBAL
 
@@ -350,7 +365,7 @@ def api_upload_replays():
             try:
                 r = requests.post(GCP_URL + '&uuid=' + str(ud), data=encoded_file, timeout=0.5)
             except ReadTimeout as e:
-                pass # we don't care, it's given
+                pass  # we don't care, it's given
         else:
             result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
             task_ids.append(result.id)
@@ -401,8 +416,10 @@ def api_upload_proto():
         shutil.move(id_replay_path, guid_replay_path)
     if 'uuid' in response:
         uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
-        shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename)) # rename replay properly
-
+        shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename))  # rename replay properly
+        upload_to_bucket(filename, filename, REPLAY_BUCKET)
+        upload_to_bucket(filename + '.pts', parsed_path + '.pts', PARSED_BUCKET)
+        upload_to_bucket(filename + '.gzip', parsed_path + '.gzip', GZIP_BUCKET)
     return jsonify({'Success': True})
 
 
@@ -458,3 +475,19 @@ def api_handle_error(error: CalculatedError):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+def upload_to_bucket(blob_name, path_to_file, bucket_name):
+    """ Upload data to a bucket"""
+
+    # Explicitly use service account credentials by specifying the private key
+    # file.
+    storage_client = storage.Client()
+    # print(buckets = list(storage_client.list_buckets())
+
+    bucket = storage_client.get_bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+    blob.upload_from_filename(path_to_file)
+
+    # returns a public url
+    return blob.public_url
