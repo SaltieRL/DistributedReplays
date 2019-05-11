@@ -1,13 +1,15 @@
-from typing import List
+from typing import List, Tuple
 
 from flask import current_app
+from sqlalchemy import func, desc
 
 from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
 from backend.blueprints.spa_api.service_layers.stat import DataPoint, PlayerDataPoint
 from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.database.objects import PlayerGame
+from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 from backend.utils.psyonix_api_handler import get_rank
 from .player_profile_stats import player_stat_wrapper, player_wrapper
-from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 
 explanations = player_stat_wrapper.player_stats.stat_explanation_map
 
@@ -31,10 +33,10 @@ class PlayStyleResponse:
             raise UserHasNoReplays()
         if rank is None:
             rank = get_rank(id_)
-        averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
-                                                                              redis=current_app.config['r'], raw=raw,
-                                                                              rank=rank, replay_ids=replay_ids,
-                                                                              playlist=playlist, win=win)
+        averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_,
+                                                                redis=current_app.config['r'], raw=raw,
+                                                                rank=rank, replay_ids=replay_ids,
+                                                                playlist=playlist, win=win)
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
 
         play_style_chart_datas: List[PlayStyleChartData] = []
@@ -42,7 +44,7 @@ class PlayStyleResponse:
             title = spider_chart_group['title']
             chart_data_points = [
                 ChartDataPoint(name=explanations[name].short_name if name in explanations else name,
-                               value=averaged_stats[name], average=global_stats[name])
+                               value=averaged_stats[name])
                 for name in spider_chart_group['group']
             ]
             play_style_chart_datas.append(PlayStyleChartData(title, chart_data_points))
@@ -61,10 +63,16 @@ class PlayStyleResponse:
             raise UserHasNoReplays()
         if rank is None:
             rank = get_rank(id_)
-        averaged_stats, global_stats = player_stat_wrapper.get_averaged_stats(session, id_,
-                                                                              redis=current_app.config['r'], raw=True,
-                                                                              rank=rank, replay_ids=replay_ids,
-                                                                              playlist=playlist, win=win)
+        averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_,
+                                                                redis=current_app.config['r'], raw=True,
+                                                                rank=rank, replay_ids=replay_ids,
+                                                                playlist=playlist, win=win)
+        if len(id_) == 11 and id_[0] == 'b' and id_[-1] == 'b':
+            names_and_counts: List[Tuple[str, int]] = session.query(PlayerGame.name,
+                                                                    func.count(PlayerGame.name).label('c')) \
+                                                          .filter(PlayerGame.player == id_) \
+                                                          .group_by(PlayerGame.name).order_by(desc('c'))[:5]
+            id_ = names_and_counts[0][0]
         playstyle_data_raw: PlayerDataPoint = PlayerDataPoint(name=id_,
                                                               data_points=[
                                                                   DataPoint(explanations[

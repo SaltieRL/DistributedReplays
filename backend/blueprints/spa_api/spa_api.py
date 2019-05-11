@@ -1,23 +1,37 @@
 import base64
 import gzip
+import hashlib
 import io
 import logging
 import os
 import re
 import shutil
 import uuid
+import zlib
 
+import requests
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
+from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 
 try:
     import config
 except ImportError:
     config = None
+
+
+try:
+    import config
+
+    GCP_URL = config.GCP_URL
+except:
+    print('Not using GCP')
+    GCP_URL = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -29,7 +43,7 @@ from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
-from .service_layers.global_stats import GlobalStatsGraph
+from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
 from .service_layers.player.play_style_progression import PlayStyleProgression
@@ -67,6 +81,8 @@ def better_jsonify(response: object):
         else:
             return jsonify(response.__dict__)
 
+def encode_bot_name(w):
+    return 'b' + hashlib.md5(w.lower().encode()).hexdigest()[:9] + 'b'
 
 ### GLOBAL
 
@@ -88,6 +104,12 @@ def api_get_global_stats():
     return better_jsonify(global_stats_graphs)
 
 
+@bp.route('/global/graphs')
+def api_get_global_graphs():
+    global_stats_charts = GlobalStatsChart.create()
+    return better_jsonify(global_stats_charts)
+
+
 @bp.route('/me')
 def api_get_current_user():
     return better_jsonify(LoggedInUser.create())
@@ -97,7 +119,9 @@ def api_get_current_user():
 
 @bp.route('player/<id_or_name>')
 def api_get_player(id_or_name):
-    if len(id_or_name) != 17 or re.match(re.compile('\d{17}'), id_or_name) is None:
+    if id_or_name.startswith("(bot)"):
+        return jsonify(encode_bot_name(id_or_name[5:]))
+    elif len(id_or_name) != 17 or re.match(re.compile('\d{17}'), id_or_name) is None:
         # Treat as name
         response = get_vanity_to_steam_id_or_random_response(id_or_name)
         if response is None:
@@ -235,6 +259,16 @@ def api_get_replay_positions(id_):
     return better_jsonify(positions)
 
 
+@bp.route('replay/<id_>/heatmaps')
+def api_get_replay_heatmaps(id_):
+    if 'type' in request.args:
+        type_ = request.args['type'].lower()
+    else:
+        type_ = 'positioning'
+    positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
+    return better_jsonify(positions)
+
+
 @bp.route('replay/group')
 def api_get_replay_group():
     ids = request.args.getlist('ids')
@@ -338,11 +372,16 @@ def api_upload_replays():
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
         lengths = get_queue_length()  # priority 0,3,6,9
-        if lengths[1] > 1000:
-            result = celery_tasks.parse_replay_gcp(os.path.abspath(filename))  # TODO: Add queryparams support
+        if lengths[1] > 1000 and GCP_URL is not None:
+            with open(os.path.abspath(filename), 'rb') as f:
+                encoded_file = base64.b64encode(f.read())
+            try:
+                r = requests.post(GCP_URL + '&uuid=' + str(ud), data=encoded_file, timeout=0.5)
+            except ReadTimeout as e:
+                pass # we don't care, it's given
         else:
-            result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename, **query_params))
-        task_ids.append(result.id)
+            result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
+            task_ids.append(result.id)
     return jsonify(task_ids), 202
 
 
@@ -359,8 +398,8 @@ def api_upload_proto():
 
     # Convert to byte files from base64
     response = request.get_json()
-    proto_in_memory = io.BytesIO(base64.b64decode(gzip.decompress(response['proto'])))
-    pandas_in_memory = io.BytesIO(base64.b64decode(gzip.decompress(response['pandas'])))
+    proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
+    pandas_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['pandas'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
@@ -388,6 +427,9 @@ def api_upload_proto():
     # Cleanup
     if os.path.isfile(id_replay_path):
         shutil.move(id_replay_path, guid_replay_path)
+    if 'uuid' in response:
+        uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
+        shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename)) # rename replay properly
 
     return jsonify({'Success': True})
 

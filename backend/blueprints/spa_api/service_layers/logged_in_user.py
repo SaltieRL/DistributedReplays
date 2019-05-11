@@ -24,4 +24,5 @@ class LoggedInUser:
             return LoggedInUser(name, id_, avatar_link, True, True, True)
         if g.user is None:
             raise CalculatedError(404, "User is not logged in.")
-        return LoggedInUser(g.user.platformname, g.user.platformid, g.user.avatar, g.admin, g.alpha, g.beta)
+        return LoggedInUser(g.user.platformname, g.user.platformid, g.user.avatar, g.admin, g.admin or g.alpha,
+                            g.admin or g.alpha or g.beta)

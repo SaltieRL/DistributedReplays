@@ -59,4 +59,7 @@ export const getPredictedRanks = (id: string): Promise<any> => {
 
 export const setVisibility = (id: string, gameVisibility: GameVisibility): Promise<VisibilityResponse> => {
     return doRequest(`/replay/${id}/visibility/${gameVisibility}`, {method: "PUT"})
+
+export const getHeatmaps = (id: string, type: string = "position"): Promise<any> => {
+    return doGet(`/replay/${id}/heatmaps?type=${type}`)
 }
