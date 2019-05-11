@@ -1,6 +1,5 @@
 import time
 import unittest
-from threading import Thread
 
 import requests
 

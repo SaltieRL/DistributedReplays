@@ -101,10 +101,15 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
-def parse_replay_task(self, fn, preserve_upload_date=False):
-    output = fn + '.json'
-    pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
-    failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
+def parse_replay_task(self, fn, preserve_upload_date=False, custom_file_location:str=None):
+    if custom_file_location is None:
+        pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
+    else:
+        pickled = os.path.join(custom_file_location, os.path.basename(fn))
+    if custom_file_location is None:
+        failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
+    else:
+        failed_dir = custom_file_location
     if os.path.isfile(pickled):
         return
     # try:

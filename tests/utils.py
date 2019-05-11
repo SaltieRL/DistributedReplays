@@ -1,8 +1,11 @@
 import ctypes
 import inspect
+import os
 import threading
 
 import requests
+
+folder_location = os.path.join(os.path.dirname(__file__), 'test_data')
 
 
 def download_replay_discord(url):
@@ -26,6 +29,19 @@ def get_complex_replay_list():
         'https://cdn.discordapp.com/attachments/493849514680254468/497191273619259393/WASTED_BOOST_WHILE_SUPER_SONIC.replay',
     ]
 
+
+def write_files_to_disk(replays):
+    if not os.path.exists(folder_location):
+        os.mkdir(folder_location)
+    for replay_url in replays:
+        print('Testing:', replay_url)
+        file_name = replay_url[replay_url.rfind('/') + 1:]
+        f = download_replay_discord(replay_url)
+        with open(os.path.join(folder_location, file_name), 'wb') as real_file:
+            real_file.write(f)
+
+def clear_dir():
+    os.remove(folder_location)
 
 def _async_raise(tid, exctype):
     '''Raises an exception in the threads with id tid'''
@@ -65,8 +81,6 @@ class KillableThread(threading.Thread):
             if tobj is self:
                 self._thread_id = tid
                 return tid
-
-        # TODO: in python 2.6, there's a simpler way to do : self.ident
 
         raise AssertionError("could not determine the thread's id")
 
