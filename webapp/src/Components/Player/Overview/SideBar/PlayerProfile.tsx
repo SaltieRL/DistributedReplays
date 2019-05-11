@@ -1,7 +1,8 @@
 import * as React from "react"
 
-import { Card, CardContent, CardMedia, createStyles, Typography, WithStyles, withStyles } from "@material-ui/core"
+import { Card, CardContent, createStyles, Typography, WithStyles, withStyles } from "@material-ui/core"
 import { PlayerNameDropdown } from "./PlayerNameDropdown"
+import { PlayerProfilePicture } from "./PlayerProfilePicture"
 
 interface OwnProps {
     player: Player
@@ -15,7 +16,7 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
         const {player, classes} = this.props
         return (
             <Card className={classes.card}>
-                <CardMedia className={classes.avatar} image={player.avatarLink}/>
+                <PlayerProfilePicture image={player.avatarLink} groups={player.groups}/>
                 <CardContent className={classes.content}>
                     <div className={classes.nameWrapper}>
                     <Typography variant="headline" noWrap>
