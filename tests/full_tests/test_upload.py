@@ -1,7 +1,11 @@
+import time
 import unittest
+from threading import Thread
+
 import requests
 
-from tests.utils import get_complex_replay_list, download_replay_discord
+from RLBotServer import start_server
+from tests.utils import get_complex_replay_list, download_replay_discord, KillableThread
 
 LOCAL_URL = 'http://localhost:8000'
 
@@ -11,13 +15,12 @@ class RunningServerTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        pass
-        # start_server()
-        # cls.thread = Thread(target=start_server)
-        # cls.thread.start()
-        # for replay_url in get_complex_replay_list():
-        #     cls.replay_status.append(
-        #         requests.post('http://localhost:8000/api/upload', files={'file': download_replay_discord(replay_url)}))
+        cls.thread = KillableThread(target=start_server)
+        cls.thread.daemon = True
+        cls.thread.start()
+        print('waiting for a bit')
+        time.sleep(2)
+        print('done waiting')
 
     def test_replays_status(self):
         for replay_url in get_complex_replay_list():
@@ -27,3 +30,11 @@ class RunningServerTest(unittest.TestCase):
             r.raise_for_status()
 
         print(self.replay_status)
+
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            cls.thread.terminate()
+        except:
+            pass
+        cls.thread.join()
