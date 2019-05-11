@@ -11,7 +11,6 @@ import zlib
 import requests
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
-from google.auth.credentials import Credentials
 from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
@@ -35,14 +34,14 @@ try:
     import config
     from google.cloud import storage
 
-    REPLAY_BUCKET = ''
-    PARSED_BUCKET = ''
-    GZIP_BUCKET = ''
+    REPLAY_BUCKET = config.REPLAY_BUCKET
+    PROTO_BUCKET = config.PROTO_BUCKET
+    PARSED_BUCKET = config.PARSED_BUCKET
 except:
     print('Not uploading to buckets')
     REPLAY_BUCKET = ''
+    PROTO_BUCKET = ''
     PARSED_BUCKET = ''
-    GZIP_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -417,9 +416,10 @@ def api_upload_proto():
     if 'uuid' in response:
         uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
         shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename))  # rename replay properly
-        upload_to_bucket(filename, filename, REPLAY_BUCKET)
-        upload_to_bucket(filename + '.pts', parsed_path + '.pts', PARSED_BUCKET)
-        upload_to_bucket(filename + '.gzip', parsed_path + '.gzip', GZIP_BUCKET)
+        if REPLAY_BUCKET != '':
+            upload_to_bucket(filename, filename, REPLAY_BUCKET)
+            upload_to_bucket(filename + '.pts', parsed_path + '.pts', PROTO_BUCKET)
+            upload_to_bucket(filename + '.gzip', parsed_path + '.gzip', PARSED_BUCKET)
     return jsonify({'Success': True})
 
 
@@ -482,7 +482,7 @@ def upload_to_bucket(blob_name, path_to_file, bucket_name):
 
     # Explicitly use service account credentials by specifying the private key
     # file.
-    storage_client = storage.Client()
+    storage_client = storage.Client.from_service_account_json('creds.json')
     # print(buckets = list(storage_client.list_buckets())
 
     bucket = storage_client.get_bucket(bucket_name)
