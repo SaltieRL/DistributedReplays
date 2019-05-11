@@ -140,9 +140,12 @@ def get_rank(steam_id):
     :param steam_id: steamid to get
     :return: rank, if it exists
     """
-    if len(steam_id) == 11 and steam_id[0] == 'b' and steam_id[-1] == 'b':
-        engine, Session = startup()
-        bot = Session().query(Player).filter(Player.platformid == steam_id).first().platformname
+    if steam_id[0] == 'b' and steam_id[-1] == 'b':
+        if len(steam_id) < 6:
+            bot = "Allstar"
+        else:
+            engine, Session = startup()
+            bot = Session().query(Player).filter(Player.platformid == steam_id).first().platformname
         league = Braacket()
         braacket_id = league.player_cache.get(bot)
         unranked = get_empty_data([steam_id])
