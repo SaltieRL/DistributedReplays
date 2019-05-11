@@ -1,16 +1,20 @@
 import ctypes
 import inspect
 import os
+import tempfile
 import threading
 
 import requests
+from carball import analyze_replay_file
+
+from backend.database import startup
+from backend.database.utils.utils import add_objects
 
 folder_location = os.path.join(os.path.dirname(__file__), 'test_data')
 
 
 def get_test_folder():
     return folder_location
-
 
 
 def get_test_file(file_name):
@@ -21,6 +25,35 @@ def download_replay_discord(url):
     file = requests.get(url, stream=True)
     replay = file.raw
     return replay.data
+
+
+def initialize_db():
+    engine, sessionmaker = startup.startup()
+    session = sessionmaker()
+    _, path = tempfile.mkstemp()
+    return session
+
+
+def parse_file(replay):
+    replay_name = write_files_to_disk([replay])[0]
+    replay = analyze_replay_file(os.path.join(folder_location, replay_name),
+                                 os.path.join(folder_location, replay_name) + '.json')
+    proto = replay.protobuf_game
+    guid = proto.game_metadata.match_guid
+    return replay, proto, guid
+
+
+def initialize_db_with_replays(replay_list, session=None):
+    if session is None:
+        session = initialize_db()
+    guids = []
+    protos = []
+    for replay in replay_list:
+        replay, proto, guid = parse_file(replay)
+        add_objects(proto, session=session)
+        guids.append(guid)
+        protos.append(proto)
+    return session, protos, guids
 
 
 def get_complex_replay_list():
@@ -42,12 +75,15 @@ def get_complex_replay_list():
 def write_files_to_disk(replays):
     if not os.path.exists(folder_location):
         os.mkdir(folder_location)
+    file_names = []
     for replay_url in replays:
         print('Testing:', replay_url)
         file_name = replay_url[replay_url.rfind('/') + 1:]
+        file_names.append(file_name)
         f = download_replay_discord(replay_url)
         with open(os.path.join(folder_location, file_name), 'wb') as real_file:
             real_file.write(f)
+    return file_names
 
 def clear_dir():
     try:
