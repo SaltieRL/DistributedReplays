@@ -157,20 +157,23 @@ def get_rank(steam_id):
         braacket_id = league.player_cache.get(bot_id)
         unranked = get_empty_data([steam_id])
         if braacket_id is not None:
-            ranking_info, rank_points = league.get_ranking(braacket_id)
-            unranked.get(steam_id).get('10')['string'] = ranking_info[0] + ranking_info[1] + " " + ranking_info[2] + " " + ranking_info[3]
-            unranked.get(steam_id).get('10')['rank_points'] = rank_points
-            rank = int(ranking_info[0])
-            if rank <= 6:
-                unranked.get(steam_id).get('10')['tier'] = 21
-            elif rank <= 12:
-                unranked.get(steam_id).get('10')['tier'] = 22
-            elif rank <= 18:
-                unranked.get(steam_id).get('10')['tier'] = 23
-            elif rank <= 24:
-                unranked.get(steam_id).get('10')['tier'] = 24
-            else:
-                unranked.get(steam_id).get('10')['tier'] = 25
+            ranking_info = league.get_ranking(braacket_id)
+            if ranking_info is not None:
+                ranking_string = ranking_info[0]
+                ranking_points = ranking_info[1]
+                unranked.get(steam_id).get('10')['string'] = ranking_string[0] + ranking_string[1] + " " + ranking_string[2] + " " + ranking_string[3]
+                unranked.get(steam_id).get('10')['rank_points'] = ranking_points
+                rank = int(ranking_string[0])
+                if rank <= 6:
+                    unranked.get(steam_id).get('10')['tier'] = 21
+                elif rank <= 12:
+                    unranked.get(steam_id).get('10')['tier'] = 22
+                elif rank <= 18:
+                    unranked.get(steam_id).get('10')['tier'] = 23
+                elif rank <= 24:
+                    unranked.get(steam_id).get('10')['tier'] = 24
+                else:
+                    unranked.get(steam_id).get('10')['tier'] = 25
         return unranked[list(unranked.keys())[0]]
     rank = get_rank_batch([steam_id])
     if rank is None or len(rank) <= 0:

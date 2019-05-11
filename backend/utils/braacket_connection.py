@@ -53,6 +53,8 @@ class Braacket:
         # :: TAG ::
         # tag can be found in:
         # <tr> -> <td> -> <h4 class='ellipsis'>
+        if len(soup.select("tr td h4.ellipsis")) == 0:
+            return None
         tag = soup.select("tr td h4.ellipsis")[0].get_text().strip()
         player_stats['tag'] = tag
         # :: RANKING ::

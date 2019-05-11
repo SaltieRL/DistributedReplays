@@ -1,8 +1,8 @@
+import tempfile
 import time
+import unittest
 
 from carball import analyze_replay_file
-import unittest
-import tempfile
 
 from backend.database import startup
 from backend.database.objects import Game, PlayerGame, TeamStat
