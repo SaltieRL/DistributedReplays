@@ -138,7 +138,7 @@ class QueryFilterBuilder:
 
         if self.is_game or has_joined_game:
             # Do visibility check
-            if not g.admin:
+            if not g.isAdmin():
                 filtered_query = filtered_query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
                                      Game.players.any(g.user.platformid)))
 

@@ -24,4 +24,3 @@ def pop(list):
 def debug(text):
     logger.warning(str(text))
     return ''
-

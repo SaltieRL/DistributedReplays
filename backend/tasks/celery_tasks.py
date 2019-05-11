@@ -101,25 +101,25 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
-def parse_replay_task(self, fn, preserve_upload_date=False, 
+def parse_replay_task(self, filename=None, preserve_upload_date: bool = False,
                       # private replays parameters
                       player_id: str = None, game_visibility: GameVisibilitySetting = None,
                       # test parameters
-                      custom_file_location:str=None, force_reparse=False):
-  """
+                      custom_file_location: str = None, force_reparse: bool = False):
+    """
     :param self:
-    :param fn: filename
+    :param filename: filename
     :param preserve_upload_date: If true the upload date is retained
     :param player_id: Must be provided if game_visibility is provided.
     :param game_visibility: Must be provided if player_id is provided.
     :param custom_file_location: If a custom file path should be used instead
     :param force_reparse: if true parsing will happen even if a file already exists.
     :return:
-  """
+    """
     if custom_file_location is None:
-        pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(fn))
+        pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(filename))
     else:
-        pickled = os.path.join(custom_file_location, os.path.basename(fn))
+        pickled = os.path.join(custom_file_location, os.path.basename(filename))
     if custom_file_location is None:
         failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
     else:
@@ -128,12 +128,12 @@ def parse_replay_task(self, fn, preserve_upload_date=False,
         return
     # try:
     try:
-         analysis_manager = analyze_replay_file(fn)  # type: ReplayGame
+        analysis_manager = analyze_replay_file(filename)  # type: ReplayGame
     except Exception as e:
         if not os.path.isdir(failed_dir):
             os.makedirs(failed_dir)
-        shutil.move(fn, os.path.join(failed_dir, os.path.basename(fn)))
-        with open(os.path.join(failed_dir, os.path.basename(fn) + '.txt'), 'a') as f:
+        shutil.move(filename, os.path.join(failed_dir, os.path.basename(filename)))
+        with open(os.path.join(failed_dir, os.path.basename(filename) + '.txt'), 'a') as f:
             f.write(str(e))
             f.write(traceback.format_exc())
         raise e
@@ -143,9 +143,9 @@ def parse_replay_task(self, fn, preserve_upload_date=False,
     with gzip.open(pickled + '.gzip', 'wb') as fo:
         analysis_manager.write_pandas_out_to_file(fo)
 
-    g = analysis_manager.protobuf_game
+    proto_game = analysis_manager.protobuf_game
     sess = self.session()
-    game, player_games, players, teamstats = convert_pickle_to_db(g)
+    game, player_games, players, teamstats = convert_pickle_to_db(proto_game)
     add_objs_to_db(game, player_games, players, teamstats, sess, preserve_upload_date=preserve_upload_date)
 
     # Add game visibility option
@@ -159,10 +159,10 @@ def parse_replay_task(self, fn, preserve_upload_date=False,
     sess.commit()
     sess.close()
 
-    replay_id = g.game_metadata.match_guid
+    replay_id = proto_game.game_metadata.match_guid
     if replay_id == '':
-        replay_id = g.game_metadata.id
-    shutil.move(fn, os.path.join(os.path.dirname(fn), replay_id + '.replay'))
+        replay_id = proto_game.game_metadata.id
+    shutil.move(filename, os.path.join(os.path.dirname(filename), replay_id + '.replay'))
     shutil.move(pickled + '.pts', os.path.join(os.path.dirname(pickled), replay_id + '.replay.pts'))
     shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip'))
     return replay_id
