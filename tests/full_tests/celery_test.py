@@ -16,7 +16,7 @@ class RunningServerTest(unittest.TestCase):
         self.assertEqual(result, '5699EF4011E8B3E248B0878371BE58A5')
 
     def test_global_stats_dont_crash_null_data(self):
-        = calc_global_stats.apply(throw=True).get()
+        calc_global_stats.apply(throw=True).get()
 
     @classmethod
     def tearDownClass(cls) -> None:
