@@ -1,16 +1,18 @@
 import gzip
+import io
 import os
+from typing import List
 
-import pandas as pd
-
-from typing import List, cast
+import requests
+from carball.analysis.utils import proto_manager, pandas_manager
 from flask import current_app
 
-from carball.analysis.utils import proto_manager, pandas_manager
-from backend.database.objects import Game, PlayerGame
 from .replay_player import ReplayPlayer
-from ..utils import sort_player_games_by_team_then_id
 from ...errors.errors import ReplayNotFound, ErrorOpeningGame
+try:
+    from config import PARSED_BUCKET
+except:
+    PARSED_BUCKET = None
 
 
 class ReplayPositions:
@@ -30,16 +32,25 @@ class ReplayPositions:
         pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
         gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
         replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-        if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-            raise ReplayNotFound()
-
-        try:
-            with gzip.open(gzip_path, 'rb') as f:
+        if not os.path.isfile(pickle_path):
+            if PARSED_BUCKET is None:
+                raise ReplayNotFound()
+            gzip_url = f'https://storage.googleapis.com/calculatedgg-parsed/{id_}.replay.gzip'
+            r = requests.get(gzip_url)
+            with gzip.GzipFile(io.BytesIO(r.content)) as f:
                 data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
-            with open(pickle_path, 'rb') as f:
+            pts_url = f'https://storage.googleapis.com/calculatedgg-proto/{id_}.replay.pts'
+            r = requests.get(pts_url)
+            with io.BytesIO(r.content) as f:
                 protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-        except Exception as e:
-            raise ErrorOpeningGame(str(e))
+        else:
+            try:
+                with gzip.open(gzip_path, 'rb') as f:
+                    data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
+                with open(pickle_path, 'rb') as f:
+                    protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
+            except Exception as e:
+                raise ErrorOpeningGame(str(e))
 
         cs = ['pos_x', 'pos_y', 'pos_z']
         rot_cs = ['rot_x', 'rot_y', 'rot_z']
