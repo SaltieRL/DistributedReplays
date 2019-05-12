@@ -7,3 +7,4 @@ codecov
 pep8
 autopep8
 httmock
+alchemy-mock
