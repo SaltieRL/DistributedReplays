@@ -4,6 +4,7 @@ from flask import current_app
 
 from backend.blueprints.spa_api.errors.errors import UserNotAuthorizedError, UserNotAuthenticatedError
 from backend.database.objects import Player, Tournament
+from backend.database.startup import startup
 from backend.database.wrapper.tournament_wrapper import TournamentWrapper
 
 TEST_USER_ID = "00000000000000001"
@@ -38,7 +39,8 @@ def remove_test_tournament(session, tournament_id):
 class CreateTournamentTest(unittest.TestCase):
     def setUp(self):
         self.test_user_id = TEST_USER_ID
-        self.session = current_app.config["db"]()
+        engine, Session = startup()
+        self.session = Session()
         add_test_user(self.session)
 
     def tearDown(self):
@@ -54,7 +56,8 @@ class CreateTournamentTest(unittest.TestCase):
 class DeleteTournamentTest(unittest.TestCase):
     def setUp(self):
         self.test_user_id = TEST_USER_ID
-        self.session = current_app.config["db"]()
+        engine, Session = startup()
+        self.session = Session()
         tournament = TournamentWrapper.add_tournament(self.session, TEST_USER_ID, TEST_TOURNAMENT_NAME)
         self.tournament_id = tournament.id
         add_test_user(self.session)
