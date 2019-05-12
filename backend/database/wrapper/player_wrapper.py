@@ -10,6 +10,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting, GameVisibility
+from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +95,8 @@ class PlayerWrapper:
                                                      GameVisibility.game == game_hash).first()
         if entry is None:
             # Check if user has right to change visibility:
-            game = session.query(Game).filter(Game.hash == game_hash, Game.players.any(g.user.platformid)).first()
+            QueryFilterBuilder().as_game().set_replay_id(game_hash).build_query(session)
+            game = session.query(Game).filter(Game.hash == game_hash).first()
             if game is not None:
                 entry = GameVisibility(player=g.user.platformid, game=game_hash, visibility=visibility)
                 session.add(entry)

@@ -101,11 +101,11 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 def add_replay_parse_task(file_name):
-    parse_replay_task.delay(kwargs={'filename': file_name})
+    return parse_replay_task.delay(*[file_name])
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
-def parse_replay_task(self, filename=None, preserve_upload_date: bool = False,
+def parse_replay_task(self, filename, preserve_upload_date: bool = False,
                       # private replays parameters
                       player_id: str = None, game_visibility: GameVisibilitySetting = None,
                       # test parameters

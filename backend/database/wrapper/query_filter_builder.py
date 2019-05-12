@@ -6,6 +6,7 @@ from sqlalchemy import cast, String, or_
 from sqlalchemy.dialects import postgresql
 
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
+from backend.utils.checks import is_admin
 
 
 class QueryFilterBuilder:
@@ -101,6 +102,10 @@ class QueryFilterBuilder:
         self.replay_ids = replay_ids
         return self
 
+    def set_replay_id(self, replay_id: str) -> 'QueryFilterBuilder':
+        self.replay_ids = replay_id
+        return self
+
     def with_team_size(self, team_size: int) -> 'QueryFilterBuilder':
         self.team_size = team_size
         return self
@@ -138,7 +143,7 @@ class QueryFilterBuilder:
 
         if self.is_game or has_joined_game:
             # Do visibility check
-            if not g.isAdmin():
+            if not is_admin():
                 filtered_query = filtered_query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
                                      Game.players.any(g.user.platformid)))
 
@@ -173,6 +178,11 @@ class QueryFilterBuilder:
                 filtered_query = filtered_query.filter(self.handle_list(Game.hash, self.replay_ids))
             else:
                 filtered_query = filtered_query.filter(self.handle_list(PlayerGame.game, self.replay_ids))
+        elif self.replay_ids is not None and len(self.replay_ids) == 1:
+            if self.is_game or has_joined_game:
+                filtered_query = filtered_query.filter(Game.hash == self.replay_ids)
+            else:
+                filtered_query = filtered_query.filter(PlayerGame.game == self.replay_ids)
         # Todo: implement tags remember to handle table joins correctly
 
         return filtered_query

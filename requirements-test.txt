@@ -6,3 +6,4 @@ coverage
 codecov
 pep8
 autopep8
+httmock

@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 
 from requests import Request
+from werkzeug.datastructures import FileStorage
 
 from RLBotServer import app
 from tests.utils import get_complex_replay_list, download_replay_discord
@@ -20,6 +21,8 @@ class RunningServerTest(unittest.TestCase):
         for replay_url in get_complex_replay_list():
             print('Testing:', replay_url)
             f = download_replay_discord(replay_url)
-            test_app = app.test_client()
-            response = test_app.post('/api/upload', data={'replays': (f,)}, follow_redirects=True, buffered=True)
+            file_storage = FileStorage(stream=f, filename='replays')
+            response = self.context.post('/api/upload', data={'replays':(file_storage, file_storage)},
+                                         buffered=True, content_type="multipart/form-data")
             print(response)
+
