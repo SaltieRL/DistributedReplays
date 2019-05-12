@@ -24,9 +24,22 @@ install:
 - ls
 - cd webapp
 - npm install
+- cd $TRAVIS_BUILD_DIR
 
 # command to run tests
 script:
+# run linters
+- chmod 777 .travis/tslint.sh && .travis/tslint.sh
+
+## test python unit tests
+- pytest --cov=./
+- bash <(curl -s https://codecov.io/bash) -c -F server
+## test react
+#- cd webapp
+#- npm test
+#- cd ..
+
+# start the server
 - cd $TRAVIS_BUILD_DIR
 - cd webapp
 - npm install
@@ -34,13 +47,8 @@ script:
 - cd $TRAVIS_BUILD_DIR
 - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
 - python3 RLBotServer.py &
-#
-## test python
-- pytest --cov=./
-## test react
-- chmod 777 .travis/tslint.sh && .travis/tslint.sh
-#- cd webapp
-#- npm test
+
+# start up integration tests
 
 after_success:
 - codecov
