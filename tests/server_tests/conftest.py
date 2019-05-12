@@ -1,7 +1,6 @@
 import pytest
 from alchemy_mock.mocking import AlchemyMagicMock
 
-from tests.utils import get_test_folder
 
 """
 @pytest.fixture(autouse=True)
