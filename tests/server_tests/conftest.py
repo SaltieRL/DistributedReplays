@@ -1,15 +1,22 @@
 import pytest
 from alchemy_mock.mocking import AlchemyMagicMock
 
+from tests.utils import get_test_folder
 
+"""
 @pytest.fixture(autouse=True)
 def no_requests(monkeypatch):
     monkeypatch.delattr("requests.sessions.Session.request")
-
+"""
 
 @pytest.fixture(autouse=True)
 def mock_alchemy(monkeypatch):
-    def fake_startup():
-        return AlchemyMagicMock()
+    from backend.database.startup import EngineStartup
+    print('mocking database')
 
-    monkeypatch.setattr('backend.database.startup', 'startup', fake_startup)
+    local_instance = AlchemyMagicMock()
+    def fake_startup():
+        return local_instance
+
+    monkeypatch.setattr(EngineStartup, 'startup', fake_startup)
+    return local_instance

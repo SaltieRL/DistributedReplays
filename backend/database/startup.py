@@ -32,3 +32,23 @@ def startup() -> sessionmaker:
         except Exception as e:
             engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
     return session
+
+
+def startup():
+    return EngineStartup.startup()
+
+
+class EngineStartup:
+    @staticmethod
+    def startup() -> sessionmaker:
+        try:
+            # Sql Stuff
+            connection_string = 'postgresql:///saltie'
+            engine, session = login(connection_string)
+        except OperationalError as e:
+            print('trying backup info', e)
+            try:
+                engine, session = login('postgresql://postgres:postgres@localhost/saltie')
+            except Exception as e:
+                engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+        return session

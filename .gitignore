@@ -1,5 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 __pycache__/
+.pytest_cache
 *.py[cod]
 *$py.class
 *.so

@@ -64,3 +64,9 @@ docker ps
 ```
 
 Now go to `localhost:3000` and the site should be running.
+
+
+### Testing
+
+We run with pytest and use some features from it.
+If you are using an ide (pycharm/intellij) you must change the default runner from unit tests to pytests
