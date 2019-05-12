@@ -100,6 +100,10 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
 
 
+def add_replay_parse_task(file_name):
+    parse_replay_task.delay(kwargs={'filename': file_name})
+
+
 @celery.task(base=DBTask, bind=True, priority=5)
 def parse_replay_task(self, filename=None, preserve_upload_date: bool = False,
                       # private replays parameters
@@ -170,7 +174,7 @@ def parse_replay_task(self, filename=None, preserve_upload_date: bool = False,
 
 @celery.task(base=DBTask, bind=True, priority=9)
 def parse_replay_task_low_priority(self, fn):
-    parse_replay_task(fn, preserve_upload_date=True)
+    parse_replay_task(filename=fn, preserve_upload_date=True)
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
@@ -274,6 +278,7 @@ class ResultState(Enum):
 def get_task_state(id_) -> ResultState:
     # NB: State will be PENDING for unknown ids.
     return ResultState[AsyncResult(id_, app=celery).state]
+
 
 
 if __name__ == '__main__':
