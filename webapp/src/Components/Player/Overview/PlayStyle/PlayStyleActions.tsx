@@ -12,14 +12,13 @@ import {
 } from "@material-ui/core"
 import CompareArrows from "@material-ui/icons/CompareArrows"
 import Edit from "@material-ui/icons/Edit"
-import Help from "@material-ui/icons/Help"
-import Info from "@material-ui/icons/Info"
 import MoreVert from "@material-ui/icons/MoreVert"
 import * as React from "react"
 import { Link } from "react-router-dom"
-import { EXPLANATIONS_LINK, PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
+import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
 import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
 import { PlayStyleEdit } from "./PlayStyleEdit"
+import { Help } from "@material-ui/icons"
 
 interface OwnProps {
     player: Player
@@ -71,58 +70,13 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
             </IconButton>
         )
         const whatAreTheseStats = (
-            <Link to={EXPLANATIONS_LINK}>
-                <IconButton>
-                    <Help/>
-                </IconButton>
+            <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)} style={{textDecoration: "none"}}>
+                <MenuItem>
+                    <ListItemIcon><Help/></ListItemIcon>
+                    <ListItemText primary="What are these stats?"/>
+                </MenuItem>
             </Link>
-        )
-        return (
-            <Grid container justify="center" spacing={8}>
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    {toggleWinsLosses}
-                </Grid>
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    {dropDown}
-                </Grid>
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    {compareButton}
-                </Grid>
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    {whatAreTheseStats}
-                </Grid>
-                {/*<Grid item xs="auto" style={{margin: "auto"}}>*/}
-                {/*<Button variant="outlined"*/}
-                {/*onClick={this.handleOpen}*/}
-                {/*style={{marginRight: 8, height: "100%"}}*/}
-                {/*>*/}
-                {/*What are these stats?*/}
-                {/*</Button>*/}
-                {/*</Grid>*/}
-                <Grid item xs="auto" style={{margin: "auto"}}>
-                    {editSpiderCharts}
-                </Grid>
 
-                <Dialog open={this.state.dialogOpen}
-                        onClose={this.handleClose}
-                        scroll="paper"
-                >
-                    <DialogTitle>Edit charts</DialogTitle>
-                    <DialogContent>
-                        <PlayStyleEdit onUpdate={this.onChartUpdate}/>
-                    </DialogContent>
-                </Dialog>
-            </Grid>
-        const explanationsDialog = (
-            <Dialog open={this.state.dialogOpen}
-                    onClose={this.handleExplanationsClose}
-                    scroll="paper"
-            >
-                <DialogTitle>Explanation of terms</DialogTitle>
-                <DialogContent>
-                    <PlayStyleExplanationTable/>
-                </DialogContent>
-            </Dialog>
         )
 
         return (
@@ -136,10 +90,7 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                         anchorEl={this.state.anchorElement}
                         onClose={this.handleClose}
                     >
-                        <MenuItem onClick={this.handleExplanationsOpen}>
-                            <ListItemIcon><Info/></ListItemIcon>
-                            <ListItemText primary="Stats explanations"/>
-                        </MenuItem>
+                        {whatAreTheseStats}
                         <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)} style={{textDecoration: "none"}}>
                             <MenuItem>
                                 <ListItemIcon><CompareArrows/></ListItemIcon>
@@ -156,10 +107,21 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
                             </ListItemIcon>
                             <ListItemText primary="Wins/Losses mode"/>
                         </MenuItem>
+                        <MenuItem>
+                            {editSpiderCharts}
+                        </MenuItem>
+
+                        <Dialog open={this.state.dialogOpen}
+                                onClose={this.handleClose}
+                                scroll="paper"
+                        >
+                            <DialogTitle>Edit charts</DialogTitle>
+                            <DialogContent>
+                                <PlayStyleEdit onUpdate={this.onChartUpdate}/>
+                            </DialogContent>
+                        </Dialog>
                     </Menu>
                 </>
-
-                {explanationsDialog}
             </>
         )
     }
@@ -176,14 +138,6 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
             menuOpen: false,
             anchorElement: undefined
         })
-    }
-
-    private readonly handleExplanationsOpen = () => {
-        this.setState({dialogOpen: true})
-    }
-
-    private readonly handleExplanationsClose = () => {
-        this.setState({dialogOpen: false})
     }
 
     private readonly onChartUpdate = () => {

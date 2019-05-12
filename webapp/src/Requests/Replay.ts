@@ -7,7 +7,8 @@ import {
     MatchHistoryResponse,
     parseReplay,
     Replay,
-    ReplaysSearchQueryParams, StatDescription,
+    ReplaysSearchQueryParams,
+    StatDescription,
     stringifyReplaySearchQueryParam
 } from "../Models"
 import { useMockData } from "./Config"
