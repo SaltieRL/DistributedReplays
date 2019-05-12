@@ -16,6 +16,7 @@ coverage:
           threshold: 0.5
           paths:
             - backend/*
+            - tests/*
         website:
           threshold: 0.5
           paths:
