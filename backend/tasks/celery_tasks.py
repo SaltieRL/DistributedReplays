@@ -18,12 +18,13 @@ from sqlalchemy import func, Numeric, cast
 
 from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsMetadata, GlobalStatsGraph, \
     GlobalStatsGraphDataset
-from backend.database.objects import Game, PlayerGame
+from backend.database.objects import Game, PlayerGame, Player
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.middleware import DBTask
+from backend.utils.patreon import PatreonAPI
 
 try:
     import config
@@ -32,6 +33,15 @@ try:
 except:
     print('Not using GCP')
     GCP_URL = ''
+
+try:
+    import config
+
+    PATREON_ACCESS_TOKEN = config.PATREON_ACCESS_TOKEN
+except:
+    PATREON_ACCESS_TOKEN = ''
+
+PATRON_GROUP = 3
 # from helpers import rewards
 
 # bp = Blueprint('celery', __name__)
@@ -234,6 +244,27 @@ def calc_global_dists(self):
     return overall_data
 
 
+@periodic_task(run_every=60 * 60 * 24, base=DBTask, bind=True, priority=0)
+def get_patreon_data(self):
+    patreon = PatreonAPI(PATREON_ACCESS_TOKEN)
+    campaign_id = patreon.get_url("campaigns").data()[0].id()
+    result2 = patreon.get_url(
+        f"campaigns/{campaign_id}/members?include=address,campaign,currently_entitled_tiers,user&fields[member]=patron_status,email")
+    patrons = result2.data()
+    statuses = {d.attributes()['email']: d.attributes()['patron_status'] for d in patrons}
+    sess = self.session()
+    for email, status in statuses:
+        if email is None:
+            pass
+        result = sess.query(Player).filter(Player.email == email).first()
+        if result is not None:
+            if status == "active_patron" and PATRON_GROUP not in result.groups:
+                result.groups.append(PATRON_GROUP)
+            elif status != "active_patron" and PATRON_GROUP in result.groups:
+                result.groups.remove(PATRON_GROUP)
+    sess.commit()
+
+
 class ResultState(Enum):
     PENDING = auto()
     STARTED = auto()
@@ -248,7 +279,7 @@ def get_task_state(id_) -> ResultState:
 
 
 if __name__ == '__main__':
-    parse_replay_gcp('')
+    get_patreon_data(None)
     # fn = '/home/matthew/PycharmProjects/Distributed-Replays/replays/88E7A7BE41717522C30040AA4B187E9E.replay'
     # output = fn + '.json'
     # pickled = os.path.join(os.path.dirname(__file__), 'parsed', os.path.basename(fn) + '.pkl')

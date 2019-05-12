@@ -2,7 +2,7 @@
 import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, UniqueConstraint
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
@@ -254,6 +254,7 @@ class Player(DBObjectBase):
     games = relationship('PlayerGame')
     groups = Column(postgresql.ARRAY(Integer, dimensions=1), default=[])
     owned_tags = relationship('Tag')
+    email = Column(String(200))
 
     @validates('platformid')
     def validate_code(self, key, value):
