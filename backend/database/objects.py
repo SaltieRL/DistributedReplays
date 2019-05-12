@@ -109,7 +109,7 @@ class PlayerGame(DBObjectBase):
 
     # camera stuff
     field_of_view = Column(Integer)
-    transition_speed = Column(Integer)
+    transition_speed = Column(Float)
     pitch = Column(Integer)
     swivel_speed = Column(Integer)
     stiffness = Column(Float)
@@ -267,7 +267,7 @@ class CameraSettings(DBObjectBase):
     __tablename__ = 'camera_settings'
     id = Column(Integer, primary_key=True, autoincrement=True)
     field_of_view = Column(Integer)
-    transition_speed = Column(Integer)
+    transition_speed = Column(Float)
     pitch = Column(Integer)
     swivel_speed = Column(Integer)
     stiffness = Column(Float)
