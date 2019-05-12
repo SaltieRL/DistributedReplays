@@ -2,7 +2,7 @@ import Grid from "@material-ui/core/Grid/Grid"
 import { ChartDataSets, ChartOptions } from "chart.js"
 import * as React from "react"
 import { HorizontalBar } from "react-chartjs-2"
-import { Replay } from "src/Models"
+import { Replay } from "../../Models"
 import { getChartColors } from "../../Utils/Color"
 
 interface Props {

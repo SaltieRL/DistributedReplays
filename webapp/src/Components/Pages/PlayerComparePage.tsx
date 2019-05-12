@@ -1,6 +1,6 @@
 import { Divider, Grid } from "@material-ui/core"
-import * as _ from "lodash"
-import * as qs from "qs"
+import _ from "lodash"
+import qs from "qs"
 import * as React from "react"
 import { RouteComponentProps } from "react-router-dom"
 import { getPlayer } from "../../Requests/Player/getPlayer"
@@ -139,6 +139,8 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
         if (ids.indexOf(inputId) === -1) {
             resolvePlayerNameOrId(inputId)
                 .then(getPlayer)
+                .then(this.handleAddPlayer)
+                .then(() => this.setState({inputId: ""}))
                 .catch(() => {
                     this.props.showNotification({
                         variant: "error",
@@ -146,8 +148,6 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                         timeout: 3000
                     })
                 })
-                .then(this.handleAddPlayer)
-                .then(() => this.setState({inputId: ""}))
                 .catch((e: any) => {
                     // console.log(e) // TypeError expected here when above .catch catches something.
                     // TODO: Figure out what the right thing to do here is.

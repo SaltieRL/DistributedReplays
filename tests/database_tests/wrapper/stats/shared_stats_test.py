@@ -4,7 +4,6 @@ from typing import List
 from backend.database.wrapper.field_wrapper import QueryFieldWrapper
 from backend.database.wrapper.stats.creation.player_stat_creation import PlayerStatCreation
 from backend.database.wrapper.stats.creation.team_stat_creation import TeamStatCreation
-from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
 
 
 class SharedStatsTest(unittest.TestCase):

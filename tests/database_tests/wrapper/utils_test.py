@@ -1,34 +1,23 @@
 import time
 
-from carball import analyze_replay_file
 import unittest
-import tempfile
-
-from backend.database import startup
 from backend.database.objects import Game, PlayerGame, TeamStat
 from backend.database.utils.utils import add_objects
-from tests.utils import get_complex_replay_list, download_replay_discord
+from tests.utils import get_complex_replay_list, initialize_db_with_replays
 
 
 class UtilsTest(unittest.TestCase):
 
     def setUp(self):
-        engine, sessionmaker = startup.startup()
-        self.session = sessionmaker()
-        _, path = tempfile.mkstemp()
-        with open(path, 'wb') as tmp:
-            tmp.write(download_replay_discord(get_complex_replay_list()[0]))
-        self.replay = analyze_replay_file(path, path + '.json')
-        self.proto = self.replay.protobuf_game
-        self.guid = self.proto.game_metadata.match_guid
+        self.session, self.protos, self.guids = initialize_db_with_replays([get_complex_replay_list()[0]])
+        self.guid = self.guids[0]
+        self.proto = self.protos[0]
 
     def test_add(self):
-        add_objects(self.proto, session=self.session)
         match = self.session.query(PlayerGame).filter(PlayerGame.game == self.guid).first()
         self.assertIsNotNone(match)
 
     def test_same_upload_date(self):
-        add_objects(self.proto, session=self.session)
         match: Game = self.session.query(Game).filter(Game.hash == self.guid).first()
         self.assertIsNotNone(match)
 
@@ -40,7 +29,6 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(upload_date, match.upload_date)
 
     def test_same_ranks(self):
-        add_objects(self.proto, session=self.session)
         match: PlayerGame = self.session.query(PlayerGame).filter(PlayerGame.game == self.guid).first()
         self.assertIsNotNone(match)
 

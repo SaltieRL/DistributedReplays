@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Tab, Tabs, withWidth } from "@material-ui/core"
 import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
-import { TeamStatsSubcategory } from "src/Models"
+import { TeamStatsSubcategory } from "../../../../Models"
 
 interface OwnProps {
     selectedTab: TeamStatsSubcategory
-    handleChange: (event: unknown, selectedTab: TeamStatsSubcategory) => void
+    handleChange: (event: any, selectedTab: TeamStatsSubcategory) => void
 }
 
 type Props = OwnProps

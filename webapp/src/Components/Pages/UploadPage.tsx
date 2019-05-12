@@ -35,7 +35,7 @@ export class UploadPage extends React.PureComponent<{}, State> {
         )
     }
 
-    private readonly handleTabChange = (event: React.ChangeEvent, selectedTab: UploadTab) => {
+    private readonly handleTabChange = (_: React.ChangeEvent<{}>, selectedTab: UploadTab) => {
         this.setState({selectedTab})
     }
 }

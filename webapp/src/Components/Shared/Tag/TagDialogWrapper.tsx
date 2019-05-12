@@ -44,13 +44,10 @@ class TagDialogWrapperComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly handleOpen: React.MouseEventHandler = (event) => {
-        event.stopPropagation()
-        // TODO: Fix click propagation on search results page - clicking on the dialog affects expansionpanelsummary.
         this.setState({open: true})
     }
 
     private readonly handleClose: React.ReactEventHandler<{}> = (event) => {
-        event.stopPropagation()
         this.setState({open: false})
     }
 }

@@ -1,4 +1,4 @@
-import { faDiscord, faGithub, faReddit, faTwitter, IconDefinition } from "@fortawesome/free-brands-svg-icons"
+import { faDiscord, faGithub, faPatreon, faReddit, faTwitter, IconDefinition } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
     ButtonBase,
@@ -19,7 +19,7 @@ import {
     ABOUT_LINK,
     DISCORD_LINK, EXPLANATIONS_LINK,
     GITHUB_LINK,
-    GLOBAL_STATS_LINK,
+    GLOBAL_STATS_LINK, PATREON_LINK,
     REDDIT_LINK,
     STATUS_PAGE_LINK,
     TWITTER_LINK
@@ -56,6 +56,11 @@ class FooterComponent extends React.PureComponent<Props> {
                 to: REDDIT_LINK,
                 icon: faReddit,
                 text: "Reddit"
+            },
+            {
+                to: PATREON_LINK,
+                icon: faPatreon,
+                text: "Patreon"
             }
         ]
 
@@ -74,7 +79,7 @@ class FooterComponent extends React.PureComponent<Props> {
                     <Grid container spacing={24} justify="center" alignItems="center">
                         <Grid item xs={12} md={3}>
                             <Typography align={isWidthUpMd ? "left" : "center"}>
-                                &copy; 2017-2018 Saltie Group
+                                &copy; 2017-2019 Saltie Group
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={5}

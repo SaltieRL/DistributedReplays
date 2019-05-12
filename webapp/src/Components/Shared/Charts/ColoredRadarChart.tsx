@@ -1,7 +1,7 @@
 import { ChartData, ChartDataSets, ChartOptions } from "chart.js"
 import * as React from "react"
 import { Radar } from "react-chartjs-2"
-import { BasicStat } from "src/Models"
+import { BasicStat } from "../../../Models"
 import { roundLabelToMaxDPCallback } from "../../../Utils/Chart"
 import { convertHexToRgba, getPrimaryColorsForPlayers, primaryColours } from "../../../Utils/Color"
 

@@ -1,7 +1,7 @@
 import { ChartData, ChartOptions, ChartPoint, ChartTooltipItem } from "chart.js"
 import * as React from "react"
 import { Line } from "react-chartjs-2"
-import { PlayStyleProgressionPoint } from "src/Models"
+import { PlayStyleProgressionPoint } from "../../../../Models"
 import { roundLabelToMaxDPCallback } from "../../../../Utils/Chart"
 import { colorsForPlaylists } from "../../../../Utils/Color"
 

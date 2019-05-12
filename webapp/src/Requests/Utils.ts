@@ -1,5 +1,5 @@
-import * as _ from "lodash"
-import * as qs from "qs"
+import _ from "lodash"
+import qs from "qs"
 
 export interface QueryParamMetadata {
     name: string

@@ -1,4 +1,4 @@
-import { faDiscord, faGithub, faRedditAlien, faSteam, faTwitter } from "@fortawesome/free-brands-svg-icons"
+import { faDiscord, faGithub, faPatreon, faRedditAlien, faSteam, faTwitter } from "@fortawesome/free-brands-svg-icons"
 import { faChartBar } from "@fortawesome/free-solid-svg-icons"
 import { Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth } from "@material-ui/core"
 import { GridProps } from "@material-ui/core/Grid"
@@ -9,19 +9,20 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
-import { LoggedInUserActions, StoreState } from "src/Redux"
 import {
     ABOUT_LINK,
     DISCORD_LINK,
     GITHUB_LINK,
     GLOBAL_STATS_LINK,
     LOCAL_LINK,
+    PATREON_LINK,
     PLAYER_PAGE_LINK,
     REDDIT_LINK,
     STEAM_LOGIN_LINK,
     TWITTER_LINK,
     UPLOAD_LINK
 } from "../../Globals"
+import { LoggedInUserActions, StoreState } from "../../Redux"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { LinkButton } from "../Shared/LinkButton"
 import { Logo } from "../Shared/Logo/Logo"
@@ -144,23 +145,35 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
                     iconType="fontawesome" icon={faRedditAlien}
                     tooltip="Reddit"/>
     )
+    const patreonLinkButton = (
+        <LinkButton to={PATREON_LINK} isExternalLink
+                    iconType="fontawesome" icon={faPatreon}
+                    tooltip="Patreon"/>
+    )
 
     return (
         <Grid container justify="center" spacing={16}>
             {isWidthUp("md", props.width) ?
-                [globalStatsLinkButton, aboutLinkButton, twitterLinkButton, discordLinkButton,
-                    githubLinkButton, redditLinkButton]
-                    .map((linkButton, i) => (
-                        <Grid item xs={3} md={2} style={{textAlign: "center"}} key={i}>
-                            {linkButton}
-                        </Grid>
-                    ))
+                [
+                    [globalStatsLinkButton, aboutLinkButton, twitterLinkButton, discordLinkButton],
+                    [githubLinkButton, redditLinkButton, patreonLinkButton]
+                ]
+                    .map((linkButtonRow, i) => (
+                        <Grid item xs={12} justify="center" container key={i}>
+                            {linkButtonRow.map((linkButton, j) => (
+                                <Grid item xs={3} md={2} style={{textAlign: "center"}} key={j}>
+                                    {linkButton}
+                                </Grid>
+                            ))
+                            }
+                        </Grid>))
                 :
                 <>
                     {
                         [
                             [globalStatsLinkButton, aboutLinkButton],
-                            [twitterLinkButton, discordLinkButton, githubLinkButton, redditLinkButton]
+                            [twitterLinkButton, discordLinkButton, githubLinkButton, redditLinkButton,
+                                patreonLinkButton]
                         ]
                             .map((linkButtonRow, i) => (
                                 <Grid item xs={12} container justify="space-around" key={i}>

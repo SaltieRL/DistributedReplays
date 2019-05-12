@@ -9,13 +9,11 @@ export interface StoreState {
 }
 
 const rootReducer: Reducer<StoreState> = combineReducers<StoreState>({
-    loggedInUser: loggedInUserReducer,
-    notifications: notificationsReducer
+    loggedInUser: loggedInUserReducer as any,
+    notifications: notificationsReducer as any
 })
 
-export const store = createStore(
-    rootReducer, devToolsEnhancer({})
-)
+export const store = createStore(rootReducer, devToolsEnhancer({}))
 
 export * from "./loggedInUser/actions"
 export * from "./notifications/actions"

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, Divider, Grid } from "@material-ui/core"
 import * as moment from "moment"
 import * as React from "react"
-import { ReplaysSearchQueryParams } from "src/Models"
+import { ReplaysSearchQueryParams } from "../../../Models"
 import { ClearableDatePicker } from "../../Shared/ClearableDatePicker"
 import { PlaylistSelect } from "../../Shared/Selects/PlaylistSelect"
 import { RankSelect } from "../../Shared/Selects/RankSelect"

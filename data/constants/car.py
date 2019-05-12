@@ -56,6 +56,18 @@ cars = {
   2853: "Twinzer",
   2919: "Jurassic Jeep Wrangler",
   3031: "Cyclone",
+  3155: "Maverick",
+  3156: "Maverick G1",
+  3157: "Maverick GXT",
+  3265: "McLaren 570S",
+  3426: "Diestro",
+  3451: "Nimbus",
+  3594: "Artemis G1",
+  3614: "Artemis",
+  3622: "Artemis GXT",
+  3875: "Guardian GXT",
+  3879: "Guardian",
+  3880: "Guardian G1"
 }
 
 

@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleRawResponse } from "src/Models"
+import { PlayStyleRawResponse } from "../../../../Models"
 import { roundNumberToMaxDP } from "../../../../Utils/String"
 
 interface StatRow {
