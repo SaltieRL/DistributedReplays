@@ -1,7 +1,7 @@
 import unittest
 
 from backend.tasks.celery_tasks import parse_replay_task, calc_global_stats
-from tests.utils import get_complex_replay_list, download_replay_discord, write_files_to_disk, clear_dir, \
+from tests.server_tests.utils import write_files_to_disk, clear_dir, \
     get_test_folder, get_test_file
 
 

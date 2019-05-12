@@ -3,10 +3,9 @@ import unittest
 from unittest.mock import patch
 
 from requests import Request
-from werkzeug.datastructures import FileStorage
 
 from RLBotServer import app
-from tests.utils import get_complex_replay_list, download_replay_discord
+from tests.server_tests.utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
 
