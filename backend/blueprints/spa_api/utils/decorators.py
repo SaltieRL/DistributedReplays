@@ -23,6 +23,8 @@ class with_query_params(object):
     def __call__(self, decorated_function):
         def decorator(*args, **kwargs):
             query_params = get_query_params(self.accepted_query_params, request)
+            if query_params is None:
+                return decorated_function(*args, **kwargs)
             validation = self.validation_func(query_params)
             if validation is not None:
                 return validation

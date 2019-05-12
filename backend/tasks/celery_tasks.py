@@ -24,6 +24,7 @@ from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
+from backend.tasks.add_replay import apply_game_visibility
 from backend.tasks.middleware import DBTask
 
 try:
@@ -101,23 +102,21 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
 
 
-def add_replay_parse_task(file_name, query_params: Dict[str, any]={}, **kwargs):
-    return parse_replay_task.delay(*[file_name], **{**kwargs, **{'celery_query_params': query_params}})
+def add_replay_parse_task(file_name, query_params: Dict[str, any] = None, **kwargs):
+    return parse_replay_task.delay(*[file_name], **{**kwargs, **{'query_params': query_params}})
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
 def parse_replay_task(self, filename, preserve_upload_date: bool = False,
                       # url parameters
-                      query_params = None,
+                      query_params:Dict[str, any] = None,
                       # test parameters
                       custom_file_location: str = None, force_reparse: bool = False):
     """
     :param self:
     :param filename: filename
-    :param uuid: id for the task for any post task tasks that need to be performed.
+    :param query_params: The arguments from the url
     :param preserve_upload_date: If true the upload date is retained
-    :param player_id: Must be provided if game_visibility is provided.
-    :param game_visibility: Must be provided if player_id is provided.
     :param custom_file_location: If a custom file path should be used instead
     :param force_reparse: if true parsing will happen even if a file already exists.
     :return:
@@ -155,7 +154,7 @@ def parse_replay_task(self, filename, preserve_upload_date: bool = False,
     add_objs_to_db(game, player_games, players, teamstats, sess, preserve_upload_date=preserve_upload_date)
 
     # Add game visibility option
-    apply_game_visibility(query_params, sess)
+    apply_game_visibility(query_params, sess, game.hash)
 
     sess.commit()
     sess.close()

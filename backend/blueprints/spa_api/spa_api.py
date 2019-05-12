@@ -16,6 +16,7 @@ from werkzeug.utils import secure_filename, redirect
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
+from backend.tasks.add_replay import create_replay_task
 
 try:
     import config
@@ -353,7 +354,7 @@ def api_upload_replays(query_params=None):
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
-        create_replay_task()
+        create_replay_task(filename, ud, task_ids, query_params)
 
     return jsonify(task_ids), 202
 

@@ -1,6 +1,8 @@
 import datetime
+import urllib
 from enum import Enum
 from typing import List, Dict, Any, Callable, Type, TypeVar
+from urllib.parse import urlencode
 
 from flask import Request
 
@@ -72,3 +74,6 @@ def convert_to_enum(enum: Type[T]) -> Callable[[str], T]:
         return enum[string.upper()]
     return convert_string_to_enum
 
+
+def create_query_string(query_params):
+    return urlencode(query_params)
