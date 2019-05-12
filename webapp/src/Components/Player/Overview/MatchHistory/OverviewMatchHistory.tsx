@@ -1,6 +1,6 @@
 import { Grid, TablePagination } from "@material-ui/core"
 import * as React from "react"
-import { MatchHistoryResponse, Replay } from "src/Models"
+import { MatchHistoryResponse, Replay } from "../../../../Models"
 import { getMatchHistory } from "../../../../Requests/Player/getMatchHistory"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 import { OverviewMatchHistoryRow } from "./OverviewMatchHistoryRow"

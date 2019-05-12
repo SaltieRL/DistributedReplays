@@ -69,7 +69,7 @@ class SearchComponent extends React.PureComponent<Props, State> {
                     </div>
                 }
                 {this.state.resolvedId &&
-                <Redirect to={PLAYER_PAGE_LINK(this.state.resolvedId)}/>
+                <Redirect push to={PLAYER_PAGE_LINK(this.state.resolvedId)}/>
                 }
             </>
         )

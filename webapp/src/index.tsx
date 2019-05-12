@@ -1,6 +1,6 @@
-import { CssBaseline } from "@material-ui/core"
+import MomentUtils from "@date-io/moment"
+import CssBaseline from "@material-ui/core/CssBaseline"
 import { MuiPickersUtilsProvider } from "material-ui-pickers"
-import MomentUtils from "material-ui-pickers/utils/moment-utils"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 import { Provider } from "react-redux"

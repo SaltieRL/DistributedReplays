@@ -40,7 +40,7 @@ export class UploadDialog extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleTabChange = (event: React.ChangeEvent, selectedTab: UploadTab) => {
+    private readonly handleTabChange = (_: React.ChangeEvent<{}>, selectedTab: UploadTab) => {
         this.setState({selectedTab})
     }
 }

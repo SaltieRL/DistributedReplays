@@ -1,4 +1,4 @@
-# Calculated.gg Backend
+# Calculated.gg Backend [![Build Status](https://api.travis-ci.org/SaltieRL/DistributedReplays.svg?branch=master)](https://travis-ci.org/SaltieRL/DistributedReplays)
 
 ## Setup
 - Install Python 3.6/pip
@@ -48,9 +48,9 @@ The structure of the server is split into different directories:
 ### Basic Dependencies
 
 - [Docker Community Edition (Stable)](https://docs.docker.com/install/)
-  
-  Docker will run Postgres, Redis, Flask, Celery, and Node inside linux based "Containers" on most platforms. 
-  Download and install Docker and Docker Compose for your platform:    
+
+  Docker will run Postgres, Redis, Flask, Celery, and Node inside linux based "Containers" on most platforms.
+  Download and install Docker and Docker Compose for your platform:
   - [Mac/Windows: Docker Desktop](https://www.docker.com/products/docker-desktop)
   - [Ubuntu/Debian-ish: Docker CLI](https://docs.docker.com/install/linux/docker-ce/debian/#install-docker-ce)
 

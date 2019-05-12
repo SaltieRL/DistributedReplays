@@ -39,9 +39,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
                   playlist=13, win: bool = None):
 
         player_stats_filter = self.player_stats_filter.clean().clone()
-        global_stats, global_stds = self.get_global_stats_by_rank(session, player_stats_filter,
-                                                                  stats_query, std_query, player_rank=rank, redis=redis,
-                                                                  ids=replay_ids, playlist=playlist)
         player_stats_filter.clean().with_stat_query(stats_query).with_players([id_])
         if replay_ids is not None:
             player_stats_filter.with_replay_ids(replay_ids)
@@ -56,9 +53,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
         stats = list(query.first())
         stats = [0 if s is None else s for s in stats]
         if raw:
-            return [self.float_maybe(s) for s in stats], [self.float_maybe(s) for s in global_stats]
+            return [self.float_maybe(s) for s in stats]
         else:
-            return self.compare_to_global(stats, global_stats, global_stds), len(stats) * [0.0]
+            global_stats, global_stds = self.get_global_stats_by_rank(session, player_stats_filter,
+                                                                      stats_query, std_query, player_rank=rank,
+                                                                      redis=redis,
+                                                                      ids=replay_ids, playlist=playlist)
+            return self.compare_to_global(stats, global_stats, global_stds)
 
     def get_averaged_stats(self, session, id_: str, rank: int = None, redis=None, raw: bool = False,
                            replay_ids: list = None, playlist: int = 13, win: bool = None):
@@ -79,13 +80,11 @@ class PlayerStatWrapper(GlobalStatWrapper):
         std_query = self.get_player_stat_std_query()
         total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
         if total_games > 0:
-            stats, global_stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
+            stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
                                                  replay_ids=replay_ids, playlist=playlist, win=win)
         else:
             stats = [0.0] * len(stats_query)
-            global_stats = [0.0] * len(stats_query)
-        return (self.get_wrapped_stats(stats, self.player_stats),
-                self.get_wrapped_stats(global_stats, self.player_stats))
+        return self.get_wrapped_stats(stats, self.player_stats)
 
     def get_progression_stats(self, session, id_,
                               time_unit: 'TimeUnit' = TimeUnit.MONTH,
@@ -159,10 +158,11 @@ class PlayerStatWrapper(GlobalStatWrapper):
         titles = [  # 'Basic',
             'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
         groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
-            ['shots', 'possession', 'hits', 'shots/hit', 'boost usage', 'speed'],  # agressive
-            ['total boost efficiency', 'assists', 'passes/hit', 'passes', 'assists/hit'],  # chemistry
-            ['turnover efficiency', 'useful/hits', 'aerials', 'takeaways', 'avg hit dist'],  # skill
-            ['att 1/3', 'att 1/2', 'def 1/2', 'def 1/3', '< ball', '> ball']]  # ,  # tendencies
+            ['shots', 'possession_time', 'total_hits', 'shots/hit', 'boost_usage', 'average_speed'],  # agressive
+            ['total boost efficiency', 'assists', 'passes/hit', 'total_passes', 'assists/hit'],  # chemistry
+            ['turnover efficiency', 'useful/hits', 'total_aerials', 'won_turnovers', 'average_hit_distance'],  # skill
+            ['time_in_attacking_third', 'time_in_attacking_half', 'time_in_defending_half', 'time_in_defending_third',
+             'time_behind_ball', 'time_in_front_ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]

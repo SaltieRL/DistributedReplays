@@ -1,4 +1,4 @@
-import * as moment from "moment"
+import moment from "moment"
 import { getUploadStatuses } from "../../../Requests/Global"
 
 const SESSION_STORAGE_UPLOADS_KEY = "uploadTasks"

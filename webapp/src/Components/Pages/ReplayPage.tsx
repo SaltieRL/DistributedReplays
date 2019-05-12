@@ -1,8 +1,8 @@
 import { Grid } from "@material-ui/core"
 import * as React from "react"
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
-import { Replay } from "src/Models"
-import { getReplay } from "../../Requests/Replay"
+import { Replay } from "../../Models"
+import { getExplanations, getReplay } from "../../Requests/Replay"
 import { ReplayView } from "../Replay/ReplayView"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
@@ -15,6 +15,8 @@ type Props = RouteComponentProps<RouteParams>
 
 interface State {
     replay?: Replay
+    explanations?: Record<string, any> | undefined
+    predictedRanks?: any
 }
 
 export class ReplayPage extends React.PureComponent<Props, State> {
@@ -25,7 +27,7 @@ export class ReplayPage extends React.PureComponent<Props, State> {
 
     public render() {
         const matchUrl = this.props.match.url
-        const {replay} = this.state
+        const {replay, explanations} = this.state
 
         return (
             <BasePage backgroundImage={"/replay_page_background.png"}>
@@ -38,6 +40,7 @@ export class ReplayPage extends React.PureComponent<Props, State> {
                                 render={() => (
                                     <ReplayView
                                         replay={replay}
+                                        explanations={explanations}
                                         handleUpdateTags={this.handleUpdateTags}
                                     />
                                 )}
@@ -52,8 +55,8 @@ export class ReplayPage extends React.PureComponent<Props, State> {
     }
 
     private readonly getReplay = (): Promise<void> => {
-        return getReplay(this.props.match.params.id)
-            .then((replay) => this.setState({replay}))
+        return Promise.all([getReplay(this.props.match.params.id), getExplanations()])
+            .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
     }
 
     private readonly handleUpdateTags = (tags: Tag[]) => {

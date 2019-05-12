@@ -42,7 +42,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
              team1possession=team1poss.possession_time, name='' if match_name is None else match_name,
              frames=game.game_metadata.frames, length=game.game_metadata.length,
              playlist=game.game_metadata.playlist,
-             game_server_id=game.game_metadata.game_server_id,
+             game_server_id=0 if game.game_metadata.game_server_id == '' else game.game_metadata.game_server_id,
              server_name=game.game_metadata.server_name,
              replay_id=game.game_metadata.id)
 
@@ -59,7 +59,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                 kwargs[k] = 0.0
         t = TeamStat(game=replay_id, is_orange=team.is_orange, **kwargs)
         teamstats.append(t)
-        print(t)
+
     for p in player_objs:  # type: GamePlayer
         fields = create_and_filter_proto_field(p, ['name', 'title_id', 'is_orange'],
                                                ['api.metadata.CameraSettings', 'api.metadata.PlayerLoadout',

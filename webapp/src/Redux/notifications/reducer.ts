@@ -1,14 +1,28 @@
-import { Reducer } from "redux"
-import { NotificationsActionTypes, NotificationsState } from "./actions"
+import { Action, handleActions } from "redux-actions"
+import { NotificationProps } from "../../Components/Shared/Notification/NotificationSnackbar"
+import { NotificationActions } from "./actions"
 
-export const notificationsReducer: Reducer<NotificationsState, NotificationsActionTypes> = (
-    state = [], action) => {
-    switch (action.type) {
-        case "SHOW_NOTIFICATION":
-            return [...state, action.notification]
-        case "DISMISS_NOTIFICATION":
-            return state.slice(1)
-        default:
+export type NotificationsState = NotificationProps[]
+
+const initialState: NotificationsState = []
+
+export const notificationsReducer = handleActions<NotificationsState, any>(
+    {
+        [NotificationActions.Type.SHOW_NOTIFICATION]: (
+            state: NotificationsState,
+            action: Action<NotificationProps>
+        ): NotificationsState => {
+            if (action.payload) {
+                return [...state, action.payload]
+            }
             return state
-    }
-}
+        },
+        [NotificationActions.Type.DISMISS_NOTIFICATION]: (
+            state: NotificationsState,
+            _
+        ): NotificationsState => {
+            return state.slice(1)
+        }
+    },
+    initialState
+)
