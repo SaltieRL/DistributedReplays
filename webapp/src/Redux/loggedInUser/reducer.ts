@@ -1,12 +1,18 @@
-import { Reducer } from "redux"
-import { LoggedInUserActionTypes, LoggedInUserState } from "./actions"
+import { Action, handleActions } from "redux-actions"
+import { LoggedInUserActions } from "./actions"
 
-export const loggedInUserReducer: Reducer<LoggedInUserState, LoggedInUserActionTypes> = (
-    state = null, action) => {
-    switch (action.type) {
-        case "SET_LOGGED_IN_USER":
-            return {...action.loggedInUser}
-        default:
-            return state
-    }
-}
+export type LoggedInUserState = LoggedInUser | null
+
+const initialState: LoggedInUserState = null
+
+export const loggedInUserReducer = handleActions<LoggedInUserState, any>(
+    {
+        [LoggedInUserActions.Type.SET_LOGGED_IN_USER]: (
+            state,
+            action: Action<LoggedInUser>
+        ): LoggedInUserState => {
+            return action.payload || null
+        }
+    },
+    initialState
+)

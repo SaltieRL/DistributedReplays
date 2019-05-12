@@ -1,9 +1,9 @@
 import { Divider, Grid } from "@material-ui/core"
-import * as _ from "lodash"
-import * as qs from "qs"
+import _ from "lodash"
+import qs from "qs"
 import * as React from "react"
 import { RouteComponentProps } from "react-router-dom"
-import { Replay } from "src/Models"
+import { Replay } from "../../Models"
 import { getReplay } from "../../Requests/Replay"
 import { AddReplayInput } from "../ReplaysGroup/AddReplayInput"
 import { ReplayChip } from "../ReplaysGroup/ReplayChip"
@@ -138,6 +138,8 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
 
         if (ids.indexOf(inputId) === -1) {
             getReplay(inputId)
+                .then(this.handleAddReplay)
+                .then(() => this.setState({inputId: ""}))
                 .catch(() => {
                     this.props.showNotification({
                         variant: "error",
@@ -145,10 +147,8 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                         timeout: 3000
                     })
                 })
-                .then(this.handleAddReplay)
-                .then(() => this.setState({inputId: ""}))
                 .catch((e: any) => {
-                    console.log(e) // TypeError expected here when above .catch catches something.
+                    // console.log(e) // TypeError expected here when above .catch catches something.
                     // TODO: Figure out what the right thing to do here is.
                 })
         } else {

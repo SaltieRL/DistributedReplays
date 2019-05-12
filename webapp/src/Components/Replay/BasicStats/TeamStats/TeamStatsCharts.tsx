@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import { BasicStat, Replay, TeamStatsSubcategory } from "src/Models"
+import { BasicStat, Replay, TeamStatsSubcategory } from "../../../../Models"
 import { getReplayTeamStats } from "../../../../Requests/Replay"
 import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 import { StatChart } from "../../../Shared/Charts/StatChart"
@@ -9,6 +9,7 @@ import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 interface Props {
     replay: Replay
     selectedTab: TeamStatsSubcategory
+    explanations: Record<string, any> | undefined
 }
 
 interface State {
@@ -40,7 +41,7 @@ export class TeamStatsCharts extends React.PureComponent<Props, State> {
                                     <Typography variant="subheading" align="center">
                                         {convertSnakeAndCamelCaseToReadable(basicStat.title)}
                                     </Typography>
-                                    <StatChart basicStat={basicStat}/>
+                                    <StatChart basicStat={basicStat} explanations={this.props.explanations}/>
                                 </Grid>
                             )
                         })

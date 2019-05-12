@@ -1,4 +1,4 @@
-import * as qs from "qs"
+import qs from "qs"
 import { doGet, doPost } from "../apiHandler/apiHandler"
 import { useMockData } from "./Config"
 
@@ -14,6 +14,7 @@ export const getQueueStatuses = (): Promise<QueueStatus[]> => {
 }
 
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
+export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
 
 // @return taskIds of uploaded replays
 export const uploadReplays = (replays: File[]): Promise<string[]> => {

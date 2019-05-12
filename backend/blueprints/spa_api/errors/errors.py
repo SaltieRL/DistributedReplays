@@ -78,3 +78,8 @@ class StageNotFound(CalculatedError):
 class SeriesNotFound(CalculatedError):
     status_code = 404
     message = "Series not found"
+
+
+class UnsupportedPlaylist(CalculatedError):
+    status_code = 501
+    message = "Playlist not supported"

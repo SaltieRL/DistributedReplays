@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "src/Models"
+import { Replay } from "../../../Models"
 import { getReplayViewerData } from "../../../Requests/Replay"
 import { ThreeScene } from "./ThreeScene"
 
@@ -29,7 +29,7 @@ export class ReplayViewer extends React.PureComponent<Props, State> {
 
     public async componentDidMount() {
         await this.getReplayPositions()
-        console.log(this.state.replayData)
+        // console.log(this.state.replayData)
     }
 
     public render() {

@@ -1,19 +1,19 @@
 import { combineReducers, createStore, Reducer } from "redux"
 import { devToolsEnhancer } from "redux-devtools-extension"
-import { loggedInUserReducer } from "./loggedInUser/reducer"
-import { NotificationsState } from "./notifications/actions"
-import { notificationsReducer } from "./notifications/reducer"
+import { loggedInUserReducer, LoggedInUserState } from "./loggedInUser/reducer"
+import { notificationsReducer, NotificationsState } from "./notifications/reducer"
 
 export interface StoreState {
-    loggedInUser: LoggedInUser | null
+    loggedInUser: LoggedInUserState
     notifications: NotificationsState
 }
 
 const rootReducer: Reducer<StoreState> = combineReducers<StoreState>({
-    loggedInUser: loggedInUserReducer,
-    notifications: notificationsReducer
+    loggedInUser: loggedInUserReducer as any,
+    notifications: notificationsReducer as any
 })
 
-export const store = createStore(
-    rootReducer, devToolsEnhancer({})
-)
+export const store = createStore(rootReducer, devToolsEnhancer({}))
+
+export * from "./loggedInUser/actions"
+export * from "./notifications/actions"

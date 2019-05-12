@@ -1,7 +1,7 @@
 import { createStyles, Grid, Theme, Typography, withStyles, WithStyles } from "@material-ui/core"
 import Warning from "@material-ui/icons/Warning"
 import * as React from "react"
-import { PlayStyleResponse } from "src/Models"
+import { PlayStyleResponse } from "../../../../Models"
 import { getPlayStyle } from "../../../../Requests/Player/getPlayStyle"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 import { PlayerPlayStyleChart } from "./PlayerPlayStyleChart"
@@ -72,9 +72,11 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                             {chartDataResponse.title}
                                         </Typography>
                                         {this.state.winLossData &&
-                                        <PlayerPlayStyleChart names={["Win", "Loss"]}
-                                                              data={this.state.winLossData.map((data) =>
-                                                                  data.chartDatas[i])}/>}
+                                        <PlayerPlayStyleChart
+                                            names={["Win", "Loss"]}
+                                            data={this.state.winLossData.map((data) => data.chartDatas[i])}
+                                        />
+                                        }
                                     </Grid>
                                 )
                             })
@@ -89,7 +91,8 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                         <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>
                                     </Grid>
                                 )
-                            })}
+                            })
+                        }
                     </>
                     }
                 </LoadableWrapper>

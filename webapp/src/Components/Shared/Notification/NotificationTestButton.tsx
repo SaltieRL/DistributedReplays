@@ -2,7 +2,7 @@ import { Button } from "@material-ui/core"
 import * as React from "react"
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
-import { showNotifictionAction } from "../../../Redux/notifications/actions"
+import { NotificationActions } from "../../../Redux"
 import { NotificationProps } from "./NotificationSnackbar"
 
 type Props = ReturnType<typeof mapDispatchToProps>
@@ -40,7 +40,8 @@ class NotificationTestButtonComponent extends React.PureComponent<Props, State> 
 }
 
 export const mapDispatchToProps = (dispatch: Dispatch) => ({
-    showNotification: (notificationProps: NotificationProps) => dispatch(showNotifictionAction(notificationProps))
+    showNotification: (notificationProps: NotificationProps) =>
+        dispatch(NotificationActions.showNotifictionAction(notificationProps))
 })
 
 export const NotificationTestButton = connect(null, mapDispatchToProps)(NotificationTestButtonComponent)

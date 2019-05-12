@@ -1,0 +1,54 @@
+sudo: required
+dist: xenial
+language: python
+python:
+  - '3.6'
+  - '3.7'
+
+services:
+- postgresql
+- redis-server
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+
+# command to install dependencies (docker in this case)
+before_install:
+
+
+install:
+- pip install -r requirements.txt
+- pip install -r requirements-test.txt
+- ls
+- cd webapp
+- npm install
+- cd $TRAVIS_BUILD_DIR
+
+# command to run tests
+script:
+# run linters
+- chmod 777 .travis/tslint.sh && .travis/tslint.sh
+
+## test python unit tests
+- pytest --cov=./
+- bash <(curl -s https://codecov.io/bash) -c -F server
+## test react
+#- cd webapp
+#- npm test
+#- cd ..
+
+# start the server
+- cd $TRAVIS_BUILD_DIR
+- cd webapp
+- npm install
+- npm start &
+- cd $TRAVIS_BUILD_DIR
+- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
+- python3 RLBotServer.py &
+
+# start up integration tests
+
+after_success:
+- codecov

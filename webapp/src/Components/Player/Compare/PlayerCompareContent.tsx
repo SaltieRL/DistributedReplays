@@ -42,7 +42,7 @@ export class PlayerCompareContent extends React.PureComponent<Props, State> {
                     <div style={{padding: 16, paddingBottom: 48}}>
                         <Grid container spacing={32} justify="center">
                             <PlayerProgressionCharts players={this.props.players} playlist={this.state.playlist}
-                                                          handlePlaylistChange={this.handlePlaylistChange}/>
+                                                     handlePlaylistChange={this.handlePlaylistChange}/>
                         </Grid>
                     </div>
                 }
@@ -50,7 +50,7 @@ export class PlayerCompareContent extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: PlayerCompareTab) => {
+    private readonly handleSelectTab = (_: React.ChangeEvent<{}>, selectedTab: PlayerCompareTab) => {
         this.setState({selectedTab})
     }
 
