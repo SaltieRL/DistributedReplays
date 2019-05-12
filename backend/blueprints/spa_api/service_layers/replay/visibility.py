@@ -10,7 +10,7 @@ class ReplayVisibility:
 
     @staticmethod
     @require_user
-    def change_replay_visibility(game_hash: str, visibility: GameVisibilitySetting) -> 'ReplayVisibility':
+    def change_replay_visibility(game_hash: str, visibility: GameVisibilitySetting, release_date=None) -> 'ReplayVisibility':
         updated_visibility_setting = PlayerWrapper.change_game_visibility(game_hash, visibility)
 
         return ReplayVisibility(game_hash, updated_visibility_setting)

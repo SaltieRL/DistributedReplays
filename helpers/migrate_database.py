@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath('.'))
 from backend.database.startup import startup
 
 
-def main(sess):
+def clear_database(sess):
     s = sess()
     s.execute('DROP TABLE GAMES CASCADE;')
     s.execute('DROP TABLE PLAYERGAMES CASCADE;')
@@ -14,4 +14,4 @@ def main(sess):
 
 if __name__ == '__main__':
     engine, Session = startup()
-    main(Session)
+    clear_database(Session)

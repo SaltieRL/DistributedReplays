@@ -6,6 +6,7 @@ import os
 import shutil
 import traceback
 from enum import Enum, auto
+from typing import Dict
 
 import flask
 import requests
@@ -18,7 +19,7 @@ from sqlalchemy import func, Numeric, cast
 
 from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsMetadata, GlobalStatsGraph, \
     GlobalStatsGraphDataset
-from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, GameVisibility, Player
+from backend.database.objects import Game, PlayerGame
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
@@ -100,19 +101,20 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
 
 
-def add_replay_parse_task(file_name):
-    return parse_replay_task.delay(*[file_name])
+def add_replay_parse_task(file_name, query_params: Dict[str, any]={}, **kwargs):
+    return parse_replay_task.delay(*[file_name], **{**kwargs, **{'celery_query_params': query_params}})
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
 def parse_replay_task(self, filename, preserve_upload_date: bool = False,
-                      # private replays parameters
-                      player_id: str = None, game_visibility: GameVisibilitySetting = None,
+                      # url parameters
+                      query_params = None,
                       # test parameters
                       custom_file_location: str = None, force_reparse: bool = False):
     """
     :param self:
     :param filename: filename
+    :param uuid: id for the task for any post task tasks that need to be performed.
     :param preserve_upload_date: If true the upload date is retained
     :param player_id: Must be provided if game_visibility is provided.
     :param game_visibility: Must be provided if player_id is provided.
@@ -153,12 +155,7 @@ def parse_replay_task(self, filename, preserve_upload_date: bool = False,
     add_objs_to_db(game, player_games, players, teamstats, sess, preserve_upload_date=preserve_upload_date)
 
     # Add game visibility option
-    if game_visibility:
-        player = sess.query(Player).filter(Player.platformid == player_id).first()
-        if player is not None:
-            game_visibility_entry = GameVisibility(game=game.hash, player=player_id, visibility=game_visibility)
-            sess.add(game_visibility_entry)
-        # GameVisibility fails silently - does not do anything if player_id does not exist.
+    apply_game_visibility(query_params, sess)
 
     sess.commit()
     sess.close()

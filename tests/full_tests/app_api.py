@@ -1,3 +1,4 @@
+import io
 import unittest
 from unittest.mock import patch
 
@@ -21,8 +22,17 @@ class RunningServerTest(unittest.TestCase):
         for replay_url in get_complex_replay_list():
             print('Testing:', replay_url)
             f = download_replay_discord(replay_url)
-            file_storage = FileStorage(stream=f, filename='replays')
-            response = self.context.post('/api/upload', data={'replays':(file_storage, file_storage)},
-                                         buffered=True, content_type="multipart/form-data")
-            print(response)
+            # create your request like you normally would for upload
+            r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', io.BytesIO(f))})
 
+            # build it
+            prepped = r.prepare()
+
+            # extract data needed for content
+            content_data = list(prepped.headers._store.items())
+            content_length = content_data[0][1][1]
+            content_type = content_data[1][1][1]
+
+            # add the body as an input stream and use the existing values
+            response = self.context.post('/api/upload', input_stream=io.BytesIO(prepped.body),
+                                         content_length=content_length, content_type=content_type)

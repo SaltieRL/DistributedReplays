@@ -9,10 +9,8 @@ import shutil
 import uuid
 import zlib
 
-import requests
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
-from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
@@ -25,14 +23,6 @@ except ImportError:
     config = None
 
 
-try:
-    import config
-
-    GCP_URL = config.GCP_URL
-except:
-    print('Not using GCP')
-    GCP_URL = ''
-
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
@@ -41,7 +31,6 @@ from backend.database.utils.utils import add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
-from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
@@ -57,7 +46,7 @@ from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 from .service_layers.replay.replay_positions import ReplayPositions
 from .service_layers.replay.tag import Tag
-from .utils.decorators import require_user
+from .utils.decorators import require_user, with_query_params
 from .utils.query_params_handler import QueryParam, convert_to_datetime, get_query_params, \
     convert_to_enum
 
@@ -299,23 +288,21 @@ def api_predict_ranks(id_):
     ranks = PredictedRank.create_from_id(id_)
     return better_jsonify(ranks)
 
-
+@with_query_params(accepted_query_params=[
+    QueryParam(name='page', type_=int),
+    QueryParam(name='limit', type_=int),
+    QueryParam(name='player_ids', optional=True, is_list=True),
+    QueryParam(name='playlists', optional=True, is_list=True, type_=int),
+    QueryParam(name='rank', optional=True, type_=int),
+    QueryParam(name='team_size', optional=True, type_=int),
+    QueryParam(name='date_before', optional=True, type_=convert_to_datetime),
+    QueryParam(name='date_after', optional=True, type_=convert_to_datetime),
+    QueryParam(name='min_length', optional=True, type_=float),
+    QueryParam(name='max_length', optional=True, type_=float),
+    QueryParam(name='map', optional=True),
+])
 @bp.route('/replay')
-def api_search_replays():
-    accepted_query_params = [
-        QueryParam(name='page', type_=int),
-        QueryParam(name='limit', type_=int),
-        QueryParam(name='player_ids', optional=True, is_list=True),
-        QueryParam(name='playlists', optional=True, is_list=True, type_=int),
-        QueryParam(name='rank', optional=True, type_=int),
-        QueryParam(name='team_size', optional=True, type_=int),
-        QueryParam(name='date_before', optional=True, type_=convert_to_datetime),
-        QueryParam(name='date_after', optional=True, type_=convert_to_datetime),
-        QueryParam(name='min_length', optional=True, type_=float),
-        QueryParam(name='max_length', optional=True, type_=float),
-        QueryParam(name='map', optional=True),
-    ]
-    query_params = get_query_params(accepted_query_params, request)
+def api_search_replays(query_params):
     match_history = MatchHistory.create_with_filters(**query_params)
     return better_jsonify(match_history)
 
@@ -338,21 +325,16 @@ def api_update_replay_visibility(id_: str, visibility: str):
 def api_get_stat_explanations():
     return jsonify(get_explanations())
 
-
+@with_query_params(accepted_query_params=[
+    QueryParam(name='player_id', optional=True, type_=str),
+    QueryParam(name='release_date', optional=True, type_=str, required_siblings=['visibility', 'player_id']),
+    QueryParam(name='visibility', optional=True, type_=lambda param: GameVisibilitySetting(int(param)),
+               required_siblings=['player_id']),
+])
 @bp.route('/upload', methods=['POST'])
-def api_upload_replays():
+def api_upload_replays(query_params=None):
     # TODO (sciguymjm): Create endpoint/query param for private replay upload
     # that adds an entry to the GameVisibility table for the replay
-    accepted_query_params = [
-        QueryParam(name='player_id', optional=True, type_=str),
-        QueryParam(name='visibility', optional=True, type_=lambda param: GameVisibilitySetting(int(param))),
-    ]
-    query_params = get_query_params(accepted_query_params, request)
-    if "visibility" in query_params or "player_id" in query_params:
-        if "visibility" not in query_params:
-            return MissingQueryParams(["visibility"])
-        elif "player_id" not in query_params:
-            return MissingQueryParams(["player_id"])
 
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
@@ -371,17 +353,8 @@ def api_upload_replays():
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
-        lengths = get_queue_length()  # priority 0,3,6,9
-        if lengths[1] > 1000 and GCP_URL is not None:
-            with open(os.path.abspath(filename), 'rb') as f:
-                encoded_file = base64.b64encode(f.read())
-            try:
-                r = requests.post(GCP_URL + '&uuid=' + str(ud), data=encoded_file, timeout=0.5)
-            except ReadTimeout as e:
-                pass # we don't care, it's given
-        else:
-            result = celery_tasks.add_replay_parse_task(os.path.abspath(filename))
-            task_ids.append(result.id)
+        create_replay_task()
+
     return jsonify(task_ids), 202
 
 

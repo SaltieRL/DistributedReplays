@@ -8,14 +8,17 @@ from backend.blueprints.spa_api.errors.errors import MissingQueryParams
 
 
 class QueryParam:
-    def __init__(self, name: str, is_list: bool = False, optional: bool = False, type_: Callable = None):
+    def __init__(self, name: str, is_list: bool = False, optional: bool = False,
+                 type_: Callable = None, required_siblings: List=None):
         self.name = name
         self.is_list = is_list
         self.optional = optional
         self.type = type_
+        self.required_siblings = required_siblings
 
     def __str__(self):
-        return f"QueryParam: {self.name}, is_list: {self.is_list}, optional: {self.optional}, type: {self.type}"
+        return (f"QueryParam: {self.name}, is_list: {self.is_list},"
+                f" optional: {self.optional}, type: {self.type} required siblings: {self.required_siblings}")
 
 
 def get_query_params(query_params: List[QueryParam], request: Request) -> Dict[str, Any]:
@@ -39,6 +42,21 @@ def get_query_params(query_params: List[QueryParam], request: Request) -> Dict[s
             found_query_params[query_param.name] = value
 
     return found_query_params
+
+
+def create_validation_for_query_params(query_params: List[QueryParam]):
+    check_dict:Dict[str, List[str]] = dict()
+    for query in query_params:
+        if query.required_siblings is not None:
+            check_dict[query.name] = query.required_siblings
+
+    def validate(created_query_params):
+        for query, siblings in check_dict.items():
+            if query in created_query_params:
+                for value in siblings:
+                    if value not in created_query_params:
+                        return MissingQueryParams(siblings)
+    return validate
 
 
 def convert_to_datetime(timestamp: str):

@@ -6,7 +6,7 @@ from sqlalchemy import cast, String, or_
 from sqlalchemy.dialects import postgresql
 
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
-from backend.utils.checks import is_admin
+from backend.utils.checks import is_admin, is_local_dev
 
 
 class QueryFilterBuilder:
@@ -130,7 +130,10 @@ class QueryFilterBuilder:
         """
         has_joined_game = False
         if self.initial_query is None:
-            filtered_query = session.query(*self.stats_query)
+            if self.is_game and self.stats_query is None:
+                filtered_query = session.query(Game)
+            else:
+                filtered_query = session.query(*self.stats_query)
         else:
             filtered_query = self.initial_query
 

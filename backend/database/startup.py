@@ -18,7 +18,6 @@ def login(connection_string, recreate_database=False):
     return engine, Session
 
 
-
 def startup():
     try:
         # Sql Stuff

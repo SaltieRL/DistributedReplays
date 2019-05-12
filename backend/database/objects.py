@@ -338,3 +338,4 @@ class GameVisibility(DBObjectBase):
     game = Column(String(40), ForeignKey('games.hash'), index=True)
     player = Column(String(40), ForeignKey('players.platformid'))
     visibility = Column(Enum(GameVisibilitySetting))
+    release_date = Column(DateTime, default=datetime.datetime.max)
