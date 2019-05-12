@@ -13,5 +13,5 @@ def clear_database(sess):
 
 
 if __name__ == '__main__':
-    engine, Session = startup()
+    session = startup()
     clear_database(Session)

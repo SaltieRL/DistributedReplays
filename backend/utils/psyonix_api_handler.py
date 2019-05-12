@@ -42,8 +42,8 @@ def get_bot_by_steam_id(steam_id):
         if len(steam_id) < 6:
             return "Allstar"
         else:
-            engine, Session = startup()
-            bot = Session().query(Player).filter(Player.platformid == steam_id).first()
+            session = startup()
+            bot = session().query(Player).filter(Player.platformid == steam_id).first()
             if bot is None:
                 return None
         return bot.platformname

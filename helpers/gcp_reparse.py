@@ -39,5 +39,5 @@ def main(s):
 
 
 if __name__ == '__main__':
-    engine, Session = startup()
-    main(Session)
+    session = startup()
+    main(session)

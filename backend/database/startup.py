@@ -1,10 +1,12 @@
+from typing import Tuple
+
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from backend.database.objects import DBObjectBase
 
 
-def login(connection_string, recreate_database=False):
+def login(connection_string, recreate_database=False) -> Tuple[create_engine, sessionmaker]:
     print(connection_string)
     engine = create_engine(connection_string, echo=False)
     if recreate_database:
@@ -14,19 +16,19 @@ def login(connection_string, recreate_database=False):
         conn.close()
         engine = create_engine(connection_string + '/saltie', echo=False)
     DBObjectBase.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    return engine, Session
+    session = sessionmaker(bind=engine)
+    return engine, session
 
 
-def startup():
+def startup() -> sessionmaker:
     try:
         # Sql Stuff
         connection_string = 'postgresql:///saltie'
-        engine, Session = login(connection_string)
+        engine, session = login(connection_string)
     except OperationalError as e:
         print('trying backup info', e)
         try:
-            engine, Session = login('postgresql://postgres:postgres@localhost/saltie')
+            engine, session = login('postgresql://postgres:postgres@localhost/saltie')
         except Exception as e:
-            engine, Session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
-    return engine, Session
+            engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+    return session

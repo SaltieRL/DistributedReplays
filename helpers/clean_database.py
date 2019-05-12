@@ -28,5 +28,5 @@ def clean_database(sess, ignored_parsed=False):
 
 
 if __name__ == '__main__':
-    engine, Session = startup()
-    clean_database(Session)
+    session = startup()
+    clean_database(session)

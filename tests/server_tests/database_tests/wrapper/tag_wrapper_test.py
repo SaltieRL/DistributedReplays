@@ -36,8 +36,8 @@ class TagWrapperCreateTagTest(unittest.TestCase):
     def setUp(self):
         self.tag_name = TAGS[0]
         self.test_user_id = TEST_USER_ID
-        engine, Session = startup()
-        self.session = Session()
+        session = startup()
+        self.session = session()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
         if test_user is None:
@@ -88,8 +88,8 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
     def setUp(self):
         self.tag_name = TAGS[0]
         self.test_user_id = TEST_USER_ID
-        engine, Session = startup()
-        self.session = Session()
+        session = startup()
+        self.session = session()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
         if test_user is None:
@@ -147,8 +147,8 @@ class TagWrapperRenameTagTest(unittest.TestCase):
         self.tag_name = TAGS[0]
         self.tag_name_new = TAGS[1]
         self.test_user_id = TEST_USER_ID
-        engine, Session = startup()
-        self.session = Session()
+        session = startup()
+        self.session = session()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
         if test_user is None:
@@ -224,8 +224,8 @@ class TagWrapperGetTagTest(unittest.TestCase):
     def setUp(self):
         self.tag_name = TAGS[0]
         self.test_user_id = TEST_USER_ID
-        engine, Session = startup()
-        self.session = Session()
+        session = startup()
+        self.session = session()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
         if test_user is None:
@@ -281,8 +281,8 @@ class TagWrapperAddTagToGameTest(unittest.TestCase):
         self.tag_name = TAGS[0]
         self.tag_name_alt = TAGS[1]
         self.test_user_id = TEST_USER_ID
-        engine, Session = startup()
-        self.session = Session()
+        session = startup()
+        self.session = session()
         self.test_game_id = TEST_GAME_ID
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
@@ -347,8 +347,8 @@ class TagWrapperRemoveTagFromGameTest(unittest.TestCase):
         self.tag_name = TAGS[0]
         self.tag_name_alt = TAGS[1]
         self.test_user_id = TEST_USER_ID
-        engine, Session = startup()
-        self.session = Session()
+        session = startup()
+        self.session = session()
         self.test_game_id = TEST_GAME_ID
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
@@ -411,8 +411,8 @@ class TagWrapperGetTaggedGamesTest(unittest.TestCase):
         self.tag_name_alt = TAGS[1]
         self.all_tags = TAGS
         self.test_user_id = TEST_USER_ID
-        engine, Session = startup()
-        self.session = Session()
+        session = startup()
+        self.session = session()
         self.test_game_id = TEST_GAME_ID
         self.test_game_ids = self.create_replay_names()
 

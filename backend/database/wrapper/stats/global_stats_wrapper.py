@@ -157,8 +157,8 @@ class GlobalStatWrapper(SharedStatsWrapper):
 if __name__ == '__main__':
     from backend.database.startup import startup
 
-    engine, Session = startup()
-    sess = Session()
+    session = startup()
+    sess = session()
     try:
         result = GlobalStatWrapper().get_global_stats(sess)
         print(result)

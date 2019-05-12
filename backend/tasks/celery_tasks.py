@@ -91,7 +91,7 @@ def better_json_dumps(response: object):
 # def calculate_reward(self, uid):
 #     calc = rewards.RewardCalculator()
 #     reward = calc.read_file(get_replay_path(uid))
-#     session = Session()
+#     session = session()
 #     r = session.query(Replay).filter(Replay.uuid == uid).first()
 #     # TODO: Update replay reward in db
 #     print(reward)

@@ -33,7 +33,7 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
     CORS(app)
     create_needed_folders(app)
 
-    engine, Session = startup()
+    session = startup()
 
     with app.app_context():
         register_blueprints(app)
@@ -44,10 +44,10 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
         except:  # TODO: Specify necessary excepts here.
             logger.warning('No secret key has been set')
 
-        app.config['db'] = Session
+        app.config['db'] = session
         app.config['r'] = get_redis()
 
-        _session = Session()
+        _session = session()
         groups_to_add = ['admin', 'alpha', 'beta']
         add_needed_groups_to_db(_session, groups_to_add)
         ids, ids_to_group = get_id_group_dicts(_session, groups_to_add)

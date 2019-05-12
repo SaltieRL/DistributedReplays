@@ -15,7 +15,7 @@ from backend.database.startup import startup
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 
 logger = logging.getLogger(__name__)
-engine, Session = startup()  # type: (Engine, sessionmaker)
+session = startup()  # type: (Engine, sessionmaker)
 
 r = redis.Redis(
     host='localhost',
@@ -23,7 +23,7 @@ r = redis.Redis(
 pickled_location = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed')
 pickles = glob.glob(os.path.join(pickled_location, '*.pkl'))
 
-s = Session()
+s = session()
 games = s.query(Game.hash).all()
 
 
@@ -34,7 +34,7 @@ def main():
 
 
 def parse_pickle(p):
-    s = Session()  # type: Session
+    s = session()  # type: Session
     with open(p, 'rb') as f:
         try:
             g = pickle.load(f)  # type: ReplayGame
