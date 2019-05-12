@@ -3,7 +3,7 @@ import time
 import unittest
 from backend.database.objects import Game, PlayerGame, TeamStat
 from backend.database.utils.utils import add_objects
-from tests.server_tests.utils import get_complex_replay_list, initialize_db_with_replays
+from tests.utils import get_complex_replay_list, initialize_db_with_replays
 
 
 class UtilsTest(unittest.TestCase):

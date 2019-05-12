@@ -4,7 +4,7 @@ import unittest
 import requests
 
 from RLBotServer import start_server
-from tests.server_tests.utils import get_complex_replay_list, download_replay_discord, KillableThread
+from tests.utils import get_complex_replay_list, download_replay_discord, KillableThread
 
 LOCAL_URL = 'http://localhost:8000'
 

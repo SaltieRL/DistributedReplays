@@ -5,7 +5,7 @@ from unittest.mock import patch
 from requests import Request
 
 from RLBotServer import app
-from tests.server_tests.utils import get_complex_replay_list, download_replay_discord
+from tests.utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
 
