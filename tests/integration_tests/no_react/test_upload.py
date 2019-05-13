@@ -36,7 +36,6 @@ class RunningServerTest(unittest.TestCase):
             print('Testing:', replay_url)
             f = download_replay_discord(replay_url)
             r = requests.post(LOCAL_URL + '/api/upload', files={'replayst': f})
-            r.raise_for_status()
             self.assertEqual(r.status_code, 400)
 
         print(self.replay_status)
