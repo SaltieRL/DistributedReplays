@@ -1,9 +1,9 @@
 from functools import wraps
 from typing import List
 
-from flask import current_app
 
 from backend.database.objects import PlayerGame
+from backend.database.startup import get_current_session
 
 
 def with_session(decorated_function):
@@ -12,7 +12,7 @@ def with_session(decorated_function):
         if 'session' in kwargs:
             if kwargs['session'] is not None:
                 return decorated_function(*args, **kwargs)
-        session = current_app.config['db']()
+        session = get_current_session()
         try:
             kwargs['session'] = session
             result = decorated_function(*args, **kwargs)

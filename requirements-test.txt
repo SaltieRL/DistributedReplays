@@ -9,5 +9,6 @@ autopep8
 httmock
 alchemy-mock
 mock==2.0.0
-testing.postgresql
 fakeredis
+git+https://github.com/tk0miya/testing.postgresql.git@master
+urllib3==1.25.2

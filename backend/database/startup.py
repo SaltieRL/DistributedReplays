@@ -1,6 +1,6 @@
 import logging
 from typing import Tuple, Optional
-
+from flask import current_app
 import redis
 from redis import Redis
 from sqlalchemy.exc import OperationalError
@@ -37,6 +37,10 @@ def startup() -> sessionmaker:
         except Exception as e:
             engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
     return session
+
+
+def get_current_session():
+    return EngineStartup.get_current_session()
 
 
 stored_session: sessionmaker = None
@@ -97,3 +101,7 @@ class EngineStartup:
     @staticmethod
     def get_strict_redis():
         return redis.StrictRedis()
+
+    @staticmethod
+    def get_current_session():
+        return current_app.config['db']()

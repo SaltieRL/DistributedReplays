@@ -19,6 +19,9 @@ logger = logging.getLogger(__name__)
 def create_default_player(session=None):
     player = session.query(Player).first()
 
+    if player is None:
+        player = Player()
+
     player.platformid = "LOCAL_PLATFORMID" if player is None else player.platformid
     player.platformname = 'test user with a really long name but even longer'
     if bool(random.getrandbits(1)):

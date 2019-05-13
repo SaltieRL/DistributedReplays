@@ -2,13 +2,16 @@ import random
 from unittest import mock
 
 import fakeredis
+import psycopg2
 import pytest
 from alchemy_mock.mocking import UnifiedAlchemyMagicMock
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
-from tests.utils import get_test_folder, clear_dir, llen
+from backend.database.objects import Player
+from backend.initial_setup import CalculatedServer
+from tests.utils import get_test_folder, clear_dir
 
 """
 #####################################
@@ -33,25 +36,43 @@ def create_initial_mock_database():
     return UnifiedAlchemyMagicMock(data=initial_data), initial_data
 
 
+def create_initial_data(postgresql):
+    conn = psycopg2.connect(**postgresql.dsn())
+    cursor = conn.cursor()
+    cursor.execute("commit")
+    cursor.execute("create database saltie")
+    cursor.close()
+    conn.commit()
+    conn.close()
+
+
+
 @pytest.fixture(autouse=True, scope="session")
 def postgres_factory():
     """
     Creates an initial fake database for use in unit tests.
     """
-    postgres_factory = postgresql.PostgresqlFactory(cache_initialized_db=True)
+    postgres_factory = postgresql.PostgresqlFactory(cache_initialized_db=True, on_initialized=create_initial_data)
     return postgres_factory
 
 
 @pytest.fixture(autouse=True)
-def postgres(postgres_factory):
+def postgres_instance(postgres_factory):
     fake_db = postgres_factory()
     return fake_db
 
 
+def add_player(session):
+    session().add(Player(platformid='10'))
+
+
 @pytest.fixture(autouse=True)
-def session(postgres):
-    engine = create_engine(postgres.url())
+def session(postgres_instance):
+    engine = create_engine(postgres_instance.url())
+    from backend.database.objects import DBObjectBase
+    DBObjectBase.metadata.create_all(engine)
     fake_db = sessionmaker(bind=engine)
+    add_player(fake_db)
     return fake_db
 
 
@@ -65,7 +86,7 @@ def mock_db(monkeypatch, session, fake_redis):
     from backend.database.startup import EngineStartup
 
     # local_instance = UnifiedAlchemyMagicMock(data=create_initial_mock_database_data())
-    local_alchemy = postgres
+    local_alchemy = session
 
     # add alchemy
     def fake_startup(replacement=None):
@@ -73,7 +94,11 @@ def mock_db(monkeypatch, session, fake_redis):
             nonlocal local_alchemy
             local_alchemy = replacement
         return local_alchemy
+
+    def fake_session_instance():
+        return local_alchemy()
     monkeypatch.setattr(EngineStartup, 'startup', fake_startup)
+    monkeypatch.setattr(EngineStartup, 'get_current_session', fake_session_instance)
 
     # Add redis
     local_redis = fake_redis
@@ -83,17 +108,16 @@ def mock_db(monkeypatch, session, fake_redis):
             nonlocal local_redis
             local_redis = replacement
         return local_redis
-    monkeypatch.setattr(EngineStartup, 'get_redis', fake_startup)
-    monkeypatch.setattr(EngineStartup, 'get_strict_redis', fake_startup)
+    monkeypatch.setattr(EngineStartup, 'get_redis', fake_redis)
+    monkeypatch.setattr(EngineStartup, 'get_strict_redis', fake_redis)
 
     return local_alchemy
 
 
 @pytest.fixture(autouse=True)
-def clean_database(request, postgres, postgres_factory, monkeypatch):
+def clean_database(request, postgres_instance, postgres_factory, monkeypatch):
     def kill_database():
-        postgres.stop()
-        postgres_factory.clear_cache()
+        postgres_instance.stop()
 
         from backend.database import startup
 
@@ -113,9 +137,8 @@ def cleanup(request, postgres_factory):
 
 @pytest.fixture(autouse=True)
 def fake_redis():
-    redis = fakeredis.FakeServer()
-
-    setattr(redis, 'llen', llen)
+    server = fakeredis.FakeServer()
+    redis = fakeredis.FakeStrictRedis(server=server)
     return redis
 
 """
@@ -160,9 +183,10 @@ def fake_upload_location(monkeypatch):
     monkeypatch.setattr(server_constants, 'UPLOAD_FOLDER', get_test_folder())
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture()
 def app():
-    from RLBotServer import app
+    instance = CalculatedServer()
+    app = instance.app
 
     app.testing = True
     return app.test_client()

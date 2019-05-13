@@ -22,6 +22,6 @@ class TestClient:
                              content_length=content_length, content_type=content_type)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def test_client(app) -> TestClient:
     return TestClient(app)

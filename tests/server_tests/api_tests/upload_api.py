@@ -4,7 +4,8 @@ from unittest.mock import patch
 import pytest
 from requests import Request
 
-from backend.database.startup import lazy_startup
+from backend.database.objects import Game, Player
+from backend.database.startup import lazy_startup, get_current_session
 from tests.utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
@@ -27,4 +28,11 @@ class Test_upload_file:
 
         assert(response.status_code == 202)
 
-        fake_alchemy = lazy_startup()
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game.hash == '70DDECEA4653AC55EA77DBA0DB497995')
+
+        assert(game.name == '3 kickoffs 4 shots')
+
+        player = fake_session.query(Player).first()
+        print(player)

@@ -12,7 +12,7 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
 from backend.database.startup import lazy_startup, lazy_get_redis
 from backend.database.wrapper.player_wrapper import create_default_player
-from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER
+from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER, BASE_FOLDER
 from backend.utils.checks import is_local_dev
 from backend.utils.global_jinja_functions import create_jinja_globals
 
@@ -69,7 +69,7 @@ class CalculatedServer:
     def create_needed_folders(app: Flask):
         folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
         for f in folders_to_make:
-            abspath = os.path.join(os.path.dirname(__file__), f)
+            abspath = os.path.join(BASE_FOLDER, f)
             if not os.path.isdir(abspath):
                 os.makedirs(abspath)
 
@@ -79,8 +79,8 @@ class CalculatedServer:
         app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
         app.config['TEMPLATES_AUTO_RELOAD'] = True
         app.config['BASE_URL'] = 'https://calculated.gg'
-        app.config['REPLAY_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'rlreplays')
-        app.config['PARSED_DIR'] = os.path.join(os.path.dirname(__file__), 'data', 'parsed')
+        app.config['REPLAY_DIR'] = os.path.join(BASE_FOLDER, 'data', 'rlreplays')
+        app.config['PARSED_DIR'] = os.path.join(BASE_FOLDER, 'data', 'parsed')
         app.config.update(
             broker_url='redis://localhost:6379/0',
             result_backend='redis://',
