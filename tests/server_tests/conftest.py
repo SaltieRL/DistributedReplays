@@ -192,10 +192,8 @@ def app():
     return app.test_client()
 
 
-"""
 @pytest.fixture(autouse=True)
 def make_celery_testable(monkeypatch):
     from backend.tasks import celeryconfig
     monkeypatch.setattr(celeryconfig, 'task_always_eager', True, raising=False)
     monkeypatch.setattr(celeryconfig, 'task_eager_propagates', True, raising=False)
-"""

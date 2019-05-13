@@ -14,9 +14,6 @@ LOCAL_URL = 'http://localhost:8000'
 class Test_upload_file:
     replay_status = []
 
-
-    @patch('backend.tasks.celeryconfig.task_always_eager', True, create=True)
-    @patch('backend.tasks.celeryconfig.task_eager_propagates', True, create=True)
     def test_replay_basic_server_upload(self, test_client):
         replay_url = get_complex_replay_list()[0]
         print('Testing:', replay_url)
