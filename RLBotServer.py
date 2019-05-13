@@ -31,7 +31,7 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
     CORS(app)
     create_needed_folders(app)
 
-    session = startup()
+    session_factory = startup()
 
     with app.app_context():
         register_blueprints(app)
@@ -42,10 +42,10 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
         except:  # TODO: Specify necessary excepts here.
             logger.warning('No secret key has been set')
 
-        app.config['db'] = session
+        app.config['db'] = session_factory
         app.config['r'] = get_redis()
 
-        _session = session()
+        _session = session_factory()
 
         add_needed_groups_to_db(_session, SERVER_PERMISSION_GROUPS)
         ids, ids_to_group = get_id_group_dicts(_session, SERVER_PERMISSION_GROUPS)
@@ -114,7 +114,8 @@ def get_id_group_dicts(_session, groups_to_add: List[str]) -> Tuple[Dict[str, in
     ids: Dict[str, int] = {}
     ids_to_group: Dict[int, str] = {}
     for group_name in groups_to_add:
-        i = _session.query(Group).filter(Group.name == group_name).first().id
+        value = _session.query(Group).filter(Group.name == group_name).first()
+        i = value.id
         ids[group_name] = i
         ids_to_group[i] = group_name
 

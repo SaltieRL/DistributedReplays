@@ -102,9 +102,9 @@ if __name__ == '__main__':
     from backend.database.startup import startup
 
     pr = RankPredictor()
-    engine, sessionmaker = startup()
+    session_factory = startup()
 
-    s = sessionmaker()
+    s = session_factory()
 
     for o in s.query(PlayerGame)[:20]:
         print(o.name, o.rank)

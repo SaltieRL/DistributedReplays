@@ -30,7 +30,7 @@ def download_replay_discord(url):
 
 
 def initialize_db():
-    engine, sessionmaker = startup.startup()
+    sessionmaker = startup.startup()
     session = sessionmaker()
     _, path = tempfile.mkstemp()
     return session

@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.fixture()
-def test_client():
+def app():
     from RLBotServer import app
 
     app.testing = True

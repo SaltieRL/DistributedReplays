@@ -8,3 +8,5 @@ pep8
 autopep8
 httmock
 alchemy-mock
+mock==2.0.0
+testing.postgresql

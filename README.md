@@ -5,6 +5,7 @@
 - `pip3 install -r requirements.txt`
 - Install and run Redis with default port + settings (Windows is included, [Ubuntu](https://redis.io/topics/quickstart))
 - Install postgreSQL ([Windows](https://www.enterprisedb.com/thank-you-downloading-postgresql?anid=1255928), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04), [Mac](https://stackoverflow.com/a/35308200/2187510))
+- Make sure that postgreSQL is in the path
 - If only for local development [change the password in Ubuntu](https://blog.2ndquadrant.com/how-to-safely-change-the-postgres-user-password-via-psql/) to `postgres`
 - Ensure you have the latest LTS version of node and npm installed
 - Run `cd webapp`, `npm install`

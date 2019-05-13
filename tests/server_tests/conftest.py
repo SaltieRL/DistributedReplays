@@ -1,9 +1,23 @@
+import random
+from unittest import mock
+
 import pytest
 from alchemy_mock.mocking import UnifiedAlchemyMagicMock
-from sqlalchemy.testing import mock
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from testing import postgresql
 
 from tests.utils import get_test_folder
+
+
+@pytest.fixture(scope="function")
+def seeded_random():
+    """
+    Calls random.seed() with a constant to ensure that random always returns
+    the same results.
+    """
+
+    random.seed(1234)
 
 
 @pytest.fixture()
@@ -11,7 +25,7 @@ def no_requests(monkeypatch):
     monkeypatch.delattr("requests.sessions.Session.request")
 
 
-def create_initial_mock_database_data():
+def create_initial_mock_database():
     from backend.database.objects import Group
     from backend.server_constants import SERVER_PERMISSION_GROUPS
 
@@ -24,7 +38,7 @@ def create_initial_mock_database_data():
                 [Group(id=index, name=group)]
             )
         )
-    return initial_data
+    return UnifiedAlchemyMagicMock(data=initial_data), initial_data
 
 
 @pytest.fixture(autouse=True)
@@ -35,8 +49,11 @@ def mock_alchemy(monkeypatch):
     :return: the initial instance of the database
     """
     from backend.database.startup import EngineStartup
+    fake_db = postgresql.Postgresql()
+    engine = create_engine(postgresql.url())
+    local_instance = sessionmaker(bind=engine)
 
-    local_instance = UnifiedAlchemyMagicMock(data=create_initial_mock_database_data())
+    # local_instance = UnifiedAlchemyMagicMock(data=create_initial_mock_database_data())
 
     def fake_startup(replacement=None):
         if replacement is not None:
@@ -45,7 +62,11 @@ def mock_alchemy(monkeypatch):
         return local_instance
 
     monkeypatch.setattr(EngineStartup, 'startup', fake_startup)
-    return local_instance
+
+    yield local_instance
+
+    fake_db.stop()
+
 
 
 # All files should be in the test directory
