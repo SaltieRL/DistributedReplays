@@ -1,5 +1,3 @@
-import time
-
 from backend.database.objects import Game, PlayerGame
 from backend.database.utils.utils import add_objects
 from tests.utils import get_complex_replay_list, initialize_db_with_replays
@@ -22,7 +20,6 @@ class Test_Utils:
 
         upload_date = match.upload_date
 
-        time.sleep(1)
         add_objects(self.proto, session=self.session)
         match: Game = self.session.query(Game).filter(Game.hash == self.guid).first()
         assert(upload_date == match.upload_date)
@@ -33,7 +30,6 @@ class Test_Utils:
 
         rank = match.rank
 
-        time.sleep(1)
         add_objects(self.proto, session=self.session)
         match: PlayerGame = self.session.query(PlayerGame).filter(PlayerGame.game == self.guid).first()
         assert(rank == match.rank)

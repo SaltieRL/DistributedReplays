@@ -1,11 +1,10 @@
 import io
-from unittest.mock import patch
 
 import pytest
 from requests import Request
 
 from backend.database.objects import Game, Player
-from backend.database.startup import lazy_startup, get_current_session
+from backend.database.startup import get_current_session
 from tests.utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
@@ -14,7 +13,7 @@ LOCAL_URL = 'http://localhost:8000'
 class Test_upload_file:
     replay_status = []
 
-    def test_replay_basic_server_upload(self, test_client):
+    def test_replay_basic_server_upload(self, test_client, clean_database):
         replay_url = get_complex_replay_list()[0]
         print('Testing:', replay_url)
         f = download_replay_discord(replay_url)

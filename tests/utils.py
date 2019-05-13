@@ -6,6 +6,7 @@ import threading
 
 import requests
 from carball import analyze_replay_file
+from sqlalchemy.dialects.postgresql.base import PGInspector
 
 from backend.database import startup
 from backend.database.utils.utils import add_objects
@@ -40,7 +41,10 @@ def parse_file(replay):
     replay = analyze_replay_file(os.path.join(folder_location, replay_name),
                                  os.path.join(folder_location, replay_name) + '.json')
     proto = replay.protobuf_game
-    guid = proto.game_metadata.match_guid
+    if proto.game_metadata.match_guid is not None and proto.game_metadata.match_guid != '':
+        guid = proto.game_metadata.match_guid
+    else:
+        guid = proto.game_metadata.id
     return replay, proto, guid
 
 
@@ -55,6 +59,13 @@ def initialize_db_with_replays(replay_list, session=None):
         guids.append(guid)
         protos.append(proto)
     return session, protos, guids
+
+
+def print_entire_db(inspector: PGInspector, session):
+    for table in inspector.get_table_names():
+        pass
+    #https://stackoverflow.com/questions/21310549/list-database-tables-with-sqlalchemy/21346185
+
 
 
 def get_complex_replay_list():

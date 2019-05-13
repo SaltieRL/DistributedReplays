@@ -1,11 +1,13 @@
 import random
+from typing import Tuple, List
 from unittest import mock
 
 import fakeredis
 import psycopg2
 import pytest
 from alchemy_mock.mocking import UnifiedAlchemyMagicMock
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.dialects.postgresql.base import PGInspector
 from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
@@ -20,7 +22,7 @@ DATABSE FUNCTIONS
 """
 
 
-def create_initial_mock_database():
+def create_initial_mock_database() -> Tuple[UnifiedAlchemyMagicMock, List[Tuple]]:
     from backend.database.objects import Group
     from backend.server_constants import SERVER_PERMISSION_GROUPS
 
@@ -44,7 +46,6 @@ def create_initial_data(postgresql):
     cursor.close()
     conn.commit()
     conn.close()
-
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -75,9 +76,27 @@ def session(postgres_instance):
     add_player(fake_db)
     return fake_db
 
+@pytest.fixture()
+def inspector(postgres_instance) -> PGInspector:
+    engine = create_engine(postgres_instance.url())
+    inspector = inspect(engine)  # type: PGInspector
+    return inspector
+
+
+@pytest.fixture()
+def mock_db(fake_db):
+
+    local_alchemy, _ = create_initial_mock_database()
+
+    def constructor():
+        return local_alchemy
+
+    from backend.database.startup import EngineStartup
+    EngineStartup.startup(replacement=constructor)
+
 
 @pytest.fixture(autouse=True)
-def mock_db(monkeypatch, session, fake_redis):
+def fake_db(monkeypatch, session, fake_redis):
     """
     Creates an initial fake database for use in unit tests.
     Allows for a replacement mock if a replacement engine is needed.
@@ -85,7 +104,6 @@ def mock_db(monkeypatch, session, fake_redis):
     """
     from backend.database.startup import EngineStartup
 
-    # local_instance = UnifiedAlchemyMagicMock(data=create_initial_mock_database_data())
     local_alchemy = session
 
     # add alchemy
@@ -114,8 +132,15 @@ def mock_db(monkeypatch, session, fake_redis):
     return local_alchemy
 
 
+@pytest.fixture()
+def clean_database(request, postgres_factory):
+    def kill_database():
+        postgres_factory.clear_cache()
+    request.addfinalizer(kill_database)
+
+
 @pytest.fixture(autouse=True)
-def clean_database(request, postgres_instance, postgres_factory, monkeypatch):
+def kill_database(request, postgres_instance, monkeypatch):
     def kill_database():
         postgres_instance.stop()
 

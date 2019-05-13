@@ -15,7 +15,7 @@ class BraacketTest(unittest.TestCase):
             'https://cdn.discordapp.com/attachments/493849514680254468/576877550891171860/ALL_STAR_SCOUT.replay',
             'https://cdn.discordapp.com/attachments/493849514680254468/560580395276566548/SKYBOT_DRIBBLE_INFO.replay',
         ]
-        initialize_db_with_replays(replays);
+        initialize_db_with_replays(replays)
 
     def test_get_player(self):
         bot = get_bot_by_steam_id("b086f2d2abb")
