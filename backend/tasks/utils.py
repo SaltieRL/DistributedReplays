@@ -2,6 +2,8 @@ import os
 
 import redis
 
+from backend.database.startup import get_strict_redis
+
 PRIORITY_SEP = '\x06\x16'
 DEFAULT_PRIORITY_STEPS = [0, 3, 6, 9]
 

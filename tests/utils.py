@@ -168,3 +168,9 @@ class KillableThread(threading.Thread):
 
     def terminate(self):
         self.raise_exc(SystemExit)
+
+
+llen_value = 10
+
+def llen(value):
+    return llen_value

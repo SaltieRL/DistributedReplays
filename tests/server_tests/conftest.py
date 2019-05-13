@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
-from tests.utils import get_test_folder, clear_dir
+from tests.utils import get_test_folder, clear_dir, llen
 
 """
 #####################################
@@ -39,7 +39,6 @@ def postgres_factory():
     Creates an initial fake database for use in unit tests.
     """
     postgres_factory = postgresql.PostgresqlFactory(cache_initialized_db=True)
-    fake_db = postgresql.Postgresql()
     return postgres_factory
 
 
@@ -100,11 +99,12 @@ def clean_database(request, postgres, postgres_factory, monkeypatch):
 
         monkeypatch.setattr(startup, 'stored_session', None)
         monkeypatch.setattr(startup, 'stored_redis', None)
+        monkeypatch.setattr(startup, 'redis_attempted', False)
     request.addfinalizer(kill_database)
 
 
 @pytest.fixture(scope="session", autouse=True)
-def cleanup(request, postgres_factory, monkeypatch):
+def cleanup(request, postgres_factory):
     """Cleanup a testing directory once we are finished."""
     def kill_database():
         clear_dir()
@@ -114,6 +114,8 @@ def cleanup(request, postgres_factory, monkeypatch):
 @pytest.fixture(autouse=True)
 def fake_redis():
     redis = fakeredis.FakeServer()
+
+    setattr(redis, 'llen', llen)
     return redis
 
 """

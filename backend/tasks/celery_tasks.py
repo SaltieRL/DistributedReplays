@@ -20,6 +20,7 @@ from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsMe
     GlobalStatsGraphDataset
 from backend.database.objects import Game, PlayerGame
 from backend.database.startup import lazy_get_redis
+
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
@@ -62,7 +63,6 @@ celery.config_from_object(celeryconfig)
 player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
-_redis = lazy_get_redis()
 
 
 def better_json_dumps(response: object):
@@ -184,9 +184,9 @@ def calc_global_stats(self):
     sess = self.session()
     result = player_stat_wrapper.get_global_stats(sess)
     sess.close()
-    if _redis is not None:
-        _redis.set('global_stats', json.dumps(result))
-        _redis.set('global_stats_expire', json.dumps(True))
+    if lazy_get_redis() is not None:
+        lazy_get_redis().set('global_stats', json.dumps(result))
+        lazy_get_redis().set('global_stats_expire', json.dumps(True))
     print('Done')
     return result
 
@@ -257,8 +257,8 @@ def calc_global_dists(self):
             datasets=[GlobalStatsGraphDataset(**dataset) for dataset in datasets]
         ))
     session.close()
-    if _redis is not None:
-        _redis.set('global_distributions', better_json_dumps(overall_data))
+    if lazy_get_redis() is not None:
+        lazy_get_redis().set('global_distributions', better_json_dumps(overall_data))
     return overall_data
 
 

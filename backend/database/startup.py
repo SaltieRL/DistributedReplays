@@ -41,6 +41,7 @@ def startup() -> sessionmaker:
 
 stored_session: sessionmaker = None
 stored_redis = None
+redis_attempted = False
 
 
 def lazy_startup():
@@ -53,9 +54,11 @@ def lazy_startup():
 
 def lazy_get_redis():
     global stored_redis
-    if stored_redis is not None:
+    global redis_attempted
+    if stored_redis is not None or redis_attempted:
         return stored_redis
     stored_redis = EngineStartup.get_redis()
+    redis_attempted = True
     return stored_redis
 
 
@@ -77,7 +80,6 @@ class EngineStartup:
                 engine, session = login('postgresql://postgres:postgres@localhost/saltie')
             except Exception as e:
                 engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
-        stored_session = session
         return session
 
     @staticmethod
@@ -87,7 +89,6 @@ class EngineStartup:
                 host='localhost',
                 port=6379)
             _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
-            stored_redis = _redis
             return _redis
         except:  # TODO: Investigate and specify this except.
             logger.error("Not using redis.")
