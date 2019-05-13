@@ -32,7 +32,6 @@ def download_replay_discord(url):
 def initialize_db():
     sessionmaker = startup.lazy_startup()
     session = sessionmaker()
-    _, path = tempfile.mkstemp()
     return session
 
 
