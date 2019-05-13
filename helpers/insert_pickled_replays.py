@@ -6,20 +6,16 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 
-import redis
-from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from backend.database.objects import Game
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup, lazy_get_redis
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 
 logger = logging.getLogger(__name__)
-session = startup()  # type: (Engine, sessionmaker)
+session = lazy_startup()  # type: sessionmaker
 
-r = redis.Redis(
-    host='localhost',
-    port=6379)
+r = lazy_get_redis()
 pickled_location = os.path.join(os.path.dirname(__file__), '..', 'data', 'parsed')
 pickles = glob.glob(os.path.join(pickled_location, '*.pkl'))
 

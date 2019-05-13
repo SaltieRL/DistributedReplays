@@ -1,17 +1,16 @@
 import logging
 import os
-from typing import Optional, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 from flask import Flask, render_template, g, request, redirect, send_from_directory
 from flask import session as flask_session
 from flask_cors import CORS
-from redis import Redis
 
 from backend.blueprints import steam, auth, debug, admin, api
 from backend.blueprints.spa_api import spa_api
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup, lazy_get_redis
 from backend.database.wrapper.player_wrapper import create_default_player
 from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER
 from backend.utils.checks import is_local_dev
@@ -31,7 +30,7 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
     CORS(app)
     create_needed_folders(app)
 
-    session_factory = startup()
+    session_factory = lazy_startup()
 
     with app.app_context():
         register_blueprints(app)
@@ -43,7 +42,7 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
             logger.warning('No secret key has been set')
 
         app.config['db'] = session_factory
-        app.config['r'] = get_redis()
+        app.config['r'] = lazy_get_redis()
 
         _session = session_factory()
 
@@ -88,18 +87,6 @@ def register_blueprints(app: Flask):
     app.register_blueprint(auth.bp)
     app.register_blueprint(debug.bp)
     app.register_blueprint(admin.bp)
-
-
-def get_redis() -> Optional[Redis]:
-    try:
-        _redis = Redis(
-            host='localhost',
-            port=6379)
-        _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
-        return _redis
-    except:  # TODO: Investigate and specify this except.
-        logger.error("Not using redis.")
-        return None
 
 
 def add_needed_groups_to_db(_session, groups_to_add: List[str]):

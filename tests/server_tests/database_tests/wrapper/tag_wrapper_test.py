@@ -3,7 +3,7 @@ import unittest
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
 from backend.database.objects import Player, Tag, Game
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 
 TAGS = ["salt", "pepper", "peppermint", "allspice", "cinnamon", "coriander", "basil", "holy basil", "fennel",
@@ -36,7 +36,7 @@ class TagWrapperCreateTagTest(unittest.TestCase):
     def setUp(self):
         self.tag_name = TAGS[0]
         self.test_user_id = TEST_USER_ID
-        session = startup()
+        session = lazy_startup()
         self.session = session()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
@@ -88,7 +88,7 @@ class TagWrapperRemoveTagTest(unittest.TestCase):
     def setUp(self):
         self.tag_name = TAGS[0]
         self.test_user_id = TEST_USER_ID
-        session = startup()
+        session = lazy_startup()
         self.session = session()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
@@ -147,7 +147,7 @@ class TagWrapperRenameTagTest(unittest.TestCase):
         self.tag_name = TAGS[0]
         self.tag_name_new = TAGS[1]
         self.test_user_id = TEST_USER_ID
-        session = startup()
+        session = lazy_startup()
         self.session = session()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
@@ -224,7 +224,7 @@ class TagWrapperGetTagTest(unittest.TestCase):
     def setUp(self):
         self.tag_name = TAGS[0]
         self.test_user_id = TEST_USER_ID
-        session = startup()
+        session = lazy_startup()
         self.session = session()
 
         test_user = self.session.query(Player).filter(Player.platformid == self.test_user_id).first()
@@ -281,7 +281,7 @@ class TagWrapperAddTagToGameTest(unittest.TestCase):
         self.tag_name = TAGS[0]
         self.tag_name_alt = TAGS[1]
         self.test_user_id = TEST_USER_ID
-        session = startup()
+        session = lazy_startup()
         self.session = session()
         self.test_game_id = TEST_GAME_ID
 
@@ -347,7 +347,7 @@ class TagWrapperRemoveTagFromGameTest(unittest.TestCase):
         self.tag_name = TAGS[0]
         self.tag_name_alt = TAGS[1]
         self.test_user_id = TEST_USER_ID
-        session = startup()
+        session = lazy_startup()
         self.session = session()
         self.test_game_id = TEST_GAME_ID
 
@@ -411,7 +411,7 @@ class TagWrapperGetTaggedGamesTest(unittest.TestCase):
         self.tag_name_alt = TAGS[1]
         self.all_tags = TAGS
         self.test_user_id = TEST_USER_ID
-        session = startup()
+        session = lazy_startup()
         self.session = session()
         self.test_game_id = TEST_GAME_ID
         self.test_game_ids = self.create_replay_names()

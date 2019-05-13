@@ -2,7 +2,7 @@ import glob
 import os
 
 from backend.database.objects import Game
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 
 
 def clean_database(sess, ignored_parsed=False):
@@ -28,5 +28,5 @@ def clean_database(sess, ignored_parsed=False):
 
 
 if __name__ == '__main__':
-    session = startup()
+    session = lazy_startup()
     clean_database(session)

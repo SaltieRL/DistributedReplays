@@ -14,12 +14,12 @@ from carball import analyze_replay_file
 from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
-from redis import Redis
 from sqlalchemy import func, Numeric, cast
 
 from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsMetadata, GlobalStatsGraph, \
     GlobalStatsGraphDataset
 from backend.database.objects import Game, PlayerGame
+from backend.database.startup import lazy_get_redis
 from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
@@ -62,13 +62,7 @@ celery.config_from_object(celeryconfig)
 player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
-try:
-    _redis = Redis(
-        host='localhost',
-        port=6379)
-    _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
-except:  # TODO: Investigate and specify this except.
-    _redis = None
+_redis = lazy_get_redis()
 
 
 def better_json_dumps(response: object):

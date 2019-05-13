@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 from requests import Request
 
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 from tests.utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
@@ -23,19 +23,8 @@ class Test_upload_file:
         # create your request like you normally would for upload
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', io.BytesIO(f))})
 
-        # build it
-        prepped = r.prepare()
-
-        # extract data needed for content
-        content_data = list(prepped.headers._store.items())
-        content_length = content_data[0][1][1]
-        content_type = content_data[1][1][1]
-
-        # add the body as an input stream and use the existing values
-        response = test_client.post('/api/upload', input_stream=io.BytesIO(prepped.body),
-                                     content_length=content_length, content_type=content_type)
-
-        fake_alchemy = startup()
-        fake_alchemy
+        response = test_client.send(r)
 
         assert(response.status_code == 202)
+
+        fake_alchemy = lazy_startup()

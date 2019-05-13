@@ -10,3 +10,4 @@ httmock
 alchemy-mock
 mock==2.0.0
 testing.postgresql
+fakeredis

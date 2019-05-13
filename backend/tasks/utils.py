@@ -42,7 +42,7 @@ def get_queue_length(queue_name='celery'):
     """
     priority_names = [make_queue_name_for_pri(queue_name, pri) for pri in
                       DEFAULT_PRIORITY_STEPS]
-    r = redis.StrictRedis()
+    r = get_strict_redis()
     return [r.llen(x) for x in priority_names]
 
 

@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append(os.path.abspath('.'))
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 
 
 def clear_database(sess):
@@ -13,5 +13,5 @@ def clear_database(sess):
 
 
 if __name__ == '__main__':
-    session = startup()
+    session = lazy_startup()
     clear_database(Session)

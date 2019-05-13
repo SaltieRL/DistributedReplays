@@ -7,7 +7,7 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend.database.objects import Game
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 import json
 
 try:
@@ -39,5 +39,5 @@ def main(s):
 
 
 if __name__ == '__main__':
-    session = startup()
+    session = lazy_startup()
     main(session)

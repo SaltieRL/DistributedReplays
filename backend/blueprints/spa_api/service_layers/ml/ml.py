@@ -99,10 +99,10 @@ model_holder = RankPredictor()
 
 
 if __name__ == '__main__':
-    from backend.database.startup import startup
+    from backend.database.startup import lazy_startup
 
     pr = RankPredictor()
-    session_factory = startup()
+    session_factory = lazy_startup()
 
     s = session_factory()
 

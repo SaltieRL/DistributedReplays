@@ -1,7 +1,7 @@
 from celery import Task
 from werkzeug.wsgi import LimitedStream
 
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 
 
 class StreamConsumingMiddleware(object):
@@ -33,6 +33,6 @@ class DBTask(Task):
     @property
     def session(self):
         if self._session is None:
-            self._session = startup()
+            self._session = lazy_startup()
 
         return self._session
