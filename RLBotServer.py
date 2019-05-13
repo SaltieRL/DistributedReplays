@@ -13,14 +13,12 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
 from backend.database.startup import startup
 from backend.database.wrapper.player_wrapper import create_default_player
+from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER
 from backend.utils.checks import is_local_dev
 from backend.utils.global_jinja_functions import create_jinja_globals
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")
-
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'replays')
-UPLOAD_RATE_LIMIT_MINUTES = 4.5  # TODO: Make use of this.
 
 
 def start_app() -> Tuple[Flask, Dict[str, int]]:
@@ -48,9 +46,9 @@ def start_app() -> Tuple[Flask, Dict[str, int]]:
         app.config['r'] = get_redis()
 
         _session = session()
-        groups_to_add = ['admin', 'alpha', 'beta']
-        add_needed_groups_to_db(_session, groups_to_add)
-        ids, ids_to_group = get_id_group_dicts(_session, groups_to_add)
+
+        add_needed_groups_to_db(_session, SERVER_PERMISSION_GROUPS)
+        ids, ids_to_group = get_id_group_dicts(_session, SERVER_PERMISSION_GROUPS)
         app.config['groups'] = ids_to_group
         _session.commit()
         _session.close()

@@ -4,6 +4,7 @@ from unittest.mock import patch
 import pytest
 from requests import Request
 
+from backend.database.startup import startup
 from tests.utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
@@ -15,7 +16,7 @@ class Test_upload_file:
 
     @patch('backend.tasks.celeryconfig.task_always_eager', True, create=True)
     @patch('backend.tasks.celeryconfig.task_eager_propagates', True, create=True)
-    def test_replay_no_server_upload(self, test_client):
+    def test_replay_basic_server_upload(self, test_client):
         replay_url = get_complex_replay_list()[0]
         print('Testing:', replay_url)
         f = download_replay_discord(replay_url)
@@ -33,5 +34,8 @@ class Test_upload_file:
         # add the body as an input stream and use the existing values
         response = test_client.post('/api/upload', input_stream=io.BytesIO(prepped.body),
                                      content_length=content_length, content_type=content_type)
+
+        fake_alchemy = startup()
+        fake_alchemy
 
         assert(response.status_code == 202)
