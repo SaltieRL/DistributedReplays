@@ -33,6 +33,6 @@ class DBTask(Task):
     @property
     def session(self):
         if self._session is None:
-            _, self._session = startup()
+            self._session = startup()
 
         return self._session

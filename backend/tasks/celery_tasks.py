@@ -26,6 +26,7 @@ from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.add_replay import apply_game_visibility
 from backend.tasks.middleware import DBTask
+from backend.tasks.utils import get_default_parse_folder
 
 try:
     import config
@@ -103,7 +104,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 def add_replay_parse_task(file_name, query_params: Dict[str, any] = None, **kwargs):
-    return parse_replay_task.delay(*[file_name], **{**kwargs, **{'query_params': query_params}})
+    return parse_replay_task.delay(*[file_name], **{**kwargs, **{'query_params': query_params}},)
 
 
 @celery.task(base=DBTask, bind=True, priority=5)
@@ -122,7 +123,7 @@ def parse_replay_task(self, filename, preserve_upload_date: bool = False,
     :return:
     """
     if custom_file_location is None:
-        pickled = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed', os.path.basename(filename))
+        pickled = os.path.join(get_default_parse_folder(), os.path.basename(filename))
     else:
         pickled = os.path.join(custom_file_location, os.path.basename(filename))
     if custom_file_location is None:
@@ -142,11 +143,15 @@ def parse_replay_task(self, filename, preserve_upload_date: bool = False,
             f.write(str(e))
             f.write(traceback.format_exc())
         raise e
-
-    with open(pickled + '.pts', 'wb') as fo:
-        analysis_manager.write_proto_out_to_file(fo)
-    with gzip.open(pickled + '.gzip', 'wb') as fo:
-        analysis_manager.write_pandas_out_to_file(fo)
+    try:
+        with open(pickled + '.pts', 'wb') as fo:
+            analysis_manager.write_proto_out_to_file(fo)
+        with gzip.open(pickled + '.gzip', 'wb') as fo:
+            analysis_manager.write_pandas_out_to_file(fo)
+    except Exception as e:
+        with open(os.path.join(failed_dir, os.path.basename(filename) + '.txt'), 'a') as f:
+            f.write(str(e))
+            f.write(traceback.format_exc())
 
     proto_game = analysis_manager.protobuf_game
     sess = self.session()

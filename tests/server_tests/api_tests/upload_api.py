@@ -1,23 +1,21 @@
 import io
-import unittest
 from unittest.mock import patch
 
+import pytest
 from requests import Request
 
-from RLBotServer import app
 from tests.utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
 
-
-class RunningServerTest(unittest.TestCase):
+@pytest.mark.usefixtures('test_client')
+class Test_upload_file:
     replay_status = []
 
-    def setUp(self) -> None:
-        self.context = app.test_client()
 
     @patch('backend.tasks.celeryconfig.task_always_eager', True, create=True)
-    def test_replay_no_server_upload(self):
+    @patch('backend.tasks.celeryconfig.task_eager_propagates', True, create=True)
+    def test_replay_no_server_upload(self, test_client):
         replay_url = get_complex_replay_list()[0]
         print('Testing:', replay_url)
         f = download_replay_discord(replay_url)
@@ -33,5 +31,7 @@ class RunningServerTest(unittest.TestCase):
         content_type = content_data[1][1][1]
 
         # add the body as an input stream and use the existing values
-        response = self.context.post('/api/upload', input_stream=io.BytesIO(prepped.body),
+        response = test_client.post('/api/upload', input_stream=io.BytesIO(prepped.body),
                                      content_length=content_length, content_type=content_type)
+
+        print(response)
