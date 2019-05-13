@@ -34,4 +34,4 @@ class Test_upload_file:
         response = test_client.post('/api/upload', input_stream=io.BytesIO(prepped.body),
                                      content_length=content_length, content_type=content_type)
 
-        print(response)
+        assert(response.status_code == 202)

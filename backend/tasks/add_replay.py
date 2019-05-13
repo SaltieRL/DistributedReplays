@@ -20,6 +20,8 @@ except:
 
 
 def apply_game_visibility(query_params, sess, game_id):
+    if query_params is None:
+        return None
     if 'visibility' not in query_params:
         return None
 
