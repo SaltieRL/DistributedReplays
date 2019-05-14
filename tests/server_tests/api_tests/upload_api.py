@@ -1,6 +1,5 @@
 import io
 
-import pytest
 from requests import Request
 
 from backend.database.objects import Game, Player
@@ -9,7 +8,7 @@ from tests.utils.replay_utils import get_complex_replay_list, download_replay_di
 
 LOCAL_URL = 'http://localhost:8000'
 
-@pytest.mark.usefixtures('test_client')
+
 class Test_upload_file:
     replay_status = []
 
@@ -34,22 +33,22 @@ class Test_upload_file:
         player = fake_session.query(Player).first()
         assert(player.platformid == '76561198018756583')
 
-    def test_upload_file_bad_request_no_files(self, test_client, clean_database):
+    def test_upload_file_bad_request_no_files(self, test_client):
         r = Request('POST', LOCAL_URL + '/api/upload')
         response = test_client.send(r)
         assert(response.status_code == 400)
 
-    def test_upload_file_bad_request_invalid_file_name(self, test_client, clean_database):
+    def test_upload_file_bad_request_invalid_file_name(self, test_client):
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.txt', self.stream)})
         response = test_client.send(r)
         assert(response.status_code == 400)
 
-    def test_upload_file_bad_request_invalid_file_data(self, test_client, clean_database):
+    def test_upload_file_bad_request_invalid_file_data(self, test_client):
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.txt', io.BytesIO(b'12345'))})
         response = test_client.send(r)
         assert(response.status_code == 202)
 
-    def test_double_upload_does_not_replace(self, test_client, clean_database, mock_db):
+    def test_double_upload_does_not_replace(self, test_client, mock_db):
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)})
 
         response = test_client.send(r)
