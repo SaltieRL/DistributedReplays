@@ -1,11 +1,9 @@
 import random
-from typing import Tuple, List
-from unittest import mock
+
 
 import fakeredis
 import psycopg2
 import pytest
-from alchemy_mock.mocking import UnifiedAlchemyMagicMock
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.dialects.postgresql.base import PGInspector
 from sqlalchemy.orm import sessionmaker
@@ -13,29 +11,15 @@ from testing import postgresql
 
 from backend.database.objects import Player
 from backend.initial_setup import CalculatedServer
-from tests.utils import get_test_folder, clear_dir
+from tests.utils.database_utils import create_initial_mock_database
+from tests.utils.location_utils import get_test_folder
+from tests.utils.replay_utils import clear_dir
 
 """
 #####################################
 DATABSE FUNCTIONS
 ####################################
 """
-
-
-def create_initial_mock_database() -> Tuple[UnifiedAlchemyMagicMock, List[Tuple]]:
-    from backend.database.objects import Group
-    from backend.server_constants import SERVER_PERMISSION_GROUPS
-
-    initial_data = []
-    for index, group in enumerate(SERVER_PERMISSION_GROUPS):
-        initial_data.append(
-            (
-                [mock.call.query(Group),
-                 mock.call.filter(Group.name == group)],
-                [Group(id=index, name=group)]
-            )
-        )
-    return UnifiedAlchemyMagicMock(data=initial_data), initial_data
 
 
 def create_initial_data(postgresql):
@@ -93,6 +77,8 @@ def mock_db(fake_db):
 
     from backend.database.startup import EngineStartup
     EngineStartup.startup(replacement=constructor)
+
+    return constructor
 
 
 @pytest.fixture(autouse=True)
@@ -208,8 +194,11 @@ def fake_upload_location(monkeypatch):
     monkeypatch.setattr(server_constants, 'UPLOAD_FOLDER', get_test_folder())
 
 
-@pytest.fixture()
+@pytest.fixture(scope="class")
 def app():
+    from backend.tasks import celeryconfig
+    celeryconfig.task_eager_propagates = True
+
     instance = CalculatedServer()
     app = instance.app
 

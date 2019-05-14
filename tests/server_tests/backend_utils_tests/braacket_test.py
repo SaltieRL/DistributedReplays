@@ -2,7 +2,8 @@ import unittest
 
 from backend.utils.braacket_connection import Braacket
 from backend.utils.psyonix_api_handler import get_bot_by_steam_id, get_rank, get_empty_data
-from tests.utils import initialize_db_with_replays, clear_dir
+from tests.utils.database_utils import initialize_db_with_replays
+from tests.utils.replay_utils import clear_dir
 
 
 class BraacketTest(unittest.TestCase):

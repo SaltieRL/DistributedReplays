@@ -4,8 +4,8 @@ import pytest
 from requests import Request
 
 from backend.database.objects import Game, Player
-from backend.database.startup import get_current_session
-from tests.utils import get_complex_replay_list, download_replay_discord
+from backend.database.startup import get_current_session, EngineStartup
+from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
 
@@ -13,12 +13,13 @@ LOCAL_URL = 'http://localhost:8000'
 class Test_upload_file:
     replay_status = []
 
-    def test_replay_basic_server_upload(self, test_client, clean_database):
+    def setup_method(self):
         replay_url = get_complex_replay_list()[0]
-        print('Testing:', replay_url)
         f = download_replay_discord(replay_url)
-        # create your request like you normally would for upload
-        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', io.BytesIO(f))})
+        self.stream = io.BytesIO(f)
+
+    def test_replay_basic_server_upload(self, test_client):
+        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)})
 
         response = test_client.send(r)
 
@@ -31,4 +32,35 @@ class Test_upload_file:
         assert(game.name == '3 kickoffs 4 shots')
 
         player = fake_session.query(Player).first()
-        print(player)
+        assert(player.platformid == '76561198018756583')
+
+    def test_upload_file_bad_request_no_files(self, test_client, clean_database):
+        r = Request('POST', LOCAL_URL + '/api/upload')
+        response = test_client.send(r)
+        assert(response.status_code == 400)
+
+    def test_upload_file_bad_request_invalid_file_name(self, test_client, clean_database):
+        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.txt', self.stream)})
+        response = test_client.send(r)
+        assert(response.status_code == 400)
+
+    def test_upload_file_bad_request_invalid_file_data(self, test_client, clean_database):
+        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.txt', io.BytesIO(b'12345'))})
+        response = test_client.send(r)
+        assert(response.status_code == 202)
+
+    def test_double_upload_does_not_replace(self, test_client, clean_database, mock_db):
+        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)})
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 202)
+
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+
+        EngineStartup.startup(replacement=mock_db)
+
+        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)})
+
+        assert(response.status_code == 202)
