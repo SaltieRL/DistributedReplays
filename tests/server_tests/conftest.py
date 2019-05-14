@@ -1,18 +1,17 @@
+import contextlib
 import random
-from typing import Tuple, List
-from unittest import mock
 
 import fakeredis
 import psycopg2
 import pytest
-from alchemy_mock.mocking import UnifiedAlchemyMagicMock
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, MetaData
 from sqlalchemy.dialects.postgresql.base import PGInspector
 from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
 from backend.database.objects import Player
 from backend.initial_setup import CalculatedServer
+from tests.utils.database_utils import create_initial_mock_database
 from tests.utils.location_utils import get_test_folder
 from tests.utils.replay_utils import clear_dir
 
@@ -27,7 +26,6 @@ def create_initial_data(postgresql):
     conn = psycopg2.connect(**postgresql.dsn())
     cursor = conn.cursor()
     cursor.execute("commit")
-    cursor.execute("create database saltie")
     cursor.close()
     conn.commit()
     conn.close()
@@ -38,11 +36,11 @@ def postgres_factory():
     """
     Creates an initial fake database for use in unit tests.
     """
-    postgres_factory = postgresql.PostgresqlFactory(cache_initialized_db=True, on_initialized=create_initial_data)
+    postgres_factory = postgresql.PostgresqlFactory(cache_initialized_db=True)
     return postgres_factory
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session")
 def postgres_instance(postgres_factory):
     fake_db = postgres_factory()
     return fake_db
@@ -52,14 +50,20 @@ def add_player(session):
     session().add(Player(platformid='10'))
 
 
-@pytest.fixture(autouse=True)
-def session(postgres_instance):
+@pytest.fixture()
+def engine(postgres_instance):
     engine = create_engine(postgres_instance.url())
     from backend.database.objects import DBObjectBase
     DBObjectBase.metadata.create_all(engine)
+    return engine
+
+
+@pytest.fixture()
+def session(engine):
     fake_db = sessionmaker(bind=engine)
     add_player(fake_db)
     return fake_db
+
 
 @pytest.fixture()
 def inspector(postgres_instance) -> PGInspector:
@@ -125,9 +129,16 @@ def clean_database(request, postgres_factory):
 
 
 @pytest.fixture(autouse=True)
-def kill_database(request, postgres_instance, monkeypatch):
+def kill_database(request, engine, monkeypatch):
     def kill_database():
-        postgres_instance.stop()
+
+        meta = MetaData()
+
+        with contextlib.closing(engine.connect()) as con:
+            trans = con.begin()
+            for table in reversed(meta.sorted_tables):
+                con.execute(table.delete())
+            trans.commit()
 
         from backend.database import startup
 

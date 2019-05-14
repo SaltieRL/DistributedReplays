@@ -44,7 +44,7 @@ class Test_upload_file:
         assert(response.status_code == 400)
 
     def test_upload_file_bad_request_invalid_file_data(self, test_client):
-        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.txt', io.BytesIO(b'12345'))})
+        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', io.BytesIO(b'12345'))})
         response = test_client.send(r)
         assert(response.status_code == 202)
 
