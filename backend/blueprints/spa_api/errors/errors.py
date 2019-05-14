@@ -55,6 +55,8 @@ class InvalidQueryParamFormat(CalculatedError):
 
     def __init__(self, invalidParameter, value):
         message = f'{value} is in invalid format for Query parameter: {invalidParameter.name}'
+        if invalidParameter.tip is not None:
+            message += f'tip: {invalidParameter.tip}'
         super().__init__(self.status_code, message)
 
 

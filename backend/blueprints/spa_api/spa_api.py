@@ -1,5 +1,4 @@
 import base64
-import datetime
 import hashlib
 import io
 import logging
@@ -16,6 +15,8 @@ from werkzeug.utils import secure_filename, redirect
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
+from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
+    replay_search_query_params, progression_query_params, playstyle_query_params
 from backend.tasks.add_replay import create_replay_task
 
 try:
@@ -30,7 +31,6 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
 from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.utils.utils import add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
-from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
 from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
@@ -48,8 +48,7 @@ from .service_layers.replay.replay import Replay
 from .service_layers.replay.replay_positions import ReplayPositions
 from .service_layers.replay.tag import Tag
 from .utils.decorators import require_user, with_query_params
-from .utils.query_params_handler import QueryParam, convert_to_datetime, get_query_params, \
-    convert_to_enum
+from .utils.query_params_handler import QueryParam, get_query_params
 
 logger = logging.getLogger(__name__)
 
@@ -169,27 +168,16 @@ def api_get_player_play_style(id_):
 
 
 @bp.route('player/<id_>/play_style/all')
-def api_get_player_play_style_all(id_):
-    accepted_query_params = [
-        QueryParam(name='rank', optional=True, type_=int),
-        QueryParam(name='replay_ids', optional=True),
-        QueryParam(name='playlist', optional=True, type_=int),
-    ]
-    query_params = get_query_params(accepted_query_params, request)
+@with_query_params(accepted_query_params=playstyle_query_params)
+def api_get_player_play_style_all(id_, query_params=None):
 
     play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, **query_params)
     return better_jsonify(play_style_response)
 
 
 @bp.route('player/<id_>/play_style/progression')
-def api_get_player_play_style_progress(id_):
-    accepted_query_params = [
-        QueryParam(name='time_unit', optional=True, type_=convert_to_enum(TimeUnit)),
-        QueryParam(name='start_date', optional=True, type_=convert_to_datetime),
-        QueryParam(name='end_date', optional=True, type_=convert_to_datetime),
-        QueryParam(name='playlist', optional=True, type_=int),
-    ]
-    query_params = get_query_params(accepted_query_params, request)
+@with_query_params(accepted_query_params=progression_query_params)
+def api_get_player_play_style_progress(id_, query_params=None):
 
     play_style_progression = PlayStyleProgression.create_progression(id_, **query_params)
     return better_jsonify(play_style_progression)
@@ -289,19 +277,8 @@ def api_predict_ranks(id_):
     ranks = PredictedRank.create_from_id(id_)
     return better_jsonify(ranks)
 
-@with_query_params(accepted_query_params=[
-    QueryParam(name='page', type_=int),
-    QueryParam(name='limit', type_=int),
-    QueryParam(name='player_ids', optional=True, is_list=True),
-    QueryParam(name='playlists', optional=True, is_list=True, type_=int),
-    QueryParam(name='rank', optional=True, type_=int),
-    QueryParam(name='team_size', optional=True, type_=int),
-    QueryParam(name='date_before', optional=True, type_=convert_to_datetime),
-    QueryParam(name='date_after', optional=True, type_=convert_to_datetime),
-    QueryParam(name='min_length', optional=True, type_=float),
-    QueryParam(name='max_length', optional=True, type_=float),
-    QueryParam(name='map', optional=True),
-])
+
+@with_query_params(accepted_query_params=replay_search_query_params)
 @bp.route('/replay')
 def api_search_replays(query_params):
     match_history = MatchHistory.create_with_filters(**query_params)
@@ -328,13 +305,7 @@ def api_get_stat_explanations():
 
 
 @bp.route('/upload', methods=['POST'])
-@with_query_params(accepted_query_params=[
-    QueryParam(name='player_id', optional=True, type_=str),
-    QueryParam(name='release_date', optional=True, type_=lambda param: datetime.datetime.fromtimestamp(int(param)),
-               required_siblings=['visibility', 'player_id']),
-    QueryParam(name='visibility', optional=True, type_=lambda param: GameVisibilitySetting(int(param)),
-               required_siblings=['player_id']),
-])
+@with_query_params(accepted_query_params=upload_file_query_params)
 def api_upload_replays(query_params=None):
     # TODO (sciguymjm): Create endpoint/query param for private replay upload
     # that adds an entry to the GameVisibility table for the replay

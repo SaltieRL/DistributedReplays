@@ -1,5 +1,3 @@
-import datetime
-import urllib
 from enum import Enum
 from typing import List, Dict, Any, Callable, Type, TypeVar
 from urllib.parse import urlencode
@@ -11,16 +9,20 @@ from backend.blueprints.spa_api.errors.errors import MissingQueryParams, Invalid
 
 class QueryParam:
     def __init__(self, name: str, is_list: bool = False, optional: bool = False,
-                 type_: Callable = None, required_siblings: List=None):
+                 type_: Callable = None, required_siblings: List=None, tip: str=None, secondary_type=None):
         self.name = name
         self.is_list = is_list
         self.optional = optional
         self.type = type_
         self.required_siblings = required_siblings
+        self.tip = tip
+        self.secondary_type = secondary_type
 
     def __str__(self):
         return (f"QueryParam: {self.name}, is_list: {self.is_list},"
-                f" optional: {self.optional}, type: {self.type} required siblings: {self.required_siblings}")
+                f" optional: {self.optional}, type: {self.type}"
+                f"required params: {self.required_siblings}"
+                f"tip: {self.tip}")
 
 
 def get_query_params(query_params: List[QueryParam], request: Request) -> Dict[str, Any]:
@@ -43,8 +45,30 @@ def get_query_params(query_params: List[QueryParam], request: Request) -> Dict[s
                 value = request.args.get(query_param.name, type=query_param.type)
             if value is None and request.args.get(query_param.name) is not None:
                 raise InvalidQueryParamFormat(query_param, request.args.get(query_param.name))
+
+            # catch errors from secondary parsing upfront
+            try:
+                if query_param.secondary_type is not None and query_param.secondary_type(value) is None:
+                    raise InvalidQueryParamFormat(query_param, value)
+            except:
+                raise InvalidQueryParamFormat(query_param, value)
+
             found_query_params[query_param.name] = value
 
+    return found_query_params
+
+
+def parse_query_params(query_params: List[QueryParam], args: Dict[str, str], add_initial=False, add_secondary=False):
+    found_query_params = {}
+    for query_param in query_params:
+        if query_param.name in args:
+            initial_value = args[query_param.name]
+            value = initial_value
+            if add_initial:
+                value = query_param.type(initial_value)
+            if add_secondary and query_param.secondary_type is not None:
+                value = query_param.secondary_type(initial_value)
+            found_query_params[query_param.name] = value
     return found_query_params
 
 
@@ -62,19 +86,6 @@ def create_validation_for_query_params(query_params: List[QueryParam]):
                         return MissingQueryParams(siblings)
     return validate
 
-
-def convert_to_datetime(timestamp: str):
-    return datetime.datetime.fromtimestamp(int(timestamp))
-
-
-T = TypeVar('T', bound=Enum)
-
-
-def convert_to_enum(enum: Type[T]) -> Callable[[str], T]:
-    # TODO: Type this to reject non-enums while stil typing the return of the function
-    def convert_string_to_enum(string: str) -> T:
-        return enum[string.upper()]
-    return convert_string_to_enum
 
 
 def create_query_string(query_params):

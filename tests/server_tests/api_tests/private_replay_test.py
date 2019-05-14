@@ -1,6 +1,6 @@
+from datetime import datetime, timedelta
 import io
 import time
-
 from requests import Request
 
 from backend.database.objects import Game, Player, GameVisibilitySetting
@@ -21,8 +21,10 @@ class Test_upload_file:
         self.stream = io.BytesIO(self.file)
 
     def test_replay_basic_server_upload_private_replay(self, test_client):
-        params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE,
-                  'release_date': time.time()}
+        timestamp = int(datetime.timestamp(datetime.utcnow()))
+
+        params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE.name,
+                  'release_date': str(timestamp)}
         r = Request('POST', LOCAL_URL + '/api/upload',
                     files={'replays': ('fake_file.replay', self.stream)}, params=params)
 
