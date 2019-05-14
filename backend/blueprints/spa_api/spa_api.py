@@ -30,7 +30,7 @@ try:
 except:
     print('Not using GCP')
     GCP_URL = None
-    CLOUD_THRESHOLD = 100 # threshold of queue size for cloud parsing
+    CLOUD_THRESHOLD = 100  # threshold of queue size for cloud parsing
 
 try:
     import config
@@ -396,7 +396,7 @@ def api_upload_proto():
     if filename == '':
         filename = protobuf_game.game_metadata.id
     filename += '.replay'
-    parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
+    parsed_prefix_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
     id_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays',
                                   protobuf_game.game_metadata.id + '.replay')
     guid_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays', filename)
@@ -407,9 +407,9 @@ def api_upload_proto():
     # Write to disk
     proto_in_memory.seek(0)
     pandas_in_memory.seek(0)
-    with open(parsed_path + '.pts', 'wb') as f:
+    with open(parsed_prefix_path + '.pts', 'wb') as f:
         f.write(proto_in_memory.read())
-    with open(parsed_path + '.gzip', 'wb') as f:
+    with open(parsed_prefix_path + '.gzip', 'wb') as f:
         f.write(pandas_in_memory.read())
 
     # Cleanup
@@ -419,9 +419,24 @@ def api_upload_proto():
         uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
         shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename))  # rename replay properly
         if REPLAY_BUCKET != '':
-            upload_to_bucket(filename, os.path.join(os.path.dirname(uuid_fn), filename), REPLAY_BUCKET)
-            upload_to_bucket(filename + '.pts', parsed_path + '.pts', PROTO_BUCKET)
-            upload_to_bucket(filename + '.gzip', parsed_path + '.gzip', PARSED_BUCKET)
+            replay_path = os.path.join(os.path.dirname(uuid_fn), filename)
+            proto_path = parsed_prefix_path + '.pts'
+            parsed_path = parsed_prefix_path + '.gzip'
+            try:
+                upload_to_bucket(filename, replay_path, REPLAY_BUCKET)
+                os.remove(replay_path)
+            except:
+                print("Error uploading/removing replay file")
+            try:
+                upload_to_bucket(filename + '.pts', proto_path, PROTO_BUCKET)
+                os.remove(proto_path)
+            except:
+                print("Error uploading/removing proto file")
+            try:
+                upload_to_bucket(filename + '.gzip', parsed_path, PARSED_BUCKET)
+                os.remove(parsed_path)
+            except:
+                print("Error uploading/removing parsed file")
     return jsonify({'Success': True})
 
 
