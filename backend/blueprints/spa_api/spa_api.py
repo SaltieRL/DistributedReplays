@@ -388,7 +388,6 @@ def api_upload_proto():
     # Convert to byte files from base64
     response = request.get_json()
     proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
-    pandas_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['pandas'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
@@ -407,11 +406,8 @@ def api_upload_proto():
 
     # Write to disk
     proto_in_memory.seek(0)
-    pandas_in_memory.seek(0)
     with open(parsed_prefix_path + '.pts', 'wb') as f:
         f.write(proto_in_memory.read())
-    with open(parsed_prefix_path + '.gzip', 'wb') as f:
-        f.write(pandas_in_memory.read())
 
     # Cleanup
     if os.path.isfile(id_replay_path):
@@ -433,11 +429,6 @@ def api_upload_proto():
                 os.remove(proto_path)
             except:
                 print("Error uploading/removing proto file")
-            try:
-                upload_df(parsed_path)
-                os.remove(parsed_path)
-            except:
-                print("Error uploading/removing parsed file")
     return jsonify({'Success': True})
 
 
