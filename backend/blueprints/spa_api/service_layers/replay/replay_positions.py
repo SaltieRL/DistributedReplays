@@ -37,7 +37,7 @@ class ReplayPositions:
                 raise ReplayNotFound()
             gzip_url = f'https://storage.googleapis.com/calculatedgg-parsed/{id_}.replay.gzip'
             r = requests.get(gzip_url)
-            with gzip.GzipFile(io.BytesIO(r.content)) as f:
+            with gzip.GzipFile(r.content) as f:
                 data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
             pts_url = f'https://storage.googleapis.com/calculatedgg-proto/{id_}.replay.pts'
             r = requests.get(pts_url)
