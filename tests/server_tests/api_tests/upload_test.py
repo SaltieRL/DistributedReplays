@@ -3,7 +3,7 @@ import io
 from requests import Request
 
 from backend.database.objects import Game, Player
-from backend.database.startup import get_current_session, EngineStartup
+from backend.database.startup import get_current_session, EngineStartup, startup
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
@@ -15,7 +15,8 @@ class Test_upload_file:
     def setup_method(self):
         replay_url = get_complex_replay_list()[0]
         f = download_replay_discord(replay_url)
-        self.stream = io.BytesIO(f)
+        self.file = f
+        self.stream = io.BytesIO(self.file)
 
     def test_replay_basic_server_upload(self, test_client):
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)})
@@ -61,8 +62,13 @@ class Test_upload_file:
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
 
-        EngineStartup.startup(replacement=mock_db)
-
+        self.stream = io.BytesIO(self.file)
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)})
 
+        response = test_client.send(r)
+
         assert(response.status_code == 202)
+
+        game2 = fake_session.query(Game).first()
+
+        assert(game == game2)
