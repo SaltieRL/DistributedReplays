@@ -1,6 +1,7 @@
 from backend.database.objects import Game, PlayerGame
 from backend.database.utils.utils import add_objects
-from tests.utils import get_complex_replay_list, initialize_db_with_replays
+from tests.utils.database_utils import initialize_db_with_replays
+from tests.utils.replay_utils import get_complex_replay_list
 
 
 class Test_Utils:

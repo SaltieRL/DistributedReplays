@@ -1,8 +1,8 @@
 import unittest
 
 from backend.tasks.celery_tasks import parse_replay_task, calc_global_stats
-from tests.utils import write_files_to_disk, clear_dir, \
-    get_test_folder, get_test_file
+from tests.utils.replay_utils import write_files_to_disk, get_test_file, clear_dir
+from tests.utils.location_utils import get_test_folder
 
 
 class RunningServerTest(unittest.TestCase):
