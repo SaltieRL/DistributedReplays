@@ -194,7 +194,7 @@ def fake_upload_location(monkeypatch):
     monkeypatch.setattr(server_constants, 'UPLOAD_FOLDER', get_test_folder())
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture()
 def app():
     from backend.tasks import celeryconfig
     celeryconfig.task_eager_propagates = True
