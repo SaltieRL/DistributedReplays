@@ -1,8 +1,11 @@
 import random
-import time
+from typing import Tuple, List
+from unittest import mock
 
 import fakeredis
+import psycopg2
 import pytest
+from alchemy_mock.mocking import UnifiedAlchemyMagicMock
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.dialects.postgresql.base import PGInspector
 from sqlalchemy.orm import sessionmaker
@@ -10,7 +13,6 @@ from testing import postgresql
 
 from backend.database.objects import Player
 from backend.initial_setup import CalculatedServer
-from tests.utils.database_utils import create_initial_mock_database
 from tests.utils.location_utils import get_test_folder
 from tests.utils.replay_utils import clear_dir
 
@@ -21,12 +23,22 @@ DATABSE FUNCTIONS
 """
 
 
-@pytest.fixture(autouse=True, scope="class")
+def create_initial_data(postgresql):
+    conn = psycopg2.connect(**postgresql.dsn())
+    cursor = conn.cursor()
+    cursor.execute("commit")
+    cursor.execute("create database saltie")
+    cursor.close()
+    conn.commit()
+    conn.close()
+
+
+@pytest.fixture(autouse=True, scope="session")
 def postgres_factory():
     """
     Creates an initial fake database for use in unit tests.
     """
-    postgres_factory = postgresql.PostgresqlFactory(cache_initialized_db=True)
+    postgres_factory = postgresql.PostgresqlFactory(cache_initialized_db=True, on_initialized=create_initial_data)
     return postgres_factory
 
 
@@ -41,19 +53,13 @@ def add_player(session):
 
 
 @pytest.fixture(autouse=True)
-def engine(postgres_instance):
+def session(postgres_instance):
     engine = create_engine(postgres_instance.url())
     from backend.database.objects import DBObjectBase
     DBObjectBase.metadata.create_all(engine)
-    return engine
-
-
-@pytest.fixture(autouse=True)
-def session(engine):
     fake_db = sessionmaker(bind=engine)
     add_player(fake_db)
     return fake_db
-
 
 @pytest.fixture()
 def inspector(postgres_instance) -> PGInspector:
@@ -72,8 +78,6 @@ def mock_db(fake_db):
 
     from backend.database.startup import EngineStartup
     EngineStartup.startup(replacement=constructor)
-
-    return constructor
 
 
 @pytest.fixture(autouse=True)
@@ -113,7 +117,7 @@ def fake_db(monkeypatch, session, fake_redis):
     return local_alchemy
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture()
 def clean_database(request, postgres_factory):
     def kill_database():
         postgres_factory.clear_cache()
@@ -121,12 +125,9 @@ def clean_database(request, postgres_factory):
 
 
 @pytest.fixture(autouse=True)
-def kill_database(request, postgres_instance, monkeypatch, engine, session):
+def kill_database(request, postgres_instance, monkeypatch):
     def kill_database():
-        session.close_all()
-        engine.dispose()
         postgres_instance.stop()
-        time.sleep(0.5)
 
         from backend.database import startup
 
@@ -136,8 +137,8 @@ def kill_database(request, postgres_instance, monkeypatch, engine, session):
     request.addfinalizer(kill_database)
 
 
-@pytest.fixture(scope="class", autouse=True)
-def cleanup(request):
+@pytest.fixture(scope="session", autouse=True)
+def cleanup(request, postgres_factory):
     """Cleanup a testing directory once we are finished."""
     def kill_database():
         clear_dir()
@@ -192,11 +193,8 @@ def fake_upload_location(monkeypatch):
     monkeypatch.setattr(server_constants, 'UPLOAD_FOLDER', get_test_folder())
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture()
 def app():
-    from backend.tasks import celeryconfig
-    celeryconfig.task_eager_propagates = True
-
     instance = CalculatedServer()
     app = instance.app
 
