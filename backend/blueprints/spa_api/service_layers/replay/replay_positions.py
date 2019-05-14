@@ -10,9 +10,10 @@ from flask import current_app
 from .replay_player import ReplayPlayer
 from ...errors.errors import ReplayNotFound, ErrorOpeningGame
 try:
-    from config import PARSED_BUCKET
+    from config import PARSED_BUCKET, PROTO_BUCKET
 except:
     PARSED_BUCKET = None
+    PROTO_BUCKET = None
 
 
 class ReplayPositions:
@@ -35,11 +36,14 @@ class ReplayPositions:
         if not os.path.isfile(pickle_path):
             if PARSED_BUCKET is None:
                 raise ReplayNotFound()
-            gzip_url = f'https://storage.googleapis.com/calculatedgg-parsed/{id_}.replay.gzip'
+            # GZIP
+            gzip_url = f'https://storage.googleapis.com/{PARSED_BUCKET}/{id_}.replay.gzip'
             r = requests.get(gzip_url)
-            with gzip.GzipFile(r.content) as f:
+            with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as f:
                 data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
-            pts_url = f'https://storage.googleapis.com/calculatedgg-proto/{id_}.replay.pts'
+
+            # PROTO
+            pts_url = f'https://storage.googleapis.com/{PROTO_BUCKET}/{id_}.replay.pts'
             r = requests.get(pts_url)
             with io.BytesIO(r.content) as f:
                 protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
