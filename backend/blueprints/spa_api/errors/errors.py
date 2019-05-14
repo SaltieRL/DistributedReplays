@@ -50,6 +50,14 @@ class MissingQueryParams(CalculatedError):
         super().__init__(self.status_code, message)
 
 
+class InvalidQueryParamFormat(CalculatedError):
+    status_code = 400
+
+    def __init__(self, invalidParameter, value):
+        message = f'{value} is in invalid format for Query parameter: {invalidParameter.name}'
+        super().__init__(self.status_code, message)
+
+
 class TagNotFound(CalculatedError):
     status_code = 404
     message = "Tag not found"

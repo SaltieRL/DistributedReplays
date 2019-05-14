@@ -6,6 +6,7 @@ from unittest import mock
 from sqlalchemy.dialects.postgresql.base import PGInspector
 
 from backend.database import startup
+from backend.database.objects import Player
 from backend.database.utils.utils import add_objects
 from tests.utils.replay_utils import parse_file
 
@@ -39,6 +40,7 @@ def initialize_db():
 def initialize_db_with_replays(replay_list, session=None):
     if session is None:
         session = initialize_db()
+    add_player(session)
     guids = []
     protos = []
     for replay in replay_list:
@@ -53,3 +55,10 @@ def print_entire_db(inspector: PGInspector, session):
     for table in inspector.get_table_names():
         pass
     #https://stackoverflow.com/questions/21310549/list-database-tables-with-sqlalchemy/21346185
+
+
+def default_player_id():
+    return '10'
+
+def add_player(session):
+    session().add(Player(platformid=default_player_id()))

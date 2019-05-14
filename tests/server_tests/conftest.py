@@ -12,7 +12,7 @@ from testing import postgresql
 
 from backend.database.objects import Player
 from backend.initial_setup import CalculatedServer
-from tests.utils.database_utils import create_initial_mock_database
+from tests.utils.database_utils import create_initial_mock_database, add_player
 from tests.utils.location_utils import get_test_folder
 from tests.utils.replay_utils import clear_dir
 
@@ -21,15 +21,6 @@ from tests.utils.replay_utils import clear_dir
 DATABSE FUNCTIONS
 ####################################
 """
-
-
-def create_initial_data(postgresql):
-    conn = psycopg2.connect(**postgresql.dsn())
-    cursor = conn.cursor()
-    cursor.execute("commit")
-    cursor.close()
-    conn.commit()
-    conn.close()
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -45,10 +36,6 @@ def postgres_factory():
 def postgres_instance(postgres_factory):
     fake_db = postgres_factory()
     return fake_db
-
-
-def add_player(session):
-    session().add(Player(platformid='10'))
 
 
 @pytest.fixture()

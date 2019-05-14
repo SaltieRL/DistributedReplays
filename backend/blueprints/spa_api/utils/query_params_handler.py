@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from flask import Request
 
-from backend.blueprints.spa_api.errors.errors import MissingQueryParams
+from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat
 
 
 class QueryParam:
@@ -41,6 +41,8 @@ def get_query_params(query_params: List[QueryParam], request: Request) -> Dict[s
                 value = request.args.getlist(query_param.name, type=query_param.type)
             else:
                 value = request.args.get(query_param.name, type=query_param.type)
+            if value is None and request.args.get(query_param.name) is not None:
+                raise InvalidQueryParamFormat(query_param, request.args.get(query_param.name))
             found_query_params[query_param.name] = value
 
     return found_query_params

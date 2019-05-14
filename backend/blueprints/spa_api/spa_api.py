@@ -1,4 +1,5 @@
 import base64
+import datetime
 import hashlib
 import io
 import logging
@@ -325,13 +326,15 @@ def api_update_replay_visibility(id_: str, visibility: str):
 def api_get_stat_explanations():
     return jsonify(get_explanations())
 
+
+@bp.route('/upload', methods=['POST'])
 @with_query_params(accepted_query_params=[
     QueryParam(name='player_id', optional=True, type_=str),
-    QueryParam(name='release_date', optional=True, type_=str, required_siblings=['visibility', 'player_id']),
+    QueryParam(name='release_date', optional=True, type_=lambda param: datetime.datetime.fromtimestamp(int(param)),
+               required_siblings=['visibility', 'player_id']),
     QueryParam(name='visibility', optional=True, type_=lambda param: GameVisibilitySetting(int(param)),
                required_siblings=['player_id']),
 ])
-@bp.route('/upload', methods=['POST'])
 def api_upload_replays(query_params=None):
     # TODO (sciguymjm): Create endpoint/query param for private replay upload
     # that adds an entry to the GameVisibility table for the replay
