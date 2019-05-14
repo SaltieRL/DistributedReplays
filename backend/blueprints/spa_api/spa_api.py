@@ -1,5 +1,4 @@
 import base64
-import gzip
 import hashlib
 import io
 import logging
@@ -15,8 +14,9 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
-from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
+from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.utils.cloud_handler import upload_proto, upload_df, upload_replay
 
 try:
     import config
@@ -27,9 +27,24 @@ try:
     import config
 
     GCP_URL = config.GCP_URL
+    CLOUD_THRESHOLD = config.CLOUD_THRESHOLD
 except:
     print('Not using GCP')
-    GCP_URL = ''
+    GCP_URL = None
+    CLOUD_THRESHOLD = 100  # threshold of queue size for cloud parsing
+
+try:
+    import config
+    from google.cloud import storage
+
+    REPLAY_BUCKET = config.REPLAY_BUCKET
+    PROTO_BUCKET = config.PROTO_BUCKET
+    PARSED_BUCKET = config.PARSED_BUCKET
+except:
+    print('Not uploading to buckets')
+    REPLAY_BUCKET = ''
+    PROTO_BUCKET = ''
+    PARSED_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -79,8 +94,10 @@ def better_jsonify(response: object):
         else:
             return jsonify(response.__dict__)
 
+
 def encode_bot_name(w):
     return 'b' + hashlib.md5(w.lower().encode()).hexdigest()[:9] + 'b'
+
 
 ### GLOBAL
 
@@ -344,13 +361,13 @@ def api_upload_replays():
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
         lengths = get_queue_length()  # priority 0,3,6,9
-        if lengths[1] > 1000 and GCP_URL is not None:
+        if lengths[1] > CLOUD_THRESHOLD and GCP_URL is not None:
             with open(os.path.abspath(filename), 'rb') as f:
                 encoded_file = base64.b64encode(f.read())
             try:
                 r = requests.post(GCP_URL + '&uuid=' + str(ud), data=encoded_file, timeout=0.5)
             except ReadTimeout as e:
-                pass # we don't care, it's given
+                pass  # we don't care, it's given
         else:
             result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
             task_ids.append(result.id)
@@ -380,7 +397,7 @@ def api_upload_proto():
     if filename == '':
         filename = protobuf_game.game_metadata.id
     filename += '.replay'
-    parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
+    parsed_prefix_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
     id_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays',
                                   protobuf_game.game_metadata.id + '.replay')
     guid_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays', filename)
@@ -391,9 +408,9 @@ def api_upload_proto():
     # Write to disk
     proto_in_memory.seek(0)
     pandas_in_memory.seek(0)
-    with open(parsed_path + '.pts', 'wb') as f:
+    with open(parsed_prefix_path + '.pts', 'wb') as f:
         f.write(proto_in_memory.read())
-    with open(parsed_path + '.gzip', 'wb') as f:
+    with open(parsed_prefix_path + '.gzip', 'wb') as f:
         f.write(pandas_in_memory.read())
 
     # Cleanup
@@ -401,8 +418,26 @@ def api_upload_proto():
         shutil.move(id_replay_path, guid_replay_path)
     if 'uuid' in response:
         uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
-        shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename)) # rename replay properly
-
+        shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename))  # rename replay properly
+        if REPLAY_BUCKET != '':
+            replay_path = os.path.join(os.path.dirname(uuid_fn), filename)
+            proto_path = parsed_prefix_path + '.pts'
+            parsed_path = parsed_prefix_path + '.gzip'
+            try:
+                upload_replay(replay_path)
+                os.remove(replay_path)
+            except:
+                print("Error uploading/removing replay file")
+            try:
+                upload_proto(proto_path)
+                os.remove(proto_path)
+            except:
+                print("Error uploading/removing proto file")
+            try:
+                upload_df(parsed_path)
+                os.remove(parsed_path)
+            except:
+                print("Error uploading/removing parsed file")
     return jsonify({'Success': True})
 
 
@@ -458,3 +493,4 @@ def api_handle_error(error: CalculatedError):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+

@@ -1,20 +1,14 @@
 import gzip
-import io
 import math
 import os
 
 import numpy as np
-import requests
 from carball.analysis.utils import pandas_manager, proto_manager
 from carball.generated.api.game_pb2 import Game
 from flask import current_app
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
-
-try:
-    from config import GCP_BUCKET_GZIP_URL
-except:
-    GCP_BUCKET_GZIP_URL = ""
+from backend.utils.cloud_handler import download_df, download_proto
 
 
 class ReplayHeatmaps:
@@ -27,21 +21,16 @@ class ReplayHeatmaps:
         if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
             raise ReplayNotFound()
         if not os.path.isfile(gzip_path):
-            if GCP_BUCKET_GZIP_URL != "":
-                gz = gzip.GzipFile(fileobj=io.BytesIO(requests.get(GCP_BUCKET_GZIP_URL + id_ + '.replay.gzip').content),
-                                   mode='rb')
-            else:
-                raise ReplayNotFound()
+            data_frame = download_df(id_)
+            protobuf_game = download_proto(id_)
         else:
-            gz = gzip.open(gzip_path, 'rb')
-        try:
-            data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(gz)
-            with open(pickle_path, 'rb') as f:
-                protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-        except Exception as e:
-            raise ErrorOpeningGame(str(e))
-        finally:
-            gz.close()
+            try:
+                with gzip.open(gzip_path, 'rb') as gz:
+                    data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(gz)
+                with open(pickle_path, 'rb') as f:
+                    protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
+            except Exception as e:
+                raise ErrorOpeningGame(str(e))
         # output = generate_heatmaps(data_frame, protobuf_game, type="hits")
         output = generate_heatmaps(data_frame, protobuf_game, type=type_)
         data = {}
