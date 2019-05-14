@@ -101,6 +101,8 @@ def parse_replay(self, filename, preserve_upload_date: bool = False,
             f.write(traceback.format_exc())
         raise e
     try:
+        if not os.path.isdir(os.path.dirname(pickled)):
+            os.makedirs(os.path.dirname(pickled))
         with open(pickled + '.pts', 'wb') as fo:
             analysis_manager.write_proto_out_to_file(fo)
         with gzip.open(pickled + '.gzip', 'wb') as fo:
