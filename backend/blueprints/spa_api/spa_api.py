@@ -16,6 +16,7 @@ from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.utils.cloud_handler import upload_proto, upload_df, upload_replay
 
 try:
     import config
@@ -423,17 +424,17 @@ def api_upload_proto():
             proto_path = parsed_prefix_path + '.pts'
             parsed_path = parsed_prefix_path + '.gzip'
             try:
-                upload_to_bucket(filename, replay_path, REPLAY_BUCKET)
+                upload_replay(replay_path)
                 os.remove(replay_path)
             except:
                 print("Error uploading/removing replay file")
             try:
-                upload_to_bucket(filename + '.pts', proto_path, PROTO_BUCKET)
+                upload_proto(proto_path)
                 os.remove(proto_path)
             except:
                 print("Error uploading/removing proto file")
             try:
-                upload_to_bucket(filename + '.gzip', parsed_path, PARSED_BUCKET)
+                upload_df(parsed_path)
                 os.remove(parsed_path)
             except:
                 print("Error uploading/removing parsed file")
@@ -493,18 +494,3 @@ def api_handle_error(error: CalculatedError):
     response.status_code = error.status_code
     return response
 
-
-def upload_to_bucket(blob_name, path_to_file, bucket_name):
-    """ Upload data to a bucket"""
-
-    # Explicitly use service account credentials by specifying the private key
-    # file.
-    storage_client = storage.Client.from_service_account_json('creds.json')
-    # print(buckets = list(storage_client.list_buckets())
-
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-    blob.upload_from_filename(path_to_file)
-
-    # returns a public url
-    return blob.public_url

@@ -1,19 +1,13 @@
 import gzip
-import io
 import os
 from typing import List
 
-import requests
 from carball.analysis.utils import proto_manager, pandas_manager
 from flask import current_app
 
+from backend.utils.cloud_handler import download_df, download_proto
 from .replay_player import ReplayPlayer
-from ...errors.errors import ReplayNotFound, ErrorOpeningGame
-try:
-    from config import PARSED_BUCKET, PROTO_BUCKET
-except:
-    PARSED_BUCKET = None
-    PROTO_BUCKET = None
+from ...errors.errors import ErrorOpeningGame
 
 
 class ReplayPositions:
@@ -34,19 +28,10 @@ class ReplayPositions:
         gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
         replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
         if not os.path.isfile(pickle_path):
-            if PARSED_BUCKET is None:
-                raise ReplayNotFound()
             # GZIP
-            gzip_url = f'https://storage.googleapis.com/{PARSED_BUCKET}/{id_}.replay.gzip'
-            r = requests.get(gzip_url)
-            with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as f:
-                data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
-
+            data_frame = download_df(id_)
             # PROTO
-            pts_url = f'https://storage.googleapis.com/{PROTO_BUCKET}/{id_}.replay.pts'
-            r = requests.get(pts_url)
-            with io.BytesIO(r.content) as f:
-                protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
+            protobuf_game = download_proto(id_)
         else:
             try:
                 with gzip.open(gzip_path, 'rb') as f:
