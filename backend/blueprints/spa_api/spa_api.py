@@ -342,18 +342,25 @@ def api_upload_replays(query_params=None):
         raise CalculatedError(400, 'No files uploaded')
     task_ids = []
 
+    errors = []
+
     for file in uploaded_files:
         file.seek(0, os.SEEK_END)
         file_length = file.tell()
         if file_length > 5000000:
+            errors.append(CalculatedError(413, 'Replay file is too big'))
             continue
         if not file.filename.endswith('replay'):
+            errors.append(CalculatedError(415, 'Replay uploads must end in .replay'))
             continue
         file.seek(0)
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
         file.save(filename)
         create_replay_task(filename, ud, task_ids, query_params)
+
+    if len(errors) == 1:
+        raise errors[0]
 
     return jsonify(task_ids), 202
 

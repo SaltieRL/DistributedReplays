@@ -1,4 +1,5 @@
 import contextlib
+import os
 import random
 
 import fakeredis
@@ -194,7 +195,7 @@ FAKE DIRECTORIES
 def fake_write_location(monkeypatch):
     from backend.tasks import utils
 
-    monkeypatch.setattr(utils, 'DEFAULT_PARSED_FOLDER', get_test_folder())
+    monkeypatch.setattr(utils, 'DEFAULT_PARSED_FOLDER', os.path.join(get_test_folder(), 'parsed'))
 
 
 @pytest.fixture(autouse=True)

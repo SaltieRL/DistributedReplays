@@ -84,7 +84,7 @@ def parse_replay(self, filename, preserve_upload_date: bool = False,
     else:
         pickled = os.path.join(custom_file_location, os.path.basename(filename))
     if custom_file_location is None:
-        failed_dir = os.path.join(os.path.dirname(os.path.dirname(pickled)), 'failed')
+        failed_dir = os.path.join(os.path.dirname(get_default_parse_folder()), 'failed')
     else:
         failed_dir = custom_file_location
     if os.path.isfile(pickled) and not force_reparse:
