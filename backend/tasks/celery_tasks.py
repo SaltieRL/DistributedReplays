@@ -8,6 +8,8 @@ import requests
 from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
+
+import RLBotServer
 from backend.database.startup import lazy_get_redis
 
 from backend.database.wrapper.player_wrapper import PlayerWrapper
@@ -17,12 +19,18 @@ from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
 
+celery = Celery(__name__, broker=celeryconfig.broker_url)
 
-celery = Celery()
-celery.config_from_object(celeryconfig)
+
+def create_celery_config():
+    celery.config_from_object(celeryconfig)
+
 
 player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
+
+
+app = RLBotServer.app
 
 
 @celery.on_after_configure.connect

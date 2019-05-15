@@ -1,6 +1,7 @@
 from functools import wraps
 from typing import List
 
+from flask import current_app
 
 from backend.database.objects import PlayerGame
 from backend.database.startup import get_current_session

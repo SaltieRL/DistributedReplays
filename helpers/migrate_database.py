@@ -13,5 +13,5 @@ def clear_database(sess):
 
 
 if __name__ == '__main__':
-    session = lazy_startup()
+    Session = lazy_startup()
     clear_database(Session)
