@@ -1,3 +1,4 @@
+import contextlib
 from typing import List, Tuple
 
 from alchemy_mock.mocking import UnifiedAlchemyMagicMock
@@ -60,5 +61,21 @@ def print_entire_db(inspector: PGInspector, session):
 def default_player_id():
     return '10'
 
+
 def add_player(session):
-    session().add(Player(platformid=default_player_id()))
+    session.add(Player(platformid=default_player_id()))
+
+
+def empty_database(engine):
+    from backend.database.objects import DBObjectBase
+    tables = DBObjectBase.metadata.sorted_tables
+    # empty tables
+    for table in reversed(tables):
+        print('Clear table %s' % table)
+        with contextlib.closing(engine.connect()) as con:
+            trans = con.begin()
+            try:
+                con.execute(table.delete())
+            except Exception as e:
+                print(e)
+            trans.commit()

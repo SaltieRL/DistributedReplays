@@ -3,17 +3,14 @@ import os
 import random
 
 import fakeredis
-import psycopg2
 import pytest
-from sqlalchemy import create_engine, inspect, MetaData
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.dialects.postgresql.base import PGInspector
 from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
-from backend.database.objects import Player
-from backend.initial_setup import CalculatedServer
-from tests.utils.database_utils import create_initial_mock_database, add_player
-from tests.utils.location_utils import get_test_folder
+
+from tests.utils.database_utils import create_initial_mock_database, add_player, empty_database
 from tests.utils.replay_utils import clear_dir
 
 """
@@ -42,7 +39,6 @@ def postgres_instance(postgres_factory):
 def engine(postgres_instance):
     engine = create_engine(postgres_instance.url())
     from backend.database.objects import DBObjectBase
-    DBObjectBase.metadata.drop_all(engine)
     DBObjectBase.metadata.create_all(engine)
     return engine
 
@@ -50,7 +46,7 @@ def engine(postgres_instance):
 @pytest.fixture()
 def session(engine):
     fake_db = sessionmaker(bind=engine)
-    add_player(fake_db)
+    add_player(fake_db())
     return fake_db
 
 
@@ -120,17 +116,10 @@ def clean_database(request, postgres_factory):
 @pytest.fixture(autouse=True)
 def kill_database(request, engine, monkeypatch):
     def kill_database():
-
-        meta = MetaData()
-
-        with contextlib.closing(engine.connect()) as con:
-            trans = con.begin()
-            for table in reversed(meta.sorted_tables):
-                print('Clear table %s' % table)
-                con.execute(table.delete())
-            trans.commit()
+        empty_database(engine)
 
         from backend.database import startup
+
 
         monkeypatch.setattr(startup, 'stored_session', None)
         monkeypatch.setattr(startup, 'stored_redis', None)
@@ -196,6 +185,7 @@ def fake_upload_location(monkeypatch, temp_folder):
 
 @pytest.fixture()
 def app():
+    from backend.initial_setup import CalculatedServer
     instance = CalculatedServer()
     app = instance.app
 
