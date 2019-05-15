@@ -17,6 +17,7 @@ from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeat
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
+from backend.utils.checks import log_error
 from backend.utils.cloud_handler import upload_proto, upload_df, upload_replay
 
 try:
@@ -322,8 +323,6 @@ def api_get_stat_explanations():
 @bp.route('/upload', methods=['POST'])
 @with_query_params(accepted_query_params=upload_file_query_params)
 def api_upload_replays(query_params=None):
-    # TODO (sciguymjm): Create endpoint/query param for private replay upload
-    # that adds an entry to the GameVisibility table for the replay
 
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
@@ -374,7 +373,10 @@ def api_upload_proto():
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
     # Process
-    parsed_replay_processing(protobuf_game)
+    try:
+        parsed_replay_processing(protobuf_game)
+    except Exception as e:
+        log_error(e, logger=logger)
 
     return jsonify({'Success': True})
 

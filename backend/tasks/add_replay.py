@@ -3,6 +3,7 @@ import gzip
 import logging
 import os
 import shutil
+import time
 import traceback
 from typing import Dict
 
@@ -10,6 +11,7 @@ import requests
 from carball import analyze_replay_file
 from requests import ReadTimeout
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params
 from backend.database.utils.utils import add_objects
@@ -105,10 +107,10 @@ def parse_replay(self, filename, preserve_upload_date: bool = False,
     # success!
     proto_game = analysis_manager.protobuf_game
 
-    if proto_game.game_metadata.match_guid is None:
-        proto_game.protobuf_game.game_metadata .match_guid = proto_game.protobuf_game.game_metadata .id
+    if proto_game.game_metadata.match_guid is None or proto_game.game_metadata.match_guid == '':
+        proto_game.game_metadata.match_guid = proto_game.game_metadata.id
 
-    parsed_replay_processing(proto_game, query_params, session=self.session(), preserve_upload_date=preserve_upload_date)
+    parsed_replay_processing(proto_game, query_params, preserve_upload_date=preserve_upload_date)
 
     return save_replay(proto_game, filename, pickled)
 
@@ -124,17 +126,16 @@ def save_replay(proto_game, filename, pickled):
 
     return replay_id
 
-
-def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, session=None, preserve_upload_date=True):
+def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, preserve_upload_date=True):
     # Process
-    add_objects(protobuf_game, session=session, preserve_upload_date=preserve_upload_date)
+    add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
 
     if query_params is None:
         return
+
     query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
 
     # Add game visibility option
-    result = apply_game_visibility(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid,
-                                   session=session)
+    result = apply_game_visibility(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid)
     if result is not None:
         log_error(result, message='Error changing visibility', logger=logger)

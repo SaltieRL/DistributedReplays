@@ -64,6 +64,7 @@ def default_player_id():
 
 def add_player(session):
     session.add(Player(platformid=default_player_id()))
+    session.commit()
 
 
 def empty_database(engine):

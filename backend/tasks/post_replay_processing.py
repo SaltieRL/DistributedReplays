@@ -14,19 +14,26 @@ def apply_game_visibility(query_params=None, game_id=None, session=None, retry=F
 
     player_id = query_params['player_id']
     visibility = query_params['visibility']
-    release_date = query_params['release_date']
+    try:
+        release_date = query_params['release_date']
+    except KeyError:
+        release_date = None
 
     player = session.query(Player).filter(Player.platformid == player_id).first()
     if player is not None:
         game_visibility_entry = GameVisibility(game=game_id, player=player_id, visibility=visibility)
         if release_date is not None:
             game_visibility_entry.release_date = release_date
+
+        result = update_game_visibility(game_id, session, visibility)
+        if result is not None:
+            return result
+
         session.add(game_visibility_entry)
         # GameVisibility fails silently - does not do anything if player_id does not exist.
         session.commit()
 
-        return update_game_visibility(game_id, session, visibility)
-
+        return None
     elif not retry:
         time.sleep(1)
         return apply_game_visibility(query_params=query_params, game_id=game_id, session=session, retry=True)

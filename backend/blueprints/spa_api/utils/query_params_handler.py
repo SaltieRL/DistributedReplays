@@ -87,6 +87,6 @@ def create_validation_for_query_params(query_params: List[QueryParam]):
     return validate
 
 
-
 def create_query_string(query_params):
     return urlencode(query_params)
+
