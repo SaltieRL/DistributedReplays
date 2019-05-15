@@ -11,12 +11,11 @@ import requests
 from carball import analyze_replay_file
 from requests import ReadTimeout
 
-from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.blueprints.spa_api.service_layers.replay.visibility import apply_game_visibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params
 from backend.database.utils.utils import add_objects
 from backend.tasks import celery_tasks
-from backend.tasks.post_replay_processing import apply_game_visibility
 from backend.tasks.utils import get_queue_length, get_default_parse_folder
 from backend.utils.checks import log_error
 
@@ -125,6 +124,7 @@ def save_replay(proto_game, filename, pickled):
     shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip'))
 
     return replay_id
+
 
 def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, preserve_upload_date=True):
     # Process

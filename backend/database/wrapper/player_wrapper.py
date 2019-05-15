@@ -92,8 +92,7 @@ class PlayerWrapper:
 
     @staticmethod
     @with_session
-    def change_game_visibility(game_hash: str, visibility: GameVisibilitySetting, session=None) -> GameVisibilitySetting:
-        # g.user.platformid = "76561198065217357"
+    def have_permission_to_change_game(game_hash: str, session=None) -> bool:
         entry = session.query(GameVisibility).filter(GameVisibility.player == g.user.platformid,
                                                      GameVisibility.game == game_hash).first()
         if entry is None:
@@ -101,17 +100,12 @@ class PlayerWrapper:
             QueryFilterBuilder().as_game().set_replay_id(game_hash).build_query(session)
             game = session.query(Game).filter(Game.hash == game_hash).first()
             if game is not None:
-                entry = GameVisibility(player=g.user.platformid, game=game_hash, visibility=visibility)
-                session.add(entry)
+                return False
             else:
                 # Replay might actually exist, but user should not know.
                 raise ReplayNotFound()
         else:
-            entry.visibility = visibility
-        session.commit()
-
-        updated_visibility_setting = PlayerWrapper.update_game_visibility(game_hash, session)
-        return updated_visibility_setting
+            return True
 
     @staticmethod
     def update_game_visibility(game_hash, session) -> GameVisibilitySetting:

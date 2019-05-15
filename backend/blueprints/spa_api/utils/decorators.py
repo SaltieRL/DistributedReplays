@@ -14,11 +14,12 @@ def require_user(decorated_function):
 
 
 class with_query_params(object):
-    def __init__(self, accepted_query_params=None):
+    def __init__(self, accepted_query_params=None, provided_params=None):
         if accepted_query_params is None:
             raise Exception("Need query params")
+        self.provided_params = provided_params
         self.accepted_query_params = accepted_query_params
-        self.validation_func = create_validation_for_query_params(accepted_query_params)
+        self.validation_func = create_validation_for_query_params(accepted_query_params, self.provided_params)
 
     def __call__(self, decorated_function):
         @wraps(decorated_function)

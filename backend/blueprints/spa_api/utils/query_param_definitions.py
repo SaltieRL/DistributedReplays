@@ -17,8 +17,7 @@ def convert_to_enum(enum: Type[T]) -> Callable[[str], T]:
     return convert_string_to_enum
 
 
-upload_file_query_params = [
-    QueryParam(name='player_id', optional=True, type_=str),
+visibility_params = [
     QueryParam(name='release_date', optional=True,
                type_=float,
                secondary_type=lambda param: hour_rounder(datetime.datetime.fromtimestamp(param)),
@@ -26,8 +25,13 @@ upload_file_query_params = [
                tip='Remember that this date needs to be a timestamp in UTC time in seconds'),
     QueryParam(name='visibility', optional=True,
                secondary_type=convert_to_enum(GameVisibilitySetting),
-               required_siblings=['player_id']),
+               required_siblings=['player_id'])
 ]
+
+
+upload_file_query_params = [
+    QueryParam(name='player_id', optional=True, type_=str)
+] + visibility_params
 
 
 replay_search_query_params = [

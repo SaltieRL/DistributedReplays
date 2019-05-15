@@ -15,7 +15,7 @@ from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import Pre
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
-    replay_search_query_params, progression_query_params, playstyle_query_params
+    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
 from backend.utils.cloud_handler import upload_proto, upload_df, upload_replay
@@ -294,20 +294,26 @@ def api_predict_ranks(id_):
     return better_jsonify(ranks)
 
 
-@with_query_params(accepted_query_params=replay_search_query_params)
 @bp.route('/replay')
-def api_search_replays(query_params):
+@with_query_params(accepted_query_params=replay_search_query_params)
+def api_search_replays(query_params=None):
     match_history = MatchHistory.create_with_filters(**query_params)
     return better_jsonify(match_history)
 
 
 @bp.route('replay/<id_>/visibility/<visibility>', methods=['PUT'])
-def api_update_replay_visibility(id_: str, visibility: str):
+@with_query_params(accepted_query_params=visibility_params, provided_params=['player_id', 'visibility'])
+def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
     try:
         visibility_setting = GameVisibilitySetting(int(visibility))
     except Exception as e:
         logger.error(e)
         return "Visibility setting not provided or incorrect", 400
+
+    try:
+        release_date = query_params['release_date']
+    except KeyError:
+        release_date = None
 
     replay_visibiltiy = ReplayVisibility.change_replay_visibility(game_hash=id_, visibility=visibility_setting)
     return better_jsonify(replay_visibiltiy)
