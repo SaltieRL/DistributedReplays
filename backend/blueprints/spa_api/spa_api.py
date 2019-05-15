@@ -18,12 +18,26 @@ from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeat
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params
 from backend.tasks.add_replay import create_replay_task
+from backend.utils.cloud_handler import upload_proto, upload_df, upload_replay
 
 try:
     import config
 except ImportError:
     config = None
 
+
+try:
+    import config
+    from google.cloud import storage
+
+    REPLAY_BUCKET = config.REPLAY_BUCKET
+    PROTO_BUCKET = config.PROTO_BUCKET
+    PARSED_BUCKET = config.PARSED_BUCKET
+except:
+    print('Not uploading to buckets')
+    REPLAY_BUCKET = ''
+    PROTO_BUCKET = ''
+    PARSED_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -70,8 +84,10 @@ def better_jsonify(response: object):
         else:
             return jsonify(response.__dict__)
 
+
 def encode_bot_name(w):
     return 'b' + hashlib.md5(w.lower().encode()).hexdigest()[:9] + 'b'
+
 
 ### GLOBAL
 
@@ -357,34 +373,6 @@ def api_upload_proto():
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
-    # Path creation
-    filename = protobuf_game.game_metadata.match_guid
-    if filename == '':
-        filename = protobuf_game.game_metadata.id
-    filename += '.replay'
-    parsed_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
-    id_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays',
-                                  protobuf_game.game_metadata.id + '.replay')
-    guid_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays', filename)
-
-    # Process
-    add_objects(protobuf_game)
-
-    # Write to disk
-    proto_in_memory.seek(0)
-    pandas_in_memory.seek(0)
-    with open(parsed_path + '.pts', 'wb') as f:
-        f.write(proto_in_memory.read())
-    with open(parsed_path + '.gzip', 'wb') as f:
-        f.write(pandas_in_memory.read())
-
-    # Cleanup
-    if os.path.isfile(id_replay_path):
-        shutil.move(id_replay_path, guid_replay_path)
-    if 'uuid' in response:
-        uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
-        shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename)) # rename replay properly
-
     return jsonify({'Success': True})
 
 
@@ -440,3 +428,4 @@ def api_handle_error(error: CalculatedError):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
