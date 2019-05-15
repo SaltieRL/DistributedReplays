@@ -74,7 +74,7 @@ class ReplayHeatmaps:
                     if arr[0][x, y] == 0:
                         continue
                     if log_scale:
-                        value = math.log(arr[0][x, y] + 1e-3)
+                        value = math.log(arr[0][x, y] + 1e-3) ** 1.7
                     else:
                         value = arr[0][x, y]
                     player_data.append({

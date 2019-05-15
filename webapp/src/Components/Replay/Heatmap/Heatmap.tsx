@@ -40,8 +40,7 @@ export class ReactHeatmap extends React.PureComponent<Props, State> {
                     "0.6": "#414487",
                     "0.8": "#22a884",
                     "0.0": "#fff"
-                },
-                backgroundColor: "rgba(68,1,84,0.5)"
+                }
             }
 
             const localCfg = _.merge(defaultCfg, c)
