@@ -27,12 +27,14 @@ install:
 - cd $TRAVIS_BUILD_DIR
 
 # command to run tests
-script:
-# run linters
-- chmod 777 .travis/tslint.sh && .travis/tslint.sh
+
 
 jobs:
   include:
+    - stage: lint
+    - script:
+      # run linters
+      - chmod 777 .travis/tslint.sh && .travis/tslint.sh
     - stage: test
     - script:
         ## test python unit tests
