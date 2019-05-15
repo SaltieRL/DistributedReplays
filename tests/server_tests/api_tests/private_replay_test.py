@@ -2,7 +2,7 @@ from datetime import datetime
 import io
 from requests import Request
 
-from backend.database.objects import Game, GameVisibilitySetting, GameVisibility
+from backend.database.objects import Game, GameVisibilitySetting, GameVisibility, PlayerGame
 from backend.database.startup import get_current_session
 from backend.utils.time_related import hour_rounder
 from tests.utils.database_utils import default_player_id
@@ -43,6 +43,10 @@ class Test_upload_file:
         assert(game_visiblity.player == default_player_id())
         assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
         assert(game_visiblity.release_date == hour_rounder(date))
+
+        players = fake_session.query(PlayerGame).all()
+
+        print(players)
 
     def test_replay_basic_server_upload_private_replay_invalid_release_date(self, test_client):
         params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE,

@@ -105,10 +105,10 @@ def parse_replay(self, filename, preserve_upload_date: bool = False,
     # success!
     proto_game = analysis_manager.protobuf_game
 
-    if analysis_manager.protobuf_game.metadata.match_guid is None:
+    if proto_game.game_metadata.match_guid is None:
         proto_game.protobuf_game.game_metadata .match_guid = proto_game.protobuf_game.game_metadata .id
 
-    parsed_replay_processing(proto_game, query_params, session=self.session, preserve_upload_date=preserve_upload_date)
+    parsed_replay_processing(proto_game, query_params, session=self.session(), preserve_upload_date=preserve_upload_date)
 
     return save_replay(proto_game, filename, pickled)
 
