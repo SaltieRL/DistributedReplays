@@ -4,7 +4,6 @@ import io
 import logging
 import os
 import re
-import shutil
 import uuid
 import zlib
 
@@ -16,7 +15,6 @@ from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
-from backend.utils.cloud_handler import upload_proto, upload_df, upload_replay
 
 try:
     import config
@@ -359,15 +357,17 @@ def api_upload_replays():
         file.seek(0)
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
-        file.save(filename)
         lengths = get_queue_length()  # priority 0,3,6,9
         if lengths[1] > CLOUD_THRESHOLD and GCP_URL is not None:
-            with open(os.path.abspath(filename), 'rb') as f:
-                encoded_file = base64.b64encode(f.read())
+            encoded_file = base64.b64encode(file.read())
             try:
                 r = requests.post(GCP_URL + '&uuid=' + str(ud), data=encoded_file, timeout=0.5)
             except ReadTimeout as e:
                 pass  # we don't care, it's given
+            except Exception as e:
+                file.seek(0)
+                file.save(filename)  # oops, error so lets save the file
+
         else:
             result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
             task_ids.append(result.id)
@@ -387,48 +387,16 @@ def api_upload_proto():
 
     # Convert to byte files from base64
     response = request.get_json()
+
+    print("Args:", request.args)
+
     proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
-    # Path creation
-    filename = protobuf_game.game_metadata.match_guid
-    if filename == '':
-        filename = protobuf_game.game_metadata.id
-    filename += '.replay'
-    parsed_prefix_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'parsed', filename)
-    id_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays',
-                                  protobuf_game.game_metadata.id + '.replay')
-    guid_replay_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'rlreplays', filename)
-
     # Process
     add_objects(protobuf_game)
 
-    # Write to disk
-    proto_in_memory.seek(0)
-    with open(parsed_prefix_path + '.pts', 'wb') as f:
-        f.write(proto_in_memory.read())
-
-    # Cleanup
-    if os.path.isfile(id_replay_path):
-        shutil.move(id_replay_path, guid_replay_path)
-    if 'uuid' in response:
-        uuid_fn = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(response['uuid'] + '.replay'))
-        shutil.move(uuid_fn, os.path.join(os.path.dirname(uuid_fn), filename))  # rename replay properly
-        if REPLAY_BUCKET != '':
-            replay_path = os.path.join(os.path.dirname(uuid_fn), filename)
-            proto_path = parsed_prefix_path + '.pts'
-            parsed_path = parsed_prefix_path + '.gzip'
-            try:
-                upload_replay(replay_path)
-                os.remove(replay_path)
-            except:
-                print("Error uploading/removing replay file")
-            try:
-                upload_proto(proto_path)
-                os.remove(proto_path)
-            except:
-                print("Error uploading/removing proto file")
     return jsonify({'Success': True})
 
 
@@ -484,4 +452,3 @@ def api_handle_error(error: CalculatedError):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
-
