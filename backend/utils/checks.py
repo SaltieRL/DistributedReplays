@@ -58,3 +58,14 @@ def is_local_dev():
 
 def ignore_filtering():
     return False
+
+
+# done in cases where we can't throw but want to make sure it is known an error occurs
+def log_error(exception, message='Error occured', logger: logging.Logger = logger):
+    ErrorLogger.log_error(logger, message, exception)
+
+
+class ErrorLogger:
+    @staticmethod
+    def log_error(logger, message, exception):
+        logger.exception(message, exception)

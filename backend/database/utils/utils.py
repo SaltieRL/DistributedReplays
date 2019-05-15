@@ -184,7 +184,7 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
 
 
 @with_session
-def add_objects(protobuf_game, session=None):
+def add_objects(protobuf_game, session=None, preserve_upload_date=True):
     game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
-    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date=True)
+    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date)
     session.commit()

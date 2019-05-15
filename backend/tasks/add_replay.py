@@ -1,5 +1,6 @@
 import base64
 import gzip
+import logging
 import os
 import shutil
 import traceback
@@ -9,13 +10,15 @@ import requests
 from carball import analyze_replay_file
 from requests import ReadTimeout
 
-from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
-from backend.blueprints.spa_api.utils.query_params_handler import create_query_string, parse_query_params
-from backend.database.objects import Player, GameVisibility
-from backend.database.utils.utils import convert_pickle_to_db, add_objs_to_db, add_objects
+from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params
+from backend.database.utils.utils import add_objects
 from backend.tasks import celery_tasks
+from backend.tasks.post_replay_processing import apply_game_visibility
 from backend.tasks.utils import get_queue_length, get_default_parse_folder
+from backend.utils.checks import log_error
+
+logger = logging.getLogger(__name__)
 
 try:
     import config
@@ -26,28 +29,6 @@ except:
     print('Not using GCP')
     GCP_URL = None
     CLOUD_THRESHOLD = 100  # threshold of queue size for cloud parsing
-
-
-@with_session
-def apply_game_visibility(query_params, game_id, session=None):
-    if query_params is None:
-        return None
-    if 'visibility' not in query_params:
-        return None
-
-    player_id = query_params['player_id']
-    visibility = query_params['visibility']
-    release_date = query_params['release_date']
-
-    player = session.query(Player).filter(Player.platformid == player_id).first()
-    if player is not None:
-        game_visibility_entry = GameVisibility(game=game_id, player=player_id, visibility=visibility)
-        if release_date is not None:
-            game_visibility_entry.release_date = release_date
-        session.add(game_visibility_entry)
-        # GameVisibility fails silently - does not do anything if player_id does not exist.
-
-    session.commit()
 
 
 def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, any] = None):
@@ -124,7 +105,10 @@ def parse_replay(self, filename, preserve_upload_date: bool = False,
     # success!
     proto_game = analysis_manager.protobuf_game
 
-    parsed_replay_processing(proto_game, query_params)
+    if analysis_manager.protobuf_game.metadata.match_guid is None:
+        proto_game.protobuf_game.game_metadata .match_guid = proto_game.protobuf_game.game_metadata .id
+
+    parsed_replay_processing(proto_game, query_params, session=self.session, preserve_upload_date=preserve_upload_date)
 
     return save_replay(proto_game, filename, pickled)
 
@@ -141,12 +125,16 @@ def save_replay(proto_game, filename, pickled):
     return replay_id
 
 
-def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None):
+def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, session=None, preserve_upload_date=True):
     # Process
-    add_objects(protobuf_game)
+    add_objects(protobuf_game, session=session, preserve_upload_date=preserve_upload_date)
 
-    if query_params is not None:
-        query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
+    if query_params is None:
+        return
+    query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
 
-        # Add game visibility option
-        apply_game_visibility(query_params, game_id=protobuf_game.game_metadata.match_guid)
+    # Add game visibility option
+    result = apply_game_visibility(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid,
+                                   session=session)
+    if result is not None:
+        log_error(result, message='Error changing visibility', logger=logger)
