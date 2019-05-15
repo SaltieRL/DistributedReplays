@@ -42,6 +42,7 @@ def postgres_instance(postgres_factory):
 def engine(postgres_instance):
     engine = create_engine(postgres_instance.url())
     from backend.database.objects import DBObjectBase
+    DBObjectBase.metadata.drop_all(engine)
     DBObjectBase.metadata.create_all(engine)
     return engine
 
@@ -125,6 +126,7 @@ def kill_database(request, engine, monkeypatch):
         with contextlib.closing(engine.connect()) as con:
             trans = con.begin()
             for table in reversed(meta.sorted_tables):
+                print('Clear table %s' % table)
                 con.execute(table.delete())
             trans.commit()
 

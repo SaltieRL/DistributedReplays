@@ -19,6 +19,9 @@ class Test_upload_file:
         self.stream = io.BytesIO(self.file)
 
     def test_replay_basic_server_upload(self, test_client):
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game==None)
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)})
 
         response = test_client.send(r)
@@ -53,6 +56,9 @@ class Test_upload_file:
             assert(True)
 
     def test_double_upload_does_not_replace(self, test_client, mock_db):
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game==None)
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)})
 
         response = test_client.send(r)

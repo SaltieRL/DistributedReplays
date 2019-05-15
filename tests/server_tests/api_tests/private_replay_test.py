@@ -21,6 +21,9 @@ class Test_upload_file:
         self.stream = io.BytesIO(self.file)
 
     def test_replay_basic_server_upload_private_replay(self, test_client):
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game==None)
         timestamp = int(datetime.timestamp(datetime.utcnow()))
 
         params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE.name,
