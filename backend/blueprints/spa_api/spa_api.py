@@ -4,7 +4,6 @@ import io
 import logging
 import os
 import re
-import shutil
 import uuid
 import zlib
 
@@ -368,10 +367,15 @@ def api_upload_proto():
 
     # Convert to byte files from base64
     response = request.get_json()
+
+    print("Args:", request.args)
+
     proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
-    pandas_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['pandas'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
+
+    # Process
+    add_objects(protobuf_game)
 
     return jsonify({'Success': True})
 
@@ -428,4 +432,3 @@ def api_handle_error(error: CalculatedError):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
-

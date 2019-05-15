@@ -111,3 +111,4 @@ yarn-error.log*
 node_modules
 creds.json
 test_data
+.idea
