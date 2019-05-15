@@ -1,4 +1,4 @@
-import { faBraille, faBullseye, faFastForward, faHourglass, IconDefinition } from "@fortawesome/free-solid-svg-icons"
+import { faBraille, faFastForward, faHourglass, IconDefinition } from "@fortawesome/free-solid-svg-icons"
 import { faRocket } from "@fortawesome/free-solid-svg-icons/faRocket"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Tab, Tabs, withWidth } from "@material-ui/core"
@@ -17,7 +17,7 @@ type Props = OwnProps
 class HeatmapTabsComponent extends React.PureComponent<Props> {
     public render() {
         const categoryToIcon: Record<HeatmapSubcategory, IconDefinition> = {
-            "Hits": faBullseye,
+            // "Hits": faBullseye,
             "Positioning": faBraille,
             "Boost": faRocket,
             "Boost Speed": faFastForward,
