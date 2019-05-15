@@ -367,8 +367,8 @@ def api_upload_replays():
             except Exception as e:
                 file.seek(0)
                 file.save(filename)  # oops, error so lets save the file
-
         else:
+            file.save(filename)
             result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
             task_ids.append(result.id)
     return jsonify(task_ids), 202
