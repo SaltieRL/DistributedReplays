@@ -8,11 +8,12 @@ from carball.analysis.utils import pandas_manager, proto_manager
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
 
 try:
-    from config import PARSED_BUCKET, PROTO_BUCKET, REPLAY_BUCKET
+    from config import PARSED_BUCKET, PROTO_BUCKET, REPLAY_BUCKET, FAILED_BUCKET
 except:
     PARSED_BUCKET = None
     PROTO_BUCKET = None
     REPLAY_BUCKET = None
+    FAILED_BUCKET = None
 
 try:
     from google.cloud import storage
@@ -58,6 +59,12 @@ def upload_replay(filepath, blob_name=None):
     if blob_name is None:
         blob_name = os.path.basename(filepath)
     return upload_to_bucket(blob_name, filepath, REPLAY_BUCKET)
+
+
+def upload_failed_replay(filepath, blob_name=None):
+    if blob_name is None:
+        blob_name = os.path.basename(filepath)
+    return upload_to_bucket(blob_name, filepath, FAILED_BUCKET)
 
 
 def upload_to_bucket(blob_name, path_to_file, bucket_name):
