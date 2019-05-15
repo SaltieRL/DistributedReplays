@@ -16,7 +16,7 @@ from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVi
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params
-from backend.tasks.add_replay import create_replay_task
+from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.cloud_handler import upload_proto, upload_df, upload_replay
 
 try:
@@ -375,7 +375,7 @@ def api_upload_proto():
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
     # Process
-    add_objects(protobuf_game)
+    parsed_replay_processing(protobuf_game)
 
     return jsonify({'Success': True})
 
