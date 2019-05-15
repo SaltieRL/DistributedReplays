@@ -74,7 +74,7 @@ class ReplayHeatmaps:
                     if arr[0][x, y] == 0:
                         continue
                     if log_scale:
-                        value = math.log(arr[0][x, y] + 1e-3) ** 1.7
+                        value = math.log(arr[0][x, y] + 1e-3) ** 1.8
                     else:
                         value = arr[0][x, y]
                     player_data.append({
@@ -119,7 +119,10 @@ def generate_heatmaps(df, proto: Game = None, type='position', bins=[20, 30]):
     for player in players:
         if type == 'positioning':
             # player = players[1]
-            df_adjusted = df
+            if player == 'ball':
+                df_adjusted = df.loc[~((df[player].pos_x == 0) & (df[player].pos_y == 0))]
+            else:
+                df_adjusted = df.loc[df.game.goal_number.notnull()]
         elif type in ['shots', 'hits']:
             if proto is None:
                 raise Exception("Proto is none")

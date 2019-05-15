@@ -76,7 +76,7 @@ class HeatmapContentComponent extends React.PureComponent<Props, State> {
                         <Grid item xs={12} style={{height: "500px"}}>
                             <Typography variant={"h3"}>Ball</Typography>
                             <div style={{
-                                background: `url(/fieldr.jpg) no-repeat center`,
+                                background: `url(/fieldrblack.jpg) no-repeat center`,
                                 backgroundSize: "250px 350px",
                                 width: WIDTH,
                                 height: HEIGHT,
@@ -106,7 +106,7 @@ class HeatmapContentComponent extends React.PureComponent<Props, State> {
                   style={{height: "375px", width: WIDTH, textAlign: "center"}}>
                 <Typography>{player.name}</Typography>
                 <div style={{
-                    background: `url(/fieldr.jpg) no-repeat center`,
+                    background: `url(/fieldrblack.jpg) no-repeat center`,
                     backgroundSize: "250px 350px",
                     width: WIDTH,
                     height: HEIGHT,
