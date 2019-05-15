@@ -44,8 +44,12 @@ def download_df(id_):
         raise ReplayNotFound()
     gzip_url = f'https://storage.googleapis.com/{PARSED_BUCKET}/{id_}.replay.gzip'
     r = requests.get(gzip_url)
-    with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as f:
-        data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
+    try:
+        with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as f:
+            data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
+    except:
+        with io.BytesIO(r.content) as f:
+            data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
     return data_frame
 
 
