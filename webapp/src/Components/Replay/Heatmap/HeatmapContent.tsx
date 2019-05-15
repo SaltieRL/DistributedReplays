@@ -127,7 +127,6 @@ class HeatmapContentComponent extends React.PureComponent<Props, State> {
     }
 }
 
-
 const styles = (theme: Theme) => createStyles({
     heatmapTitle: {
         padding: "10px",
