@@ -31,22 +31,30 @@ script:
 # run linters
 - chmod 777 .travis/tslint.sh && .travis/tslint.sh
 
-## test python unit tests
-- pytest --cov=./
-- bash <(curl -s https://codecov.io/bash) -c -F server
-## test react
-#- cd webapp
-#- npm test
-#- cd ..
+jobs:
+  include:
+    - stage: test
+    - script:
+        ## test python unit tests
+      - pytest tests/server_tests --cov=./
+      - bash <(curl -s https://codecov.io/bash) -c -F server
+    ##- script:
+      ## test react
+      #- cd webapp
+      #- npm test
+      #- cd ..
+    - script:
 
-# start the server
-- cd $TRAVIS_BUILD_DIR
-- cd webapp
-- npm install
-- npm start &
-- cd $TRAVIS_BUILD_DIR
-- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
-- python3 RLBotServer.py &
+      # start the server
+      - cd $TRAVIS_BUILD_DIR
+      - cd webapp
+      - npm install
+      - npm start &
+      - cd $TRAVIS_BUILD_DIR
+      - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
+      - python3 RLBotServer.py &
+      - pytest tests/full_tests --cov=./
+      - bash <(curl -s https://codecov.io/bash) -c -F full
 
 # start up integration tests
 
