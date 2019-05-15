@@ -345,8 +345,7 @@ def api_upload_replays(query_params=None):
         file.seek(0)
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
-        file.save(filename)
-        create_replay_task(filename, ud, task_ids, query_params)
+        create_replay_task(file, filename, ud, task_ids, query_params)
 
     if len(errors) == 1:
         raise errors[0]

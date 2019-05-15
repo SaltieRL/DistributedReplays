@@ -1,12 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 import io
-import time
 from requests import Request
 
-from backend.database.objects import Game, Player, GameVisibilitySetting
+from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.startup import get_current_session
+from tests.utils.database_utils import default_player_id
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
-from utils.database_utils import default_player_id
 
 LOCAL_URL = 'http://localhost:8000'
 
