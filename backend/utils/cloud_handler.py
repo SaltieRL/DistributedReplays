@@ -46,10 +46,10 @@ def download_df(id_):
     r = requests.get(gzip_url)
     try:
         with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as f:
-            data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
+            data_frame = pandas_manager.PandasManager.read_numpy_from_memory(f)
     except:
         with io.BytesIO(r.content) as f:
-            data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
+            data_frame = pandas_manager.PandasManager.read_numpy_from_memory(f)
     return data_frame
 
 
