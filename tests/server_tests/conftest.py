@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
 
-from tests.utils.database_utils import create_initial_mock_database, add_player, empty_database
+from tests.utils.database_utils import create_initial_mock_database, add_initial_player, empty_database
 from tests.utils.replay_utils import clear_dir
 
 """
@@ -46,7 +46,7 @@ def engine(postgres_instance):
 @pytest.fixture()
 def session(engine):
     fake_db = sessionmaker(bind=engine)
-    add_player(fake_db())
+    add_initial_player(fake_db())
     return fake_db
 
 
@@ -65,8 +65,19 @@ def mock_db(fake_db):
     def constructor():
         return local_alchemy
 
-    from backend.database.startup import EngineStartup
-    EngineStartup.startup(replacement=constructor)
+    class Mocker:
+        def __init__(self, starter_instance):
+            self.mock_db = starter_instance
+
+        def create_mock_db_instance(self, existing_data=None):
+            self.mock_db, _ = create_initial_mock_database(existing_data=existing_data)
+
+        def apply_mock(self):
+            from backend.database.startup import EngineStartup
+            EngineStartup.startup(replacement=constructor)
+
+    return Mocker(local_alchemy)
+
 
 
 @pytest.fixture(autouse=True)
@@ -114,9 +125,9 @@ def clean_database(request, postgres_factory):
 
 
 @pytest.fixture(autouse=True)
-def kill_database(request, engine, monkeypatch):
+def kill_database(request, engine, session, monkeypatch):
     def kill_database():
-        empty_database(engine)
+        empty_database(engine, session)
 
         from backend.database import startup
 

@@ -34,8 +34,8 @@ class Test_upload_file:
 
         assert(game.name == '3 kickoffs 4 shots')
 
-        player = fake_session.query(Player).first()
-        assert(player.platformid == '76561198018756583')
+        player = fake_session.query(Player.platformid == '76561198018756583').first()
+        assert(player is not None)
 
     def test_upload_file_bad_request_no_files(self, test_client):
         r = Request('POST', LOCAL_URL + '/api/upload')

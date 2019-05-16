@@ -41,7 +41,7 @@ def initialize_db():
 def initialize_db_with_replays(replay_list, session=None):
     if session is None:
         session = initialize_db()
-    add_player(session)
+    add_initial_player(session)
     guids = []
     protos = []
     for replay in replay_list:
@@ -62,21 +62,38 @@ def default_player_id():
     return '10'
 
 
-def add_player(session):
+def add_initial_player(session):
     session.add(Player(platformid=default_player_id()))
     session.commit()
 
 
-def empty_database(engine):
+def empty_database(engine, session=None):
     from backend.database.objects import DBObjectBase
     tables = DBObjectBase.metadata.sorted_tables
+
+    print('tables should be empty now')
+    if session is not None:
+        sess = session()
+        for table in reversed(tables):
+            print('Clear table %s' % table)
+            try:
+
+                rows_deleted = sess.query(table).delete()
+                sess.commit()
+                print(rows_deleted, 'from table')
+            except:
+                print('oopsies')
+
+        sess.close()
+
     # empty tables
     for table in reversed(tables):
         print('Clear table %s' % table)
         with contextlib.closing(engine.connect()) as con:
             trans = con.begin()
             try:
-                con.execute(table.delete())
+                rows_deleted = con.execute(table.delete())
+                print(rows_deleted, 'from table')
             except Exception as e:
                 print(e)
             trans.commit()

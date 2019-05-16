@@ -8,7 +8,8 @@ import requests
 from carball.decompile_replays import analyze_replay_file
 
 from RLBotServer import start_server
-from tests.utils import write_files_to_disk, clear_dir, get_test_file, KillableThread
+from utils.killable_thread import KillableThread
+from utils.replay_utils import write_files_to_disk, get_test_file, clear_dir
 
 LOCAL_URL = 'http://localhost:8000'
 
