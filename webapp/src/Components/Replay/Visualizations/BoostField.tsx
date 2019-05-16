@@ -30,7 +30,8 @@ export class BoostField extends React.PureComponent<Props, State> {
 
             <svg width={500}
                  height={500}
-                 ref={(element) => (this.state = {element: d3.select(element)})}>
+                 ref={(element) => (this.state = {element: d3.select(element)})}
+                key={"field"}>
                 <image x="0" y="0" width="500" height="500" href="/field.jpg"/>
                 {boosts.map((item: any, index: number) => <TeamPie blue={data[index][0]}
                                                                    orange={data[index][1]} x={item[0]}

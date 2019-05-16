@@ -36,19 +36,16 @@ export class TeamPie extends React.PureComponent<Props, State> {
             .innerRadius(0)
 
         const event = (d: any, i: any) => {
-
             if (onClick) {
                 onClick()
             }
         }
         const mouseover = (d: any, i: any) => {
-
             if (onMouseover) {
                 onMouseover()
             }
         }
         const mouseout = (d: any, i: any) => {
-
             if (onMouseout) {
                 onMouseout()
             }
@@ -67,7 +64,6 @@ export class TeamPie extends React.PureComponent<Props, State> {
             .value((d: any) => {
                 return d
             })
-
 
         //
         // var label = d3.arc()
