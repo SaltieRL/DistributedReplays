@@ -26,7 +26,7 @@ export class VisualizationsContent extends React.PureComponent<Props, State> {
             <>
                 <Divider/>
                 <LoadableWrapper load={this.getBoostmapsData} reloadSignal={this.state.reloadSignal}>
-                    <BoostMapWrapper data={this.state.boostmapData} />
+                    <BoostMapWrapper data={this.state.boostmapData} replay={this.props.replay} />
                 </LoadableWrapper>
             </>
         )

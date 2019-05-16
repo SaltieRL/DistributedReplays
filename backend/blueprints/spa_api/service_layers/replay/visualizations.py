@@ -51,7 +51,10 @@ class Visualizations:
             player_df = df[player]
             boost_pickup_frames = player_df[player_df.boost_collect == True].index.values
             for frame in boost_pickup_frames:
-                position = player_df.iloc[frame].loc[['pos_x', 'pos_y']]
+                try:
+                    position = player_df.iloc[frame].loc[['pos_x', 'pos_y']]
+                except:
+                    continue
                 distances_from_boosts = np.sqrt(
                     np.square(FULL_BOOST_POSITIONS - position.values).sum(axis=1, dtype=np.float32))
                 idx: int = np.argmin(distances_from_boosts)
