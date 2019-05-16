@@ -1,7 +1,9 @@
 import { Divider } from "@material-ui/core"
 import * as React from "react"
 import { Replay } from "../../../Models"
-import { BoostField } from "./BoostField"
+import { getBoostmap } from "../../../Requests/Replay"
+import { LoadableWrapper } from "../../Shared/LoadableWrapper"
+import { BoostMapWrapper } from "./BoostMapWrapper"
 
 interface Props {
     replay: Replay
@@ -9,30 +11,30 @@ interface Props {
 
 interface State {
     element: any
+    reloadSignal: boolean
+    boostmapData: any
 }
 
 export class VisualizationsContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {element: null}
+        this.state = {element: null, reloadSignal: false, boostmapData: null}
     }
 
     public render() {
         return (
             <>
                 <Divider/>
-                <BoostField data={
-                    [
-                        [0.9, 0.1],
-                        [0.5, 0.5],
-                        [0.05, 0.95],
-                        [0.8, 0.2],
-                        [0.4, 0.6],
-                        [0.3, 0.7]
-                    ]
-                }/>
+                <LoadableWrapper load={this.getBoostmapsData} reloadSignal={this.state.reloadSignal}>
+                    <BoostMapWrapper data={this.state.boostmapData} />
+                </LoadableWrapper>
             </>
         )
+    }
+
+    private readonly getBoostmapsData = () => {
+        return getBoostmap(this.props.replay.id)
+            .then((data) => this.setState({boostmapData: data}))
     }
 
 }

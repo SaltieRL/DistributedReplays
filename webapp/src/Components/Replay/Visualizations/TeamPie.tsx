@@ -38,7 +38,7 @@ export class TeamPie extends React.PureComponent<Props, State> {
                 onClick()
             }
         }
-        const colorArray = ["#0078c4", "#ff8c00"]
+        const colorArray = ["#ff8c00", "#0078c4"]
         // const color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
         const vis = this.state.element.append("svg:g")
             .attr("transform", "translate(" + x + "," + y + ")")
@@ -57,7 +57,7 @@ export class TeamPie extends React.PureComponent<Props, State> {
         //     .innerRadius(size - 40)
 
         const arc = vis.selectAll(".arc")
-            .data(pie([blue, orange]))
+            .data(pie([orange, blue]))
             .enter().append("g")
             .attr("class", "arc")
 
