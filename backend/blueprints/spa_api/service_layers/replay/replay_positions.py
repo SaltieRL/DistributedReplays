@@ -1,16 +1,13 @@
 import gzip
 import os
-
-import pandas as pd
-
-from typing import List, cast
-from flask import current_app
+from typing import List
 
 from carball.analysis.utils import proto_manager, pandas_manager
-from backend.database.objects import Game, PlayerGame
+from flask import current_app
+
+from backend.utils.cloud_handler import download_df, download_proto
 from .replay_player import ReplayPlayer
-from ..utils import sort_player_games_by_team_then_id
-from ...errors.errors import ReplayNotFound, ErrorOpeningGame
+from ...errors.errors import ErrorOpeningGame
 
 
 class ReplayPositions:
@@ -30,16 +27,19 @@ class ReplayPositions:
         pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
         gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
         replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-        if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-            raise ReplayNotFound()
-
-        try:
-            with gzip.open(gzip_path, 'rb') as f:
-                data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
-            with open(pickle_path, 'rb') as f:
-                protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-        except Exception as e:
-            raise ErrorOpeningGame(str(e))
+        if not os.path.isfile(pickle_path):
+            # GZIP
+            data_frame = download_df(id_)
+            # PROTO
+            protobuf_game = download_proto(id_)
+        else:
+            try:
+                with gzip.open(gzip_path, 'rb') as f:
+                    data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
+                with open(pickle_path, 'rb') as f:
+                    protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
+            except Exception as e:
+                raise ErrorOpeningGame(str(e))
 
         cs = ['pos_x', 'pos_y', 'pos_z']
         rot_cs = ['rot_x', 'rot_y', 'rot_z']
