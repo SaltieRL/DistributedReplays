@@ -31,7 +31,7 @@ export class BoostField extends React.PureComponent<Props, State> {
             <svg width={500}
                  height={500}
                  ref={(element) => (this.state = {element: d3.select(element)})}
-                key={"field"}>
+                 key={"field"}>
                 <image x="0" y="0" width="500" height="500" href="/field.jpg"/>
                 {boosts.map((item: any, index: number) => <TeamPie blue={data[index][0]}
                                                                    orange={data[index][1]} x={item[0]}
@@ -39,54 +39,17 @@ export class BoostField extends React.PureComponent<Props, State> {
                                                                    size={30}
                                                                    rotate={rotationEnabled ? rotate[index] : 0}
                                                                    onMouseover={() => {
-                                                                       console.log("mouseover", index)
-                                                                       onMouseover !== undefined
-                                                                           ? onMouseover(index, data) : null
+                                                                       if (onMouseover !== undefined) {
+                                                                           onMouseover(index, data)
+                                                                       }
                                                                    }}
                                                                    onMouseout={() => {
-                                                                       console.log("mouseout", index)
-                                                                       onMouseout !== undefined
-                                                                           ? onMouseout(index, data) : null
+                                                                       if (onMouseout !== undefined) {
+                                                                           onMouseout(index, data)
+                                                                       }
                                                                    }}/>)}
             </svg>
         )
-    }
-
-    public addCircle = (cx: number, cy: number, radius: number, border: string, color: string) => {
-        this.state.element.append("circle")
-            .attr("cx", cx)
-            .attr("cy", cy)
-            .attr("r", radius)
-            .style("stroke", border)
-            .style("fill", color)
-    }
-
-    public drawFrame = () => {
-        // this.drawField()
-        // const center = 250
-
-        // this.addCircle(center, center, 20, "red", "red")
-
-    }
-
-    public drawField = () => {
-        this.state.element.append("svg:image")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", 500)
-            .attr("height", 500)
-            .attr("xlink:href", "/field.jpg")
-    }
-
-    public drawBoosts = () => {
-    }
-
-    public componentDidMount(): void {
-        this.drawFrame()
-    }
-
-    public onMouseover = (index: any) => {
-
     }
 
 }
