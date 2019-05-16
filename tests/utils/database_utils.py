@@ -63,6 +63,9 @@ def default_player_id():
 
 
 def add_initial_player(session):
+    initial_player = session.query(Player.platformid == default_player_id()).first()
+    if initial_player is not None:
+        return 
     session.add(Player(platformid=default_player_id()))
     session.commit()
 
