@@ -76,8 +76,8 @@ export class BoostMapWrapper extends React.PureComponent<Props, State> {
                                     ratios
                                 }
                                 rotationEnabled={this.state.rotateCharts}
-                    onMouseover={this.onMouseover}
-                    onMouseout={this.onMouseout}/>
+                                onMouseover={this.onMouseover}
+                                onMouseout={this.onMouseout}/>
                 </Grid>
                 <Grid item xs={8} style={{padding: "40px"}}>
                     <Grid item xs={12}>
@@ -94,7 +94,10 @@ export class BoostMapWrapper extends React.PureComponent<Props, State> {
                                 <TableBody>
                                     {boostNames.map((name, i) => (
                                         <TableRow key={i}
-                                                  style={{backgroundColor: this.state.highlight === i ? "#eee" : "white"}}>
+                                                  style={{
+                                                      backgroundColor:
+                                                          this.state.highlight === i ? "#eee" : "white"
+                                                  }}>
                                             <TableCell component="th" scope="row">
                                                 {name}
                                             </TableCell>

@@ -33,7 +33,7 @@ export class BoostField extends React.PureComponent<Props, State> {
                  ref={(element) => (this.state = {element: d3.select(element)})}
                  key={"field"}>
                 <image x="0" y="0" width="500" height="500" href="/field.jpg"/>
-                {boosts.map((item: any, index: number) => <TeamPie blue={data[index][0]}
+                {boosts.map((item: any, index: number) => <TeamPie blue={data[index][0]} key={index}
                                                                    orange={data[index][1]} x={item[0]}
                                                                    y={item[1]}
                                                                    size={30}
