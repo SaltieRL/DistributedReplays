@@ -23,6 +23,8 @@ install:
 - npm install
 - cd $TRAVIS_BUILD_DIR
 
+script: echo 'nothing'
+
 stages:
   - lint
   - test
@@ -41,13 +43,6 @@ jobs:
         - pytest --cov=./
         - bash <(curl -s https://codecov.io/bash) -c -F server
     - stage: test
-      name: "react unit tests"
-      # we only need to run npm tests for one python version
-      python: "3.6"
-      script:
-        - cd webapp
-        - npm test
-    - stage: test
       name: "integration tests"
       script:
         - cd $TRAVIS_BUILD_DIR
@@ -57,6 +52,13 @@ jobs:
         - cd $TRAVIS_BUILD_DIR
         - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
         - python3 RLBotServer.py &
+    - stage: react
+      name: "react unit tests"
+      # we only need to run npm tests for one python version
+      python: "3.6"
+      script:
+        - cd webapp
+        - npm test
     - stage: deploy
       name: "Deploy"
       python: "3.7"
