@@ -25,9 +25,10 @@ install:
 script: skip
 
 stages:
-  - lint
-  - test
-  - deploy
+  - name: lint
+  - name: test
+  - name: deploy
+    if: branch = master
 
 
 jobs:
