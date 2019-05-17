@@ -34,13 +34,18 @@ jobs:
   include:
     - stage: lint
       name: "style checks"
-      python: "3.7"
       script:
         - chmod 777 .travis/tslint.sh && .travis/tslint.sh
     - stage: test
-      name: "server unit tests"
+      name: "server unit tests 3.6"
       python:
         - '3.6'
+      script:
+        - pytest --cov=./
+        - bash <(curl -s https://codecov.io/bash) -c -F server
+    - stage: test
+      name: "server unit tests 3.7"
+      python:
         - '3.7'
       script:
         - pytest --cov=./
@@ -48,7 +53,6 @@ jobs:
     - stage: test
       name: "integration tests"
       python:
-        - '3.6'
         - '3.7'
       script:
         - cd $TRAVIS_BUILD_DIR
@@ -60,7 +64,6 @@ jobs:
         - python3 RLBotServer.py &
     - stage: test
       name: "react unit tests"
-      # we only need to run npm tests for one python version
       script:
         - cd webapp
         - npm test
