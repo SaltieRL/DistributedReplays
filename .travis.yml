@@ -84,6 +84,7 @@ jobs:
     - stage: deploy
       name: "Announce success"
       python: "3.7"
+      install: skip
       script: skip
       after_success:
       - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
