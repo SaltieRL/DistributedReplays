@@ -36,7 +36,8 @@ script:
   ## test python unit tests
 - pytest tests/server_tests --cov=./
 - bash <(curl -s https://codecov.io/bash) -c -F server
-##- script:
+
+##
 ## test react
 #- cd webapp
 #- npm test
