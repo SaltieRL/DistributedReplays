@@ -23,7 +23,7 @@ install:
 - npm install
 - cd $TRAVIS_BUILD_DIR
 
-script: echo 'nothing'
+script: skip
 
 stages:
   - lint
@@ -63,13 +63,9 @@ jobs:
     - stage: deploy
       name: "Deploy"
       python: "3.7"
+      script: skip
       after_success:
       - codecov
       - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
       - chmod +x .travis/send.sh
       - ./.travis/send.sh success $WEBHOOK_URL
-
-      after_failure:
-        - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-        - chmod +x .travis/send.sh
-        - ./.travis/send.sh failure $WEBHOOK_URL
