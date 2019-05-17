@@ -97,10 +97,9 @@ class PlayerWrapper:
                                                      GameVisibility.game == game_hash).first()
         if entry is None:
             # Check if user has right to change visibility:
-            QueryFilterBuilder().as_game().set_replay_id(game_hash).build_query(session)
-            game = session.query(Game).filter(Game.hash == game_hash).first()
-            if game is not None:
-                return False
+            builder = QueryFilterBuilder().as_game().set_replay_id(game_hash).with_players([g.user.platformid])
+            if builder.build_query(session).first() is not None:
+                return True
             else:
                 # Replay might actually exist, but user should not know.
                 raise ReplayNotFound()

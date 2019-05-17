@@ -1,6 +1,9 @@
 from datetime import datetime
 import io
+from unittest import mock
+
 from requests import Request
+from sqlalchemy import or_
 
 from backend.database.objects import Game, GameVisibilitySetting, GameVisibility, PlayerGame, Player
 from backend.database.startup import get_current_session, EngineStartup
@@ -21,14 +24,25 @@ class Test_edit_private_replay:
         self.stream = io.BytesIO(self.file)
 
     def test_replay_edit_private_replay(self, test_client, mock_db):
-        EngineStartup.startup(replacement=mock_db)
-        date = datetime.utcnow()
-        timestamp = int(datetime.timestamp(date))
+        mock_db.create_mock_db_instance(existing_data=[
+            (
+                [mock.call.query(GameVisibility),
+                 mock.call.filter(GameVisibility.player == '10',
+                                  GameVisibility.game == '70DDECEA4653AC55EA77DBA0DB497995')],
+                [None]
+            ),
+            (
+                [mock.call.query(Game),
+                 mock.call.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
+                            Game.players.any('10'))),
+                 mock.call.filter(Player.platformid == '10')],
+                [Game()]
+            )
+        ])
+        mock_db.apply_mock()
 
-        params = {,
-                  'release_date': str(timestamp)}
-        r = Request('POST', LOCAL_URL + '/api/upload',
-                    files={'replays': ('fake_file.replay', self.stream)}, params=params)
+        api_url = '/api/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
+        r = Request('PUT', LOCAL_URL + api_url)
 
         response = test_client.send(r)
 

@@ -11,6 +11,8 @@ class TestClient:
     def get_function_type(self, request: Request):
         if request.method == "POST":
             return self.app.post
+        if request.method == "PUT":
+            return self.app.put
 
     def send(self, request: Request) -> Response:
 
