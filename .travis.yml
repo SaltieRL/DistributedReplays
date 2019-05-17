@@ -17,10 +17,6 @@ addons:
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
-- ls
-- cd webapp
-- npm install
-- cd $TRAVIS_BUILD_DIR
 
 script: skip
 
@@ -35,6 +31,10 @@ jobs:
   include:
     - stage: lint
       name: "style checks"
+      install:
+        - cd webapp
+        - npm install
+        - cd $TRAVIS_BUILD_DIR
       script:
         - chmod 777 .travis/tslint.sh && .travis/tslint.sh
     - stage: test
@@ -44,6 +44,8 @@ jobs:
       script:
         - pytest --cov=./
         - bash <(curl -s https://codecov.io/bash) -c -F server
+      after_success:
+        - codecov
     - stage: test
       name: "server unit tests 3.7"
       python:
@@ -51,12 +53,16 @@ jobs:
       script:
         - pytest --cov=./
         - bash <(curl -s https://codecov.io/bash) -c -F server
+      after_success:
+        - codecov
     - stage: test
       name: "integration tests"
       python:
         - '3.7'
+      before_install:
+        - cd webapp
+        - npm install
       script:
-        - cd $TRAVIS_BUILD_DIR
         - cd webapp
         - npm install
         - npm start &
@@ -65,15 +71,21 @@ jobs:
         - python3 RLBotServer.py &
    # - stage: test
    #   name: "react unit tests"
+   #   install:
+   #     - cd webapp
+   #     - npm install
+   #     - npm install codecov -g
+   #     - cd $TRAVIS_BUILD_DIR
    #   script:
    #     - cd webapp
    #     - npm test
+   #   after_success:
+   #     - codecov
     - stage: deploy
-      name: "Deploy"
+      name: "Announce success"
       python: "3.7"
       script: skip
       after_success:
-      - codecov
       - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
       - chmod +x .travis/send.sh
       - ./.travis/send.sh success $WEBHOOK_URL
