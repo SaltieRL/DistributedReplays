@@ -2,7 +2,6 @@ sudo: required
 dist: xenial
 language: python
 python:
-  - '3.6'
   - '3.7'
 
 services:
@@ -40,11 +39,17 @@ jobs:
         - chmod 777 .travis/tslint.sh && .travis/tslint.sh
     - stage: test
       name: "server unit tests"
+      python:
+        - '3.6'
+        - '3.7'
       script:
         - pytest --cov=./
         - bash <(curl -s https://codecov.io/bash) -c -F server
     - stage: test
       name: "integration tests"
+      python:
+        - '3.6'
+        - '3.7'
       script:
         - cd $TRAVIS_BUILD_DIR
         - cd webapp
@@ -56,7 +61,6 @@ jobs:
     - stage: test
       name: "react unit tests"
       # we only need to run npm tests for one python version
-      python: "3.6"
       script:
         - cd webapp
         - npm test
