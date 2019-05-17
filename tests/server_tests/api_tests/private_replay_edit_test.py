@@ -25,7 +25,7 @@ class Test_edit_private_replay:
         date = datetime.utcnow()
         timestamp = int(datetime.timestamp(date))
 
-        params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE.name,
+        params = {,
                   'release_date': str(timestamp)}
         r = Request('POST', LOCAL_URL + '/api/upload',
                     files={'replays': ('fake_file.replay', self.stream)}, params=params)

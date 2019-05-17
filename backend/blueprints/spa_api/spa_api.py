@@ -301,7 +301,7 @@ def api_search_replays(query_params=None):
     return better_jsonify(match_history)
 
 
-@bp.route('replay/<id_>/visibility/<visibility>', methods=['PUT'])
+@bp.route('replay/<id_>/visibility', methods=['PUT'])
 @with_query_params(accepted_query_params=visibility_params, provided_params=['player_id', 'visibility'])
 def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
     try:
