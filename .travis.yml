@@ -62,11 +62,11 @@ jobs:
         - cd $TRAVIS_BUILD_DIR
         - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
         - python3 RLBotServer.py &
-    - stage: test
-      name: "react unit tests"
-      script:
-        - cd webapp
-        - npm test
+   # - stage: test
+   #   name: "react unit tests"
+   #   script:
+   #     - cd webapp
+   #     - npm test
     - stage: deploy
       name: "Deploy"
       python: "3.7"
