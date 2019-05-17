@@ -23,6 +23,12 @@ install:
 - npm install
 - cd $TRAVIS_BUILD_DIR
 
+stages:
+  - lint
+  - test
+  - deploy
+
+
 jobs:
   include:
     - stage: lint
