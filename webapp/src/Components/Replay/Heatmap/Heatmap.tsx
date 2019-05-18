@@ -38,7 +38,8 @@ export class ReactHeatmap extends React.PureComponent<Props, State> {
                     "0.7": "#2a788e",
                     "0.9": "#7ad151",
                     "0.6": "#414487",
-                    "0.8": "#22a884"
+                    "0.8": "#22a884",
+                    "0.0": "#fff"
                 }
             }
 
@@ -58,7 +59,7 @@ export class ReactHeatmap extends React.PureComponent<Props, State> {
 
         return (
             // tslint:disable-next-line
-                <div ref="react-heatmap"/>
+            <div ref="react-heatmap"/>
         )
 
     }

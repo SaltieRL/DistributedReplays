@@ -8,7 +8,7 @@ import uuid
 import zlib
 
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory, g
+from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
@@ -19,6 +19,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
+from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 
 try:
     import config
@@ -261,6 +262,12 @@ def api_get_replay_heatmaps(id_):
         type_ = 'positioning'
     positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
     return better_jsonify(positions)
+
+
+@bp.route('replay/<id_>/boostmap')
+def api_get_replay_boostmaps(id_):
+    positions = Visualizations.create_from_id(id_)
+    return jsonify(positions)
 
 
 @bp.route('replay/group')

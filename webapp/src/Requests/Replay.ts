@@ -64,3 +64,7 @@ export const setVisibility = (id: string, gameVisibility: GameVisibility): Promi
 export const getHeatmaps = (id: string, type: string = "position"): Promise<any> => {
     return doGet(`/replay/${id}/heatmaps?type=${type}`)
 }
+
+export const getBoostmap = (id: string): Promise<any> => {
+    return doGet(`/replay/${id}/boostmap`)
+}
