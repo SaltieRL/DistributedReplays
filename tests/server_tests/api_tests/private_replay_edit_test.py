@@ -24,24 +24,17 @@ class Test_edit_private_replay:
         self.stream = io.BytesIO(self.file)
 
     def test_replay_edit_private_replay(self, test_client, mock_db):
-        mock_db.create_mock_db_instance(existing_data=[
-            (
-                [mock.call.query(GameVisibility),
-                 mock.call.filter(GameVisibility.player == '10',
-                                  GameVisibility.game == '70DDECEA4653AC55EA77DBA0DB497995')],
-                [None]
-            ),
-            (
-                [mock.call.query(Game),
-                 mock.call.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
-                            Game.players.any('10'))),
-                 mock.call.filter(Player.platformid == '10')],
-                [Game()]
-            )
-        ])
-        mock_db.apply_mock()
+        game = get_current_session().query(Game).first()
+        assert game is None
 
-        api_url = '/api/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
+        r = Request('POST', LOCAL_URL + '/api/upload',
+                    files={'replays': ('fake_file.replay', self.stream)})
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 202)
+
+        api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
         r = Request('PUT', LOCAL_URL + api_url)
 
         response = test_client.send(r)
@@ -57,4 +50,3 @@ class Test_edit_private_replay:
         assert(game_visiblity.game == game.hash)
         assert(game_visiblity.player == default_player_id())
         assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
-        assert(game_visiblity.release_date == hour_rounder(date))

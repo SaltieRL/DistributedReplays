@@ -8,7 +8,7 @@ import uuid
 import zlib
 
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from flask import jsonify, Blueprint, current_app, request, send_from_directory, g
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
@@ -315,7 +315,10 @@ def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
     except KeyError:
         release_date = None
 
-    replay_visibiltiy = ReplayVisibility.change_replay_visibility(game_hash=id_, visibility=visibility_setting)
+    replay_visibiltiy = ReplayVisibility.change_replay_visibility(game_hash=id_,
+                                                                  visibility=visibility_setting,
+                                                                  user_id=g.user.platformid,
+                                                                  release_date=release_date)
     return better_jsonify(replay_visibiltiy)
 
 

@@ -68,3 +68,8 @@ class TagNotFound(CalculatedError):
 class UnsupportedPlaylist(CalculatedError):
     status_code = 501
     message = "Playlist not supported"
+
+
+class AuthorizationException(CalculatedError):
+    status_code = 401
+    message = "User not allowed for this request"

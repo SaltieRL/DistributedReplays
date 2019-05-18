@@ -11,6 +11,7 @@ import requests
 from carball import analyze_replay_file
 from requests import ReadTimeout
 
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.blueprints.spa_api.service_layers.replay.visibility import apply_game_visibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params
@@ -128,7 +129,7 @@ def save_replay(proto_game, filename, pickled):
 
 def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, preserve_upload_date=True):
     # Process
-    add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
+    match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
 
     if query_params is None:
         return
@@ -136,6 +137,8 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
     query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
 
     # Add game visibility option
-    result = apply_game_visibility(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid)
-    if result is not None:
-        log_error(result, message='Error changing visibility', logger=logger)
+    try:
+        apply_game_visibility(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid,
+                              game_exists=match_exists)
+    except CalculatedError as e:
+        log_error(e, message='Error changing visibility', logger=logger)

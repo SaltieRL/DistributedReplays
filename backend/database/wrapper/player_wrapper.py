@@ -92,12 +92,12 @@ class PlayerWrapper:
 
     @staticmethod
     @with_session
-    def have_permission_to_change_game(game_hash: str, session=None) -> bool:
-        entry = session.query(GameVisibility).filter(GameVisibility.player == g.user.platformid,
+    def have_permission_to_change_game(game_hash: str, user_id, session=None) -> bool:
+        entry = session.query(GameVisibility).filter(GameVisibility.player == user_id,
                                                      GameVisibility.game == game_hash).first()
         if entry is None:
             # Check if user has right to change visibility:
-            builder = QueryFilterBuilder().as_game().set_replay_id(game_hash).with_players([g.user.platformid])
+            builder = QueryFilterBuilder().as_game().set_replay_id(game_hash).with_players([user_id])
             if builder.build_query(session).first() is not None:
                 return True
             else:

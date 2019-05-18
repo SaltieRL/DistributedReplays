@@ -118,6 +118,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
 def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], teamstats: List[TeamStat],
                    session,
                    preserve_upload_date=False, preserve_ranks=True):
+    match_exists = False
     # delete playergames/teamstats first, to prevent orphans
     for pg in player_games:
         match = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
@@ -131,7 +132,7 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
 
         matches = session.query(PlayerGame).filter(PlayerGame.player == str(pg.player)).filter(
             PlayerGame.game == game.replay_id).all()  # catch old replay ids
-        if matches is not None:
+        if matches is not None and len(matches) > 0:
             for match in matches:
                 if preserve_ranks:
                     pg.rank = match.rank
@@ -146,7 +147,8 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
 
     try:
         matches = session.query(Game).filter(Game.hash == game.hash).all()
-        if matches is not None:
+        if matches is not None and len(matches) > 0:
+            match_exists = True
             for match in matches:
                 if preserve_upload_date:
                     game.upload_date = match.upload_date
@@ -156,7 +158,7 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
                 session.delete(match)
                 print('deleting {}'.format(match.hash))
         matches = session.query(Game).filter(Game.hash == game.replay_id).all()  # catch old replay ids
-        if matches is not None:
+        if matches is not None and len(matches) > 0:
             for match in matches:
                 if preserve_upload_date:
                     game.upload_date = match.upload_date
@@ -182,9 +184,12 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
     for team in teamstats:
         session.add(team)
 
+    return match_exists
+
 
 @with_session
 def add_objects(protobuf_game, session=None, preserve_upload_date=True):
     game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
-    add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date)
+    match_exists = add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date)
     session.commit()
+    return match_exists

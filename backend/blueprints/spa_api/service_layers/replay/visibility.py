@@ -3,7 +3,8 @@ from datetime import datetime
 
 from flask import g
 
-from backend.blueprints.spa_api.errors.errors import PlayerNotFound, ReplayNotFound
+from backend.blueprints.spa_api.errors.errors import PlayerNotFound, ReplayNotFound, AuthorizationException, \
+    CalculatedError
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, GameVisibility, Game
 from backend.blueprints.spa_api.utils.decorators import require_user
@@ -21,18 +22,22 @@ class ReplayVisibility:
     @require_user
     def change_replay_visibility(game_hash: str,
                                  visibility: GameVisibilitySetting,
+                                 user_id='',
                                  release_date=None) -> 'ReplayVisibility':
-        can_change = PlayerWrapper.have_permission_to_change_game(game_hash)
+        can_change = PlayerWrapper.have_permission_to_change_game(game_hash, user_id)
         if can_change:
-            result = apply_game_visibility_explicit(g.user.platformid, visibility, release_date, game_hash)
-            if result is not None:
-                log_error(result)
-                raise result
+            try:
+                apply_game_visibility_explicit(user_id, visibility, release_date, game_hash)
+            except CalculatedError as e:
+                log_error(e)
+                raise e
+        else:
+            log_error(AuthorizationException())
 
         return ReplayVisibility(game_hash, visibility)
 
 
-def apply_game_visibility(query_params=None, game_id=None) -> Exception:
+def apply_game_visibility(query_params=None, game_id=None, game_exists=True) -> Exception:
     if query_params is None:
         return None
     if 'visibility' not in query_params:
@@ -44,12 +49,20 @@ def apply_game_visibility(query_params=None, game_id=None) -> Exception:
         release_date = query_params['release_date']
     except KeyError:
         release_date = None
-    return apply_game_visibility_explicit(player_id, visibility, release_date, game_id)
+
+    try:
+        can_change = PlayerWrapper.have_permission_to_change_game(game_id, player_id)
+    except ReplayNotFound:
+        can_change = not game_exists
+
+    if can_change:
+        return apply_game_visibility_explicit(player_id, visibility, release_date, game_id)
+    raise AuthorizationException()
 
 
 @with_session
 def apply_game_visibility_explicit(player_id, visibility: GameVisibilitySetting,
-                                   release_date: datetime, game_id, session=None, retry=False) -> Exception:
+                                   release_date: datetime, game_id, session=None, retry=False):
     entry = session.query(GameVisibility).filter(GameVisibility.player == player_id,
                                                  GameVisibility.game == game_id).first()
     if entry is not None and entry.visibility != visibility:
@@ -63,9 +76,7 @@ def apply_game_visibility_explicit(player_id, visibility: GameVisibilitySetting,
         if release_date is not None:
             game_visibility_entry.release_date = release_date
 
-        result = update_game_visibility(game_id, session, visibility)
-        if result is not None:
-            return result
+        update_game_visibility(game_id, session, visibility)
 
         session.add(game_visibility_entry)
         # GameVisibility fails silently - does not do anything if player_id does not exist.
@@ -77,20 +88,20 @@ def apply_game_visibility_explicit(player_id, visibility: GameVisibilitySetting,
         return apply_game_visibility_explicit(player_id, visibility, release_date,
                                               game_id=game_id, session=session, retry=True)
 
-    return PlayerNotFound()
+    raise PlayerNotFound()
 
 
-def update_game_visibility(game_id, session, visibility: GameVisibilitySetting, retry=False) -> Exception:
+def update_game_visibility(game_id, session, visibility: GameVisibilitySetting, retry=False):
     game = session.query(Game).filter(Game.hash == game_id).first()
     if game is None:
         if not retry:
             time.sleep(1)
             return update_game_visibility(game_id=game_id, session=session, visibility=visibility, retry=True)
-        return ReplayNotFound()
+        raise ReplayNotFound()
 
     if game.visibility == visibility:
-        return None
+        return
 
     game.visibility = visibility
     session.commit()
-    return None
+    return

@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 import io
 from requests import Request
@@ -21,6 +22,8 @@ class Test_upload_file:
         self.stream = io.BytesIO(self.file)
 
     def test_replay_basic_server_upload_private_replay(self, test_client):
+        game = get_current_session().query(Game).filter(Game.hash == '70DDECEA4653AC55EA77DBA0DB497995').all()
+        assert len(game) == 0
         date = datetime.utcnow()
         timestamp = int(datetime.timestamp(date))
 
@@ -43,6 +46,37 @@ class Test_upload_file:
         assert(game_visiblity.player == default_player_id())
         assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
         assert(game_visiblity.release_date == hour_rounder(date))
+
+    def test_setting_visibility_fails_if_replay_exists(self, test_client, no_errors_are_logged):
+        no_errors_are_logged.cancel_check()
+        date = datetime.utcnow()
+        timestamp = int(datetime.timestamp(date))
+
+        r = Request('POST', LOCAL_URL + '/api/upload',
+                    files={'replays': ('fake_file.replay', self.stream)})
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 202)
+        time.sleep(1)
+
+        params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE.name,
+                  'release_date': str(timestamp)}
+        r = Request('POST', LOCAL_URL + '/api/upload',
+                    files={'replays': ('fake_file.replay', io.BytesIO(self.file))}, params=params)
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 202)
+
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game.hash == '70DDECEA4653AC55EA77DBA0DB497995')
+        assert(game.visibility == GameVisibilitySetting.DEFAULT)
+
+        game_visiblity = fake_session.query(GameVisibility).first()
+        assert(game_visiblity is None)
+        assert(no_errors_are_logged.mock_is_called())
 
     def test_replay_basic_server_upload_private_replay_invalid_release_date(self, test_client):
         params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE,
