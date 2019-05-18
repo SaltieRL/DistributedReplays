@@ -41,7 +41,7 @@ class Test_edit_private_replay:
 
         response = test_client.send(r)
 
-        assert(response.status_code == 202)
+        assert(response.status_code == 200)
 
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
@@ -50,5 +50,85 @@ class Test_edit_private_replay:
 
         game_visiblity = fake_session.query(GameVisibility).first()
         assert(game_visiblity.game == game.hash)
-        assert(game_visiblity.player == default_player_id())
+        assert(game_visiblity.player == '76561198018756583')
         assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
+
+
+    def test_replay_edit_private_replay_no_permission(self, test_client, fake_user):
+        game = get_current_session().query(Game).first()
+        assert game is None
+
+        r = Request('POST', LOCAL_URL + '/api/upload',
+                    files={'replays': ('fake_file.replay', self.stream)})
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 202)
+
+        api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
+        r = Request('PUT', LOCAL_URL + api_url)
+
+        fake_user.setUser(default_player_id())
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 404)
+
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game.hash == '70DDECEA4653AC55EA77DBA0DB497995')
+        assert(game.visibility == GameVisibilitySetting.DEFAULT)
+
+        game_visiblity = fake_session.query(GameVisibility).first()
+        assert(game_visiblity is None)
+
+
+    def test_replay_edit_private_replay_twice(self, test_client, fake_user):
+        game = get_current_session().query(Game).first()
+        assert game is None
+
+        r = Request('POST', LOCAL_URL + '/api/upload',
+                    files={'replays': ('fake_file.replay', self.stream)})
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 202)
+
+        api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
+        r = Request('PUT', LOCAL_URL + api_url)
+
+        fake_user.setUser('76561198018756583')
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 200)
+
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game.hash == '70DDECEA4653AC55EA77DBA0DB497995')
+        assert(game.visibility == GameVisibilitySetting.PRIVATE)
+
+        game_visiblity = fake_session.query(GameVisibility).first()
+        assert(game_visiblity.game == game.hash)
+        assert(game_visiblity.player == '76561198018756583')
+        assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
+
+
+        api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PUBLIC.name
+        r = Request('PUT', LOCAL_URL + api_url)
+
+        fake_user.setUser('76561198018756583')
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 200)
+
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game.hash == '70DDECEA4653AC55EA77DBA0DB497995')
+        assert(game.visibility == GameVisibilitySetting.PUBLIC)
+
+        game_visiblity = fake_session.query(GameVisibility).first()
+        assert(game_visiblity.game == game.hash)
+        assert(game_visiblity.player == '76561198018756583')
+        assert(game_visiblity.visibility == GameVisibilitySetting.PUBLIC)
