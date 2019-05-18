@@ -1,4 +1,3 @@
-import contextlib
 import os
 import random
 
@@ -9,7 +8,7 @@ from sqlalchemy.dialects.postgresql.base import PGInspector
 from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
-
+from backend.database.objects import Player
 from tests.utils.database_utils import create_initial_mock_database, add_initial_player, empty_database
 from tests.utils.replay_utils import clear_dir
 
@@ -209,3 +208,21 @@ def make_celery_testable(monkeypatch):
     from backend.tasks import celeryconfig
     monkeypatch.setattr(celeryconfig, 'task_always_eager', True, raising=False)
     monkeypatch.setattr(celeryconfig, 'task_eager_propagates', True, raising=False)
+
+@pytest.fixture()
+def fake_user(monkeypatch):
+    from backend.utils.global_functions import UserManager
+
+    fake_user = None
+
+    def get_fake_user():
+        return fake_user
+
+    class FakeUser:
+        def setUser(self, platformId):
+            nonlocal fake_user
+            fake_user = Player(platformid=platformId)
+
+    monkeypatch.setattr(UserManager, 'get_current_user', get_fake_user)
+
+    return FakeUser()

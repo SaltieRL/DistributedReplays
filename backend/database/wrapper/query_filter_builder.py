@@ -7,6 +7,7 @@ from sqlalchemy.dialects import postgresql
 
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
 from backend.utils.checks import is_admin, is_local_dev
+from backend.utils.global_functions import get_current_user_id
 
 
 class QueryFilterBuilder:
@@ -148,7 +149,7 @@ class QueryFilterBuilder:
             # Do visibility check
             if not is_admin():
                 filtered_query = filtered_query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
-                                                           Game.players.any(g.user.platformid)))
+                                                           Game.players.any(get_current_user_id())))
 
         if self.start_time is not None:
             filtered_query = filtered_query.filter(

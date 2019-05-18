@@ -3,6 +3,7 @@ from typing import List, cast
 from flask import g
 
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
+from backend.utils.global_functions import get_current_user_id
 from data.constants.playlist import get_playlist
 from .replay_player import ReplayPlayer
 from .tag import Tag
@@ -59,7 +60,7 @@ class Replay:
             ],
             tags=[
                 Tag.create_from_dbtag(tag)
-                for tag in game.tags if tag.owner == g.user.platformid
+                for tag in game.tags if tag.owner == get_current_user_id()
             ],
             visibility=game.visibility
         )

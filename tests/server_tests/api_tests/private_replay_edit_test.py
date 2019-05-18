@@ -23,7 +23,7 @@ class Test_edit_private_replay:
         self.file = f
         self.stream = io.BytesIO(self.file)
 
-    def test_replay_edit_private_replay(self, test_client, mock_db):
+    def test_replay_edit_private_replay(self, test_client, fake_user):
         game = get_current_session().query(Game).first()
         assert game is None
 
@@ -36,6 +36,8 @@ class Test_edit_private_replay:
 
         api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
         r = Request('PUT', LOCAL_URL + api_url)
+
+        fake_user.setUser('76561198018756583')
 
         response = test_client.send(r)
 

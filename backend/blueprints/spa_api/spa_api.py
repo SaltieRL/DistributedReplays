@@ -18,7 +18,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
-from backend.utils.cloud_handler import upload_proto, upload_df, upload_replay
+from backend.utils.global_functions import get_current_user_id
 
 try:
     import config
@@ -317,7 +317,7 @@ def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
 
     replay_visibiltiy = ReplayVisibility.change_replay_visibility(game_hash=id_,
                                                                   visibility=visibility_setting,
-                                                                  user_id=g.user.platformid,
+                                                                  user_id=get_current_user_id(),
                                                                   release_date=release_date)
     return better_jsonify(replay_visibiltiy)
 

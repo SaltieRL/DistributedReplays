@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask
+from flask import Flask, g
 
 from backend.utils.checks import get_checks
 
@@ -24,3 +24,13 @@ def pop(list):
 def debug(text):
     logger.warning(str(text))
     return ''
+
+
+def get_current_user_id():
+    return UserManager.get_current_user().platformid
+
+
+class UserManager:
+    @staticmethod
+    def get_current_user():
+        return g.user

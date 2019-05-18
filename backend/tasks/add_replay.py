@@ -3,7 +3,6 @@ import gzip
 import logging
 import os
 import shutil
-import time
 import traceback
 from typing import Dict
 
