@@ -1,14 +1,12 @@
-import unittest
-
 from backend.utils.braacket_connection import Braacket
 from backend.utils.psyonix_api_handler import get_bot_by_steam_id, get_rank, get_empty_data
 from tests.utils.database_utils import initialize_db_with_replays
 from tests.utils.replay_utils import clear_dir
 
 
-class BraacketTest(unittest.TestCase):
+class Test_Braacket():
 
-    def setup_method(self):
+    def setup_method(self, method):
         self.league = Braacket()
         self.replays = [
             'https://cdn.discordapp.com/attachments/493849514680254468/576877585896570920/ALL_STAR.replay',
