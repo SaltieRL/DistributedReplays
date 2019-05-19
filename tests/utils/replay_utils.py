@@ -6,8 +6,8 @@ from carball import analyze_replay_file
 from tests.utils.location_utils import get_test_folder
 
 
-def get_test_file(file_name):
-    return os.path.join(get_test_folder(), file_name)
+def get_test_file(file_name, temp_folder=None):
+    return os.path.join(get_test_folder(temp_folder=temp_folder), file_name)
 
 
 def download_replay_discord(url):
@@ -44,16 +44,16 @@ def get_complex_replay_list():
     ]
 
 
-def write_files_to_disk(replays):
-    if not os.path.exists(get_test_folder()):
-        os.mkdir(get_test_folder())
+def write_files_to_disk(replays, temp_folder=None):
+    if not os.path.exists(get_test_folder(temp_folder=temp_folder)):
+        os.mkdir(get_test_folder(temp_folder=temp_folder))
     file_names = []
     for replay_url in replays:
         print('Testing:', replay_url)
         file_name = replay_url[replay_url.rfind('/') + 1:]
         file_names.append(file_name)
         f = download_replay_discord(replay_url)
-        with open(os.path.join(get_test_folder(), file_name), 'wb') as real_file:
+        with open(os.path.join(get_test_folder(temp_folder=temp_folder), file_name), 'wb') as real_file:
             real_file.write(f)
     return file_names
 

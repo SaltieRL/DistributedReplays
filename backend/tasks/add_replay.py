@@ -99,6 +99,7 @@ def parse_replay(self, filename, preserve_upload_date: bool = False,
         with gzip.open(pickled + '.gzip', 'wb') as fo:
             analysis_manager.write_pandas_out_to_file(fo)
     except Exception as e:
+        log_error(e, logger=logger)
         with open(os.path.join(failed_dir, os.path.basename(filename) + '.txt'), 'a') as f:
             f.write(str(e))
             f.write(traceback.format_exc())

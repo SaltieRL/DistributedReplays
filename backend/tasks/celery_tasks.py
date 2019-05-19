@@ -45,12 +45,12 @@ def add_replay_parse_task(file_name, query_params: Dict[str, any] = None, **kwar
 
 @celery.task(base=DBTask, bind=True, priority=5)
 def parse_replay_task(self, *args, **kwargs):
-    parse_replay(self, *args, **kwargs)
+    return parse_replay(self, *args, **kwargs)
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
 def parse_replay_task_low_priority(self, fn):
-    parse_replay_task(filename=fn, preserve_upload_date=True)
+    return parse_replay_task(filename=fn, preserve_upload_date=True)
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
