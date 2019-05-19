@@ -1,13 +1,10 @@
-from datetime import datetime
+
 import io
-from unittest import mock
 
 from requests import Request
-from sqlalchemy import or_
 
-from backend.database.objects import Game, GameVisibilitySetting, GameVisibility, PlayerGame, Player
-from backend.database.startup import get_current_session, EngineStartup
-from backend.utils.time_related import hour_rounder
+from backend.database.objects import Game, GameVisibilitySetting, GameVisibility
+from backend.database.startup import get_current_session
 from tests.utils.database_utils import default_player_id
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 

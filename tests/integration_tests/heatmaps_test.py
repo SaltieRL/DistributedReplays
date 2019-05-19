@@ -1,13 +1,11 @@
 import time
 import unittest
 
-import requests
-
 from RLBotServer import start_server
 from backend.tasks.celery_tasks import parse_replay_task
-from utils.killable_thread import KillableThread
-from utils.location_utils import get_test_folder
-from utils.replay_utils import write_files_to_disk, get_test_file, clear_dir
+from tests.utils.killable_thread import KillableThread
+from tests.utils.location_utils import get_test_folder
+from tests.utils.replay_utils import write_files_to_disk, get_test_file, clear_dir
 
 LOCAL_URL = 'http://localhost:8000'
 
