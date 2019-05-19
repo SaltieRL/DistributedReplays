@@ -4,7 +4,7 @@ from tests.utils.database_utils import initialize_db_with_replays
 from tests.utils.replay_utils import clear_dir
 
 
-class Test_Braacket():
+class Test_Braacket:
 
     def setup_method(self, method):
         self.league = Braacket()
@@ -17,34 +17,34 @@ class Test_Braacket():
     def test_get_player(self):
         initialize_db_with_replays(self.replays)
         bot = get_bot_by_steam_id("b086f2d2abb")
-        self.assertEqual(bot, "SkyBot")
+        assert(bot ==  "SkyBot")
         braacket_id = self.league.player_cache.get(bot)
         skybot_id = "54FB8C16-6FA9-4C4A-AAD5-3DB8A6AE169B"
-        self.assertEqual(braacket_id, skybot_id)
+        assert(braacket_id == skybot_id)
         ranking_info = self.league.get_ranking(braacket_id)
-        self.assertIsNotNone(ranking_info)
+        assert (ranking_info is None )
 
     def test_get_non_existing_bot(self):
         initialize_db_with_replays(self.replays)
-        self.assertIsNone(get_bot_by_steam_id("notABot"))
-        self.assertIsNone(self.league.player_cache.get("notABot"))
-        self.assertIsNone(self.league.get_ranking("notABot"))
-        self.assertIsNone(get_bot_by_steam_id("bNotABotb"))
+        assert(get_bot_by_steam_id("notABot") is None)
+        assert(self.league.player_cache.get("notABot") is None)
+        assert(self.league.get_ranking("notABot") is None)
+        assert(get_bot_by_steam_id("bNotABotb") is None)
 
     def test_get_bot_by_steam_id_allstars(self):
         initialize_db_with_replays(self.replays)
         bot = get_bot_by_steam_id("bcfe70a272b")
-        self.assertEqual(bot, "Allstar")
+        assert(bot == "Allstar")
         bot = get_bot_by_steam_id("b40b")
-        self.assertEqual(bot, "Allstar")
+        assert(bot == "Allstar")
 
     def test_get_rank_bot(self):
         initialize_db_with_replays(self.replays)
         unranked_rank = get_empty_data(["b086f2d2abb"])
         rank = get_rank("b086f2d2abb")
-        self.assertNotEqual(unranked_rank[list(unranked_rank.keys())[0]].get('10'), rank.get('10'))
-        self.assertEqual(unranked_rank[list(unranked_rank.keys())[0]].get('13'), rank.get('13'))
-        self.assertEqual(unranked_rank[list(unranked_rank.keys())[0]].get('11'), rank.get('11'))
+        assert(unranked_rank[list(unranked_rank.keys())[0]].get('10') != rank.get('10'))
+        assert(unranked_rank[list(unranked_rank.keys())[0]].get('13') == rank.get('13'))
+        assert(unranked_rank[list(unranked_rank.keys())[0]].get('11') == rank.get('11'))
 
     def teardown_method(self) -> None:
         clear_dir()
