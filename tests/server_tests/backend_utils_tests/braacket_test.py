@@ -22,7 +22,7 @@ class Test_Braacket:
         skybot_id = "54FB8C16-6FA9-4C4A-AAD5-3DB8A6AE169B"
         assert(braacket_id == skybot_id)
         ranking_info = self.league.get_ranking(braacket_id)
-        assert (ranking_info is None )
+        assert (ranking_info is not None )
 
     def test_get_non_existing_bot(self):
         initialize_db_with_replays(self.replays)
