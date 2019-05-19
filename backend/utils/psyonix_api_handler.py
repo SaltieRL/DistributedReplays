@@ -46,7 +46,7 @@ def get_bot_by_steam_id(steam_id):
             bot = session().query(Player).filter(Player.platformid == steam_id).first()
             if bot is None:
                 return None
-            return bot.platformname
+        return bot.platformname
     return None
 
 
