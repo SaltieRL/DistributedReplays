@@ -166,23 +166,45 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
+    
+    def _create_stats_from_query(self, session, query, player_filter=None, replay_ids=None):
+        stats = QueryFilterBuilder().with_stat_query(query)
+        if player_filter is not None:
+            stats.with_players(player_filter)
+        if replay_ids is not None:
+            stats.with_replay_ids(replay_ids)
+        stats = stats.build_query(session).filter(PlayerGame.time_in_game > 0).first()
+        stats = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, stats) if s is not None}
+        return stats
 
     def _create_stats(self, session, player_filter=None, replay_ids=None):
-        average = QueryFilterBuilder().with_stat_query(self.get_player_stat_query())
-        std_devs = QueryFilterBuilder().with_stat_query(self.get_player_stat_std_query())
-        if player_filter is not None:
-            average.with_players(player_filter)
-            std_devs.with_players(player_filter)
-        if replay_ids is not None:
-            average.with_replay_ids(replay_ids)
-            std_devs.with_replay_ids(replay_ids)
-        average = average.build_query(session).filter(PlayerGame.time_in_game > 0).first()
-        std_devs = std_devs.build_query(session).filter(PlayerGame.time_in_game > 0).first()
-        average = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, average) if
-                   s is not None}
-        std_devs = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, std_devs) if
-                    s is not None}
-        return {'average': average, 'std_dev': std_devs}
+        average    = self._create_stats_from_query(session, self.get_player_stat_query()      , player_filter, replay_ids)
+        std_dev    = self._create_stats_from_query(session, self.get_player_stat_std_query()  , player_filter, replay_ids)
+        individual = self._create_stats_from_query(session, self.player_stats.individual_query, player_filter, replay_ids)
+
+        total = {}
+        per_game = {}
+        per_minute = {} # TODO get replay duration
+
+        num_replay_ids = len(replay_ids) if replay_ids is not None else 0
+        # full_replay_duration = 
+
+        for stat in self.get_player_stat_list():
+            stat_field_name = stat.get_field_name()
+            if stat.is_percent or stat.is_averaged:
+                total[stat_field_name] = average[stat_field_name]
+            else:
+                total[stat_field_name] = individual[stat_field_name]
+                if replay_ids is not None:
+                    per_game[stat_field_name] = individual[stat_field_name] / num_replay_ids
+
+        return {
+            'stats': {
+                '(Total)'     : total,
+                '(per Game)'  : per_game,
+                '(per Minute)': per_minute
+            }
+        }
 
     @with_session
     def get_group_stats(self, replay_ids, session=None):
@@ -211,4 +233,5 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # create stats that include all the players in the game
         # global_stats = self._create_stats(session, ids=replay_ids)
         # return_obj['globalStats'] = global_stats
+
         return return_obj

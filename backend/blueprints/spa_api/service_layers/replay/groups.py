@@ -23,26 +23,30 @@ class ReplayGroupChartData(ChartData):
         players = list(stats['playerStats'].keys())
         if 'ensembleStats' in stats:
             players.append('ensembleStats')
+        
+        categories = stats['playerStats'][players[0]]['stats'].keys()
+
         all_chart_data = []
         for chart_metadata in player_stats_metadata:
-            chart_data = ReplayGroupChartData(
-                title=chart_metadata.stat_name,
-                chart_data_points=[
-                    ChartDataPoint(
-                        name=stats['playerStats'][player_id]['name'] if player_id in stats[
-                            'playerStats'] else 'Ensemble',
-                        value=stats['playerStats'][player_id]['average'].get(chart_metadata.stat_name, 0)
-                        if player_id in stats['playerStats']
-                        else stats[player_id]['average'].get(chart_metadata.stat_name, 0),
-                    )
-                    for player_id in players
-                ],
-                type_=chart_metadata.type,
-                subcategory=chart_metadata.subcategory
-            )
-            if all(chart_data_point['value'] is None or chart_data_point['value'] == 0 for chart_data_point in
-                   chart_data.chartDataPoints):
-                continue
-            all_chart_data.append(chart_data)
+            for category in categories:
+                chart_data = ReplayGroupChartData(
+                    title=chart_metadata.stat_name + ' ' + category,
+                    chart_data_points=[
+                        ChartDataPoint(
+                            name=stats['playerStats'][player_id]['name'] if player_id in stats[
+                                'playerStats'] else 'Ensemble',
+                            value=stats['playerStats'][player_id]['stats'][category].get(chart_metadata.stat_name, 0)
+                            if player_id in stats['playerStats']
+                            else stats[player_id]['stats'][category].get(chart_metadata.stat_name, 0),
+                        )
+                        for player_id in players
+                    ],
+                    type_=chart_metadata.type,
+                    subcategory=chart_metadata.subcategory
+                )
+                if all(chart_data_point['value'] is None or chart_data_point['value'] == 0 for chart_data_point in
+                    chart_data.chartDataPoints):
+                    continue
+                all_chart_data.append(chart_data)
 
         return all_chart_data
