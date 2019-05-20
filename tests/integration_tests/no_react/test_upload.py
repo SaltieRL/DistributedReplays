@@ -1,3 +1,4 @@
+import json
 import time
 import unittest
 
@@ -10,11 +11,11 @@ from tests.utils.replay_utils import get_complex_replay_list, download_replay_di
 LOCAL_URL = 'http://localhost:8000'
 
 
-class RunningServerTest(unittest.TestCase):
+class Test_BasicServerCommands():
     replay_status = []
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         cls.thread = KillableThread(target=start_server)
         cls.thread.daemon = True
         cls.thread.start()
@@ -26,14 +27,20 @@ class RunningServerTest(unittest.TestCase):
         for replay_url in get_complex_replay_list():
             print('Testing:', replay_url)
             f = download_replay_discord(replay_url)
-            r = requests.post(LOCAL_URL + '/api/upload', files={'replays': f})
+            r = requests.post(LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', f)})
             r.raise_for_status()
-            self.assertEqual(r.status_code, 202)
+            assert(r.status_code == 202)
 
-        print(self.replay_status)
+        for i in range(len(get_complex_replay_list())):
+            print('waiting', i)
+            time.sleep(10)
+
+        r = requests.get(LOCAL_URL + '/api/global/replay_count')
+        result = json.loads(r.content)
+        assert(int(result) == 7)
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         try:
             cls.thread.terminate()
         except:

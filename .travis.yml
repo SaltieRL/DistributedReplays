@@ -69,7 +69,8 @@ jobs:
         - npm start &
         - cd $TRAVIS_BUILD_DIR
         - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
-        - python3 RLBotServer.py &
+          # Wait for all other systems to be setup
+        - sleep 30
         - pytest tests/integration_tests --cov=./
    # - stage: test
    #   name: "react unit tests"
