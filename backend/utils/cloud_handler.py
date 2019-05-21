@@ -80,7 +80,7 @@ def upload_to_bucket(blob_name, path_to_file, bucket_name):
     :return:
     """
     if storage is None:
-        pass
+        return
 
     # Explicitly use service account credentials by specifying the private key
     # file.
