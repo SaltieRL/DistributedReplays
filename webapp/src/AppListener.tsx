@@ -15,11 +15,11 @@ type Props = RouteComponentProps
 class AppListenerComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
-        const cookies = new ReactCookies()
+        // const cookies = new ReactCookies()
 
         this.state = {
             location: "",
-            notificationOpen: cookies.get("rcl_consent_given") === undefined
+            notificationOpen: false //cookies.get("rcl_consent_given") === undefined
         }
         this.onChange = this.onChange.bind(this)
         this.handleClose = this.handleClose.bind(this)
