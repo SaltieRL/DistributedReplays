@@ -59,7 +59,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     </Grid>
 
                     <Grid item xs={12} style={{textAlign: "center"}}>
-                        <Typography>Use this with the AR Replay Viewer mobile app to view this replay in Augmented
+                        <Typography>Use this with the <a
+                            href="https://play.google.com/store/apps/details?id=gg.calculated.arviewer">AR Replay Viewer
+                            mobile app</a> to view this replay in Augmented
                             Reality!</Typography>
                     </Grid>
                 </Grid>
