@@ -15,6 +15,7 @@ from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 
 try:
     import config
@@ -279,6 +280,12 @@ def api_get_replay_heatmaps(id_):
         type_ = 'positioning'
     positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
     return better_jsonify(positions)
+
+
+@bp.route('replay/<id_>/boostmap')
+def api_get_replay_boostmaps(id_):
+    positions = Visualizations.create_from_id(id_)
+    return jsonify(positions)
 
 
 @bp.route('replay/group')

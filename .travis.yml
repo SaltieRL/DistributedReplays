@@ -2,7 +2,6 @@ sudo: required
 dist: xenial
 language: python
 python:
-  - '3.6'
   - '3.7'
 
 services:
@@ -14,41 +13,81 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
 
-# command to install dependencies (docker in this case)
-before_install:
-
 
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
-- ls
-- cd webapp
-- npm install
-- cd $TRAVIS_BUILD_DIR
 
-# command to run tests
-script:
-# run linters
-- chmod 777 .travis/tslint.sh && .travis/tslint.sh
+script: skip
 
-## test python unit tests
-- pytest --cov=./
-- bash <(curl -s https://codecov.io/bash) -c -F server
-## test react
-#- cd webapp
-#- npm test
-#- cd ..
+stages:
+  - name: lint
+  - name: test
+  - name: deploy
+    if: branch = master
 
-# start the server
-- cd $TRAVIS_BUILD_DIR
-- cd webapp
-- npm install
-- npm start &
-- cd $TRAVIS_BUILD_DIR
-- celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
-- python3 RLBotServer.py &
 
-# start up integration tests
-
-after_success:
-- codecov
+jobs:
+  include:
+    - stage: lint
+      name: "style checks"
+      install:
+        - cd webapp
+        - npm install
+        - cd $TRAVIS_BUILD_DIR
+      script:
+        - chmod 777 .travis/tslint.sh && .travis/tslint.sh
+    - stage: test
+      name: "server unit tests 3.6"
+      python:
+        - '3.6'
+      script:
+        - pytest --cov=./
+        - bash <(curl -s https://codecov.io/bash) -c -F server
+      after_success:
+        - codecov
+    - stage: test
+      name: "server unit tests 3.7"
+      python:
+        - '3.7'
+      script:
+        - pytest --cov=./
+        - bash <(curl -s https://codecov.io/bash) -c -F server
+      after_success:
+        - codecov
+    - stage: test
+      name: "integration tests"
+      python:
+        - '3.7'
+      before_install:
+        - cd webapp
+        - npm install
+        - cd $TRAVIS_BUILD_DIR
+      script:
+        - cd webapp
+        - npm install
+        - npm start &
+        - cd $TRAVIS_BUILD_DIR
+        - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
+        - python3 RLBotServer.py &
+   # - stage: test
+   #   name: "react unit tests"
+   #   install:
+   #     - cd webapp
+   #     - npm install
+   #     - npm install codecov -g
+   #     - cd $TRAVIS_BUILD_DIR
+   #   script:
+   #     - cd webapp
+   #     - npm test
+   #   after_success:
+   #     - codecov
+    - stage: deploy
+      name: "Announce success"
+      python: "3.7"
+      install: skip
+      script: skip
+      after_success:
+      - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+      - chmod +x .travis/send.sh
+      - ./.travis/send.sh success $WEBHOOK_URL
