@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Tab, Tabs, Typography, withWidth } from "@material-ui/core"
+import { Card, CardContent, Grid, Tab, Tabs, Tooltip, Typography, withWidth } from "@material-ui/core"
 import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import QRCode from "qrcode.react"
 import * as React from "react"
@@ -26,6 +26,17 @@ type ReplayTab = "playerStats" | "teamStats" | "heatmaps" | "visualizations" | "
 interface State {
     selectedTab: ReplayTab
 }
+
+
+const TabDisabled = (props: any) => {
+    return (
+        <Tooltip title="In beta; Patrons only">
+            <Tab key={props.key} label={props.label} value={props.value}
+                 style={{color: "#ccc", cursor: "not-allowed"}}/>
+        </Tooltip>
+    )
+}
+
 
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
@@ -64,11 +75,13 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     <Tab key="basicStats" label="Player Stats" value="playerStats"/>
                     <Tab key="predictions" label="Predictions" value="predictions"/>
                     <Tab key="heatmaps" label="Heatmaps" value="heatmaps"/>
-                    {this.props.loggedInUser && this.props.loggedInUser.beta &&
-                    <Tab key="visualizations" label="Visualizations" value="visualizations"/>
+                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
+                        <Tab key="visualizations" label="Visualizations" value="visualizations"/> :
+                        <TabDisabled label="Visualizations"/>
                     }
-                    {this.props.loggedInUser && this.props.loggedInUser.beta &&
-                    <Tab key="teamStats" label="Team Stats" value="teamStats"/>
+                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
+                        <Tab key="teamStats" label="Team Stats" value="teamStats"/> :
+                        <TabDisabled label="Team Stats"/>
                     }
                     {this.props.loggedInUser && this.props.loggedInUser.alpha &&
                     [
@@ -96,7 +109,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 {this.state.selectedTab === "qrCode" &&
                 qrcode}
                 {this.state.selectedTab === "visualizations" &&
-                <VisualizationsContent replay={this.props.replay} />}
+                <VisualizationsContent replay={this.props.replay}/>}
             </Card>
         )
     }
