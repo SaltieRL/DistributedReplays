@@ -81,7 +81,7 @@ class ChartStatsWrapper(SharedStatsWrapper):
             )
             if all(chart_data_point['value'] is None or chart_data_point['value'] == 0 for chart_data_point in
                    chart_data.chartDataPoints):
-                print(basic_stats_metadata.stat_name, 'is zero')
+                print(stat_name, 'is zero')
                 continue
             all_chart_data.append(chart_data)
         return all_chart_data
