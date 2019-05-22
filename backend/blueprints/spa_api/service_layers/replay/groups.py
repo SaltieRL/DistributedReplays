@@ -1,3 +1,5 @@
+import logging
+
 from typing import List
 
 from flask import current_app
@@ -6,6 +8,8 @@ from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 from backend.database.wrapper import player_wrapper
 from backend.database.wrapper.chart.player_chart_metadata import player_stats_metadata
 from backend.database.wrapper.stats import player_stat_wrapper
+
+logger = logging.getLogger(__name__)
 
 wrapper = player_stat_wrapper.PlayerStatWrapper(player_wrapper.PlayerWrapper(limit=10))
 
@@ -24,9 +28,23 @@ class ReplayGroupChartData(ChartData):
         if 'ensembleStats' in stats:
             players.append('ensembleStats')
         
-        categories = stats['playerStats'][players[0]]['stats'].keys()
+        categories = list(stats['playerStats'][players[0]]['stats'].keys())
 
         all_chart_data = []
+        
+        player_stats_metadata_list = [chart_metadata.stat_name for chart_metadata in player_stats_metadata]
+        stats_list = list(stats['playerStats'][players[0]]['stats'][categories[0]].keys())logger.warning('intersection')
+        only_player_stats_metadata = list(set(player_stats_metadata_list) - set(stats_list))
+        if not empty(only_player_stats_metadata):
+            logger.warning('only player_stats_metadata')
+            logger.warning(','.join(only_player_stats_metadata))
+            logger.warning('')
+        only_stats = list(set(stats_list) - set(player_stats_metadata_list))
+        if not empty(only_stats):
+            logger.warning('only stats')
+            logger.warning(','.join(only_stats))
+            logger.warning('')
+
         for chart_metadata in player_stats_metadata:
             for category in categories:
                 chart_data = ReplayGroupChartData(
