@@ -159,8 +159,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             'Aggressiveness', 'Chemistry', 'Skill', 'Tendencies', 'Luck']
         groups = [  # ['score', 'goals', 'assists', 'saves', 'turnovers'],  # basic
             ['shots', 'possession_time', 'total_hits', 'shots/hit', 'boost_usage', 'average_speed'],  # agressive
-            ['total boost efficiency', 'assists', 'passes/hit', 'total_passes', 'assists/hit'],  # chemistry
-            ['turnover efficiency', 'useful/hits', 'total_aerials', 'won_turnovers', 'average_hit_distance'],  # skill
+            ['total_boost_efficiency', 'assists', 'passes/hit', 'total_passes', 'assists/hit'],  # chemistry
+            ['turnover_efficiency', 'useful/hits', 'total_aerials', 'won_turnovers', 'average_hit_distance'],  # skill
             ['time_in_attacking_third', 'time_in_attacking_half', 'time_in_defending_half', 'time_in_defending_third',
              'time_behind_ball', 'time_in_front_ball']]  # ,  # tendencies
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
@@ -174,7 +174,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         if replay_ids is not None:
             stats.with_replay_ids(replay_ids)
         stats = stats.build_query(session).filter(PlayerGame.time_in_game > 0).first()
-        stats = {n.get_field_name(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, stats) if s is not None}
+        stats = {n.get_query_key(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, stats) if s is not None}
         return stats
 
     def _create_stats(self, session, player_filter=None, replay_ids=None):
@@ -190,13 +190,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # full_replay_duration = 
 
         for stat in self.get_player_stat_list():
-            stat_field_name = stat.get_field_name()
+            stat_query_key = stat.get_query_key()
             if stat.is_percent or stat.is_averaged:
-                total[stat_field_name] = average[stat_field_name]
+                total[stat_query_key] = average[stat_query_key]
             else:
-                total[stat_field_name] = individual[stat_field_name]
+                total[stat_query_key] = individual[stat_query_key]
                 if replay_ids is not None:
-                    per_game[stat_field_name] = individual[stat_field_name] / num_replay_ids
+                    per_game[stat_query_key] = individual[stat_query_key] / num_replay_ids
 
         return {
             'stats': {
