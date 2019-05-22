@@ -184,10 +184,10 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         total = {}
         per_game = {}
-        per_minute = {} # TODO get replay duration
+        per_minute = {}
 
-        num_replay_ids = len(replay_ids) if replay_ids is not None else 0
-        # full_replay_duration = 
+        num_replay_ids = len(replay_ids) if replay_ids is not None else None
+        full_replay_duration = individual['time_in_game'] / 60.0 if 'time_in_game' in individual else None
 
         for stat in self.get_player_stat_list():
             stat_query_key = stat.get_query_key()
@@ -196,7 +196,9 @@ class PlayerStatWrapper(GlobalStatWrapper):
             else:
                 total[stat_query_key] = individual[stat_query_key]
                 if replay_ids is not None:
-                    per_game[stat_query_key] = individual[stat_query_key] / num_replay_ids
+                    per_game  [stat_query_key] = individual[stat_query_key] / num_replay_ids
+                if full_replay_duration is not None:
+                    per_minute[stat_query_key] = individual[stat_query_key] / full_replay_duration
 
         return {
             'stats': {
