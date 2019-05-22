@@ -72,7 +72,7 @@ class AppListenerComponent extends React.Component<Props, State> {
         const cookies = new ReactCookies()
 
         if (cookies !== undefined) {
-            if (this.state.location !== loc && cookies.get("rcl_consent_given") !== undefined) {
+            if (this.state.location !== loc && window.location.href.indexOf("https://calculated.gg") !== -1) {
                 ReactGA.initialize([{
                         trackingId: GOOGLE_ANALYTICS_ID,
                         debug: true,
