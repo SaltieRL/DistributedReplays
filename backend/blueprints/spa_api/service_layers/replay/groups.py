@@ -33,7 +33,9 @@ class ReplayGroupChartData(ChartData):
         all_chart_data = []
         
         player_stats_metadata_list = [chart_metadata.stat_name for chart_metadata in player_stats_metadata]
-        stats_list = list(stats['playerStats'][players[0]]['stats'][categories[0]].keys())
+        stats_list = []
+        for category in stats['playerStats'][players[0]]['stats'].values():
+            stats_list.extend(category.keys())
         only_player_stats_metadata = list(set(player_stats_metadata_list) - set(stats_list))
         if only_player_stats_metadata:
             logger.warning('only player_stats_metadata')

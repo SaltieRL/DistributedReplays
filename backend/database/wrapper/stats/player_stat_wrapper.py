@@ -167,7 +167,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
     
-    def _create_stats_from_query(self, session, query, player_filter=None, replay_ids=None):
+    def _create_group_stats_from_query(self, session, query, player_filter=None, replay_ids=None):
         stats = QueryFilterBuilder().with_stat_query(query)
         if player_filter is not None:
             stats.with_players(player_filter)
@@ -177,34 +177,39 @@ class PlayerStatWrapper(GlobalStatWrapper):
         stats = {n.get_query_key(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, stats) if s is not None}
         return stats
 
-    def _create_stats(self, session, player_filter=None, replay_ids=None):
-        average    = self._create_stats_from_query(session, self.get_player_stat_query()      , player_filter, replay_ids)
-        std_dev    = self._create_stats_from_query(session, self.get_player_stat_std_query()  , player_filter, replay_ids)
-        individual = self._create_stats_from_query(session, self.player_stats.individual_query, player_filter, replay_ids)
+    def _create_group_stats(self, session, player_filter=None, replay_ids=None):
+        average    = self._create_group_stats_from_query(session, self.get_player_stat_query()      , player_filter, replay_ids)
+        individual = self._create_group_stats_from_query(session, self.player_stats.individual_query, player_filter, replay_ids)
 
-        total = {}
-        per_game = {}
-        per_minute = {}
+        total         = {}
+        per_game      = {}
+        per_norm_game = {}
+        per_minute    = {}
 
-        num_replay_ids = len(replay_ids) if replay_ids is not None else None
-        full_replay_duration = individual['time_in_game'] / 60.0 if 'time_in_game' in individual else None
+        factor_per_game      = len(replay_ids)                   if replay_ids        is not None else None
+        factor_per_minute    = individual['time_in_game'] / 60.0 if 'time_in_game' in individual  else None
+        factor_per_norm_game = factor_per_minute / 5             if factor_per_minute is not None else None
 
         for stat in self.get_player_stat_list():
             stat_query_key = stat.get_query_key()
-            if stat.is_percent or stat.is_averaged:
-                total[stat_query_key] = average[stat_query_key]
-            else:
-                total[stat_query_key] = individual[stat_query_key]
-                if replay_ids is not None:
-                    per_game  [stat_query_key] = individual[stat_query_key] / num_replay_ids
-                if full_replay_duration is not None:
-                    per_minute[stat_query_key] = individual[stat_query_key] / full_replay_duration
+            if stat_query_key in self.replay_group_stats.grouped_stat_total:
+                if stat.is_percent or stat.is_averaged:
+                    total[stat_query_key] = average[stat_query_key]
+                else:
+                    total[stat_query_key] = individual[stat_query_key]
+            elif factor_per_game is not None and stat_query_key in self.replay_group_stats.grouped_stat_per_game:
+                per_game[stat_query_key] = individual[stat_query_key] / factor_per_game
+            elif factor_per_minute is not None and stat_query_key in self.replay_group_stats.grouped_stat_per_minute:
+                per_minute[stat_query_key] = individual[stat_query_key] / factor_per_minute
+            elif factor_per_norm_game is not None:
+                per_norm_game[stat_query_key] = individual[stat_query_key] / factor_per_norm_game
 
         return {
             'stats': {
-                '(Total)'     : total,
-                '(per Game)'  : per_game,
-                '(per Minute)': per_minute
+                '(Total)'        : total,
+                '(per Game)'     : per_game,
+                '(per Norm Game)': per_norm_game,
+                '(per Minute)'   : per_minute
             }
         }
 
@@ -221,19 +226,19 @@ class PlayerStatWrapper(GlobalStatWrapper):
         for player_tuple in player_tuples:
             player, name, count = player_tuple
             if count > 1:
-                player_stats = self._create_stats(session, player_filter=player, replay_ids=replay_ids)
+                player_stats = self._create_group_stats(session, player_filter=player, replay_ids=replay_ids)
                 player_stats['name'] = name
                 return_obj['playerStats'][player] = player_stats
             else:
                 ensemble.append(player)
         if len(ensemble) > 0:
             # create stats that only includes the ensemble
-            ensemble_stats = self._create_stats(session, player_filter=ensemble, replay_ids=replay_ids)
+            ensemble_stats = self._create_group_stats(session, player_filter=ensemble, replay_ids=replay_ids)
             return_obj['ensembleStats'] = ensemble_stats
         # STATS
         # Global
         # create stats that include all the players in the game
-        # global_stats = self._create_stats(session, ids=replay_ids)
+        # global_stats = self._create_group_stats(session, ids=replay_ids)
         # return_obj['globalStats'] = global_stats
 
         return return_obj
