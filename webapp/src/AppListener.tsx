@@ -19,7 +19,7 @@ class AppListenerComponent extends React.Component<Props, State> {
 
         this.state = {
             location: "",
-            notificationOpen: false //cookies.get("rcl_consent_given") === undefined
+            notificationOpen: false // cookies.get("rcl_consent_given") === undefined
         }
         this.onChange = this.onChange.bind(this)
         this.handleClose = this.handleClose.bind(this)

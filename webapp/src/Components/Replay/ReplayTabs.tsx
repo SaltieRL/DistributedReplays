@@ -27,7 +27,6 @@ interface State {
     selectedTab: ReplayTab
 }
 
-
 const TabDisabled = (props: any) => {
     return (
         <Tooltip title="In beta; Patrons only">
@@ -36,7 +35,6 @@ const TabDisabled = (props: any) => {
         </Tooltip>
     )
 }
-
 
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
