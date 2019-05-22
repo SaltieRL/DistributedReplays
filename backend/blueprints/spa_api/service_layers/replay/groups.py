@@ -33,14 +33,14 @@ class ReplayGroupChartData(ChartData):
         all_chart_data = []
         
         player_stats_metadata_list = [chart_metadata.stat_name for chart_metadata in player_stats_metadata]
-        stats_list = list(stats['playerStats'][players[0]]['stats'][categories[0]].keys())logger.warning('intersection')
+        stats_list = list(stats['playerStats'][players[0]]['stats'][categories[0]].keys())
         only_player_stats_metadata = list(set(player_stats_metadata_list) - set(stats_list))
-        if not empty(only_player_stats_metadata):
+        if only_player_stats_metadata:
             logger.warning('only player_stats_metadata')
             logger.warning(','.join(only_player_stats_metadata))
             logger.warning('')
         only_stats = list(set(stats_list) - set(player_stats_metadata_list))
-        if not empty(only_stats):
+        if only_stats:
             logger.warning('only stats')
             logger.warning(','.join(only_stats))
             logger.warning('')
