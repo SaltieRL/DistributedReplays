@@ -23,44 +23,51 @@ class ReplayGroupChartData(ChartData):
     @staticmethod
     def create_from_ids(ids: List[str]) -> List['ReplayGroupChartData']:
         stats = wrapper.get_group_stats(ids)
+        player_stats = stats['playerStats']
 
-        players = list(stats['playerStats'].keys())
+        players = list(player_stats.keys())
         if 'ensembleStats' in stats:
             players.append('ensembleStats')
         
-        categories = list(stats['playerStats'][players[0]]['stats'].keys())
+        categories = list(player_stats[players[0]]['stats'].keys())
 
         all_chart_data = []
         
-        player_stats_metadata_list = [chart_metadata.stat_name for chart_metadata in player_stats_metadata]
-        stats_list = []
-        for category in stats['playerStats'][players[0]]['stats'].values():
-            stats_list.extend(category.keys())
-        only_player_stats_metadata = list(set(player_stats_metadata_list) - set(stats_list))
-        if only_player_stats_metadata:
-            logger.warning('only player_stats_metadata')
-            logger.warning(','.join(only_player_stats_metadata))
-            logger.warning('')
-        only_stats = list(set(stats_list) - set(player_stats_metadata_list))
-        if only_stats:
-            logger.warning('only stats')
-            logger.warning(','.join(only_stats))
-            logger.warning('')
+        # player_stats_metadata_list = [chart_metadata.stat_name for chart_metadata in player_stats_metadata]
+        # stats_list = []
+        # for category in player_stats[players[0]]['stats'].values():
+        #     stats_list.extend(category.keys())
+        # only_player_stats_metadata = list(set(player_stats_metadata_list) - set(stats_list))
+        # if only_player_stats_metadata:
+        #     logger.warning('only player_stats_metadata')
+        #     logger.warning(','.join(only_player_stats_metadata))
+        #     logger.warning('')
+        # only_stats = list(set(stats_list) - set(player_stats_metadata_list))
+        # if only_stats:
+        #     logger.warning('only stats')
+        #     logger.warning(','.join(only_stats))
+        #     logger.warning('')
 
         for chart_metadata in player_stats_metadata:
             for category in categories:
+                chart_data_points = []
+                for player_id in players:
+                    name = player_stats[player_id]['name'] if player_id in player_stats else 'Ensemble'
+                    if player_id in player_stats:
+                        value = player_stats[player_id]['stats'][category].get(chart_metadata.stat_name, 0)
+                    else:
+                        value = stats[player_id]['stats'][category].get(chart_metadata.stat_name, 0)
+                    is_orange = player_stats[player_id]['is_orange'] if 'is_orange' in player_stats[player_id] else None
+                    
+                    chart_data_points.append(ChartDataPoint(
+                        name=name,
+                        value=value,
+                        #is_orange=is_orange
+                    ))
+                
                 chart_data = ReplayGroupChartData(
                     title=chart_metadata.stat_name + ' ' + category,
-                    chart_data_points=[
-                        ChartDataPoint(
-                            name=stats['playerStats'][player_id]['name'] if player_id in stats[
-                                'playerStats'] else 'Ensemble',
-                            value=stats['playerStats'][player_id]['stats'][category].get(chart_metadata.stat_name, 0)
-                            if player_id in stats['playerStats']
-                            else stats[player_id]['stats'][category].get(chart_metadata.stat_name, 0),
-                        )
-                        for player_id in players
-                    ],
+                    chart_data_points=chart_data_points,
                     type_=chart_metadata.type,
                     subcategory=chart_metadata.subcategory
                 )
