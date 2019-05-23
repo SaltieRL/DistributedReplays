@@ -24,6 +24,7 @@ from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.middleware import DBTask
+from backend.utils.cloud_handler import upload_df, upload_proto, upload_replay
 
 try:
     import config
@@ -139,9 +140,22 @@ def parse_replay_task(self, fn, preserve_upload_date=False, custom_file_location
     replay_id = g.game_metadata.match_guid
     if replay_id == '':
         replay_id = g.game_metadata.id
-    shutil.move(fn, os.path.join(os.path.dirname(fn), replay_id + '.replay'))
-    shutil.move(pickled + '.pts', os.path.join(os.path.dirname(pickled), replay_id + '.replay.pts'))
-    shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip'))
+
+    replay_path = os.path.join(os.path.dirname(fn), replay_id + '.replay')
+    proto_path = os.path.join(os.path.dirname(pickled), replay_id + '.replay.pts')
+    pandas_path = os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip')
+    shutil.move(fn, replay_path)
+    shutil.move(pickled + '.pts', proto_path)
+    shutil.move(pickled + '.gzip', pandas_path)
+
+    upload_replay(replay_path)
+    upload_proto(proto_path)
+    upload_df(pandas_path)
+
+    os.remove(replay_path)
+    os.remove(proto_path)
+    os.remove(pandas_path)
+
     return replay_id
 
 
