@@ -7,7 +7,7 @@ from typing import Tuple, List
 
 from sqlalchemy import func, cast
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, ReplayNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame, Game
 from backend.database.wrapper.player_wrapper import PlayerWrapper
@@ -220,7 +220,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         player_tuples: List[Tuple[str, str, int]] = session.query(PlayerGame.player, func.min(PlayerGame.name),
                                                                   func.count(PlayerGame.player)).filter(
             PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.player).all()
-        return_obj['playerStats'] = {}
+        return_obj['playerStats'] = []
         # ensemble are the players that do not have enough replays to make an individual analysis for them
         ensemble = []
         for player_tuple in player_tuples:
@@ -228,7 +228,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             if count > 1:
                 player_stats = self._create_group_stats(session, player_filter=player, replay_ids=replay_ids)
                 player_stats['name'] = name
-                return_obj['playerStats'][player] = player_stats
+                player_stats['player'] = player
+                return_obj['playerStats'].append(player_stats)
             else:
                 ensemble.append(player)
         if len(ensemble) > 0:
@@ -240,5 +241,39 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # create stats that include all the players in the game
         # global_stats = self._create_group_stats(session, ids=replay_ids)
         # return_obj['globalStats'] = global_stats
+
+        num_replays = len(replay_ids)
+        if num_replays > 1 and all([player_tuple[2] == num_replays for player_tuple in player_tuples]):
+            assert 'ensembleStats' not in return_obj
+            # all players have played every game
+            is_orange = {player_tuple[0]: [] for player_tuple in player_tuples}
+
+            for replay_id in replay_ids:
+                game: Game = session.query(Game).filter(Game.hash == replay_id).first()
+                if game is None:
+                    raise ReplayNotFound()
+
+                playergames: List = session.query(
+                    func.max(PlayerGame.player)        ,
+                    func.bool_and(PlayerGame.is_orange)  ).filter(
+                    PlayerGame.game == replay_id).group_by(PlayerGame.player).all()
+
+                for playergame in playergames:
+                    assert len(playergame) == 2
+                    player, is_orange_game = playergame
+                    assert player in is_orange
+                    is_orange[player].append(is_orange_game)
+            
+            # if the player is always in the same team
+            if all([len(set(player_is_orange)) == 1 for player_is_orange in is_orange.values()]):
+                for i in range(len(return_obj['playerStats'])):
+                    player = return_obj['playerStats'][i]['player']
+                    return_obj['playerStats'][i]['is_orange'] = is_orange[player][0]
+                
+                return_obj['playerStats'] = sorted(
+                    sorted(
+                        return_obj['playerStats'], key=lambda x: x['name'].lower()
+                    ), key=lambda x: x['is_orange']
+                )
 
         return return_obj

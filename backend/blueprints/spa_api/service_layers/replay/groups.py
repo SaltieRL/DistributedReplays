@@ -4,9 +4,10 @@ from typing import List
 
 from flask import current_app
 
-from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 from backend.database.wrapper import player_wrapper
+from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 from backend.database.wrapper.chart.player_chart_metadata import player_stats_metadata
+from backend.database.wrapper.chart.stat_point import StatDataPoint
 from backend.database.wrapper.stats import player_stat_wrapper
 
 logger = logging.getLogger(__name__)
@@ -24,12 +25,11 @@ class ReplayGroupChartData(ChartData):
     def create_from_ids(ids: List[str]) -> List['ReplayGroupChartData']:
         stats = wrapper.get_group_stats(ids)
         player_stats = stats['playerStats']
-
-        players = list(player_stats.keys())
+        player_names = [player['name'] for player in player_stats]
         if 'ensembleStats' in stats:
-            players.append('ensembleStats')
+            player_stats.append(stats['ensembleStats'])
         
-        categories = list(player_stats[players[0]]['stats'].keys())
+        categories = list(player_stats[0]['stats'].keys())
 
         all_chart_data = []
         
@@ -51,19 +51,22 @@ class ReplayGroupChartData(ChartData):
         for chart_metadata in player_stats_metadata:
             for category in categories:
                 chart_data_points = []
-                for player_id in players:
-                    name = player_stats[player_id]['name'] if player_id in player_stats else 'Ensemble'
-                    if player_id in player_stats:
-                        value = player_stats[player_id]['stats'][category].get(chart_metadata.stat_name, 0)
+                for player in player_stats:
+                    name = player['name'] if 'name' in player and player['name'] in player_names else 'Ensemble'
+                    value = player['stats'][category].get(chart_metadata.stat_name, 0)
+                    is_orange = player['is_orange'] if 'is_orange' in player else None
+
+                    if is_orange is not None:
+                        chart_data_points.append(StatDataPoint(
+                            name=name,
+                            value=value,
+                            is_orange=is_orange
+                        ))
                     else:
-                        value = stats[player_id]['stats'][category].get(chart_metadata.stat_name, 0)
-                    is_orange = player_stats[player_id]['is_orange'] if 'is_orange' in player_stats[player_id] else None
-                    
-                    chart_data_points.append(ChartDataPoint(
-                        name=name,
-                        value=value,
-                        #is_orange=is_orange
-                    ))
+                        chart_data_points.append(ChartDataPoint(
+                            name=name,
+                            value=value
+                        ))
                 
                 chart_data = ReplayGroupChartData(
                     title=chart_metadata.stat_name + ' ' + category,
