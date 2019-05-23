@@ -1,8 +1,18 @@
+import { Grid } from "@material-ui/core"
 import React, { Component } from "react"
-import { FPSClock, GameManager, ReplayViewer } from "replay-viewer"
+import {
+    FieldCameraControls,
+    FPSClock,
+    GameManager,
+    PlayControls,
+    PlayerCameraControls,
+    ReplayViewer,
+    Slider
+} from "replay-viewer"
 
 import { Replay } from "../../../Models"
-import { getReplayViewerData } from "../../../Requests/Replay"
+import { getReplayMetadata, getReplayViewerData } from "../../../Requests/Replay"
+import { LoadableWrapper } from "../../Shared/LoadableWrapper"
 
 interface Props {
     replayId: Replay["id"]
@@ -18,26 +28,50 @@ export class Viewer extends Component<Props, State> {
         this.state = {}
     }
 
-    public componentDidMount() {
-        this.getReplayData()
-    }
-
     public render() {
         const { gameManager } = this.state
-        if (!gameManager) {
-            return <div>Loading!</div>
-        }
-        return <ReplayViewer gameManager={gameManager} />
+
+        return (
+            <LoadableWrapper load={this.getReplayData}>
+                <Grid
+                    container
+                    direction="column"
+                    justify="center"
+                    spacing={24}
+                    style={{ padding: 32 }}
+                >
+                    <Grid item style={{ minHeight: 0 }}>
+                        <ReplayViewer gameManager={gameManager!} />
+                    </Grid>
+                    <Grid item>
+                        <Grid container justify="space-between" alignItems="center" spacing={24}>
+                            <Grid item>
+                                <PlayControls />
+                            </Grid>
+                            <Grid item>
+                                <FieldCameraControls />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <PlayerCameraControls />
+                    </Grid>
+                    <Grid item>
+                        <Slider />
+                    </Grid>
+                </Grid>
+            </LoadableWrapper>
+        )
     }
 
-    private readonly getReplayData = () => {
+    private readonly getReplayData = async() => {
         const { replayId } = this.props
-        Promise.all([getReplayViewerData(replayId)])
+        return Promise.all([getReplayViewerData(replayId), getReplayMetadata(replayId)])
             .then(([replayData, replayMetadata]) => {
                 return GameManager.builder({
                     clock: FPSClock.convertReplayToClock(replayData),
                     replayData,
-                    replayMetadata: {} as any
+                    replayMetadata
                 })
             })
             .then((gameManager) => this.setState({ gameManager }))
