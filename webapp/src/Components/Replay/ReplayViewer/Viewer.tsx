@@ -64,7 +64,7 @@ export class Viewer extends Component<Props, State> {
         )
     }
 
-    private readonly getReplayData = async () => {
+    private readonly getReplayData = async() => {
         const { replayId } = this.props
         return Promise.all([getReplayViewerData(replayId), getReplayMetadata(replayId)])
             .then(([replayData, replayMetadata]) => {
