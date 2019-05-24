@@ -40,7 +40,7 @@ export class Viewer extends Component<Props, State> {
                     spacing={24}
                     style={{ padding: 32 }}
                 >
-                    <Grid item style={{ minHeight: 0 }}>
+                    <Grid item style={{ minHeight: 0, width: "100%" }}>
                         <ReplayViewer gameManager={gameManager!} />
                     </Grid>
                     <Grid item>
@@ -64,7 +64,7 @@ export class Viewer extends Component<Props, State> {
         )
     }
 
-    private readonly getReplayData = async() => {
+    private readonly getReplayData = async () => {
         const { replayId } = this.props
         return Promise.all([getReplayViewerData(replayId), getReplayMetadata(replayId)])
             .then(([replayData, replayMetadata]) => {
