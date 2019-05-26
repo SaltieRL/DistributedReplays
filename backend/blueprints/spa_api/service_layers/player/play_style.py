@@ -2,8 +2,9 @@ from typing import List, Tuple
 
 from flask import current_app
 from sqlalchemy import func, desc
+from sqlalchemy.orm.exc import NoResultFound
 
-from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
+from backend.blueprints.spa_api.errors.errors import UserHasNoReplays, CalculatedError
 from backend.blueprints.spa_api.service_layers.stat import DataPoint, PlayerDataPoint
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame
@@ -33,10 +34,13 @@ class PlayStyleResponse:
             raise UserHasNoReplays()
         if rank is None:
             rank = get_rank(id_)
-        averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_,
-                                                                redis=current_app.config['r'], raw=raw,
-                                                                rank=rank, replay_ids=replay_ids,
-                                                                playlist=playlist, win=win)
+        try:
+            averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_,
+                                                                    redis=current_app.config['r'], raw=raw,
+                                                                    rank=rank, replay_ids=replay_ids,
+                                                                    playlist=playlist, win=win)
+        except NoResultFound:
+            raise CalculatedError(404, f"User has no replays for the selected playlist: {playlist}")
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
 
         play_style_chart_datas: List[PlayStyleChartData] = []

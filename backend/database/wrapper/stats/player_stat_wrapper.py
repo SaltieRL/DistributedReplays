@@ -48,9 +48,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
             PlayerGame.game != '').group_by(PlayerGame.player)
         if win is not None:
             query = query.filter(PlayerGame.win == win)
-        if query.count() < 1:
-            raise CalculatedError(404, 'User does not have enough replays.')
-        stats = list(query.first())
+        stats = list(query.one())
         stats = [0 if s is None else s for s in stats]
         if raw:
             return [self.float_maybe(s) for s in stats]
