@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Tab, Tabs, Typography, withWidth } from "@material-ui/core"
+import { Card, CardContent, Grid, Tab, Tabs, Tooltip, Typography, withWidth } from "@material-ui/core"
 import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import QRCode from "qrcode.react"
 import * as React from "react"
@@ -33,6 +33,15 @@ interface State {
     selectedTab: ReplayTab
 }
 
+const TabDisabled = (props: any) => {
+    return (
+        <Tooltip title="In beta; Patrons only">
+            <Tab key={props.key} label={props.label} value={props.value}
+                 style={{color: "#ccc", cursor: "not-allowed"}}/>
+        </Tooltip>
+    )
+}
+
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
@@ -53,10 +62,12 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                         <Typography>{url}</Typography>
                     </Grid>
 
-                    <Grid item xs={12} style={{ textAlign: "center" }}>
+                    <Grid item xs={12} style={{textAlign: "center"}}>
                         <Typography>
-                            Use this with the AR Replay Viewer mobile app to view this replay in
-                            Augmented Reality!
+                            Use this with the <a
+                            href="https://play.google.com/store/apps/details?id=gg.calculated.arviewer">AR Replay Viewer
+                            mobile app</a> to view this replay in Augmented
+                            Reality!
                         </Typography>
                     </Grid>
                 </Grid>
@@ -70,19 +81,22 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     centered={!isWidthSm}
                     scrollable={isWidthSm}
                 >
-                    <Tab key="basicStats" label="Player Stats" value="playerStats" />
-                    <Tab key="predictions" label="Predictions" value="predictions" />
-                    <Tab key="heatmaps" label="Heatmaps" value="heatmaps" />
-                    {this.props.loggedInUser && this.props.loggedInUser.beta && (
-                        <Tab key="visualizations" label="Visualizations" value="visualizations" />
-                    )}
-                    {this.props.loggedInUser && this.props.loggedInUser.beta && (
-                        <Tab key="teamStats" label="Team Stats" value="teamStats" />
-                    )}
-                    {this.props.loggedInUser &&
-                        this.props.loggedInUser.alpha && [
-                            <Tab key="replayViewer" label="Replay Viewer" value="replayViewer" />
-                        ]}
+                    <Tab key="basicStats" label="Player Stats" value="playerStats"/>
+                    <Tab key="predictions" label="Predictions" value="predictions"/>
+                    <Tab key="heatmaps" label="Heatmaps" value="heatmaps"/>
+                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
+                        <Tab key="visualizations" label="Visualizations" value="visualizations"/> :
+                        <TabDisabled label="Visualizations"/>
+                    }
+                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
+                        <Tab key="teamStats" label="Team Stats" value="teamStats"/> :
+                        <TabDisabled label="Team Stats"/>
+                    }
+                    {this.props.loggedInUser && this.props.loggedInUser.alpha &&
+                    [
+                        <Tab key="replayViewer" label="Replay Viewer" value="replayViewer"/>
+                    ]
+                    }
 
                     <Tab key="qrCode" label="QR Code" value="qrCode" />
                 </Tabs>

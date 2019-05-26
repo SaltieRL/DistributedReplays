@@ -12,6 +12,7 @@ from sqlalchemy.sql import operators
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
+from backend.utils.cloud_handler import download_proto
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
@@ -160,19 +161,23 @@ def api_v1_get_stats(session=None):
 def api_v1_get_replay_info(id_):
     pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
     replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-    try:
-        with open(pickle_path, 'rb') as f:
-            g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-        response = Response(
-            response=convert_proto_to_json(g),
-            status=200,
-            mimetype='application/json'
-        )
+    if not os.path.isfile(pickle_path):
+        g = download_proto(id_)
+    else:
+        try:
+            with open(pickle_path, 'rb') as f:
+                g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
+        except Exception as e:
+            return jsonify({'error': 'Error opening game: ' + str(e)})
 
-        return response
+    response = Response(
+        response=convert_proto_to_json(g),
+        status=200,
+        mimetype='application/json'
+    )
 
-    except Exception as e:
-        return jsonify({'error': 'Error opening game: ' + str(e)})
+    return response
+
     game = session.query(Game).filter(Game.hash == id_).first()
     data = {'datetime': g.datetime, 'map': g.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': g.name,
             'hash': game.hash, 'version': g.replay_version, 'id': g.id, 'frames': len(g.frames)}
