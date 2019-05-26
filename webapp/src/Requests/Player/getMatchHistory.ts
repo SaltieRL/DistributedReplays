@@ -32,7 +32,7 @@ export const getMatchHistory = (id: string, page: number, limit: number): Promis
                                 pitch: -3,
                                 stiffness: 0.449999988079071,
                                 swivelSpeed: 4,
-                                transitionSpeed: 1
+                                transitionSpeed: 1.0
                             },
                             loadout: {
                                 car: "Octane"
@@ -54,7 +54,7 @@ export const getMatchHistory = (id: string, page: number, limit: number): Promis
                                 pitch: -3,
                                 stiffness: 0.449999988079071,
                                 swivelSpeed: 5,
-                                transitionSpeed: 1
+                                transitionSpeed: 1.0
                             },
                             loadout: {
                                 car: "Octane"
