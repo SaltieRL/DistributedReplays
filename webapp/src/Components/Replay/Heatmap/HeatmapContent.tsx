@@ -1,58 +1,35 @@
-import { createStyles, Grid, Theme, Typography, WithStyles, withStyles } from "@material-ui/core"
+import { createStyles, Grid, Typography, WithStyles, withStyles } from "@material-ui/core"
 import * as React from "react"
 import { Replay } from "../../../Models"
 import { ReactHeatmap } from "./Heatmap"
 
-interface MyProps {
+const styles = createStyles({
+    heatmapTitle: {
+        padding: 10,
+        marginBottom: 10
+    }
+})
+
+interface OwnProps {
     replay: Replay
     heatmapData: any
 }
 
-type Props = MyProps
+type Props = OwnProps
     & WithStyles<typeof styles>
 
-interface State {
+const WIDTH = 250
+const HEIGHT = 350
 
-}
-
-const WIDTH = "250px"
-const HEIGHT = "350px"
-
-class HeatmapContentComponent extends React.PureComponent<Props, State> {
-    constructor(props: Props) {
-        super(props)
-
-        this.createHeatmap = this.createHeatmap.bind(this)
-    }
-
+class HeatmapContentComponent extends React.PureComponent<Props> {
     public render() {
         const {replay, classes} = this.props
         const blueTeam =
             replay.players.filter((player) => !player.isOrange)
         const orangeTeam =
             replay.players.filter((player) => player.isOrange)
-        blueTeam.sort((a, b) => {
-            const nameA = a.name.toLowerCase()
-            const nameB = b.name.toLowerCase()
-            if (nameA < nameB) {
-                return -1
-            }
-            if (nameA > nameB) {
-                return 1
-            }
-            return 0
-        })
-        orangeTeam.sort((a, b) => {
-            const nameA = a.name.toLowerCase()
-            const nameB = b.name.toLowerCase()
-            if (nameA < nameB) {
-                return -1
-            }
-            if (nameA > nameB) {
-                return 1
-            }
-            return 0
-        })
+        blueTeam.sort(this.nameCompareFn)
+        orangeTeam.sort(this.nameCompareFn)
         return (
             <Grid container justify={"center"}>
                 <Grid item xs={6} style={{textAlign: "center", borderRight: "#ccc solid 2px"}}>
@@ -85,7 +62,6 @@ class HeatmapContentComponent extends React.PureComponent<Props, State> {
                                 <ReactHeatmap
                                     data={{
                                         max: this.props.heatmapData.maxs.ball,
-                                        // max: 1,
                                         data: this.props.heatmapData.data.ball
                                     }}
                                     style={{width: WIDTH, height: HEIGHT}}
@@ -100,38 +76,45 @@ class HeatmapContentComponent extends React.PureComponent<Props, State> {
         )
     }
 
-    private createHeatmap(player: any) {
-        return (
-            <Grid item key={player.name} xs={12} md={6} lg={4}
-                  style={{height: "375px", minWidth: WIDTH, textAlign: "center"}}>
-                <Typography>{player.name}</Typography>
-                <div style={{
+    private readonly nameCompareFn = (a: ReplayPlayer, b: ReplayPlayer) => {
+        const nameA = a.name.toLowerCase()
+        const nameB = b.name.toLowerCase()
+        if (nameA < nameB) {
+            return -1
+        }
+        if (nameA > nameB) {
+            return 1
+        }
+        return 0
+    }
+
+    private readonly createHeatmap = (player: ReplayPlayer) => (
+        <Grid item key={player.name} xs={12} md={6} lg={4}
+              style={{height: 375, minWidth: WIDTH, textAlign: "center"}}>
+            <Typography>{player.name}</Typography>
+            <div
+                style={{
                     background: `url(/fieldrblack.jpg) no-repeat center`,
                     backgroundSize: "250px 350px",
                     width: WIDTH,
                     height: HEIGHT,
                     margin: "auto"
-                }}>
-                    <ReactHeatmap data={{
+                }}
+            >
+                <ReactHeatmap
+                    data={{
                         max: this.props.heatmapData.maxs[player.name],
                         // max: 1,
                         data: this.props.heatmapData.data[player.name]
                     }}
-                                  style={{width: WIDTH, height: HEIGHT}}
-                                  config={{
-                                      radius: 18
-                                  }}/>
-                </div>
-            </Grid>
-        )
-    }
+                    style={{width: WIDTH, height: HEIGHT}}
+                    config={{
+                        radius: 18
+                    }}
+                />
+            </div>
+        </Grid>
+    )
 }
-
-const styles = (theme: Theme) => createStyles({
-    heatmapTitle: {
-        padding: "10px",
-        marginBottom: "10px"
-    }
-})
 
 export const HeatmapContent = withStyles(styles)(HeatmapContentComponent)

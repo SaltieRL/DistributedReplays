@@ -3,6 +3,37 @@ import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import * as React from "react"
 import Dropzone, { DropFilesEventHandler } from "react-dropzone"
 
+const styles = createStyles({
+    active: {
+        borderStyle: "solid",
+        borderColor: "#6c6",
+        backgroundColor: "#ccc"
+    },
+    default: {
+        "width": 550,
+        "height": 430,
+        "maxWidth": "80vw",
+        "maxHeight": "90vh",
+        "borderWidth": 2,
+        "borderColor": "#666",
+        "borderStyle": "dashed",
+        "borderRadius": 5,
+        "cursor": "pointer",
+        "backgroundColor": "#eee",
+        "display": "flex",
+        "alignItems": "center",
+        "&:hover": {
+            backgroundColor: "#ddd"
+        }
+    },
+    dropzoneContent: {
+        position: "absolute",
+        width: "100%",
+        textAlign: "center",
+        padding: 20
+    }
+})
+
 interface OwnProps {
     files: File[]
     onDrop: DropFilesEventHandler
@@ -60,36 +91,5 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    active: {
-        borderStyle: "solid",
-        borderColor: "#6c6",
-        backgroundColor: "#ccc"
-    },
-    default: {
-        "width": 550,
-        "height": 430,
-        "maxWidth": "80vw",
-        "maxHeight": "90vh",
-        "borderWidth": 2,
-        "borderColor": "#666",
-        "borderStyle": "dashed",
-        "borderRadius": 5,
-        "cursor": "pointer",
-        "backgroundColor": "#eee",
-        "display": "flex",
-        "alignItems": "center",
-        "&:hover": {
-            backgroundColor: "#ddd"
-        }
-    },
-    dropzoneContent: {
-        position: "absolute",
-        width: "100%",
-        textAlign: "center",
-        padding: 20
-    }
-})
 
 export const UploadDropzone = withStyles(styles)(UploadDropzoneComponent)

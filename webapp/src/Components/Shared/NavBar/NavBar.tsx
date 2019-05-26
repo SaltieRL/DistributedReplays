@@ -25,6 +25,32 @@ import { Search } from "../Search"
 import { UploadDialogWrapper } from "../Upload/UploadDialogWrapper"
 import { AccountMenu } from "./AccountMenu"
 
+const styles = createStyles({
+    grow: {
+        flexGrow: 1
+    },
+    motto: {
+        margin: "auto 0 auto 0"
+    },
+    search: {
+        flexGrow: 1,
+        minWidth: 200,
+        maxWidth: 400
+    },
+    accountMenuGridItem: {
+        margin: "auto",
+        marginLeft: 10
+    }
+})
+
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(LoggedInUserActions.setLoggedInUserAction(loggedInUser))
+})
+
 type Props = ReturnType<typeof mapStateToProps>
     & ReturnType<typeof mapDispatchToProps>
     & WithWidth
@@ -85,32 +111,6 @@ class NavBarComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    grow: {
-        flexGrow: 1
-    },
-    motto: {
-        margin: "auto 0 auto 0"
-    },
-    search: {
-        flexGrow: 1,
-        minWidth: 200,
-        maxWidth: 400
-    },
-    accountMenuGridItem: {
-        margin: "auto",
-        marginLeft: "10px"
-    }
-})
-
-export const mapStateToProps = (state: StoreState) => ({
-    loggedInUser: state.loggedInUser
-})
-
-export const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(LoggedInUserActions.setLoggedInUserAction(loggedInUser))
-})
 
 export const NavBar = withWidth()(withStyles(styles)(
     connect(mapStateToProps, mapDispatchToProps)(NavBarComponent)

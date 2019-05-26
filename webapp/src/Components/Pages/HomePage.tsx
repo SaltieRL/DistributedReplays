@@ -29,6 +29,36 @@ import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
 
+const styles = createStyles({
+    root: {
+        margin: "auto",
+        width: "100%",
+        overflowX: "hidden"
+    },
+    child: {
+        margin: "auto",
+        padding: "20px",
+        height: "100%",
+        width: "100%"
+    },
+    backgroundContainer: {
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        backgroundSize: "cover",
+        backgroundAttachment: "fixed",
+        backgroundImage: 'url("/splash.png")'
+    }
+})
+
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(LoggedInUserActions.setLoggedInUserAction(loggedInUser))
+})
+
 type Props = ReturnType<typeof mapStateToProps>
     & ReturnType<typeof mapDispatchToProps>
     & WithStyles<typeof styles>
@@ -82,6 +112,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                         <Link to={PLAYER_PAGE_LINK(loggedInUser.id)} style={{textDecoration: "none"}}>
                                             <Button variant="outlined">
                                                 <img src={loggedInUser.avatarLink}
+                                                     alt="Avatar"
                                                      style={{marginRight: 8, height: 24, width: 24}}/>
                                                 View Profile
                                             </Button>
@@ -193,36 +224,6 @@ const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
 }
 
 const HomePageFooter = withWidth()(HomePageFooterComponent)
-
-const styles = createStyles({
-    root: {
-        margin: "auto",
-        width: "100%",
-        overflowX: "hidden"
-    },
-    child: {
-        margin: "auto",
-        padding: "20px",
-        height: "100%",
-        width: "100%"
-    },
-    backgroundContainer: {
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        backgroundSize: "cover",
-        backgroundAttachment: "fixed",
-        backgroundImage: 'url("/splash.png")'
-    }
-})
-
-export const mapStateToProps = (state: StoreState) => ({
-    loggedInUser: state.loggedInUser
-})
-
-export const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(LoggedInUserActions.setLoggedInUserAction(loggedInUser))
-})
 
 export const HomePage = withWidth()(withStyles(styles)(
     connect(mapStateToProps, mapDispatchToProps)(HomePageComponent)

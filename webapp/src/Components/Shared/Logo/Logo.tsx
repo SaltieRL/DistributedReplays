@@ -10,7 +10,7 @@ export class Logo extends React.PureComponent<Props> {
     public render() {
         return (
             <Link to="/">
-                <img src={LogoImage} style={this.props.imgStyle}/>
+                <img alt="calculated.gg logo" src={LogoImage} style={this.props.imgStyle}/>
             </Link>
         )
     }

@@ -22,6 +22,25 @@ import { ReplayBoxScore } from "../../../Replay/ReplayBoxScore"
 import { ReplayChart } from "../../../Replay/ReplayChart"
 import { ColouredGameScore } from "../../../Shared/ColouredGameScore"
 
+const styles = (theme: Theme) => createStyles({
+    iconButton: {
+        "height": 20,
+        "width": 20,
+        "color": theme.palette.secondary.main,
+        "&:hover": {
+            transitionProperty: "transform",
+            transitionDuration: "100ms",
+            transform: "scale(1.2)",
+            color: theme.palette.secondary.dark
+        }
+    },
+    panelDetails: {
+        overflowX: "auto",
+        maxWidth: "95vw",
+        margin: "auto"
+    }
+})
+
 interface OwnProps {
     replay: Replay
     player: Player
@@ -108,24 +127,5 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = (theme: Theme) => createStyles({
-    iconButton: {
-        "height": 20,
-        "width": 20,
-        "color": theme.palette.secondary.main,
-        "&:hover": {
-            transitionProperty: "transform",
-            transitionDuration: "100ms",
-            transform: "scale(1.2)",
-            color: theme.palette.secondary.dark
-        }
-    },
-    panelDetails: {
-        overflowX: "auto",
-        maxWidth: "95vw",
-        margin: "auto"
-    }
-})
 
 export const OverviewMatchHistoryRow = withWidth()(withStyles(styles)(OverviewMatchHistoryRowComponent))

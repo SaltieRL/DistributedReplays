@@ -205,6 +205,23 @@ interface SinglePlaylistProps {
     handleChange: React.ChangeEventHandler<HTMLSelectElement>
 }
 
+const styles = createStyles({
+    formControl: {
+        maxWidth: 400,
+        minWidth: 200,
+        width: "90%"
+    },
+    panelDetails: {
+        flexWrap: "wrap"
+    },
+    root: {
+        cursor: "default"
+    },
+    content: {
+        cursor: "default"
+    }
+})
+
 type Props = (SinglePlaylistProps | MultiplePlaylistProps) & OwnProps
     & WithStyles<typeof styles>
 
@@ -365,22 +382,5 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
         this.setState({optionsExpanded: !this.state.optionsExpanded})
     }
 }
-
-const styles = createStyles({
-    formControl: {
-        maxWidth: 400,
-        minWidth: 200,
-        width: "90%"
-    },
-    panelDetails: {
-        flexWrap: "wrap"
-    },
-    root: {
-        cursor: "default"
-    },
-    content: {
-        cursor: "default"
-    }
-})
 
 export const PlaylistSelect = withStyles(styles)(PlaylistSelectComponent)

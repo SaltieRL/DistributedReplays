@@ -19,7 +19,8 @@ export class PlayerPlaylistRank extends React.PureComponent<Props> {
                 <Typography variant="title" align="center">
                     {this.props.playlistName}
                 </Typography>
-                <img style={{width: 64, height: 64, margin: "auto"}}
+                <img alt=""
+                     style={{width: 64, height: 64, margin: "auto"}}
                      src={`${window.location.origin}/ranks/${this.props.playlistRank.rank}.png`}/>
                 <Typography align="center">
                     {this.props.playlistRank.name}

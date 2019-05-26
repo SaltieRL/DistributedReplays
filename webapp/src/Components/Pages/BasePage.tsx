@@ -4,6 +4,13 @@ import { Footer } from "../Shared/Footer"
 import { NavBar } from "../Shared/NavBar/NavBar"
 import { PageContent } from "../Shared/PageContent"
 
+const styles = createStyles({
+    withBackgroundImage: {
+        backgroundSize: "cover",
+        backgroundAttachment: "fixed"
+    }
+})
+
 interface OwnProps {
     backgroundImage?: string
 }
@@ -28,12 +35,5 @@ class BasePageComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    withBackgroundImage: {
-        backgroundSize: "cover",
-        backgroundAttachment: "fixed"
-    }
-})
 
 export const BasePage = withStyles(styles)(BasePageComponent)

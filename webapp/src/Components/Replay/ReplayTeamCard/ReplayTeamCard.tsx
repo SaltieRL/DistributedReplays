@@ -3,6 +3,15 @@ import * as React from "react"
 import { Replay } from "../../../Models"
 import { TeamCardPlayer } from "./TeamCardPlayer"
 
+const styles = createStyles({
+    orangeCard: {
+        backgroundColor: "bisque"
+    },
+    blueCard: {
+        backgroundColor: "aliceblue"
+    }
+})
+
 interface OwnProps {
     replay: Replay
     isOrange: boolean
@@ -37,14 +46,5 @@ class ReplayTeamCardComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    orangeCard: {
-        backgroundColor: "bisque"
-    },
-    blueCard: {
-        backgroundColor: "aliceblue"
-    }
-})
 
 export const ReplayTeamCard = withStyles(styles)(ReplayTeamCardComponent)

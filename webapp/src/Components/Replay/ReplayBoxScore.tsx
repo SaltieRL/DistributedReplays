@@ -13,6 +13,25 @@ import Grid from "@material-ui/core/Grid/Grid"
 import * as React from "react"
 import { Replay } from "../../Models"
 
+const styles = createStyles({
+    teamTable: {
+        maxWidth: 800,
+        margin: "auto"
+    },
+    teamName: {
+        textTransform: "uppercase"
+    },
+    tableData: {
+        fontWeight: 400
+    },
+    blueTableHead: {
+        borderBottom: "2px solid cornflowerblue"
+    },
+    orangeTableHead: {
+        borderBottom: "2px solid orange"
+    }
+})
+
 interface BoxScoreData {
     name: "Blue" | "Orange",
     score: number,
@@ -129,24 +148,5 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    teamTable: {
-        maxWidth: 800,
-        margin: "auto"
-    },
-    teamName: {
-        textTransform: "uppercase"
-    },
-    tableData: {
-        fontWeight: 400
-    },
-    blueTableHead: {
-        borderBottom: "2px solid cornflowerblue"
-    },
-    orangeTableHead: {
-        borderBottom: "2px solid orange"
-    }
-})
 
 export const ReplayBoxScore = withStyles(styles)(ReplayBoxScoreComponent)

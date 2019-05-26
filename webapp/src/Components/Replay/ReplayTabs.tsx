@@ -13,6 +13,10 @@ import { Predictions } from "./Predictions/Predictions"
 import { Viewer } from "./ReplayViewer/Viewer"
 import { VisualizationsContent } from "./Visualizations/VisualizationsContent"
 
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
 interface OwnProps {
     replay: Replay
     explanations: Record<string, any> | undefined
@@ -133,9 +137,5 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
         this.setState({ selectedTab })
     }
 }
-
-export const mapStateToProps = (state: StoreState) => ({
-    loggedInUser: state.loggedInUser
-})
 
 export const ReplayTabs = withWidth()(connect(mapStateToProps)(ReplayTabsComponent))

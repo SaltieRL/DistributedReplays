@@ -30,6 +30,15 @@ import {
     UPLOAD_LINK
 } from "./Globals"
 
+const styles = createStyles({
+    App: {
+        margin: 0,
+        minHeight: "100vh",
+        width: "100%",
+        display: "flex"
+    }
+})
+
 type Props = WithStyles<typeof styles>
 
 class AppComponent extends React.Component<Props> {
@@ -66,14 +75,5 @@ class AppComponent extends React.Component<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    App: {
-        margin: "0",
-        minHeight: "100vh",
-        width: "100%",
-        display: "flex"
-    }
-})
 
 export const App = withStyles(styles)(AppComponent)

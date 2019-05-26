@@ -25,6 +25,20 @@ import {
     TWITTER_LINK
 } from "../../Globals"
 
+const styles = (theme: Theme) => createStyles({
+    footer: {
+        fontSize: "1em",
+        borderWidth: "8px 0",
+        borderStyle: "solid",
+        borderColor: "rgba(0, 0, 0, 0)",
+        padding: "0 12px",
+        backgroundColor: theme.palette.primary.light + "cc"
+    },
+    grow: {
+        flexGrow: 1
+    }
+})
+
 interface ButtonData {
     to: string
     icon: IconDefinition
@@ -144,26 +158,12 @@ class FooterComponent extends React.PureComponent<Props> {
     }
 
     private readonly createIconButton = (buttonData: ButtonData) => (
-        <a href={buttonData.to} target="_blank" style={{textDecoration: "none"}}>
+        <a href={buttonData.to} target="_blank" rel="noreferrer noopener" style={{textDecoration: "none"}}>
             <IconButton>
                 <FontAwesomeIcon icon={buttonData.icon}/>
             </IconButton>
         </a>
     )
 }
-
-const styles = (theme: Theme) => createStyles({
-    footer: {
-        fontSize: "1em",
-        borderWidth: "8px 0",
-        borderStyle: "solid",
-        borderColor: "rgba(0, 0, 0, 0)",
-        padding: "0 12px",
-        backgroundColor: theme.palette.primary.light + "cc"
-    },
-    grow: {
-        flexGrow: 1
-    }
-})
 
 export const Footer = withWidth()(withStyles(styles)(FooterComponent))

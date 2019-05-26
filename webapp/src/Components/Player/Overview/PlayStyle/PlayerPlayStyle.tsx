@@ -6,6 +6,19 @@ import { getPlayStyle } from "../../../../Requests/Player/getPlayStyle"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 import { PlayerPlayStyleChart } from "./PlayerPlayStyleChart"
 
+const styles = (theme: Theme) => createStyles({
+    inlineWarning: {
+        color: theme.palette.error.main,
+        margin: "auto",
+        marginRight: theme.spacing.unit
+    },
+    warningContainer: {
+        border: "1px rgba(0, 0, 0, 0.4) solid",
+        borderRadius: 8,
+        padding: 8
+    }
+})
+
 interface OwnProps {
     player: Player
     playlist?: number
@@ -115,18 +128,5 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
         this.setState({reloadSignal: !this.state.reloadSignal})
     }
 }
-
-const styles = (theme: Theme) => createStyles({
-    inlineWarning: {
-        color: theme.palette.error.main,
-        margin: "auto",
-        marginRight: theme.spacing.unit
-    },
-    warningContainer: {
-        border: "1px rgba(0, 0, 0, 0.4) solid",
-        borderRadius: 8,
-        padding: 8
-    }
-})
 
 export const PlayerPlayStyle = withStyles(styles)(PlayerPlayStyleComponent)

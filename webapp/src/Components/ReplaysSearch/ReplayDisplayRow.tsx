@@ -25,6 +25,28 @@ import { ReplayChart } from "../Replay/ReplayChart"
 import { ColouredGameScore } from "../Shared/ColouredGameScore"
 import { TagDialogWrapper } from "../Shared/Tag/TagDialogWrapper"
 
+const styles = (theme: Theme) => createStyles({
+    iconButton: {
+        "height": 20,
+        "width": 20,
+        "color": theme.palette.secondary.main,
+        "&:hover": {
+            transitionProperty: "transform",
+            transitionDuration: "100ms",
+            transform: "scale(1.2)",
+            color: theme.palette.secondary.dark
+        }
+    },
+    panelDetails: {
+        overflowX: "auto",
+        maxWidth: "95vw",
+        margin: "auto"
+    },
+    listGridItem: {
+        margin: "auto"
+    }
+})
+
 interface SelectProps {
     selected: boolean
     handleSelectChange: (selected: boolean) => void
@@ -140,27 +162,5 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
         event.stopPropagation()
     }
 }
-
-const styles = (theme: Theme) => createStyles({
-    iconButton: {
-        "height": 20,
-        "width": 20,
-        "color": theme.palette.secondary.main,
-        "&:hover": {
-            transitionProperty: "transform",
-            transitionDuration: "100ms",
-            transform: "scale(1.2)",
-            color: theme.palette.secondary.dark
-        }
-    },
-    panelDetails: {
-        overflowX: "auto",
-        maxWidth: "95vw",
-        margin: "auto"
-    },
-    listGridItem: {
-        margin: "auto"
-    }
-})
 
 export const ReplayDisplayRow = withWidth()(withStyles(styles)(ReplayDisplayRowComponent))

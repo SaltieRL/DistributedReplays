@@ -9,17 +9,16 @@ import { IconTooltip } from "../Shared/IconTooltip"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
+type Props = ReturnType<typeof mapStateToProps>
+
 interface State {
     globalStats?: GlobalStatsGraph[]
     globalRankGraphs?: any
 }
-
-interface OwnProps {
-
-}
-
-type Props = OwnProps
-    & ReturnType<typeof mapStateToProps>
 
 export class GlobalStatsPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
@@ -88,13 +87,10 @@ export class GlobalStatsPageComponent extends React.PureComponent<Props, State> 
             .then((stats) => this.setState({globalRankGraphs: stats}))
     }
 
-    private titleCase(str: string) {
+    private titleCase(str: string) { // TODO: Look at if this is similar to convertSnakeAndCamelCaseToReadable
         return str.toLowerCase().split(" ").map((word) => word.replace(word[0],
             word[0].toUpperCase())).join(" ")
     }
 }
 
-export const mapStateToProps = (state: StoreState) => ({
-    loggedInUser: state.loggedInUser
-})
 export const GlobalStatsPage = connect(mapStateToProps)(GlobalStatsPageComponent)

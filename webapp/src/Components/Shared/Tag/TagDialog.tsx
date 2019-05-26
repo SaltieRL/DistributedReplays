@@ -8,6 +8,10 @@ import { LoadableWrapper } from "../LoadableWrapper"
 import { ReplayTagDisplay } from "./ReplayTagDisplay"
 import { UserTagDisplay } from "./UserTagDisplay"
 
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
 type TagTab = "Replay" | "My tags"
 
 interface OwnProps {
@@ -120,9 +124,5 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
         }
     }
 }
-
-export const mapStateToProps = (state: StoreState) => ({
-    loggedInUser: state.loggedInUser
-})
 
 export const TagDialog = connect(mapStateToProps)(TagDialogComponent)
