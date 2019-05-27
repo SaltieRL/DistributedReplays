@@ -83,7 +83,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     value={this.state.selectedTab}
                     onChange={this.handleSelectTab}
                     centered={!isWidthSm}
-                    scrollable={isWidthSm}
+                    variant={isWidthSm ? "scrollable" : "standard"}
                 >
                     <Tab key="basicStats" label="Player Stats" value="playerStats"/>
                     <Tab key="predictions" label="Predictions" value="predictions"/>

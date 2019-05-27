@@ -5,10 +5,7 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 
 const styles = createStyles({
     content: {
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        flex: 1
+        width: "100%"
     }
 })
 
@@ -17,10 +14,11 @@ type Props = WithStyles<typeof styles> & WithWidth
 class PageContentComponent extends React.PureComponent<Props> {
     public render() {
         const {classes} = this.props
+        const aboveSm = isWidthUp("sm", this.props.width)
         return (
             <div className={classes.content}>
                 <Toolbar/>
-                <div style={{padding: isWidthUp("sm", this.props.width) ? 20 : 3, minHeight: "100%"}}>
+                <div style={{padding: aboveSm ? 20 : 3, minHeight: "100%", overflowX: aboveSm ? undefined : "hidden"}}>
                     {this.props.children}
                 </div>
             </div>

@@ -91,12 +91,12 @@ class FooterComponent extends React.PureComponent<Props> {
                 <Divider/>
                 <footer className={classes.footer}>
                     <Grid container spacing={24} justify="center" alignItems="center">
-                        <Grid item xs={12} md={3}>
+                        <Grid item xs={12} md={3} lg={3}>
                             <Typography align={isWidthUpMd ? "left" : "center"}>
                                 &copy; 2017-2019 Saltie Group
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} md={4}
+                        <Grid item xs={12} md={4} lg={5}
                               container justify={isWidthUpMd ? "flex-start" : "center"} spacing={16}
                         >
                             <Grid item>
