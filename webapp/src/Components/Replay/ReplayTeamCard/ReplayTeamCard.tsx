@@ -1,14 +1,24 @@
-import { Card, CardContent, CardHeader, createStyles, Divider, List, WithStyles, withStyles } from "@material-ui/core"
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    createStyles,
+    Divider,
+    List,
+    Theme,
+    WithStyles,
+    withStyles
+} from "@material-ui/core"
 import * as React from "react"
 import { Replay } from "../../../Models"
 import { TeamCardPlayer } from "./TeamCardPlayer"
 
-const styles = createStyles({
+const styles = (theme: Theme) => createStyles({
     orangeCard: {
-        backgroundColor: "bisque"
+        backgroundColor: theme.palette.type === "dark" ? "darkorange" : "bisque"
     },
     blueCard: {
-        backgroundColor: "aliceblue"
+        backgroundColor: theme.palette.type === "dark" ? "royalblue" : "aliceblue"
     }
 })
 

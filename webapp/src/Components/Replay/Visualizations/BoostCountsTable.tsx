@@ -57,10 +57,8 @@ export class BoostCountsTable extends React.PureComponent<Props> {
                             {this.props.boostNames.map((name, i) => (
                                 <TableRow
                                     key={name}
-                                    style={{
-                                        backgroundColor:
-                                            this.props.highlight === i ? "#eee" : "white"
-                                    }}>
+                                    selected={this.props.highlight === i}
+                                >
                                     <TableCell component="th" scope="row">
                                         {name}
                                     </TableCell>

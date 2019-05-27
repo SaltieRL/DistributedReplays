@@ -28,8 +28,7 @@ const styles = createStyles({
         padding: 5,
         textAlign: "center",
         borderTop: "1px solid rgb(70, 70, 70)",
-        borderBottom: "1px solid rgb(70, 70, 70)",
-        backgroundColor: "rgb(218, 248, 213)"
+        borderBottom: "1px solid rgb(70, 70, 70)"
     }
 })
 
@@ -86,7 +85,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                         <>
                             <Grid container alignItems="center" justify="space-around" spacing={8}>
                                 <Grid item xs={3}>
-                                    <DirectionsCar/>
+                                    <Typography> <DirectionsCar/> </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <Typography variant="subtitle1">
@@ -108,7 +107,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                             </Grid>
                             <Grid container alignItems="center" justify="space-around" spacing={8}>
                                 <Grid item xs={3}>
-                                    <People/>
+                                    <Typography> <People/> </Typography>
                                 </Grid>
                                 <Grid item xs={9}>
                                     <Typography variant="subtitle1">

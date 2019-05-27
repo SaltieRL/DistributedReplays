@@ -8,12 +8,12 @@ interface Coordinate {
 }
 
 const boostLocations: Coordinate[] = [
-    {x: 100, y: 50},
-    {x: 250, y: 50},
-    {x: 400, y: 50},
-    {x: 100, y: 300},
-    {x: 250, y: 300},
-    {x: 400, y: 300}
+    {x: 90, y: 50},
+    {x: 250, y: 40},
+    {x: 410, y: 50},
+    {x: 90, y: 300},
+    {x: 250, y: 310},
+    {x: 410, y: 300}
 ]
 
 interface Props {
@@ -43,7 +43,7 @@ export class BoostField extends React.PureComponent<Props, State> {
                  ref={this.state.element === null ?
                      (element) => (this.setState({element: d3.select(element)})) : undefined}
                  key={"field"}>
-                <image x="0" y="0" width={500} height={350} href="/field.jpg"/>
+                <image x="0" y="0" width={500} height={350} href="/fieldblack.png"/>
                 {boostLocations.map((boostCoordinate, i) => (
                     <TeamPie key={i}
                              blue={data[i][0]}

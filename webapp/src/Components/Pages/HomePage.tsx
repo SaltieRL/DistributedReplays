@@ -1,6 +1,16 @@
 import { faDiscord, faGithub, faPatreon, faRedditAlien, faSteam, faTwitter } from "@fortawesome/free-brands-svg-icons"
 import { faChartBar } from "@fortawesome/free-solid-svg-icons"
-import { Button, createStyles, Divider, Grid, Typography, WithStyles, withStyles, withWidth } from "@material-ui/core"
+import {
+    Button,
+    createStyles,
+    Divider,
+    Grid,
+    Theme,
+    Typography,
+    WithStyles,
+    withStyles,
+    withWidth
+} from "@material-ui/core"
 import { GridProps } from "@material-ui/core/Grid"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import CloudUpload from "@material-ui/icons/CloudUpload"
@@ -29,7 +39,7 @@ import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
 
-const styles = createStyles({
+const styles = (theme: Theme) => createStyles({
     root: {
         margin: "auto",
         width: "100%",
@@ -47,7 +57,7 @@ const styles = createStyles({
         display: "flex",
         backgroundSize: "cover",
         backgroundAttachment: "fixed",
-        backgroundImage: 'url("/splash.png")'
+        backgroundImage: theme.palette.type === "dark" ? undefined : 'url("/splash.png")'
     }
 })
 
@@ -92,7 +102,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                     <div className={classes.root}>
                         <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}>
                             <Grid item xs={12} {...alignCenterProps} style={{minHeight: "300px"}} direction="column">
-                                <Logo imgStyle={{maxWidth: "80vw"}}/>
+                                <Logo imgStyle={{maxWidth: "80vw", maxHeight: 88}}/>
                                 {this.state.replayCount &&
                                 <>
                                     <br/>

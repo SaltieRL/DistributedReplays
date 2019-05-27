@@ -53,7 +53,7 @@ class HeatmapContentComponent extends React.PureComponent<Props> {
                         <Grid item xs={12} style={{height: "500px"}}>
                             <Typography variant="h3">Ball</Typography>
                             <div style={{
-                                background: `url(/fieldrblack.jpg) no-repeat center`,
+                                background: `url(/fieldrblack.png) no-repeat center`,
                                 backgroundSize: "250px 350px",
                                 width: WIDTH,
                                 height: HEIGHT,
@@ -88,13 +88,13 @@ class HeatmapContentComponent extends React.PureComponent<Props> {
         return 0
     }
 
-    private readonly createHeatmap = (player: ReplayPlayer) => (
+    private readonly createHeatmap = (player: ReplayPlayer) => ( // TODO: Standardise with ball heatmap above
         <Grid item key={player.name} xs={12} md={6} lg={4}
               style={{height: 375, minWidth: WIDTH, textAlign: "center"}}>
             <Typography>{player.name}</Typography>
             <div
                 style={{
-                    background: `url(/fieldrblack.jpg) no-repeat center`,
+                    background: `url(/fieldrblack.png) no-repeat center`,
                     backgroundSize: "250px 350px",
                     width: WIDTH,
                     height: HEIGHT,

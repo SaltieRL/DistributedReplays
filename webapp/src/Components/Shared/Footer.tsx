@@ -32,7 +32,8 @@ const styles = (theme: Theme) => createStyles({
         borderStyle: "solid",
         borderColor: "rgba(0, 0, 0, 0)",
         padding: "0 12px",
-        backgroundColor: theme.palette.primary.light + "cc"
+        backgroundColor: (theme.palette.type === "dark" ?
+            theme.palette.primary.dark : theme.palette.primary.light) + "cc"
     },
     grow: {
         flexGrow: 1

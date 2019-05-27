@@ -12,8 +12,7 @@ export const buttonStyles = (theme: Theme) => createStyles({
     },
     icon: {
         height: "24px !important",
-        width: "24px !important",
-        color: "rgba(0, 0, 0, 0.54)"
+        width: "24px !important"
     },
     leftIcon: {
         marginRight: theme.spacing.unit

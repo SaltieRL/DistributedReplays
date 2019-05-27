@@ -1,4 +1,5 @@
 import { faGlobeAmericas } from "@fortawesome/free-solid-svg-icons"
+import { faLightbulb } from "@fortawesome/free-solid-svg-icons/faLightbulb"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
     AppBar,
@@ -20,6 +21,7 @@ import { Dispatch } from "redux"
 import { GLOBAL_STATS_LINK } from "../../../Globals"
 import { LoggedInUserActions, StoreState } from "../../../Redux"
 import { getLoggedInUser } from "../../../Requests/Global"
+import { ThemeContext } from "../../../Theme"
 import { Logo } from "../Logo/Logo"
 import { Search } from "../Search"
 import { UploadDialogWrapper } from "../Upload/UploadDialogWrapper"
@@ -89,6 +91,17 @@ class NavBarComponent extends React.PureComponent<Props> {
                         {isWidthUp("sm", width) &&
                         <>
                             <Grid item className={classes.grow}/>
+                            <Grid item>
+                                <ThemeContext.Consumer>
+                                    {(themeValue) => (
+                                        <Tooltip title="Toggle theme">
+                                            <IconButton onClick={themeValue.toggleTheme}>
+                                                <FontAwesomeIcon icon={faLightbulb}/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    )}
+                                </ThemeContext.Consumer>
+                            </Grid>
                             <Grid item>
                                 <Link to={GLOBAL_STATS_LINK}>
                                     <Tooltip title="Global stats">
