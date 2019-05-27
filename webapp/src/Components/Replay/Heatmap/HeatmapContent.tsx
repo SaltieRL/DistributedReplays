@@ -33,17 +33,17 @@ class HeatmapContentComponent extends React.PureComponent<Props> {
         return (
             <Grid container justify={"center"}>
                 <Grid item xs={6} style={{textAlign: "center", borderRight: "#ccc solid 2px"}}>
-                    <Typography variant={"h3"} style={{borderBottom: "blue solid 1px"}}
+                    <Typography variant="h5" style={{borderBottom: "blue solid 1px"}}
                                 className={classes.heatmapTitle}>Blue</Typography>
-                    <Grid container>
+                    <Grid container justify="space-evenly">
                         {this.props.heatmapData !== null ?
                             blueTeam.map(this.createHeatmap) : undefined}
                     </Grid>
                 </Grid>
                 <Grid item xs={6} style={{textAlign: "center"}}>
-                    <Typography variant={"h3"} style={{borderBottom: "orange solid 1px"}}
+                    <Typography variant="h5" style={{borderBottom: "orange solid 1px"}}
                                 className={classes.heatmapTitle}>Orange</Typography>
-                    <Grid container>
+                    <Grid container justify="space-evenly">
                         {this.props.heatmapData !== null ?
                             orangeTeam.map(this.createHeatmap) : undefined}
                     </Grid>
@@ -51,7 +51,7 @@ class HeatmapContentComponent extends React.PureComponent<Props> {
                 <Grid item xs={12} style={{textAlign: "center"}}>
                     {(this.props.heatmapData !== null && "ball" in this.props.heatmapData.data) ?
                         <Grid item xs={12} style={{height: "500px"}}>
-                            <Typography variant={"h3"}>Ball</Typography>
+                            <Typography variant="h3">Ball</Typography>
                             <div style={{
                                 background: `url(/fieldrblack.jpg) no-repeat center`,
                                 backgroundSize: "250px 350px",

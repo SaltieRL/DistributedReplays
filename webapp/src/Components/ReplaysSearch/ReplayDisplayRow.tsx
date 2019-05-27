@@ -66,7 +66,7 @@ type Props = OwnProps
 class ReplayDisplayRowComponent extends React.PureComponent<Props> {
     public render() {
         const {classes, width, replay, selectProps} = this.props
-        const typographyVariant = "subheading"
+        const typographyVariant = "subtitle1"
         const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
 
         const contents = (

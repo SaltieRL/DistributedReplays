@@ -16,7 +16,7 @@ export class PlayerPlaylistRank extends React.PureComponent<Props> {
     public render() {
         return (
             <Grid container direction="column" justify="center">
-                <Typography variant="title" align="center">
+                <Typography variant="h6" align="center">
                     {this.props.playlistName}
                 </Typography>
                 <img alt=""

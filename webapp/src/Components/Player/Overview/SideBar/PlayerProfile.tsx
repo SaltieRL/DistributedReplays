@@ -34,12 +34,12 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                 <CardMedia className={classes.avatar} image={player.avatarLink}/>
                 <CardContent className={classes.content}>
                     <div className={classes.nameWrapper}>
-                        <Typography variant="headline" noWrap>
+                        <Typography variant="h5" noWrap>
                             {player.name}
                         </Typography>
                         {player.pastNames.length > 0 && <PlayerNameDropdown pastNames={player.pastNames}/>}
                     </div>
-                    <Typography variant="subheading">
+                    <Typography variant="subtitle1">
                         {player.platform}
                     </Typography>
                     <Typography style={{textDecoration: "none"}}>

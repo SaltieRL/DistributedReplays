@@ -55,7 +55,7 @@ class LoadableWrapperComponent extends React.PureComponent<Props, State> {
                 {loadingState === "failed" &&
                 <>
                     <div className={classes.loadableWrapper}>
-                        <Typography variant="subheading">
+                        <Typography variant="subtitle1">
                             Failed to load the required data.
                         </Typography>
                         <Button variant="outlined" onClick={this.attemptToLoad}>

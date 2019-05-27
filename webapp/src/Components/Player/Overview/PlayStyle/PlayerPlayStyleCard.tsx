@@ -15,7 +15,7 @@ export class PlayerPlayStyleCard extends React.PureComponent<Props> {
     public render() {
         /* tslint:disable */
         const playStyleTitle =
-            <Typography variant="headline">
+            <Typography variant="h5">
                 Playstyle
                 <IconTooltip
                     tooltip="Data is presented as standard deviations from the mean, and only includes games from the past 6 months"/>

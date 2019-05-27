@@ -58,7 +58,7 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
                     <div className={classes.dropzoneContent}>
                         {hasFilesSelected ?
                             <>
-                                <Typography variant="subheading">
+                                <Typography variant="subtitle1">
                                     Selected {files.length} files:
                                 </Typography>
                                 <br/>
@@ -75,7 +75,7 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
                             </>
                             :
                             <>
-                                <Typography align="center" variant="subheading">
+                                <Typography align="center" variant="subtitle1">
                                     Drop your .replay files here, or click to select files to upload.
                                 </Typography>
                                 <Typography align="center">

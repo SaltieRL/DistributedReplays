@@ -100,7 +100,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
             <TableHead className={boxScoreData.name === "Blue" ? classes.blueTableHead : classes.orangeTableHead}>
                 <TableRow>
                     <TableCell style={{width: "30%"}} padding="dense">
-                        <Typography variant="title" className={classes.teamName}>
+                        <Typography variant="h6" className={classes.teamName}>
                             {boxScoreData.score} {boxScoreData.name}
                         </Typography>
                     </TableCell>
@@ -108,7 +108,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                         if (key !== "name") {
                             return (
                                 <TableCell numeric key={key} padding="dense">
-                                    <Typography variant="subheading">
+                                    <Typography variant="subtitle1">
                                         {label}
                                     </Typography>
                                 </TableCell>

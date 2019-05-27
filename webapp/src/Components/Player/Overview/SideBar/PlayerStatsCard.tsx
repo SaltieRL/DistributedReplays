@@ -89,7 +89,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                     <DirectionsCar/>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Typography variant="subheading">
+                                    <Typography variant="subtitle1">
                                         favourite car
                                     </Typography>
                                 </Grid>
@@ -111,7 +111,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                     <People/>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    <Typography variant="subheading">
+                                    <Typography variant="subtitle1">
                                         plays with
                                     </Typography>
                                 </Grid>

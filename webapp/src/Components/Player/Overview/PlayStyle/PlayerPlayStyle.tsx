@@ -81,7 +81,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                 return (
                                     <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
                                           style={{height: 400}}>
-                                        <Typography variant="subheading" align="center">
+                                        <Typography variant="subtitle1" align="center">
                                             {chartDataResponse.title}
                                         </Typography>
                                         {this.state.winLossData &&
@@ -98,7 +98,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                 return (
                                     <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
                                           style={{height: 400}}>
-                                        <Typography variant="subheading" align="center">
+                                        <Typography variant="subtitle1" align="center">
                                             {chartDataResponse.title}
                                         </Typography>
                                         <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>

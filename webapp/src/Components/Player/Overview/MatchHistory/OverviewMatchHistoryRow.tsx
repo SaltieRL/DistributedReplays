@@ -55,7 +55,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
     public render() {
         const {classes, width} = this.props
         const notOnMobile = isWidthUp("sm", width)
-        const typographyVariant = "subheading"
+        const typographyVariant = "subtitle1"
 
         const {replay, player} = this.props
         const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
