@@ -13,6 +13,7 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory
 from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
+from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
@@ -122,6 +123,12 @@ def api_get_global_stats():
 def api_get_global_graphs():
     global_stats_charts = GlobalStatsChart.create()
     return better_jsonify(global_stats_charts)
+
+
+@bp.route('/global/leaderboards')
+def api_get_leaderboards():
+    leaderboards = Leaderboards.create()
+    return better_jsonify(leaderboards)
 
 
 @bp.route('/me')

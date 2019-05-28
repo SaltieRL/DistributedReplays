@@ -1,6 +1,5 @@
 from typing import List
 
-from flask import current_app
 from sqlalchemy import func, desc, cast, String, literal_column
 from sqlalchemy.dialects import postgresql
 
@@ -50,7 +49,12 @@ class PlayerProfileStats:
                                                                  Player.platformid == result.c.player).filter(
             Player.platformid != id_).filter(literal_column('count') > 1)[:3]
         for p in result:
-            players_in_common.append(PlayerInCommonStats(name=p[2], count=p[1], id=p[0]))
+            player = session.query(Player).filter(Player.platformid == p[0]).first()
+            if player is None or player.platformname == "":
+                players_in_common.append(PlayerInCommonStats(name=p[2], count=p[1], id=p[0]))
+            else:
+                players_in_common.append(PlayerInCommonStats(name=player.platformname, count=p[1], id=p[0]))
+
         return players_in_common
 
     @staticmethod
