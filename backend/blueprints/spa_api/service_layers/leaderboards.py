@@ -3,6 +3,7 @@ import datetime
 from sqlalchemy import func, desc
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.blueprints.steam import steam_id_to_profile, get_steam_profile_or_random_response
 from backend.database.objects import PlayerGame, Game, Player, Playlist
 
 
@@ -25,6 +26,10 @@ class Leaderboards:
                 leaders_dict = []
                 for leader in leaders:
                     player = session.query(Player).filter(Player.platformid == leader[0]).first()
+                    if player.avatar == "":
+                        # this will update the DB for future calls, we just want it temporarily
+                        profile = get_steam_profile_or_random_response(player.platformid)
+                        player.avatar = profile['response']['players'][0]['avatarfull']
                     leaders_dict.append({
                         'name': player.platformname if player.platformname != "" else leader[0],
                         'id': leader[0],
