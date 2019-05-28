@@ -14,6 +14,7 @@ import {
     withWidth
 } from "@material-ui/core"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import Menu from "@material-ui/icons/Menu"
 import * as React from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
@@ -53,10 +54,15 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setLoggedInUser: (loggedInUser: LoggedInUser) => dispatch(LoggedInUserActions.setLoggedInUserAction(loggedInUser))
 })
 
+interface OwnProps {
+    toggleSideBar: () => void
+}
+
 type Props = ReturnType<typeof mapStateToProps>
     & ReturnType<typeof mapDispatchToProps>
     & WithWidth
     & WithStyles<typeof styles>
+    & OwnProps
 
 class NavBarComponent extends React.PureComponent<Props> {
     public componentDidMount() {
@@ -71,6 +77,15 @@ class NavBarComponent extends React.PureComponent<Props> {
             <AppBar color="default">
                 <Toolbar>
                     <Grid container>
+                        <Grid item xs="auto">
+                            <IconButton
+                                onClick={this.props.toggleSideBar}
+                                color="inherit"
+                                aria-label="Menu"
+                                style={{marginLeft: -12, marginRight: isWidthUp("sm", width) ? 10 : 0}}>
+                                <Menu/>
+                            </IconButton>
+                        </Grid>
                         {isWidthUp("md", width) &&
                         <>
                             <Grid item xs="auto">
