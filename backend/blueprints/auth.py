@@ -6,7 +6,7 @@ from flask import Blueprint, current_app, redirect, request, url_for, jsonify
 from flask import session as flask_session
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.blueprints.steam import get_steam_profile_or_random_response
+from backend.blueprints.steam import get_steam_profile_or_random_response, add_or_update_steam_player
 from backend.database.objects import Player
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -79,6 +79,7 @@ def steam_process(session=None):
     if validate_openid(request.args):
         user_id = request.args['openid.claimed_id'].split('/')[-1]
         profile = get_steam_profile_or_random_response(user_id)['response']['players'][0]
+        add_or_update_steam_player(profile)
         match = session.query(Player).filter(Player.platformid == user_id).first()
         if match:
             match.platformname = profile['personaname']
