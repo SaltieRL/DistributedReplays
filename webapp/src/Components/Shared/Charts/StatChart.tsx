@@ -18,7 +18,7 @@ class StatChartComponent extends React.PureComponent<Props> {
         const isDarkTheme = this.props.theme.palette.type === "dark"
         Chart.defaults.global.defaultFontColor = isDarkTheme ? "white" : "grey"
         Chart.defaults.radar.scale.ticks = {
-            backdropColor: this.props.theme.palette.background.paper + "88"
+            backdropColor: this.props.theme.palette.background.paper
         }
 
         const ChartType = this.getChartType()

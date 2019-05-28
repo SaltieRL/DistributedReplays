@@ -111,7 +111,7 @@ class NavBarComponent extends React.PureComponent<Props> {
                                     {(themeValue) => (
                                         <Tooltip title="Toggle theme">
                                             <IconButton onClick={themeValue.toggleTheme}>
-                                                <FontAwesomeIcon icon={faLightbulb}/>
+                                                <FontAwesomeIcon icon={faLightbulb} style={{width: 24, height: 24}}/>
                                             </IconButton>
                                         </Tooltip>
                                     )}
