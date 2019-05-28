@@ -1,13 +1,13 @@
-import { ButtonBase, createStyles, Typography, WithStyles, withStyles } from "@material-ui/core"
+import { ButtonBase, createStyles, Theme, Typography, WithStyles, withStyles } from "@material-ui/core"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import * as React from "react"
 import Dropzone, { DropFilesEventHandler } from "react-dropzone"
 
-const styles = createStyles({
+const styles = (theme: Theme)  => createStyles({
     active: {
         borderStyle: "solid",
         borderColor: "#6c6",
-        backgroundColor: "#ccc"
+        backgroundColor: theme.palette.type === "dark" ? "#333" : "#ccc"
     },
     default: {
         "width": 550,
@@ -19,11 +19,11 @@ const styles = createStyles({
         "borderStyle": "dashed",
         "borderRadius": 5,
         "cursor": "pointer",
-        "backgroundColor": "#eee",
+        "backgroundColor": theme.palette.type === "dark" ? "#111" : "#eee",
         "display": "flex",
         "alignItems": "center",
         "&:hover": {
-            backgroundColor: "#ddd"
+            backgroundColor: theme.palette.type === "dark" ? "#222" : "#ddd"
         }
     },
     dropzoneContent: {
@@ -82,7 +82,7 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
                                     Replays can be found in your Documents/My Games/Rocket League/TAGame/Demos/ folder
                                 </Typography>
                                 <br/>
-                                <ArrowDownward/>
+                                <Typography><ArrowDownward/></Typography>
                             </>
                         }
                     </div>
