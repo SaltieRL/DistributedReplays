@@ -52,7 +52,7 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
             >
                 {Object.keys(PlayerStatsSubcategory).filter((subcategory) => {
                     return this.props.exclude !== undefined
-                        ? this.props.exclude.indexOf(subcategory) == -1
+                        ? this.props.exclude.indexOf(subcategory) === -1
                         : true
                 }).map((subcategory) => {
                     const value = PlayerStatsSubcategory[subcategory]
