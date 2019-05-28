@@ -191,17 +191,22 @@ class PlayerStatWrapper(GlobalStatWrapper):
         factor_per_norm_game = factor_per_minute / 5             if factor_per_minute is not None else None
 
         for stat in self.get_player_stat_list():
+            inserted = False
             stat_query_key = stat.get_query_key()
             if stat_query_key in self.replay_group_stats.grouped_stat_total:
                 if stat.is_percent or stat.is_averaged:
                     total[stat_query_key] = average[stat_query_key]
+                    inserted = True
                 else:
                     total[stat_query_key] = individual[stat_query_key]
-            elif factor_per_game is not None and stat_query_key in self.replay_group_stats.grouped_stat_per_game:
+                    inserted = True
+            if stat_query_key in self.replay_group_stats.grouped_stat_per_game and factor_per_game is not None:
                 per_game[stat_query_key] = individual[stat_query_key] / factor_per_game
-            elif factor_per_minute is not None and stat_query_key in self.replay_group_stats.grouped_stat_per_minute:
+                inserted = True
+            if stat_query_key in self.replay_group_stats.grouped_stat_per_minute and factor_per_minute is not None:
                 per_minute[stat_query_key] = individual[stat_query_key] / factor_per_minute
-            elif factor_per_norm_game is not None:
+                inserted = True
+            if not inserted and factor_per_norm_game is not None:
                 per_norm_game[stat_query_key] = individual[stat_query_key] / factor_per_norm_game
 
         return {

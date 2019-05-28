@@ -6,7 +6,7 @@ from flask import current_app
 
 from backend.database.wrapper import player_wrapper
 from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
-from backend.database.wrapper.chart.player_chart_metadata import player_stats_metadata
+from backend.database.wrapper.chart.player_chart_metadata import player_group_stats_metadata
 from backend.database.wrapper.chart.stat_point import StatDataPoint
 from backend.database.wrapper.stats import player_stat_wrapper
 
@@ -32,23 +32,8 @@ class ReplayGroupChartData(ChartData):
         categories = list(player_stats[0]['stats'].keys())
 
         all_chart_data = []
-        
-        # player_stats_metadata_list = [chart_metadata.stat_name for chart_metadata in player_stats_metadata]
-        # stats_list = []
-        # for category in player_stats[players[0]]['stats'].values():
-        #     stats_list.extend(category.keys())
-        # only_player_stats_metadata = list(set(player_stats_metadata_list) - set(stats_list))
-        # if only_player_stats_metadata:
-        #     logger.warning('only player_stats_metadata')
-        #     logger.warning(','.join(only_player_stats_metadata))
-        #     logger.warning('')
-        # only_stats = list(set(stats_list) - set(player_stats_metadata_list))
-        # if only_stats:
-        #     logger.warning('only stats')
-        #     logger.warning(','.join(only_stats))
-        #     logger.warning('')
 
-        for chart_metadata in player_stats_metadata:
+        for chart_metadata in player_group_stats_metadata:
             for category in categories:
                 chart_data_points = []
                 for player in player_stats:

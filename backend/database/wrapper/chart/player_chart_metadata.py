@@ -4,6 +4,7 @@ from backend.database.wrapper.chart.chart_data import ChartType, ChartSubcatagor
 
 
 class BasicStatSubcategory(ChartSubcatagory):
+    Main_Stats = auto()
     Hits = auto()
     Ball = auto()
     Playstyles = auto()
@@ -84,4 +85,13 @@ player_stats_metadata = [
     Metadata('time_most_forward_player', ChartType.bar, SubCat.Team_Positioning),
     Metadata('time_most_back_player', ChartType.bar, SubCat.Team_Positioning),
     Metadata('time_between_players', ChartType.bar, SubCat.Team_Positioning),
+]
+
+player_group_stats_metadata = player_stats_metadata + [
+    # Main Stats
+    Metadata('score', ChartType.bar, SubCat.Main_Stats),
+    Metadata('goals', ChartType.bar, SubCat.Main_Stats),
+    Metadata('assists', ChartType.bar, SubCat.Main_Stats),
+    Metadata('saves', ChartType.bar, SubCat.Main_Stats),
+    Metadata('shots', ChartType.bar, SubCat.Main_Stats)
 ]
