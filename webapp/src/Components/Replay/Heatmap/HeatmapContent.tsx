@@ -103,7 +103,7 @@ class HeatmapContentComponent extends React.PureComponent<Props, State> {
     private createHeatmap(player: any) {
         return (
             <Grid item key={player.name} xs={12} md={6} lg={4}
-                  style={{height: "375px", width: WIDTH, textAlign: "center"}}>
+                  style={{height: "375px", minWidth: WIDTH, textAlign: "center"}}>
                 <Typography>{player.name}</Typography>
                 <div style={{
                     background: `url(/fieldrblack.jpg) no-repeat center`,

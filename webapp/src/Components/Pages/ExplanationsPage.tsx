@@ -80,7 +80,6 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
                 this.setState({explanations: data})
             }
         )
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub])
         return explanations
     }
 }

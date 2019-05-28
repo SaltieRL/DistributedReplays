@@ -148,13 +148,14 @@ def parse_replay_task(self, fn, preserve_upload_date=False, custom_file_location
     shutil.move(pickled + '.pts', proto_path)
     shutil.move(pickled + '.gzip', pandas_path)
 
-    upload_replay(replay_path)
-    upload_proto(proto_path)
-    upload_df(pandas_path)
+    result = upload_replay(replay_path)
+    if result is not None:
+        upload_proto(proto_path)
+        upload_df(pandas_path)
 
-    os.remove(replay_path)
-    os.remove(proto_path)
-    os.remove(pandas_path)
+        os.remove(replay_path)
+        os.remove(proto_path)
+        os.remove(pandas_path)
 
     return replay_id
 
