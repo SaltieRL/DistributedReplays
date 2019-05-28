@@ -35,4 +35,4 @@ export const PLUGINS_LINK = "/plugins"
 export const EXPLANATIONS_LINK = "/explanations"
 export const PRIVACY_POLICY_LINK = "/privacy"
 
-export const GOOGLE_ANALYTICS_ID = "UA-000000000-1"
+export const GOOGLE_ANALYTICS_ID = "UA-137482750-1"
