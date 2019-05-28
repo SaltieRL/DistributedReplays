@@ -1,6 +1,5 @@
 import { faGithub, faPatreon } from "@fortawesome/free-brands-svg-icons"
-import { faGlobeAmericas } from "@fortawesome/free-solid-svg-icons"
-import { faLightbulb } from "@fortawesome/free-solid-svg-icons/faLightbulb"
+import { faChartBar, faGlobeAmericas, faLightbulb } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@material-ui/core"
 import CloudUpload from "@material-ui/icons/CloudUpload"
@@ -18,7 +17,7 @@ import {
     GLOBAL_STATS_LINK,
     PATREON_LINK,
     PLAYER_COMPARE_PAGE_LINK,
-    PLAYER_SEARCH_PAGE_LINK,
+    PLAYER_SEARCH_PAGE_LINK, REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
     UPLOAD_LINK
 } from "../../Globals"
@@ -39,6 +38,13 @@ export class SideBar extends React.PureComponent<Props> {
                         <ListItem button component={this.createLink(REPLAYS_SEARCH_PAGE_LINK())}>
                             <ListItemIcon><Search/></ListItemIcon>
                             <ListItemText>Search</ListItemText>
+                        </ListItem>
+
+                        <ListItem button component={this.createLink(REPLAYS_GROUP_PAGE_LINK)}>
+                            <ListItemIcon>
+                                <FontAwesomeIcon icon={faChartBar} size="lg" style={{width: 24}}/>
+                            </ListItemIcon>
+                            <ListItemText>Groups</ListItemText>
                         </ListItem>
 
                         <Divider component={"li" as any}/>
@@ -86,7 +92,7 @@ export class SideBar extends React.PureComponent<Props> {
                             style={{textDecoration: "none"}}
                         >
                             <ListItemIcon style={{width: 24}}>
-                                <FontAwesomeIcon icon={faPatreon} size="lg" fixedWidth/>
+                                <FontAwesomeIcon icon={faPatreon} size="lg" style={{width: 24}}/>
                             </ListItemIcon>
                             <ListItemText>Support Us</ListItemText>
                         </ListItem>
@@ -98,7 +104,7 @@ export class SideBar extends React.PureComponent<Props> {
                             style={{textDecoration: "none"}}
                         >
                             <ListItemIcon style={{width: 24}}>
-                                <FontAwesomeIcon icon={faGithub} size="lg" fixedWidth/>
+                                <FontAwesomeIcon icon={faGithub} size="lg" style={{width: 24}}/>
                             </ListItemIcon>
                             <ListItemText>Contribute</ListItemText>
                         </ListItem>
@@ -111,7 +117,7 @@ export class SideBar extends React.PureComponent<Props> {
                                     onClick={themeValue.toggleTheme}
                                 >
                                     <ListItemIcon style={{width: 24}}>
-                                        <FontAwesomeIcon icon={faLightbulb} size="lg" fixedWidth/>
+                                        <FontAwesomeIcon icon={faLightbulb} size="lg" style={{width: 24}}/>
                                     </ListItemIcon>
                                     <ListItemText>Toggle theme</ListItemText>
                                 </ListItem>
