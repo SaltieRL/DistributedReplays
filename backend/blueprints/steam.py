@@ -73,7 +73,7 @@ def steam_id_to_profile(steam_id):
         if redis_instance is not None:
             redis_instance.set(key, json.dumps(resp.json()), ex=60 * 60 * 24)
         profile = resp.json()['response']['players'][0]
-        add_or_update_steam_player(steam_id, profile)
+        add_or_update_steam_player(profile)
         # return the normal JSON to not change anything else
         return resp.json()
 
