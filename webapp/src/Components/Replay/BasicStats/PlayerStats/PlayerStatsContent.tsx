@@ -11,19 +11,22 @@ interface Props {
 
 interface State {
     selectedTab: PlayerStatsSubcategory
+    exclude: string[]
 }
 
 export class PlayerStatsContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectedTab: PlayerStatsSubcategory.HITS}
+        this.state = {selectedTab: PlayerStatsSubcategory.HITS, exclude: ["MAIN_STATS"]}
     }
 
     public render() {
         return (
             <>
                 <Divider/>
-                <PlayerStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
+                <PlayerStatsTabs selectedTab={this.state.selectedTab}
+                                 handleChange={this.handleSelectTab}
+                                 exclude={this.state.exclude}/>
                 <CardContent>
                     <Grid container spacing={32}>
                         <PlayerStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab}

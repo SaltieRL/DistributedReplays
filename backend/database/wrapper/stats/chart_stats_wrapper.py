@@ -56,16 +56,10 @@ class ChartStatsWrapper(SharedStatsWrapper):
         all_chart_data = []
         for basic_stats_metadata in chart_metadata_list:
             stat_name = basic_stats_metadata.stat_name
-            adjusted_stat_name = stat_name.replace(' ', '_')
             data_points = []
             for player_game in database_data_point:
                 # print(basic_stats_metadata.stat_name, player_game.stats.keys())
-                if adjusted_stat_name in player_game.stats:
-                    val = player_game.stats[adjusted_stat_name]
-                    if val is None:
-                        val = 0.0
-                    value = float(val)
-                elif stat_name in player_game.stats:
+                if stat_name in player_game.stats:
                     val = player_game.stats[stat_name]
                     if val is None:
                         val = 0.0
@@ -87,7 +81,7 @@ class ChartStatsWrapper(SharedStatsWrapper):
             )
             if all(chart_data_point['value'] is None or chart_data_point['value'] == 0 for chart_data_point in
                    chart_data.chartDataPoints):
-                print(basic_stats_metadata.stat_name, 'is zero')
+                print(stat_name, 'is zero')
                 continue
             all_chart_data.append(chart_data)
         return all_chart_data

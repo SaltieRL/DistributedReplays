@@ -3,6 +3,7 @@ from typing import List
 
 from backend.database.wrapper.field_wrapper import QueryFieldWrapper
 from backend.database.wrapper.stats.creation.player_stat_creation import PlayerStatCreation
+from backend.database.wrapper.stats.creation.replay_group_stat_creation import ReplayGroupStatCreation
 from backend.database.wrapper.stats.creation.shared_stat_creation import SharedStatCreation
 from backend.database.wrapper.stats.creation.team_stat_creation import TeamStatCreation
 
@@ -16,6 +17,7 @@ class SharedStatsWrapper:
 
     def __init__(self):
         self.player_stats = PlayerStatCreation()
+        self.replay_group_stats = ReplayGroupStatCreation()
         self.team_stats = TeamStatCreation()
 
     def compare_to_global(self, stats, global_stats, global_stds):

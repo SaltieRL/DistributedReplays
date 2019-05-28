@@ -20,6 +20,7 @@ export interface BasicStat extends ChartDataResponse {
 }
 
 export enum PlayerStatsSubcategory {
+    MAIN_STATS = "Main Stats",
     POSITIONING = "Positioning",
     HITS = "Hits",
     BALL = "Ball",
