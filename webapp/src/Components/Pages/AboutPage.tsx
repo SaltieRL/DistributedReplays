@@ -308,7 +308,7 @@ const personListItemStyles = createStyles({
 
 type PersonListItemComponentProps = ListItemInfo & WithStyles<typeof personListItemStyles>
 
-const PersonListItemComponent: React.SFC<PersonListItemComponentProps> = (props) => (
+const PersonListItemComponent: React.FunctionComponent<PersonListItemComponentProps> = (props) => (
     <ListItem>
         <ListItemText
             primary={
@@ -323,7 +323,7 @@ const PersonListItem = withStyles(personListItemStyles)(PersonListItemComponent)
 
 type ExternalLinkProps = Pick<ListItemInfo, "link" | "name">
 
-const ExternalLink: React.SFC<ExternalLinkProps> = (props) => (
+const ExternalLink: React.FunctionComponent<ExternalLinkProps> = (props) => (
     <a
         href={props.link}
         target="_blank"

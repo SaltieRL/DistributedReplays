@@ -103,14 +103,15 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                         <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}>
                             <Grid item xs={12} {...alignCenterProps} style={{minHeight: "300px"}} direction="column">
                                 <Logo imgStyle={{maxWidth: "80vw", maxHeight: 88}}/>
-                                {this.state.replayCount &&
-                                <>
-                                    <br/>
-                                    <Typography>
-                                        <i>{this.state.replayCount} replays and counting...</i>
-                                    </Typography>
-                                </>
-                                }
+                                <br/>
+                                <Typography>
+                                    <i>
+                                        {this.state.replayCount
+                                            ? `${this.state.replayCount} replays and counting...`
+                                            : "Loading replay count..."
+                                        }
+                                    </i>
+                                </Typography>
                             </Grid>
                             <Grid item xs={11} {...alignCenterProps} style={{padding: "20px 0 20px 0"}}>
                                 <Search usePaper/>
@@ -154,7 +155,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
     }
 }
 
-const HomePageFooterComponent: React.SFC<WithWidth> = (props: WithWidth) => {
+const HomePageFooterComponent: React.FunctionComponent<WithWidth> = (props: WithWidth) => {
 
     const globalStatsLinkButton = (
         <LinkButton to={GLOBAL_STATS_LINK}
