@@ -41,7 +41,9 @@ export class BoostField extends React.PureComponent<Props, State> {
             <svg width={500}
                  height={350}
                  ref={this.state.element === null ?
-                     (element) => (this.setState({element: d3.select(element)})) : undefined}
+                     (element) => {
+                         this.setState({element: d3.select(element)})
+                     } : undefined}
                  key={"field"}>
                 <image x="0" y="0" width={500} height={350} href="/fieldblack.png"/>
                 {boostLocations.map((boostCoordinate, i) => (
