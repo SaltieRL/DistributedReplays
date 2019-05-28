@@ -14,11 +14,13 @@ import { Link } from "react-router-dom"
 import {
     ABOUT_LINK,
     EXPLANATIONS_LINK,
-    GITHUB_LINK, GLOBAL_STATS_LINK,
+    GITHUB_LINK,
+    GLOBAL_STATS_LINK,
     PATREON_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_SEARCH_PAGE_LINK,
-    REPLAYS_SEARCH_PAGE_LINK, UPLOAD_LINK
+    REPLAYS_SEARCH_PAGE_LINK,
+    UPLOAD_LINK
 } from "../../Globals"
 import { ThemeContext } from "../../Theme"
 
@@ -42,15 +44,15 @@ export class SideBar extends React.PureComponent<Props> {
                         <Divider component={"li" as any}/>
 
                         <ListSubheader>Player</ListSubheader>
-                        <ListItem button component={this.createLink(PLAYER_SEARCH_PAGE_LINK)}>
+                        <ListItem button component={this.createLink(PLAYER_SEARCH_PAGE_LINK)} disabled>
                             <ListItemIcon><Search/></ListItemIcon>
-                            <ListItemText>Search</ListItemText>
+                            <ListItemText secondary="Coming soon">Search</ListItemText>
                         </ListItem>
                         <ListItem button component={this.createLink(PLAYER_COMPARE_PAGE_LINK)}>
                             <ListItemIcon><CompareArrows/></ListItemIcon>
                             <ListItemText>Compare</ListItemText>
                         </ListItem>
-                        <ListItem button>
+                        <ListItem button component={this.createLink(PLAYER_COMPARE_PAGE_LINK)}>
                             <ListItemIcon><ShowChart/></ListItemIcon>
                             <ListItemText>Progression</ListItemText>
                         </ListItem>
