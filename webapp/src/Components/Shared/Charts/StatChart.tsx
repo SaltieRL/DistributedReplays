@@ -1,5 +1,4 @@
 import { Tooltip, WithTheme, withTheme } from "@material-ui/core"
-import Chart from "chart.js"
 import * as React from "react"
 import { BasicStat } from "../../../Models"
 import { ColoredBarChart } from "./ColoredBarChart"
@@ -15,12 +14,6 @@ type Props = OwnProps & WithTheme
 
 class StatChartComponent extends React.PureComponent<Props> {
     public render() {
-        const isDarkTheme = this.props.theme.palette.type === "dark"
-        Chart.defaults.global.defaultFontColor = isDarkTheme ? "white" : "grey"
-        Chart.defaults.radar.scale.ticks = {
-            backdropColor: this.props.theme.palette.background.paper
-        }
-
         const ChartType = this.getChartType()
         const title = this.props.basicStat.title
         return (

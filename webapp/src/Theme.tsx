@@ -1,4 +1,5 @@
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"
+import Chart from "chart.js"
 import * as React from "react"
 
 interface ThemeContextType {
@@ -65,9 +66,17 @@ export class Theme extends React.PureComponent<{}, State> {
     }
 
     public render() {
-        const theme = getTheme(this.state.dark)
+        const dark = this.state.dark
+
+        const theme = getTheme(dark)
+
+        Chart.defaults.global.defaultFontColor = dark ? "white" : "grey"
+        Chart.defaults.radar.scale.ticks = {
+            backdropColor: theme.palette.background.paper
+        }
+
         return (
-            <ThemeContext.Provider value={{dark: this.state.dark, toggleTheme: this.toggleTheme}}>
+            <ThemeContext.Provider value={{dark, toggleTheme: this.toggleTheme}}>
                 <MuiThemeProvider theme={theme}>
                     {this.props.children}
                 </MuiThemeProvider>
