@@ -42,6 +42,7 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
                 onClose={this.props.onClose}
                 scroll="paper"
                 PaperProps={{style: {width: 360, maxWidth: "90vw"}}}
+                onClick={this.stopPropagation}
             >
                 <DialogTitle style={{padding: 0}}>
                     <Tabs
@@ -122,6 +123,10 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
                     })
                 })
         }
+    }
+
+    private readonly stopPropagation: React.MouseEventHandler = (event) => {
+        event.stopPropagation()
     }
 }
 

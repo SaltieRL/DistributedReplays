@@ -67,18 +67,20 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
     public render() {
         const {classes, width, replay, selectProps} = this.props
         const typographyVariant = "subtitle1"
-        const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
+        const dateFormat = isWidthUp("lg", width) ? "DD/MM/YYYY" : "DD/MM"
 
+        const aboveSm = isWidthUp("sm", width)
         const contents = (
             <Grid container>
-                {selectProps &&
-                <Grid item xs="auto" sm={1}>
-                    <Checkbox checked={selectProps.selected}
-                              onChange={this.toggleSelect}
-                              color="secondary"/>
-                </Grid>
-                }
-                <Grid item xs={selectProps ? 2 : 3} md={selectProps ? 3 : 4} zeroMinWidth
+                {selectProps && (
+                    <Grid item sm={1}>
+                        <Checkbox checked={selectProps.selected}
+                                  onChange={this.toggleSelect}
+                                  color="secondary"/>
+                    </Grid>
+                )}
+
+                <Grid item xs={selectProps ? 2 : 3} zeroMinWidth
                       className={classes.listGridItem}>
                     <Typography variant={typographyVariant} noWrap>
                         {replay.name}
@@ -98,18 +100,20 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                         handleUpdateTags={this.props.handleUpdateTags}
                         small/>
                 </Grid>
-                <Grid item xs={2} sm={3} md={2} className={classes.listGridItem}>
+                <Grid item xs={2} sm={3} className={classes.listGridItem}>
                     <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
                         <Typography variant={typographyVariant}>
                             {replay.date.format(dateFormat)}
                         </Typography>
                     </Tooltip>
                 </Grid>
-                <Grid item xs={2} zeroMinWidth className={classes.listGridItem}>
-                    <Typography variant={typographyVariant} noWrap>
-                        {replay.gameMode}
-                    </Typography>
-                </Grid>
+                {aboveSm && (
+                    <Grid item xs={2} zeroMinWidth className={classes.listGridItem}>
+                        <Typography variant={typographyVariant} noWrap>
+                            {replay.gameMode}
+                        </Typography>
+                    </Grid>
+                )}
                 <Grid item xs={2} className={classes.listGridItem}>
                     <Typography variant={typographyVariant}>
                         <ColouredGameScore replay={replay}/>
@@ -136,10 +140,8 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                     </ListItem>
                     :
                     <ExpansionPanel>
-                        <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
-                            <div onClick={this.stopPropagation} style={{width: "100%"}}>
-                                {contents}
-                            </div>
+                        <ExpansionPanelSummary expandIcon={<ExpandMore/>} >
+                            {contents}
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails className={classes.panelDetails}>
                             {!this.props.useBoxScore ?
@@ -156,10 +158,6 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
 
     private readonly toggleSelect = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         this.props.selectProps!.handleSelectChange(checked)
-    }
-
-    private readonly stopPropagation: React.MouseEventHandler = (event) => {
-        event.stopPropagation()
     }
 }
 

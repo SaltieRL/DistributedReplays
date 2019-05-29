@@ -62,7 +62,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         const replayName = replay.name
         const replayDate = (
             <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
-                <Typography variant={typographyVariant}>
+                <Typography variant={notOnMobile ? typographyVariant : "caption"}>
                     {replay.date.format(dateFormat)}
                 </Typography>
             </Tooltip>
@@ -81,34 +81,60 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
                 expandIcon={<ExpandMore/>}
             >
                 <Grid container>
-                    <Grid item xs={notOnMobile ? 3 : 5}>
-                        <Typography variant={typographyVariant} noWrap>
-                            {replayName}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={2}>
-                        {replayDate}
-                    </Grid>
-                    {notOnMobile &&
-                    <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayGameMode}
-                        </Typography>
-                    </Grid>
-                    }
-                    <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayScore}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayResult}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={1}>
+                    {notOnMobile ? (
+                        <>
+                            <Grid item xs={3}>
+                                <Typography variant={typographyVariant} noWrap>
+                                    {replayName}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2}>
+                                {replayDate}
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Typography variant={typographyVariant} noWrap>
+                                    {replayGameMode}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Typography variant={typographyVariant}>
+                                    {replayScore}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Typography variant={typographyVariant}>
+                                    {replayResult}
+                                </Typography>
+                            </Grid>
+                        </>
+                    ) : (
+                        <>
+                            <Grid item xs={4}>
+                                <Typography variant={typographyVariant} noWrap>
+                                    {replayName}
+                                </Typography>
+                                {replayDate}
+                            </Grid>
+                            <Grid item xs={3} style={{margin: "auto"}}>
+                                <Typography variant={typographyVariant} noWrap>
+                                    {replayGameMode}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Typography variant={typographyVariant}>
+                                    {replayScore}
+                                </Typography>
+                                <Typography variant={notOnMobile ? typographyVariant : "caption"}>
+                                    {replayResult}
+                                </Typography>
+                            </Grid>
+                        </>
+                    )}
+
+                    <Grid item xs={1} style={{margin: "auto"}}>
                         {chartIcon}
                     </Grid>
+
                 </Grid>
             </ExpansionPanelSummary>
         )
