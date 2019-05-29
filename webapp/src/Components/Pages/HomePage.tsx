@@ -42,7 +42,7 @@ const styles = (theme: Theme) => createStyles({
     },
     backgroundContainer: {
         width: "100vw",
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         backgroundSize: "cover",
         backgroundAttachment: "fixed",
