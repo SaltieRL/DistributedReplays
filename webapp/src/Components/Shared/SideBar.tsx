@@ -8,6 +8,7 @@ import Help from "@material-ui/icons/Help"
 import Info from "@material-ui/icons/Info"
 import Search from "@material-ui/icons/Search"
 import ShowChart from "@material-ui/icons/ShowChart"
+import TableChart from "@material-ui/icons/TableChart"
 import * as React from "react"
 import { Link } from "react-router-dom"
 import {
@@ -15,9 +16,10 @@ import {
     EXPLANATIONS_LINK,
     GITHUB_LINK,
     GLOBAL_STATS_LINK,
+    LEADERBOARDS_LINK,
     PATREON_LINK,
     PLAYER_COMPARE_PAGE_LINK,
-    PLAYER_SEARCH_PAGE_LINK, REPLAYS_GROUP_PAGE_LINK,
+    REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
     UPLOAD_LINK
 } from "../../Globals"
@@ -50,9 +52,9 @@ export class SideBar extends React.PureComponent<Props> {
                         <Divider component={"li" as any}/>
 
                         <ListSubheader>Player</ListSubheader>
-                        <ListItem button component={this.createLink(PLAYER_SEARCH_PAGE_LINK)} disabled>
-                            <ListItemIcon><Search/></ListItemIcon>
-                            <ListItemText secondary="Coming soon">Search</ListItemText>
+                        <ListItem button component={this.createLink(LEADERBOARDS_LINK)}>
+                            <ListItemIcon><TableChart/></ListItemIcon>
+                            <ListItemText>Leaderboards</ListItemText>
                         </ListItem>
                         <ListItem button component={this.createLink(PLAYER_COMPARE_PAGE_LINK)}>
                             <ListItemIcon><CompareArrows/></ListItemIcon>

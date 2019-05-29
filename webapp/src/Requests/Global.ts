@@ -13,6 +13,8 @@ export const getQueueStatuses = (): Promise<QueueStatus[]> => {
     return doGet("/global/queue/count")
 }
 
+export const getLeaderboards = (): Promise<PlaylistLeaderboard[]> => doGet("/global/leaderboards")
+
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
 export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
 
