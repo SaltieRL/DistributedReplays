@@ -1,11 +1,16 @@
 interface Leader {
     name: string
-    id_: number
+    id_: string
     count: number
     avatar: string
 }
 
+interface DurationLeaders {
+    month: Leader[]
+    week: Leader[]
+}
+
 interface PlaylistLeaderboard {
     playlist: int
-    leaders: Leader[]
+    leaders: DurationLeaders
 }

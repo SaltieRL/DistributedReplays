@@ -1,6 +1,7 @@
-import { Card, CardHeader, Grid } from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import * as React from "react"
 import { getLeaderboards } from "../../Requests/Global"
+import { PlaylistLeaderboardGrid } from "../Leaderboards/PlaylistLeaderboardGrid"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
@@ -24,15 +25,14 @@ export class LeaderboardsPage extends React.PureComponent<Props, State> {
                 <Grid container spacing={24} justify="center">
                     <LoadableWrapper load={this.getLeaderboards}>
                         {this.state.leaderboards &&
-                        <Card>
-                            <CardHeader title="Leaderboards"/>
-                        </Card>
+                        <PlaylistLeaderboardGrid leaderboards={this.state.leaderboards}/>
                         }
                     </LoadableWrapper>
                 </Grid>
             </BasePage>
         )
     }
+
     private readonly getLeaderboards = (): Promise<void> => {
         return getLeaderboards()
             .then((leaderboards) => this.setState({leaderboards}))

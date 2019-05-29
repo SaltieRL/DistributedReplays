@@ -1,5 +1,6 @@
 import qs from "qs"
 import { doGet, doPost } from "../apiHandler/apiHandler"
+import { playlists } from "../Utils/Playlists"
 import { useMockData } from "./Config"
 
 export const getReplayCount = (): Promise<number> => {
@@ -13,7 +14,30 @@ export const getQueueStatuses = (): Promise<QueueStatus[]> => {
     return doGet("/global/queue/count")
 }
 
-export const getLeaderboards = (): Promise<PlaylistLeaderboard[]> => doGet("/global/leaderboards")
+export const getLeaderboards = (): Promise<PlaylistLeaderboard[]> => {
+    if (useMockData) {
+        const leaders: Leader[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+            {
+                name: `Leader${i}`,
+                id_: "76561198064630547",
+                count: 500 - i,
+                avatar: "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
+            }
+        ))
+        return Promise.resolve(
+            playlists.map((playlist) => (
+                    {
+                        leaders: {
+                            month: leaders,
+                            week: leaders
+                        },
+                        playlist: playlist.value
+                    }
+                )
+            ))
+    }
+    return doGet("/global/leaderboards")
+}
 
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
 export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
