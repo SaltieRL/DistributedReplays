@@ -41,6 +41,7 @@ export const getLeaderboards = (): Promise<PlaylistLeaderboard[]> => {
 
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
 export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
+// TODO(Sciguymjm) Type this thing.
 
 // @return taskIds of uploaded replays
 export const uploadReplays = (replays: File[]): Promise<string[]> => {
