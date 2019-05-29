@@ -5,7 +5,10 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 
 const styles = createStyles({
     content: {
-        width: "100%"
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        flex: 1
     }
 })
 

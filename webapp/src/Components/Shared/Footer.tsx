@@ -80,7 +80,7 @@ class FooterComponent extends React.PureComponent<Props> {
         ]
 
         const {classes, width} = this.props
-        const isWidthUpMd = isWidthUp("md", width)
+        const isWidthUpLg = isWidthUp("lg", width)
 
         const buttons: JSX.Element[] = buttonDatas.map((buttonData: ButtonData) => (
             <Grid item xs="auto" key={buttonData.text}>
@@ -92,18 +92,18 @@ class FooterComponent extends React.PureComponent<Props> {
                 <Divider/>
                 <footer className={classes.footer}>
                     <Grid container spacing={24} justify="center" alignItems="center">
-                        <Grid item xs={12} md={3} lg={3}>
-                            <Typography align={isWidthUpMd ? "left" : "center"}>
+                        <Grid item xs={12} lg={3}>
+                            <Typography align={isWidthUpLg ? "left" : "center"}>
                                 &copy; 2017-2019 Saltie Group
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} md={4} lg={5}
-                              container justify={isWidthUpMd ? "flex-start" : "center"} spacing={16}
+                        <Grid item xs={12} lg={5}
+                              container justify={isWidthUpLg ? "flex-start" : "center"} spacing={16}
                         >
                             <Grid item>
                                 <Link to={"/"} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             Home
                                         </Typography>
                                     </ButtonBase>
@@ -113,7 +113,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             <Grid item>
                                 <Link to={GLOBAL_STATS_LINK} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             Global Stats
                                         </Typography>
                                     </ButtonBase>
@@ -123,7 +123,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             <Grid item>
                                 <Link to={ABOUT_LINK} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             About Us
                                         </Typography>
                                     </ButtonBase>
@@ -133,7 +133,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             <Grid item>
                                 <Link to={STATUS_PAGE_LINK} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             Status
                                         </Typography>
                                     </ButtonBase>
@@ -143,7 +143,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             <Grid item>
                                 <Link to={EXPLANATIONS_LINK} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             Stat Explanations
                                         </Typography>
                                     </ButtonBase>
