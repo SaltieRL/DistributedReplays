@@ -26,10 +26,6 @@ type Props = OwnProps
     & WithWidth
 
 class PlayerStatsTabsComponent extends React.PureComponent<Props> {
-    constructor(props: Props) {
-        super(props)
-    }
-
     public render() {
         const categoryToIcon: Record<PlayerStatsSubcategory, IconDefinition> = {
             "Main Stats": faChartBar,
