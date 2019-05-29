@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core"
+import { Grid, withTheme, WithTheme } from "@material-ui/core"
 import * as React from "react"
 import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
 import { Replay } from "../../Models"
@@ -11,7 +11,7 @@ interface RouteParams {
     id: string
 }
 
-type Props = RouteComponentProps<RouteParams>
+type Props = RouteComponentProps<RouteParams> & WithTheme
 
 interface State {
     replay?: Replay
@@ -19,7 +19,7 @@ interface State {
     predictedRanks?: any
 }
 
-export class ReplayPage extends React.PureComponent<Props, State> {
+class ReplayPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {}
@@ -29,8 +29,10 @@ export class ReplayPage extends React.PureComponent<Props, State> {
         const matchUrl = this.props.match.url
         const {replay, explanations} = this.state
 
+        const backgroundImage = this.props.theme.palette.type === "dark" ?
+            "/replay_page_background_black.jpg" : "/replay_page_background.jpg"
         return (
-            <BasePage backgroundImage={"/replay_page_background.jpg"}>
+            <BasePage backgroundImage={backgroundImage}>
                 <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
                     <LoadableWrapper load={this.getReplay}>
                         {replay &&
@@ -67,3 +69,5 @@ export class ReplayPage extends React.PureComponent<Props, State> {
         this.setState({replay})
     }
 }
+
+export const ReplayPage = withTheme()(ReplayPageComponent)

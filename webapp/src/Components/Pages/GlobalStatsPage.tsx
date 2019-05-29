@@ -29,7 +29,7 @@ export class GlobalStatsPageComponent extends React.PureComponent<Props, State> 
     public render() {
         const removedStats = ["first_frame_in_game", "is_keyboard", "time_in_game", "total_saves"]
         return (
-            <BasePage backgroundImage={"/splash.png"}>
+            <BasePage useSplash>
                 <Grid container spacing={16} alignItems="center" justify="center">
                     <Grid item xs={12}>
                         <Typography variant="h6" align="center">

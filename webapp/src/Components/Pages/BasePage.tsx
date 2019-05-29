@@ -1,4 +1,4 @@
-import { createStyles, Grid, WithStyles, withStyles } from "@material-ui/core"
+import { createStyles, Grid, WithStyles, withStyles, withTheme, WithTheme } from "@material-ui/core"
 import * as React from "react"
 import { Footer } from "../Shared/Footer"
 import { NavBar } from "../Shared/NavBar/NavBar"
@@ -14,10 +14,11 @@ const styles = createStyles({
 
 interface OwnProps {
     backgroundImage?: string
+    useSplash?: boolean
 }
 
 type Props = OwnProps
-    & WithStyles<typeof styles>
+    & WithStyles<typeof styles> & WithTheme
 
 interface State {
     sideBarOpen: boolean
@@ -30,7 +31,12 @@ class BasePageComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {classes, backgroundImage} = this.props
+        const {classes, theme} = this.props
+
+        const backgroundImage = this.props.useSplash ? (
+            theme.palette.type === "dark" ? "/splash_black.png" : "/splash.png"
+        ) : this.props.backgroundImage
+
         return (
             <Grid container direction="column"
                   className={backgroundImage ? classes.withBackgroundImage : undefined}
@@ -51,4 +57,4 @@ class BasePageComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const BasePage = withStyles(styles)(BasePageComponent)
+export const BasePage = withTheme()(withStyles(styles)(BasePageComponent))

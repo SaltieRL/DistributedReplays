@@ -57,7 +57,7 @@ const styles = (theme: Theme) => createStyles({
         display: "flex",
         backgroundSize: "cover",
         backgroundAttachment: "fixed",
-        backgroundImage: theme.palette.type === "dark" ? undefined : 'url("/splash.png")'
+        backgroundImage: theme.palette.type === "dark" ? 'url("/splash_black.png")' : 'url("/splash.png")'
     }
 })
 
