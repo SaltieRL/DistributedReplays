@@ -21,7 +21,9 @@ export const getLeaderboards = (): Promise<PlaylistLeaderboard[]> => {
                 name: `Leader${i}`,
                 id_: "76561198064630547",
                 count: 500 - i,
-                avatar: "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
+                avatar: "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-" +
+                    "black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-" +
+                    "4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
             }
         ))
         return Promise.resolve(
