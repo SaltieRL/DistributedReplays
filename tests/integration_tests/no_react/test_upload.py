@@ -33,7 +33,7 @@ class Test_BasicServerCommands():
             r.raise_for_status()
             assert(r.status_code == 202)
 
-        for i in range(replay_list):
+        for i in range(len(replay_list)):
             print('waiting ', (len(replay_list) - i) * 30, 'seconds')
             time.sleep(30)
 
