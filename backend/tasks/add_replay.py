@@ -141,8 +141,11 @@ def save_replay(proto_game, filename, pickled):
 
 
 def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, preserve_upload_date=True):
+    logger.debug("Successfully parsed replay adding data to DB")
     # Process
     match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
+
+    logger.debug("SUCCESS: Added base data to db adding query params")
 
     if query_params is None:
         return
@@ -155,3 +158,5 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
                               game_exists=match_exists)
     except CalculatedError as e:
         log_error(e, message='Error changing visibility', logger=logger)
+
+    logger.debug("SUCCESS: Processed all query params")
