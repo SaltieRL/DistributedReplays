@@ -18,6 +18,7 @@ from backend.database.utils.utils import add_objects
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length, get_default_parse_folder
 from backend.utils.checks import log_error
+from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df
 
 logger = logging.getLogger(__name__)
 
@@ -116,13 +117,25 @@ def parse_replay(self, filename, preserve_upload_date: bool = False,
 
 
 def save_replay(proto_game, filename, pickled):
-
     replay_id = proto_game.game_metadata.match_guid
     if replay_id == '':
         replay_id = proto_game.game_metadata.id
-    shutil.move(filename, os.path.join(os.path.dirname(filename), replay_id + '.replay'))
-    shutil.move(pickled + '.pts', os.path.join(os.path.dirname(pickled), replay_id + '.replay.pts'))
-    shutil.move(pickled + '.gzip', os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip'))
+
+    replay_path = os.path.join(os.path.dirname(filename), replay_id + '.replay')
+    proto_path = os.path.join(os.path.dirname(pickled), replay_id + '.replay.pts')
+    pandas_path = os.path.join(os.path.dirname(pickled), replay_id + '.replay.gzip')
+    shutil.move(filename, replay_path)
+    shutil.move(pickled + '.pts', proto_path)
+    shutil.move(pickled + '.gzip', pandas_path)
+
+    result = upload_replay(replay_path)
+    if result is not None:
+        upload_proto(proto_path)
+        upload_df(pandas_path)
+
+        os.remove(replay_path)
+        os.remove(proto_path)
+        os.remove(pandas_path)
 
     return replay_id
 
