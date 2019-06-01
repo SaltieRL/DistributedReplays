@@ -32,9 +32,10 @@ class Test_BasicServerCommands():
             assert(r.status_code == 202)
 
         for i in range(len(get_complex_replay_list())):
-            print('waiting', i)
-            time.sleep(10)
+            print('waiting ', (len(get_complex_replay_list()) - i) * 30, 'seconds')
+            time.sleep(30)
 
+        time.sleep(30)
         r = requests.get(LOCAL_URL + '/api/global/replay_count')
         result = json.loads(r.content)
         assert(int(result) == 7)
