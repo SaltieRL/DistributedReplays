@@ -74,7 +74,7 @@ class SharedStatCreation:
         zipped_stats = dict()
 
         for i in range(len(stat_list)):
-            zipped_stats[stat_list[i].get_field_name()] = stats[i]
+            zipped_stats[stat_list[i].get_query_key()] = stats[i]
 
         return zipped_stats
 

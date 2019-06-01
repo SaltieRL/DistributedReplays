@@ -14,20 +14,20 @@ Metadata = ChartStatsMetadata
 
 team_stats_metadata = [
     # Positioning
-    Metadata('time high in air', ChartType.bar, SubCat.Positioning),
-    Metadata('time low in air', ChartType.bar, SubCat.Positioning),
-    Metadata('time on ground', ChartType.bar, SubCat.Positioning),
-    Metadata('time in defending third', ChartType.bar, SubCat.Positioning),
-    Metadata('time in neutral third', ChartType.bar, SubCat.Positioning),
-    Metadata('time in attacking third', ChartType.bar, SubCat.Positioning),
-    Metadata('time in defending half', ChartType.bar, SubCat.Positioning),
-    Metadata('time in attacking half', ChartType.bar, SubCat.Positioning),
-    Metadata('time near wall', ChartType.bar, SubCat.Positioning),
-    Metadata('time in corner', ChartType.bar, SubCat.Positioning),
+    Metadata('time_high_in_air', ChartType.bar, SubCat.Positioning),
+    Metadata('time_low_in_air', ChartType.bar, SubCat.Positioning),
+    Metadata('time_on_ground', ChartType.bar, SubCat.Positioning),
+    Metadata('time_in_defending_third', ChartType.bar, SubCat.Positioning),
+    Metadata('time_in_neutral_third', ChartType.bar, SubCat.Positioning),
+    Metadata('time_in_attacking_third', ChartType.bar, SubCat.Positioning),
+    Metadata('time_in_defending_half', ChartType.bar, SubCat.Positioning),
+    Metadata('time_in_attacking_half', ChartType.bar, SubCat.Positioning),
+    Metadata('time_near_wall', ChartType.bar, SubCat.Positioning),
+    Metadata('time_in_corner', ChartType.bar, SubCat.Positioning),
 
     # Center of mass
-    Metadata('average distance from center', ChartType.bar, SubCat.CenterOfMass),
-    Metadata('average max distance from center', ChartType.bar, SubCat.CenterOfMass),
-    Metadata('time clumped', ChartType.bar, SubCat.CenterOfMass),
-    Metadata('time boondocks', ChartType.bar, SubCat.CenterOfMass),
+    Metadata('average_distance_from_center', ChartType.bar, SubCat.CenterOfMass),
+    Metadata('average_max_distance_from_center', ChartType.bar, SubCat.CenterOfMass),
+    Metadata('time_clumped', ChartType.bar, SubCat.CenterOfMass),
+    Metadata('time_boondocks', ChartType.bar, SubCat.CenterOfMass),
 ]

@@ -120,12 +120,14 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
     private readonly sortPlayerStats = (playerStats: PlayerStat[]): void => {
         const {statName, direction} = this.state.currentSort!
 
-        playerStats.sort((playerStatA, playerStatB) => {
-            return playerStatA.stats.find((stat) => stat.statName === statName)!.value
-                - playerStatB.stats.find((stat) => stat.statName === statName)!.value
-        })
-        if (direction !== "asc") {
-            playerStats.reverse()
+        if (playerStats.length > 0 && playerStats[0].stats.find((stat) => stat.statName === statName) !== undefined) {
+            playerStats.sort((playerStatA, playerStatB) => {
+                return playerStatA.stats.find((stat) => stat.statName === statName)!.value
+                    -  playerStatB.stats.find((stat) => stat.statName === statName)!.value
+            })
+            if (direction !== "asc") {
+                playerStats.reverse()
+            }
         }
     }
 

@@ -2,6 +2,7 @@ import {
     faBraille,
     faBullseye,
     faCarSide,
+    faChartBar,
     faCircle,
     faFutbol,
     faHandshake,
@@ -18,14 +19,20 @@ import { PlayerStatsSubcategory } from "../../../../Models"
 interface OwnProps {
     selectedTab: PlayerStatsSubcategory
     handleChange: (event: any, selectedTab: PlayerStatsSubcategory) => void
+    exclude?: string[]
 }
 
 type Props = OwnProps
     & WithWidth
 
 class PlayerStatsTabsComponent extends React.PureComponent<Props> {
+    constructor(props: Props) {
+        super(props)
+    }
+
     public render() {
         const categoryToIcon: Record<PlayerStatsSubcategory, IconDefinition> = {
+            "Main Stats": faChartBar,
             "Hits": faBullseye,
             "Ball": faFutbol,
             "Playstyles": faCarSide,
@@ -44,7 +51,11 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
                   variant={widthDown ? "scrollable" : "fullWidth"}
                   scrollButtons={widthDown ? "on" : undefined}
             >
-                {Object.keys(PlayerStatsSubcategory).map((subcategory) => {
+                {Object.keys(PlayerStatsSubcategory).filter((subcategory) => {
+                    return this.props.exclude !== undefined
+                        ? this.props.exclude.indexOf(subcategory) === -1
+                        : true
+                }).map((subcategory) => {
                     const value = PlayerStatsSubcategory[subcategory]
                     return <Tab label={value} value={value} key={value}
                                 icon={<FontAwesomeIcon icon={categoryToIcon[value]}/>}/>

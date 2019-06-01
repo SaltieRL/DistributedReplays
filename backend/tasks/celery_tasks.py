@@ -18,6 +18,7 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
+from backend.utils.cloud_handler import upload_df, upload_proto, upload_replay
 
 celery = Celery(__name__, broker=celeryconfig.broker_url)
 
