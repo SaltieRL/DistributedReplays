@@ -34,5 +34,4 @@ class DBTask(Task):
     def session(self):
         if self._session is None:
             self._session = lazy_startup()
-
         return self._session

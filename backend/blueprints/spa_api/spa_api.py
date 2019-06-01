@@ -314,8 +314,11 @@ def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
     try:
         visibility_setting = convert_to_enum(GameVisibilitySetting)(visibility)
     except Exception as e:
-        logger.error(e)
-        return "Visibility setting not provided or incorrect", 400
+        try:
+            visibility_setting = GameVisibilitySetting(int(visibility))
+        except Exception as e:
+            logger.error(e)
+            return "Visibility setting not provided or incorrect", 400
 
     try:
         release_date = query_params['release_date']

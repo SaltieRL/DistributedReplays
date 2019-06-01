@@ -44,7 +44,7 @@ def add_replay_parse_task(file_name, query_params: Dict[str, any] = None, **kwar
     return parse_replay_task.delay(*[file_name], **{**kwargs, **{'query_params': query_params}},)
 
 
-@celery.task(base=DBTask, bind=True, priority=5)
+@celery.task(bind=True, priority=5)
 def parse_replay_task(self, *args, **kwargs):
     return parse_replay(self, *args, **kwargs)
 
