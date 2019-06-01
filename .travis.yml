@@ -65,7 +65,6 @@ jobs:
         - cd $TRAVIS_BUILD_DIR
       script:
         - cd webapp
-        - npm install
         - npm start &
         - cd $TRAVIS_BUILD_DIR
         - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
