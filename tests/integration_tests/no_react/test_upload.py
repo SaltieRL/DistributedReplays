@@ -1,6 +1,5 @@
 import json
 import time
-import unittest
 
 import requests
 
@@ -24,21 +23,24 @@ class Test_BasicServerCommands():
         print('done waiting')
 
     def test_upload_files(self):
-        for replay_url in get_complex_replay_list():
+
+        replay_list = get_complex_replay_list()[0:4]
+
+        for replay_url in replay_list:
             print('Testing:', replay_url)
             f = download_replay_discord(replay_url)
             r = requests.post(LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', f)})
             r.raise_for_status()
             assert(r.status_code == 202)
 
-        for i in range(len(get_complex_replay_list())):
-            print('waiting ', (len(get_complex_replay_list()) - i) * 30, 'seconds')
+        for i in range(replay_list):
+            print('waiting ', (len(replay_list) - i) * 30, 'seconds')
             time.sleep(30)
 
         time.sleep(30)
         r = requests.get(LOCAL_URL + '/api/global/replay_count')
         result = json.loads(r.content)
-        assert(int(result) == 7)
+        assert(int(result) == len(replay_list))
 
     @classmethod
     def teardown_class(cls):

@@ -80,6 +80,7 @@ jobs:
    #     - cd $TRAVIS_BUILD_DIR
    #   script:
    #     - cd webapp
+   #     - npm start
    #     - npm test
    #   after_success:
    #     - codecov
