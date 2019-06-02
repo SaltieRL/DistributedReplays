@@ -73,7 +73,7 @@ def get_strict_redis():
 # session getting
 class EngineStartup:
     @staticmethod
-    def startup() -> sessionmaker:
+    def login_db() -> Tuple[any, sessionmaker]:
         try:
             # Sql Stuff
             connection_string = 'postgresql:///saltie'
@@ -84,6 +84,11 @@ class EngineStartup:
                 engine, session = login('postgresql://postgres:postgres@localhost/saltie')
             except Exception as e:
                 engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+        return engine, session
+
+    @staticmethod
+    def startup() -> sessionmaker:
+        _, session = EngineStartup.login_db()
         return session
 
     @staticmethod
