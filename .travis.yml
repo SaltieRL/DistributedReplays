@@ -14,6 +14,11 @@ addons:
     - ubuntu-toolchain-r-test
 
 
+cache:
+  - pip
+  - npm
+
+
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
@@ -30,6 +35,7 @@ stages:
   - name: test
   - name: deploy
     if: branch = master AND NOT fork AND type = push
+  - name: announcement
 
 
 jobs:
@@ -76,6 +82,9 @@ jobs:
           # Wait for all other systems to be setup
         - sleep 30
         - pytest tests/integration_tests --cov=./
+        - bash <(curl -s https://codecov.io/bash) -c -F integration
+      after_success:
+        - codecov
    # - stage: test
    #   name: "react unit tests"
    #   install:
@@ -90,6 +99,10 @@ jobs:
    #   after_success:
    #     - codecov
     - stage: deploy
+      name: "Deploy to Production"
+      install: skip
+      script: skip
+    - stage: announcement
       name: "Announce success"
       python: "3.7"
       install: skip
@@ -98,3 +111,4 @@ jobs:
       - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
       - chmod +x .travis/send.sh
       - ./.travis/send.sh success $WEBHOOK_URL
+
