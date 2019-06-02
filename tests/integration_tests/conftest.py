@@ -1,7 +1,7 @@
 import pytest
 
 from backend.database.startup import EngineStartup
-from utils.database_utils import empty_database
+from tests.utils.database_utils import empty_database
 
 
 @pytest.fixture(autouse=True, scope="class")
