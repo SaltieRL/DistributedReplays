@@ -20,11 +20,16 @@ install:
 
 script: skip
 
+# We only build if it is a pr into master or it is a pr and it is not into master
+if:
+  branch = master OR (type = pull_request AND NOT branch = master)
+
+
 stages:
   - name: lint
   - name: test
   - name: deploy
-    if: branch = master
+    if: branch = master AND NOT fork AND type = push
 
 
 jobs:
