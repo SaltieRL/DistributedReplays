@@ -88,7 +88,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                     {Array.from(labelToKeys, ([label, key]) => {
                         if (key !== "name") {
                             return (
-                                <TableCell numeric key={key} padding="dense">
+                                <TableCell align="right" key={key} padding="dense">
                                     <Typography variant="subheading">
                                         {label}
                                     </Typography>
@@ -112,7 +112,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                         <TableRow key={player.id}>
                             {Array.from(labelToKeys, ([label, key]) => (
                                 <TableCell key={key}
-                                           numeric={key !== "name"}
+                                           align={key !== "name" ? "right" : undefined}
                                            className={this.props.classes.tableData}
                                            padding="dense"
                                 >

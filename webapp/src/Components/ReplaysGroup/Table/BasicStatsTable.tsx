@@ -84,7 +84,7 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
                     <TableRow>
                         <TableCell>Name</TableCell>
                         {stats.map((stat) => (
-                            <TableCell key={stat.name} numeric>
+                            <TableCell key={stat.name} align="right">
                                 <TableSortLabel
                                     active={this.state.currentSort && stat.name === this.state.currentSort.statName}
                                     direction={this.state.currentSort && this.state.currentSort.direction}
@@ -101,7 +101,7 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
                         <TableRow key={playerStat.playerName}>
                             <TableCell>{playerStat.playerName}</TableCell>
                             {playerStat.stats.map((stat, i) => (
-                                <TableCell key={i} numeric>
+                                <TableCell key={i} align="right">
                                     {stat.isMax ?
                                         <b>{stat.value}</b>
                                         :

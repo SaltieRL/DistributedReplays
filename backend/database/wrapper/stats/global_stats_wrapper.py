@@ -155,10 +155,10 @@ class GlobalStatWrapper(SharedStatsWrapper):
 
 
 if __name__ == '__main__':
-    from backend.database.startup import startup
+    from backend.database.startup import lazy_startup
 
-    engine, Session = startup()
-    sess = Session()
+    session_factory = lazy_startup()
+    sess = session_factory()
     try:
         result = GlobalStatWrapper().get_global_stats(sess)
         print(result)

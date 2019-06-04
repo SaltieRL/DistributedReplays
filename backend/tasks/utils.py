@@ -1,4 +1,8 @@
+import os
+
 import redis
+
+from backend.database.startup import get_strict_redis
 
 PRIORITY_SEP = '\x06\x16'
 DEFAULT_PRIORITY_STEPS = [0, 3, 6, 9]
@@ -40,5 +44,12 @@ def get_queue_length(queue_name='celery'):
     """
     priority_names = [make_queue_name_for_pri(queue_name, pri) for pri in
                       DEFAULT_PRIORITY_STEPS]
-    r = redis.StrictRedis()
+    r = get_strict_redis()
     return [r.llen(x) for x in priority_names]
+
+
+DEFAULT_PARSED_FOLDER = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed')
+
+
+def get_default_parse_folder():
+    return DEFAULT_PARSED_FOLDER
