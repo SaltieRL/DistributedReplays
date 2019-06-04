@@ -322,7 +322,7 @@ class TagWrapperAddTagToGameTest(unittest.TestCase):
         self.session.close()
 
     def test_add_tag_to_replay_success(self):
-        TagWrapper.add_tag_to_game(self.session, self.test_game_id, self.test_user_id, self.tag_name)
+        TagWrapper.add_tag_by_name_to_game(self.session, self.test_game_id, self.test_user_id, self.tag_name)
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
         game = self.session.query(Game).filter(Game.hash == self.test_game_id).first()
         self.assertIsNotNone(tag)
@@ -331,7 +331,7 @@ class TagWrapperAddTagToGameTest(unittest.TestCase):
 
     def test_add_tag_to_replay_tag_not_found(self):
         with self.assertRaises(DBTagNotFound):
-            TagWrapper.add_tag_to_game(self.session, self.test_game_id, self.test_user_id, TAGS[1])
+            TagWrapper.add_tag_by_name_to_game(self.session, self.test_game_id, self.test_user_id, TAGS[1])
 
 
 class TagWrapperRemoveTagFromGameTest(unittest.TestCase):
@@ -389,7 +389,7 @@ class TagWrapperRemoveTagFromGameTest(unittest.TestCase):
 
     def test_remove_tag_from_replay_success(self):
         # a bit dirty to do it like this...
-        TagWrapper.add_tag_to_game(self.session, self.test_game_id, self.test_user_id, self.tag_name)
+        TagWrapper.add_tag_by_name_to_game(self.session, self.test_game_id, self.test_user_id, self.tag_name)
         TagWrapper.remove_tag_from_game(self.session, self.test_game_id, self.test_user_id, self.tag_name)
         tag = self.session.query(Tag).filter(Tag.owner == self.test_user_id, Tag.name == self.tag_name).first()
         game = self.session.query(Game).filter(Game.hash == self.test_game_id).first()
@@ -440,7 +440,7 @@ class TagWrapperGetTaggedGamesTest(unittest.TestCase):
         for i in range(len(self.test_game_ids)):
             game_id = self.test_game_ids[i]
             for j in range(len(self.test_game_ids) - i):
-                TagWrapper.add_tag_to_game(self.session, game_id, self.test_user_id, self.all_tags[j])
+                TagWrapper.add_tag_by_name_to_game(self.session, game_id, self.test_user_id, self.all_tags[j])
 
     def tearDown(self):
         # remove tag if necessary

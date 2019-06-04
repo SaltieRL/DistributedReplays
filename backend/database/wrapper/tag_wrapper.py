@@ -40,17 +40,20 @@ class TagWrapper:
         return tag
 
     @staticmethod
-    def add_tag_to_game(session, game_id: str, user_id: str, tag_name: str) -> None:
+    def add_tag_by_name_to_game(session, game_id: str, user_id: str, tag_name: str) -> None:
         tag: Tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == tag_name).first()
         if tag is None:
             raise DBTagNotFound()
+        TagWrapper.add_tag_to_game(session, game_id, tag)
+
+    @staticmethod
+    def add_tag_to_game(session, game_id: str, tag: Tag) -> None:
         game = session.query(Game).filter(Game.hash == game_id).first()
         if game is None:
             raise ReplayNotFound()
         if tag not in game.tags:
             game.tags.append(tag)
             session.commit()
-        # TODO maybe add else
 
     @staticmethod
     def remove_tag_from_game(session, game_id: str, user_id: str, tag_name: str) -> None:

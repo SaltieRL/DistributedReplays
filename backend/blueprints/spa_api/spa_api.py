@@ -44,7 +44,6 @@ from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game, GameVisibilitySetting
-from backend.database.utils.utils import add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from .errors.errors import CalculatedError, MissingQueryParams

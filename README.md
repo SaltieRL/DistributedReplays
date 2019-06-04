@@ -71,3 +71,5 @@ Now go to `localhost:3000` and the site should be running.
 
 We run with pytest and use some features from it.
 If you are using an ide (pycharm/intellij) you must change the default runner from unit tests to pytests
+You can make this change by going to settings and searching for "unittest"
+[Python unit test configuration](https://www.jetbrains.com/help/idea/run-debug-configuration-python-unit-test.html)

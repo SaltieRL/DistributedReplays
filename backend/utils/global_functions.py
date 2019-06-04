@@ -26,7 +26,9 @@ def debug(text):
     return ''
 
 
-def get_current_user_id():
+def get_current_user_id(player_id=None):
+    if player_id is not None:
+        return player_id
     return UserManager.get_current_user().platformid
 
 
