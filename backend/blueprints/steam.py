@@ -37,7 +37,7 @@ def get_steam_profile_or_random_response(steam_id):
         logger.warning(e)
         traceback.print_exc()
         player = create_default_player()
-        print(player)
+        print(f"Returning default player: {player}")
         return {
             'response': {
                 'players': [{

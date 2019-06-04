@@ -50,6 +50,16 @@ class MissingQueryParams(CalculatedError):
         super().__init__(self.status_code, message)
 
 
+class InvalidQueryParamFormat(CalculatedError):
+    status_code = 400
+
+    def __init__(self, invalidParameter, value):
+        message = f'{value} is in invalid format for Query parameter: {invalidParameter.name}'
+        if invalidParameter.tip is not None:
+            message += f'tip: {invalidParameter.tip}'
+        super().__init__(self.status_code, message)
+
+
 class TagNotFound(CalculatedError):
     status_code = 404
     message = "Tag not found"
@@ -58,3 +68,8 @@ class TagNotFound(CalculatedError):
 class UnsupportedPlaylist(CalculatedError):
     status_code = 501
     message = "Playlist not supported"
+
+
+class AuthorizationException(CalculatedError):
+    status_code = 401
+    message = "User not allowed for this request"

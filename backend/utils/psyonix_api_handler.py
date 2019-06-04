@@ -9,7 +9,7 @@ import requests
 from flask import current_app
 from backend.utils.braacket_connection import Braacket
 from backend.database.objects import Player
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 
 fake_data = False
 try:
@@ -42,8 +42,8 @@ def get_bot_by_steam_id(steam_id):
         if len(steam_id) < 6:
             return "Allstar"
         else:
-            engine, Session = startup()
-            bot = Session().query(Player).filter(Player.platformid == steam_id).first()
+            session = lazy_startup()
+            bot = session().query(Player).filter(Player.platformid == steam_id).first()
             if bot is None:
                 return None
         return bot.platformname
@@ -62,24 +62,24 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
     if fake_data or RL_API_KEY is None:
         return make_fake_data(ids)
     try:
-        r = current_app.config['r']  # type: redis.Redis
+        _redis = current_app.config['r']  # type: redis.Redis
     except KeyError:
-        r = None
+        _redis = None
         ids_to_find = ids
     except RuntimeError:  # we're not in application context, use our own redis
         if offline_redis is None and use_redis:
             offline_redis = redis.Redis(
                 host='localhost',
                 port=6379)
-        r = offline_redis
-    if r is not None:
+        _redis = offline_redis
+    if _redis is not None:
         ids_to_find = []
         for steam_id in ids:
             try:
-                result = r.get(steam_id)
+                result = _redis.get(steam_id)
             except redis.ConnectionError:
                 logger.error('Error connecting to redis')
-                r = None
+                _redis = None
                 ids_to_find = ids
                 break
             if result is not None:
@@ -138,8 +138,8 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
                         'string': tier_div_to_string(None)
                     }
 
-            if r is not None:
-                r.set(unique_id, json.dumps(rank_datas), ex=30 * 60)
+            if _redis is not None:
+                _redis.set(unique_id, json.dumps(rank_datas), ex=30 * 60)
             rank_datas_for_players[unique_id] = rank_datas
         else:
             rank_datas_for_players[unique_id] = {}

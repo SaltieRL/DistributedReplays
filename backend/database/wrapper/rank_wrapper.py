@@ -43,7 +43,6 @@ def get_rank_tier(rank, playlist=13):
 
 def get_rank_obj_by_mapping(rank, playlist=13):
     try:
-        print(rank)
         return rank[str(real_rank_mapping[int(playlist)])]
     except KeyError:
         return rank['13']

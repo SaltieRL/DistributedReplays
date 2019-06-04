@@ -82,7 +82,7 @@ class FooterComponent extends React.PureComponent<Props> {
                                 &copy; 2017-2019 Saltie Group
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} md={5}
+                        <Grid item xs={12} md={4}
                               container justify={isWidthUpMd ? "flex-start" : "center"} spacing={16}
                         >
                             <Grid item>
