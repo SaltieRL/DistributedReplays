@@ -29,7 +29,7 @@ class with_query_params(object):
                 return decorated_function(*args, **kwargs)
             validation = self.validation_func(query_params)
             if validation is not None:
-                return validation
+                raise validation
             kwargs['query_params'] = query_params
             return decorated_function(*args, **kwargs)
         return decorator

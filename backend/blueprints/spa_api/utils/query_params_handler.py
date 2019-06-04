@@ -1,5 +1,4 @@
-from enum import Enum
-from typing import List, Dict, Any, Callable, Type, TypeVar
+from typing import List, Dict, Any, Callable
 from urllib.parse import urlencode
 
 from flask import Request

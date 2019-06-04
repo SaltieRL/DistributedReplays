@@ -30,6 +30,9 @@ def no_errors_are_logged(request, mocker):
         def mock_is_called(self):
             return ErrorLogger.log_error.called
 
+        def get_mock(self):
+            return ErrorLogger.log_error
+
     holder = Holder()
 
     def check_mock():
