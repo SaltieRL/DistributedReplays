@@ -6,8 +6,8 @@ from requests import Request
 from backend.database.objects import Game, GameVisibilitySetting, GameVisibility, PlayerGame, Player
 from backend.database.startup import get_current_session
 from backend.utils.time_related import hour_rounder
-from blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat
-from blueprints.spa_api.utils.query_param_definitions import visibility_params
+from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat
+from backend.blueprints.spa_api.utils.query_param_definitions import visibility_params
 from tests.utils.database_utils import default_player_id
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
