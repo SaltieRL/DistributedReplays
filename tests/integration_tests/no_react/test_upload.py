@@ -5,7 +5,7 @@ import time
 import requests
 
 from RLBotServer import start_server
-from database.objects import GameVisibilitySetting, User, Player
+from backend.database.objects import GameVisibilitySetting, User, Player
 from tests.utils.killable_thread import KillableThread
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
