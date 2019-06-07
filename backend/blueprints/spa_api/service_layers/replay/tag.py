@@ -1,17 +1,24 @@
 from typing import List
 
+
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.utils.global_functions import get_current_user_id
 from ...errors.errors import CalculatedError, TagNotFound
 from backend.database.objects import Tag as DBTag
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 
-
 class Tag:
     def __init__(self, name: str, owner: str, db_tag: DBTag = None):
+        super().__init__()
         self.name = name
-        self.ownerId = owner
+        self.owner_id = owner
         self.db_tag = db_tag
+
+    def toJSON(self):
+        return {
+            "name": self.name,
+            "owner_id": self.owner_id
+        }
 
     @staticmethod
     def create_from_dbtag(tag: DBTag):

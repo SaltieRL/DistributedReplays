@@ -30,8 +30,10 @@ def debug(text):
 def get_current_user_id(player_id=None) -> str:
     if player_id is not None:
         return player_id
-    return UserManager.get_current_user().platformid
-
+    try:
+        return UserManager.get_current_user().platformid
+    except Exception as e:
+        logger.error(e)
 
 class UserManager:
     @staticmethod

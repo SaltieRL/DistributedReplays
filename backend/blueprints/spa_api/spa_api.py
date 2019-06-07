@@ -77,6 +77,11 @@ def better_jsonify(response: object):
     :return: The return value of jsonify.
     """
     try:
+        if 'toJSON' in response.__dict__:
+            return better_jsonify(response.toJSON())
+    except:
+        pass
+    try:
         return jsonify(response)
     except TypeError:
         if isinstance(response, list):
@@ -429,7 +434,7 @@ def api_delete_tag(name: str):
 @bp.route('/tag')
 def api_get_tags():
     tags = Tag.get_all()
-    return better_jsonify(tags)
+    return better_jsonify([tag.toJSON() for tag in tags])
 
 
 @require_user

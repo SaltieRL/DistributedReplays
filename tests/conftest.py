@@ -61,5 +61,5 @@ def mock_user(monkeypatch):
 
     mock_user = MockUser()
 
-    monkeypatch.setattr(UserManager, 'get_current_user', mock_user)
+    monkeypatch.setattr(UserManager, 'get_current_user', mock_user.get_fake_user)
     return mock_user

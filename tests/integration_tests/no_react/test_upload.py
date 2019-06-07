@@ -35,7 +35,7 @@ class Test_BasicServerCommands():
 
         replay_list = get_complex_replay_list()[0:4]
 
-        tags = ['TAG1', 'TAG2', 'TAG3', ['TAG4', 'TAG5']]
+        tags = ['TAG1', 'TAG2', 'TAG3', ['TAG4', 'TAG2']]
         privacy = [GameVisibilitySetting.DEFAULT.name,
                    GameVisibilitySetting.PUBLIC.name,
                    GameVisibilitySetting.PRIVATE.name,
@@ -67,7 +67,10 @@ class Test_BasicServerCommands():
 
         response = requests.get(LOCAL_URL + '/api/tag')
 
-        assert response is None
+        result = json.loads(r.content)
+        assert len(result == 3)
+        assert result[0].owner_id == "76561198018756583"
+        assert result[0].name.startswith('TAG')
 
     @classmethod
     def teardown_class(cls):
