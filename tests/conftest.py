@@ -1,6 +1,6 @@
 import pytest
 
-from utils.database_utils import default_player_id
+from tests.utils.database_utils import default_player_id
 
 
 @pytest.fixture(autouse=True)
