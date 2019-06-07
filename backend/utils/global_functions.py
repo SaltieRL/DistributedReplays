@@ -3,7 +3,7 @@ import logging
 from flask import Flask, g
 
 from backend.utils.checks import get_checks
-from database.objects import Player
+from backend.database.objects import Player
 
 logger = logging.getLogger(__name__)
 
