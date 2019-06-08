@@ -46,7 +46,7 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
 from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from .errors.errors import CalculatedError, MissingQueryParams
+from .errors.errors import CalculatedError, MissingQueryParams, TagNotFound
 from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
@@ -454,6 +454,8 @@ def api_get_tags(query_params=None):
 @require_user
 def api_get_tag_key(name: str):
     tag = Tag.get_tag(name)
+    if tag.db_tag.private_id is None:
+        raise TagNotFound()
     return better_jsonify(tag.db_tag.private_id)
 
 

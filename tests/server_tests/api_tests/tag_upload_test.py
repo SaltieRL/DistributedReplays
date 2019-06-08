@@ -144,6 +144,27 @@ class Test_upload_file_with_tags:
         assert(response.status_code == 200)
         assert response.json == 'fake_private_key'
 
+    def test_tag_creation_no_private_key(self, test_client, mock_user):
+        fake_session = get_current_session()
+        r = Request('PUT', LOCAL_URL + '/api/tag/TAG')
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 201)
+        data = response.json
+        assert data['name'] == 'TAG'
+        assert data['owner_id'] == default_player_id()
+
+        tag = fake_session.query(Tag).first()
+        assert tag.name == 'TAG'
+        assert tag.owner == default_player_id()
+        assert tag.private_id is None
+
+        r = Request('GET', LOCAL_URL + '/api/tag/TAG/private_key')
+
+        response = test_client.send(r)
+        assert(response.status_code == 404)
+
     def test_replay_basic_server_upload_with_private_tags(self, test_client, mock_user):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
