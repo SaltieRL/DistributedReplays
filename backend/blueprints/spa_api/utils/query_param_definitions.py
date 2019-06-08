@@ -31,7 +31,13 @@ visibility_params = [
 tag_params = [
     QueryParam(name="tags", optional=True,
                type_=str, is_list=True,
-               required_siblings=['player_id'])
+               required_siblings=['player_id']),
+    QueryParam(name="tag_ids", optional=True,
+               type_=str, is_list=True,
+               required_siblings=['private_tag_keys']),
+    QueryParam(name="private_tag_keys", optional=True,
+               type_=str, is_list=True,
+               required_siblings=['tag_ids'])
 ]
 
 

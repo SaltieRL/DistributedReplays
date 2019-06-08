@@ -105,7 +105,6 @@ class Test_upload_file:
         data = response.json['message']
         assert(str(data) == MissingQueryParams(['player_id']).message)
 
-
     def test_replay_basic_server_upload_private_replay_missing_player(self, test_client, no_errors_are_logged):
         no_errors_are_logged.cancel_check()
         params = {'player_id': 'invalid_id', 'visibility': GameVisibilitySetting.PRIVATE.name}

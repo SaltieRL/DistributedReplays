@@ -323,6 +323,7 @@ class Tag(DBObjectBase):
     name = Column(String(40))
     owner = Column(String(40), ForeignKey('players.platformid'), index=True)
     games = relationship('Game', secondary='game_tags', back_populates='tags')
+    private_id = Column(String(40), nullable=True)
     __table_args_ = (UniqueConstraint(name, owner, name='unique_names'))
 
 

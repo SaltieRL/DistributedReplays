@@ -6,6 +6,7 @@ from ..errors.errors import CalculatedError
 
 
 def require_user(decorated_function):
+    @wraps(decorated_function)
     def wrapper_require_user(*args, **kwargs):
         if g.user is None and 'internal_user' not in kwargs:
             raise CalculatedError(404, "User is not logged in.")

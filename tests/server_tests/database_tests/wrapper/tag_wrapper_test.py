@@ -253,7 +253,7 @@ class TagWrapperGetTagTest(unittest.TestCase):
         self.session.add(tag)
         self.session.commit()
 
-        tag = TagWrapper.get_tag(self.session, self.test_user_id, self.tag_name)
+        tag = TagWrapper.get_tag_by_name(self.session, self.test_user_id, self.tag_name)
 
         self.assertIsNotNone(tag)
 
@@ -265,7 +265,7 @@ class TagWrapperGetTagTest(unittest.TestCase):
             self.session.commit()
 
         with self.assertRaises(DBTagNotFound):
-            TagWrapper.get_tag(self.session, self.test_user_id, self.tag_name)
+            TagWrapper.get_tag_by_name(self.session, self.test_user_id, self.tag_name)
 
 
 class TagWrapperAddTagToGameTest(unittest.TestCase):

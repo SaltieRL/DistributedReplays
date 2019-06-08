@@ -9,15 +9,15 @@ from backend.database.objects import Tag, Game, GameTag
 
 class TagWrapper:
     @staticmethod
-    def create_tag(session, user_id: str, name: str) -> Tag:
-        tag = Tag(name=name, owner=user_id)
+    def create_tag(session, user_id: str, name: str, private_key: str = None) -> Tag:
+        tag = Tag(name=name, owner=user_id, private_id=private_key)
         session.add(tag)
         session.commit()
         return tag
 
     @staticmethod
     def rename_tag(session, user_id: str, old_name: str, new_name: str) -> Tag:
-        tag = TagWrapper.get_tag(session, user_id, old_name)
+        tag = TagWrapper.get_tag_by_name(session, user_id, old_name)
         tag.name = new_name
         session.commit()
         return tag
@@ -28,13 +28,20 @@ class TagWrapper:
 
     @staticmethod
     def delete_tag(session, user_id: str, name: str):
-        tag = TagWrapper.get_tag(session, user_id, name)
+        tag = TagWrapper.get_tag_by_name(session, user_id, name)
         session.delete(tag)
         session.commit()
 
     @staticmethod
-    def get_tag(session, user_id: str, name: str) -> Tag:
+    def get_tag_by_name(session, user_id: str, name: str) -> Tag:
         tag = session.query(Tag).filter(Tag.owner == user_id, Tag.name == name).first()
+        if tag is None:
+            raise DBTagNotFound()
+        return tag
+
+    @staticmethod
+    def get_tag_by_id(session, tag_id: str) -> Tag:
+        tag = session.query(Tag).filter(Tag.id == tag_id).first()
         if tag is None:
             raise DBTagNotFound()
         return tag
@@ -57,7 +64,7 @@ class TagWrapper:
 
     @staticmethod
     def remove_tag_from_game(session, game_id: str, user_id: str, tag_name: str) -> None:
-        tag = TagWrapper.get_tag(session, user_id, tag_name)
+        tag = TagWrapper.get_tag_by_name(session, user_id, tag_name)
         game = session.query(Game).filter(Game.hash == game_id).first()
         if game is None:
             raise ReplayNotFound()

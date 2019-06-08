@@ -50,6 +50,15 @@ class MissingQueryParams(CalculatedError):
         super().__init__(self.status_code, message)
 
 
+class MismatchQueryParams(CalculatedError):
+    status_code = 400
+
+    def __init__(self, query1: str, query2: str, list_size1, list_size2: int):
+        message = f'Query parameter {query1} does not have the same number of elements as {query2}: '
+        message += f'{list_size1} != {list_size2}'
+        super().__init__(self.status_code, message)
+
+
 class InvalidQueryParamFormat(CalculatedError):
     status_code = 400
 

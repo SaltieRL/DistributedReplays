@@ -77,10 +77,11 @@ def better_jsonify(response: object):
     :return: The return value of jsonify.
     """
     try:
-        if 'toJSON' in response.__dict__:
+        if hasattr(response, 'toJSON'):
             return better_jsonify(response.toJSON())
     except:
         pass
+
     try:
         return jsonify(response)
     except TypeError:
@@ -406,15 +407,21 @@ def api_upload_proto():
 
 ### TAG
 
-@require_user
 @bp.route('/tag/<name>', methods=["PUT"])
-def api_create_tag(name: str):
-    tag = Tag.create(name)
+@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name='private_key', type_=str, optional=True)
+])
+def api_create_tag(name: str, query_params=None):
+    private_key = None
+    if 'private_key' in query_params:
+        private_key = query_params['private_key']
+    tag = Tag.create(name, private_key=private_key)
     return better_jsonify(tag), 201
 
 
-@require_user
 @bp.route('/tag/<current_name>', methods=["PATCH"])
+@require_user
 def api_rename_tag(current_name: str):
     accepted_query_params = [QueryParam(name='new_name')]
     query_params = get_query_params(accepted_query_params, request)
@@ -423,29 +430,42 @@ def api_rename_tag(current_name: str):
     return better_jsonify(tag), 200
 
 
-@require_user
 @bp.route('/tag/<name>', methods=['DELETE'])
+@require_user
 def api_delete_tag(name: str):
     Tag.delete(name)
     return '', 204
 
 
-@require_user
 @bp.route('/tag')
-def api_get_tags():
-    tags = Tag.get_all()
-    return better_jsonify([tag.toJSON() for tag in tags])
-
-
 @require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name='with_id', type_=bool, optional=True)
+])
+def api_get_tags(query_params=None):
+    tags = Tag.get_all()
+    with_id = False
+    if 'with_id' in query_params:
+        with_id = query_params['with_id']
+    return better_jsonify([tag.toJSON(with_id=with_id) for tag in tags])
+
+
+@bp.route('/tag/<name>/private_key', methods=["GET"])
+@require_user
+def api_get_tag_key(name: str):
+    tag = Tag.get_tag(name)
+    return better_jsonify(tag.db_tag.private_id)
+
+
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
+@require_user
 def api_add_tag_to_game(name: str, id_: str):
     Tag.add_tag_to_game(name, id_)
     return '', 204
 
 
-@require_user
 @bp.route('/tag/<name>/replay/<id_>', methods=["DELETE"])
+@require_user
 def api_remove_tag_from_game(name: str, id_: str):
     Tag.remove_tag_from_game(name, id_)
     return '', 204
