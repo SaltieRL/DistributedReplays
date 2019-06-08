@@ -68,9 +68,9 @@ class Test_BasicServerCommands():
         response = requests.get(LOCAL_URL + '/api/tag')
 
         result = json.loads(response.content)
+        assert result[0]['owner_id'] == "76561198018756583"
+        assert result[0]['name'].startswith('TAG')
         assert len(result == 3)
-        assert result[0].owner_id == "76561198018756583"
-        assert result[0].name.startswith('TAG')
 
     @classmethod
     def teardown_class(cls):
