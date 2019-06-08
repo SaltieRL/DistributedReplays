@@ -70,7 +70,7 @@ class Test_BasicServerCommands():
         result = json.loads(response.content)
         assert result[0]['owner_id'] == "76561198018756583"
         assert result[0]['name'].startswith('TAG')
-        assert len(result == 3)
+        assert len(result) == 3
 
     @classmethod
     def teardown_class(cls):
