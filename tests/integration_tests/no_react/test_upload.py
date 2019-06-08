@@ -67,7 +67,7 @@ class Test_BasicServerCommands():
 
         response = requests.get(LOCAL_URL + '/api/tag')
 
-        result = json.loads(r.content)
+        result = json.loads(response.content)
         assert len(result == 3)
         assert result[0].owner_id == "76561198018756583"
         assert result[0].name.startswith('TAG')
