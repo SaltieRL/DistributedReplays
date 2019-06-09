@@ -1,4 +1,5 @@
 import base64
+import json
 import tempfile
 import time
 import unittest
@@ -8,12 +9,13 @@ import requests
 from carball.decompile_replays import analyze_replay_file
 
 from RLBotServer import start_server
-from tests.utils import write_files_to_disk, clear_dir, get_test_file, KillableThread
+from tests.utils.killable_thread import KillableThread
+from tests.utils.replay_utils import write_files_to_disk, get_test_file, clear_dir
 
 LOCAL_URL = 'http://localhost:8000'
 
 
-class HeatmapTest(unittest.TestCase):
+class Test_UploadingProtos(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -40,6 +42,11 @@ class HeatmapTest(unittest.TestCase):
         r = requests.post(LOCAL_URL + '/api/upload/proto', json=obj)
         r.raise_for_status()
         self.assertEqual(r.status_code, 200)
+
+        r = requests.get(LOCAL_URL + '/api/global/replay_count')
+        result = json.loads(r.content)
+        self.assertEqual(int(result), 1)
+
 
     @classmethod
     def tearDownClass(cls) -> None:

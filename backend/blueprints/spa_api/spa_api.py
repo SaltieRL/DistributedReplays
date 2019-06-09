@@ -7,15 +7,20 @@ import re
 import uuid
 import zlib
 
-import requests
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory
-from requests import ReadTimeout
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
+from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
+from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
+    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
+from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
+from backend.utils.checks import log_error
+from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 
 try:
@@ -23,15 +28,6 @@ try:
 except ImportError:
     config = None
 
-try:
-    import config
-
-    GCP_URL = config.GCP_URL
-    CLOUD_THRESHOLD = config.CLOUD_THRESHOLD
-except:
-    print('Not using GCP')
-    GCP_URL = None
-    CLOUD_THRESHOLD = 100  # threshold of queue size for cloud parsing
 
 try:
     import config
@@ -49,12 +45,10 @@ except:
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game
+from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.utils.utils import add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
-from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.tasks import celery_tasks
-from backend.tasks.utils import get_queue_length
 from .errors.errors import CalculatedError, MissingQueryParams
 from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
@@ -70,9 +64,8 @@ from .service_layers.replay.match_history import MatchHistory
 from .service_layers.replay.replay import Replay
 from .service_layers.replay.replay_positions import ReplayPositions
 from .service_layers.replay.tag import Tag
-from .utils.decorators import require_user
-from .utils.query_params_handler import QueryParam, convert_to_datetime, get_query_params, \
-    convert_to_enum
+from .utils.decorators import require_user, with_query_params
+from .utils.query_params_handler import QueryParam, get_query_params
 
 logger = logging.getLogger(__name__)
 
@@ -177,6 +170,7 @@ def api_get_player_ranks(id_):
 
 @bp.route('player/<id_>/play_style')
 def api_get_player_play_style(id_):
+    # TODO: Use get_query_params
     if 'rank' in request.args:
         rank = int(request.args['rank'])
     else:
@@ -199,27 +193,16 @@ def api_get_player_play_style(id_):
 
 
 @bp.route('player/<id_>/play_style/all')
-def api_get_player_play_style_all(id_):
-    accepted_query_params = [
-        QueryParam(name='rank', optional=True, type_=int),
-        QueryParam(name='replay_ids', optional=True),
-        QueryParam(name='playlist', optional=True, type_=int),
-    ]
-    query_params = get_query_params(accepted_query_params, request)
+@with_query_params(accepted_query_params=playstyle_query_params)
+def api_get_player_play_style_all(id_, query_params=None):
 
     play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, **query_params)
     return better_jsonify(play_style_response)
 
 
 @bp.route('player/<id_>/play_style/progression')
-def api_get_player_play_style_progress(id_):
-    accepted_query_params = [
-        QueryParam(name='time_unit', optional=True, type_=convert_to_enum(TimeUnit)),
-        QueryParam(name='start_date', optional=True, type_=convert_to_datetime),
-        QueryParam(name='end_date', optional=True, type_=convert_to_datetime),
-        QueryParam(name='playlist', optional=True, type_=int),
-    ]
-    query_params = get_query_params(accepted_query_params, request)
+@with_query_params(accepted_query_params=progression_query_params)
+def api_get_player_play_style_progress(id_, query_params=None):
 
     play_style_progression = PlayStyleProgression.create_progression(id_, **query_params)
     return better_jsonify(play_style_progression)
@@ -327,23 +310,34 @@ def api_predict_ranks(id_):
 
 
 @bp.route('/replay')
-def api_search_replays():
-    accepted_query_params = [
-        QueryParam(name='page', type_=int),
-        QueryParam(name='limit', type_=int),
-        QueryParam(name='player_ids', optional=True, is_list=True),
-        QueryParam(name='playlists', optional=True, is_list=True, type_=int),
-        QueryParam(name='rank', optional=True, type_=int),
-        QueryParam(name='team_size', optional=True, type_=int),
-        QueryParam(name='date_before', optional=True, type_=convert_to_datetime),
-        QueryParam(name='date_after', optional=True, type_=convert_to_datetime),
-        QueryParam(name='min_length', optional=True, type_=float),
-        QueryParam(name='max_length', optional=True, type_=float),
-        QueryParam(name='map', optional=True),
-    ]
-    query_params = get_query_params(accepted_query_params, request)
+@with_query_params(accepted_query_params=replay_search_query_params)
+def api_search_replays(query_params=None):
     match_history = MatchHistory.create_with_filters(**query_params)
     return better_jsonify(match_history)
+
+
+@bp.route('replay/<id_>/visibility/<visibility>', methods=['PUT'])
+@with_query_params(accepted_query_params=visibility_params, provided_params=['player_id', 'visibility'])
+def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
+    try:
+        visibility_setting = convert_to_enum(GameVisibilitySetting)(visibility)
+    except Exception as e:
+        try:
+            visibility_setting = GameVisibilitySetting(int(visibility))
+        except Exception as e:
+            logger.error(e)
+            return "Visibility setting not provided or incorrect", 400
+
+    try:
+        release_date = query_params['release_date']
+    except KeyError:
+        release_date = None
+
+    replay_visibiltiy = ReplayVisibility.change_replay_visibility(game_hash=id_,
+                                                                  visibility=visibility_setting,
+                                                                  user_id=get_current_user_id(),
+                                                                  release_date=release_date)
+    return better_jsonify(replay_visibiltiy)
 
 
 ## Other
@@ -354,37 +348,34 @@ def api_get_stat_explanations():
 
 
 @bp.route('/upload', methods=['POST'])
-def api_upload_replays():
+@with_query_params(accepted_query_params=upload_file_query_params)
+def api_upload_replays(query_params=None):
+
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:
         raise CalculatedError(400, 'No files uploaded')
     task_ids = []
 
+    errors = []
+
     for file in uploaded_files:
         file.seek(0, os.SEEK_END)
         file_length = file.tell()
         if file_length > 5000000:
+            errors.append(CalculatedError(413, 'Replay file is too big'))
             continue
         if not file.filename.endswith('replay'):
+            errors.append(CalculatedError(415, 'Replay uploads must end in .replay'))
             continue
         file.seek(0)
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
-        lengths = get_queue_length()  # priority 0,3,6,9
-        if lengths[1] > CLOUD_THRESHOLD and GCP_URL is not None:
-            encoded_file = base64.b64encode(file.read())
-            try:
-                r = requests.post(GCP_URL + '&uuid=' + str(ud), data=encoded_file, timeout=0.5)
-            except ReadTimeout as e:
-                pass  # we don't care, it's given
-            except Exception as e:
-                file.seek(0)
-                file.save(filename)  # oops, error so lets save the file
-        else:
-            file.save(filename)
-            result = celery_tasks.parse_replay_task.delay(os.path.abspath(filename))
-            task_ids.append(result.id)
+        create_replay_task(file, filename, ud, task_ids, query_params)
+
+    if len(errors) == 1:
+        raise errors[0]
+
     return jsonify(task_ids), 202
 
 
@@ -409,7 +400,10 @@ def api_upload_proto():
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
     # Process
-    add_objects(protobuf_game)
+    try:
+        parsed_replay_processing(protobuf_game)
+    except Exception as e:
+        log_error(e, logger=logger)
 
     return jsonify({'Success': True})
 

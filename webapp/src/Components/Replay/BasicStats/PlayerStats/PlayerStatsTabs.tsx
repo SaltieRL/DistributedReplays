@@ -38,12 +38,13 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
             "Efficiency": faPercent,
             "Team Positioning": faHandshake
         }
+        const { width, selectedTab, handleChange } = this.props
+        const belowMd = isWidthDown("md", width)
 
-        const belowMd = isWidthDown("md", this.props.width)
         return (
-            <Tabs value={this.props.selectedTab}
-                  onChange={this.props.handleChange}
-                  centered={!belowMd}
+            <Tabs value={selectedTab}
+                  onChange={handleChange}
+                  centered
                   variant={belowMd ? "scrollable" : "standard"}
                   scrollButtons={belowMd ? "on" : undefined}
             >

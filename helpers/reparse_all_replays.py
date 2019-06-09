@@ -2,7 +2,7 @@ import glob
 import os
 import datetime
 from backend.database.objects import Game
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 from backend.tasks.celery_tasks import parse_replay_task_low_priority
 import json
 
@@ -24,5 +24,5 @@ def main(s):
 
 
 if __name__ == '__main__':
-    engine, Session = startup()
+    session = lazy_startup()
     main(Session)
