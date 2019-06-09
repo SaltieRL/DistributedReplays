@@ -62,6 +62,10 @@ interface OwnProps {
     selectProps?: SelectProps
 }
 
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
 type Props = OwnProps
     & WithStyles<typeof styles>
     & WithWidth
@@ -171,9 +175,5 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
         this.props.selectProps!.handleSelectChange(checked)
     }
 }
-
-export const mapStateToProps = (state: StoreState) => ({
-    loggedInUser: state.loggedInUser
-})
 
 export const ReplayDisplayRow = withWidth()(withStyles(styles)(connect(mapStateToProps)(ReplayDisplayRowComponent)))
