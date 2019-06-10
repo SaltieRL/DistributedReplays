@@ -6,6 +6,7 @@ import requests
 from flask import jsonify, request, redirect, url_for, Blueprint, current_app
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.database.objects import Player
 from backend.database.wrapper.player_wrapper import get_random_player, create_default_player
 
 try:
@@ -71,7 +72,23 @@ def steam_id_to_profile(steam_id):
     else:
         if redis_instance is not None:
             redis_instance.set(key, json.dumps(resp.json()), ex=60 * 60 * 24)
+        profile = resp.json()['response']['players'][0]
+        add_or_update_steam_player(profile)
+        # return the normal JSON to not change anything else
         return resp.json()
+
+
+@with_session
+def add_or_update_steam_player(profile, session=None):
+    match = session.query(Player).filter(Player.platformid == profile['steamid']).first()
+    if match:
+        match.platformname = profile['personaname']
+        match.avatar = profile['avatarfull']
+    else:
+        u = Player(platformid=profile['steamid'], platformname=profile['personaname'], avatar=profile['avatarfull'],
+                   groups=[])
+        session.add(u)
+    session.commit()
 
 
 @with_session

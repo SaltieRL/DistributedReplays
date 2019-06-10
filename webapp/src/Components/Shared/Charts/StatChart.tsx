@@ -1,30 +1,32 @@
-import { Tooltip } from "@material-ui/core"
+import { Tooltip, WithTheme, withTheme } from "@material-ui/core"
 import * as React from "react"
 import { BasicStat } from "../../../Models"
 import { ColoredBarChart } from "./ColoredBarChart"
 import { ColoredPieChart } from "./ColoredPieChart"
 import { ColoredRadarChart } from "./ColoredRadarChart"
 
-interface Props {
+interface OwnProps {
     basicStat: BasicStat
     explanations: Record<string, any> | undefined
 }
 
-export class StatChart extends React.PureComponent<Props> {
+type Props = OwnProps & WithTheme
+
+class StatChartComponent extends React.PureComponent<Props> {
     public render() {
-        const Chart = this.getChartType()
-        const title = this.props.basicStat.title// .replace(/\s/g, "_")
+        const ChartType = this.getChartType()
+        const title = this.props.basicStat.title
         return (
             <>
-            {this.props.explanations && (this.props.explanations.hasOwnProperty(title) ?
-                <Tooltip title={this.props.explanations[this.props.basicStat.title].simple_explanation}>
-                    <div>
-                        <Chart basicStat={this.props.basicStat}/>
-                    </div>
-                </Tooltip>
-                :
-                <Chart basicStat={this.props.basicStat}/>)}
-        </>
+                {this.props.explanations && (this.props.explanations.hasOwnProperty(title) ?
+                    <Tooltip title={this.props.explanations[this.props.basicStat.title].simple_explanation}>
+                        <div>
+                            <ChartType basicStat={this.props.basicStat}/>
+                        </div>
+                    </Tooltip>
+                    :
+                    <ChartType basicStat={this.props.basicStat}/>)}
+            </>
         )
     }
 
@@ -44,3 +46,5 @@ export class StatChart extends React.PureComponent<Props> {
         }
     }
 }
+
+export const StatChart = withTheme()(StatChartComponent)

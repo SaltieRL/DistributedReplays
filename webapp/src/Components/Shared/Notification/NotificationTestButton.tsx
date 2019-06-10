@@ -5,6 +5,11 @@ import { Dispatch } from "redux"
 import { NotificationActions } from "../../../Redux"
 import { NotificationProps } from "./NotificationSnackbar"
 
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    showNotification: (notificationProps: NotificationProps) =>
+        dispatch(NotificationActions.showNotifictionAction(notificationProps))
+})
+
 type Props = ReturnType<typeof mapDispatchToProps>
 
 interface State {
@@ -38,10 +43,5 @@ class NotificationTestButtonComponent extends React.PureComponent<Props, State> 
         }
     }
 }
-
-export const mapDispatchToProps = (dispatch: Dispatch) => ({
-    showNotification: (notificationProps: NotificationProps) =>
-        dispatch(NotificationActions.showNotifictionAction(notificationProps))
-})
 
 export const NotificationTestButton = connect(null, mapDispatchToProps)(NotificationTestButtonComponent)

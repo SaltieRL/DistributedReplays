@@ -121,7 +121,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                     return (
                         <Grid item xs={12} md={5} lg={3} key={chartTitle}
                               style={{height: 400}}>
-                            <Typography variant="subheading" align="center">
+                            <Typography variant="subtitle1" align="center">
                                 {chartTitle}
                             </Typography>
                             <PlayerPlayStyleChart names={players.map((player) => player.name)}

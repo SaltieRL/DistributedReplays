@@ -38,7 +38,7 @@ export class PlayerStatsCharts extends React.PureComponent<Props, State> {
                         .map((playerStat) => {
                             return (
                                 <Grid item xs={12} md={6} lg={4} xl={3} key={playerStat.title}>
-                                    <Typography variant="subheading" align="center">
+                                    <Typography variant="subtitle1" align="center">
                                         {convertSnakeAndCamelCaseToReadable(playerStat.title)}
                                     </Typography>
                                     <StatChart basicStat={playerStat} explanations={this.props.explanations}/>

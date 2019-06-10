@@ -59,7 +59,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                         </Tooltip>}
                     subheader={<ColouredGameScore replay={replay}/>}
                     titleTypographyProps={{align: "center"}}
-                    subheaderTypographyProps={{align: "center", variant: "subheading"}}
+                    subheaderTypographyProps={{align: "center", variant: "subtitle1"}}
                     action={
                         <div style={{position: "relative", width: 0, right: 16, top: 16}}>
                             <div style={{display: "flex", float: "right"}}>

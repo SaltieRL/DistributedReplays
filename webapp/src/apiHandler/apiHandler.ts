@@ -28,6 +28,7 @@ const handleResponse = (response: Response): Promise<any> => {
         let message: string = response.statusText
         return response.json()
             .catch(() => {
+                // eslint-disable-next-line
                 throw {code, message} as AppError
             })
             .then((responseJson: any) => {
@@ -36,6 +37,7 @@ const handleResponse = (response: Response): Promise<any> => {
                 }
             })
             .then(() => {
+                // eslint-disable-next-line
                 throw {code, message} as AppError
             })
     } else {

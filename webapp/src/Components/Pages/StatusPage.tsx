@@ -16,7 +16,7 @@ export class StatusPage extends React.PureComponent<{}, State> {
 
     public render() {
         return (
-            <BasePage backgroundImage={"/splash.png"}>
+            <BasePage useSplash>
                 <Grid container justify="center" spacing={16}>
                     <Grid item xs="auto">
                         <Card>
