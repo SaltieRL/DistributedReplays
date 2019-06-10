@@ -22,93 +22,6 @@ import { ReplayBoxScore } from "../../../Replay/ReplayBoxScore"
 import { ReplayChart } from "../../../Replay/ReplayChart"
 import { ColouredGameScore } from "../../../Shared/ColouredGameScore"
 
-interface OwnProps {
-    replay: Replay
-    player: Player
-    useBoxScore?: boolean
-}
-
-type Props = OwnProps
-    & WithStyles<typeof styles>
-    & WithWidth
-
-class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
-    public render() {
-        const {classes, width} = this.props
-        const notOnMobile = isWidthUp("sm", width)
-        const typographyVariant = "subheading"
-
-        const {replay, player} = this.props
-        const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
-        const replayName = replay.name
-        const replayDate = (
-            <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
-                <Typography variant={typographyVariant}>
-                    {replay.date.format(dateFormat)}
-                </Typography>
-            </Tooltip>
-        )
-        const replayGameMode = replay.gameMode
-        const replayScore = <ColouredGameScore replay={replay}/>
-        const replayResult = getReplayResult(replay, player)
-        const chartIcon = (
-            <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
-                <InsertChart/>
-            </IconButton>
-        )
-
-        const expansionPanelSummary = (
-            <ExpansionPanelSummary
-                expandIcon={<ExpandMore/>}
-            >
-                <Grid container>
-                    <Grid item xs={notOnMobile ? 3 : 5}>
-                        <Typography variant={typographyVariant} noWrap>
-                            {replayName}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={2}>
-                        {replayDate}
-                    </Grid>
-                    {notOnMobile &&
-                    <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayGameMode}
-                        </Typography>
-                    </Grid>
-                    }
-                    <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayScore}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Typography variant={typographyVariant}>
-                            {replayResult}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                        {chartIcon}
-                    </Grid>
-                </Grid>
-            </ExpansionPanelSummary>
-        )
-
-        return (
-            <ExpansionPanel>
-                {expansionPanelSummary}
-                <ExpansionPanelDetails className={classes.panelDetails}>
-                    {!this.props.useBoxScore ?
-                        <ReplayChart replay={this.props.replay}/>
-                        :
-                        <ReplayBoxScore replay={this.props.replay} player={this.props.player}/>
-                    }
-                </ExpansionPanelDetails>
-            </ExpansionPanel>
-        )
-    }
-}
-
 const styles = (theme: Theme) => createStyles({
     iconButton: {
         "height": 20,
@@ -127,5 +40,118 @@ const styles = (theme: Theme) => createStyles({
         margin: "auto"
     }
 })
+
+interface OwnProps {
+    replay: Replay
+    player: Player
+    useBoxScore?: boolean
+}
+
+type Props = OwnProps
+    & WithStyles<typeof styles>
+    & WithWidth
+
+class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
+    public render() {
+        const {classes, width} = this.props
+        const notOnMobile = isWidthUp("sm", width)
+        const typographyVariant = "subtitle1"
+
+        const {replay, player} = this.props
+        const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
+        const replayName = replay.name
+        const replayDate = (
+            <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
+                <Typography variant={notOnMobile ? typographyVariant : "caption"}>
+                    {replay.date.format(dateFormat)}
+                </Typography>
+            </Tooltip>
+        )
+        const replayGameMode = replay.gameMode
+        const replayScore = <ColouredGameScore replay={replay}/>
+        const replayResult = getReplayResult(replay, player)
+        const chartIcon = (
+            <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
+                <InsertChart/>
+            </IconButton>
+        )
+
+        const expansionPanelSummary = (
+            <ExpansionPanelSummary
+                expandIcon={<ExpandMore/>}
+            >
+                <Grid container>
+                    {notOnMobile ? (
+                        <>
+                            <Grid item xs={3}>
+                                <Typography variant={typographyVariant} noWrap>
+                                    {replayName}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2}>
+                                {replayDate}
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Typography variant={typographyVariant} noWrap>
+                                    {replayGameMode}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Typography variant={typographyVariant}>
+                                    {replayScore}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2}>
+                                <Typography variant={typographyVariant}>
+                                    {replayResult}
+                                </Typography>
+                            </Grid>
+                        </>
+                    ) : (
+                        <>
+                            <Grid item xs={4}>
+                                <Typography variant={typographyVariant} noWrap>
+                                    {replayName}
+                                </Typography>
+                                {replayDate}
+                            </Grid>
+                            <Grid item xs={3} style={{margin: "auto"}}>
+                                <Typography variant={typographyVariant} noWrap>
+                                    {replayGameMode}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Typography variant={typographyVariant}>
+                                    {replayScore}
+                                </Typography>
+                                <Typography variant={notOnMobile ? typographyVariant : "caption"}>
+                                    {replayResult}
+                                </Typography>
+                            </Grid>
+                        </>
+                    )}
+
+                    <Grid item xs={1} style={{margin: "auto"}}>
+                        {chartIcon}
+                    </Grid>
+
+                </Grid>
+            </ExpansionPanelSummary>
+        )
+
+        return (
+            <ExpansionPanel>
+                {expansionPanelSummary}
+                <ExpansionPanelDetails className={classes.panelDetails}>
+                    {!this.props.useBoxScore ?
+                        <ReplayChart replay={this.props.replay}/>
+                        :
+                        <ReplayBoxScore replay={this.props.replay} player={this.props.player}/>
+                    }
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+        )
+    }
+}
 
 export const OverviewMatchHistoryRow = withWidth()(withStyles(styles)(OverviewMatchHistoryRowComponent))

@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
 import * as React from "react"
 import { BasicStat, StatsSubcategory } from "../../../Models"
-import { convertSnakeAndCamelCaseToReadable } from "../../../Utils/String"
+import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../../Utils/String"
 
 interface StatMetadata {
     name: string
@@ -103,9 +103,9 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
                             {playerStat.stats.map((stat, i) => (
                                 <TableCell key={i} align="right">
                                     {stat.isMax ?
-                                        <b>{stat.value}</b>
+                                        <b>{roundNumberToMaxDP(stat.value)}</b>
                                         :
-                                        stat.value
+                                        roundNumberToMaxDP(stat.value)
                                     }
                                 </TableCell>
                             ))}

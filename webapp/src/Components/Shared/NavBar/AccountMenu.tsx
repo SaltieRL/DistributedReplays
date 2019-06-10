@@ -18,6 +18,21 @@ import { LOCAL_LINK, LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK } from "../
 import { LoggedInUserState } from "../../../Redux/loggedInUser/reducer"
 import { LinkButton } from "../LinkButton"
 
+const styles = createStyles({
+    iconButtonWrapper: {
+        padding: 0,
+        height: 48,
+        width: 48
+    },
+    avatar: {
+        height: 128,
+        width: 128
+    },
+    actions: {
+        textAlign: "center"
+    }
+})
+
 interface OwnProps {
     loggedInUser: LoggedInUserState
 }
@@ -106,20 +121,5 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
         })
     }
 }
-
-const styles = createStyles({
-    iconButtonWrapper: {
-        padding: 0,
-        height: 48,
-        width: 48
-    },
-    avatar: {
-        height: 128,
-        width: 128
-    },
-    actions: {
-        textAlign: "center"
-    }
-})
 
 export const AccountMenu = withStyles(styles)(AccountMenuComponent)

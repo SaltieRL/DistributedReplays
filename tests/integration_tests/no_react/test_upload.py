@@ -12,7 +12,7 @@ LOCAL_URL = 'http://localhost:8000'
 
 logger = logging.getLogger(__name__)
 
-sleep_time = 20
+sleep_time = 30
 
 
 class Test_BasicServerCommands():
@@ -39,7 +39,7 @@ class Test_BasicServerCommands():
             r.raise_for_status()
             assert(r.status_code == 202)
 
-        for i in range(len(replay_list)):
+        for i in range(len(replay_list) + 1):
             logger.debug('waiting ', (len(replay_list) - i) * sleep_time, 'seconds')
             time.sleep(sleep_time)
 

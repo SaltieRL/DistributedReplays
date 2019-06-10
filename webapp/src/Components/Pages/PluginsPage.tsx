@@ -7,7 +7,7 @@ import { BasePage } from "./BasePage"
 export class PluginsPage extends React.PureComponent {
     public render() {
         return (
-            <BasePage backgroundImage={"/splash.png"}>
+            <BasePage useSplash>
                 <Grid container justify="center" spacing={16}>
                     <Grid item xs={12} sm={6} md={5} lg={4} xl={3}>
                         <Card>

@@ -46,7 +46,7 @@ export class ReplaysGroupCharts extends React.PureComponent<Props, State> {
                                 .map((basicStat) => {
                                     return (
                                         <Grid item xs={12} md={6} lg={4} xl={3} key={basicStat.title}>
-                                            <Typography variant="subheading" align="center">
+                                            <Typography variant="subtitle1" align="center">
                                                 {convertSnakeAndCamelCaseToReadable(basicStat.title)}
                                             </Typography>
                                             <StatChart basicStat={basicStat} explanations={{}}/>

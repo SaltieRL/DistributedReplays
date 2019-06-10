@@ -13,6 +13,20 @@ import {
 import * as React from "react"
 import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
 
+const styles = (theme: Theme) => createStyles({
+    formControl: {
+        minWidth: 250,
+        width: "90%"
+    },
+    chipWrapper: {
+        display: "flex",
+        flexWrap: "wrap"
+    },
+    chip: {
+        margin: theme.spacing.unit / 4
+    }
+})
+
 interface OwnProps {
     fields: string[]
     selectedFields: string[]
@@ -66,19 +80,5 @@ class FieldSelectComponent extends React.PureComponent<Props> {
         } as any as React.ChangeEvent)
     }
 }
-
-const styles = (theme: Theme) => createStyles({
-    formControl: {
-        minWidth: 250,
-        width: "90%"
-    },
-    chipWrapper: {
-        display: "flex",
-        flexWrap: "wrap"
-    },
-    chip: {
-        margin: theme.spacing.unit / 4
-    }
-})
 
 export const FieldSelect = withStyles(styles)(FieldSelectComponent)

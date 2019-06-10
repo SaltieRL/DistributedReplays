@@ -2,12 +2,20 @@ import { createStyles, Theme, Tooltip, WithStyles, withStyles } from "@material-
 import Info from "@material-ui/icons/Info"
 import * as React from "react"
 
+export const styles = (theme: Theme) => createStyles({
+    infoIcon: {
+        verticalAlign: "middle",
+        marginLeft: theme.spacing.unit,
+        marginTop: -4
+    }
+})
+
 interface OwnProps {
     tooltip: string
 }
 
 type Props = OwnProps
-& WithStyles<typeof styles>
+    & WithStyles<typeof styles>
 
 class IconTooltipComponent extends React.PureComponent<Props> {
     public render() {
@@ -19,13 +27,5 @@ class IconTooltipComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = (theme: Theme) => createStyles({
-    infoIcon: {
-        verticalAlign: "middle",
-        marginLeft: theme.spacing.unit,
-        marginTop: -4
-    }
-})
 
 export const IconTooltip = withStyles(styles)(IconTooltipComponent)

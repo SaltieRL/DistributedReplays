@@ -30,7 +30,7 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                 <Grid container spacing={24} justify="center">
                     <Grid item xs={12} md={4} container spacing={32} alignContent="flex-start">
                         <Grid item xs={12}>
-                            <Typography variant="title" align="center" gutterBottom>
+                            <Typography variant="h6" align="center" gutterBottom>
                                 Filters
                             </Typography>
                         </Grid>
@@ -40,7 +40,7 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                     </Grid>
                     <Grid item xs={12} md={8} container alignContent="flex-start">
                         <Grid item xs={12}>
-                            <Typography variant="title" align="center" gutterBottom>
+                            <Typography variant="h6" align="center" gutterBottom>
                                 Replays
                             </Typography>
                         </Grid>
