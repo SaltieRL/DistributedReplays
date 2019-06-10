@@ -2,52 +2,69 @@ import * as d3 from "d3"
 import * as React from "react"
 import { TeamPie } from "./TeamPie"
 
-interface State {
-    element: any
+interface Coordinate {
+    x: number
+    y: number
 }
+
+const boostLocations: Coordinate[] = [
+    {x: 90, y: 50},
+    {x: 250, y: 40},
+    {x: 410, y: 50},
+    {x: 90, y: 300},
+    {x: 250, y: 310},
+    {x: 410, y: 300}
+]
 
 interface Props {
     data: number[][]
     rotationEnabled: boolean
-    onMouseover?: (index: number, data: any) => void
-    onMouseout?: (index: number, data: any) => void
+    onMouseover?: (i: number, data: any) => void
+    onMouseout?: (i: number, data: any) => void
+}
+
+interface State {
+    element: d3.Selection<SVGSVGElement | null, {}, null, undefined> | null
 }
 
 export class BoostField extends React.PureComponent<Props, State> {
+    constructor(props: Props) {
+        super(props)
+        this.state = {element: null}
+    }
 
     public render() {
         const {data, rotationEnabled, onMouseover, onMouseout} = this.props
-        const boosts = [
-            [100, 125],
-            [250, 125],
-            [400, 125],
-            [100, 375],
-            [250, 375],
-            [400, 375]
-        ]
+
         const rotate = [1, 1, -1, 1, 1, -1]
         return (
-
             <svg width={500}
-                 height={500}
-                 ref={(element) => (this.state = {element: d3.select(element)})}
+                 height={350}
+                 ref={this.state.element === null ?
+                     (element) => {
+                         this.setState({element: d3.select(element)})
+                     } : undefined}
                  key={"field"}>
-                <image x="0" y="0" width="500" height="500" href="/field.jpg"/>
-                {boosts.map((item: any, index: number) => <TeamPie blue={data[index][0]} key={index}
-                                                                   orange={data[index][1]} x={item[0]}
-                                                                   y={item[1]}
-                                                                   size={30}
-                                                                   rotate={rotationEnabled ? rotate[index] : 0}
-                                                                   onMouseover={() => {
-                                                                       if (onMouseover !== undefined) {
-                                                                           onMouseover(index, data)
-                                                                       }
-                                                                   }}
-                                                                   onMouseout={() => {
-                                                                       if (onMouseout !== undefined) {
-                                                                           onMouseout(index, data)
-                                                                       }
-                                                                   }}/>)}
+                <image x="0" y="0" width={500} height={350} href="/fieldblack.png"/>
+                {boostLocations.map((boostCoordinate, i) => (
+                    <TeamPie key={i}
+                             blue={data[i][0]}
+                             orange={data[i][1]}
+                             x={boostCoordinate.x}
+                             y={boostCoordinate.y}
+                             size={30}
+                             rotate={rotationEnabled ? rotate[i] : 0}
+                             onMouseover={() => {
+                                 if (onMouseover !== undefined) {
+                                     onMouseover(i, data)
+                                 }
+                             }}
+                             onMouseout={() => {
+                                 if (onMouseout !== undefined) {
+                                     onMouseout(i, data)
+                                 }
+                             }}/>
+                ))}
             </svg>
         )
     }

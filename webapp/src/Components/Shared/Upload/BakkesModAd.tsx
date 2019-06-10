@@ -8,7 +8,7 @@ export class BakkesModAd extends React.PureComponent {
     public render() {
         return (
             <div style={{maxWidth: 400, textAlign: "center", margin: "0 auto 0 auto", padding: 15}}>
-                <Typography variant="subheading">
+                <Typography variant="subtitle1">
                     A shoutout for BakkesMod
                 </Typography>
                 <Typography style={{marginBottom: 7}}>

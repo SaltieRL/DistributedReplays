@@ -54,14 +54,14 @@ export class HitsContent extends React.PureComponent<Props, State> {
         return (
             <Grid container justify={"center"}>
                 <Grid item xs={6} style={{textAlign: "center"}}>
-                    <Typography variant={"h3"}>Blue</Typography>
+                    <Typography variant="h3">Blue</Typography>
                     <Grid container>
                         {this.props.heatmapData !== null ?
                             blueTeam.map(this.createHeatmap) : undefined}
                     </Grid>
                 </Grid>
                 <Grid item xs={6} style={{textAlign: "center"}}>
-                    <Typography variant={"h3"}>Orange</Typography>
+                    <Typography variant="h3">Orange</Typography>
                     <Grid container>
                         {this.props.heatmapData !== null ?
                             orangeTeam.map(this.createHeatmap) : undefined}
@@ -70,7 +70,7 @@ export class HitsContent extends React.PureComponent<Props, State> {
                 <Grid item xs={12} style={{textAlign: "center"}}>
                     {(this.props.heatmapData !== null && "ball" in this.props.heatmapData.data) ?
                         <Grid item xs={12} style={{height: "500px"}}>
-                            <Typography variant={"h3"}>Ball</Typography>
+                            <Typography variant="h3">Ball</Typography>
                             <ReactHeatmap
                                 data={{
                                     max: this.props.heatmapData.maxs.ball,

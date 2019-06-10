@@ -19,6 +19,15 @@ import { BakkesModAd } from "./BakkesModAd"
 import { addTaskIds } from "./StatusUtils"
 import { UploadDropzone } from "./UploadDropzone"
 
+const styles = (theme: Theme) => createStyles({
+    leftIcon: {
+        marginRight: theme.spacing.unit
+    },
+    uploadButton: {
+        marginLeft: "auto"
+    }
+})
+
 type Props = WithStyles<typeof styles>
     & WithNotifications
 
@@ -110,14 +119,5 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         this.setState({files: [], rejected: []})
     }
 }
-
-const styles = (theme: Theme) => createStyles({
-    leftIcon: {
-        marginRight: theme.spacing.unit
-    },
-    uploadButton: {
-        marginLeft: "auto"
-    }
-})
 
 export const UploadForm = withStyles(styles)(withNotifications()(UploadFormComponent))

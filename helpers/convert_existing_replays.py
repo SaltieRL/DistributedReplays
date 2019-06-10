@@ -16,7 +16,7 @@ engine = create_engine(connection_string, echo=True)
 DBObjectBase.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
-session = Session()
+session = session()
 
 for replay in glob.glob(os.path.join('replays', '*.gz')):
     base = os.path.basename(replay)

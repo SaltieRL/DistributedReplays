@@ -1,7 +1,38 @@
-import { ButtonBase, createStyles, Typography, WithStyles, withStyles } from "@material-ui/core"
+import { ButtonBase, createStyles, Theme, Typography, WithStyles, withStyles } from "@material-ui/core"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import * as React from "react"
 import Dropzone, { DropFilesEventHandler } from "react-dropzone"
+
+const styles = (theme: Theme)  => createStyles({
+    active: {
+        borderStyle: "solid",
+        borderColor: "#6c6",
+        backgroundColor: theme.palette.type === "dark" ? "#333" : "#ccc"
+    },
+    default: {
+        "width": 550,
+        "height": 430,
+        "maxWidth": "80vw",
+        "maxHeight": "90vh",
+        "borderWidth": 2,
+        "borderColor": "#666",
+        "borderStyle": "dashed",
+        "borderRadius": 5,
+        "cursor": "pointer",
+        "backgroundColor": theme.palette.type === "dark" ? "#111" : "#eee",
+        "display": "flex",
+        "alignItems": "center",
+        "&:hover": {
+            backgroundColor: theme.palette.type === "dark" ? "#222" : "#ddd"
+        }
+    },
+    dropzoneContent: {
+        position: "absolute",
+        width: "100%",
+        textAlign: "center",
+        padding: 20
+    }
+})
 
 interface OwnProps {
     files: File[]
@@ -27,7 +58,7 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
                     <div className={classes.dropzoneContent}>
                         {hasFilesSelected ?
                             <>
-                                <Typography variant="subheading">
+                                <Typography variant="subtitle1">
                                     Selected {files.length} files:
                                 </Typography>
                                 <br/>
@@ -44,14 +75,14 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
                             </>
                             :
                             <>
-                                <Typography align="center" variant="subheading">
+                                <Typography align="center" variant="subtitle1">
                                     Drop your .replay files here, or click to select files to upload.
                                 </Typography>
                                 <Typography align="center">
                                     Replays can be found in your Documents/My Games/Rocket League/TAGame/Demos/ folder
                                 </Typography>
                                 <br/>
-                                <ArrowDownward/>
+                                <Typography><ArrowDownward/></Typography>
                             </>
                         }
                     </div>
@@ -60,36 +91,5 @@ class UploadDropzoneComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    active: {
-        borderStyle: "solid",
-        borderColor: "#6c6",
-        backgroundColor: "#ccc"
-    },
-    default: {
-        "width": 550,
-        "height": 430,
-        "maxWidth": "80vw",
-        "maxHeight": "90vh",
-        "borderWidth": 2,
-        "borderColor": "#666",
-        "borderStyle": "dashed",
-        "borderRadius": 5,
-        "cursor": "pointer",
-        "backgroundColor": "#eee",
-        "display": "flex",
-        "alignItems": "center",
-        "&:hover": {
-            backgroundColor: "#ddd"
-        }
-    },
-    dropzoneContent: {
-        position: "absolute",
-        width: "100%",
-        textAlign: "center",
-        padding: 20
-    }
-})
 
 export const UploadDropzone = withStyles(styles)(UploadDropzoneComponent)

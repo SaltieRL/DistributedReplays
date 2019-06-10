@@ -26,10 +26,6 @@ type Props = OwnProps
     & WithWidth
 
 class PlayerStatsTabsComponent extends React.PureComponent<Props> {
-    constructor(props: Props) {
-        super(props)
-    }
-
     public render() {
         const categoryToIcon: Record<PlayerStatsSubcategory, IconDefinition> = {
             "Main Stats": faChartBar,
@@ -42,13 +38,15 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
             "Efficiency": faPercent,
             "Team Positioning": faHandshake
         }
+        const { width, selectedTab, handleChange } = this.props
+        const belowMd = isWidthDown("md", width)
 
         return (
-            <Tabs value={this.props.selectedTab}
-                  onChange={this.props.handleChange}
+            <Tabs value={selectedTab}
+                  onChange={handleChange}
                   centered
-                  scrollable={isWidthDown("xs", this.props.width)}
-                  scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
+                  variant={belowMd ? "scrollable" : "standard"}
+                  scrollButtons={belowMd ? "on" : undefined}
             >
                 {Object.keys(PlayerStatsSubcategory).filter((subcategory) => {
                     return this.props.exclude !== undefined

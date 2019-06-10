@@ -8,6 +8,10 @@ import { LoadableWrapper } from "../LoadableWrapper"
 import { ReplayTagDisplay } from "./ReplayTagDisplay"
 import { UserTagDisplay } from "./UserTagDisplay"
 
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
 type TagTab = "Replay" | "My tags"
 
 interface OwnProps {
@@ -38,6 +42,7 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
                 onClose={this.props.onClose}
                 scroll="paper"
                 PaperProps={{style: {width: 360, maxWidth: "90vw"}}}
+                onClick={this.stopPropagation}
             >
                 <DialogTitle style={{padding: 0}}>
                     <Tabs
@@ -119,10 +124,10 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
                 })
         }
     }
-}
 
-export const mapStateToProps = (state: StoreState) => ({
-    loggedInUser: state.loggedInUser
-})
+    private readonly stopPropagation: React.MouseEventHandler = (event) => {
+        event.stopPropagation()
+    }
+}
 
 export const TagDialog = connect(mapStateToProps)(TagDialogComponent)

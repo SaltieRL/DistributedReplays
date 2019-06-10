@@ -6,7 +6,7 @@ import { BasePage } from "./BasePage"
 export class PrivacyPolicyPage extends React.PureComponent {
     public render() {
         return (
-            <BasePage backgroundImage={"/splash.png"}>
+            <BasePage useSplash>
                 <Grid container justify="center">
                     <Grid item xs={12} lg={10} xl={8}>
                         <Grid container spacing={16} justify="center">

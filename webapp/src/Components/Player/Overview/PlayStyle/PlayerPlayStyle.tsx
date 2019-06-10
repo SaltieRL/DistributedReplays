@@ -6,6 +6,19 @@ import { getPlayStyle } from "../../../../Requests/Player/getPlayStyle"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 import { PlayerPlayStyleChart } from "./PlayerPlayStyleChart"
 
+const styles = (theme: Theme) => createStyles({
+    inlineWarning: {
+        color: theme.palette.error.main,
+        margin: "auto",
+        marginRight: theme.spacing.unit
+    },
+    warningContainer: {
+        border: "1px rgba(0, 0, 0, 0.4) solid",
+        borderRadius: 8,
+        padding: 8
+    }
+})
+
 interface OwnProps {
     player: Player
     playlist?: number
@@ -68,7 +81,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                 return (
                                     <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
                                           style={{height: 400}}>
-                                        <Typography variant="subheading" align="center">
+                                        <Typography variant="subtitle1" align="center">
                                             {chartDataResponse.title}
                                         </Typography>
                                         {this.state.winLossData &&
@@ -85,7 +98,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                 return (
                                     <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
                                           style={{height: 400}}>
-                                        <Typography variant="subheading" align="center">
+                                        <Typography variant="subtitle1" align="center">
                                             {chartDataResponse.title}
                                         </Typography>
                                         <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>
@@ -115,18 +128,5 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
         this.setState({reloadSignal: !this.state.reloadSignal})
     }
 }
-
-const styles = (theme: Theme) => createStyles({
-    inlineWarning: {
-        color: theme.palette.error.main,
-        margin: "auto",
-        marginRight: theme.spacing.unit
-    },
-    warningContainer: {
-        border: "1px rgba(0, 0, 0, 0.4) solid",
-        borderRadius: 8,
-        padding: 8
-    }
-})
 
 export const PlayerPlayStyle = withStyles(styles)(PlayerPlayStyleComponent)

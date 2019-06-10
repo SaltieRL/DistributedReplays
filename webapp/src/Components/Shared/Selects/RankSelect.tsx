@@ -14,6 +14,14 @@ const ranks = ["Unranked", "Bronze I", "Bronze II", "Bronze III", "Silver I", "S
     "Gold II", "Gold III", "Platinum I", "Platinum II", "Platinum III", "Diamond I", "Diamond II",
     "Diamond III", "Champion I", "Champion II", "Champion III", "Grand Champion"]
 
+const styles = createStyles({
+    formControl: {
+        maxWidth: 400,
+        minWidth: 200,
+        width: "80%"
+    }
+})
+
 interface OwnProps {
     selectedRank: number
     handleChange: React.ChangeEventHandler<HTMLSelectElement>
@@ -53,13 +61,5 @@ class RankSelectComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    formControl: {
-        maxWidth: 400,
-        minWidth: 200,
-        width: "80%"
-    }
-})
 
 export const RankSelect = withStyles(styles)(RankSelectComponent)
