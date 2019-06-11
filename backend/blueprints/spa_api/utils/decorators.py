@@ -6,6 +6,7 @@ from ..errors.errors import CalculatedError
 
 
 def require_user(decorated_function):
+    @wraps(decorated_function)
     def wrapper_require_user(*args, **kwargs):
         if g.user is None and 'internal_user' not in kwargs:
             raise CalculatedError(404, "User is not logged in.")
@@ -29,7 +30,7 @@ class with_query_params(object):
                 return decorated_function(*args, **kwargs)
             validation = self.validation_func(query_params)
             if validation is not None:
-                return validation
+                raise validation
             kwargs['query_params'] = query_params
             return decorated_function(*args, **kwargs)
         return decorator

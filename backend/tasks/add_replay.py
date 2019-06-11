@@ -11,6 +11,7 @@ from carball import analyze_replay_file
 from requests import ReadTimeout
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.service_layers.replay.tag import apply_tags_to_game
 from backend.blueprints.spa_api.service_layers.replay.visibility import apply_game_visibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params
@@ -152,11 +153,22 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
 
     query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
 
+    error_counter = []
     # Add game visibility option
     try:
         apply_game_visibility(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid,
                               game_exists=match_exists)
     except CalculatedError as e:
+        error_counter.append('visibility')
         log_error(e, message='Error changing visibility', logger=logger)
+    # Add game visibility option
+    try:
+        apply_tags_to_game(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid)
+    except CalculatedError as e:
+        error_counter.append('tags')
+        log_error(e, message='Error adding tags', logger=logger)
 
-    logger.debug("SUCCESS: Processed all query params")
+    if len(error_counter) == 0:
+        logger.debug("SUCCESS: Processed all query params")
+    else:
+        logger.warning('Found ' + str(len(error_counter)) + ' errors while processing query params: ' + str(error_counter))

@@ -156,6 +156,7 @@ def get_rank(steam_id):
     bot_id = get_bot_by_steam_id(steam_id)
     if bot_id is not None:
         league = Braacket()
+        league.update_player_cache()
         braacket_id = league.player_cache.get(bot_id)
         unranked = get_empty_data([steam_id])
         if braacket_id is not None:

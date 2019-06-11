@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="en"> 
+    <head>
+ 		<title>RLBot / Player / SkyBot</title>
+ 		
+ 		<meta charset="UTF-8">
+       	<meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="All" />
+        
+               		<meta name="description" content='League: RLBot | United States; Rocket League | Custom fan-made bots in Rocket League' />
+       	       	<meta name="keywords" content='League,Tournament,Leagues,Tournaments,Player,Ranking,Power ranking,ELO,Glicko,TrueSkill,Point,Bracket,Generator,Round-Robin,Single-Elimination,Double-Elimination,Pool,Multistage,Seeding,Statistics,History,Media' />
+       	
+       	<meta name="google-site-verification" content="q3EjBxDSLQrmS_qTedBmKwQ4IKGg2yf13ZcbTGs4pYY" />
+
+       	<link href="https://fonts.googleapis.com/css?family=Play:400,700" rel="stylesheet">
+       	<!-- 
+       	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+       	  -->
+       	
+       	       	
+                		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/bootstrap/css/bootstrap.min.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/font-awesome/css/font-awesome.min.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/font-awesome/css/font-awesome-animation.min.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/bootstrap/css/custom/fix.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/bootstrap/plugin/datetimepicker/css/bootstrap-datetimepicker.min.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/bootstrap/css/custom/overload.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/jquery/plugin/loading/css/jquery.loading.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/jquery/plugin/panel/css/jquery.panel.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/_my/css/main.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/_my/css/theme/theme.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/core/_my/css/game.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/libraries/navsub/css/navsub.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/libraries/auth/css/auth.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/libraries/embed/css/embed.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/libraries/search/css/search.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/libraries/searchxhr/css/searchxhr.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/libraries/chart/css/chart.css?v=1.1.85.2" />
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="/assets/css/league/league.player.css?v=1.1.85.2" />
+        			<script type="text/javascript">
+					</script>
+		    </head>  
+          
+    <body>	    	
+	  	<!--  Header -->
+    	<div id='header'>
+	<div id='nav'>
+		<nav class="navbar navbar-default navbar-static-top">
+	<div class="container">
+		<div class="navbar-header">
+        	<button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+            	<span class="sr-only">Toggle navigation</span>
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+          	</button>
+          	<a class="navbar-brand" href='https://braacket.com/'>
+          		Braacket.com          	</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar">
+        	<ul class="nav navbar-nav">
+            	<li class='active'>
+	<a href='https://braacket.com/league'>
+		League	</a>
+</li><li class=''>
+	<a href='https://braacket.com/tournament'>
+		Tournament	</a>
+</li>          	</ul>
+			<ul class="nav navbar-nav navbar-right">
+								
+        	</ul>
+    	</div><!--/.nav-collapse -->
+    	<div class="navbar-custom">
+    		<ul class="nav navbar-nav navbar-right">
+	    		<li class="dropdown">
+	<div data-toggle="dropdown" class="dropdown-toggle" aria-expanded="true">
+		<span class=''><i class='fa fa-cog fa-fw'></i></span> <span class='hidden-xs hidden-sm hidden'>Settings</span>
+		<span class="caret"></span>
+	</div>
+	<ul class="dropdown-menu dropdown-menu-right">
+		<li class="dropdown-header">Timezone</li>
+		<li class="">
+			<form method='POST' action='/setting/process_set_timezone' class='timezone my-form-dyn form-inline'>
+				<select class='form-control ' name='timezones'><option value='Pacific/Midway' >(UTC-11:00) American Samoa</option><option value='Pacific/Honolulu' >(UTC-10:00) Hawaii</option><option value='Pacific/Marquesas' >(UTC-09:30) Marquesas Islands</option><option value='America/Anchorage' >(UTC-09:00) Alaska</option><option value='America/Los_Angeles' >(UTC-08:00) Pacific Time (US &amp; Canada)</option><option value='America/Santa_Isabel' >(UTC-08:00) Baja California</option><option value='America/Tijuana' >(UTC-08:00) Tijuana</option><option value='America/Denver' >(UTC-07:00) Mountain Time (US &amp; Canada)</option><option value='America/Chihuahua' >(UTC-07:00) Chihuahua, La Paz, Mazatlan</option><option value='America/Phoenix' >(UTC-07:00) Arizona</option><option value='America/Chicago' >(UTC-06:00) Central Time (US &amp; Canada)</option><option value='America/Belize' >(UTC-06:00) Saskatchewan, Central America</option><option value='America/Mexico_City' >(UTC-06:00) Guadalajara, Mexico City, Monterrey</option><option value='Pacific/Easter' >(UTC-06:00) Easter Island</option><option value='America/New_York' >(UTC-05:00) Eastern Time (US &amp; Canada)</option><option value='America/Havana' >(UTC-05:00) Cuba</option><option value='America/Bogota' >(UTC-05:00) Bogota, Lima, Quito</option><option value='America/Caracas' >(UTC-04:30) Caracas</option><option value='America/Halifax' >(UTC-04:00) Atlantic Time (Canada)</option><option value='America/Goose_Bay' >(UTC-04:00) Atlantic Time (Goose Bay)</option><option value='America/Asuncion' >(UTC-04:00) Asuncion</option><option value='America/Santiago' >(UTC-04:00) Santiago</option><option value='America/Cuiaba' >(UTC-04:00) Cuiaba</option><option value='America/La_Paz' >(UTC-04:00) Georgetown, La Paz, Manaus, San Juan</option><option value='America/St_Johns' >(UTC-03:30) Newfoundland</option><option value='America/Argentina/Buenos_Aires' >(UTC-03:00) Buenos Aires</option><option value='America/Argentina/San_Luis' >(UTC-03:00) San Luis</option><option value='America/Argentina/Mendoza' >(UTC-03:00) Argentina, Cayenne, Fortaleza</option><option value='Atlantic/Stanley' >(UTC-03:00) Falkland Islands</option><option value='America/Godthab' >(UTC-03:00) Greenland</option><option value='America/Montevideo' >(UTC-03:00) Montevideo</option><option value='America/Sao_Paulo' >(UTC-03:00) Brasilia</option><option value='America/Miquelon' >(UTC-03:00) Saint Pierre and Miquelon</option><option value='America/Noronha' >(UTC-02:00) Mid-Atlantic</option><option value='Atlantic/Cape_Verde' >(UTC-01:00) Cape Verde Is.</option><option value='Atlantic/Azores' >(UTC-01:00) Azores</option><option value='Europe/London' >(UTC) Dublin, Edinburgh, Lisbon, London</option><option value='Africa/Casablanca' >(UTC) Casablanca</option><option value='Atlantic/Reykjavik' >(UTC) Monrovia, Reykjavik</option><option value='Europe/Zurich' selected>(UTC+01:00) Central European Time</option><option value='Africa/Algiers' >(UTC+01:00) West Central Africa</option><option value='Africa/Windhoek' >(UTC+01:00) Windhoek</option><option value='Africa/Tunis' >(UTC+01:00) Tunis</option><option value='Europe/Athens' >(UTC+02:00) Eastern European Time</option><option value='Africa/Johannesburg' >(UTC+02:00) South Africa Standard Time</option><option value='Europe/Kaliningrad' >(UTC+02:00) Kaliningrad</option><option value='Asia/Amman' >(UTC+02:00) Amman</option><option value='Asia/Beirut' >(UTC+02:00) Beirut</option><option value='Africa/Cairo' >(UTC+02:00) Cairo</option><option value='Asia/Jerusalem' >(UTC+02:00) Jerusalem</option><option value='Asia/Gaza' >(UTC+02:00) Gaza</option><option value='Asia/Damascus' >(UTC+02:00) Syria</option><option value='Europe/Moscow' >(UTC+03:00) Moscow, St. Petersburg, Volgograd</option><option value='Europe/Minsk' >(UTC+03:00) Minsk</option><option value='Africa/Nairobi' >(UTC+03:00) Nairobi, Baghdad, Kuwait, Qatar, Riyadh</option><option value='Asia/Tehran' >(UTC+03:30) Tehran</option><option value='Asia/Dubai' >(UTC+04:00) Abu Dhabi, Muscat, Tbilisi</option><option value='Asia/Yerevan' >(UTC+04:00) Yerevan</option><option value='Asia/Baku' >(UTC+04:00) Baku</option><option value='Indian/Mauritius' >(UTC+04:00) Mauritius</option><option value='Asia/Kabul' >(UTC+04:30) Kabul</option><option value='Asia/Yekaterinburg' >(UTC+05:00) Ekaterinburg</option><option value='Asia/Tashkent' >(UTC+05:00) Tashkent, Karachi</option><option value='Asia/Kolkata' >(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi</option><option value='Asia/Kathmandu' >(UTC+05:45) Kathmandu</option><option value='Asia/Novosibirsk' >(UTC+06:00) Novosibirsk</option><option value='Asia/Dhaka' >(UTC+06:00) Astana, Dhaka</option><option value='Asia/Almaty' >(UTC+06:00) Almaty, Bishkek, Qyzylorda</option><option value='Asia/Rangoon' >(UTC+06:30) Yangon (Rangoon)</option><option value='Asia/Krasnoyarsk' >(UTC+07:00) Krasnoyarsk</option><option value='Asia/Bangkok' >(UTC+07:00) Bangkok, Hanoi, Jakarta</option><option value='Asia/Irkutsk' >(UTC+08:00) Irkutsk</option><option value='Asia/Hong_Kong' >(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option><option value='Asia/Singapore' >(UTC+08:00) Kuala Lumpur, Singapore</option><option value='Australia/Perth' >(UTC+08:00) Perth</option><option value='Asia/Yakutsk' >(UTC+09:00) Yakutsk</option><option value='Asia/Tokyo' >(UTC+09:00) Osaka, Sapporo, Tokyo</option><option value='Asia/Seoul' >(UTC+09:00) Seoul</option><option value='Australia/Adelaide' >(UTC+09:30) Adelaide</option><option value='Australia/Darwin' >(UTC+09:30) Darwin</option><option value='Asia/Vladivostok' >(UTC+10:00) Vladivostok</option><option value='Asia/Magadan' >(UTC+10:00) Magadan</option><option value='Australia/Brisbane' >(UTC+10:00) Brisbane, Guam</option><option value='Australia/Sydney' >(UTC+10:00) Sydney, Melbourne, Hobart</option><option value='Pacific/Noumea' >(UTC+11:00) Solomon Is., New Caledonia</option><option value='Pacific/Norfolk' >(UTC+11:30) Norfolk Island</option><option value='Asia/Anadyr' >(UTC+12:00) Anadyr, Kamchatka</option><option value='Pacific/Auckland' >(UTC+12:00) Auckland, Wellington</option><option value='Pacific/Fiji' >(UTC+12:00) Fiji</option><option value='Pacific/Chatham' >(UTC+12:45) Chatham Islands</option><option value='Pacific/Tongatapu' >(UTC+13:00) Nuku'alofa</option><option value='Pacific/Apia' >(UTC+13:00) Apia, Samoa</option><option value='Pacific/Kiritimati' >(UTC+14:00) Kiritimati</option></select>			</form>
+		</li>
+	</ul>
+</li>				<li class="dropdown ">
+    <div class="dropdown-toggle" data-toggle="dropdown">
+    	<span class=''>
+			<span class='glyphicon glyphicon-log-in fa-fw'></span>		</span>
+		<span class='hidden-xs hidden-sm hidden'>
+			Account
+		</span>
+		<span class="caret"></span>
+    </div>
+	<ul class="dropdown-menu dropdown-menu-right">
+		<li class="dropdown-header">
+			You are not logged in
+		</li>
+		<li>
+			<a href='#' data-toggle="modal" data-target="#login_modal">Login</a>
+		</li>
+		<li class='divider'></li>
+		<li class="dropdown-header">
+			Account manager
+		</li>
+		<li class=''>
+			<a href='/auth/create'>Create</a>
+		</li>
+		<li class=''>
+			<a href='/auth/password_recovery'>Password recovery</a>
+		</li>
+	</ul>
+</li>			</ul>
+		</div>
+	</div>
+</nav>	</div>
+</div>    	
+    	<!--  Content -->    	
+        <div id='content'>
+        	          	          	
+       			<div id='content_header' class='my-navsub-active'>	
+		<div class='container'>
+			<div class='content_header-body'>
+				<div>
+	<h1 class='text-transform-none'>
+		<a class='text-bold' href='/league/rlbot'>RLBot</a>
+	</h1>
+	<div class='content_header-infos'>
+			<div class='btn-group'>
+			<div class="btn btn-default btn-legend">
+				<i class='fa fa-gamepad fa-fw'></i>			</div>
+			<div class="btn btn-default">Rocket League</div>
+		</div>
+		<br class='visible-xxs'>
+				<div class='btn-group'>
+			<div class="btn btn-default btn-legend"><i class='fa fa-globe fa-fw'></i></div>
+			<div class="btn btn-default">United States</div>
+		</div>
+		<br class='hidden-lg'>
+			
+	<div class='btn-group'>
+		<div class="btn btn-default btn-legend">
+			<i class='fa fa-users fa-fw'></i>		</div>
+		<div class="btn btn-default">
+			69		</div>
+	</div>
+	<div class='btn-group'>
+		<div class="btn btn-default btn-legend">
+			<i class='fa fa-sitemap fa-fw'></i>		</div>
+		<div class="btn btn-default">
+			61		</div>
+	</div>
+			<div class='content_header_share btn-group'>
+			<div class="btn btn-default btn-legend dropdown-toggle" data-toggle="dropdown">
+				<i class='fa fa-share-alt fa-fw'></i> <span class='hidden-xs'>Share</span> <span class='caret'></span>	
+			</div>
+			<ul class="dropdown-menu dropdown-menu-right">
+				<li class='share_url'>
+					<input type='text' value='https://braacket.com/league/rlbot' readonly />
+					<a href="#" class="btn btn-url" class='share_url_toggle'>URL</a>
+				</li>
+				<li>
+					<a href="http://www.facebook.com/sharer.php?u=https://braacket.com/league/rlbot" target="_blank" rel='noreferrer' class="btn btn-facebook">
+						<i class='fa fa-facebook-square fab fa-fw'></i>					</a>
+				</li>
+				<li>
+					<a href="https://twitter.com/home?status=https://braacket.com/league/rlbot" target="_blank" rel='noreferrer' class="btn btn-twitter">
+						<i class='fa fa-twitter-square fab fa-fw'></i>					</a>
+				</li>
+							</ul>
+	</div>
+	</div></div>
+<div class='game_bg game_bg-rocketleague' style="background-image:url('/assets/images/game/rocketleague/bg/main.jpg?v=1.1.85.2')"></div>			</div>
+		</div>
+	</div>
+<div id='content_nav' class="nav my-navsub navbar-default ">
+	<div class='my-navsub-overflow my-navsub-overflow-left'></div>
+	<div class="my-navsub-container">
+		<div class='container'>
+			<ul class='nav navbar-nav my-navsub-ul navbar-left'>
+									<li class=' text-center'>
+						<a href='/league/rlbot/dashboard' >
+															<span class='my-navsub-icon'>
+									<i class='fa fa-cube fa-fw '></i>								</span>
+														<div class='my-navsub-label'>
+								        							<span class='my-navsub-label_base_page'>
+        								league        							</span>
+    							    							<span class='my-navsub-label_page'>
+    							Dashboard    							</span>
+    						</div>
+													</a>
+									<li class=' active text-center'>
+						<a href='/league/rlbot/player' >
+															<span class='my-navsub-icon'>
+									<i class='fa fa-users fa-fw '></i>								</span>
+														<div class='my-navsub-label'>
+								        							<span class='my-navsub-label_base_page'>
+        								league        							</span>
+    							    							<span class='my-navsub-label_page'>
+    							Players    							</span>
+    						</div>
+													</a>
+									<li class=' text-center'>
+						<a href='/league/rlbot/tournament' >
+															<span class='my-navsub-icon'>
+									<i class='fa fa-sitemap fa-fw '></i>								</span>
+														<div class='my-navsub-label'>
+								        							<span class='my-navsub-label_base_page'>
+        								league        							</span>
+    							    							<span class='my-navsub-label_page'>
+    							Tournaments    							</span>
+    						</div>
+													</a>
+									<li class=' text-center'>
+						<a href='/league/rlbot/ranking' >
+															<span class='my-navsub-icon'>
+									<i class='fa fa-trophy fa-fw '></i>								</span>
+														<div class='my-navsub-label'>
+								        							<span class='my-navsub-label_base_page'>
+        								league        							</span>
+    							    							<span class='my-navsub-label_page'>
+    							Ranking    							</span>
+    						</div>
+													</a>
+									<li class=' text-center'>
+						<a href='/league/rlbot/head2head' >
+															<span class='my-navsub-icon'>
+									<span class='glyphicon glyphicon-fire  fa-fw '></span>								</span>
+														<div class='my-navsub-label'>
+								        							<span class='my-navsub-label_base_page'>
+        								league        							</span>
+    							    							<span class='my-navsub-label_page'>
+    							Head 2 Head    							</span>
+    						</div>
+													</a>
+									<li class=' text-center'>
+						<a href='/league/rlbot/stats' >
+															<span class='my-navsub-icon'>
+									<i class='fa fa-line-chart fa-fw '></i>								</span>
+														<div class='my-navsub-label'>
+								        							<span class='my-navsub-label_base_page'>
+        								league        							</span>
+    							    							<span class='my-navsub-label_page'>
+    							Stats    							</span>
+    						</div>
+													</a>
+							</ul>
+		</div>
+	</div>
+	<div class='my-navsub-overflow my-navsub-overflow-right'></div>
+</div>	<div id='content_body' class='my-navsub-active'>
+		<div class='container'>
+			<div class='ads ads-mobile-top'>
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- Braacket-mobile-top -->
+	<ins class="adsbygoogle adsbygoogle-mobile-top"
+	     style="display:block; max-height:60px;"
+	     data-ad-client="ca-pub-6977339199743617"
+	     data-ad-slot="2454238061"
+	     data-ad-format="auto"></ins>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div><div class='ads ads-side ads-side-right'>
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- Braacket-desktop-side-right -->
+	<ins class="adsbygoogle"
+	     style="display:block"
+	     data-ad-client="ca-pub-6977339199743617"
+	     data-ad-slot="8357301433"
+	     data-ad-format="vertical"></ins>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div><section class='embed-hidden'>
+	<div class='my-btn-group-responsive btn-group'>
+		<div class='btn-group'>
+			<a class='btn btn-default' href='/league/rlbot/player'><i class='fa fa-chevron-left fa-fw'></i> Back to the player list</a>
+		</div>
+							</div>
+	</section><section class='embed-hidden'>
+	<div class='panel panel-default my-panel-title  my-box-shadow'>
+		<div class='panel-heading'>
+			Player <i class='fa fa-line-chart pull-right fa-fw'></i>	
+			<div class="text-small text-light text-transform-none">
+				View the player's general performance, the history of his matches and tournaments and head 2 head with another player
+			</div>
+			<hr>
+						<table class='text-transform-none'>
+				<tr>
+					<td class='ellipsis max'>
+						<h4 class='ellipsis'>
+							SkyBot&nbsp;																				</h4>
+					</td>
+					<td class='min nowrap text-right'>
+						<a class='badge badge-default badge-pill float-right' target='_blank' rel='noreferrer' href='https://github.com/skyborgff/SkyBot'><i class='fa fa-github '></i><span class='hidden-xs'>&nbsp;&nbsp;github.com</span></a><a class='badge badge-primary badge-pill float-right' href='/account/fabiorcferreira?' aria-label='fabiorcferreira'><i class='fa fa-user-circle '></i><span class='hidden-xs'>&nbsp;&nbsp;fabiorcferreira</span></a>					</td>
+					<td class='min my-td-padding-left'>
+						<span class='country_flag country_flag-pt'><img alt='' class='' data-toggle='tooltip' data-placement='top' title='Portugal' data-animation='false' data-container='body' src='/assets/images/country/flag/pt.png'></span>					</td>
+				</tr>
+							</table>
+		</div>	
+	</div>
+</section>
+    <section>
+    	<div class='search-box'>
+    		<form class='my-form-selection' action='/league/rlbot/player/54FB8C16-6FA9-4C4A-AAD5-3DB8A6AE169B' method='GET'>
+    			<div class='row player_specific_form'>
+    				<!-- SELECT RANKING -->
+    				<div class='col-lg-6'>
+    					<div class="input-group form-group">
+    						<label class='input-group-addon' for='ranking'>
+    							Ranking
+    						</label>
+    						<select id='ranking' name='ranking' class='form-control '>
+    							    									<option value='1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F' selected>
+    										RLBot Elo    										(24 February 2018 - 31 December 2019) 
+    									</option>
+    								    						</select>
+    					</div>
+    				</div>	
+    				<!-- SELECT PLAYER HEAD TO HEAD -->
+    				<div class='col-lg-6'>
+    					<input type='hidden' name='player_hth' value=''>
+    					<div class="input-group form-group">
+    						<div class='input-group-addon'>
+    							Head 2 Head
+    						</div>
+    						<div class='input-group-addon my-input-group-addon player_hth_name' data-toggle="modal" data-target="#league_player_modal_search">
+    							<span class="text-muted">No player selected</span>    						</div>
+    						<div class='input-group-btn'>
+    							<div class='btn btn-default' data-toggle="modal" data-target="#league_player_modal_search">
+    								<i class='fa fa-crosshairs fa-fw'></i><span class='hidden-xxs'> Search players</span>
+    							</div>
+    						</div>
+    						    					</div>
+    				</div>
+    			</div>
+    		</form>
+    	</div>
+    </section>
+    <section>
+    	    			<div class='row'>
+    				<div class='col-lg-6'>
+    					<div class="panel panel-default my-box-shadow">
+	<div class="panel-heading">
+		Ranking
+		<i class='fa fa-trophy pull-right fa-fw'></i>	</div>
+		<div class="panel-body">
+					<div class='my-dashboard-values-main'>
+				28<sup>th</sup>
+								<span class='text-light text-small'>out of</span> 69 
+			</div>
+			<div class='my-dashboard-values-sub'>
+				<div>Points</div>
+				<div>
+					1466									</div>
+			</div>
+			<div class='my-dashboard-values-sub'>
+				<div>Type</div>
+				<div>
+					Elo<br>
+				</div>
+			</div>
+			<div class='my-dashboard-values-sub'>
+				<div>Date</div>
+				<div>24 February 2018 - 31 December 2019</div>
+			</div>
+							<div class='my-dashboard-values-sub'>
+					<div>Activity requirement</div>
+					<div>
+						Requires 1 tournaments played within last 3 months											</div>
+				</div>
+												</div>
+</div>    					<div class="panel panel-default my-box-shadow  my-panel-collapsed">
+	<div class="panel-heading">
+		Ranking history
+				<div class='my-panel-heading-action text-transform-none'>
+			<div class='form-group '>
+				<div class="btn-group my-btn-group-radio league_ranking_snapshot_toggle" data-toggle="buttons">
+					<label class="btn btn-sm btn-default active" data-type='rank'>
+		  			 	<input name="display" id="display_matches" value='1' autocomplete="off" type="radio" active> Rank
+		  			</label>
+		  			<label class="btn btn-sm btn-default " data-type='score'>
+		  			 	<input name="display" id="display_ranking" value='0' autocomplete="off" type="radio" > Points
+		  			</label>
+				</div>
+			</div>			
+		</div>
+	</div>
+		<div class="panel-body">
+		<div class='chart_tooltip_container'>
+			<table class='chart_tooltip'>
+				<tr><td colspan='2' class='text-bold player'></td></tr>
+				<tr><td colspan='2' class='spacer'><hr></td></tr>
+				<tr><td colspan='2' class='text-bold date'></td></tr>
+		  		<tr><td colspan='2' class='ellipsis text-bold tournament'></td></tr>
+		  		<tr>
+		  			<td class='min'>Rank:</td>
+		  			<td class='text-bold rank'></td>
+		  		</tr>
+		  		<tr>
+		  			<td class='min'>Points:</td>
+		  			<td class='text-bold score'></td>
+		  		</tr>
+		  	</table>
+	  	</div>
+		<div class='my-google-chart' id='league_player_ranking_snapshot_chart' data-href='/league/1229/process/player_get_ranking_snapshot' data-id_player='153056' data-id_player_hth='' data-id_ranking='2531' data-type='rank'>
+			<div class='loader'></div>
+		</div>
+	</div>
+</div>    					<div class='panel panel-default my-box-shadow my-panel-collapsed'>
+	<div class="panel-heading">
+		Matches statistics 
+		(69)
+		<i class='fa fa-shield pull-right fa-fw'></i>		<div class="text-small text-light text-transform-none">
+			Overall performance in matches
+		</div>
+	</div>
+			<div class="panel-body">
+			<div class='alert'>
+				<div class='my-dashboard-values-main'>
+					49% 
+										Win rate
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<table class='table'>
+				<thead>
+					<tr>
+						<th colspan='2'>Result</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Win</td>
+						<td class='text-right text-bold min'>
+							34													</td>
+					</tr>
+					<tr>
+						<td>Draw</td>
+						<td class='text-right text-bold min'>
+							0													</td>
+					</tr>
+					<tr>
+						<td>Lose</td>
+						<td class='text-right text-bold min'>
+							35													</td>
+					</tr>
+				</tbody>
+				<thead>
+					<tr>
+						<th colspan='2'>Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>+</td>
+						<td class='text-right min text-bold'>
+							225													</td>
+					</tr>
+					<tr>
+						<td>-</td>
+						<td class='text-right min text-bold'>
+							248													</td>
+					</tr>
+					<tr>
+						<td>+/-</td>
+						<td class='text-right min text-bold'>
+							-23													</td>
+					</tr>	
+				</tbody>
+			</table>
+		</div>
+	</div>    					<div class='panel panel-default my-box-shadow my-panel-collapsed'>
+	<div class='panel-heading'>
+		Tournament statistics
+		(27)
+		<i class='fa fa-sitemap pull-right fa-fw'></i>		<div class="text-small text-light text-transform-none">
+			Overall performance in tournaments
+		</div>
+	</div>
+			<div class='panel-body'>
+			<table class='table'>
+				<tbody>
+											<tr>
+							<td>Top 1</td>
+							<td class='text-right text-bold min'>
+								3															</td>
+						</tr>
+											<tr>
+							<td>Top 3</td>
+							<td class='text-right text-bold min'>
+								6															</td>
+						</tr>
+											<tr>
+							<td>Top 8</td>
+							<td class='text-right text-bold min'>
+								11															</td>
+						</tr>
+											<tr>
+							<td>Top 16</td>
+							<td class='text-right text-bold min'>
+								6															</td>
+						</tr>
+											<tr>
+							<td>Top 32</td>
+							<td class='text-right text-bold min'>
+								1															</td>
+						</tr>
+											<tr>
+							<td>Worst</td>
+							<td class='text-right text-bold min'>
+								0															</td>
+						</tr>
+									</tbody>
+			</table>
+		</div>
+	</div>	
+    				</div>
+    				<div class='col-lg-6'>
+    					    					<div class='panel panel-default my-box-shadow my-panel-collapsed'>
+	<div class="panel-heading">
+		Matchups
+		<i class='fa fa-shield pull-right fa-fw'></i>		<div class="text-small text-light text-transform-none">
+			Overall performance against other players
+		</div>
+	</div>
+				<div class="panel-body">
+			<table class='table'>
+				<tbody>
+										<tr>
+						<td class='ellipsis'>Most won</td>
+													<td class='text-right min text-bold'>
+								5x
+							</td>
+							<td class='text-right min'>
+								vs
+							</td>
+							<td class='text-right min'>
+								<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+									Beast from the East								</a>
+							</td>
+											</tr>
+					<tr>
+						<td class='ellipsis'>Most lost</td>
+													<td class='text-right min text-bold'>
+								5x
+							</td>
+							<td class='text-right min'>
+								vs
+							</td>
+							<td class='text-right min'>
+								<a href='/league/rlbot/player/86503A63-A4CE-4FBE-B03C-FD7C76B8BFD6?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+									Botimus Prime								</a> 
+							</td>
+											</tr>
+					<tr>
+						<td class='ellipsis'>Most played</td>
+													<td class='text-right min text-bold'>
+								6x
+							</td>
+							<td class='text-right min'>
+								vs
+							</td>
+							<td class='text-right min'>
+								<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+								Beast from the East								</a> 
+							</td>
+											</tr>
+					<tr>
+						<td class='ellipsis'>
+							Best win rate <span class='text-small'>(Min. 3 matches)</span>
+						</td>
+													<td class='text-right min text-bold'>
+								83%
+							</td>
+							<td class='text-right min'>
+								vs
+							</td>
+							<td class='text-right min'>
+								<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+									Beast from the East								</a> 
+							</td>
+											</tr>
+					<tr>
+						<td class='ellipsis'>
+							Worst win rate <span class='text-small'>(Min. 3 matches)</span>
+						</td>
+													<td class='text-right min text-bold'>
+								0%
+							</td>
+							<td class='text-right min'>
+								vs
+							</td>
+							<td class='text-right min'>
+								<a href='/league/rlbot/player/2E8B84D3-9C31-4258-B8DC-50B882F95E4A?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+									AdversityBot								</a> 
+							</td>
+											</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>    					<div class='panel panel-default my-box-shadow my-panel-collapsed'>
+	<div class="panel-heading">
+		Matches history 
+					(72)
+				<i class='fa fa-shield pull-right fa-fw'></i>	</div>
+			<div class="panel-body">
+			<!-- Matches - history -->
+			<table class='table my-table-show_max' data-show_number='20'>
+				<thead>
+					<tr>
+						<th>Result</th>
+						<th></th>
+						<th class='min'>Score</th>
+						<th class='min text-right'>Date</th>
+					</tr>
+				</thead>
+				<tbody>
+													<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/1516427F-65CF-417A-8AE0-F52E9131FCB7/player/4F1C5183-7433-408A-A29E-00DB2AB9F342?'>
+										<a href='/tournament/1516427F-65CF-417A-8AE0-F52E9131FCB7/player/4F1C5183-7433-408A-A29E-00DB2AB9F342?'>Tiny Tourney 4</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/48270C6C-ECFD-418C-A861-01404A6F87EF?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Tuxedo											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-5 
+									</td>
+									<td class='text-right min'>
+										2019-05-26									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/E63A8683-3407-4B78-AB2A-A400FEEDC4A5/player/B83B3520-5BB2-42CF-BD56-173825A57221?'>
+										<a href='/tournament/E63A8683-3407-4B78-AB2A-A400FEEDC4A5/player/B83B3520-5BB2-42CF-BD56-173825A57221?'>GarbageBot &amp; Tuxedo Challenge Matches</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/48270C6C-ECFD-418C-A861-01404A6F87EF?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Tuxedo											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-6 
+									</td>
+									<td class='text-right min'>
+										2019-05-02									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/2A3ED214-4E16-43E1-8EB7-BD3E83261479?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												GarbageBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-3 
+									</td>
+									<td class='text-right min'>
+										2019-05-02									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/wintertide/player/1C5756A9-7991-4AC3-86DB-0DB118BA9EE9?'>
+										<a href='/tournament/wintertide/player/1C5756A9-7991-4AC3-86DB-0DB118BA9EE9?'>Wintertide 1v1</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/86503A63-A4CE-4FBE-B03C-FD7C76B8BFD6?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Botimus Prime											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										0-5 
+									</td>
+									<td class='text-right min'>
+										2019-03-09									</td>
+								</tr>
+															<tr class='text-muted-opacity'>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+										Weeabot									</td>
+									<td class='min text-right'>
+																					<span data-toggle='tooltip' data-placement='top' title='Not considered in ranking and statistics (player not added)' data-animation='false' data-container='body'>
+												<i class='fa fa-ban '></i>											</span>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-1 
+									</td>
+									<td class='text-right min'>
+										2019-03-09									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/3F9DF7D2-A0EA-4C23-A3C1-EA4643DCA655/player/A2F40094-CD62-4C4C-A89B-E7E480A5D1D1?'>
+										<a href='/tournament/3F9DF7D2-A0EA-4C23-A3C1-EA4643DCA655/player/A2F40094-CD62-4C4C-A89B-E7E480A5D1D1?'>Bubble Sort 2 - Electric Boogaloo (Iteration 0)</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/AE527CB9-6971-4FD8-9496-C37BFD280118?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NomBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-6 
+									</td>
+									<td class='text-right min'>
+										2019-03-02									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/73490B35-E60F-463C-8793-D20393113FFA?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Gas Gas Gas											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-0 
+									</td>
+									<td class='text-right min'>
+										2019-03-02									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/F4B40724-33A2-4A80-B9B0-07D3F4D4AE83/player/04EBA206-ABC7-4014-979B-89CB1D471C55?'>
+										<a href='/tournament/F4B40724-33A2-4A80-B9B0-07D3F4D4AE83/player/04EBA206-ABC7-4014-979B-89CB1D471C55?'>The return of Skybot</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/AE527CB9-6971-4FD8-9496-C37BFD280118?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NomBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										5-6 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/80E9FA90-EEC2-45F6-9F1C-A03C4CAB9E97?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Air Bud											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-5 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/3F6FB0F3-0196-4F0C-AD1C-8FE82CE9E6C1?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												CCBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-1 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/DCFF3B53-C021-4ED7-9A81-857D61C7E842?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Boolean Algebra Calf											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										5-0 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class='text-muted-opacity'>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+										Weeabot									</td>
+									<td class='min text-right'>
+																					<span data-toggle='tooltip' data-placement='top' title='Not considered in ranking and statistics (player not added)' data-animation='false' data-container='body'>
+												<i class='fa fa-ban '></i>											</span>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-1 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/9530819D-992E-4021-906A-F76372DB2413?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Bean											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										7-3 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/82911D6C-5D56-416A-B2FA-A1ABCA441376/player/5793265A-4E06-44B2-8077-117B37B2F65D?'>
+										<a href='/tournament/82911D6C-5D56-416A-B2FA-A1ABCA441376/player/5793265A-4E06-44B2-8077-117B37B2F65D?'>Skybot &amp; Heart Challenges</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/62F8BA9D-7EF3-47C5-9147-90677B3A71E4?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Allstar											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-5 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/97461D55-44D5-40AF-B1B9-317418ABF6D2?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Atlas											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-7 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/73490B35-E60F-463C-8793-D20393113FFA?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Gas Gas Gas											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										0-4 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/50EDC413-27BB-4728-BCB5-F1D14FF13846?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Wildfire											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-5 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/66033380-B06F-44DF-B9F7-94CAA32025BB?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NV Derevo											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-4 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/66033380-B06F-44DF-B9F7-94CAA32025BB?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NV Derevo											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-2 
+									</td>
+									<td class='text-right min'>
+										2019-02-28									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/C3C09BA5-951B-47B4-8FE8-9DD869C8E006/player/19EBCE87-63C5-469A-830A-79501FE0F40C?'>
+										<a href='/tournament/C3C09BA5-951B-47B4-8FE8-9DD869C8E006/player/19EBCE87-63C5-469A-830A-79501FE0F40C?'>Showmatches 25/02/2019 (Evening)</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/B990C536-B6E2-45D1-A685-26A0E7DCB7D3?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Opportunity Rover											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										5-2 
+									</td>
+									<td class='text-right min'>
+										2019-02-27									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/907CC666-EF5A-4C73-AD94-53CAD5772E04/player/9F9EAB8A-A10A-441E-BB76-8E177B28C354?'>
+										<a href='/tournament/907CC666-EF5A-4C73-AD94-53CAD5772E04/player/9F9EAB8A-A10A-441E-BB76-8E177B28C354?'>Inaugural Bubble Sort</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/BE0209B7-77F8-4EE8-B82D-BEE2C82D87D3?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												rashBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-4 
+									</td>
+									<td class='text-right min'>
+										2019-02-18									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/B86451D3-B59C-4B1D-9F85-F7D5148D1EF0?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												KipjeBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-6 
+									</td>
+									<td class='text-right min'>
+										2019-02-18									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/5337AF58-AC41-464D-9F3F-86525A550422?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Leaf											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-6 
+									</td>
+									<td class='text-right min'>
+										2019-02-18									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/62F8BA9D-7EF3-47C5-9147-90677B3A71E4?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Allstar											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-3 
+									</td>
+									<td class='text-right min'>
+										2019-02-18									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/AE527CB9-6971-4FD8-9496-C37BFD280118?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NomBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-6 
+									</td>
+									<td class='text-right min'>
+										2019-02-18									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/66033380-B06F-44DF-B9F7-94CAA32025BB?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NV Derevo											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-1 
+									</td>
+									<td class='text-right min'>
+										2019-02-18									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/868C7C79-9582-446C-80BD-56679F344407/player/EF248251-F28D-411B-B3FB-0444F6EA3CCB?'>
+										<a href='/tournament/868C7C79-9582-446C-80BD-56679F344407/player/EF248251-F28D-411B-B3FB-0444F6EA3CCB?'>KipjeBot Gauntlet</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/B86451D3-B59C-4B1D-9F85-F7D5148D1EF0?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												KipjeBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										10-4 
+									</td>
+									<td class='text-right min'>
+										2019-02-14									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/E72DF553-BE32-4CB2-A63F-1877D9C0E8C8/player/C0138185-A84B-492E-B75D-3C1FCDC63A98?'>
+										<a href='/tournament/E72DF553-BE32-4CB2-A63F-1877D9C0E8C8/player/C0138185-A84B-492E-B75D-3C1FCDC63A98?'>Skybot Gauntlet</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/62F8BA9D-7EF3-47C5-9147-90677B3A71E4?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Allstar											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-2 
+									</td>
+									<td class='text-right min'>
+										2019-01-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/62F8BA9D-7EF3-47C5-9147-90677B3A71E4?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Allstar											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-5 
+									</td>
+									<td class='text-right min'>
+										2019-01-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/62F8BA9D-7EF3-47C5-9147-90677B3A71E4?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Allstar											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										5-1 
+									</td>
+									<td class='text-right min'>
+										2019-01-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/86503A63-A4CE-4FBE-B03C-FD7C76B8BFD6?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Botimus Prime											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-3 
+									</td>
+									<td class='text-right min'>
+										2019-01-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/86503A63-A4CE-4FBE-B03C-FD7C76B8BFD6?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Botimus Prime											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-5 
+									</td>
+									<td class='text-right min'>
+										2019-01-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Beast from the East											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-0 
+									</td>
+									<td class='text-right min'>
+										2019-01-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Beast from the East											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-2 
+									</td>
+									<td class='text-right min'>
+										2019-01-27									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/7E71AE2A-AF52-4FC5-B150-D697CDF267BD/player/F44FBF52-C37F-4CD2-A70B-7F24F65D1616?'>
+										<a href='/tournament/7E71AE2A-AF52-4FC5-B150-D697CDF267BD/player/F44FBF52-C37F-4CD2-A70B-7F24F65D1616?'>CunningBot Gauntlet + Random Matches</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/9530819D-992E-4021-906A-F76372DB2413?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Bean											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-2 
+									</td>
+									<td class='text-right min'>
+										2019-01-20									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/7138FF11-69BF-4DCB-8499-00469B58CA3E/player/5A282972-249F-494F-B059-5A970C8E6000?'>
+										<a href='/tournament/7138FF11-69BF-4DCB-8499-00469B58CA3E/player/5A282972-249F-494F-B059-5A970C8E6000?'>Second Round of Swiss</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/97DAD406-0815-4E04-A231-0E98071C035D?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Mork											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-2 
+									</td>
+									<td class='text-right min'>
+										2019-01-17									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/9213D44D-AE54-4594-B4FF-395C58CE1E8D/player/20CAF37A-6F36-484E-B463-EBB444BA96C3?'>
+										<a href='/tournament/9213D44D-AE54-4594-B4FF-395C58CE1E8D/player/20CAF37A-6F36-484E-B463-EBB444BA96C3?'>Stream of 15/01 (First round of Swiss)</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/AE527CB9-6971-4FD8-9496-C37BFD280118?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NomBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-5 
+									</td>
+									<td class='text-right min'>
+										2019-01-15									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/EF7507A4-9FC7-4E3A-8DD3-86EF67A85246/player/0B210A8C-9336-4071-A2F3-AD11E18C6429?'>
+										<a href='/tournament/EF7507A4-9FC7-4E3A-8DD3-86EF67A85246/player/0B210A8C-9336-4071-A2F3-AD11E18C6429?'>Stream 29/12</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/8308DD65-8494-4A04-8A05-FA0718BB7126?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Self-driving car											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										0-9 
+									</td>
+									<td class='text-right min'>
+										2018-12-30									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/86503A63-A4CE-4FBE-B03C-FD7C76B8BFD6?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Botimus Prime											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-5 
+									</td>
+									<td class='text-right min'>
+										2018-12-30									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/66033380-B06F-44DF-B9F7-94CAA32025BB?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NV Derevo											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-2 
+									</td>
+									<td class='text-right min'>
+										2018-12-30									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/965EAE8E-9035-4CB9-B533-02110DFA2425/player/E8F12C45-7E1A-4524-B19B-713CE9045235?'>
+										<a href='/tournament/965EAE8E-9035-4CB9-B533-02110DFA2425/player/E8F12C45-7E1A-4524-B19B-713CE9045235?'>Christmas Pre-Recorded Matches</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/97461D55-44D5-40AF-B1B9-317418ABF6D2?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Atlas											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-3 
+									</td>
+									<td class='text-right min'>
+										2018-12-26									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/38343F47-C98B-44DF-84D9-57364DDA0317/player/88C1FEC6-AF48-49BD-AEF3-8DAA7B89463D?'>
+										<a href='/tournament/38343F47-C98B-44DF-84D9-57364DDA0317/player/88C1FEC6-AF48-49BD-AEF3-8DAA7B89463D?'>Showmatches 19/12/18</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/50EDC413-27BB-4728-BCB5-F1D14FF13846?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Wildfire											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-5 
+									</td>
+									<td class='text-right min'>
+										2018-12-19									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/69BF67CC-54A5-4212-B108-1677922358C9/player/ACF0C6F9-F32E-4E46-94D3-1948057F62A0?'>
+										<a href='/tournament/69BF67CC-54A5-4212-B108-1677922358C9/player/ACF0C6F9-F32E-4E46-94D3-1948057F62A0?'>Snowbot Showdown</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/2E8B84D3-9C31-4258-B8DC-50B882F95E4A?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												AdversityBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-2 
+									</td>
+									<td class='text-right min'>
+										2018-12-16									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/80E9FA90-EEC2-45F6-9F1C-A03C4CAB9E97?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Air Bud											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-3 
+									</td>
+									<td class='text-right min'>
+										2018-12-16									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/2E8B84D3-9C31-4258-B8DC-50B882F95E4A?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												AdversityBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-3 
+									</td>
+									<td class='text-right min'>
+										2018-12-15									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/0A5EDB74-E8BF-475F-A7F0-E42683806025?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												RobloxBot123											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-2 
+									</td>
+									<td class='text-right min'>
+										2018-12-15									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/E9A258EC-0051-4F6F-8D17-996B45440B07/player/5C3E098A-D9F5-4035-8FAF-71CEFE8677A8?'>
+										<a href='/tournament/E9A258EC-0051-4F6F-8D17-996B45440B07/player/5C3E098A-D9F5-4035-8FAF-71CEFE8677A8?'>American birthday stream!</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/86503A63-A4CE-4FBE-B03C-FD7C76B8BFD6?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Botimus Prime											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-4 
+									</td>
+									<td class='text-right min'>
+										2018-12-09									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/62F8BA9D-7EF3-47C5-9147-90677B3A71E4?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Allstar											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-3 
+									</td>
+									<td class='text-right min'>
+										2018-12-09									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Beast from the East											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-1 
+									</td>
+									<td class='text-right min'>
+										2018-12-09									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/3135BA77-C62E-47BD-997E-88F6838B6381/player/9DB1BF34-AEBD-4316-A0F7-922B7407542C?'>
+										<a href='/tournament/3135BA77-C62E-47BD-997E-88F6838B6381/player/9DB1BF34-AEBD-4316-A0F7-922B7407542C?'>Amboss Gauntlet</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/4B3BBE74-54CF-4900-9984-B266D86F841A?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Amboss											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										7-1 
+									</td>
+									<td class='text-right min'>
+										2018-11-24									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/8E19A32F-7292-4AD8-9746-FCA32DC0E17F/player/5C29C463-DBBD-4D16-B7DA-689C9C8935EA?'>
+										<a href='/tournament/8E19A32F-7292-4AD8-9746-FCA32DC0E17F/player/5C29C463-DBBD-4D16-B7DA-689C9C8935EA?'>Random Showmatches!</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/13403CB1-2D1A-44F4-BF88-DD911C47928F?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												CunningBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-8 
+									</td>
+									<td class='text-right min'>
+										2018-11-24									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/288A4A9B-F0CA-4B2D-8C5C-0D823BE8D8FA/player/53571215-4DC1-41F9-B8F0-304F2AAEA21F?'>
+										<a href='/tournament/288A4A9B-F0CA-4B2D-8C5C-0D823BE8D8FA/player/53571215-4DC1-41F9-B8F0-304F2AAEA21F?'>Dweller Gauntlet</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/27DB0047-38D5-4CF4-84BD-81CCAC628B45?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Dweller											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-10 
+									</td>
+									<td class='text-right min'>
+										2018-11-19									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/tinytourney2/player/1F8EBECE-1BF2-4248-AF85-4FE041D68BEB?'>
+										<a href='/tournament/tinytourney2/player/1F8EBECE-1BF2-4248-AF85-4FE041D68BEB?'>Titan Tourney</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/7334CCB8-5DD8-451D-95F2-C378E4F6D072?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												ReliefBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-5 
+									</td>
+									<td class='text-right min'>
+										2018-11-11									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/5337AF58-AC41-464D-9F3F-86525A550422?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Leaf											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-3 
+									</td>
+									<td class='text-right min'>
+										2018-11-11									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/BF408D0F-15AC-4EF7-A720-2B2886F3C5E7?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												BeepBoop											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										6-0 
+									</td>
+									<td class='text-right min'>
+										2018-11-11									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/0661561E-BA13-49E9-80BF-ABD953579CED/player/62BB58DE-B32B-4263-9D44-29E49665FB3D?'>
+										<a href='/tournament/0661561E-BA13-49E9-80BF-ABD953579CED/player/62BB58DE-B32B-4263-9D44-29E49665FB3D?'>Tiny Tourney (Unofficial)</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Beast from the East											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-0 
+									</td>
+									<td class='text-right min'>
+										2018-10-07									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Beast from the East											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										4-1 
+									</td>
+									<td class='text-right min'>
+										2018-10-07									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/66033380-B06F-44DF-B9F7-94CAA32025BB?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NV Derevo											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-1 
+									</td>
+									<td class='text-right min'>
+										2018-10-07									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/DB311EF0-4795-4ED5-81B4-C4DAA0625990?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Gosling											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										5-4 
+									</td>
+									<td class='text-right min'>
+										2018-10-07									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/C706664D-080B-469D-8AF7-ED939A220D0F?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												DuiBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										5-3 
+									</td>
+									<td class='text-right min'>
+										2018-10-07									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Beast from the East											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										0-3 
+									</td>
+									<td class='text-right min'>
+										2018-10-07									</td>
+								</tr>
+															<tr class='text-muted-opacity'>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/961B9D17-9F37-490E-A71E-CC2AFD256334?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Levi											</a>
+																														</td>
+									<td class='min text-right'>
+																					<span data-toggle='tooltip' data-placement='top' title='Not considered in ranking and statistics (match excluded)' data-animation='false' data-container='body'>
+												<i class='fa fa-ban '></i>											</span>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-0 
+									</td>
+									<td class='text-right min'>
+										2018-10-07									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/C706664D-080B-469D-8AF7-ED939A220D0F?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												DuiBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										5-4 
+									</td>
+									<td class='text-right min'>
+										2018-10-06									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/2E8B84D3-9C31-4258-B8DC-50B882F95E4A?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												AdversityBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-6 
+									</td>
+									<td class='text-right min'>
+										2018-10-06									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/66033380-B06F-44DF-B9F7-94CAA32025BB?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												NV Derevo											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										7-0 
+									</td>
+									<td class='text-right min'>
+										2018-10-06									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/527AAEBD-D323-455A-90EB-9AFFA8C92B34/player/148FA017-88F5-49AA-B78C-518C41E5F2B0?'>
+										<a href='/tournament/527AAEBD-D323-455A-90EB-9AFFA8C92B34/player/148FA017-88F5-49AA-B78C-518C41E5F2B0?'>RLBot 2018</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/13403CB1-2D1A-44F4-BF88-DD911C47928F?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												CunningBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-4 
+									</td>
+									<td class='text-right min'>
+										2018-09-03									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/DB311EF0-4795-4ED5-81B4-C4DAA0625990?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Gosling											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										3-2 
+									</td>
+									<td class='text-right min'>
+										2018-09-03									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/791402B1-27E7-462E-9B4A-5BF3CEC673AB?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												PacificScienceScratcher											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-1 
+									</td>
+									<td class='text-right min'>
+										2018-09-03									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/344C35B4-FE5C-4AF7-913D-559475521460?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												2DayHackBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-0 
+									</td>
+									<td class='text-right min'>
+										2018-09-03									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/157CF30A-B133-43E3-8934-70A493BB3FFD/player/A572CA9D-97D3-4EF7-83AC-038A2674E289?'>
+										<a href='/tournament/157CF30A-B133-43E3-8934-70A493BB3FFD/player/A572CA9D-97D3-4EF7-83AC-038A2674E289?'>SkyBot-Dweller Challenge Match</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/27DB0047-38D5-4CF4-84BD-81CCAC628B45?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												Dweller											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										0-18 
+									</td>
+									<td class='text-right min'>
+										2018-02-28									</td>
+								</tr>
+															<tr class='my-table-row-action'>
+									<td colspan='99' data-href='/tournament/rocketbot1v1/player/81102B3E-CAD6-48AB-BD1B-E77212B3DD75?'>
+										<a href='/tournament/rocketbot1v1/player/81102B3E-CAD6-48AB-BD1B-E77212B3DD75?'>Rocket Bot Championship 1v1</a>
+									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-danger'>Lose</span> vs
+																					<a href='/league/rlbot/player/7334CCB8-5DD8-451D-95F2-C378E4F6D072?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												ReliefBot											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										1-6 
+									</td>
+									<td class='text-right min'>
+										2018-02-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis'>
+										<span class='text-bold number-success'>Win</span> vs
+																					<a href='/league/rlbot/player/E5F99A5B-3A7A-4F5D-A641-F6BB28B41B59?ranking=1A3DCD4A-CC77-4A53-AE19-B2E2F52C790F'>
+												ClassicRushy											</a>
+																														</td>
+									<td class='min text-right'>
+																			</td>
+									<td class='min text-center text-bold'>
+										2-0 
+									</td>
+									<td class='text-right min'>
+										2018-02-27									</td>
+								</tr>
+											</tbody>
+			</table>
+		</div>
+	</div>    					<div class='panel panel-default my-box-shadow my-panel-collapsed'>
+	<div class="panel-heading">
+		Tournaments history  
+					(27)
+				<i class='fa fa-sitemap pull-right fa-fw'></i>	</div>
+			<div class="panel-body">
+			<table class='table table-hover my-table-show_max' data-show_number='20'>
+				<thead>
+					<tr>
+						<th class=''>Name</th>	
+						<th class='min'></th>
+						<th class='text-right'>Rank</th>
+						<th class='text-right'>Date</th>
+					</tr>
+				</thead>
+				<tbody>
+													<tr class=''>
+									<td class='ellipsis' data-href='/tournament/1516427F-65CF-417A-8AE0-F52E9131FCB7/player/4F1C5183-7433-408A-A29E-00DB2AB9F342?'>
+										<a href='/tournament/1516427F-65CF-417A-8AE0-F52E9131FCB7/player/4F1C5183-7433-408A-A29E-00DB2AB9F342?'>Tiny Tourney 4</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											5 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>10</span>
+									</td>
+									<td class='min text-right'>
+										2019-05-26									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/E63A8683-3407-4B78-AB2A-A400FEEDC4A5/player/B83B3520-5BB2-42CF-BD56-173825A57221?'>
+										<a href='/tournament/E63A8683-3407-4B78-AB2A-A400FEEDC4A5/player/B83B3520-5BB2-42CF-BD56-173825A57221?'>GarbageBot &amp; Tuxedo Challenge Matches</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											8 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>9</span>
+									</td>
+									<td class='min text-right'>
+										2019-04-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/wintertide/player/1C5756A9-7991-4AC3-86DB-0DB118BA9EE9?'>
+										<a href='/tournament/wintertide/player/1C5756A9-7991-4AC3-86DB-0DB118BA9EE9?'>Wintertide 1v1</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											9 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>24</span>
+									</td>
+									<td class='min text-right'>
+										2019-03-09									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/47B2909D-A3D7-4AF8-A55A-54AB6A016BFC/player/39E943C2-ACB8-4BF4-8A5C-5F8E4807966C?'>
+										<a href='/tournament/47B2909D-A3D7-4AF8-A55A-54AB6A016BFC/player/39E943C2-ACB8-4BF4-8A5C-5F8E4807966C?'>Bubble Sort 2 - Electric Boogaloo (Iteration 1+)</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											14 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>20</span>
+									</td>
+									<td class='min text-right'>
+										2019-03-02									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/3F9DF7D2-A0EA-4C23-A3C1-EA4643DCA655/player/A2F40094-CD62-4C4C-A89B-E7E480A5D1D1?'>
+										<a href='/tournament/3F9DF7D2-A0EA-4C23-A3C1-EA4643DCA655/player/A2F40094-CD62-4C4C-A89B-E7E480A5D1D1?'>Bubble Sort 2 - Electric Boogaloo (Iteration 0)</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											7 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>20</span>
+									</td>
+									<td class='min text-right'>
+										2019-03-02									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/F4B40724-33A2-4A80-B9B0-07D3F4D4AE83/player/04EBA206-ABC7-4014-979B-89CB1D471C55?'>
+										<a href='/tournament/F4B40724-33A2-4A80-B9B0-07D3F4D4AE83/player/04EBA206-ABC7-4014-979B-89CB1D471C55?'>The return of Skybot</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											1 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>9</span>
+									</td>
+									<td class='min text-right'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/82911D6C-5D56-416A-B2FA-A1ABCA441376/player/5793265A-4E06-44B2-8077-117B37B2F65D?'>
+										<a href='/tournament/82911D6C-5D56-416A-B2FA-A1ABCA441376/player/5793265A-4E06-44B2-8077-117B37B2F65D?'>Skybot &amp; Heart Challenges</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											11 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>11</span>
+									</td>
+									<td class='min text-right'>
+										2019-02-28									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/C3C09BA5-951B-47B4-8FE8-9DD869C8E006/player/19EBCE87-63C5-469A-830A-79501FE0F40C?'>
+										<a href='/tournament/C3C09BA5-951B-47B4-8FE8-9DD869C8E006/player/19EBCE87-63C5-469A-830A-79501FE0F40C?'>Showmatches 25/02/2019 (Evening)</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											4 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>9</span>
+									</td>
+									<td class='min text-right'>
+										2019-02-25									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/907CC666-EF5A-4C73-AD94-53CAD5772E04/player/9F9EAB8A-A10A-441E-BB76-8E177B28C354?'>
+										<a href='/tournament/907CC666-EF5A-4C73-AD94-53CAD5772E04/player/9F9EAB8A-A10A-441E-BB76-8E177B28C354?'>Inaugural Bubble Sort</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											17 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>17</span>
+									</td>
+									<td class='min text-right'>
+										2019-02-17									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/868C7C79-9582-446C-80BD-56679F344407/player/EF248251-F28D-411B-B3FB-0444F6EA3CCB?'>
+										<a href='/tournament/868C7C79-9582-446C-80BD-56679F344407/player/EF248251-F28D-411B-B3FB-0444F6EA3CCB?'>KipjeBot Gauntlet</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											2 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>7</span>
+									</td>
+									<td class='min text-right'>
+										2019-02-14									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/E72DF553-BE32-4CB2-A63F-1877D9C0E8C8/player/C0138185-A84B-492E-B75D-3C1FCDC63A98?'>
+										<a href='/tournament/E72DF553-BE32-4CB2-A63F-1877D9C0E8C8/player/C0138185-A84B-492E-B75D-3C1FCDC63A98?'>Skybot Gauntlet</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											1 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>4</span>
+									</td>
+									<td class='min text-right'>
+										2019-01-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/7E71AE2A-AF52-4FC5-B150-D697CDF267BD/player/F44FBF52-C37F-4CD2-A70B-7F24F65D1616?'>
+										<a href='/tournament/7E71AE2A-AF52-4FC5-B150-D697CDF267BD/player/F44FBF52-C37F-4CD2-A70B-7F24F65D1616?'>CunningBot Gauntlet + Random Matches</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											4 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>10</span>
+									</td>
+									<td class='min text-right'>
+										2019-01-20									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/7138FF11-69BF-4DCB-8499-00469B58CA3E/player/5A282972-249F-494F-B059-5A970C8E6000?'>
+										<a href='/tournament/7138FF11-69BF-4DCB-8499-00469B58CA3E/player/5A282972-249F-494F-B059-5A970C8E6000?'>Second Round of Swiss</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											4 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>16</span>
+									</td>
+									<td class='min text-right'>
+										2019-01-16									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/9213D44D-AE54-4594-B4FF-395C58CE1E8D/player/20CAF37A-6F36-484E-B463-EBB444BA96C3?'>
+										<a href='/tournament/9213D44D-AE54-4594-B4FF-395C58CE1E8D/player/20CAF37A-6F36-484E-B463-EBB444BA96C3?'>Stream of 15/01 (First round of Swiss)</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											9 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>13</span>
+									</td>
+									<td class='min text-right'>
+										2019-01-15									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/EF7507A4-9FC7-4E3A-8DD3-86EF67A85246/player/0B210A8C-9336-4071-A2F3-AD11E18C6429?'>
+										<a href='/tournament/EF7507A4-9FC7-4E3A-8DD3-86EF67A85246/player/0B210A8C-9336-4071-A2F3-AD11E18C6429?'>Stream 29/12</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											10 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>15</span>
+									</td>
+									<td class='min text-right'>
+										2018-12-30									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/965EAE8E-9035-4CB9-B533-02110DFA2425/player/E8F12C45-7E1A-4524-B19B-713CE9045235?'>
+										<a href='/tournament/965EAE8E-9035-4CB9-B533-02110DFA2425/player/E8F12C45-7E1A-4524-B19B-713CE9045235?'>Christmas Pre-Recorded Matches</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											2 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>6</span>
+									</td>
+									<td class='min text-right'>
+										2018-12-26									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/38343F47-C98B-44DF-84D9-57364DDA0317/player/88C1FEC6-AF48-49BD-AEF3-8DAA7B89463D?'>
+										<a href='/tournament/38343F47-C98B-44DF-84D9-57364DDA0317/player/88C1FEC6-AF48-49BD-AEF3-8DAA7B89463D?'>Showmatches 19/12/18</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											7 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>9</span>
+									</td>
+									<td class='min text-right'>
+										2018-12-19									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/69BF67CC-54A5-4212-B108-1677922358C9/player/ACF0C6F9-F32E-4E46-94D3-1948057F62A0?'>
+										<a href='/tournament/69BF67CC-54A5-4212-B108-1677922358C9/player/ACF0C6F9-F32E-4E46-94D3-1948057F62A0?'>Snowbot Showdown</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											5 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>21</span>
+									</td>
+									<td class='min text-right'>
+										2018-12-16									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/E9A258EC-0051-4F6F-8D17-996B45440B07/player/5C3E098A-D9F5-4035-8FAF-71CEFE8677A8?'>
+										<a href='/tournament/E9A258EC-0051-4F6F-8D17-996B45440B07/player/5C3E098A-D9F5-4035-8FAF-71CEFE8677A8?'>American birthday stream!</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											3 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>13</span>
+									</td>
+									<td class='min text-right'>
+										2018-12-09									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/8E19A32F-7292-4AD8-9746-FCA32DC0E17F/player/5C29C463-DBBD-4D16-B7DA-689C9C8935EA?'>
+										<a href='/tournament/8E19A32F-7292-4AD8-9746-FCA32DC0E17F/player/5C29C463-DBBD-4D16-B7DA-689C9C8935EA?'>Random Showmatches!</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											9 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>9</span>
+									</td>
+									<td class='min text-right'>
+										2018-11-24									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/3135BA77-C62E-47BD-997E-88F6838B6381/player/9DB1BF34-AEBD-4316-A0F7-922B7407542C?'>
+										<a href='/tournament/3135BA77-C62E-47BD-997E-88F6838B6381/player/9DB1BF34-AEBD-4316-A0F7-922B7407542C?'>Amboss Gauntlet</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											2 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>7</span>
+									</td>
+									<td class='min text-right'>
+										2018-11-24									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/288A4A9B-F0CA-4B2D-8C5C-0D823BE8D8FA/player/53571215-4DC1-41F9-B8F0-304F2AAEA21F?'>
+										<a href='/tournament/288A4A9B-F0CA-4B2D-8C5C-0D823BE8D8FA/player/53571215-4DC1-41F9-B8F0-304F2AAEA21F?'>Dweller Gauntlet</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											3 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>4</span>
+									</td>
+									<td class='min text-right'>
+										2018-11-19									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/tinytourney2/player/1F8EBECE-1BF2-4248-AF85-4FE041D68BEB?'>
+										<a href='/tournament/tinytourney2/player/1F8EBECE-1BF2-4248-AF85-4FE041D68BEB?'>Titan Tourney</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											4 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>8</span>
+									</td>
+									<td class='min text-right'>
+										2018-11-04									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/0661561E-BA13-49E9-80BF-ABD953579CED/player/62BB58DE-B32B-4263-9D44-29E49665FB3D?'>
+										<a href='/tournament/0661561E-BA13-49E9-80BF-ABD953579CED/player/62BB58DE-B32B-4263-9D44-29E49665FB3D?'>Tiny Tourney (Unofficial)</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											1 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>8</span>
+									</td>
+									<td class='min text-right'>
+										2018-10-06									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/527AAEBD-D323-455A-90EB-9AFFA8C92B34/player/148FA017-88F5-49AA-B78C-518C41E5F2B0?'>
+										<a href='/tournament/527AAEBD-D323-455A-90EB-9AFFA8C92B34/player/148FA017-88F5-49AA-B78C-518C41E5F2B0?'>RLBot 2018</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											6 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>23</span>
+									</td>
+									<td class='min text-right'>
+										2018-08-04									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/157CF30A-B133-43E3-8934-70A493BB3FFD/player/A572CA9D-97D3-4EF7-83AC-038A2674E289?'>
+										<a href='/tournament/157CF30A-B133-43E3-8934-70A493BB3FFD/player/A572CA9D-97D3-4EF7-83AC-038A2674E289?'>SkyBot-Dweller Challenge Match</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											2 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>2</span>
+									</td>
+									<td class='min text-right'>
+										2018-02-27									</td>
+								</tr>
+															<tr class=''>
+									<td class='ellipsis' data-href='/tournament/rocketbot1v1/player/81102B3E-CAD6-48AB-BD1B-E77212B3DD75?'>
+										<a href='/tournament/rocketbot1v1/player/81102B3E-CAD6-48AB-BD1B-E77212B3DD75?'>Rocket Bot Championship 1v1</a>
+									</td>
+									<td class='min'>
+																			</td>
+									<td class='min text-right'>
+										<span class='text-bold'>
+											5 
+																						</span>
+											/ <span class='player_stats_tournament_rank_total'>14</span>
+									</td>
+									<td class='min text-right'>
+										2018-02-25									</td>
+								</tr>
+											</tbody>
+			</table>
+		</div>
+	</div>    				</div>
+    			</div>
+    		    </section>
+		</div>
+	</div>
+       		<div id='modal-embed' class='modal fade my-modal'  tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+				<div class='modal-title'><span class='text-bold'>Embed</span> / Get Code</div>
+      		</div>
+			<div class='modal-body'>
+				<div class='panel panel-default my-box-shadow'>
+					<div class='panel-heading'>
+						Embed code
+						<i class='fa fa-code fa-fw pull-right'></i>					</div>
+					<div class='panel-body'>
+						<label for="embed_iframe">Copy paste this code into your website</label>
+						<div class="form-group">
+							<textarea id='embed_iframe' class="form-control"></textarea>
+						</div>
+						<hr>
+						<label class="control-label">
+							<span class="my-label-infos">
+								<span class="text-bold">Note</span>: you can edit the <i>height</i> and <i>width</i> parameters according to your needs.
+							</span>
+						</label>
+					</div>
+				</div>
+		   	</div>
+		   	<div class='modal-footer'>
+				<button type='button' class='btn btn-default cancel' data-dismiss='modal'><i class='fa fa-times fa-fw'></i> Close</button>
+			</div>
+		</div>
+	</div>
+</div><div id="league_player_modal_search" class="modal fade"  tabindex="-1" role="dialog" aria-hidden="true" data-search_url='/league/1229/process/player_search'>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<div class="modal-title">Player / <span class='action_label text-bold'>Search</span></div>
+      		</div>
+			<div class="modal-body">
+				<section>
+	<div class='search-box search-box_xhr'>
+		<form method='GET' id='search_xhr_form' action='#s'>
+			<div class="input-group form-group search-text my-input-cleaner">
+				<input type="text" class="form-control" name='search_xhr' id='search_xhr' placeholder="Search by name" >
+				<span class='input-cleaner' style="display:none;"><i class='fa fa-times-circle '></i></span>
+				<div class="input-group-btn">
+					<button class="btn btn-default" type="submit">
+						<i class='fa fa-search fa-fw'></i>			       		Search
+			       	</button>
+			    </div>
+			</div>
+		</form>
+	</div>
+</section>				<section>
+					<section>
+	<div class='panel panel-default my-panel-collapsed my-box-shadow search-list_xhr'>
+		<div class='panel-body'>
+			<table class='table table-hover'>
+				<thead>
+					<tr>
+						<th>List of players</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class='skel'>
+						<td class='name'>Player name</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>					<section>
+	<div class='search-box'>
+		<div class="row">
+			<div class='col-xs-12 col-sm-12'>
+				<div class='input-group form-group'>
+	<div class='input-group-addon'>
+		Displaying
+	</div>
+	<div class='input-group-addon my-input-group-addon '>
+		 <span class='search_xhr-first_index'></span> to <span  class='search_xhr-last_index'></span> of <span class='search_xhr-nb_results'></span> Items
+	</div>
+</div>			</div>
+			<div class='col-xs-12 col-sm-12'>
+				<div class='search-pagination'>
+	<div class='input-group form-group'>
+		<div class='input-group-addon'>
+			Page
+		</div>
+		<select class='form-control' id='search_xhr-page'></select>
+		<div class='input-group-addon'>
+			/ <span class='search_xhr-last'></span>
+		</div>
+    	<div class='input-group-btn'>
+    		<div class='btn btn-default search_xhr-goto_preview'>
+    			<i class='fa fa-chevron-left fa-fw'></i>	    	</div>
+    	</div>
+	    <div class='input-group-btn '>
+    		<div class='btn btn-default search_xhr-goto_next'>
+    			<i class='fa fa-chevron-right fa-fw'></i>    		</div>
+    	</div>
+    </div>
+</div>			</div>
+		</div>
+	</div>
+</section>				</section>
+			</div>
+		</div>
+	</div>
+</div><div class='container'>
+	<div class='ads ads-desktop-bottom'>
+		<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+		<!-- Braacket-desktop-bottom -->
+		<ins class="adsbygoogle adsbygoogle-desktop-bottom"
+		     style="display:block"
+		     data-ad-client="ca-pub-6977339199743617"
+		     data-ad-slot="7223101590"
+		     data-ad-format="auto"></ins>
+		<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+		</script>
+	</div>
+</div>
+<div id="message_send_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<div class="modal-title">
+					Account / Message / <span class='text-bold'>Send</span>
+				</div>
+      		</div>
+      						<div class="modal-body">
+					<div class='alert alert-danger text-center'>
+						<h5>
+							<i class='fa fa-ban fa-fw'></i> AUTHENTIFICATION REQUIRED
+						</h5>
+						<p>You must be logged in to send a message.</p>
+						<br>
+						<a href='#' class='btn btn-danger' data-target="#login_modal" data-toggle="modal" > 
+							<span class='text-bold'><span class='glyphicon glyphicon-log-in fa-fw'></span> Login</span>
+						</a>
+						<a href='/auth/create' class='btn btn-danger'> 
+							<span class='text-bold'><span class='glyphicon glyphicon-log-out fa-fw'></span> Create</span> an account
+						</a>
+					</div>
+				</div>
+				<div class="modal-footer">
+		   			<button data-dismiss='modal' class='btn btn-default cancel ' type='button'><i class='fa fa-times fa-fw'></i> Cancel</button>
+		   		</div>
+		   		</div>
+	</div>
+</div><div id="login_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<div class="modal-title">Account / <span class='text-bold'>Login</span></div>
+      		</div>
+			<div class="modal-body">
+				<div id='auth_login_panel'>
+	<form id='auth_login'  method='POST' action='/auth/process/login' class='my-form-dyn'>
+	<input type="hidden" id='redirect' name='redirect' value='' class="form-control">
+	<div class='panel panel-default my-box-shadow'>
+		<div class='panel-body'>
+			<!-- username -->
+			<div class="form-group">
+				<label class='label-control' for='username'>Username</label>
+				<div class='input-group'>
+					<div class="input-group-addon"><span class='glyphicon glyphicon-user fa-fw'></span></div>
+					<input type="text" autofocus required id='username' name='username' class="form-control">
+				</div>
+			</div>
+			<!-- password -->
+			<div class="form-group">
+				<label class='label-control' for='password'>Password</label>
+				<div class='input-group'>
+					<div class="input-group-addon"><i class='fa fa-key fa-fw'></i></div>
+					<input type="password" required id='password' name='password' class="form-control">
+				</div>
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-primary btn-block btn-shadow"><span class='text-bold'><span class='glyphicon glyphicon-log-in fa-fw'></span> Login</span></button>
+</form>		<hr>
+	   	<div class='text-center'>
+							<a href='/auth/create'>Create an account</a><br>
+							 <a href='/auth/password_recovery'>Recovery your password</a><br>
+					</div>
+		<br>
+</div>		   	</div>
+		</div>
+	</div>
+</div>		</div>
+
+		<!--  Footer -->
+		<div id='footer'>
+			<div class='container'>
+	<div id='footer-body'>
+		<div class='pull-left text-left'>
+			© 2019 Braacket.com<br>
+			v. 1.1.85.2					</div>
+		<div class='pull-right text-right'>
+			<ul class='my-ul my-ul-separator my-ul-xs'>
+				<li>
+					<a href='/usermanual'>User manual</a>
+				</li>
+				<li>
+					<a href='/legal/terms_and_conditions'>Terms and Conditions</a>
+				</li>
+				<li>
+					<a href='/legal/privacy_policy'>Privacy Policy</a>
+				</li>
+				<li>
+					<a href='/contact'>Contact</a>
+				</li>
+			</ul>
+		</div>
+		<div class='clearfix'></div>
+	</div>
+</div>		</div>
+		
+		<div id='panel' class='panel-theme alert-dismissible' role='alert'>
+	<div class='container'>
+		<div id='panel_content' class='alert'></div>
+		<div id='panel_toggle'>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	</div>
+</div>    	<div id='modal-confirm' class='modal fade my-modal'  tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+				<div class='modal-title'><span class='text-bold'>Confirm</span></div>
+      		</div>
+			<div class='modal-body'>
+				<div class='panel panel-default my-box-shadow'>
+					<div class='panel-body'>
+						<span class='icon'>&nbsp;</span>
+						<span class='message'></span>
+					</div>
+				</div>
+		   	</div>
+		   	<div class='modal-footer'>
+				<button type='button' class='btn btn-default cancel' data-dismiss='modal'><i class='fa fa-times fa-fw'></i> Cancel</button>
+			    <a class='action btn btn-primary'><i class='fa fa-check fa-fw'></i> <span class='action_label'>Ok</span></a>
+			</div>
+		</div>
+	</div>
+</div>	    <div id='modal-confirm-double' class='modal fade my-modal'  tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<form id='modal-confirm-double-form' method='POST' action='#' class='my-form-dyn'>
+				<div class='form-values'>
+				
+				</div>
+				<div class='modal-header'>
+					<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+					<div class='modal-title'><span class='text-bold'>Confirm</span></div>
+	      		</div>
+				<div class='modal-body'>
+					<div class='panel panel-default panel-danger my-box-shadow'>
+						<div class='panel-heading'>
+							WARNING: DANGEROUS ACTION
+							<i class='fa fa-exclamation-triangle pull-right'></i> 
+						</div>
+						<div class='panel-body'>
+							<div class='form-group'>
+								<div class='message text-danger'></div>
+							</div>
+							<div class='form-group'>
+								<label class='control-label' for='confirm-text'>
+									<span class='message-input text-danger'></span>
+									<span class="my-label-infos">
+										Enter "yes" in the input field bellow.
+									</span>
+								</label>
+								<input type="text" id="confirm-text" name="confirm-text" required class="form-control">
+							</div>
+						</div>
+					</div>
+			   	</div>
+			   	<div class='modal-footer'>
+					<button type='button' class='btn btn-default cancel' data-dismiss='modal'><i class='fa fa-times fa-fw'></i> Cancel</button>
+				    <button type='submit' class='action btn btn-primary'><i class='fa fa-check fa-fw'></i> <span class='action_label'>Ok</span></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>	      	
+	    			<script type="text/javascript" src="/assets/core/jquery/js/jquery-3.2.1.min.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/js/jquery.mobile.custom.min.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/bootstrap/js/bootstrap.min.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/bootstrap/plugin/datetimepicker/js/moment-with-locales.min.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/bootstrap/plugin/datetimepicker/js/bootstrap-datetimepicker.min.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/bootstrap/plugin/table-responsive.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/jquery.utilities.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/jquery.cookie.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/jquery.form.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/jquery.table.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/jquery.toggle-radio.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/jquery.timer.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/jquery.scrollfollow.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/loading/js/jquery.loading.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/panel/js/jquery.panel.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/jquery/plugin/xhr/js/jquery.xhr.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/_my/js/fix.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/_my/js/helper.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/_my/js/modal.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/_my/js/share.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/_my/js/loader.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/core/_my/js/google_analytics.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/libraries/navsub/js/navsub.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/libraries/auth/js/auth.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/libraries/embed/js/embed.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/libraries/search/js/search.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/libraries/searchxhr/js/searchxhr.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/libraries/chart/js/chart.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/js/_common/public.player_claim.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/js/league/league.public.player.specific.js?v=1.1.85.2"></script>
+					<script type="text/javascript" src="/assets/js/league/league.public.player.chart.js?v=1.1.85.2"></script>
+				
+					<script type="text/javascript">
+
+				$.myReCaptcha = {}
+				
+				var ReCaptchaCallback = function(){
+				
+					$('.my-recaptcha').each(function(){
+						$.myReCaptcha[$(this).attr('id')] = grecaptcha.render($(this).attr('id'), {'sitekey' : $(this).data('sitekey')});
+					});
+				}
+			
+			</script>
+			<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=en&onload=ReCaptchaCallback&render=explicit" async defer></script>
+				    </body>
+ 
+</html>

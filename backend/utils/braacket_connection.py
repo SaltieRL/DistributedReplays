@@ -9,7 +9,6 @@ class Braacket:
     def __init__(self):
         self.league = "rlbot"
         self.player_cache = {}
-        self.update_player_cache()
 
     def update_player_cache(self):
         # pretty straight forward. the leagues are their name

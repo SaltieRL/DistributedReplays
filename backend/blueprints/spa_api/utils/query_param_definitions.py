@@ -28,10 +28,23 @@ visibility_params = [
                required_siblings=['player_id'])
 ]
 
+tag_params = [
+    QueryParam(name="tags", optional=True,
+               type_=str, is_list=True,
+               required_siblings=['player_id']),
+    QueryParam(name="tag_ids", optional=True,
+               type_=str, is_list=True,
+               required_siblings=['private_tag_keys']),
+    QueryParam(name="private_tag_keys", optional=True,
+               type_=str, is_list=True,
+               required_siblings=['tag_ids'])
+]
 
+
+# Query params for uploading a file
 upload_file_query_params = [
     QueryParam(name='player_id', optional=True, type_=str)
-] + visibility_params
+] + visibility_params + tag_params
 
 
 replay_search_query_params = [

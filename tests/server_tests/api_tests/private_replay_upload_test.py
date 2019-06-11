@@ -6,6 +6,8 @@ from requests import Request
 from backend.database.objects import Game, GameVisibilitySetting, GameVisibility, PlayerGame, Player
 from backend.database.startup import get_current_session
 from backend.utils.time_related import hour_rounder
+from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat
+from backend.blueprints.spa_api.utils.query_param_definitions import visibility_params
 from tests.utils.database_utils import default_player_id
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
@@ -79,7 +81,7 @@ class Test_upload_file:
         assert(no_errors_are_logged.mock_is_called())
 
     def test_replay_basic_server_upload_private_replay_invalid_release_date(self, test_client):
-        params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE,
+        params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE.name,
                   'release_date': 'TODAY'}
         r = Request('POST', LOCAL_URL + '/api/upload',
                     files={'replays': ('fake_file.replay', self.stream)}, params=params)
@@ -88,8 +90,11 @@ class Test_upload_file:
 
         assert(response.status_code == 400)
 
+        data = response.json['message']
+        assert(str(data) == InvalidQueryParamFormat(visibility_params[0], 'TODAY').message)
+
     def test_replay_basic_server_upload_private_replay_no_player(self, test_client):
-        params = {'visibility': GameVisibilitySetting.PRIVATE}
+        params = {'visibility': GameVisibilitySetting.PRIVATE.name}
         r = Request('POST', LOCAL_URL + '/api/upload',
                     files={'replays': ('fake_file.replay', self.stream)}, params=params)
 
@@ -97,14 +102,20 @@ class Test_upload_file:
 
         assert(response.status_code == 400)
 
-    def test_replay_basic_server_upload_private_replay_missing_player(self, test_client):
-        params = {'player_id': 'invalid_id', 'visibility': GameVisibilitySetting.PRIVATE}
+        data = response.json['message']
+        assert(str(data) == MissingQueryParams(['player_id']).message)
+
+    def test_replay_basic_server_upload_private_replay_missing_player(self, test_client, no_errors_are_logged):
+        no_errors_are_logged.cancel_check()
+        params = {'player_id': 'invalid_id', 'visibility': GameVisibilitySetting.PRIVATE.name}
         r = Request('POST', LOCAL_URL + '/api/upload',
                     files={'replays': ('fake_file.replay', self.stream)}, params=params)
 
         response = test_client.send(r)
 
-        assert(response.status_code == 400)
+        assert(response.status_code == 202)
+
+        assert(no_errors_are_logged.mock_is_called())
 
     def test_replay_basic_server_upload_private_replay_new_player_in_game(self, test_client):
         fake_session = get_current_session()
