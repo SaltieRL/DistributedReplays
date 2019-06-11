@@ -11,6 +11,9 @@ def get_test_file(file_name, temp_folder=None):
 
 
 def download_replay_discord(url):
+    if 'http' not in url:
+        return open(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'replays', url),
+                    mode='rb').read()
     file = requests.get(url, stream=True)
     replay = file.raw
     return replay.data
