@@ -15,6 +15,7 @@ class Test_Braacket:
         ]
 
     def test_get_player(self, mock_bracket):
+        self.league.update_player_cache()
         initialize_db_with_replays(self.replays)
         bot = get_bot_by_steam_id("b086f2d2abb")
         assert(bot == "SkyBot")
