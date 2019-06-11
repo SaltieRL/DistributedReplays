@@ -9,36 +9,36 @@ class Test_Braacket:
     def setup_method(self, method):
         self.league = Braacket()
         self.replays = [
-            'https://cdn.discordapp.com/attachments/493849514680254468/576877585896570920/ALL_STAR.replay',
-            'https://cdn.discordapp.com/attachments/493849514680254468/576877550891171860/ALL_STAR_SCOUT.replay',
-            'https://cdn.discordapp.com/attachments/493849514680254468/560580395276566548/SKYBOT_DRIBBLE_INFO.replay',
+            'ALL_STAR.replay',
+            'ALL_STAR_SCOUT.replay',
+            'SKYBOT_DRIBBLE_INFO.replay',
         ]
 
-    def test_get_player(self):
+    def test_get_player(self, mock_bracket):
         initialize_db_with_replays(self.replays)
         bot = get_bot_by_steam_id("b086f2d2abb")
-        assert(bot ==  "SkyBot")
+        assert(bot == "SkyBot")
         braacket_id = self.league.player_cache.get(bot)
         skybot_id = "54FB8C16-6FA9-4C4A-AAD5-3DB8A6AE169B"
         assert(braacket_id == skybot_id)
         ranking_info = self.league.get_ranking(braacket_id)
         assert (ranking_info is not None)
 
-    def test_get_non_existing_bot(self):
+    def test_get_non_existing_bot(self, mock_bracket):
         initialize_db_with_replays(self.replays)
         assert(get_bot_by_steam_id("notABot") is None)
         assert(self.league.player_cache.get("notABot") is None)
         assert(self.league.get_ranking("notABot") is None)
         assert(get_bot_by_steam_id("bNotABotb") is None)
 
-    def test_get_bot_by_steam_id_allstars(self):
+    def test_get_bot_by_steam_id_allstars(self, mock_bracket):
         initialize_db_with_replays(self.replays)
         bot = get_bot_by_steam_id("bcfe70a272b")
         assert(bot == "Allstar")
         bot = get_bot_by_steam_id("b40b")
         assert(bot == "Allstar")
 
-    def test_get_rank_bot(self):
+    def test_get_rank_bot(self, mock_bracket):
         initialize_db_with_replays(self.replays)
         unranked_rank = get_empty_data(["b086f2d2abb"])
         rank = get_rank("b086f2d2abb")
