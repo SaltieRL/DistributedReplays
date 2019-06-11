@@ -4,7 +4,7 @@ from requests import Request
 
 from backend.database.objects import Game, Player, Tag
 from backend.database.startup import get_current_session
-from backend.blueprints.spa_api.errors.errors import MismatchQueryParams
+from backend.blueprints.spa_api.errors.errors import MismatchedQueryParams
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 from tests.utils.database_utils import default_player_id
 
@@ -118,7 +118,7 @@ class Test_upload_file_with_tags:
 
         assert(response.status_code == 400)
         data = response.json['message']
-        assert(str(data) == MismatchQueryParams('tag_ids', 'private_tag_keys', 2, 1).message)
+        assert(str(data) == MismatchedQueryParams('tag_ids', 'private_tag_keys', 2, 1).message)
 
     def test_tag_creation_private_key(self, test_client, mock_user):
         fake_session = get_current_session()

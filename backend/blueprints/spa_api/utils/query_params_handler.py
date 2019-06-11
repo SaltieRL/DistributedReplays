@@ -1,9 +1,10 @@
-from typing import List, Dict, Any, Callable
+from typing import List, Dict, Any, Callable, Optional
 from urllib.parse import urlencode
 
 from flask import Request
 
-from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat, MismatchQueryParams
+from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat, MismatchedQueryParams, \
+    CalculatedError
 
 
 class QueryParam:
@@ -71,7 +72,13 @@ def parse_query_params(query_params: List[QueryParam], args: Dict[str, str], add
     return found_query_params
 
 
-def create_validation_for_query_params(query_params: List[QueryParam], provided_params: List[str]):
+def create_validation_for_query_params(query_params: List[QueryParam], provided_params: List[str]) -> Callable:
+    """
+    Creates a function that will validate that the query has all required siblings
+    and that required siblings have valid values.
+    If a query is a list it requires that all list siblings have the same list length.
+    :return: A function that is used to validate queries.
+    """
     if provided_params is None:
         provided_params = []
     check_dict: Dict[str, List[str]] = dict()
@@ -94,7 +101,7 @@ def create_validation_for_query_params(query_params: List[QueryParam], provided_
                         else:
                             list_check[query.name] = [sibling_query]
 
-    def validate(created_query_params):
+    def validate(created_query_params) -> Optional[CalculatedError]:
         for query, siblings in check_dict.items():
             if query in created_query_params:
                 for value in siblings:
@@ -104,9 +111,9 @@ def create_validation_for_query_params(query_params: List[QueryParam], provided_
             if query in created_query_params:
                 for sibling_query in siblings:
                     if len(created_query_params[query]) != len(created_query_params[sibling_query.name]):
-                        return MismatchQueryParams(query, sibling_query.name,
-                                                   len(created_query_params[query]),
-                                                   len(created_query_params[sibling_query.name]))
+                        return MismatchedQueryParams(query, sibling_query.name,
+                                                     len(created_query_params[query]),
+                                                     len(created_query_params[sibling_query.name]))
     return validate
 
 

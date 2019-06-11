@@ -50,7 +50,7 @@ class MissingQueryParams(CalculatedError):
         super().__init__(self.status_code, message)
 
 
-class MismatchQueryParams(CalculatedError):
+class MismatchedQueryParams(CalculatedError):
     status_code = 400
 
     def __init__(self, query1: str, query2: str, list_size1, list_size2: int):
