@@ -14,7 +14,7 @@ class Tag:
         self.owner_id = owner
         self.db_tag = db_tag
 
-    def toJSON(self, with_id=None):
+    def to_JSON(self, with_id=None):
         if with_id:
             return {
                 "name": self.name,

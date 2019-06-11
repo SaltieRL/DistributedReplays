@@ -79,8 +79,8 @@ def better_jsonify(response: object):
     :return: The return value of jsonify.
     """
     try:
-        if hasattr(response, 'toJSON'):
-            return better_jsonify(response.toJSON())
+        if hasattr(response, 'to_JSON'):
+            return better_jsonify(response.to_JSON())
     except:
         pass
 
@@ -455,7 +455,7 @@ def api_get_tags(query_params=None):
     with_id = False
     if 'with_id' in query_params:
         with_id = query_params['with_id']
-    return better_jsonify([tag.toJSON(with_id=with_id) for tag in tags])
+    return better_jsonify([tag.to_JSON(with_id=with_id) for tag in tags])
 
 
 @bp.route('/tag/<name>/private_key', methods=["GET"])
