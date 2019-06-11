@@ -2,8 +2,9 @@ from typing import List, Dict
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.utils.global_functions import get_current_user_id
-from ...errors.errors import CalculatedError, TagNotFound
-from backend.database.objects import Tag as DBTag
+from utils.checks import log_error
+from ...errors.errors import CalculatedError, TagNotFound, PlayerNotFound
+from backend.database.objects import Tag as DBTag, Player
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 
 class Tag:
@@ -116,9 +117,12 @@ def apply_tags_to_game(query_params: Dict[str, any]=None, game_id=None, session=
     private_ids = query_params['private_tag_keys'] if 'private_tag_keys' in query_params else []
     if len(tags) > 0:
         player_id = query_params['player_id']
-        for tag in tags:
-            created_tag = Tag.create(tag, session=session, player_id=player_id)
-            TagWrapper.add_tag_to_game(session, game_id, created_tag.db_tag)
+        if session.query(Player).filter(Player.platformid == player_id).first() is None:
+            log_error(PlayerNotFound())
+        else:
+            for tag in tags:
+                created_tag = Tag.create(tag, session=session, player_id=player_id)
+                TagWrapper.add_tag_to_game(session, game_id, created_tag.db_tag)
 
     for index, tag_id in enumerate(tag_ids):
         tag = TagWrapper.get_tag_by_id(session, tag_id)
