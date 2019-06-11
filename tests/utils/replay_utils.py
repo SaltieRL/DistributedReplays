@@ -3,7 +3,7 @@ import os
 import requests
 from carball import analyze_replay_file
 
-from tests.utils.location_utils import get_test_folder
+from tests.utils.location_utils import get_test_folder, get_test_replay_folder
 
 
 def get_test_file(file_name, temp_folder=None):
@@ -12,7 +12,7 @@ def get_test_file(file_name, temp_folder=None):
 
 def download_replay_discord(url):
     if 'http' not in url:
-        return open(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'replays', url),
+        return open(os.path.join(get_test_replay_folder(), url),
                     mode='rb').read()
     file = requests.get(url, stream=True)
     replay = file.raw
@@ -53,7 +53,7 @@ def write_files_to_disk(replays, temp_folder=None):
     file_names = []
     for replay_url in replays:
         if 'http' not in replay_url:
-            f = open(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'replays', replay_url),
+            f = open(os.path.join(get_test_replay_folder(), replay_url),
                      mode='rb').read()
             file_names.append(replay_url)
             file_name = replay_url
