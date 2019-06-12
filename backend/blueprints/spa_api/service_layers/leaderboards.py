@@ -25,7 +25,7 @@ class PlaylistLeaderboard:
     def __init__(self, playlist: Playlist, leaders: Dict[Duration, List[Leader]]):
         self.playlist: int = playlist.value
         self.leaders: Dict[str, List[Leader]] = {
-            duration.name: _leaders
+            duration.name: [leader.__dict__ for leader in _leaders]
             for duration, _leaders in leaders.items()
         }
 
@@ -50,7 +50,11 @@ class Leaderboards:
                     if player.avatar == "":
                         # this will update the DB for future calls, we just want it temporarily
                         profile = get_steam_profile_or_random_response(player.platformid)
-                        player.avatar = profile['response']['players'][0]['avatarfull']
+                        try:
+                            player.avatar = profile['response']['players'][0]['avatarfull']
+                        except:
+                            player.avatar = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/" \
+                                            "avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg"
                     leaders.append(
                         Leader(name=player.platformname if player.platformname != "" else leader[0],
                                id_=leader[0],

@@ -135,7 +135,7 @@ def api_get_leaderboards():
             return resp
     leaderboards = Leaderboards.create()
     if lazy_get_redis():
-        lazy_get_redis().set("leaderboards", json.dumps(leaderboards), ex=24 * 60 * 60)
+        lazy_get_redis().set("leaderboards", json.dumps([l.__dict__ for l in leaderboards]), ex=24 * 60 * 60)
     return better_jsonify(leaderboards)
 
 
