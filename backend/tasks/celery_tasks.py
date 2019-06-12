@@ -9,6 +9,7 @@ from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
 
+from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
@@ -32,6 +33,7 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 3, calc_global_stats.s(), name='calculate global stats every 3 hrs')
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
+    sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
 
 
 def add_replay_parse_task(file_name, query_params: Dict[str, any] = None, **kwargs):
@@ -65,6 +67,13 @@ def calc_global_stats(self):
         lazy_get_redis().set('global_stats_expire', json.dumps(True))
     print('Done')
     return result
+
+
+@periodic_task(run_every=24 * 60, base=DBTask, bind=True, priority=0)
+def calc_leaderboards(self):
+    leaderboards = Leaderboards.create()
+    if lazy_get_redis() is not None:
+        lazy_get_redis().set("leaderboards", json.dumps([l.__dict__ for l in leaderboards]))
 
 
 @periodic_task(run_every=60 * 10, base=DBTask, bind=True, priority=0)
