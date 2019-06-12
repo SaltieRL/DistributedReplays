@@ -9,16 +9,13 @@ from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
 
-import RLBotServer
 from backend.database.startup import lazy_get_redis
-
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
-from backend.utils.cloud_handler import upload_df, upload_proto, upload_replay
 
 celery = Celery(__name__, broker=celeryconfig.broker_url)
 
@@ -31,9 +28,6 @@ player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
-app = RLBotServer.app
-
-
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 3, calc_global_stats.s(), name='calculate global stats every 3 hrs')
@@ -41,7 +35,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 def add_replay_parse_task(file_name, query_params: Dict[str, any] = None, **kwargs):
-    return parse_replay_task.delay(*[file_name], **{**kwargs, **{'query_params': query_params}},)
+    return parse_replay_task.delay(*[file_name], **{**kwargs, **{'query_params': query_params}}, )
 
 
 @celery.task(bind=True, priority=5)
