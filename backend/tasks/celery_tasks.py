@@ -78,7 +78,9 @@ def calc_leaderboards(self):
 
 @periodic_task(run_every=60 * 10, base=DBTask, bind=True, priority=0)
 def calc_global_dists(self):
-    calculate_global_distributions(self.session)
+    sess = self.session()
+    calculate_global_distributions()
+    sess.close()
 
 
 class ResultState(Enum):
