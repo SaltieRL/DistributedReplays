@@ -1,5 +1,7 @@
 import logging
 
+from flask import g
+
 logger = logging.getLogger(__name__)
 
 
