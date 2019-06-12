@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import io
+import json
 import logging
 import os
 import re
@@ -8,7 +9,7 @@ import uuid
 import zlib
 
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
@@ -18,6 +19,7 @@ from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVi
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
+from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
@@ -125,7 +127,15 @@ def api_get_global_graphs():
 
 @bp.route('/global/leaderboards')
 def api_get_leaderboards():
+    if lazy_get_redis():
+        if lazy_get_redis().get("leaderboards"):
+            resp = Response(response=lazy_get_redis().get("leaderboards"),
+                            status=200,
+                            mimetype="application/json")
+            return resp
     leaderboards = Leaderboards.create()
+    if lazy_get_redis():
+        lazy_get_redis().set("leaderboards", json.dumps(leaderboards), ex=24 * 60 * 60)
     return better_jsonify(leaderboards)
 
 
