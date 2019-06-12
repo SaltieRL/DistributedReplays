@@ -127,15 +127,15 @@ def api_get_global_graphs():
 
 @bp.route('/global/leaderboards')
 def api_get_leaderboards():
-    if lazy_get_redis():
+    if lazy_get_redis() is not None:
         if lazy_get_redis().get("leaderboards"):
             resp = Response(response=lazy_get_redis().get("leaderboards"),
                             status=200,
                             mimetype="application/json")
             return resp
     leaderboards = Leaderboards.create()
-    if lazy_get_redis():
-        lazy_get_redis().set("leaderboards", json.dumps(leaderboards), ex=24 * 60 * 60)
+    if lazy_get_redis() is not None:
+        lazy_get_redis().set("leaderboards", json.dumps([l.__dict__ for l in leaderboards]), ex=24 * 60 * 60)
     return better_jsonify(leaderboards)
 
 
