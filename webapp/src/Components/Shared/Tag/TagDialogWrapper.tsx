@@ -5,6 +5,15 @@ import * as React from "react"
 import { Replay } from "../../../Models/Replay/Replay"
 import { TagDialog } from "./TagDialog"
 
+const styles = createStyles({
+    smallIconButton: {
+        padding: 4
+    },
+    smallIcon: {
+        height: 22.5
+    }
+})
+
 interface OwnProps {
     replay: Replay
     handleUpdateTags: (tags: Tag[]) => void
@@ -45,20 +54,14 @@ class TagDialogWrapperComponent extends React.PureComponent<Props, State> {
 
     private readonly handleOpen: React.MouseEventHandler = (event) => {
         this.setState({open: true})
+        event.stopPropagation()
     }
 
     private readonly handleClose: React.ReactEventHandler<{}> = (event) => {
         this.setState({open: false})
+        event.stopPropagation()
+
     }
 }
-
-const styles = createStyles({
-    smallIconButton: {
-        padding: 4
-    },
-    smallIcon: {
-        height: 22.5
-    }
-})
 
 export const TagDialogWrapper = withStyles(styles)(TagDialogWrapperComponent)

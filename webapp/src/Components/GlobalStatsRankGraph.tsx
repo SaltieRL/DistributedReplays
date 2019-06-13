@@ -4,7 +4,7 @@ import { Line } from "react-chartjs-2"
 import { roundLabelToMaxDPCallback } from "../Utils/Chart"
 
 interface Props {
-    graph: any
+    graph: any  // TODO(Sciguymjm) Type this thing.
 }
 
 export class GlobalStatsRankGraph extends React.PureComponent<Props> {
@@ -37,7 +37,7 @@ export class GlobalStatsRankGraph extends React.PureComponent<Props> {
                 "null"].slice(SLICE_START),
             datasets: [{
                 label: "Data",
-                data: data.slice(SLICE_START).map((point: any) => {
+                data: data.slice(SLICE_START).map((point: any) => { // TODO(Sciguymjm) Type this thing.
                     // return point.mean === null ? Math.random() * 10 : point.mean
                     return point.mean
                 }),

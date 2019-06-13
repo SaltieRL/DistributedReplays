@@ -13,6 +13,20 @@ import { Predictions } from "./Predictions/Predictions"
 import { Viewer } from "./ReplayViewer/Viewer"
 import { VisualizationsContent } from "./Visualizations/VisualizationsContent"
 
+interface DisabledTabProps {
+    label: string
+}
+
+const TabDisabled = (props: DisabledTabProps) => (
+    <Tooltip title="In beta; Patrons only">
+        <Tab label={props.label} style={{color: "#ccc", cursor: "not-allowed"}}/>
+    </Tooltip>
+)
+
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
 interface OwnProps {
     replay: Replay
     explanations: Record<string, any> | undefined
@@ -33,19 +47,10 @@ interface State {
     selectedTab: ReplayTab
 }
 
-const TabDisabled = (props: any) => {
-    return (
-        <Tooltip title="In beta; Patrons only">
-            <Tab key={props.key} label={props.label} value={props.value}
-                 style={{color: "#ccc", cursor: "not-allowed"}}/>
-        </Tooltip>
-    )
-}
-
 class ReplayTabsComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = { selectedTab: "playerStats" }
+        this.state = {selectedTab: "playerStats"}
     }
 
     public render() {
@@ -54,11 +59,11 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
         const qrcode = (
             <CardContent>
                 <Grid container justify="center" alignContent="center" spacing={32}>
-                    <Grid item xs={12} style={{ textAlign: "center" }}>
-                        <QRCode value={url} />
+                    <Grid item xs={12} style={{textAlign: "center"}}>
+                        <QRCode value={url}/>
                     </Grid>
 
-                    <Grid item xs={12} style={{ textAlign: "center" }}>
+                    <Grid item xs={12} style={{textAlign: "center"}}>
                         <Typography>{url}</Typography>
                     </Grid>
 
@@ -74,12 +79,12 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
             </CardContent>
         )
         return (
-            <Card square style={{ width: "100%" }}>
+            <Card square style={{width: "100%"}}>
                 <Tabs
                     value={this.state.selectedTab}
                     onChange={this.handleSelectTab}
                     centered={!isWidthSm}
-                    scrollable={isWidthSm}
+                    variant={isWidthSm ? "scrollable" : "standard"}
                 >
                     <Tab key="basicStats" label="Player Stats" value="playerStats"/>
                     <Tab key="predictions" label="Predictions" value="predictions"/>
@@ -98,7 +103,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     ]
                     }
 
-                    <Tab key="qrCode" label="QR Code" value="qrCode" />
+                    <Tab key="qrCode" label="QR Code" value="qrCode"/>
                 </Tabs>
                 {this.state.selectedTab === "playerStats" && (
                     <PlayerStatsContent
@@ -107,10 +112,10 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     />
                 )}
                 {this.state.selectedTab === "heatmaps" && (
-                    <HeatmapTabsWrapper replay={this.props.replay} />
+                    <HeatmapTabsWrapper replay={this.props.replay}/>
                 )}
                 {this.state.selectedTab === "predictions" && (
-                    <Predictions replay={this.props.replay} />
+                    <Predictions replay={this.props.replay}/>
                 )}
                 {this.state.selectedTab === "teamStats" && (
                     <TeamStatsContent
@@ -119,23 +124,19 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     />
                 )}
                 {this.state.selectedTab === "replayViewer" && (
-                    <Viewer replayId={this.props.replay.id} />
+                    <Viewer replayId={this.props.replay.id}/>
                 )}
                 {this.state.selectedTab === "qrCode" && qrcode}
                 {this.state.selectedTab === "visualizations" && (
-                    <VisualizationsContent replay={this.props.replay} />
+                    <VisualizationsContent replay={this.props.replay}/>
                 )}
             </Card>
         )
     }
 
     private readonly handleSelectTab = (_: React.ChangeEvent<{}>, selectedTab: ReplayTab) => {
-        this.setState({ selectedTab })
+        this.setState({selectedTab})
     }
 }
-
-export const mapStateToProps = (state: StoreState) => ({
-    loggedInUser: state.loggedInUser
-})
 
 export const ReplayTabs = withWidth()(connect(mapStateToProps)(ReplayTabsComponent))

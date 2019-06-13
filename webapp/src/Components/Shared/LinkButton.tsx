@@ -6,6 +6,26 @@ import * as H from "history"
 import * as React from "react"
 import { Link } from "react-router-dom"
 
+export const buttonStyles = (theme: Theme) => createStyles({
+    button: {
+        margin: theme.spacing.unit
+    },
+    icon: {
+        height: "24px !important",
+        width: "24px !important"
+    },
+    leftIcon: {
+        marginRight: theme.spacing.unit
+    },
+    rightIcon: {
+        marginLeft: theme.spacing.unit
+    },
+    tooltip: {
+        // left: "6px !important"
+        // TODO: Fix alignment of tooltip
+    }
+})
+
 interface InternalLinkProps {
     isExternalLink?: false
     to: H.LocationDescriptor
@@ -70,44 +90,29 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
 
         return (
             <>
-                {disabled ?
+                {disabled ? (
                     <>
                         {button}
                     </>
-                    :
-                    isExternalLink === true ?
-                        (<a href={this.props.to as string} target="_blank" style={{textDecoration: "none"}}>
+                ) : (
+                    isExternalLink === true ? (
+                        <a
+                            href={this.props.to as string}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            style={{textDecoration: "none"}}
+                        >
                             {button}
-                        </a>)
-                        :
-                        (<Link to={this.props.to} style={{textDecoration: "none"}}>
+                        </a>
+                    ) : (
+                        <Link to={this.props.to} style={{textDecoration: "none"}}>
                             {button}
-                        </Link>)
-                }
+                        </Link>
+                    )
+                )}
             </>
         )
     }
 }
-
-export const buttonStyles = (theme: Theme) => createStyles({
-    button: {
-        margin: theme.spacing.unit
-    },
-    icon: {
-        height: "24px !important",
-        width: "24px !important",
-        color: "rgba(0, 0, 0, 0.54)"
-    },
-    leftIcon: {
-        marginRight: theme.spacing.unit
-    },
-    rightIcon: {
-        marginLeft: theme.spacing.unit
-    },
-    tooltip: {
-        // left: "6px !important"
-        // TODO: Fix alignment of tooltip
-    }
-})
 
 export const LinkButton = withStyles(buttonStyles)(LinkButtonComponent)

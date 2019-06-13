@@ -16,23 +16,14 @@ interface Props {
     heatmap?: boolean
 }
 
-interface State {
-
-}
-
-export class PlayerCompareTable extends React.PureComponent<Props, State> {
-
-    constructor(props: Props) {
-        super(props)
-        // this.state = {currentSort: {statName: "hits", direction: "desc"}}
-    }
+export class PlayerCompareTable extends React.PureComponent<Props> {
 
     public render() {
         const {names, rawPlayers, heatmap} = this.props
         const header = (
             <TableRow>
                 <TableCell>Stat</TableCell>
-                {names.map((player, i) => <TableCell key={player}>{player}</TableCell>)}
+                {names.map((player) => <TableCell key={player}>{player}</TableCell>)}
             </TableRow>
         )
 
@@ -53,7 +44,6 @@ export class PlayerCompareTable extends React.PureComponent<Props, State> {
                         {header}
                     </TableHead>
                     <TableBody>
-
                         {stats.map((stat) => (<TableRow key={stat.name}>
                                     <TableCell>
                                         {stat.name}
@@ -84,5 +74,4 @@ export class PlayerCompareTable extends React.PureComponent<Props, State> {
             color: (isHeatmapMode ? "white" : "black")
         }
     }
-
 }

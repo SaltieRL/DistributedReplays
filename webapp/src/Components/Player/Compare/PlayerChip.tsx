@@ -3,6 +3,15 @@ import * as React from "react"
 import { RouteComponentProps, withRouter } from "react-router"
 import { PLAYER_PAGE_LINK } from "../../../Globals"
 
+const styles = createStyles({
+    root: {
+        maxWidth: "100%"
+    },
+    label: {
+        maxWidth: "calc(100% - 48px)"
+    }
+})
+
 interface OwnProps extends Player {
     onDelete: () => void
 }
@@ -33,14 +42,5 @@ class PlayerChipComponent extends React.PureComponent<Props> {
         this.props.history.push(PLAYER_PAGE_LINK(this.props.id))
     }
 }
-
-const styles = createStyles({
-    root: {
-        maxWidth: "100%"
-    },
-    label: {
-        maxWidth: "calc(100% - 48px)"
-    }
-})
 
 export const PlayerChip = withStyles(styles)(withRouter(PlayerChipComponent))

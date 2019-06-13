@@ -99,12 +99,12 @@ model_holder = RankPredictor()
 
 
 if __name__ == '__main__':
-    from backend.database.startup import startup
+    from backend.database.startup import lazy_startup
 
     pr = RankPredictor()
-    engine, sessionmaker = startup()
+    session_factory = lazy_startup()
 
-    s = sessionmaker()
+    s = session_factory()
 
     for o in s.query(PlayerGame)[:20]:
         print(o.name, o.rank)

@@ -1,4 +1,4 @@
-import { Divider } from "@material-ui/core"
+import { Divider, Grid } from "@material-ui/core"
 import * as React from "react"
 import { Replay } from "../../../Models"
 import { getBoostmap } from "../../../Requests/Replay"
@@ -25,9 +25,13 @@ export class VisualizationsContent extends React.PureComponent<Props, State> {
         return (
             <>
                 <Divider/>
-                <LoadableWrapper load={this.getBoostmapsData} reloadSignal={this.state.reloadSignal}>
-                    <BoostMapWrapper data={this.state.boostmapData} replay={this.props.replay} />
-                </LoadableWrapper>
+                <Grid container spacing={16}>
+                    <Grid item xs={12} container justify="center">
+                        <LoadableWrapper load={this.getBoostmapsData} reloadSignal={this.state.reloadSignal}>
+                            <BoostMapWrapper data={this.state.boostmapData} replay={this.props.replay}/>
+                        </LoadableWrapper>
+                    </Grid>
+                </Grid>
             </>
         )
     }

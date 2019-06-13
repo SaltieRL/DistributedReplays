@@ -143,7 +143,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
                     return (
                         <Grid item xs={12} md={6} lg={5} key={field}
                               style={{height: 400}}>
-                            <Typography variant="subheading" align="center">
+                            <Typography variant="subtitle1" align="center">
                                 {convertSnakeAndCamelCaseToReadable(field)}
                             </Typography>
                             <ProgressionChart field={field} playerPlayStyleProgressions={playerPlayStyleProgressions}/>

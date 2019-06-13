@@ -14,17 +14,28 @@ addons:
     - ubuntu-toolchain-r-test
 
 
+cache:
+  - pip
+  - npm
+
+
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
 
 script: skip
 
+# We only build if it is a pr into master or it is a pr and it is not into master
+if:
+  branch = master OR (type = pull_request AND NOT branch = master)
+
+
 stages:
   - name: lint
   - name: test
   - name: deploy
-    if: branch = master
+    if: branch = master AND NOT fork AND type = push
+  - name: announcement
 
 
 jobs:
@@ -42,7 +53,7 @@ jobs:
       python:
         - '3.6'
       script:
-        - pytest --cov=./
+        - pytest tests/server_tests --cov=./
         - bash <(curl -s https://codecov.io/bash) -c -F server
       after_success:
         - codecov
@@ -51,7 +62,7 @@ jobs:
       python:
         - '3.7'
       script:
-        - pytest --cov=./
+        - pytest tests/server_tests --cov=./
         - bash <(curl -s https://codecov.io/bash) -c -F server
       after_success:
         - codecov
@@ -65,11 +76,15 @@ jobs:
         - cd $TRAVIS_BUILD_DIR
       script:
         - cd webapp
-        - npm install
         - npm start &
         - cd $TRAVIS_BUILD_DIR
-        - celery -A backend.tasks.celery_tasks.celery worker --pool=solo -l info &
-        - python3 RLBotServer.py &
+        - celery -A backend.tasks.celery_worker.celery worker --pool=solo -l debug &
+          # Wait for all other systems to be setup
+        - sleep 30
+        - pytest tests/integration_tests --cov=./
+        - bash <(curl -s https://codecov.io/bash) -c -F integration
+      after_success:
+        - codecov
    # - stage: test
    #   name: "react unit tests"
    #   install:
@@ -79,10 +94,15 @@ jobs:
    #     - cd $TRAVIS_BUILD_DIR
    #   script:
    #     - cd webapp
+   #     - npm start
    #     - npm test
    #   after_success:
    #     - codecov
     - stage: deploy
+      name: "Deploy to Production"
+      install: skip
+      script: skip
+    - stage: announcement
       name: "Announce success"
       python: "3.7"
       install: skip
@@ -91,3 +111,4 @@ jobs:
       - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
       - chmod +x .travis/send.sh
       - ./.travis/send.sh success $WEBHOOK_URL
+

@@ -43,6 +43,12 @@ class Playlist(enum.Enum):
     RANKED_SNOW_DAY = 30
 
 
+class GameVisibilitySetting(enum.Enum):
+    DEFAULT = 0  # i.e. Unset
+    PUBLIC = 1
+    PRIVATE = 2
+
+
 class User(DBObjectBase):
     __tablename__ = 'users'
 
@@ -225,6 +231,11 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
+    visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.DEFAULT)
+    # to update the DB
+    # ALTER TABLE games
+    # ADD COLUMN visibility gamevisibilitysetting NULL
+    # CONSTRAINT default_visibility DEFAULT 'DEFAULT';
 
     tags = relationship('Tag', secondary='game_tags', back_populates='games')
 
@@ -312,6 +323,7 @@ class Tag(DBObjectBase):
     name = Column(String(40))
     owner = Column(String(40), ForeignKey('players.platformid'), index=True)
     games = relationship('Game', secondary='game_tags', back_populates='tags')
+    private_id = Column(String(40), nullable=True)
     __table_args_ = (UniqueConstraint(name, owner, name='unique_names'))
 
 
@@ -319,3 +331,12 @@ class GameTag(DBObjectBase):
     __tablename__ = 'game_tags'
     game_id = Column(String(40), ForeignKey('games.hash'), primary_key=True)
     tag_id = Column(Integer, ForeignKey('tags.id'), primary_key=True)
+
+
+class GameVisibility(DBObjectBase):
+    __tablename__ = "game_visibility"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    game = Column(String(40), ForeignKey('games.hash'), index=True)
+    player = Column(String(40), ForeignKey('players.platformid'))
+    visibility = Column(Enum(GameVisibilitySetting))
+    release_date = Column(DateTime, default=datetime.datetime.max)

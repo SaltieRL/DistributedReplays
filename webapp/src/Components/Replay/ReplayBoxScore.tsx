@@ -13,6 +13,25 @@ import Grid from "@material-ui/core/Grid/Grid"
 import * as React from "react"
 import { Replay } from "../../Models"
 
+const styles = createStyles({
+    teamTable: {
+        maxWidth: 800,
+        margin: "auto"
+    },
+    teamName: {
+        textTransform: "uppercase"
+    },
+    tableData: {
+        fontWeight: 400
+    },
+    blueTableHead: {
+        borderBottom: "2px solid cornflowerblue"
+    },
+    orangeTableHead: {
+        borderBottom: "2px solid orange"
+    }
+})
+
 interface BoxScoreData {
     name: "Blue" | "Orange",
     score: number,
@@ -81,15 +100,15 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
             <TableHead className={boxScoreData.name === "Blue" ? classes.blueTableHead : classes.orangeTableHead}>
                 <TableRow>
                     <TableCell style={{width: "30%"}} padding="dense">
-                        <Typography variant="title" className={classes.teamName}>
+                        <Typography variant="h6" className={classes.teamName}>
                             {boxScoreData.score} {boxScoreData.name}
                         </Typography>
                     </TableCell>
                     {Array.from(labelToKeys, ([label, key]) => {
                         if (key !== "name") {
                             return (
-                                <TableCell numeric key={key} padding="dense">
-                                    <Typography variant="subheading">
+                                <TableCell align="right" key={key} padding="dense">
+                                    <Typography variant="subtitle1">
                                         {label}
                                     </Typography>
                                 </TableCell>
@@ -112,7 +131,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                         <TableRow key={player.id}>
                             {Array.from(labelToKeys, ([label, key]) => (
                                 <TableCell key={key}
-                                           numeric={key !== "name"}
+                                           align={key !== "name" ? "right" : "left"}
                                            className={this.props.classes.tableData}
                                            padding="dense"
                                 >
@@ -129,24 +148,5 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         )
     }
 }
-
-const styles = createStyles({
-    teamTable: {
-        maxWidth: 800,
-        margin: "auto"
-    },
-    teamName: {
-        textTransform: "uppercase"
-    },
-    tableData: {
-        fontWeight: 400
-    },
-    blueTableHead: {
-        borderBottom: "2px solid cornflowerblue"
-    },
-    orangeTableHead: {
-        borderBottom: "2px solid orange"
-    }
-})
 
 export const ReplayBoxScore = withStyles(styles)(ReplayBoxScoreComponent)

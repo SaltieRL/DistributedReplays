@@ -24,12 +24,13 @@ class HeatmapTabsComponent extends React.PureComponent<Props> {
             "Slow Speed": faHourglass
         }
 
+        const belowXs = isWidthDown("xs", this.props.width)
         return (
             <Tabs value={this.props.selectedTab}
                   onChange={this.props.handleChange}
-                  centered
-                  scrollable={isWidthDown("xs", this.props.width)}
-                  scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
+                  centered={!belowXs}
+                  variant={belowXs ? "scrollable" : "standard"}
+                  scrollButtons={belowXs ? "on" : undefined}
             >
                 {Object.keys(HeatmapSubcategory).map((subcategory) => {
                     const value = HeatmapSubcategory[subcategory]

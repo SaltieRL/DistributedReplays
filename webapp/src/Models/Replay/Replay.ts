@@ -7,6 +7,12 @@ interface GameScore {
     team1Score: number
 }
 
+export enum GameVisibility {
+    DEFAULT = 0,
+    PUBLIC = 1,
+    PRIVATE = 2
+}
+
 export interface Replay {
     id: string
     name: string
@@ -15,7 +21,8 @@ export interface Replay {
     gameMode: GameMode
     gameScore: GameScore
     players: ReplayPlayer[]
-    tags: Tag[]
+    tags: Tag[],
+    visibility: GameVisibility
 }
 
 export const parseReplay = (data: any) => {
@@ -29,6 +36,6 @@ type GameResult = "Win" | "Loss"
 
 export const getReplayResult = (replay: Replay, player: Player): GameResult => {
     const playerIsOrange = (replay.players.find((replayPlayer) => replayPlayer.id === player.id) || {} as any)!.isOrange
-    return replay.gameScore.team1Score > replay.gameScore.team0Score === playerIsOrange ?
-        "Win" : "Loss"
+    const winnerIsOrange = replay.gameScore.team1Score > replay.gameScore.team0Score
+    return winnerIsOrange === playerIsOrange ? "Win" : "Loss"
 }
