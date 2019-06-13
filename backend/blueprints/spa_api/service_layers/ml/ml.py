@@ -1,12 +1,13 @@
 import glob
 import os
 
+import pandas as pd
 import torch
 import torch.nn as nn
-import pandas as pd
-
-from backend.database.objects import PlayerGame
 from sqlalchemy import inspect
+
+from backend.blueprints.spa_api.errors.errors import UnsupportedPlaylist
+from backend.database.objects import PlayerGame
 
 
 def object_as_dict(obj):
@@ -38,13 +39,14 @@ class RankPredictorEnsemble(nn.Module):
 class RankPredictor:
     # Loading
     # MODEL_DIR = os.path.abspath(os.path.join('..', '..', '..', '..', '..', 'data', 'models'))
-    MODEL_DIR = os.path.abspath(os.path.join('data', 'models'))
+    MODEL_DIR = None
     models = {}
     maxs = None
     mins = None
 
-    def __init__(self):
+    def __init__(self, playlist=13):
         # Load models
+        self.MODEL_DIR = os.path.abspath(os.path.join('data', 'models', str(playlist)))
         for model in sorted(glob.glob(os.path.join(self.MODEL_DIR, '*.mdl'))):
             state = torch.load(model, map_location='cpu')
             m = RankPredictorEnsemble()
@@ -95,9 +97,19 @@ class RankPredictor:
         return int(result[0])
 
 
-model_holder = RankPredictor()
+class ModelHandler:
+    def __init__(self):
+        self.playlists = [11, 13]
+        self.models = {pl: RankPredictor(pl) for pl in self.playlists}
+
+    def predict_rank(self, x: PlayerGame, playlist: int = 13):
+        if playlist not in self.playlists:
+            raise UnsupportedPlaylist
+
+        return self.models[playlist].predict_rank(x)
 
 
+model_holder = ModelHandler()
 if __name__ == '__main__':
     from backend.database.startup import lazy_startup
 
