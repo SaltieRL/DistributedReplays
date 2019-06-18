@@ -1,15 +1,6 @@
 import * as React from "react"
 
-import {
-    Button,
-    Card,
-    CardContent,
-    CardMedia,
-    createStyles, Grid,
-    Typography,
-    WithStyles,
-    withStyles
-} from "@material-ui/core"
+import { Button, Card, CardContent, createStyles, Grid, Typography, WithStyles, withStyles } from "@material-ui/core"
 import { PlayerNameDropdown } from "./PlayerNameDropdown"
 import { PlayerProfilePicture } from "./PlayerProfilePicture"
 

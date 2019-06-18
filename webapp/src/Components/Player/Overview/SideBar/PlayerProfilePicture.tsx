@@ -16,9 +16,9 @@ class PlayerProfilePictureComponent extends React.PureComponent<Props> {
 
         const colors = {
             1: "red", // admin
-            2: "yellow", // alpha
-            3: "green", // beta
-            4: "blue" // dev
+            2: "#FFC107", // alpha
+            3: "#8BC34A", // beta
+            4: "#03A9F4" // dev
         }
         const letters = {
             1: "A",
@@ -28,8 +28,8 @@ class PlayerProfilePictureComponent extends React.PureComponent<Props> {
         }
         const names = {
             1: "Admin",
-            2: "Alpha",
-            3: "Beta",
+            2: "Alpha Tester",
+            3: "Beta Tester",
             4: "Developer"
         }
         const hierarchy = [1, 4, 2, 3]
@@ -45,7 +45,7 @@ class PlayerProfilePictureComponent extends React.PureComponent<Props> {
                 <CardMedia className={classes.avatar} image={image}>
                     {userRole !== 0 ? <Tooltip title={names[userRole]}>
                         <div style={{backgroundColor: colors[userRole]}}
-                             className={classes.tag}>{letters[userRole]}</div>
+                             className={classes.tagNew}>{letters[userRole]}</div>
                     </Tooltip> : null}
                 </CardMedia>
             </>
@@ -67,20 +67,19 @@ const styles = createStyles({
         whiteSpace: "nowrap",
         display: "flex"
     },
-    tag: {
-        fontFamily: "Lato",
-        color: "white",
-        fontWeight: 600,
-        position: "relative",
-        left: "5%",
+    tagNew: {
         top: "5%",
-        borderRadius: "1000px",
+        left: "5%",
+        position: "relative",
+        fontFamily: "Lato",
+        fontWeight: 800,
         width: "20px",
         height: "20px",
-        fontSize: "1.0em",
+        borderRadius: "50%",
         textAlign: "center",
-        cursor: "pointer"
-
+        lineHeight: "20px",
+        verticalAlign: "middle",
+        color: "white"
     }
 })
 
