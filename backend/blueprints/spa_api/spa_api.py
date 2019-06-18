@@ -12,24 +12,23 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
 from werkzeug.utils import secure_filename, redirect
 
+from backend.blueprints.spa_api.service_layers.admin import AdminPanelHandler
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
-from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
+from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
-from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 
 try:
     import config
 except ImportError:
     config = None
-
 
 try:
     import config
@@ -210,7 +209,6 @@ def api_get_player_play_style(id_):
 @bp.route('player/<id_>/play_style/all')
 @with_query_params(accepted_query_params=playstyle_query_params)
 def api_get_player_play_style_all(id_, query_params=None):
-
     play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, **query_params)
     return better_jsonify(play_style_response)
 
@@ -218,7 +216,6 @@ def api_get_player_play_style_all(id_, query_params=None):
 @bp.route('player/<id_>/play_style/progression')
 @with_query_params(accepted_query_params=progression_query_params)
 def api_get_player_play_style_progress(id_, query_params=None):
-
     play_style_progression = PlayStyleProgression.create_progression(id_, **query_params)
     return better_jsonify(play_style_progression)
 
@@ -365,7 +362,6 @@ def api_get_stat_explanations():
 @bp.route('/upload', methods=['POST'])
 @with_query_params(accepted_query_params=upload_file_query_params)
 def api_upload_replays(query_params=None):
-
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:
@@ -496,3 +492,23 @@ def api_handle_error(error: CalculatedError):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+# ADMIN
+
+@bp.route('/admin/group/add/<user_id>/<group>', methods=["GET"])
+def api_admin_add_group(user_id: str, group: str):
+    try:
+        group: int = int(group)
+    except ValueError:
+        raise CalculatedError(400, "Invalid group number format")
+    return AdminPanelHandler.add_group_to_user(user_id, group)
+
+
+@bp.route('/admin/group/remove/<user_id>/<group>', methods=["GET"])
+def api_admin_remove_group(user_id: str, group: str):
+    try:
+        group: int = int(group)
+    except ValueError:
+        raise CalculatedError(400, "Invalid group number format")
+    return AdminPanelHandler.remove_group_from_user(user_id, group)
