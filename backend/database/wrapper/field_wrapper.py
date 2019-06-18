@@ -33,7 +33,6 @@ class QueryFieldWrapper:
         """
         :return: The field name or the rename
         """
-        return self.dynamic_field.field_name
         if self.explanation is not None and self.explanation.field_rename is not None:
             return self.explanation.field_rename
         else:
@@ -165,25 +164,25 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('time_at_super_sonic',
                          'Time at max car speed. Trail is showing.'),
 
-        FieldExplanation('boost ratio',
+        FieldExplanation('boost_ratio',
                          'Ratio of small boost pad pickups to large pickups.',
                          math_explanation='\\frac{\\textrm{num small boosts}}{\\textrm{num large boosts}}'),
-        FieldExplanation('collection boost efficiency',
+        FieldExplanation('collection_boost_efficiency',
                          'How efficient the player is at collecting boost',
                          math_explanation='1 - '
                                           '\\frac{\\textrm{wasted collected boost}}{\\textrm{total boost collected}}',
                          short_name='bst clct eff'),
-        FieldExplanation('used boost efficiency',
+        FieldExplanation('used_boost_efficiency',
                          'How efficient the player is at using boost',
                          math_explanation='1 - \\frac{\\textrm{wasted used boost}}{\\textrm{total boost usage}}',
                          short_name='bst use eff'),
-        FieldExplanation('total boost efficiency',
+        FieldExplanation('total_boost_efficiency',
                          'How efficient the player is at using and collecting boost',
                          math_explanation='1 - \\frac{\\textrm{wasted used boost} + '
                                           '\\textrm{wasted collected boost}}{100 \\times \\textrm{num large boosts}'
                                           ' + 12 \\times \\textrm{num small boosts}}',
                          short_name='boost efficiency'),
-        FieldExplanation('turnover efficiency',
+        FieldExplanation('turnover_efficiency',
                          'Percentage of hits that were not turnovers.'),
         FieldExplanation('average_boost_level',
                          'Average amount of boost this player possessed over the entire game'),
@@ -192,15 +191,15 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          math_explanation='100 - \\textrm{amount of boost in tank}'),
         FieldExplanation('wasted_small',
                          'Amount of wasted boost from small boosts'),
-        FieldExplanation('aerial efficiency',
+        FieldExplanation('aerial_efficiency',
                          'Ratio of aerials to time in the air',
                          math_explanation='\\frac{\\textrm{total aerials}}'
                                           '{\\textrm{time high in air + time low in air}}',
                          short_name='aerial eff'),
-        FieldExplanation('turnover efficiency',
+        FieldExplanation('turnover_efficiency',
                          'Ratio of turnovers to number of hits',
                          short_name='turnover eff'),
-        FieldExplanation('shot %',
+        FieldExplanation('shot_%',
                          'Ratio of goals to shots',
                          math_explanation='\\frac{\\textrm{total goals}}{\\textrm{total shots}}')
 

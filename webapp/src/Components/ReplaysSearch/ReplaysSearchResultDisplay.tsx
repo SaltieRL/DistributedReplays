@@ -76,7 +76,7 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                             limit={limit}/>
                     </Card>
                     :
-                    <Typography variant="subheading" align="center">
+                    <Typography variant="subtitle1" align="center">
                         <i>No replays match the selected filters.</i>
                     </Typography>
                 }

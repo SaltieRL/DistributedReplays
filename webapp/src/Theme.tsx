@@ -1,8 +1,16 @@
-import { MuiThemeProvider } from "@material-ui/core"
-import { createMuiTheme } from "@material-ui/core/styles"
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"
+import Chart from "chart.js"
 import * as React from "react"
 
-const theme = createMuiTheme({
+interface ThemeContextType {
+    dark: boolean
+    toggleTheme: () => void
+}
+
+// tslint:disable-next-line:no-empty
+export const ThemeContext = React.createContext<ThemeContextType>({dark: false, toggleTheme: () => undefined})
+
+const getTheme = (dark: boolean) => createMuiTheme({
     palette: {
         primary: {
             contrastText: "#000",
@@ -21,7 +29,8 @@ const theme = createMuiTheme({
             dark: "#c20",
             light: "#c20",
             main: "#c20"
-        }
+        },
+        type: dark ? "dark" : "light"
     },
     // Make top bar appear above side bar
     zIndex: {
@@ -33,16 +42,51 @@ const theme = createMuiTheme({
         fontWeightRegular: 300,
         caption: {
             fontWeight: 400
+        },
+        useNextVariants: true
+    },
+    overrides: dark ? {
+        MuiTabs: {
+            root: {color: "white"}
         }
-    }
+    } : {}
 })
 
-export class Theme extends React.Component {
+interface State {
+    dark: boolean
+}
+
+const darkThemeStorageKey = "darkThemeEnabled"
+
+export class Theme extends React.PureComponent<{}, State> {
+    constructor(props: {}) {
+        super(props)
+        const darkThemeEnabled = localStorage.getItem(darkThemeStorageKey) === "true"
+        this.state = {dark: darkThemeEnabled}
+    }
+
     public render() {
+        const dark = this.state.dark
+
+        const theme = getTheme(dark)
+
+        Chart.defaults.global.defaultFontColor = dark ? "white" : "grey"
+        Chart.defaults.radar.scale.ticks = {
+            backdropColor: theme.palette.background.paper
+        }
+
         return (
-            <MuiThemeProvider theme={theme}>
-                {this.props.children}
-            </MuiThemeProvider>
+            <ThemeContext.Provider value={{dark, toggleTheme: this.toggleTheme}}>
+                <MuiThemeProvider theme={theme}>
+                    {this.props.children}
+                </MuiThemeProvider>
+            </ThemeContext.Provider>
         )
+    }
+
+    private readonly toggleTheme = () => {
+        const darkThemeEnabled = !this.state.dark
+        localStorage.setItem(darkThemeStorageKey, String(darkThemeEnabled))
+        this.setState({dark: darkThemeEnabled})
     }
 }

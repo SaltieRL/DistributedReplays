@@ -50,6 +50,25 @@ class MissingQueryParams(CalculatedError):
         super().__init__(self.status_code, message)
 
 
+class MismatchedQueryParams(CalculatedError):
+    status_code = 400
+
+    def __init__(self, query1: str, query2: str, list_size1, list_size2: int):
+        message = f'Query parameter {query1} does not have the same number of elements as {query2}: '
+        message += f'{list_size1} != {list_size2}'
+        super().__init__(self.status_code, message)
+
+
+class InvalidQueryParamFormat(CalculatedError):
+    status_code = 400
+
+    def __init__(self, invalid_parameter, value):
+        message = f'[{value}] is in invalid format for Query parameter [{invalid_parameter.name}]'
+        if invalid_parameter.tip is not None:
+            message += f' tip: {invalid_parameter.tip}'
+        super().__init__(self.status_code, message)
+
+
 class TagNotFound(CalculatedError):
     status_code = 404
     message = "Tag not found"
@@ -58,3 +77,8 @@ class TagNotFound(CalculatedError):
 class UnsupportedPlaylist(CalculatedError):
     status_code = 501
     message = "Playlist not supported"
+
+
+class AuthorizationException(CalculatedError):
+    status_code = 401
+    message = "User not allowed for this request"

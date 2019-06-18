@@ -1,5 +1,4 @@
 import { Card, CardHeader, Divider, Grid, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
-import "mathjax"
 import * as React from "react"
 import { getExplanations } from "../../Requests/Replay"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
@@ -10,7 +9,6 @@ interface State {
     explanations?: Record<string, any>
 }
 
-// MathJax.Hub.Config({tex2jax: {inlineMath: [["$", "$"], ["\\(", "\\)"]]}})
 export class ExplanationsPage extends React.PureComponent<{}, State> {
     constructor(props: any) {
         super(props)
@@ -60,7 +58,7 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
 
         return (
             <>
-                <BasePage backgroundImage={"/splash.png"}>
+                <BasePage useSplash>
                     <Grid container justify="center">
                         <Grid item xs={12} lg={12} xl={12}>
                             <Grid container spacing={16} justify="center">
@@ -80,7 +78,6 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
                 this.setState({explanations: data})
             }
         )
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub])
         return explanations
     }
 }

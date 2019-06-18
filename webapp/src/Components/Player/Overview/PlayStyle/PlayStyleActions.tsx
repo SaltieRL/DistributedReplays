@@ -2,14 +2,15 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Divider,
+    Divider, Grid,
     IconButton,
     ListItemIcon,
     ListItemText,
     Menu,
     MenuItem,
-    Switch
+    Switch, withWidth
 } from "@material-ui/core"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import CompareArrows from "@material-ui/icons/CompareArrows"
 import Info from "@material-ui/icons/Info"
 import MoreVert from "@material-ui/icons/MoreVert"
@@ -27,7 +28,7 @@ interface OwnProps {
     handleWinsLossesChange?: (winLossMode: boolean) => void
 }
 
-type Props = OwnProps
+type Props = OwnProps & WithWidth
 
 interface MenuState {
     menuOpen: boolean
@@ -40,7 +41,7 @@ interface ActionsState {
 
 type State = MenuState & ActionsState
 
-export class PlayStyleActions extends React.PureComponent<Props, State> {
+class PlayStyleActionsComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
@@ -74,42 +75,51 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
             </Dialog>
         )
 
+        const isAboveMd = isWidthUp("md", this.props.width)
+
         return (
-            <>
-                <>
+            <Grid container justify="flex-end">
+                {isAboveMd && (
+                    <Grid item>
+                        {playlistSelect}
+                    </Grid>
+                )}
+                <Grid item style={{margin: isAboveMd ? "auto" : undefined}}>
                     <IconButton onClick={this.handleOpen} style={{marginRight: 8}}>
                         <MoreVert/>
                     </IconButton>
-                    <Menu
-                        open={this.state.menuOpen}
-                        anchorEl={this.state.anchorElement}
-                        onClose={this.handleClose}
-                    >
-                        <MenuItem onClick={this.handleExplanationsOpen}>
-                            <ListItemIcon><Info/></ListItemIcon>
-                            <ListItemText primary="Stats explanations"/>
+                </Grid>
+                <Menu
+                    open={this.state.menuOpen}
+                    anchorEl={this.state.anchorElement}
+                    onClose={this.handleClose}
+                >
+                    <MenuItem onClick={this.handleExplanationsOpen}>
+                        <ListItemIcon><Info/></ListItemIcon>
+                        <ListItemText primary="Stats explanations"/>
+                    </MenuItem>
+                    <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)} style={{textDecoration: "none"}}>
+                        <MenuItem>
+                            <ListItemIcon><CompareArrows/></ListItemIcon>
+                            <ListItemText primary="Compare with other players"/>
                         </MenuItem>
-                        <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)} style={{textDecoration: "none"}}>
-                            <MenuItem>
-                                <ListItemIcon><CompareArrows/></ListItemIcon>
-                                <ListItemText primary="Compare with other players"/>
-                            </MenuItem>
-                        </Link>
-                        <Divider component={"li" as any}/>
+                    </Link>
+                    <Divider component={"li" as any}/>
+                    {!isAboveMd && (
                         <MenuItem style={{justifyContent: "center"}}>
                             {playlistSelect}
                         </MenuItem>
-                        <MenuItem onClick={this.toggleWinsLossesMode}>
-                            <ListItemIcon>
-                                <Switch checked={this.props.winLossMode}/>
-                            </ListItemIcon>
-                            <ListItemText primary="Wins/Losses mode"/>
-                        </MenuItem>
-                    </Menu>
-                </>
+                    )}
+                    <MenuItem onClick={this.toggleWinsLossesMode}>
+                        <ListItemIcon>
+                            <Switch checked={this.props.winLossMode}/>
+                        </ListItemIcon>
+                        <ListItemText primary="Wins/Losses mode"/>
+                    </MenuItem>
+                </Menu>
 
                 {explanationsDialog}
-            </>
+            </Grid>
         )
     }
 
@@ -148,3 +158,5 @@ export class PlayStyleActions extends React.PureComponent<Props, State> {
         }
     }
 }
+
+export const PlayStyleActions = withWidth()(PlayStyleActionsComponent)

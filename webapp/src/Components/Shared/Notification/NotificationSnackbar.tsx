@@ -17,6 +17,29 @@ import InfoIcon from "@material-ui/icons/Info"
 import WarningIcon from "@material-ui/icons/Warning"
 import * as React from "react"
 
+const styles = (theme: Theme) => createStyles({
+    icon: {
+        marginRight: theme.spacing.unit
+    },
+    success: {
+        backgroundColor: green[600]
+    },
+    error: {
+        backgroundColor: theme.palette.error.dark
+    },
+    info: {
+        backgroundColor: theme.palette.primary.dark
+    },
+    warning: {
+        backgroundColor: amber[700]
+    },
+    message: {
+        color: "#fff",
+        display: "flex",
+        alignItems: "center"
+    }
+})
+
 type NotificationVariant = "success" | "info" | "warning" | "error"
 
 interface DefaultNotificationProps {
@@ -103,28 +126,5 @@ const variantIcon = {
     error: ErrorIcon,
     info: InfoIcon
 }
-
-const styles = (theme: Theme) => createStyles({
-    icon: {
-        marginRight: theme.spacing.unit
-    },
-    success: {
-        backgroundColor: green[600]
-    },
-    error: {
-        backgroundColor: theme.palette.error.dark
-    },
-    info: {
-        backgroundColor: theme.palette.primary.dark
-    },
-    warning: {
-        backgroundColor: amber[700]
-    },
-    message: {
-        color: "#fff",
-        display: "flex",
-        alignItems: "center"
-    }
-})
 
 export const NotificationSnackbar = withStyles(styles)(NotificationSnackbarComponent)

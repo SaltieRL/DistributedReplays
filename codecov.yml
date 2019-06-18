@@ -8,8 +8,21 @@ coverage:
   range: "70...100"
 
   status:
-    project: yes
-    patch: yes
+    status:
+      project:
+        default:
+          threshold: 1
+        server:
+          threshold: 0.5
+          paths:
+            - backend/*
+            - tests/server_tests/*
+            - tests/integration_tests/*
+        website:
+          threshold: 0.5
+          paths:
+            - webapp/*
+    patch: off
     changes: no
 
 parsers:
@@ -24,3 +37,8 @@ comment:
   layout: "header, diff"
   behavior: default
   require_changes: no
+
+ingore:
+  - "helpers/*"
+  - "data/*"
+  - "redis/*"

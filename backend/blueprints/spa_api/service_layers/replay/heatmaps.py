@@ -1,20 +1,14 @@
 import gzip
-import io
 import math
 import os
 
 import numpy as np
-import requests
 from carball.analysis.utils import pandas_manager, proto_manager
 from carball.generated.api.game_pb2 import Game
 from flask import current_app
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
-
-try:
-    from config import GCP_BUCKET_GZIP_URL
-except:
-    GCP_BUCKET_GZIP_URL = ""
+from backend.utils.cloud_handler import download_df, download_proto
 
 
 class ReplayHeatmaps:
@@ -27,26 +21,29 @@ class ReplayHeatmaps:
         if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
             raise ReplayNotFound()
         if not os.path.isfile(gzip_path):
-            if GCP_BUCKET_GZIP_URL != "":
-                gz = gzip.GzipFile(fileobj=io.BytesIO(requests.get(GCP_BUCKET_GZIP_URL + id_ + '.replay.gzip').content),
-                                   mode='rb')
-            else:
-                raise ReplayNotFound()
+            data_frame = download_df(id_)
+            protobuf_game = download_proto(id_)
         else:
-            gz = gzip.open(gzip_path, 'rb')
-        try:
-            data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(gz)
-            with open(pickle_path, 'rb') as f:
-                protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-        except Exception as e:
-            raise ErrorOpeningGame(str(e))
-        finally:
-            gz.close()
+            try:
+                with gzip.open(gzip_path, 'rb') as gz:
+                    data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(gz)
+                with open(pickle_path, 'rb') as f:
+                    protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
+            except Exception as e:
+                raise ErrorOpeningGame(str(e))
         # output = generate_heatmaps(data_frame, protobuf_game, type="hits")
-        output = generate_heatmaps(data_frame, protobuf_game, type=type_)
+        width = 400 / 500
+        step = 350.0
+        # x_range = 4.05*10**3
+        # y_range = 5.1*10**3
+        x_range = 4.05*10**3
+        y_range = 6.1*10**3
+        x_bins = np.arange(-x_range, x_range, step)
+        y_bins = np.arange(-y_range, y_range, step)
+
+        output = generate_heatmaps(data_frame, protobuf_game, type=type_, bins=[x_bins, y_bins])
         data = {}
         maxs = {}
-        max_ = 0
         # for player in output:
         #     arr = output[player]
         #     player_data = []
@@ -67,21 +64,22 @@ class ReplayHeatmaps:
             log_scale = False
         else:
             log_scale = True
-        width = 400 / 500
+
         for player in output:
+            max_ = 0
             arr = output[player]
             player_data = []
             for x in range(len(arr[0])):
                 for y in range(len(arr[0][x])):
+                    if arr[0][x, y] == 0:
+                        continue
                     if log_scale:
-                        value = math.log(arr[0][x, y] + 1e-3)
+                        value = math.log(arr[0][x, y] + 1e-3) ** 1.8
                     else:
                         value = arr[0][x, y]
-                    if value == 0:
-                        continue
                     player_data.append({
-                        'x': math.floor(arr[1][x] * width * 200 / 6000 + 125),
-                        'y': math.floor(arr[2][y] * width * 200 / 6000 + 175),
+                        'x': math.floor(arr[1][x] * width * 200 / 6000 + 130),
+                        'y': math.floor(arr[2][y] * width * 200 / 6000 + 180),
                         'value': max(0, value)
                     })
                     max_ = max(value, max_)
@@ -111,9 +109,9 @@ class ReplayHeatmaps:
 #         data[player] = (H, x, y)
 #     return data
 
-def generate_heatmaps(df, proto: Game = None, type='position'):
+def generate_heatmaps(df, proto: Game = None, type='position', bins=[20, 30]):
     players = list(df.columns.levels[0])
-    if type != 'position':
+    if type != 'positioning':
         players.remove("ball")
     players.remove("game")
     data = {}
@@ -121,7 +119,10 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
     for player in players:
         if type == 'positioning':
             # player = players[1]
-            df_adjusted = df
+            if player == 'ball':
+                df_adjusted = df.loc[~((df[player].pos_x == 0) & (df[player].pos_y == 0))]
+            else:
+                df_adjusted = df.loc[df.game.goal_number.notnull()]
         elif type in ['shots', 'hits']:
             if proto is None:
                 raise Exception("Proto is none")
@@ -165,6 +166,6 @@ def generate_heatmaps(df, proto: Game = None, type='position'):
             val_x = df_p['pos_x']
             val_y = df_p['pos_y']
             val_z = df_p['pos_z']
-            H, x, y = np.histogram2d(val_x, val_y, bins=[20, 30])
+            H, x, y = np.histogram2d(val_x, val_y, bins=bins)
             data[player] = (H, x, y)
     return data

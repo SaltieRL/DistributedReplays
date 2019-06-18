@@ -2,6 +2,7 @@ import {
     faBraille,
     faBullseye,
     faCarSide,
+    faChartBar,
     faCircle,
     faFutbol,
     faHandshake,
@@ -18,6 +19,7 @@ import { PlayerStatsSubcategory } from "../../../../Models"
 interface OwnProps {
     selectedTab: PlayerStatsSubcategory
     handleChange: (event: any, selectedTab: PlayerStatsSubcategory) => void
+    exclude?: string[]
 }
 
 type Props = OwnProps
@@ -26,6 +28,7 @@ type Props = OwnProps
 class PlayerStatsTabsComponent extends React.PureComponent<Props> {
     public render() {
         const categoryToIcon: Record<PlayerStatsSubcategory, IconDefinition> = {
+            "Main Stats": faChartBar,
             "Hits": faBullseye,
             "Ball": faFutbol,
             "Playstyles": faCarSide,
@@ -35,15 +38,21 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
             "Efficiency": faPercent,
             "Team Positioning": faHandshake
         }
+        const { width, selectedTab, handleChange } = this.props
+        const belowMd = isWidthDown("md", width)
 
         return (
-            <Tabs value={this.props.selectedTab}
-                  onChange={this.props.handleChange}
+            <Tabs value={selectedTab}
+                  onChange={handleChange}
                   centered
-                  scrollable={isWidthDown("xs", this.props.width)}
-                  scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
+                  variant={belowMd ? "scrollable" : "standard"}
+                  scrollButtons={belowMd ? "on" : undefined}
             >
-                {Object.keys(PlayerStatsSubcategory).map((subcategory) => {
+                {Object.keys(PlayerStatsSubcategory).filter((subcategory) => {
+                    return this.props.exclude !== undefined
+                        ? this.props.exclude.indexOf(subcategory) === -1
+                        : true
+                }).map((subcategory) => {
                     const value = PlayerStatsSubcategory[subcategory]
                     return <Tab label={value} value={value} key={value}
                                 icon={<FontAwesomeIcon icon={categoryToIcon[value]}/>}/>

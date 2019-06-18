@@ -1,10 +1,13 @@
 import datetime
 from typing import List
 
-from sqlalchemy import cast, String
+from flask import g
+from sqlalchemy import cast, String, or_
 from sqlalchemy.dialects import postgresql
 
-from backend.database.objects import Game, PlayerGame
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
+from backend.utils.checks import is_admin, is_local_dev
+from backend.utils.global_functions import get_current_user_id
 
 
 class QueryFilterBuilder:
@@ -100,6 +103,10 @@ class QueryFilterBuilder:
         self.replay_ids = replay_ids
         return self
 
+    def set_replay_id(self, replay_id: str) -> 'QueryFilterBuilder':
+        self.replay_ids = replay_id
+        return self
+
     def with_team_size(self, team_size: int) -> 'QueryFilterBuilder':
         self.team_size = team_size
         return self
@@ -124,7 +131,10 @@ class QueryFilterBuilder:
         """
         has_joined_game = False
         if self.initial_query is None:
-            filtered_query = session.query(*self.stats_query)
+            if self.is_game and self.stats_query is None:
+                filtered_query = session.query(Game)
+            else:
+                filtered_query = session.query(*self.stats_query)
         else:
             filtered_query = self.initial_query
 
@@ -134,6 +144,12 @@ class QueryFilterBuilder:
             if not self.is_game:
                 filtered_query = filtered_query.join(Game)
             has_joined_game = True
+
+        if self.is_game or has_joined_game:
+            # Do visibility check
+            if not is_admin():
+                filtered_query = filtered_query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
+                                                           Game.players.any(get_current_user_id())))
 
         if self.start_time is not None:
             filtered_query = filtered_query.filter(
@@ -166,6 +182,11 @@ class QueryFilterBuilder:
                 filtered_query = filtered_query.filter(self.handle_list(Game.hash, self.replay_ids))
             else:
                 filtered_query = filtered_query.filter(self.handle_list(PlayerGame.game, self.replay_ids))
+        elif self.replay_ids is not None and len(self.replay_ids) == 1:
+            if self.is_game or has_joined_game:
+                filtered_query = filtered_query.filter(Game.hash == self.replay_ids)
+            else:
+                filtered_query = filtered_query.filter(PlayerGame.game == self.replay_ids)
         # Todo: implement tags remember to handle table joins correctly
 
         return filtered_query

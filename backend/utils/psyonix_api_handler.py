@@ -7,6 +7,9 @@ from typing import Union
 import redis
 import requests
 from flask import current_app
+from backend.utils.braacket_connection import Braacket
+from backend.database.objects import Player
+from backend.database.startup import lazy_startup
 
 fake_data = False
 try:
@@ -34,6 +37,19 @@ def get_item_dict():
     return item_dict
 
 
+def get_bot_by_steam_id(steam_id):
+    if steam_id[0] == 'b' and steam_id[-1] == 'b':
+        if len(steam_id) < 6:
+            return "Allstar"
+        else:
+            session = lazy_startup()
+            bot = session().query(Player).filter(Player.platformid == steam_id).first()
+            if bot is None:
+                return None
+        return bot.platformname
+    return None
+
+
 def get_rank_batch(ids, offline_redis=None, use_redis=True):
     """
     Gets a batch of ranks based on ids. Returns fake data if there is no API key available.
@@ -46,24 +62,24 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
     if fake_data or RL_API_KEY is None:
         return make_fake_data(ids)
     try:
-        r = current_app.config['r']  # type: redis.Redis
+        _redis = current_app.config['r']  # type: redis.Redis
     except KeyError:
-        r = None
+        _redis = None
         ids_to_find = ids
     except RuntimeError:  # we're not in application context, use our own redis
         if offline_redis is None and use_redis:
             offline_redis = redis.Redis(
                 host='localhost',
                 port=6379)
-        r = offline_redis
-    if r is not None:
+        _redis = offline_redis
+    if _redis is not None:
         ids_to_find = []
         for steam_id in ids:
             try:
-                result = r.get(steam_id)
+                result = _redis.get(steam_id)
             except redis.ConnectionError:
                 logger.error('Error connecting to redis')
-                r = None
+                _redis = None
                 ids_to_find = ids
                 break
             if result is not None:
@@ -122,8 +138,8 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
                         'string': tier_div_to_string(None)
                     }
 
-            if r is not None:
-                r.set(unique_id, json.dumps(rank_datas), ex=30 * 60)
+            if _redis is not None:
+                _redis.set(unique_id, json.dumps(rank_datas), ex=30 * 60)
             rank_datas_for_players[unique_id] = rank_datas
         else:
             rank_datas_for_players[unique_id] = {}
@@ -137,6 +153,31 @@ def get_rank(steam_id):
     :param steam_id: steamid to get
     :return: rank, if it exists
     """
+    bot_id = get_bot_by_steam_id(steam_id)
+    if bot_id is not None:
+        league = Braacket()
+        league.update_player_cache()
+        braacket_id = league.player_cache.get(bot_id)
+        unranked = get_empty_data([steam_id])
+        if braacket_id is not None:
+            ranking_info = league.get_ranking(braacket_id)
+            if ranking_info is not None:
+                ranking_string = ranking_info[0]
+                ranking_points = ranking_info[1]
+                unranked.get(steam_id).get('10')['string'] = ranking_string[0] + ranking_string[1] + " " + ranking_string[2] + " " + ranking_string[3]
+                unranked.get(steam_id).get('10')['rank_points'] = ranking_points
+                rank = int(ranking_string[0])
+                if rank <= 6:
+                    unranked.get(steam_id).get('10')['tier'] = 21
+                elif rank <= 12:
+                    unranked.get(steam_id).get('10')['tier'] = 22
+                elif rank <= 18:
+                    unranked.get(steam_id).get('10')['tier'] = 23
+                elif rank <= 24:
+                    unranked.get(steam_id).get('10')['tier'] = 24
+                else:
+                    unranked.get(steam_id).get('10')['tier'] = 25
+        return unranked[list(unranked.keys())[0]]
     rank = get_rank_batch([steam_id])
     if rank is None or len(rank) <= 0:
         return None

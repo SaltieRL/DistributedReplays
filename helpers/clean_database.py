@@ -2,17 +2,17 @@ import glob
 import os
 
 from backend.database.objects import Game
-from backend.database.startup import startup
+from backend.database.startup import lazy_startup
 
 
-def main(sess):
+def clean_database(sess, ignored_parsed=False):
     s = sess()
     # delete games that don't exist in parsed form
     pkls = [os.path.basename(p).split('.')[0] for p in glob.glob('parsed/*.pkl')]
     print(pkls)
     games = s.query(Game).all()
     for game in games:
-        if game.hash not in pkls:
+        if ignored_parsed or game.hash not in pkls:
             print('delete', game.hash)
             s.delete(game)
     s.commit()
@@ -28,5 +28,5 @@ def main(sess):
 
 
 if __name__ == '__main__':
-    engine, Session = startup()
-    main(Session)
+    session = lazy_startup()
+    clean_database(session)

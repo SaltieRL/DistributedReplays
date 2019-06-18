@@ -121,7 +121,8 @@ const uploading: ListItemInfo[] = [
         message: "A custom Auto Uploader"
     }
 ]
-{/*
+
+/*
 const replayViewer: ListItemInfo[] = [
     {
         name: "Xander",
@@ -140,7 +141,6 @@ const replayViewer: ListItemInfo[] = [
     },
 ]
 */
-}
 
 const designer: ListItemInfo[] = [
     {
@@ -276,7 +276,7 @@ export class AboutPage extends React.PureComponent {
         )
 
         return (
-            <BasePage backgroundImage={"/splash.png"}>
+            <BasePage useSplash>
                 <Grid container justify="center">
                     <Grid item xs={12} lg={10} xl={8}>
                         <Grid container spacing={16} justify="center">
@@ -300,9 +300,15 @@ export class AboutPage extends React.PureComponent {
     }
 }
 
+const personListItemStyles = createStyles({
+    secondary: {
+        fontWeight: 400
+    }
+})
+
 type PersonListItemComponentProps = ListItemInfo & WithStyles<typeof personListItemStyles>
 
-const PersonListItemComponent: React.SFC<PersonListItemComponentProps> = (props) => (
+const PersonListItemComponent: React.FunctionComponent<PersonListItemComponentProps> = (props) => (
     <ListItem>
         <ListItemText
             primary={
@@ -313,20 +319,16 @@ const PersonListItemComponent: React.SFC<PersonListItemComponentProps> = (props)
     </ListItem>
 )
 
-const personListItemStyles = createStyles({
-    secondary: {
-        fontWeight: 400
-    }
-})
-
 const PersonListItem = withStyles(personListItemStyles)(PersonListItemComponent)
 
 type ExternalLinkProps = Pick<ListItemInfo, "link" | "name">
 
-const ExternalLink: React.SFC<ExternalLinkProps> = (props) => (
-    <a href={props.link}
-       target="_blank"
-       style={{textDecoration: "none", display: "inline-flex"}}
+const ExternalLink: React.FunctionComponent<ExternalLinkProps> = (props) => (
+    <a
+        href={props.link}
+        target="_blank"
+        rel="noreferrer noopener"
+        style={{textDecoration: "none", display: "inline-flex"}}
     >
         <ButtonBase>
             <Typography>

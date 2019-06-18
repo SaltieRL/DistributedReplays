@@ -2,6 +2,14 @@ import { Button, CircularProgress, createStyles, Typography, WithStyles, withSty
 import * as React from "react"
 import { WithNotifications, withNotifications } from "./Notification/NotificationUtils"
 
+const styles = createStyles({
+    loadableWrapper: {
+        margin: "auto",
+        textAlign: "center",
+        padding: 20
+    }
+})
+
 interface OwnProps {
     load: () => Promise<any>
     reloadSignal?: boolean
@@ -47,7 +55,7 @@ class LoadableWrapperComponent extends React.PureComponent<Props, State> {
                 {loadingState === "failed" &&
                 <>
                     <div className={classes.loadableWrapper}>
-                        <Typography variant="subheading">
+                        <Typography variant="subtitle1">
                             Failed to load the required data.
                         </Typography>
                         <Button variant="outlined" onClick={this.attemptToLoad}>
@@ -73,14 +81,6 @@ class LoadableWrapperComponent extends React.PureComponent<Props, State> {
             })
     }
 }
-
-const styles = createStyles({
-    loadableWrapper: {
-        margin: "auto",
-        textAlign: "center",
-        padding: 20
-    }
-})
 
 export const LoadableWrapper = withStyles(styles)(
     withNotifications()(LoadableWrapperComponent)

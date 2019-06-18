@@ -25,6 +25,21 @@ import {
     TWITTER_LINK
 } from "../../Globals"
 
+const styles = (theme: Theme) => createStyles({
+    footer: {
+        fontSize: "1em",
+        borderWidth: "8px 0",
+        borderStyle: "solid",
+        borderColor: "rgba(0, 0, 0, 0)",
+        padding: "0 12px",
+        backgroundColor: (theme.palette.type === "dark" ?
+            theme.palette.primary.dark : theme.palette.primary.light) + "cc"
+    },
+    grow: {
+        flexGrow: 1
+    }
+})
+
 interface ButtonData {
     to: string
     icon: IconDefinition
@@ -65,7 +80,7 @@ class FooterComponent extends React.PureComponent<Props> {
         ]
 
         const {classes, width} = this.props
-        const isWidthUpMd = isWidthUp("md", width)
+        const isWidthUpLg = isWidthUp("lg", width)
 
         const buttons: JSX.Element[] = buttonDatas.map((buttonData: ButtonData) => (
             <Grid item xs="auto" key={buttonData.text}>
@@ -77,18 +92,18 @@ class FooterComponent extends React.PureComponent<Props> {
                 <Divider/>
                 <footer className={classes.footer}>
                     <Grid container spacing={24} justify="center" alignItems="center">
-                        <Grid item xs={12} md={3}>
-                            <Typography align={isWidthUpMd ? "left" : "center"}>
+                        <Grid item xs={12} lg={3}>
+                            <Typography align={isWidthUpLg ? "left" : "center"}>
                                 &copy; 2017-2019 Saltie Group
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} md={5}
-                              container justify={isWidthUpMd ? "flex-start" : "center"} spacing={16}
+                        <Grid item xs={12} lg={5}
+                              container justify={isWidthUpLg ? "flex-start" : "center"} spacing={16}
                         >
                             <Grid item>
                                 <Link to={"/"} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             Home
                                         </Typography>
                                     </ButtonBase>
@@ -98,7 +113,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             <Grid item>
                                 <Link to={GLOBAL_STATS_LINK} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             Global Stats
                                         </Typography>
                                     </ButtonBase>
@@ -108,7 +123,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             <Grid item>
                                 <Link to={ABOUT_LINK} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             About Us
                                         </Typography>
                                     </ButtonBase>
@@ -118,7 +133,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             <Grid item>
                                 <Link to={STATUS_PAGE_LINK} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             Status
                                         </Typography>
                                     </ButtonBase>
@@ -128,7 +143,7 @@ class FooterComponent extends React.PureComponent<Props> {
                             <Grid item>
                                 <Link to={EXPLANATIONS_LINK} style={{textDecoration: "none"}}>
                                     <ButtonBase>
-                                        <Typography align={isWidthUpMd ? "left" : "center"}>
+                                        <Typography align={isWidthUpLg ? "left" : "center"}>
                                             Stat Explanations
                                         </Typography>
                                     </ButtonBase>
@@ -144,26 +159,12 @@ class FooterComponent extends React.PureComponent<Props> {
     }
 
     private readonly createIconButton = (buttonData: ButtonData) => (
-        <a href={buttonData.to} target="_blank" style={{textDecoration: "none"}}>
+        <a href={buttonData.to} target="_blank" rel="noreferrer noopener" style={{textDecoration: "none"}}>
             <IconButton>
                 <FontAwesomeIcon icon={buttonData.icon}/>
             </IconButton>
         </a>
     )
 }
-
-const styles = (theme: Theme) => createStyles({
-    footer: {
-        fontSize: "1em",
-        borderWidth: "8px 0",
-        borderStyle: "solid",
-        borderColor: "rgba(0, 0, 0, 0)",
-        padding: "0 12px",
-        backgroundColor: theme.palette.primary.light + "cc"
-    },
-    grow: {
-        flexGrow: 1
-    }
-})
 
 export const Footer = withWidth()(withStyles(styles)(FooterComponent))

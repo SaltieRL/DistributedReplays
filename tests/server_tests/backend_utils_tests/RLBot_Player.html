@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://braacket.com/league/rlbot/player?rows=200 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ 		<title>RLBot / Player</title>
+ 		
+ 		
+       	<meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="All">
+        
+               		<meta name="description" content="League: RLBot | United States; Rocket League | Custom fan-made bots in Rocket League">
+       	       	<meta name="keywords" content="League,Tournament,Leagues,Tournaments,Player,Ranking,Power ranking,ELO,Glicko,TrueSkill,Point,Bracket,Generator,Round-Robin,Single-Elimination,Double-Elimination,Pool,Multistage,Seeding,Statistics,History,Media">
+       	
+       	<meta name="google-site-verification" content="q3EjBxDSLQrmS_qTedBmKwQ4IKGg2yf13ZcbTGs4pYY">
+
+       	<link href="./RLBot _ Player_files/css" rel="stylesheet">
+       	<!-- 
+       	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+       	  -->
+       	
+       	       	
+                		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/bootstrap.min.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/font-awesome.min.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/font-awesome-animation.min.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/fix.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/bootstrap-datetimepicker.min.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/overload.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/jquery.loading.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/jquery.panel.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/main.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/theme.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/game.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/navsub.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/auth.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/embed.css">
+        	        		<link rel="stylesheet" type="text/css" media="screen" href="./RLBot _ Player_files/search.css">
+        			<script type="text/javascript" async="" src="./RLBot _ Player_files/recaptcha__en.js.download"></script><script type="text/javascript">
+					</script>
+		    </head>  
+          
+    <body class="loaded">	    	
+	  	<!--  Header -->
+    	<div id="header">
+	<div id="nav">
+		<nav class="navbar navbar-default navbar-static-top">
+	<div class="container">
+		<div class="navbar-header">
+        	<button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+            	<span class="sr-only">Toggle navigation</span>
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+          	</button>
+          	<a class="navbar-brand" href="https://braacket.com/">
+          		Braacket.com          	</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar">
+        	<ul class="nav navbar-nav">
+            	<li class="active">
+	<a href="https://braacket.com/league">
+		League	</a>
+</li><li class="">
+	<a href="https://braacket.com/tournament">
+		Tournament	</a>
+</li>          	</ul>
+			<ul class="nav navbar-nav navbar-right">
+								
+        	</ul>
+    	</div><!--/.nav-collapse -->
+    	<div class="navbar-custom">
+    		<ul class="nav navbar-nav navbar-right">
+	    		<li class="dropdown">
+	<div data-toggle="dropdown" class="dropdown-toggle" aria-expanded="true">
+		<span class=""><i class="fa fa-cog fa-fw"></i></span> <span class="hidden-xs hidden-sm hidden">Settings</span>
+		<span class="caret"></span>
+	</div>
+	<ul class="dropdown-menu dropdown-menu-right">
+		<li class="dropdown-header">Timezone</li>
+		<li class="">
+			<form method="POST" action="https://braacket.com/setting/process_set_timezone" class="timezone my-form-dyn form-inline">
+				<select class="form-control " name="timezones"><option value="Pacific/Midway">(UTC-11:00) American Samoa</option><option value="Pacific/Honolulu">(UTC-10:00) Hawaii</option><option value="Pacific/Marquesas">(UTC-09:30) Marquesas Islands</option><option value="America/Anchorage">(UTC-09:00) Alaska</option><option value="America/Los_Angeles">(UTC-08:00) Pacific Time (US &amp; Canada)</option><option value="America/Santa_Isabel">(UTC-08:00) Baja California</option><option value="America/Tijuana">(UTC-08:00) Tijuana</option><option value="America/Denver">(UTC-07:00) Mountain Time (US &amp; Canada)</option><option value="America/Chihuahua">(UTC-07:00) Chihuahua, La Paz, Mazatlan</option><option value="America/Phoenix">(UTC-07:00) Arizona</option><option value="America/Chicago">(UTC-06:00) Central Time (US &amp; Canada)</option><option value="America/Belize">(UTC-06:00) Saskatchewan, Central America</option><option value="America/Mexico_City">(UTC-06:00) Guadalajara, Mexico City, Monterrey</option><option value="Pacific/Easter">(UTC-06:00) Easter Island</option><option value="America/New_York">(UTC-05:00) Eastern Time (US &amp; Canada)</option><option value="America/Havana">(UTC-05:00) Cuba</option><option value="America/Bogota">(UTC-05:00) Bogota, Lima, Quito</option><option value="America/Caracas">(UTC-04:30) Caracas</option><option value="America/Halifax">(UTC-04:00) Atlantic Time (Canada)</option><option value="America/Goose_Bay">(UTC-04:00) Atlantic Time (Goose Bay)</option><option value="America/Asuncion">(UTC-04:00) Asuncion</option><option value="America/Santiago">(UTC-04:00) Santiago</option><option value="America/Cuiaba">(UTC-04:00) Cuiaba</option><option value="America/La_Paz">(UTC-04:00) Georgetown, La Paz, Manaus, San Juan</option><option value="America/St_Johns">(UTC-03:30) Newfoundland</option><option value="America/Argentina/Buenos_Aires">(UTC-03:00) Buenos Aires</option><option value="America/Argentina/San_Luis">(UTC-03:00) San Luis</option><option value="America/Argentina/Mendoza">(UTC-03:00) Argentina, Cayenne, Fortaleza</option><option value="Atlantic/Stanley">(UTC-03:00) Falkland Islands</option><option value="America/Godthab">(UTC-03:00) Greenland</option><option value="America/Montevideo">(UTC-03:00) Montevideo</option><option value="America/Sao_Paulo">(UTC-03:00) Brasilia</option><option value="America/Miquelon">(UTC-03:00) Saint Pierre and Miquelon</option><option value="America/Noronha">(UTC-02:00) Mid-Atlantic</option><option value="Atlantic/Cape_Verde">(UTC-01:00) Cape Verde Is.</option><option value="Atlantic/Azores">(UTC-01:00) Azores</option><option value="Europe/London">(UTC) Dublin, Edinburgh, Lisbon, London</option><option value="Africa/Casablanca">(UTC) Casablanca</option><option value="Atlantic/Reykjavik">(UTC) Monrovia, Reykjavik</option><option value="Europe/Zurich" selected="">(UTC+01:00) Central European Time</option><option value="Africa/Algiers">(UTC+01:00) West Central Africa</option><option value="Africa/Windhoek">(UTC+01:00) Windhoek</option><option value="Africa/Tunis">(UTC+01:00) Tunis</option><option value="Europe/Athens">(UTC+02:00) Eastern European Time</option><option value="Africa/Johannesburg">(UTC+02:00) South Africa Standard Time</option><option value="Europe/Kaliningrad">(UTC+02:00) Kaliningrad</option><option value="Asia/Amman">(UTC+02:00) Amman</option><option value="Asia/Beirut">(UTC+02:00) Beirut</option><option value="Africa/Cairo">(UTC+02:00) Cairo</option><option value="Asia/Jerusalem">(UTC+02:00) Jerusalem</option><option value="Asia/Gaza">(UTC+02:00) Gaza</option><option value="Asia/Damascus">(UTC+02:00) Syria</option><option value="Europe/Moscow">(UTC+03:00) Moscow, St. Petersburg, Volgograd</option><option value="Europe/Minsk">(UTC+03:00) Minsk</option><option value="Africa/Nairobi">(UTC+03:00) Nairobi, Baghdad, Kuwait, Qatar, Riyadh</option><option value="Asia/Tehran">(UTC+03:30) Tehran</option><option value="Asia/Dubai">(UTC+04:00) Abu Dhabi, Muscat, Tbilisi</option><option value="Asia/Yerevan">(UTC+04:00) Yerevan</option><option value="Asia/Baku">(UTC+04:00) Baku</option><option value="Indian/Mauritius">(UTC+04:00) Mauritius</option><option value="Asia/Kabul">(UTC+04:30) Kabul</option><option value="Asia/Yekaterinburg">(UTC+05:00) Ekaterinburg</option><option value="Asia/Tashkent">(UTC+05:00) Tashkent, Karachi</option><option value="Asia/Kolkata">(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi</option><option value="Asia/Kathmandu">(UTC+05:45) Kathmandu</option><option value="Asia/Novosibirsk">(UTC+06:00) Novosibirsk</option><option value="Asia/Dhaka">(UTC+06:00) Astana, Dhaka</option><option value="Asia/Almaty">(UTC+06:00) Almaty, Bishkek, Qyzylorda</option><option value="Asia/Rangoon">(UTC+06:30) Yangon (Rangoon)</option><option value="Asia/Krasnoyarsk">(UTC+07:00) Krasnoyarsk</option><option value="Asia/Bangkok">(UTC+07:00) Bangkok, Hanoi, Jakarta</option><option value="Asia/Irkutsk">(UTC+08:00) Irkutsk</option><option value="Asia/Hong_Kong">(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option><option value="Asia/Singapore">(UTC+08:00) Kuala Lumpur, Singapore</option><option value="Australia/Perth">(UTC+08:00) Perth</option><option value="Asia/Yakutsk">(UTC+09:00) Yakutsk</option><option value="Asia/Tokyo">(UTC+09:00) Osaka, Sapporo, Tokyo</option><option value="Asia/Seoul">(UTC+09:00) Seoul</option><option value="Australia/Adelaide">(UTC+09:30) Adelaide</option><option value="Australia/Darwin">(UTC+09:30) Darwin</option><option value="Asia/Vladivostok">(UTC+10:00) Vladivostok</option><option value="Asia/Magadan">(UTC+10:00) Magadan</option><option value="Australia/Brisbane">(UTC+10:00) Brisbane, Guam</option><option value="Australia/Sydney">(UTC+10:00) Sydney, Melbourne, Hobart</option><option value="Pacific/Noumea">(UTC+11:00) Solomon Is., New Caledonia</option><option value="Pacific/Norfolk">(UTC+11:30) Norfolk Island</option><option value="Asia/Anadyr">(UTC+12:00) Anadyr, Kamchatka</option><option value="Pacific/Auckland">(UTC+12:00) Auckland, Wellington</option><option value="Pacific/Fiji">(UTC+12:00) Fiji</option><option value="Pacific/Chatham">(UTC+12:45) Chatham Islands</option><option value="Pacific/Tongatapu">(UTC+13:00) Nuku'alofa</option><option value="Pacific/Apia">(UTC+13:00) Apia, Samoa</option><option value="Pacific/Kiritimati">(UTC+14:00) Kiritimati</option></select>			</form>
+		</li>
+	</ul>
+</li>				<li class="dropdown ">
+    <div class="dropdown-toggle" data-toggle="dropdown">
+    	<span class="">
+			<span class="glyphicon glyphicon-log-in fa-fw"></span>		</span>
+		<span class="hidden-xs hidden-sm hidden">
+			Account
+		</span>
+		<span class="caret"></span>
+    </div>
+	<ul class="dropdown-menu dropdown-menu-right">
+		<li class="dropdown-header">
+			You are not logged in
+		</li>
+		<li>
+			<a href="https://braacket.com/league/rlbot/player?rows=200#" data-toggle="modal" data-target="#login_modal">Login</a>
+		</li>
+		<li class="divider"></li>
+		<li class="dropdown-header">
+			Account manager
+		</li>
+		<li class="">
+			<a href="https://braacket.com/auth/create">Create</a>
+		</li>
+		<li class="">
+			<a href="https://braacket.com/auth/password_recovery">Password recovery</a>
+		</li>
+	</ul>
+</li>			</ul>
+		</div>
+	</div>
+</nav>	</div>
+</div>    	
+    	<!--  Content -->    	
+        <div id="content">
+        	          	          	
+       			<div id="content_header" class="my-navsub-active">	
+		<div class="container">
+			<div class="content_header-body">
+				<div>
+	<h1 class="text-transform-none">
+		<a class="text-bold" href="https://braacket.com/league/rlbot">RLBot</a>
+	</h1>
+	<div class="content_header-infos">
+			<div class="btn-group">
+			<div class="btn btn-default btn-legend">
+				<i class="fa fa-gamepad fa-fw"></i>			</div>
+			<div class="btn btn-default">Rocket League</div>
+		</div>
+		<br class="visible-xxs">
+				<div class="btn-group">
+			<div class="btn btn-default btn-legend"><i class="fa fa-globe fa-fw"></i></div>
+			<div class="btn btn-default">United States</div>
+		</div>
+		<br class="hidden-lg">
+			
+	<div class="btn-group">
+		<div class="btn btn-default btn-legend">
+			<i class="fa fa-users fa-fw"></i>		</div>
+		<div class="btn btn-default">
+			69		</div>
+	</div>
+	<div class="btn-group">
+		<div class="btn btn-default btn-legend">
+			<i class="fa fa-sitemap fa-fw"></i>		</div>
+		<div class="btn btn-default">
+			61		</div>
+	</div>
+			<div class="content_header_share btn-group">
+			<div class="btn btn-default btn-legend dropdown-toggle" data-toggle="dropdown">
+				<i class="fa fa-share-alt fa-fw"></i> <span class="hidden-xs">Share</span> <span class="caret"></span>	
+			</div>
+			<ul class="dropdown-menu dropdown-menu-right">
+				<li class="share_url to-right">
+					<input type="text" value="https://braacket.com/league/rlbot" readonly="">
+					<a href="https://braacket.com/league/rlbot/player?rows=200#" class="btn btn-url">URL</a>
+				</li>
+				<li>
+					<a href="http://www.facebook.com/sharer.php?u=https://braacket.com/league/rlbot" target="_blank" rel="noreferrer" class="btn btn-facebook">
+						<i class="fa fa-facebook-square fab fa-fw"></i>					</a>
+				</li>
+				<li>
+					<a href="https://twitter.com/home?status=https://braacket.com/league/rlbot" target="_blank" rel="noreferrer" class="btn btn-twitter">
+						<i class="fa fa-twitter-square fab fa-fw"></i>					</a>
+				</li>
+							</ul>
+	</div>
+	</div></div>
+<div class="game_bg game_bg-rocketleague" style="background-image:url(&#39;/assets/images/game/rocketleague/bg/main.jpg?v=1.1.85.2&#39;)"></div>			</div>
+		</div>
+	</div>
+<div id="content_nav" class="nav my-navsub navbar-default ">
+	<div class="my-navsub-overflow my-navsub-overflow-left"></div>
+	<div class="my-navsub-container">
+		<div class="container">
+			<ul class="nav navbar-nav my-navsub-ul navbar-left">
+									<li class=" text-center">
+						<a href="https://braacket.com/league/rlbot/dashboard">
+															<span class="my-navsub-icon">
+									<i class="fa fa-cube fa-fw "></i>								</span>
+														<div class="my-navsub-label">
+								        							<span class="my-navsub-label_base_page">
+        								league        							</span>
+    							    							<span class="my-navsub-label_page">
+    							Dashboard    							</span>
+    						</div>
+													</a>
+									</li><li class=" active text-center">
+						<a href="https://braacket.com/league/rlbot/player">
+															<span class="my-navsub-icon">
+									<i class="fa fa-users fa-fw "></i>								</span>
+														<div class="my-navsub-label">
+								        							<span class="my-navsub-label_base_page">
+        								league        							</span>
+    							    							<span class="my-navsub-label_page">
+    							Players    							</span>
+    						</div>
+													</a>
+									</li><li class=" text-center">
+						<a href="https://braacket.com/league/rlbot/tournament">
+															<span class="my-navsub-icon">
+									<i class="fa fa-sitemap fa-fw "></i>								</span>
+														<div class="my-navsub-label">
+								        							<span class="my-navsub-label_base_page">
+        								league        							</span>
+    							    							<span class="my-navsub-label_page">
+    							Tournaments    							</span>
+    						</div>
+													</a>
+									</li><li class=" text-center">
+						<a href="https://braacket.com/league/rlbot/ranking">
+															<span class="my-navsub-icon">
+									<i class="fa fa-trophy fa-fw "></i>								</span>
+														<div class="my-navsub-label">
+								        							<span class="my-navsub-label_base_page">
+        								league        							</span>
+    							    							<span class="my-navsub-label_page">
+    							Ranking    							</span>
+    						</div>
+													</a>
+									</li><li class=" text-center">
+						<a href="https://braacket.com/league/rlbot/head2head">
+															<span class="my-navsub-icon">
+									<span class="glyphicon glyphicon-fire  fa-fw "></span>								</span>
+														<div class="my-navsub-label">
+								        							<span class="my-navsub-label_base_page">
+        								league        							</span>
+    							    							<span class="my-navsub-label_page">
+    							Head 2 Head    							</span>
+    						</div>
+													</a>
+									</li><li class=" text-center">
+						<a href="https://braacket.com/league/rlbot/stats">
+															<span class="my-navsub-icon">
+									<i class="fa fa-line-chart fa-fw "></i>								</span>
+														<div class="my-navsub-label">
+								        							<span class="my-navsub-label_base_page">
+        								league        							</span>
+    							    							<span class="my-navsub-label_page">
+    							Stats    							</span>
+    						</div>
+													</a>
+							</li></ul>
+		</div>
+	</div>
+	<div class="my-navsub-overflow my-navsub-overflow-right"></div>
+</div>	<div id="content_body" class="my-navsub-active">
+		<div class="container">
+			<div class="ads ads-mobile-top">
+	<script async="" src="./RLBot _ Player_files/f.txt"></script>
+	<!-- Braacket-mobile-top -->
+	<ins class="adsbygoogle adsbygoogle-mobile-top" style="display:block; max-height:60px;" data-ad-client="ca-pub-6977339199743617" data-ad-slot="2454238061" data-ad-format="auto"></ins>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div><div class="ads ads-side ads-side-right">
+	<script async="" src="./RLBot _ Player_files/f.txt"></script>
+	<!-- Braacket-desktop-side-right -->
+	<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6977339199743617" data-ad-slot="8357301433" data-ad-format="vertical"></ins>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div><section class="hidden-embed">
+	<div class="panel panel-default my-panel-title my-box-shadow">
+		<div class="panel-heading">
+			Player list <i class="fa fa-list pull-right fa-flip-horizontal fa-fw"></i>			<div class="text-small text-light text-transform-none">
+				Find players using filters or name
+			</div>
+		</div>
+	</div>
+</section>
+<section>
+	<div class="search-box search-box-text">
+		<form method="GET" id="search_form" action="https://braacket.com/league/rlbot/player?rows=200">
+			<input type="hidden" id="rows" name="rows" value="200">
+						<div class="search-filters">
+	<div class="row">
+			<div class="col-xs-12 col-sm-6 col-lg-3">
+			<div class="form-group input-group ">
+				<label class="input-group-addon" for="country">
+					Country				</label>
+				<select class="form-control my-select-alloption " id="country" name="country">
+											<option value="" class="text-color-light">All</option>
+																<option value="none" class="text-color-light">None</option>
+									    			    		<option value="aq">Antarctica</option>
+			       			    		<option value="au">Australia</option>
+			       			    		<option value="cz">Czech Republic</option>
+			       			    		<option value="dk">Denmark</option>
+			       			    		<option value="fi">Finland</option>
+			       			    		<option value="fr">France</option>
+			       			    		<option value="de">Germany</option>
+			       			    		<option value="it">Italy</option>
+			       			    		<option value="nl">Netherlands</option>
+			       			    		<option value="nz">New Zealand</option>
+			       			    		<option value="pl">Poland</option>
+			       			    		<option value="pt">Portugal</option>
+			       			    		<option value="ru">Russian Federation</option>
+			       			    		<option value="sk">Slovakia</option>
+			       			    		<option value="ch">Switzerland</option>
+			       			    		<option value="gb">United Kingdom</option>
+			       			    		<option value="us">United States</option>
+			       				</select>
+			</div>
+		</div>
+	</div>
+</div><div class="input-group form-group search-text my-input-cleaner ">
+	<label class="input-group-addon" for="search">
+		 Name	</label>
+	<input type="text" class="form-control" name="search" id="search" placeholder="" value="">
+	<span class="input-cleaner" style="display:none;"><i class="fa fa-times "></i></span>
+	<div class="input-group-btn" data-toggle="popover" data-placement="bottom" title="" data-content="You can search for multiple Name by separating them with ; (semicolon)." data-original-title="Search help">
+		<div class="btn btn-default">
+			<i class="fa fa-question-circle fa-fw"></i>		</div>
+	</div>
+	<div class="input-group-btn">
+		<button class="btn btn-default" type="submit">
+			<i class="fa fa-search fa-fw"></i>       		Search
+       	</button>
+    </div>
+</div>					</form>
+	</div>
+</section><section>
+			<div class="panel panel-default my-panel-collapsed my-box-shadow">
+			<div class="panel-body">	
+				<table class="table table-hover my-table-checkbox">
+					<thead class="heading">
+						<tr>
+							<th class="ellipsis">Player</th>
+							<th></th>
+							<th class="text-center min empty"></th>
+    												</tr>
+											</thead>
+					<tbody>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/A8075754-1C34-4E3F-AD2A-B89CE594B7D0">&lt;3 (Heart)</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-pt"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Portugal" data-animation="false" data-container="body" src="./RLBot _ Player_files/pt.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/344C35B4-FE5C-4AF7-913D-559475521460">2DayHackBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/2E8B84D3-9C31-4258-B8DC-50B882F95E4A">AdversityBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/tarehart/ReliefBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/80E9FA90-EEC2-45F6-9F1C-A03C4CAB9E97">Air Bud</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/tarehart/ReliefBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/62F8BA9D-7EF3-47C5-9147-90677B3A71E4">Allstar</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/E17E1B39-B9B9-45C2-A2EA-0D2175801866">also_michaelBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/4B3BBE74-54CF-4900-9984-B266D86F841A">Amboss</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/Kapparov/AmbossBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-de"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Germany" data-animation="false" data-container="body" src="./RLBot _ Player_files/de.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/F1333344-3C86-46A4-A747-2A42862B15AE">Apex</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/F87A5C46-2FB8-4897-9795-C44FF0A1F588">atba2</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/RLMarvin/rlbots"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/97461D55-44D5-40AF-B1B9-317418ABF6D2">Atlas</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/PriestleyDJ/Atlas2.0"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a><a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/r0bbi3?" aria-label="r0bbi3"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;r0bbi3</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-gb"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United Kingdom" data-animation="false" data-container="body" src="./RLBot _ Player_files/gb.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/591E79B9-CD7E-4415-8CA8-6E2FA871FF23">BadBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-ch"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Switzerland" data-animation="false" data-container="body" src="./RLBot _ Player_files/ch.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/9530819D-992E-4021-906A-F76372DB2413">Bean</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-fi"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Finland" data-animation="false" data-container="body" src="./RLBot _ Player_files/fi.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/64911C3A-D60F-476F-AE0D-D8B78F4E0390">Beast from the East</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/NicEastvillage/RLBot-Beast"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-dk"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Denmark" data-animation="false" data-container="body" src="./RLBot _ Player_files/dk.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/BF408D0F-15AC-4EF7-A720-2B2886F3C5E7">BeepBoop</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/Redox?" aria-label="Redox"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;Redox</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-it"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Italy" data-animation="false" data-container="body" src="./RLBot _ Player_files/it.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/DCFF3B53-C021-4ED7-9A81-857D61C7E842">Boolean Algebra Calf</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/76C4B109-C18A-4207-9AA4-C644522CEF39">Boten Anna</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/NicEastvillage/BotenAnna2"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-dk"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Denmark" data-animation="false" data-container="body" src="./RLBot _ Player_files/dk.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/86503A63-A4CE-4FBE-B03C-FD7C76B8BFD6">Botimus Prime</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/Darxeal/BotimusPrime"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-cz"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Czech Republic" data-animation="false" data-container="body" src="./RLBot _ Player_files/cz.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/5BEDC73E-B78E-45B4-B27A-0F502CA4EC7A">BotVK</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Netherlands" data-animation="false" data-container="body" src="./RLBot _ Player_files/nl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/47562BFF-446E-4668-80F9-C19AB6BE95D2">Brick</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/A5DCC11E-C322-4E39-8FB1-2E9D4BE57C95">Calculator</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/ViliamVadocz/RLBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-sk"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Slovakia" data-animation="false" data-container="body" src="./RLBot _ Player_files/sk.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/6477D996-5414-43E8-AE50-037D8BBD4444">Cartana</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left empty">
+																			</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/3F6FB0F3-0196-4F0C-AD1C-8FE82CE9E6C1">CCBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-de"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Germany" data-animation="false" data-container="body" src="./RLBot _ Player_files/de.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/E5F99A5B-3A7A-4F5D-A641-F6BB28B41B59">ClassicRushy</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/A8AE3F46-EF9D-4F2D-960B-E320FB6D8415">ConfusedBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/ConfusedBot/ConfusedBot-"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left empty">
+																			</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/12B169C4-5E33-41D6-B40D-117E34CB205D">cool_atba</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/LHolten/Leviathan"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Netherlands" data-animation="false" data-container="body" src="./RLBot _ Player_files/nl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/13403CB1-2D1A-44F4-BF88-DD911C47928F">CunningBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-pl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Poland" data-animation="false" data-container="body" src="./RLBot _ Player_files/pl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/761E752D-F210-4B5F-B603-809A6DE36B33">DadBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/19CD0693-CC80-4A3C-AFCC-D4890311F80A">Dascas</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-pl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Poland" data-animation="false" data-container="body" src="./RLBot _ Player_files/pl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/2C3AC0F4-FB5F-431B-B93B-22345D9E1A49">Defending!</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/C706664D-080B-469D-8AF7-ED939A220D0F">DuiBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/robbai/DuiBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a><a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/r0bbi3?" aria-label="r0bbi3"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;r0bbi3</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-gb"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United Kingdom" data-animation="false" data-container="body" src="./RLBot _ Player_files/gb.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/27DB0047-38D5-4CF4-84BD-81CCAC628B45">Dweller</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/RLMarvin/rlbots"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a><a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/Marvin?" aria-label="Marvin"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;Marvin</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/FDF9DCD9-4F73-4833-B7B1-86B606F5414A">Flippy</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/ThatGuyDed/Bots"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-gb"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United Kingdom" data-animation="false" data-container="body" src="./RLBot _ Player_files/gb.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/2A3ED214-4E16-43E1-8EB7-BD3E83261479">GarbageBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/73490B35-E60F-463C-8793-D20393113FFA">Gas Gas Gas</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/1JJensen/Gas-Gas-Gas"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-dk"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Denmark" data-animation="false" data-container="body" src="./RLBot _ Player_files/dk.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/E9A0FAEC-CD9E-4A6A-B16B-C00ADB42FFE1">Gibbus</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-gb"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United Kingdom" data-animation="false" data-container="body" src="./RLBot _ Player_files/gb.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/DB311EF0-4795-4ED5-81B4-C4DAA0625990">Gosling</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/ddthj/Gosling"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/ECB0AF7E-EDB3-43DE-9A9E-EBB4A4553941">Guzabot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/D2E61B2D-7B10-41F9-982D-DBC56E5CC3F8">HastamBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-fr"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="France" data-animation="false" data-container="body" src="./RLBot _ Player_files/fr.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/BBF56800-33DC-47D5-B4D1-7F983F94A8D1">InternBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/DomNomNom/RocketBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nz"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="New Zealand" data-animation="false" data-container="body" src="./RLBot _ Player_files/nz.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/6E7D14E3-11DC-481F-B57B-456EB6B0061A">JoeyBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/joey676/JoeyBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-gb"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United Kingdom" data-animation="false" data-container="body" src="./RLBot _ Player_files/gb.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/B86451D3-B59C-4B1D-9F85-F7D5148D1EF0">KipjeBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Netherlands" data-animation="false" data-container="body" src="./RLBot _ Player_files/nl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/5337AF58-AC41-464D-9F3F-86525A550422">Leaf</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/RLMarvin/Leaf"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a><a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/Marvin?" aria-label="Marvin"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;Marvin</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/961B9D17-9F37-490E-A71E-CC2AFD256334">Levi</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/LHolten/Leviathan"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Netherlands" data-animation="false" data-container="body" src="./RLBot _ Player_files/nl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/64D64076-5C12-43D0-AF15-307D3113E8A5">michaelBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/AEBD9736-2AC2-4ECA-835A-35D7CC587B1C">MightyBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-gb"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United Kingdom" data-animation="false" data-container="body" src="./RLBot _ Player_files/gb.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/97DAD406-0815-4E04-A231-0E98071C035D">Mork</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Netherlands" data-animation="false" data-container="body" src="./RLBot _ Player_files/nl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/AE527CB9-6971-4FD8-9496-C37BFD280118">NomBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/DomNomNom/RocketBot/"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nz"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="New Zealand" data-animation="false" data-container="body" src="./RLBot _ Player_files/nz.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/C4A7DCC3-1B2A-4545-9CA4-2299F54AC01C">Noobot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/Lenny67/Noobot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/66033380-B06F-44DF-B9F7-94CAA32025BB">NV Derevo</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://www.twitch.tv/donutkiller_pro"><i class="fa fa-twitch "></i><span class="hidden-xs">&nbsp;&nbsp;twitch</span></a><a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://www.youtube.com/channel/UCf0DU-WXikHHieWsAp6H9mw"><i class="fa fa-youtube "></i><span class="hidden-xs">&nbsp;&nbsp;youtube</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Netherlands" data-animation="false" data-container="body" src="./RLBot _ Player_files/nl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/B990C536-B6E2-45D1-A685-26A0E7DCB7D3">Opportunity Rover</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-nl"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Netherlands" data-animation="false" data-container="body" src="./RLBot _ Player_files/nl.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/791402B1-27E7-462E-9B4A-5BF3CEC673AB">PacificScienceScratcher</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/ADE87046-B453-414C-90B0-042CF4D974F9">RamEater</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-ru"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Russian Federation" data-animation="false" data-container="body" src="./RLBot _ Player_files/ru.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/BE0209B7-77F8-4EE8-B82D-BEE2C82D87D3">rashBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/RLMarvin/rashBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a><a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/Marvin?" aria-label="Marvin"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;Marvin</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/8EAFE7BD-A3A4-42EB-A986-C3CE0A2C2585">RedoxBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-it"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Italy" data-animation="false" data-container="body" src="./RLBot _ Player_files/it.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/7334CCB8-5DD8-451D-95F2-C378E4F6D072">ReliefBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/tarehart/ReliefBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/0A5EDB74-E8BF-475F-A7F0-E42683806025">RobloxBot123</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/8BE0BD07-091C-4DE6-8FB9-0DE67B2AB52D">Saltie</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/SaltieRL/Saltie/"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-aq"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Antarctica" data-animation="false" data-container="body" src="./RLBot _ Player_files/aq.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/8308DD65-8494-4A04-8A05-FA0718BB7126">Self-driving car</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/54FB8C16-6FA9-4C4A-AAD5-3DB8A6AE169B">SkyBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/skyborgff/SkyBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a><a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/fabiorcferreira?" aria-label="fabiorcferreira"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;fabiorcferreira</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-pt"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Portugal" data-animation="false" data-container="body" src="./RLBot _ Player_files/pt.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/BF1D0D82-D710-4346-9EA5-747A3DBB14A9">Sporticus</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/6C597971-1B3D-4A5C-A175-D68905656967">Stick</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/RLMarvin/rlbots"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a><a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/Marvin?" aria-label="Marvin"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;Marvin</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/B35F7202-DD0A-44A2-AC97-43F40109038C">Terrorbit</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/CC09714D-77D1-4AC8-81DB-F09EF7CCA1BB">Terrorbyte</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/81174927-57B9-4E8B-AD93-535E4BA3EF81">TroyBot</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/daftmaple/TroyBot"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a><a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/Maple?" aria-label="Maple"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;Maple</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-au"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Australia" data-animation="false" data-container="body" src="./RLBot _ Player_files/au.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/A03A9CC8-19DC-4B28-834A-6F642BE42850">Turtle</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-cz"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Czech Republic" data-animation="false" data-container="body" src="./RLBot _ Player_files/cz.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/29A1CDBB-73D1-4D17-B96D-99D28859CFA9">TutorialBot_ML</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/RLBots/Saltie/tree/tournament2"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/48270C6C-ECFD-418C-A861-01404A6F87EF">Tuxedo</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-default badge-pill float-right" target="_blank" rel="noreferrer" href="https://github.com/DaCoolOne/Tuxedo"><i class="fa fa-github "></i><span class="hidden-xs">&nbsp;&nbsp;github.com</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-us"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United States" data-animation="false" data-container="body" src="./RLBot _ Player_files/us.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/50EDC413-27BB-4728-BCB5-F1D14FF13846">Wildfire</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+										<a class="badge badge-primary badge-pill float-right" href="https://braacket.com/account/r0bbi3?" aria-label="r0bbi3"><i class="fa fa-user-circle "></i><span class="hidden-xs">&nbsp;&nbsp;r0bbi3</span></a>									</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-gb"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="United Kingdom" data-animation="false" data-container="body" src="./RLBot _ Player_files/gb.png"></span>									</td>
+        																						</tr>
+													<tr>
+																	<td class="ellipsis">
+										    					    	  			<a href="https://braacket.com/league/rlbot/player/2219B21E-DC3A-4D74-991B-631C566592D4">Zoomelette</a>
+    					    	  			    					    	  			    										    					    	  											</td>
+									<td class="nowrap text-right">
+																			</td>
+									<td class="min text-left ">
+										<span class="country_flag country_flag-dk"><img alt="" class="" data-toggle="tooltip" data-placement="top" title="Denmark" data-animation="false" data-container="body" src="./RLBot _ Player_files/dk.png"></span>									</td>
+        																						</tr>
+										</tbody>
+			</table>
+		</div>
+	</div>
+	</section>
+
+	<section class="section-md-separator">
+		<div class="search-box">
+			<div class="row">
+									<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="form-group text-center search-bottom-list">
+		<div class="form-group input-group ">
+			<label class="input-group-addon " for="search-row_numbers">
+				Rows  
+			</label>
+			<select id="search-row_numbers" class="form-control">
+									<option value="20">20</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+									<option value="200" selected="">200</option>
+							</select>
+		</div>
+	</div>
+					</div>
+								<div class="col-xs-12 col-sm-12 col-md-4">
+					<div class="search-pagination">
+	<div class="input-group form-group">
+		<label class="input-group-addon" for="search-page">
+			Page
+		</label>
+		<select class="form-control" id="search-page">
+	    		  			<option selected="" data-href="?rows=200&amp;cols=&amp;page=1&amp;page_cols=1&amp;country=&amp;search=">1</option>
+	  			  	</select>
+	 	<div class="input-group-addon">
+	  		/ 1		</div>
+    			<div class="input-group-btn">
+			<a class="btn btn-default" href="https://braacket.com/league/rlbot/player?rows=200&amp;cols=&amp;page=1&amp;page_cols=1&amp;country=&amp;search=" disabled="" aria-label="Go to page 1">
+				<i class="fa fa-chevron-left fa-fw"></i>    		</a>
+		</div>
+    	    	<div class="input-group-btn">
+			<a class="btn btn-default" href="https://braacket.com/league/rlbot/player?rows=200&amp;cols=&amp;page=1&amp;page_cols=1&amp;country=&amp;search=" disabled="" aria-label="Go to page 1">
+				<i class="fa fa-chevron-right fa-fw"></i>			</a>
+		</div>
+	</div>
+</div>				</div>
+				<div class="col-xs-12 col-sm-12 col-md-4">
+					<div class="input-group form-group">
+	<div class="input-group-addon">
+		Displaying
+	</div>
+	<div class="input-group-addon my-input-group-addon ">
+		 1 to 69 of 69 
+		 Rows	</div>
+</div>				</div>
+			</div>
+		</div>
+	</section>
+		</div>
+	</div>
+       		<div id="modal-embed" class="modal fade my-modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<div class="modal-title"><span class="text-bold">Embed</span> / Get Code</div>
+      		</div>
+			<div class="modal-body">
+				<div class="panel panel-default my-box-shadow">
+					<div class="panel-heading">
+						Embed code
+						<i class="fa fa-code fa-fw pull-right"></i>					</div>
+					<div class="panel-body">
+						<label for="embed_iframe">Copy paste this code into your website</label>
+						<div class="form-group">
+							<textarea id="embed_iframe" class="form-control"></textarea>
+						</div>
+						<hr>
+						<label class="control-label">
+							<span class="my-label-infos">
+								<span class="text-bold">Note</span>: you can edit the <i>height</i> and <i>width</i> parameters according to your needs.
+							</span>
+						</label>
+					</div>
+				</div>
+		   	</div>
+		   	<div class="modal-footer">
+				<button type="button" class="btn btn-default cancel" data-dismiss="modal"><i class="fa fa-times fa-fw"></i> Close</button>
+			</div>
+		</div>
+	</div>
+</div><div id="league_player_modal_stats" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<div class="modal-title">Player / <span class="text-bold">Stats</span></div>
+      		</div>
+			<div class="modal-body">
+				<div class="panel panel-default my-panel-title my-box-shadow">
+					<div class="panel-heading text-center text-transform-none">
+						<h4>
+							<a class="player_label href-external" href="https://braacket.com/league/rlbot/player?rows=200">
+								<span></span>
+								<i class="fa fa-external-link-square fa-fw"></i>							</a>
+						</h4>
+					</div>
+				</div>
+				<div class="panel panel-default my-box-shadow">
+					<div class="panel-heading">
+						Ranking
+						<i class="fa fa-trophy pull-right fa-fw"></i>					</div>
+					<div class="panel-body">
+						<div class="my-dashboard-values-main">
+							<span class="player_ranking_rank"></span> / <span class="player_ranking_total"></span>
+						</div>
+						<div class="my-dashboard-values-sub">
+							<div>Points</div>
+							<div>
+								<span class="player_ranking_score"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default my-panel-collapsed my-box-shadow">
+					<div class="panel-heading">
+						Matches statistics (<span class="player_stats_matches"></span>)
+						<i class="fa fa-shield pull-right fa-fw"></i>					</div>
+					<div class="panel-body">
+						<div class="alert">
+							<div class="my-dashboard-values-main">
+								<span class="player_stats_win_percent"></span><span>%</span> Win rate
+							</div>
+						</div>
+					</div>
+					<div class="panel-body">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th colspan="2">Result</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="col-xs-8">Win</td>
+									<td class="col-xs-4 text-right text-bold player_stats_win"></td>
+								</tr>
+								<tr>
+									<td class="col-xs-8">Draw</td>
+									<td class="col-xs-4 text-right text-bold player_stats_draw"></td>
+								</tr>
+								<tr>
+									<td class="col-xs-8">Lose</td>
+									<td class="col-xs-4 text-right text-bold player_stats_lose"></td>
+								</tr>
+							</tbody>
+							<thead>
+								<tr>
+									<th colspan="2">Score</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="col-xs-8">+</td>
+									<td class="col-xs-4 text-right text-bold player_stats_plus"></td>
+								</tr>
+								<tr>
+									<td class="col-xs-8">-</td>
+									<td class="col-xs-4 text-right text-bold player_stats_minus"></td>
+								</tr>
+								<tr>
+									<td class="col-xs-8">+/-</td>
+									<td class="col-xs-4 text-right text-bold player_stats_diff"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="panel panel-default my-panel-collapsed my-box-shadow">
+					<div class="panel-heading">
+						Tournaments history  (<span class="player_tournament_history_total"></span>)
+						<i class="fa fa-sitemap pull-right fa-fw"></i>					</div>
+					<div class="panel-body">
+						<table class="table table-hover table-bordered">
+							<thead>
+								<tr>
+									<th class="col-xs-8">Name</th>
+									<th class="col-xs-4 text-right">Rank</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="player_tournament_history_skel">
+									<td class="col-xs-8 ellipsis player_tournament_history_label"><a href="https://braacket.com/league/rlbot/player?rows=200"></a></td>
+									<td class="col-xs-4 text-right">
+										<span class="text-bold player_tournament_history_rank"></span>/<span class="player_tournament_history_rank_total"></span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+		   	</div>
+		   	<div class="modal-footer">
+				<button data-dismiss="modal" class="btn btn-default cancel " type="button"><i class="fa fa-times fa-fw"></i> Close</button>
+			</div>
+		</div>
+	</div>
+</div><div class="container">
+	<div class="ads ads-desktop-bottom">
+		<script async="" src="./RLBot _ Player_files/f.txt"></script>
+		<!-- Braacket-desktop-bottom -->
+		<ins class="adsbygoogle adsbygoogle-desktop-bottom" style="display:block" data-ad-client="ca-pub-6977339199743617" data-ad-slot="7223101590" data-ad-format="auto"></ins>
+		<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+		</script>
+	</div>
+</div>
+<div id="message_send_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<div class="modal-title">
+					Account / Message / <span class="text-bold">Send</span>
+				</div>
+      		</div>
+      						<div class="modal-body">
+					<div class="alert alert-danger text-center">
+						<h5>
+							<i class="fa fa-ban fa-fw"></i> AUTHENTIFICATION REQUIRED
+						</h5>
+						<p>You must be logged in to send a message.</p>
+						<br>
+						<a href="https://braacket.com/league/rlbot/player?rows=200#" class="btn btn-danger" data-target="#login_modal" data-toggle="modal"> 
+							<span class="text-bold"><span class="glyphicon glyphicon-log-in fa-fw"></span> Login</span>
+						</a>
+						<a href="https://braacket.com/auth/create" class="btn btn-danger"> 
+							<span class="text-bold"><span class="glyphicon glyphicon-log-out fa-fw"></span> Create</span> an account
+						</a>
+					</div>
+				</div>
+				<div class="modal-footer">
+		   			<button data-dismiss="modal" class="btn btn-default cancel " type="button"><i class="fa fa-times fa-fw"></i> Cancel</button>
+		   		</div>
+		   		</div>
+	</div>
+</div><div id="login_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<div class="modal-title">Account / <span class="text-bold">Login</span></div>
+      		</div>
+			<div class="modal-body">
+				<div id="auth_login_panel">
+	<form id="auth_login" method="POST" action="https://braacket.com/auth/process/login" class="my-form-dyn">
+	<input type="hidden" id="redirect" name="redirect" value="" class="form-control">
+	<div class="panel panel-default my-box-shadow">
+		<div class="panel-body">
+			<!-- username -->
+			<div class="form-group">
+				<label class="label-control" for="username">Username</label>
+				<div class="input-group">
+					<div class="input-group-addon"><span class="glyphicon glyphicon-user fa-fw"></span></div>
+					<input type="text" autofocus="" required="" id="username" name="username" class="form-control">
+				</div>
+			</div>
+			<!-- password -->
+			<div class="form-group">
+				<label class="label-control" for="password">Password</label>
+				<div class="input-group">
+					<div class="input-group-addon"><i class="fa fa-key fa-fw"></i></div>
+					<input type="password" required="" id="password" name="password" class="form-control">
+				</div>
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-primary btn-block btn-shadow"><span class="text-bold"><span class="glyphicon glyphicon-log-in fa-fw"></span> Login</span></button>
+</form>		<hr>
+	   	<div class="text-center">
+							<a href="https://braacket.com/auth/create">Create an account</a><br>
+							 <a href="https://braacket.com/auth/password_recovery">Recovery your password</a><br>
+					</div>
+		<br>
+</div>		   	</div>
+		</div>
+	</div>
+</div>		</div>
+
+		<!--  Footer -->
+		<div id="footer">
+			<div class="container">
+	<div id="footer-body">
+		<div class="pull-left text-left">
+			© 2019 Braacket.com<br>
+			v. 1.1.85.2					</div>
+		<div class="pull-right text-right">
+			<ul class="my-ul my-ul-separator my-ul-xs">
+				<li>
+					<a href="https://braacket.com/usermanual">User manual</a>
+				</li>
+				<li>
+					<a href="https://braacket.com/legal/terms_and_conditions">Terms and Conditions</a>
+				</li>
+				<li>
+					<a href="https://braacket.com/legal/privacy_policy">Privacy Policy</a>
+				</li>
+				<li>
+					<a href="https://braacket.com/contact">Contact</a>
+				</li>
+			</ul>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>		</div>
+		
+		<div id="panel" class="panel-theme alert-dismissible" role="alert">
+	<div class="container">
+		<div id="panel_content" class="alert"></div>
+		<div id="panel_toggle">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+		</div>
+	</div>
+</div>    	<div id="modal-confirm" class="modal fade my-modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<div class="modal-title"><span class="text-bold">Confirm</span></div>
+      		</div>
+			<div class="modal-body">
+				<div class="panel panel-default my-box-shadow">
+					<div class="panel-body">
+						<span class="icon">&nbsp;</span>
+						<span class="message"></span>
+					</div>
+				</div>
+		   	</div>
+		   	<div class="modal-footer">
+				<button type="button" class="btn btn-default cancel" data-dismiss="modal"><i class="fa fa-times fa-fw"></i> Cancel</button>
+			    <a class="action btn btn-primary"><i class="fa fa-check fa-fw"></i> <span class="action_label">Ok</span></a>
+			</div>
+		</div>
+	</div>
+</div>	    <div id="modal-confirm-double" class="modal fade my-modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form id="modal-confirm-double-form" method="POST" action="https://braacket.com/league/rlbot/player?rows=200#" class="my-form-dyn">
+				<div class="form-values">
+				
+				</div>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<div class="modal-title"><span class="text-bold">Confirm</span></div>
+	      		</div>
+				<div class="modal-body">
+					<div class="panel panel-default panel-danger my-box-shadow">
+						<div class="panel-heading">
+							WARNING: DANGEROUS ACTION
+							<i class="fa fa-exclamation-triangle pull-right"></i> 
+						</div>
+						<div class="panel-body">
+							<div class="form-group">
+								<div class="message text-danger"></div>
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="confirm-text">
+									<span class="message-input text-danger"></span>
+									<span class="my-label-infos">
+										Enter "yes" in the input field bellow.
+									</span>
+								</label>
+								<input type="text" id="confirm-text" name="confirm-text" required="" class="form-control">
+							</div>
+						</div>
+					</div>
+			   	</div>
+			   	<div class="modal-footer">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal"><i class="fa fa-times fa-fw"></i> Cancel</button>
+				    <button type="submit" class="action btn btn-primary"><i class="fa fa-check fa-fw"></i> <span class="action_label">Ok</span></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>	      	
+	    			<script type="text/javascript" src="./RLBot _ Player_files/jquery-3.2.1.min.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.mobile.custom.min.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/bootstrap.min.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/moment-with-locales.min.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/bootstrap-datetimepicker.min.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/table-responsive.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.utilities.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.cookie.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.form.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.table.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.toggle-radio.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.timer.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.scrollfollow.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.loading.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.panel.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/jquery.xhr.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/fix.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/helper.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/modal.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/share.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/loader.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/google_analytics.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/navsub.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/auth.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/embed.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/search.js.download"></script>
+					<script type="text/javascript" src="./RLBot _ Player_files/league.public.player.js.download"></script>
+				
+					<script type="text/javascript">
+
+				$.myReCaptcha = {}
+				
+				var ReCaptchaCallback = function(){
+				
+					$('.my-recaptcha').each(function(){
+						$.myReCaptcha[$(this).attr('id')] = grecaptcha.render($(this).attr('id'), {'sitekey' : $(this).data('sitekey')});
+					});
+				}
+			
+			</script>
+			<script type="text/javascript" src="./RLBot _ Player_files/api.js.download" async="" defer=""></script>
+				    
+ 
+</body></html>

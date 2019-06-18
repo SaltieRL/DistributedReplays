@@ -23,6 +23,15 @@ import { getStats } from "../../../../Requests/Player/getStats"
 import { roundNumberToMaxDP } from "../../../../Utils/String"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 
+const styles = createStyles({
+    percentage: {
+        padding: 5,
+        textAlign: "center",
+        borderTop: "1px solid rgb(70, 70, 70)",
+        borderBottom: "1px solid rgb(70, 70, 70)"
+    }
+})
+
 interface CarStat {
     carName: string
     carPercentage: number
@@ -76,10 +85,10 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                         <>
                             <Grid container alignItems="center" justify="space-around" spacing={8}>
                                 <Grid item xs={3}>
-                                    <DirectionsCar/>
+                                    <Typography> <DirectionsCar/> </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Typography variant="subheading">
+                                    <Typography variant="subtitle1">
                                         favourite car
                                     </Typography>
                                 </Grid>
@@ -98,10 +107,10 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                             </Grid>
                             <Grid container alignItems="center" justify="space-around" spacing={8}>
                                 <Grid item xs={3}>
-                                    <People/>
+                                    <Typography> <People/> </Typography>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    <Typography variant="subheading">
+                                    <Typography variant="subtitle1">
                                         plays with
                                     </Typography>
                                 </Grid>
@@ -141,15 +150,5 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
         this.setState({reloadSignal: !this.state.reloadSignal})
     }
 }
-
-const styles = createStyles({
-    percentage: {
-        padding: 5,
-        textAlign: "center",
-        borderTop: "1px solid rgb(70, 70, 70)",
-        borderBottom: "1px solid rgb(70, 70, 70)",
-        backgroundColor: "rgb(218, 248, 213)"
-    }
-})
 
 export const PlayerStatsCard = withStyles(styles)(PlayerStatsCardComponent)
