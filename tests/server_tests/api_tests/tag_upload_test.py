@@ -3,10 +3,9 @@ import io
 import zlib
 
 from requests import Request
-
-from backend.database.objects import Game, Player, Tag, GameVisibilitySetting
+from backend.blueprints.spa_api.service_layers.replay.tag import Tag as ServiceTag
+from backend.database.objects import Game, Player, Tag
 from backend.database.startup import get_current_session
-from backend.blueprints.spa_api.errors.errors import MismatchedQueryParams
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord, write_proto_pandas_to_file, \
     get_test_file
 from tests.utils.database_utils import default_player_id
@@ -78,10 +77,15 @@ class Test_upload_file_with_tags:
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
 
+        r = Request('GET', LOCAL_URL + '/api/player/76561198018756583/match_history?page=0&limit=10')
+        response = test_client.send(r)
+        assert response.status_code == 200
+        assert len(response.json['replays']) == 1
+
     def test_replay_basic_server_upload_with_duplicate_tags(self, test_client):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
-        assert(game==None)
+        assert game is None
         params = {'player_id': default_player_id(), 'tags': [TAG_NAME, TAG_NAME]}
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)},
                     params=params)
@@ -112,17 +116,6 @@ class Test_upload_file_with_tags:
 
         assert(response.status_code == 400)
 
-    def test_invalid_tag_length(self, test_client):
-        params = {'tag_ids': [TAG_NAME, TAG_NAME + "2"], 'private_tag_keys': ['key1'], "player_id": "10"}
-        r = Request('POST', LOCAL_URL + '/api/upload',
-                    files={'replays': ('fake_file.replay', self.stream)}, params=params)
-
-        response = test_client.send(r)
-
-        assert(response.status_code == 400)
-        data = response.json['message']
-        assert(str(data) == MismatchedQueryParams('tag_ids', 'private_tag_keys', 2, 1).message)
-
     def test_tag_creation_private_key(self, test_client, mock_user):
         fake_session = get_current_session()
         params = {'private_key': 'fake_private_key'}
@@ -145,7 +138,7 @@ class Test_upload_file_with_tags:
 
         response = test_client.send(r)
         assert(response.status_code == 200)
-        assert response.json == 'fake_private_key'
+        assert response.json == ServiceTag.encode_tag(tag.id, 'fake_private_key')
 
     def test_tag_creation_no_private_key(self, test_client, mock_user):
         fake_session = get_current_session()
@@ -171,7 +164,7 @@ class Test_upload_file_with_tags:
     def test_replay_basic_server_upload_with_private_tags(self, test_client, mock_user):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
-        assert(game==None)
+        assert game is None
 
         params = {'private_key': 'fake_private_key'}
         r = Request('PUT', LOCAL_URL + '/api/tag/' + TAG_NAME,
@@ -182,7 +175,13 @@ class Test_upload_file_with_tags:
 
         tag = fake_session.query(Tag).first()
 
-        params = {'tag_ids': [str(tag.id)], 'private_tag_keys': ['fake_private_key']}
+        r = Request('GET', LOCAL_URL + '/api/tag/' + TAG_NAME + '/private_key')
+        response = test_client.send(r)
+
+        encoded_key = ServiceTag.encode_tag(tag.id, tag.private_id)
+        assert response.json == encoded_key
+
+        params = {'private_tag_keys': [encoded_key]}
         r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)},
                     params=params)
 
@@ -237,3 +236,12 @@ class Test_upload_file_with_tags:
 
         player = fake_session.query(Player.platformid == proto_game.players[0].id.id).first()
         assert(player is not None)
+
+    def test_key_encode_decode(self):
+        ids = [10, 20000, 5, 12345678, 5, 20, 5]
+        keys = ['10', '::::', 'banana', 'abcdefghijklmnopqrstuvwxyz', '', 'test', '!@#$%^&*()+']
+        for index, id in enumerate(ids):
+            encoded = ServiceTag.encode_tag(id, keys[index])
+            test_id, test_key = ServiceTag.decode_tag(encoded)
+            assert test_id == id
+            assert test_key == keys[index]

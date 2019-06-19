@@ -9,7 +9,7 @@ import requests
 from carball.decompile_replays import analyze_replay_file
 
 from RLBotServer import start_server
-from database.objects import GameVisibilitySetting
+from backend.database.objects import GameVisibilitySetting
 from tests.utils.killable_thread import KillableThread
 from tests.utils.replay_utils import get_test_file, clear_dir, write_proto_pandas_to_file
 

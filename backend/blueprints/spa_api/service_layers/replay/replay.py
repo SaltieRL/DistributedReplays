@@ -32,7 +32,7 @@ class Replay:
         self.gameMode = game_mode
         self.gameScore = game_score.__dict__
         self.players = [player.__dict__ for player in players]
-        self.tags = [tag.__dict__ for tag in tags]
+        self.tags = [tag.to_JSON() for tag in tags]
         self.visibility = visibility.value
 
     @staticmethod

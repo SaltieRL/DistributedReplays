@@ -40,7 +40,7 @@ class TagWrapper:
         return tag
 
     @staticmethod
-    def get_tag_by_id(session, tag_id: str) -> Tag:
+    def get_tag_by_id(session, tag_id: int) -> Tag:
         tag = session.query(Tag).filter(Tag.id == tag_id).first()
         if tag is None:
             raise DBTagNotFound()

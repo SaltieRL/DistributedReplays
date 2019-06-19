@@ -224,18 +224,10 @@ def api_get_player_play_style_progress(id_, query_params=None):
 
 
 @bp.route('player/<id_>/match_history')
-def api_get_player_match_history(id_):
-    page = request.args.get('page')
-    limit = request.args.get('limit')
-
-    if page is None or limit is None:
-        missing_params = []
-        if page is None:
-            missing_params.append('page')
-        if limit is None:
-            missing_params.append('limit')
-        raise MissingQueryParams(missing_params)
-    match_history = MatchHistory.create_from_id(id_, int(page), int(limit))
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
+                                          QueryParam(name='limit', type_=int, optional=False)])
+def api_get_player_match_history(id_, query_params=None):
+    match_history = MatchHistory.create_from_id(id_, query_params['page'], query_params['limit'])
     return better_jsonify(match_history)
 
 
@@ -469,10 +461,7 @@ def api_get_tags(query_params=None):
 @bp.route('/tag/<name>/private_key', methods=["GET"])
 @require_user
 def api_get_tag_key(name: str):
-    tag = Tag.get_tag(name)
-    if tag.db_tag.private_id is None:
-        raise TagNotFound()
-    return better_jsonify(tag.db_tag.private_id)
+    return better_jsonify(Tag.get_encoded_private_key(name))
 
 
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
