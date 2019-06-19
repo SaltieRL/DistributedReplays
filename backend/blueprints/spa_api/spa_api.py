@@ -395,20 +395,18 @@ def api_upload_replays(query_params=None):
 
 
 @bp.route('/upload', methods=['GET'])
-def api_get_parse_status():
+@with_query_params(accepted_query_params=[QueryParam(name="ids", is_list=True, type_=str, optional=True)])
+def api_get_parse_status(query_params=None):
     ids = request.args.getlist("ids")
     states = [celery_tasks.get_task_state(id_).name for id_ in ids]
     return jsonify(states)
 
 
 @bp.route('/upload/proto', methods=['POST'])
-def api_upload_proto():
-    print('Proto uploaded')
-
+@with_query_params(accepted_query_params=upload_file_query_params)
+def api_upload_proto(query_params=None):
     # Convert to byte files from base64
     response = request.get_json()
-
-    print("Args:", request.args)
 
     proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
 
@@ -416,7 +414,7 @@ def api_upload_proto():
 
     # Process
     try:
-        parsed_replay_processing(protobuf_game)
+        parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
         log_error(e, logger=logger)
 

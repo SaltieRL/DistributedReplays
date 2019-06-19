@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import requests
 from carball import analyze_replay_file
@@ -6,8 +7,12 @@ from carball import analyze_replay_file
 from tests.utils.location_utils import get_test_folder, get_test_replay_folder
 
 
-def get_test_file(file_name, temp_folder=None):
-    return os.path.join(get_test_folder(temp_folder=temp_folder), file_name)
+def get_test_file(file_name, temp_folder=None, is_replay=False):
+    if is_replay:
+        folder = get_test_replay_folder()
+    else:
+        folder = get_test_folder(temp_folder=temp_folder)
+    return os.path.join(folder, file_name)
 
 
 def download_replay_discord(url):
@@ -29,6 +34,17 @@ def parse_file(replay):
     else:
         guid = proto.game_metadata.id
     return replay, proto, guid
+
+
+def write_proto_pandas_to_file(filename):
+    proto_manager = analyze_replay_file(filename)
+    _, proto_name = tempfile.mkstemp(dir=get_test_folder())
+    with open(proto_name, 'wb') as f:
+        proto_manager.write_proto_out_to_file(f)
+    _, pandas_name = tempfile.mkstemp(dir=get_test_folder())
+    with open(pandas_name, 'wb') as f:
+        proto_manager.write_pandas_out_to_file(f)
+    return proto_name, pandas_name, proto_manager.protobuf_game
 
 
 def get_complex_replay_list():

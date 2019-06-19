@@ -153,17 +153,24 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
 
     query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
 
+    try:
+        game_id = protobuf_game.game_metadata.match_guid
+        if game_id == "":
+            game_id = protobuf_game.game_metadata.id
+    except:
+        game_id = None
+
     error_counter = []
     # Add game visibility option
     try:
-        apply_game_visibility(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid,
+        apply_game_visibility(query_params=query_params, game_id=game_id,
                               game_exists=match_exists)
     except CalculatedError as e:
         error_counter.append('visibility')
         log_error(e, message='Error changing visibility', logger=logger)
     # Add game visibility option
     try:
-        apply_tags_to_game(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid)
+        apply_tags_to_game(query_params=query_params, game_id=game_id)
     except CalculatedError as e:
         error_counter.append('tags')
         log_error(e, message='Error adding tags', logger=logger)
