@@ -2,9 +2,9 @@ import { Grid, Typography } from "@material-ui/core"
 import * as React from "react"
 import { RouteComponentProps } from "react-router"
 import { MatchHistoryResponse, Replay } from "../../Models"
+import { getTaggedMatches } from "../../Requests/Player/getTaggedReplays"
 import { ReplaysSearchResultDisplay } from "../ReplaysSearch/ReplaysSearchResultDisplay"
 import { BasePage } from "./BasePage"
-import { getTaggedMatches } from "../../Requests/Player/getTaggedReplays"
 
 interface State {
     replaySearchResult?: MatchHistoryResponse
@@ -16,7 +16,6 @@ interface RouteParams {
 }
 
 type Props = RouteComponentProps<RouteParams>
-
 
 export class TaggedMatchesPage extends React.PureComponent<Props, State> {
     constructor(props: Props) {
