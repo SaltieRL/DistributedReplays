@@ -69,13 +69,3 @@ class Test_UploadingProtos():
         except:
             pass
         cls.thread.join()
-
-    def __decompile_replay(self, filename):
-        proto_manager = analyze_replay_file(filename)
-        _, proto_name = tempfile.mkstemp()
-        with open(proto_name, 'wb') as f:
-            proto_manager.write_proto_out_to_file(f)
-        _, pandas_name = tempfile.mkstemp()
-        with open(pandas_name, 'wb') as f:
-            proto_manager.write_pandas_out_to_file(f)
-        return proto_name, pandas_name
