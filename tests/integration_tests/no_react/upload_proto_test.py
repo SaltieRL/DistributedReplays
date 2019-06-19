@@ -19,7 +19,7 @@ LOCAL_URL = 'http://localhost:8000'
 class Test_UploadingProtos():
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         cls.thread = KillableThread(target=start_server)
         cls.thread.daemon = True
         cls.thread.start()
@@ -52,7 +52,7 @@ class Test_UploadingProtos():
         self.assertEqual(int(result), 1)
 
     @classmethod
-    def tearDownClass(cls) -> None:
+    def teardown_class(cls):
         clear_dir()
         try:
             cls.thread.terminate()
