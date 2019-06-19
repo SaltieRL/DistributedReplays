@@ -34,12 +34,21 @@ class Tag:
 
     @staticmethod
     @with_session
+    def add_private_key(name: str, private_key: str, session=None, player_id=None):
+        try:
+            TagWrapper.add_private_key_to_tag(session, get_current_user_id(player_id=player_id), name, private_key)
+        except DBTagNotFound:
+            raise TagNotFound()
+
+    @staticmethod
+    @with_session
     def create(name: str, session=None, player_id=None, private_key=None) -> 'Tag':
         """
         Creates a new instance of Tag, add one to the db if it does not exist.
         :param name: Tag name
         :param session: Database session
         :param player_id
+        :param private_key
         :return:
         """
         # Check if tag exists

@@ -464,6 +464,13 @@ def api_get_tag_key(name: str):
     return better_jsonify(Tag.get_encoded_private_key(name))
 
 
+@bp.route('/tag/<name>/private_key/<private_id>', methods=["PUT"])
+@require_user
+def api_add_tag_key(name: str, private_id: str):
+    Tag.add_private_key(name, private_id)
+    return better_jsonify(private_id), 204
+
+
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
 @require_user
 def api_add_tag_to_game(name: str, id_: str):

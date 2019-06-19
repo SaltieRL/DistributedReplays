@@ -89,6 +89,14 @@ class TagWrapper:
 
         return [game_tag.game_id for game_tag in game_tags]
 
+    @staticmethod
+    def add_private_key_to_tag(session, user_id: str, name: str, private_key: str):
+        dbtag = TagWrapper.get_tag_by_name(session, user_id, name)
+        dbtag.private_id = private_key
+        session.commit()
+
+
+
 
 class DBTagNotFound(Exception):
     pass
