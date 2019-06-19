@@ -1,4 +1,6 @@
+import base64
 import time
+import zlib
 from datetime import datetime
 import io
 from requests import Request
@@ -9,7 +11,8 @@ from backend.utils.time_related import hour_rounder
 from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat
 from backend.blueprints.spa_api.utils.query_param_definitions import visibility_params
 from tests.utils.database_utils import default_player_id
-from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
+from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord, write_proto_pandas_to_file, \
+    get_test_file
 
 LOCAL_URL = 'http://localhost:8000'
 
@@ -139,3 +142,38 @@ class Test_upload_file:
         assert(game_visiblity.player == '76561198018756583')
         assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
         assert(game_visiblity.release_date == datetime.max)
+
+    def test_proto_upload_with_privacy(self, test_client):
+
+        proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file(get_complex_replay_list()[0],
+                                                                             is_replay=True))
+
+        with open(proto, 'rb') as f:
+            encoded_proto = base64.b64encode(zlib.compress(f.read())).decode()
+        with open(pandas, 'rb') as f:
+            encoded_pandas = base64.b64encode(zlib.compress(f.read())).decode()
+        obj = {
+            'status': '200',
+            'proto': encoded_proto,
+            'pandas': encoded_pandas
+        }
+        r = Request('POST', LOCAL_URL + '/api/upload/proto', json=obj, params={'visibility': GameVisibilitySetting.PRIVATE.name,
+                                                                               'player_id': proto_game.players[0].id.id})
+        response = test_client.send(r)
+        assert(response.status_code == 200)
+
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert(game.hash == '70DDECEA4653AC55EA77DBA0DB497995')
+
+        assert(game.name == '3 kickoffs 4 shots')
+        assert(game.visibility == GameVisibilitySetting.PRIVATE)
+
+        game_visiblity = fake_session.query(GameVisibility).first()
+        assert(game_visiblity.game == game.hash)
+        assert(game_visiblity.player == proto_game.players[0].id.id)
+        assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
+        assert(game_visiblity.release_date == datetime.max)
+
+        player = fake_session.query(Player.platformid == proto_game.players[0].id.id).first()
+        assert(player is not None)

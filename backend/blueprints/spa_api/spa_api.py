@@ -224,18 +224,10 @@ def api_get_player_play_style_progress(id_, query_params=None):
 
 
 @bp.route('player/<id_>/match_history')
-def api_get_player_match_history(id_):
-    page = request.args.get('page')
-    limit = request.args.get('limit')
-
-    if page is None or limit is None:
-        missing_params = []
-        if page is None:
-            missing_params.append('page')
-        if limit is None:
-            missing_params.append('limit')
-        raise MissingQueryParams(missing_params)
-    match_history = MatchHistory.create_from_id(id_, int(page), int(limit))
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
+                                          QueryParam(name='limit', type_=int, optional=False)])
+def api_get_player_match_history(id_, query_params=None):
+    match_history = MatchHistory.create_from_id(id_, query_params['page'], query_params['limit'])
     return better_jsonify(match_history)
 
 
@@ -395,20 +387,18 @@ def api_upload_replays(query_params=None):
 
 
 @bp.route('/upload', methods=['GET'])
-def api_get_parse_status():
+@with_query_params(accepted_query_params=[QueryParam(name="ids", is_list=True, type_=str, optional=True)])
+def api_get_parse_status(query_params=None):
     ids = request.args.getlist("ids")
     states = [celery_tasks.get_task_state(id_).name for id_ in ids]
     return jsonify(states)
 
 
 @bp.route('/upload/proto', methods=['POST'])
-def api_upload_proto():
-    print('Proto uploaded')
-
+@with_query_params(accepted_query_params=upload_file_query_params)
+def api_upload_proto(query_params=None):
     # Convert to byte files from base64
     response = request.get_json()
-
-    print("Args:", request.args)
 
     proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
 
@@ -416,7 +406,7 @@ def api_upload_proto():
 
     # Process
     try:
-        parsed_replay_processing(protobuf_game)
+        parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
         log_error(e, logger=logger)
 
@@ -471,10 +461,14 @@ def api_get_tags(query_params=None):
 @bp.route('/tag/<name>/private_key', methods=["GET"])
 @require_user
 def api_get_tag_key(name: str):
-    tag = Tag.get_tag(name)
-    if tag.db_tag.private_id is None:
-        raise TagNotFound()
-    return better_jsonify(tag.db_tag.private_id)
+    return better_jsonify(Tag.get_encoded_private_key(name))
+
+
+@bp.route('/tag/<name>/private_key/<private_id>', methods=["PUT"])
+@require_user
+def api_add_tag_key(name: str, private_id: str):
+    Tag.add_private_key(name, private_id)
+    return better_jsonify(private_id), 204
 
 
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
