@@ -45,11 +45,11 @@ class Test_UploadingProtos():
                                                                              'player_id': proto_game.players[0].id.id})
 
         r.raise_for_status()
-        self.assertEqual(r.status_code, 200)
+        assert r.status_code == 200
 
         r = requests.get(LOCAL_URL + '/api/global/replay_count')
         result = json.loads(r.content)
-        self.assertEqual(int(result), 1)
+        assert int(result) == 1
 
     @classmethod
     def teardown_class(cls):
