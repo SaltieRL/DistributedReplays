@@ -76,7 +76,7 @@ class Test_BasicServerCommands():
 
         response = requests.get(LOCAL_URL + '/api/player/76561198018756583/match_history?page=0&limit=10')
         assert response.status_code == 200
-        assert len(response.json['replays']) >= 1
+        assert len(response.json()['replays']) >= 1
         assert no_errors_are_logged.get_mock().assert_called_with(PlayerNotFound())
 
     @classmethod
