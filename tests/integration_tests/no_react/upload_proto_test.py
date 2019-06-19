@@ -16,7 +16,7 @@ from tests.utils.replay_utils import get_test_file, clear_dir, write_proto_panda
 LOCAL_URL = 'http://localhost:8000'
 
 
-class Test_UploadingProtos(unittest.TestCase):
+class Test_UploadingProtos():
 
     @classmethod
     def setUpClass(cls):
@@ -38,7 +38,7 @@ class Test_UploadingProtos(unittest.TestCase):
                                                                              is_replay=True))
 
         users = [
-            proto_game.players[0].id
+            proto_game.players[0].id.id
         ]
 
         with open(proto, 'rb') as f:
