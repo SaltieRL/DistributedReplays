@@ -470,20 +470,27 @@ def api_add_tag_key(name: str, private_id: str):
     Tag.add_private_key(name, private_id)
     return better_jsonify(private_id), 204
 
-
+# Add a tag to a replay
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
 @require_user
 def api_add_tag_to_game(name: str, id_: str):
     Tag.add_tag_to_game(name, id_)
     return '', 204
 
-
+# Delete a tag from a replay
 @bp.route('/tag/<name>/replay/<id_>', methods=["DELETE"])
 @require_user
 def api_remove_tag_from_game(name: str, id_: str):
     Tag.remove_tag_from_game(name, id_)
     return '', 204
 
+
+# Get a list of replays that this <user_id> has tagged as <tag_name>
+@bp.route('/players/<user_id>/tag/<tag_name>')
+def api_get_replays_with_tag_by_player(user_id: str, tag_name: str):
+    tags = MatchHistory.get_replays_with_tag(user_id, tag_name)
+
+    return better_jsonify(tags)
 
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):
