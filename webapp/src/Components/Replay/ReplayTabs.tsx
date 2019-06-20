@@ -97,10 +97,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                         <Tab key="teamStats" label="Team Stats" value="teamStats"/> :
                         <TabDisabled label="Team Stats"/>
                     }
-                    {this.props.loggedInUser && this.props.loggedInUser.alpha &&
-                    [
-                        <Tab key="replayViewer" label="Replay Viewer" value="replayViewer"/>
-                    ]
+                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
+                        <Tab key="replayViewer" label="Replay Viewer" value="replayViewer"/> :
+                        <TabDisabled label="Replay Viewer"/>
                     }
 
                     <Tab key="qrCode" label="QR Code" value="qrCode"/>
