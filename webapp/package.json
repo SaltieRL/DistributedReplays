@@ -37,7 +37,7 @@
         "redux": "^4.0.0",
         "redux-actions": "^2.6.4",
         "redux-devtools-extension": "^2.13.5",
-        "replay-viewer": "^0.3.2",
+        "replay-viewer": "^0.3.3",
         "three": "^0.104.0"
     },
     "scripts": {
