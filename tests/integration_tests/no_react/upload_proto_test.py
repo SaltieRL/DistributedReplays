@@ -50,6 +50,18 @@ class Test_UploadingProtos():
         r = requests.get(LOCAL_URL + '/api/global/replay_count')
         result = json.loads(r.content)
         assert int(result) == 1
+        
+        response = requests.get(LOCAL_URL + '/api/tag')
+
+        result = json.loads(response.content)
+        assert result[0]['owner_id'] == "76561198018756583"
+        assert result[0]['name'].startswith('TAG')
+        assert len(result) == 3
+
+        response = requests.get(LOCAL_URL + '/api/player/76561198018756583/match_history?page=0&limit=10')
+        assert response.status_code == 200
+        assert len(response.json()['replays']) >= 1
+
 
     @classmethod
     def teardown_class(cls):
