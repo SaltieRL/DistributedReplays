@@ -56,7 +56,7 @@ class Test_UploadingProtos():
         result = json.loads(response.content)
         assert result[0]['owner_id'] == "76561198018756583"
         assert result[0]['name'].startswith('TAG')
-        assert len(result) == 3
+        assert len(result) == 1
 
         response = requests.get(LOCAL_URL + '/api/player/76561198018756583/match_history?page=0&limit=10')
         assert response.status_code == 200
