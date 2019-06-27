@@ -4,7 +4,7 @@ import numpy as np
 from carball.generated.api.game_pb2 import Game
 from flask import current_app
 
-from database.utils.file_manager import get_pandas, get_proto
+from backend.database.utils.file_manager import get_pandas, get_proto
 
 
 class ReplayHeatmaps:
