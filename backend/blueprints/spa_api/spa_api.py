@@ -24,6 +24,7 @@ from backend.tasks.add_replay import create_replay_task, parsed_replay_processin
 from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
+from database.utils.file_manager import get_replay_path
 
 try:
     import config
@@ -302,7 +303,7 @@ def api_download_group():
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
     filename = id_ + ".replay"
-    path = os.path.join(current_app.config['REPLAY_DIR'], filename)
+    path = get_replay_path(current_app, id_)
     if os.path.isfile(path):
         return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
     elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):

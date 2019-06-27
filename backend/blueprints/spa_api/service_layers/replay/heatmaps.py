@@ -1,36 +1,18 @@
-import gzip
 import math
-import os
 
 import numpy as np
-from carball.analysis.utils import pandas_manager, proto_manager
 from carball.generated.api.game_pb2 import Game
 from flask import current_app
 
-from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
-from backend.utils.cloud_handler import download_df, download_proto
+from database.utils.file_manager import get_pandas, get_proto
 
 
 class ReplayHeatmaps:
 
     @staticmethod
     def create_from_id(id_: str, type_="positioning") -> 'ReplayHeatmaps':
-        pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
-        gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
-        replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-        if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-            raise ReplayNotFound()
-        if not os.path.isfile(gzip_path):
-            data_frame = download_df(id_)
-            protobuf_game = download_proto(id_)
-        else:
-            try:
-                with gzip.open(gzip_path, 'rb') as gz:
-                    data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(gz)
-                with open(pickle_path, 'rb') as f:
-                    protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-            except Exception as e:
-                raise ErrorOpeningGame(str(e))
+        data_frame = get_pandas(current_app, id_)
+        protobuf_game = get_proto(current_app, id_)
         # output = generate_heatmaps(data_frame, protobuf_game, type="hits")
         width = 400 / 500
         step = 350.0
