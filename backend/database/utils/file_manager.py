@@ -4,9 +4,9 @@ from enum import Enum
 
 from carball.analysis.utils import proto_manager, pandas_manager
 
-from blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
-from utils.checks import log_error
-from utils.cloud_handler import download_proto, download_df, download_replay
+from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
+from backend.utils.checks import log_error
+from backend.utils.cloud_handler import download_proto, download_df, download_replay
 
 replay_directory = 'REPLAY_DIR'
 parsed_directory = 'PARSED_DIR'
