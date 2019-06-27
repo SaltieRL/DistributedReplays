@@ -1,8 +1,11 @@
 import base64
 import time
+import urllib
 import zlib
 from datetime import datetime
 import io
+
+import responses
 from requests import Request
 
 from backend.database.objects import Game, GameVisibilitySetting, GameVisibility, PlayerGame, Player
@@ -51,6 +54,33 @@ class Test_upload_file:
         assert(game_visiblity.player == default_player_id())
         assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
         assert(game_visiblity.release_date == hour_rounder(date))
+
+    @responses.activate
+    def test_replay_basic_server_upload_private_replay(self, test_client, gcp):
+        responses.add(responses.POST, gcp.get_url())
+        game = get_current_session().query(Game).filter(Game.hash == '70DDECEA4653AC55EA77DBA0DB497995').all()
+        assert len(game) == 0
+        date = datetime.utcnow()
+        timestamp = int(datetime.timestamp(date))
+
+        params = {'player_id': default_player_id(), 'visibility': GameVisibilitySetting.PRIVATE.name,
+                  'release_date': str(timestamp)}
+        r = Request('POST', LOCAL_URL + '/api/upload',
+                    files={'replays': ('fake_file.replay', self.stream)}, params=params)
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 202)
+
+        assert len(responses.calls) == 1
+
+        request_url = responses.calls[0].request.url
+        parse_result = urllib.parse.urlparse(request_url)
+        query_result = urllib.parse.parse_qs(parse_result.query)
+        assert query_result['player_id'] == [str(default_player_id())]
+        assert query_result['visibility'] == [GameVisibilitySetting.PRIVATE.name]
+        assert query_result['release_date'] == [str(float(timestamp))]
+        assert query_result['uuid'] is not None
 
     def test_setting_visibility_fails_if_replay_exists(self, test_client, no_errors_are_logged):
         no_errors_are_logged.cancel_check()

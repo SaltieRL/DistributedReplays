@@ -19,26 +19,17 @@ from backend.database.utils.utils import add_objects
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length, get_default_parse_folder
 from backend.utils.checks import log_error
-from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df
+from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df, GCPManager
 
 logger = logging.getLogger(__name__)
 
-try:
-    import config
-
-    GCP_URL = config.GCP_URL
-    CLOUD_THRESHOLD = config.CLOUD_THRESHOLD
-except:
-    print('Not using GCP')
-    GCP_URL = None
-    CLOUD_THRESHOLD = 100  # threshold of queue size for cloud parsing
-
 
 def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, any] = None):
-    if should_go_to_gcp():
+    if GCPManager.should_go_to_gcp(get_queue_length):
         encoded_file = base64.b64encode(file.read())
         try:
-            r = requests.post(GCP_URL + '&uuid=' + str(uuid), data=encoded_file, timeout=0.5)
+            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=0.5,
+                              params={**{'uuid': uuid}, **query_params})
         except ReadTimeout as e:
             pass  # we don't care, it's given
         except Exception as e:
@@ -50,11 +41,6 @@ def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, a
         file.save(filename)
         result = celery_tasks.add_replay_parse_task(os.path.abspath(filename), query_params)
         task_ids.append(result.id)
-
-
-def should_go_to_gcp():
-    lengths = get_queue_length()  # priority 0,3,6,9
-    return lengths[1] > CLOUD_THRESHOLD and GCP_URL is not None
 
 
 def parse_replay(self, filename, preserve_upload_date: bool = False,
