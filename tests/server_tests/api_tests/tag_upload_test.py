@@ -1,7 +1,9 @@
 import base64
 import io
+import urllib
 import zlib
 
+import responses
 from requests import Request
 from backend.blueprints.spa_api.service_layers.replay.tag import Tag as ServiceTag
 from backend.database.objects import Game, Player, Tag
@@ -49,6 +51,30 @@ class Test_upload_file_with_tags:
 
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
+
+
+    @responses.activate
+    def test_replay_basic_server_upload_with_tags_gcp(self, test_client, gcp):
+        responses.add(responses.POST, gcp.get_url())
+        fake_session = get_current_session()
+        game = fake_session.query(Game).first()
+        assert game is None
+        params = {'player_id': default_player_id(), 'tags': [TAG_NAME, TAG_NAME + "hello"]}
+        r = Request('POST', LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', self.stream)},
+                    params=params)
+
+        response = test_client.send(r)
+
+        assert(response.status_code == 202)
+
+        assert len(responses.calls) == 1
+
+        request_url = responses.calls[0].request.url
+        parse_result = urllib.parse.urlparse(request_url)
+        query_result = urllib.parse.parse_qs(parse_result.query)
+        assert query_result['player_id'] == [str(default_player_id())]
+        assert query_result['tags'] == [TAG_NAME, TAG_NAME + "hello"]
+        assert query_result['uuid'] is not None
 
     def test_replay_basic_server_upload_with_multiple_tags(self, test_client):
         fake_session = get_current_session()

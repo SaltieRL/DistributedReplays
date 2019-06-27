@@ -1,6 +1,7 @@
 import gzip
 import io
 import os
+from typing import Callable
 
 import requests
 from carball.analysis.utils import pandas_manager, proto_manager
@@ -20,6 +21,29 @@ try:
 except:
     print("Google Cloud Storage is not installed. Install it with `pip install google-cloud-storage`")
     storage = None
+
+
+
+try:
+    import config
+
+    GCP_URL = config.GCP_URL
+    CLOUD_THRESHOLD = config.CLOUD_THRESHOLD
+except:
+    print('Not using GCP')
+    GCP_URL = None
+    CLOUD_THRESHOLD = 100  # threshold of queue size for cloud parsing
+
+
+class GCPManager:
+    @staticmethod
+    def get_gcp_url():
+        return GCP_URL
+
+    @staticmethod
+    def should_go_to_gcp(get_queue_length: Callable):
+        lengths = get_queue_length()  # priority 0,3,6,9
+        return lengths[1] > CLOUD_THRESHOLD and GCPManager.get_gcp_url() is not None
 
 
 def download_proto(id_):
