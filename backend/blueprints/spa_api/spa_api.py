@@ -24,7 +24,7 @@ from backend.tasks.add_replay import create_replay_task, parsed_replay_processin
 from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
-from database.utils.file_manager import get_replay_path
+from backend.database.utils.file_manager import get_replay_path
 
 try:
     import config

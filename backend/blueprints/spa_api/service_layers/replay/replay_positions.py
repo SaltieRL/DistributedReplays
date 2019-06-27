@@ -2,8 +2,8 @@ from typing import List
 
 from flask import current_app
 
-from database.utils.file_manager import get_pandas, get_proto
-from .replay_player import ReplayPlayer
+from backend.database.utils.file_manager import get_pandas, get_proto
+from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
 
 
 class ReplayPositions:

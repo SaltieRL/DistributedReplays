@@ -14,7 +14,7 @@ from backend.database.objects import Game, PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.cloud_handler import download_proto
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
-from database.utils.file_manager import parsed_directory, get_proto_path, get_replay_path
+from backend.database.utils.file_manager import parsed_directory, get_proto_path, get_replay_path
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
