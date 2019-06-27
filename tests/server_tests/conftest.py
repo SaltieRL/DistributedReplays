@@ -130,7 +130,6 @@ def kill_database(request, engine, session, monkeypatch):
 
         from backend.database import startup
 
-
         monkeypatch.setattr(startup, 'stored_session', None)
         monkeypatch.setattr(startup, 'stored_redis', None)
         monkeypatch.setattr(startup, 'redis_attempted', False)
@@ -171,6 +170,27 @@ def seeded_random():
 @pytest.fixture()
 def no_requests(monkeypatch):
     monkeypatch.delattr("requests.sessions.Session.request")
+
+
+@pytest.fixture()
+def gcp(monkeypatch):
+    gcp_url = 'http://gcp.google.com'
+
+    def get_url():
+        return gcp_url
+
+    def should_go_to_gcp(ignore):
+        return True
+
+    from backend.utils.cloud_handler import GCPManager
+    monkeypatch.setattr(GCPManager, 'get_gcp_url', get_url)
+    monkeypatch.setattr(GCPManager, 'should_go_to_gcp', should_go_to_gcp)
+
+    class GCP:
+        def get_url(self):
+            return get_url()
+
+    return GCP()
 
 """
 #######################
