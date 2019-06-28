@@ -1,13 +1,11 @@
-import base64
 import json
 import time
-import zlib
 
 import requests
 
 from RLBotServer import start_server
 from tests.utils.killable_thread import KillableThread
-from tests.utils.replay_utils import write_proto_pandas_to_file, get_test_file
+from tests.utils.replay_utils import write_proto_pandas_to_file, get_test_file, download_replay_discord
 
 LOCAL_URL = 'http://localhost:8000'
 
@@ -27,19 +25,12 @@ class Test_Heatmaps:
         proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file("3_DRIBBLES_2_FLICKS.replay",
                                                                              is_replay=True))
 
-        with open(proto, 'rb') as f:
-            encoded_proto = base64.b64encode(zlib.compress(f.read())).decode()
-        with open(pandas, 'rb') as f:
-            encoded_pandas = base64.b64encode(zlib.compress(f.read())).decode()
-        obj = {
-            'status': '200',
-            'proto': encoded_proto,
-            'pandas': encoded_pandas
-        }
-        r = requests.post(LOCAL_URL + '/api/upload/proto', json=obj)
-
+        f = download_replay_discord("3_DRIBBLES_2_FLICKS.replay")
+        r = requests.post(LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', f)})
         r.raise_for_status()
-        assert r.status_code == 200
+        assert(r.status_code == 202)
+
+        time.sleep(30)
 
         r = requests.get(LOCAL_URL + '/api/global/replay_count')
         result = json.loads(r.content)
