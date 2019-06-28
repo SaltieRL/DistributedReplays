@@ -24,7 +24,7 @@ class Test_Heatmaps:
         print('done waiting')
 
     def test_heatmaps(self):
-        proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file("3_KICKOFFS_4_SHOTS.replay",
+        proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file("3_DRIBBLES_2_FLICKS.replay",
                                                                              is_replay=True))
 
         with open(proto, 'rb') as f:
