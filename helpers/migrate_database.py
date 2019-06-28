@@ -10,6 +10,7 @@ def clear_database(sess):
     s.execute('DROP TABLE PLAYERGAMES CASCADE;')
     s.execute('DROP TABLE game_visibility CASCADE;')
     s.execute('DROP TABLE game_tags CASCADE;')
+    s.execute('DROP TABLE tags CASCADE;')
     s.commit()
     s.close()
 

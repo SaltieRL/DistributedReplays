@@ -68,3 +68,4 @@ class Test_Heatmaps:
         except:
             pass
         cls.thread.join()
+        time.sleep(2)
