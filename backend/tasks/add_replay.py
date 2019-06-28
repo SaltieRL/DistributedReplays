@@ -138,6 +138,8 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
         return
 
     query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
+    if len(query_params) == 0:
+        return
 
     try:
         game_id = protobuf_game.game_metadata.match_guid

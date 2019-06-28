@@ -31,19 +31,19 @@ def get_pandas_path(current_app, replay_id: str):
 
 
 def get_replay(current_app, replay_id):
-    get_or_download(get_replay_path(current_app, replay_id),
+    return get_or_download(get_replay_path(current_app, replay_id),
                     lambda: download_replay(replay_id),
                     lambda item_path: open(item_path, 'rb'))
 
 
 def get_proto(current_app, replay_id):
-    get_or_download(get_replay_path(current_app, replay_id),
+    return get_or_download(get_proto_path(current_app, replay_id),
                     lambda: download_proto(replay_id),
                     lambda item_path: proto_manager.ProtobufManager.read_proto_out_from_file(open(item_path, 'rb')))
 
 
 def get_pandas(current_app, replay_id):
-    get_or_download(get_pandas_path(current_app, replay_id),
+    return get_or_download(get_pandas_path(current_app, replay_id),
                     lambda: download_df(replay_id),
                     lambda item_path: pandas_manager.PandasManager.safe_read_pandas_to_memory(gzip.open(item_path, 'rb')))
 

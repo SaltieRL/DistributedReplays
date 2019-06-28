@@ -13,7 +13,6 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory,
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
-from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
