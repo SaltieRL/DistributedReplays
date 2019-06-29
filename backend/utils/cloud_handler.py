@@ -52,6 +52,8 @@ def download_proto(id_):
     # PROTO
     pts_url = f'https://storage.googleapis.com/{PROTO_BUCKET}/{id_}.replay.pts'
     r = requests.get(pts_url)
+    if r.status_code == 404:
+        raise ReplayNotFound()
     with io.BytesIO(r.content) as f:
         protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
     return protobuf_game
@@ -68,6 +70,8 @@ def download_df(id_):
         raise ReplayNotFound()
     gzip_url = f'https://storage.googleapis.com/{PARSED_BUCKET}/{id_}.replay.gzip'
     r = requests.get(gzip_url)
+    if r.status_code == 404:
+        raise ReplayNotFound()
     try:
         with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as f:
             data_frame = pandas_manager.PandasManager.read_numpy_from_memory(f)
@@ -81,6 +85,18 @@ def upload_df(filepath, blob_name=None):
     if blob_name is None:
         blob_name = os.path.basename(filepath)
     return upload_to_bucket(blob_name, filepath, PARSED_BUCKET)
+
+
+def download_replay(id_):
+    if PROTO_BUCKET is None:
+        raise ReplayNotFound()
+    # PROTO
+    replay_url = f'https://storage.googleapis.com/{REPLAY_BUCKET}/{id_}.replay'
+    r = requests.get(replay_url)
+    if r.status_code == 404:
+        raise ReplayNotFound()
+    with io.BytesIO(r.content) as f:
+        return f
 
 
 def upload_replay(filepath, blob_name=None):

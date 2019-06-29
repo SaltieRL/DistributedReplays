@@ -157,6 +157,7 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
                     game.mmrs = match.mmrs
                 session.delete(match)
                 print('deleting {}'.format(match.hash))
+
         matches = session.query(Game).filter(Game.hash == game.replay_id).all()  # catch old replay ids
         if matches is not None and len(matches) > 0:
             for match in matches:

@@ -85,3 +85,4 @@ class Test_BasicServerCommands():
         except:
             pass
         cls.thread.join()
+        time.sleep(2)

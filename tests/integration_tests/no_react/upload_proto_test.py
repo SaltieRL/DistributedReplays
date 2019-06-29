@@ -71,3 +71,4 @@ class Test_UploadingProtos():
         except:
             pass
         cls.thread.join()
+        time.sleep(2)
