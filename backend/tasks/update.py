@@ -1,9 +1,9 @@
 import os
 import subprocess
 
-from blueprints.spa_api.errors.errors import AuthorizationException
-from server_constants import BASE_FOLDER
-from utils.checks import is_admin, is_local_dev
+from backend.blueprints.spa_api.errors.errors import AuthorizationException
+from backend.server_constants import BASE_FOLDER
+from backend.utils.checks import is_admin, is_local_dev
 
 try:
     import config
