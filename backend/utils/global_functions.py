@@ -3,6 +3,7 @@ import logging
 from flask import Flask, g
 
 from backend.utils.checks import get_checks
+from backend.database.objects import Player
 
 logger = logging.getLogger(__name__)
 
@@ -26,11 +27,15 @@ def debug(text):
     return ''
 
 
-def get_current_user_id():
-    return UserManager.get_current_user().platformid
-
+def get_current_user_id(player_id=None) -> str:
+    if player_id is not None:
+        return player_id
+    try:
+        return UserManager.get_current_user().platformid
+    except Exception as e:
+        logger.error(e)
 
 class UserManager:
     @staticmethod
-    def get_current_user():
+    def get_current_user() -> Player:
         return g.user
