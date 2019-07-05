@@ -29,11 +29,9 @@ visibility_params = [
 ]
 
 tag_params = [
-    QueryParam(name="tags", optional=True,
-               type_=str, is_list=True,
-               required_siblings=['player_id']),
     QueryParam(name="private_tag_keys", optional=True,
-               tip='This is base 64 encoded it is not the private key directly.',
+               tip='This is only required only if you wish to apply a tag that is owned by another account. ' +
+                   'This is base 64 encoded.',
                type_=str, is_list=True)
 ]
 

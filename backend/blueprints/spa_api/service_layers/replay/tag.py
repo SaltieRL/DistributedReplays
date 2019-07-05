@@ -8,6 +8,7 @@ from ...errors.errors import CalculatedError, TagNotFound, PlayerNotFound
 from backend.database.objects import Tag as DBTag, Player
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 
+
 class Tag:
     def __init__(self, name: str, owner: str, db_tag: DBTag = None):
         super().__init__()
@@ -138,22 +139,14 @@ class Tag:
         decoded_private_id = decoded_key[first_index + 1:]
         return tag_id, decoded_private_id
 
+
 @with_session
-def apply_tags_to_game(query_params: Dict[str, any]=None, game_id=None, session=None):
+def apply_tags_to_game(query_params: Dict[str, any] = None, game_id=None, session=None):
     if query_params is None:
         return None
-    if 'tags' not in query_params and 'private_tag_keys' not in query_params:
+    if 'private_tag_keys' not in query_params:
         return None
-    tags = query_params['tags'] if 'tags' in query_params else []
     private_ids = query_params['private_tag_keys'] if 'private_tag_keys' in query_params else []
-    if len(tags) > 0:
-        player_id = query_params['player_id']
-        if session.query(Player).filter(Player.platformid == player_id).first() is None:
-            log_error(PlayerNotFound())
-        else:
-            for tag in tags:
-                created_tag = Tag.create(tag, session=session, player_id=player_id)
-                TagWrapper.add_tag_to_game(session, game_id, created_tag.db_tag)
 
     for private_id in private_ids:
         tag_id, private_key = Tag.decode_tag(private_id)
