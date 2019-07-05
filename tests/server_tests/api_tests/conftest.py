@@ -13,6 +13,8 @@ class TestClient:
             return self.app.post
         if request.method == "PUT":
             return self.app.put
+        if request.method == "GET":
+            return self.app.get
 
     def send(self, request: Request) -> Response:
 
@@ -23,7 +25,10 @@ class TestClient:
 
         # extract data needed for content
         content_data = list(prepped.headers._store.items())
-        content_length = content_data[0][1][1]
+        try:
+            content_length = content_data[0][1][1]
+        except:
+            content_length = 0
         if int(content_length) > 0:
             content_type = content_data[1][1][1]
 

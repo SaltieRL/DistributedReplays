@@ -1,4 +1,4 @@
-# Calculated.gg Backend [![Build Status](https://api.travis-ci.org/SaltieRL/DistributedReplays.svg?branch=master)](https://travis-ci.org/SaltieRL/DistributedReplays)
+# Calculated.gg Backend [![Build Status](https://api.travis-ci.org/SaltieRL/DistributedReplays.svg?branch=master)](https://travis-ci.org/SaltieRL/DistributedReplays) [<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fcalculated">](https://www.patreon.com/calculated)  [<img src="https://img.shields.io/discord/482991399017512960.svg?colorB=7581dc&logo=discord&logoColor=white">](https://discord.gg/c8cArY9)
 
 ## Setup
 - Install Python 3.6/pip
@@ -71,3 +71,5 @@ Now go to `localhost:3000` and the site should be running.
 
 We run with pytest and use some features from it.
 If you are using an ide (pycharm/intellij) you must change the default runner from unit tests to pytests
+You can make this change by going to settings and searching for "unittest"
+[Python unit test configuration](https://www.jetbrains.com/help/idea/run-debug-configuration-python-unit-test.html)

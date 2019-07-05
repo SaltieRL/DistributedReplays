@@ -1,5 +1,7 @@
 import logging
 
+from flask import g
+
 logger = logging.getLogger(__name__)
 
 
@@ -28,14 +30,14 @@ def get_checks(global_state=None):
             return True
         if globals().user is None:
             return False
-        return global_state.admin
+        return globals().admin
 
     def is_alpha():
         if is_admin():
             return True
         if globals().user is None:
             return False
-        return global_state.alpha
+        return globals().alpha
 
     def is_beta():
         if is_admin():

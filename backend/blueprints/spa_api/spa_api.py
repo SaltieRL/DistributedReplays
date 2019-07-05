@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import io
+import json
 import logging
 import os
 import re
@@ -8,20 +9,21 @@ import uuid
 import zlib
 
 from carball.analysis.utils.proto_manager import ProtobufManager
-from flask import jsonify, Blueprint, current_app, request, send_from_directory
+from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
-from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
+from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
+from backend.database.utils.file_manager import get_replay_path
 
 try:
     import config
@@ -46,10 +48,9 @@ from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
 from backend.database.objects import Game, GameVisibilitySetting
-from backend.database.utils.utils import add_objects
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from .errors.errors import CalculatedError, MissingQueryParams
+from .errors.errors import CalculatedError, MissingQueryParams, TagNotFound
 from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
@@ -79,6 +80,12 @@ def better_jsonify(response: object):
     :param response: The object/list of objects to be jsonified.
     :return: The return value of jsonify.
     """
+    try:
+        if hasattr(response, 'to_JSON'):
+            return better_jsonify(response.to_JSON())
+    except:
+        pass
+
     try:
         return jsonify(response)
     except TypeError:
@@ -120,7 +127,15 @@ def api_get_global_graphs():
 
 @bp.route('/global/leaderboards')
 def api_get_leaderboards():
+    if lazy_get_redis() is not None:
+        if lazy_get_redis().get("leaderboards"):
+            resp = Response(response=lazy_get_redis().get("leaderboards"),
+                            status=200,
+                            mimetype="application/json")
+            return resp
     leaderboards = Leaderboards.create()
+    if lazy_get_redis() is not None:
+        lazy_get_redis().set("leaderboards", json.dumps([l.__dict__ for l in leaderboards]), ex=24 * 60 * 60)
     return better_jsonify(leaderboards)
 
 
@@ -209,18 +224,10 @@ def api_get_player_play_style_progress(id_, query_params=None):
 
 
 @bp.route('player/<id_>/match_history')
-def api_get_player_match_history(id_):
-    page = request.args.get('page')
-    limit = request.args.get('limit')
-
-    if page is None or limit is None:
-        missing_params = []
-        if page is None:
-            missing_params.append('page')
-        if limit is None:
-            missing_params.append('limit')
-        raise MissingQueryParams(missing_params)
-    match_history = MatchHistory.create_from_id(id_, int(page), int(limit))
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
+                                          QueryParam(name='limit', type_=int, optional=False)])
+def api_get_player_match_history(id_, query_params=None):
+    match_history = MatchHistory.create_from_id(id_, query_params['page'], query_params['limit'])
     return better_jsonify(match_history)
 
 
@@ -295,7 +302,7 @@ def api_download_group():
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
     filename = id_ + ".replay"
-    path = os.path.join(current_app.config['REPLAY_DIR'], filename)
+    path = get_replay_path(current_app, id_)
     if os.path.isfile(path):
         return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
     elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):
@@ -380,20 +387,18 @@ def api_upload_replays(query_params=None):
 
 
 @bp.route('/upload', methods=['GET'])
-def api_get_parse_status():
+@with_query_params(accepted_query_params=[QueryParam(name="ids", is_list=True, type_=str, optional=True)])
+def api_get_parse_status(query_params=None):
     ids = request.args.getlist("ids")
     states = [celery_tasks.get_task_state(id_).name for id_ in ids]
     return jsonify(states)
 
 
 @bp.route('/upload/proto', methods=['POST'])
-def api_upload_proto():
-    print('Proto uploaded')
-
+@with_query_params(accepted_query_params=upload_file_query_params)
+def api_upload_proto(query_params=None):
     # Convert to byte files from base64
     response = request.get_json()
-
-    print("Args:", request.args)
 
     proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
 
@@ -401,7 +406,7 @@ def api_upload_proto():
 
     # Process
     try:
-        parsed_replay_processing(protobuf_game)
+        parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
         log_error(e, logger=logger)
 
@@ -410,15 +415,21 @@ def api_upload_proto():
 
 ### TAG
 
-@require_user
 @bp.route('/tag/<name>', methods=["PUT"])
-def api_create_tag(name: str):
-    tag = Tag.create(name)
+@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name='private_key', type_=str, optional=True)
+])
+def api_create_tag(name: str, query_params=None):
+    private_key = None
+    if 'private_key' in query_params:
+        private_key = query_params['private_key']
+    tag = Tag.create(name, private_key=private_key)
     return better_jsonify(tag), 201
 
 
-@require_user
 @bp.route('/tag/<current_name>', methods=["PATCH"])
+@require_user
 def api_rename_tag(current_name: str):
     accepted_query_params = [QueryParam(name='new_name')]
     query_params = get_query_params(accepted_query_params, request)
@@ -427,29 +438,48 @@ def api_rename_tag(current_name: str):
     return better_jsonify(tag), 200
 
 
-@require_user
 @bp.route('/tag/<name>', methods=['DELETE'])
+@require_user
 def api_delete_tag(name: str):
     Tag.delete(name)
     return '', 204
 
 
-@require_user
 @bp.route('/tag')
-def api_get_tags():
-    tags = Tag.get_all()
-    return better_jsonify(tags)
-
-
 @require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name='with_id', type_=bool, optional=True)
+])
+def api_get_tags(query_params=None):
+    tags = Tag.get_all()
+    with_id = False
+    if 'with_id' in query_params:
+        with_id = query_params['with_id']
+    return better_jsonify([tag.to_JSON(with_id=with_id) for tag in tags])
+
+
+@bp.route('/tag/<name>/private_key', methods=["GET"])
+@require_user
+def api_get_tag_key(name: str):
+    return better_jsonify(Tag.get_encoded_private_key(name))
+
+
+@bp.route('/tag/<name>/private_key/<private_id>', methods=["PUT"])
+@require_user
+def api_add_tag_key(name: str, private_id: str):
+    Tag.add_private_key(name, private_id)
+    return better_jsonify(private_id), 204
+
+
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
+@require_user
 def api_add_tag_to_game(name: str, id_: str):
     Tag.add_tag_to_game(name, id_)
     return '', 204
 
 
-@require_user
 @bp.route('/tag/<name>/replay/<id_>', methods=["DELETE"])
+@require_user
 def api_remove_tag_from_game(name: str, id_: str):
     Tag.remove_tag_from_game(name, id_)
     return '', 204

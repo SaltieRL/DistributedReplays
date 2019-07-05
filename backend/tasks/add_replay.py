@@ -11,6 +11,7 @@ from carball import analyze_replay_file
 from requests import ReadTimeout
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.service_layers.replay.tag import apply_tags_to_game
 from backend.blueprints.spa_api.service_layers.replay.visibility import apply_game_visibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params
@@ -18,26 +19,17 @@ from backend.database.utils.utils import add_objects
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length, get_default_parse_folder
 from backend.utils.checks import log_error
-from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df
+from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df, GCPManager
 
 logger = logging.getLogger(__name__)
 
-try:
-    import config
-
-    GCP_URL = config.GCP_URL
-    CLOUD_THRESHOLD = config.CLOUD_THRESHOLD
-except:
-    print('Not using GCP')
-    GCP_URL = None
-    CLOUD_THRESHOLD = 100  # threshold of queue size for cloud parsing
-
 
 def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, any] = None):
-    if should_go_to_gcp():
+    if GCPManager.should_go_to_gcp(get_queue_length):
         encoded_file = base64.b64encode(file.read())
         try:
-            r = requests.post(GCP_URL + '&uuid=' + str(uuid), data=encoded_file, timeout=0.5)
+            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=0.5,
+                              params={**{'uuid': uuid}, **query_params})
         except ReadTimeout as e:
             pass  # we don't care, it's given
         except Exception as e:
@@ -49,11 +41,6 @@ def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, a
         file.save(filename)
         result = celery_tasks.add_replay_parse_task(os.path.abspath(filename), query_params)
         task_ids.append(result.id)
-
-
-def should_go_to_gcp():
-    lengths = get_queue_length()  # priority 0,3,6,9
-    return lengths[1] > CLOUD_THRESHOLD and GCP_URL is not None
 
 
 def parse_replay(self, filename, preserve_upload_date: bool = False,
@@ -151,12 +138,32 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
         return
 
     query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
+    if len(query_params) == 0:
+        return
 
+    try:
+        game_id = protobuf_game.game_metadata.match_guid
+        if game_id == "":
+            game_id = protobuf_game.game_metadata.id
+    except:
+        game_id = None
+
+    error_counter = []
     # Add game visibility option
     try:
-        apply_game_visibility(query_params=query_params, game_id=protobuf_game.game_metadata.match_guid,
+        apply_game_visibility(query_params=query_params, game_id=game_id,
                               game_exists=match_exists)
     except CalculatedError as e:
+        error_counter.append('visibility')
         log_error(e, message='Error changing visibility', logger=logger)
+    # Add game visibility option
+    try:
+        apply_tags_to_game(query_params=query_params, game_id=game_id)
+    except CalculatedError as e:
+        error_counter.append('tags')
+        log_error(e, message='Error adding tags', logger=logger)
 
-    logger.debug("SUCCESS: Processed all query params")
+    if len(error_counter) == 0:
+        logger.debug("SUCCESS: Processed all query params")
+    else:
+        logger.warning('Found ' + str(len(error_counter)) + ' errors while processing query params: ' + str(error_counter))

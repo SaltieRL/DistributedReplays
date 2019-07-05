@@ -145,10 +145,11 @@ class CalculatedServer:
         @app.route('/', defaults={'path': ''})
         @app.route('/<path:path>')
         def home(path):
+            # os.path uses cwd (..) while send_from_directory uses file location (.)
             if path != "" and os.path.exists("webapp/build/" + path):
-                return send_from_directory('webapp/build', path)
+                return send_from_directory('../webapp/build', path)
             else:
-                return send_from_directory('webapp/build', 'index.html')
+                return send_from_directory('../webapp/build', 'index.html')
 
         @app.route('/robots.txt')
         @app.route('/sitemap.xml')

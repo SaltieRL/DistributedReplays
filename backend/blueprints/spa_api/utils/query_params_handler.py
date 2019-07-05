@@ -1,10 +1,10 @@
-from enum import Enum
-from typing import List, Dict, Any, Callable, Type, TypeVar
+from typing import List, Dict, Any, Callable, Optional
 from urllib.parse import urlencode
 
 from flask import Request
 
-from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat
+from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat, MismatchedQueryParams, \
+    CalculatedError
 
 
 class QueryParam:
@@ -72,20 +72,48 @@ def parse_query_params(query_params: List[QueryParam], args: Dict[str, str], add
     return found_query_params
 
 
-def create_validation_for_query_params(query_params: List[QueryParam], provided_params: List[str]):
+def create_validation_for_query_params(query_params: List[QueryParam], provided_params: List[str]) -> Callable:
+    """
+    Creates a function that will validate that the query has all required siblings
+    and that required siblings have valid values.
+    If a query is a list it requires that all list siblings have the same list length.
+    :return: A function that is used to validate queries.
+    """
     if provided_params is None:
         provided_params = []
-    check_dict:Dict[str, List[str]] = dict()
+    check_dict: Dict[str, List[str]] = dict()
+    list_check: Dict[str, List[QueryParam]] = dict()
     for query in query_params:
         if query.required_siblings is not None and query.name not in provided_params:
             check_dict[query.name] = query.required_siblings
 
-    def validate(created_query_params):
+    for query in query_params:
+        if query.required_siblings is not None and query.name not in provided_params and query.is_list:
+            for sibling in query.required_siblings:
+                if sibling in list_check:
+                    continue
+                for sibling_query in query_params:
+                    if sibling_query == query:
+                        continue
+                    if sibling_query.name == sibling and sibling_query.is_list:
+                        if query.name in list_check:
+                            list_check[query.name].append(sibling_query)
+                        else:
+                            list_check[query.name] = [sibling_query]
+
+    def validate(created_query_params) -> Optional[CalculatedError]:
         for query, siblings in check_dict.items():
             if query in created_query_params:
                 for value in siblings:
                     if value not in created_query_params and value not in provided_params:
                         return MissingQueryParams(siblings)
+        for query, siblings in list_check.items():
+            if query in created_query_params:
+                for sibling_query in siblings:
+                    if len(created_query_params[query]) != len(created_query_params[sibling_query.name]):
+                        return MismatchedQueryParams(query, sibling_query.name,
+                                                     len(created_query_params[query]),
+                                                     len(created_query_params[sibling_query.name]))
     return validate
 
 

@@ -71,7 +71,7 @@ class AppListenerComponent extends React.Component<Props, State> {
             if (this.state.location !== loc && window.location.href.indexOf("https://calculated.gg") !== -1) {
                 ReactGA.initialize([{
                         trackingId: GOOGLE_ANALYTICS_ID,
-                        debug: true,
+                        debug: false,
                         gaOptions: {
                             cookieDomain: "none",
                             siteSpeedSampleRate: 100
