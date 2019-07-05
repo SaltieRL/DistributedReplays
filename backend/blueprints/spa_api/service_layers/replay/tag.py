@@ -2,11 +2,10 @@ import base64
 from typing import List, Dict
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.utils.global_functions import get_current_user_id
-from backend.utils.checks import log_error
-from ...errors.errors import CalculatedError, TagNotFound, PlayerNotFound
-from backend.database.objects import Tag as DBTag, Player
+from backend.database.objects import Tag as DBTag
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
+from backend.utils.global_functions import get_current_user_id
+from ...errors.errors import CalculatedError, TagNotFound
 
 
 class Tag:
