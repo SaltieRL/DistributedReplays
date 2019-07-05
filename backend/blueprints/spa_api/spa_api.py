@@ -24,6 +24,7 @@ from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.database.utils.file_manager import get_replay_path
+from tasks.update import update_self
 
 try:
     import config
@@ -485,8 +486,17 @@ def api_remove_tag_from_game(name: str, id_: str):
     return '', 204
 
 
+@bp.route('/admin/', methods=["GET"])
+@require_user
+@with_query_params([QueryParam(name='update_code', type_=int, optional=False)])
+def update_server(query_params=None):
+    code = query_params['update_code']
+    update_self(code)
+    return '', 200
+
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):
+
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
