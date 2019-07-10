@@ -35,7 +35,9 @@ class TagPageListItemComponent extends React.PureComponent<Props> {
                 <ListItemSecondaryAction>
                     {hasPrivateKey && (
                         <Tooltip
-                            title="Copy private key to clipboard. The private key allows others to upload replays to this tag.">
+                            title={"Copy private key to clipboard. " +
+                            "The private key allows others to upload replays to this tag."}
+                        >
                             <IconButton onClick={this.copyPrivateKeyToClipboard}>
                                 <FileCopy/>
                             </IconButton>
