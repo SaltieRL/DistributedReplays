@@ -2,7 +2,7 @@ import { faTags } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { createStyles, IconButton, Tooltip, WithStyles, withStyles } from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models/Replay/Replay"
+import { Replay } from "../../../Models"
 import { TagDialog } from "./TagDialog"
 
 const styles = createStyles({
