@@ -18,6 +18,7 @@ import { WithNotifications, withNotifications } from "../Notification/Notificati
 import { BakkesModAd } from "./BakkesModAd"
 import { addTaskIds } from "./StatusUtils"
 import { UploadDropzone } from "./UploadDropzone"
+import { UploadTags } from "./UploadTags"
 
 const styles = (theme: Theme) => createStyles({
     leftIcon: {
@@ -35,12 +36,13 @@ interface State {
     files: File[]
     rejected: File[]
     uploadingStage?: "pressedUpload" | "uploaded"
+    selectedPrivateKeys: string[]
 }
 
 class UploadFormComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {files: [], rejected: []}
+        this.state = {files: [], rejected: [], selectedPrivateKeys: []}
     }
 
     public render() {
@@ -59,6 +61,10 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                                 ".replay".
                             </Typography>
                             }
+
+                            <UploadTags
+                                selectedPrivateKeys={this.state.selectedPrivateKeys}
+                                handlePrivateKeysChange={this.handlePrivateKeysChange}/>
                         </DialogContent>
                         <DialogActions>
                             <Button variant="outlined"
@@ -91,7 +97,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
     private readonly handleUpload = () => {
         this.setState({uploadingStage: "pressedUpload"})
-        uploadReplays(this.state.files)
+        uploadReplays(this.state.files, this.state.selectedPrivateKeys)
             .then(addTaskIds)
             .then(this.clearFiles)
             .then(() => {
@@ -117,6 +123,10 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
     private readonly clearFiles = () => {
         this.setState({files: [], rejected: []})
+    }
+
+    private readonly handlePrivateKeysChange = (selectedPrivateKeys: string[]) => {
+        this.setState({selectedPrivateKeys})
     }
 }
 

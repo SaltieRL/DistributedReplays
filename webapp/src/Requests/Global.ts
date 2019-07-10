@@ -46,13 +46,17 @@ export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
 // TODO(Sciguymjm) Type this thing.
 
 // @return taskIds of uploaded replays
-export const uploadReplays = (replays: File[]): Promise<string[]> => {
+export const uploadReplays = (replays: File[], privateTagKeys?: string[]): Promise<string[]> => {
     const formData = new FormData()
     replays.forEach((file) => {
         formData.append("replays", file)
     })
+    const tagParams = qs.stringify(
+        {private_tag_keys: privateTagKeys},
+        {arrayFormat: "repeat", addQueryPrefix: true}
+    )
 
-    return doPost("/upload", formData)
+    return doPost("/upload" + tagParams, formData)
 }
 
 export const getUploadStatuses = (ids: string[]): Promise<UploadStatus[]> => {
