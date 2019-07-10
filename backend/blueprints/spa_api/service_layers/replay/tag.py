@@ -9,28 +9,32 @@ from ...errors.errors import CalculatedError, TagNotFound
 
 
 class Tag:
-    def __init__(self, name: str, owner: str, db_tag: DBTag = None):
+    def __init__(self, name: str, owner: str, privateKey: str = None, db_tag: DBTag = None):
         super().__init__()
         self.name = name
-        self.owner_id = owner
+        self.ownerId = owner
+        self.privateKey = privateKey
         self.db_tag = db_tag
 
     def to_JSON(self, with_id=False):
         if with_id:
             return {
                 "name": self.name,
-                "owner_id": self.owner_id,
+                "ownerId": self.ownerId,
+                "privateKey": self.privateKey,
                 "tag_id": self.db_tag.id
             }
 
         return {
             "name": self.name,
-            "owner_id": self.owner_id
+            "ownerId": self.ownerId,
+            "privateKey": self.privateKey,
         }
 
     @staticmethod
     def create_from_dbtag(tag: DBTag):
-        return Tag(tag.name, tag.owner, db_tag=tag)
+        private_key = None if tag.private_id is None else Tag.encode_tag(tag.id, tag.private_id)
+        return Tag(tag.name, tag.owner, privateKey=private_key, db_tag=tag)
 
     @staticmethod
     @with_session

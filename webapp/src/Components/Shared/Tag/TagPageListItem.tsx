@@ -11,11 +11,11 @@ import { TagsAction } from "../../../Redux"
 import { generateTagPrivateIdAndGetKey } from "../../../Requests/Tag"
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    addPrivateKeyToTagAction: (tag: TagWithPrivateKey) => dispatch(TagsAction.addPrivateKeyToTagAction(tag))
+    addPrivateKeyToTagAction: (tag: Tag) => dispatch(TagsAction.addPrivateKeyToTagAction(tag))
 })
 
 interface OwnProps {
-    tag: TagWithPrivateKey
+    tag: Tag
 }
 
 type Props = OwnProps

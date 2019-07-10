@@ -3,7 +3,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { Dispatch } from "redux"
 import { StoreState, TagsAction } from "../../Redux"
-import { getAllTagsWithPrivateKeys } from "../../Requests/Tag"
+import { getAllTags } from "../../Requests/Tag"
 import { TagPageListItem } from "../Shared/Tag/TagPageListItem"
 import { BasePage } from "./BasePage"
 
@@ -12,7 +12,7 @@ const mapStateToProps = (state: StoreState) => ({
 })
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setTags: (tags: TagWithPrivateKey[]) => dispatch(TagsAction.setTagsAction(tags))
+    setTags: (tags: Tag[]) => dispatch(TagsAction.setTagsAction(tags))
 })
 
 type Props = ReturnType<typeof mapStateToProps>
@@ -20,7 +20,7 @@ type Props = ReturnType<typeof mapStateToProps>
 
 class TagsPageComponent extends React.PureComponent<Props> {
     public componentDidMount() {
-        getAllTagsWithPrivateKeys()
+        getAllTags()
             .then((tags) => this.props.setTags(tags))
     }
 

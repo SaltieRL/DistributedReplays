@@ -16,14 +16,14 @@ import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
 import { TAGS_PAGE_LINK } from "../../../Globals"
 import { StoreState, TagsAction } from "../../../Redux"
-import { getAllTagsWithPrivateKeys } from "../../../Requests/Tag"
+import { getAllTags } from "../../../Requests/Tag"
 import { AddTagPrivateKeyDialog } from "./AddTagPrivateKeyDialog."
 
 const mapStateToProps = (state: StoreState) => ({
     tags: state.tags
 })
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setTags: (tags: TagWithPrivateKey[]) => dispatch(TagsAction.setTagsAction(tags))
+    setTags: (tags: Tag[]) => dispatch(TagsAction.setTagsAction(tags))
 })
 
 interface OwnProps {
@@ -47,7 +47,7 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        getAllTagsWithPrivateKeys()
+        getAllTags()
             .then((tags) => this.props.setTags(tags))
     }
 
@@ -59,7 +59,7 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
         tagsWithPrivateKeys = [...tagsWithPrivateKeys, ...this.state.externalPrivateKeys]
 
         return (
-            <>
+            <div style={{paddingTop: 16}}>
                 {tags !== null && (
                     <Grid container spacing={8}>
                         <Grid item xs={11}>
@@ -120,7 +120,7 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
                     toggleExternalKeyDialog={this.toggleExternalKeyDialog}
                     addExternalPrivateKey={this.addExternalPrivateKey}
                 />
-            </>
+            </div>
         )
     }
 

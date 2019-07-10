@@ -1,7 +1,7 @@
 import { Action, handleActions } from "redux-actions"
 import { TagsAction } from "./actions"
 
-export type TagsState = TagWithPrivateKey[] | null
+export type TagsState = Tag[] | null
 
 const initialState: TagsState = null
 
@@ -17,7 +17,7 @@ export const tagsReducer = handleActions<TagsState, any>(
             return state
         },
         [TagsAction.Type.ADD_PRIVATE_KEY_TO_TAG]: (
-            state, action: Action<TagWithPrivateKey>
+            state, action: Action<Tag>
         ): TagsState => {
             if (action.payload !== undefined && state !== null) {
                 return state.map((tag) => {
