@@ -191,7 +191,7 @@ class Test_upload_file_with_tags:
         assert tag.owner == default_player_id()
         assert tag.private_id is None
 
-        r = Request('PUT', LOCAL_URL + '/api/tag/TAG/private_key/fake_private_key')
+        r = Request('PUT', LOCAL_URL + '/api/tag/TAG/private_key/fake_private_id')
         response = test_client.send(r)
         assert(response.status_code == 204)
 
@@ -201,13 +201,13 @@ class Test_upload_file_with_tags:
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
         assert tag.owner == default_player_id()
-        assert tag.private_id == 'fake_private_key'
+        assert tag.private_id == 'fake_private_id'
 
         r = Request('GET', LOCAL_URL + '/api/tag/TAG/private_key')
         response = test_client.send(r)
 
         assert(response.status_code == 200)
-        assert response.json == ServiceTag.encode_tag(tag.id, 'fake_private_key')
+        assert response.json == ServiceTag.encode_tag(tag.id, 'fake_private_id')
 
     def test_tag_creation_no_private_key(self, test_client, mock_user):
         fake_session = get_current_session()
@@ -235,7 +235,7 @@ class Test_upload_file_with_tags:
         game = fake_session.query(Game).first()
         assert game is None
 
-        params = {'private_key': 'fake_private_key'}
+        params = {'private_id': 'fake_private_id'}
         r = Request('PUT', LOCAL_URL + '/api/tag/' + TAG_NAME,
                     params=params)
         response = test_client.send(r)
@@ -267,7 +267,7 @@ class Test_upload_file_with_tags:
         assert(game.tags[0].name == TAG_NAME)
         assert(game.tags[0].owner == default_player_id())
         assert(game.tags[0].games[0] == game)
-        assert(game.tags[0].private_id == 'fake_private_key')
+        assert(game.tags[0].private_id == 'fake_private_id')
 
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
