@@ -50,17 +50,19 @@ class Test_BasicServerCommands():
             '76561198018756583'
         ]
 
-        # Create all tags
-        created_tags = []
-        for _tags in tags:
-            for _tag in _tags:
-                if _tag in created_tags:
-                    continue
-                r = requests.put(LOCAL_URL + f'/api/tag/{_tag}')
-                r.raise_for_status()
-                created_tags.append(_tag)
+        def create_all_tags():
+            created_tags = []
+            for _tags in tags:
+                for _tag in _tags:
+                    if _tag in created_tags:
+                        continue
+                    r = requests.put(LOCAL_URL + f'/api/tag/{_tag}')
+                    r.raise_for_status()
+                    created_tags.append(_tag)
 
         for index, replay_url in enumerate(replay_list):
+            if index == 1:
+                create_all_tags()
             _tags = tags[index]
             _private_keys: List[str] = []
             for _tag in _tags:
