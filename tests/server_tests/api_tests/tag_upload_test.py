@@ -147,9 +147,12 @@ class Test_upload_file_with_tags:
 
         assert(response.status_code == 400)
 
-    def test_tag_creation_private_key(self, test_client, mock_user):
+    def test_tag_creation_private_id(self, test_client, mock_user):
+        fake_private_id = 'fake_private_id'
+
         fake_session = get_current_session()
-        params = {'private_key': 'fake_private_key'}
+
+        params = {'private_id': fake_private_id}
         r = Request('PUT', LOCAL_URL + '/api/tag/TAG',
                     params=params)
 
@@ -163,16 +166,18 @@ class Test_upload_file_with_tags:
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
         assert tag.owner == default_player_id()
-        assert tag.private_id == 'fake_private_key'
+        assert tag.private_id == fake_private_id
 
         r = Request('GET', LOCAL_URL + '/api/tag/TAG/private_key')
 
         response = test_client.send(r)
         assert(response.status_code == 200)
-        assert response.json == ServiceTag.encode_tag(tag.id, 'fake_private_key')
+        assert response.json == ServiceTag.encode_tag(tag.id, fake_private_id)
 
     def test_tag_modification_with_private_key(self, test_client, mock_user):
         fake_session = get_current_session()
+
+        # Create tag
         r = Request('PUT', LOCAL_URL + '/api/tag/TAG')
         response = test_client.send(r)
 
