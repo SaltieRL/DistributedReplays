@@ -486,7 +486,7 @@ def api_remove_tag_from_game(name: str, id_: str):
     return '', 204
 
 
-@bp.route('/admin/', methods=["GET"])
+@bp.route('/internal/update', methods=["GET"])
 @require_user
 @with_query_params([QueryParam(name='update_code', type_=int, optional=False)])
 def update_server(query_params=None):
