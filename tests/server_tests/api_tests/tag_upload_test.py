@@ -3,6 +3,7 @@ import io
 import urllib
 import zlib
 
+import pytest
 import responses
 from requests import Request
 from backend.blueprints.spa_api.service_layers.replay.tag import Tag as ServiceTag
@@ -27,6 +28,7 @@ class Test_upload_file_with_tags:
         self.file = f
         self.stream = io.BytesIO(self.file)
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_replay_basic_server_upload_with_tag(self, test_client):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
@@ -52,7 +54,7 @@ class Test_upload_file_with_tags:
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
 
-
+    @pytest.mark.skip(reason="tag names are disabled")
     @responses.activate
     def test_replay_basic_server_upload_with_tags_gcp(self, test_client, gcp):
         responses.add(responses.POST, gcp.get_url())
@@ -76,6 +78,7 @@ class Test_upload_file_with_tags:
         assert query_result['tags'] == [TAG_NAME, TAG_NAME + "hello"]
         assert query_result['uuid'] is not None
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_replay_basic_server_upload_with_multiple_tags(self, test_client):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
@@ -108,6 +111,7 @@ class Test_upload_file_with_tags:
         assert response.status_code == 200
         assert len(response.json['replays']) == 1
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_replay_basic_server_upload_with_duplicate_tags(self, test_client):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
@@ -133,6 +137,7 @@ class Test_upload_file_with_tags:
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_replay_basic_server_upload_tag_replay_no_player(self, test_client):
         params = {'tags': TAG_NAME}
         r = Request('POST', LOCAL_URL + '/api/upload',
