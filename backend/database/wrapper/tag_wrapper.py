@@ -9,8 +9,8 @@ from backend.database.objects import Tag, Game, GameTag
 
 class TagWrapper:
     @staticmethod
-    def create_tag(session, user_id: str, name: str, private_key: str = None) -> Tag:
-        tag = Tag(name=name, owner=user_id, private_id=private_key)
+    def create_tag(session, user_id: str, name: str, private_id: str = None) -> Tag:
+        tag = Tag(name=name, owner=user_id, private_id=private_id)
         session.add(tag)
         session.commit()
         return tag

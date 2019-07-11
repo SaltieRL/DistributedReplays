@@ -46,13 +46,13 @@ class Tag:
 
     @staticmethod
     @with_session
-    def create(name: str, session=None, player_id=None, private_key=None) -> 'Tag':
+    def create(name: str, session=None, player_id=None, private_id=None) -> 'Tag':
         """
         Creates a new instance of Tag, add one to the db if it does not exist.
         :param name: Tag name
         :param session: Database session
         :param player_id
-        :param private_key
+        :param private_id
         :return:
         """
         # Check if tag exists
@@ -62,7 +62,7 @@ class Tag:
             return tag
         except DBTagNotFound:
             pass
-        dbtag = TagWrapper.create_tag(session, get_current_user_id(player_id=player_id), name, private_key=private_key)
+        dbtag = TagWrapper.create_tag(session, get_current_user_id(player_id=player_id), name, private_id=private_id)
         tag = Tag.create_from_dbtag(dbtag)
         return tag
 

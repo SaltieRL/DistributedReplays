@@ -45,7 +45,7 @@ def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, a
 
 def parse_replay(self, filename, preserve_upload_date: bool = False,
                  # url parameters
-                 query_params:Dict[str, any] = None,
+                 query_params: Dict[str, any] = None,
                  # test parameters
                  custom_file_location: str = None, force_reparse: bool = False):
     """
@@ -127,7 +127,7 @@ def save_replay(proto_game, filename, pickled):
     return replay_id
 
 
-def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, preserve_upload_date=True):
+def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None, preserve_upload_date=True):
     logger.debug("Successfully parsed replay adding data to DB")
     # Process
     match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
@@ -156,7 +156,8 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
     except CalculatedError as e:
         error_counter.append('visibility')
         log_error(e, message='Error changing visibility', logger=logger)
-    # Add game visibility option
+
+    # Add tags
     try:
         apply_tags_to_game(query_params=query_params, game_id=game_id)
     except CalculatedError as e:
@@ -166,4 +167,5 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
     if len(error_counter) == 0:
         logger.debug("SUCCESS: Processed all query params")
     else:
-        logger.warning('Found ' + str(len(error_counter)) + ' errors while processing query params: ' + str(error_counter))
+        logger.warning(
+            'Found ' + str(len(error_counter)) + ' errors while processing query params: ' + str(error_counter))
