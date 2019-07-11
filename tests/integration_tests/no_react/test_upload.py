@@ -56,7 +56,7 @@ class Test_BasicServerCommands():
             for _tag in _tags:
                 if _tag in created_tags:
                     continue
-                r = requests.put(LOCAL_URL + f'api/tag/{_tag}')
+                r = requests.put(LOCAL_URL + f'/api/tag/{_tag}')
                 r.raise_for_status()
                 created_tags.append(_tag)
 
@@ -65,7 +65,7 @@ class Test_BasicServerCommands():
             _private_keys: List[str] = []
             for _tag in _tags:
                 # Add private ID to tag and get private key
-                requests.put(LOCAL_URL + f'api/tag/{_tag}/private_key/TEST_PRIVATE_ID')
+                requests.put(LOCAL_URL + f'/api/tag/{_tag}/private_key/TEST_PRIVATE_ID')
                 response = requests.get(LOCAL_URL + f'api/tag/{_tag}/private_key')
                 _private_keys.append(response.content)
 
