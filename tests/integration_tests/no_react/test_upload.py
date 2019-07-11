@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from typing import List
 
 import requests
 
@@ -37,7 +38,7 @@ class Test_BasicServerCommands():
 
         replay_list = get_complex_replay_list()[0:4]
 
-        # tags = ['TAG1', 'TAG2', 'TAG3', ['TAG4', 'TAG2']]
+        tags = [['TAG1'], ['TAG2'], ['TAG3'], ['TAG4', 'TAG2']]
         privacy = [GameVisibilitySetting.DEFAULT.name,
                    GameVisibilitySetting.PUBLIC.name,
                    GameVisibilitySetting.PRIVATE.name,
@@ -49,8 +50,26 @@ class Test_BasicServerCommands():
             '76561198018756583'
         ]
 
+        # Create all tags
+        created_tags = []
+        for _tags in tags:
+            for _tag in _tags:
+                if _tag in created_tags:
+                    continue
+                r = requests.put(LOCAL_URL + f'api/tag/{_tag}')
+                r.raise_for_status()
+                created_tags.append(_tag)
+
         for index, replay_url in enumerate(replay_list):
-            params = {'visibility': privacy[index], 'player_id': users[index]}
+            _tags = tags[index]
+            _private_keys: List[str] = []
+            for _tag in _tags:
+                # Add private ID to tag and get private key
+                requests.put(LOCAL_URL + f'api/tag/{_tag}/private_key/TEST_PRIVATE_ID')
+                response = requests.get(LOCAL_URL + f'api/tag/{_tag}/private_key')
+                _private_keys.append(response.content)
+
+            params = {'visibility': privacy[index], 'player_id': users[index], 'private_tag_keys': _private_keys}
             logger.debug('Testing:', replay_url)
             f = download_replay_discord(replay_url)
             r = requests.post(LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', f)}, params=params)
@@ -67,12 +86,11 @@ class Test_BasicServerCommands():
         result = json.loads(r.content)
         assert(int(result) == len(replay_list))
 
-        # TODO: Readd test for tag using private key
-        # response = requests.get(LOCAL_URL + '/api/tag')
-        # result = json.loads(response.content)
-        # assert result[0]['owner_id'] == "76561198018756583"
-        # assert result[0]['name'].startswith('TAG')
-        # assert len(result) == 3
+        response = requests.get(LOCAL_URL + '/api/tag')
+        result = json.loads(response.content)
+        assert result[0]['ownerId'] == "76561198018756583"
+        assert result[0]['name'].startswith('TAG')
+        assert len(result) == 4
 
         response = requests.get(LOCAL_URL + '/api/player/76561198018756583/match_history?page=0&limit=10')
         assert response.status_code == 200
