@@ -267,8 +267,8 @@ class Test_upload_file_with_tags:
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_proto_upload_with_tags(self, test_client):
-
         proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file(get_complex_replay_list()[0],
                                                                              is_replay=True))
 
