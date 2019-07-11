@@ -68,7 +68,7 @@ class Test_BasicServerCommands():
             for _tag in _tags:
                 # Add private ID to tag and get private key
                 requests.put(LOCAL_URL + f'/api/tag/{_tag}/private_key/TEST_PRIVATE_ID')
-                response = requests.get(LOCAL_URL + f'api/tag/{_tag}/private_key')
+                response = requests.get(LOCAL_URL + f'/api/tag/{_tag}/private_key')
                 _private_keys.append(response.content)
 
             params = {'visibility': privacy[index], 'player_id': users[index], 'private_tag_keys': _private_keys}
