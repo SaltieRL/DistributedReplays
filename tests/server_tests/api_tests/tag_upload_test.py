@@ -153,7 +153,7 @@ class Test_upload_file_with_tags:
         assert(response.status_code == 201)
         data = response.json
         assert data['name'] == 'TAG'
-        assert data['owner_id'] == default_player_id()
+        assert data['ownerId'] == default_player_id()
 
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
@@ -174,7 +174,7 @@ class Test_upload_file_with_tags:
         assert(response.status_code == 201)
         data = response.json
         assert data['name'] == 'TAG'
-        assert data['owner_id'] == default_player_id()
+        assert data['ownerId'] == default_player_id()
 
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
@@ -208,7 +208,7 @@ class Test_upload_file_with_tags:
         assert(response.status_code == 201)
         data = response.json
         assert data['name'] == 'TAG'
-        assert data['owner_id'] == default_player_id()
+        assert data['ownerId'] == default_player_id()
 
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
