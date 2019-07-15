@@ -160,19 +160,25 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                     <CardContent>
                                         {this.state.streams ? <>
                                             {this.state.streams.streams.map((stream: Stream) => (
-                                                <a href={`https://twitch.tv/${stream.name}`} target={"_blank"}>
+                                                <a href={`https://twitch.tv/${stream.name}`} target={"_blank"}
+                                                   style={{textDecoration: "none"}}>
                                                     <Grid item container xs={12} style={{padding: "25px"}}>
-                                                        <Grid item xs={12} md={12}>
+                                                        <Grid item xs={12} md={3}>
                                                             <img src={stream.thumbnail}/>
                                                         </Grid>
-                                                        <Grid item xs={12}>
-                                                            <Typography noWrap>{stream.title}</Typography>
-                                                        </Grid>
-                                                        <Grid item xs={4}>
-                                                            <Typography noWrap>{stream.name}</Typography>
-                                                        </Grid>
-                                                        <Grid item xs={3}>
-                                                            <Typography noWrap>{stream.viewers} viewers</Typography>
+                                                        <Grid item xs={12} md={9}>
+                                                            <Typography noWrap
+                                                                        style={{fontStyle: "italic"}}>
+                                                                {stream.title}
+                                                            </Typography>
+                                                            <Typography noWrap
+                                                                        style={{fontWeight: "bold"}}>
+                                                                {stream.name}
+                                                            </Typography>
+                                                            <Typography noWrap
+                                                                        style={{color: "red"}}>
+                                                                {stream.viewers} viewers
+                                                            </Typography>
                                                         </Grid>
                                                     </Grid>
                                                     <Grid item xs={12}>
@@ -197,9 +203,9 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                                         ${this.state.patreonProgress.total}</Typography>
                                                 </div>
                                                 <Grid item xs={12}>
-                                                <LinearProgress variant="determinate"
-                                                                value={this.state.patreonProgress.progress /
-                                                                this.state.patreonProgress.total * 100.0}/>
+                                                    <LinearProgress variant="determinate"
+                                                                    value={this.state.patreonProgress.progress /
+                                                                    this.state.patreonProgress.total * 100.0}/>
                                                 </Grid>
 
                                                 <Grid item xs={12} container justify="flex-end">
