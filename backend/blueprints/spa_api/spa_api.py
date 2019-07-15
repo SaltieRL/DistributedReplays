@@ -498,5 +498,5 @@ def get_twitch_streams():
 
 
 @bp.route('/home/patreon')
-def get_twitch_streams():
+def get_patreon_progress():
     return better_jsonify(PatreonProgress.create())

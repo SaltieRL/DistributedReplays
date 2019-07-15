@@ -17,3 +17,7 @@ export const getTwitchStreams = (): Promise<StreamResponse> => {
     }
     return doGet("/home/twitch")
 }
+
+export const getPatreonProgress = (): Promise<PatreonResponse> => {
+    return doGet("/home/patreon")
+}

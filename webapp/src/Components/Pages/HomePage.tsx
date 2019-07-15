@@ -11,6 +11,8 @@ import {
     withStyles,
     withWidth
 } from "@material-ui/core"
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
 import { GridProps } from "@material-ui/core/Grid"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import CloudUpload from "@material-ui/icons/CloudUpload"
@@ -21,6 +23,7 @@ import { Dispatch } from "redux"
 import { LOCAL_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, UPLOAD_LINK } from "../../Globals"
 import { LoggedInUserActions, StoreState } from "../../Redux"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
+import { getPatreonProgress, getTwitchStreams } from "../../Requests/Home"
 import { HomePageAppBar } from "../Home/HomePageAppBar"
 import { HomePageFooter } from "../Home/HomePageFooter"
 import { LinkButton } from "../Shared/LinkButton"
@@ -28,9 +31,7 @@ import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
 import { SideBar } from "../Shared/SideBar"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
-import { getTwitchStreams } from "../../Requests/Home"
-import Card from "@material-ui/core/Card"
-import CardContent from "@material-ui/core/CardContent"
+import LinearProgress from "@material-ui/core/LinearProgress"
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -71,6 +72,7 @@ interface State {
     replayCount?: number
     sideBarOpen: boolean
     streams?: StreamResponse
+    patreonProgress?: PatreonResponse
 }
 
 class HomePageComponent extends React.PureComponent<Props, State> {
@@ -87,6 +89,8 @@ class HomePageComponent extends React.PureComponent<Props, State> {
             .catch(() => undefined)
         getTwitchStreams()
             .then((streams: StreamResponse) => this.setState({streams}))
+        getPatreonProgress()
+            .then((patreonProgress: PatreonResponse) => this.setState({patreonProgress}))
     }
 
     public render() {
@@ -180,6 +184,18 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                     </CardContent>
                                 </Card>
 
+                            </Grid>
+
+                            <Grid item container xs={12} sm={6} lg={3}>
+                                <Card>
+                                    <CardHeader title={"Patreon Goal Progress"}/>
+                                    <CardContent>
+                                        {this.state.patreonProgress ?
+                                            <LinearProgress variant="determinate"
+                                                            value={this.state.patreonProgress.progress / this.state.patreonProgress.total * 100.0}/> : null}
+                                    </CardContent>
+
+                                </Card>
                             </Grid>
                         </Grid>
                     </div>

@@ -9,3 +9,8 @@ interface Stream {
 interface StreamResponse {
     streams: Stream[]
 }
+
+interface PatreonResponse {
+    progress: number
+    total: number
+}

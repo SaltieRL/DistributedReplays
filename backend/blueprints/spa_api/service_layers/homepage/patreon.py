@@ -25,7 +25,7 @@ class PatreonProgress:
         r = requests.get("https://patreon.com/calculated")
         bs = BeautifulSoup(r.text)
         progress = bs.find_all(class_="sc-htpNat ebhhXb")[0].text
-        nums = progress.split(' of ')
+        nums = [int(n[1:]) for n in progress.split(' of ')]
         if lazy_get_redis() is not None:
             r = lazy_get_redis()
             r.set('patreon_progress', json.dumps(nums), ex=60 * 60)
