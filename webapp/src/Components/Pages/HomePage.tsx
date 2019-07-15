@@ -190,9 +190,33 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                 <Card>
                                     <CardHeader title={"Patreon Goal Progress"}/>
                                     <CardContent>
-                                        {this.state.patreonProgress ?
-                                            <LinearProgress variant="determinate"
-                                                            value={this.state.patreonProgress.progress / this.state.patreonProgress.total * 100.0}/> : null}
+                                        {this.state.patreonProgress ? (
+                                            <>
+                                                <div style={{marginBottom: "15px"}}>
+                                                    <Typography variant="h5">${this.state.patreonProgress.progress} /
+                                                        ${this.state.patreonProgress.total}</Typography>
+                                                </div>
+                                                <Grid item xs={12}>
+                                                <LinearProgress variant="determinate"
+                                                                value={this.state.patreonProgress.progress /
+                                                                this.state.patreonProgress.total * 100.0}/>
+                                                </Grid>
+
+                                                <Grid item xs={12} container justify="flex-end">
+                                                    <a
+                                                        href={"https://patreon.com/calculated"}
+                                                        target="_blank"
+                                                        rel="noreferrer noopener"
+                                                        style={{textDecoration: "none"}}
+                                                    >
+                                                        <Button variant="text" size="small">
+                                                            <Typography variant="subtitle1">
+                                                                Link
+                                                            </Typography>
+                                                        </Button>
+                                                    </a>
+                                                </Grid>
+                                            </>) : null}
                                     </CardContent>
 
                                 </Card>
