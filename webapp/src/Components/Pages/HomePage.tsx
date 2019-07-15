@@ -1,6 +1,7 @@
 import { faSteam } from "@fortawesome/free-brands-svg-icons"
 import {
     Button,
+    CardHeader,
     createStyles,
     Divider,
     Grid,
@@ -27,6 +28,9 @@ import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
 import { SideBar } from "../Shared/SideBar"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
+import { getTwitchStreams } from "../../Requests/Home"
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -66,6 +70,7 @@ type Props = ReturnType<typeof mapStateToProps>
 interface State {
     replayCount?: number
     sideBarOpen: boolean
+    streams?: StreamResponse
 }
 
 class HomePageComponent extends React.PureComponent<Props, State> {
@@ -80,6 +85,8 @@ class HomePageComponent extends React.PureComponent<Props, State> {
         getLoggedInUser()
             .then((loggedInUser) => this.props.setLoggedInUser(loggedInUser))
             .catch(() => undefined)
+        getTwitchStreams()
+            .then((streams: StreamResponse) => this.setState({streams}))
     }
 
     public render() {
@@ -138,6 +145,40 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             </Grid>
                             <Grid item xs={12} sm={8} md={8} lg={6} xl={4}>
                                 <HomePageFooter/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Divider/>
+                            </Grid>
+                            <Grid item container xs={12} sm={6} lg={3}>
+                                <Card>
+                                    <CardHeader title={"Featured Twitch Streams"}/>
+                                    <CardContent>
+                                        {this.state.streams ? <>
+                                            {this.state.streams.streams.map((stream: Stream) => (
+                                                <a href={`https://twitch.tv/${stream.name}`} target={"_blank"}>
+                                                    <Grid item container xs={12} style={{padding: "25px"}}>
+                                                        <Grid item xs={12} md={12}>
+                                                            <img src={stream.thumbnail}/>
+                                                        </Grid>
+                                                        <Grid item xs={12}>
+                                                            <Typography noWrap>{stream.title}</Typography>
+                                                        </Grid>
+                                                        <Grid item xs={4}>
+                                                            <Typography noWrap>{stream.name}</Typography>
+                                                        </Grid>
+                                                        <Grid item xs={3}>
+                                                            <Typography noWrap>{stream.viewers} viewers</Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <Grid item xs={12}>
+                                                        <Divider/>
+                                                    </Grid>
+                                                </a>
+                                            ))}
+                                        </> : null}
+                                    </CardContent>
+                                </Card>
+
                             </Grid>
                         </Grid>
                     </div>
