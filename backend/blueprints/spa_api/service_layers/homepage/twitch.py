@@ -1,6 +1,9 @@
+import json
 from typing import List
 
 import requests
+
+from backend.database.startup import lazy_get_redis
 
 try:
     import config
@@ -53,6 +56,10 @@ class TwitchStreams:
 
     @staticmethod
     def get_streams():
+        if lazy_get_redis() is not None:
+            r = lazy_get_redis()
+            if r.get('twitch_streams'):
+                return json.loads(r.get('twitch_streams'))
         r = requests.get("https://api.twitch.tv/helix/streams", headers=headers,
                          params={'user_login': ['saucerboy', 'sciguymjm', 'twobackfromtheend', 'RLBotOfficial']}).json()
         if len(r['data']) == 0:
@@ -63,6 +70,9 @@ class TwitchStreams:
         for stream in r['data']:
             stream['thumbnail_url'] = TwitchStreams.get_size(stream['thumbnail_url'], 160, 90)
             stream_data.append(stream)
+        if lazy_get_redis() is not None:
+            r = lazy_get_redis()
+            r.set('twitch_streams', json.dumps(stream_data), ex=60 * 2)
         return stream_data
 
 

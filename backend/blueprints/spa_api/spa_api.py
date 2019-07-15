@@ -12,6 +12,7 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
 from werkzeug.utils import secure_filename, redirect
 
+from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
 from backend.blueprints.spa_api.service_layers.homepage.twitch import TwitchStreams
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
@@ -494,3 +495,8 @@ def api_handle_error(error: CalculatedError):
 @bp.route('/home/twitch')
 def get_twitch_streams():
     return better_jsonify(TwitchStreams.create())
+
+
+@bp.route('/home/patreon')
+def get_twitch_streams():
+    return better_jsonify(PatreonProgress.create())
