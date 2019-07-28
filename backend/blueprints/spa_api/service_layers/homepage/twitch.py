@@ -1,4 +1,5 @@
 import json
+import random
 from typing import List
 
 import requests
@@ -62,7 +63,7 @@ class TwitchStreams:
         return r.json()
 
     @staticmethod
-    def get_streams():
+    def get_streams(shuffle=True):
         if lazy_get_redis() is not None:
             r = lazy_get_redis()
             if r.get('twitch_streams'):
@@ -80,6 +81,8 @@ class TwitchStreams:
         if lazy_get_redis() is not None:
             r = lazy_get_redis()
             r.set('twitch_streams', json.dumps(stream_data), ex=60 * 2)
+        if shuffle:
+            random.shuffle(stream_data)
         return stream_data
 
 
