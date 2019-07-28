@@ -62,7 +62,7 @@ class TwitchStreams:
                 return json.loads(r.get('twitch_streams'))
         r = requests.get("https://api.twitch.tv/helix/streams", headers=headers,
                          params={'user_login': ['saucerboy', 'sciguymjm', 'twobackfromtheend', 'RLBotOfficial']}).json()
-        if len(r['data']) == 0:
+        if 'data' not in r or len(r['data']) == 0:
             r = requests.get("https://api.twitch.tv/helix/streams", headers=headers,
                              params={'game_id': '30921'}).json()  # RL streams
             r['data'] = r['data'][:5]

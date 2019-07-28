@@ -23,7 +23,7 @@ class PatreonProgress:
             if r.get('patreon_progress'):
                 return tuple(json.loads(r.get('patreon_progress')))
         r = requests.get("https://patreon.com/calculated")
-        bs = BeautifulSoup(r.text)
+        bs = BeautifulSoup(r.text, "html.parser")
         progress = bs.find_all(class_="sc-htpNat ebhhXb")[0].text
         nums = [int(n[1:]) for n in progress.split(' of ')]
         if lazy_get_redis() is not None:

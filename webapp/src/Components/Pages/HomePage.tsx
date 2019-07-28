@@ -1,7 +1,6 @@
 import { faSteam } from "@fortawesome/free-brands-svg-icons"
 import {
     Button,
-    CardHeader,
     createStyles,
     Divider,
     Grid,
@@ -11,8 +10,6 @@ import {
     withStyles,
     withWidth
 } from "@material-ui/core"
-import Card from "@material-ui/core/Card"
-import CardContent from "@material-ui/core/CardContent"
 import { GridProps } from "@material-ui/core/Grid"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import CloudUpload from "@material-ui/icons/CloudUpload"
@@ -23,7 +20,6 @@ import { Dispatch } from "redux"
 import { LOCAL_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, UPLOAD_LINK } from "../../Globals"
 import { LoggedInUserActions, StoreState } from "../../Redux"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
-import { getPatreonProgress, getTwitchStreams } from "../../Requests/Home"
 import { HomePageAppBar } from "../Home/HomePageAppBar"
 import { HomePageFooter } from "../Home/HomePageFooter"
 import { LinkButton } from "../Shared/LinkButton"
@@ -31,7 +27,8 @@ import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
 import { SideBar } from "../Shared/SideBar"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
-import LinearProgress from "@material-ui/core/LinearProgress"
+import { Twitch } from "../Home/Widgets/Twitch"
+import { Patreon } from "../Home/Widgets/Patreon"
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -71,8 +68,6 @@ type Props = ReturnType<typeof mapStateToProps>
 interface State {
     replayCount?: number
     sideBarOpen: boolean
-    streams?: StreamResponse
-    patreonProgress?: PatreonResponse
 }
 
 class HomePageComponent extends React.PureComponent<Props, State> {
@@ -87,10 +82,6 @@ class HomePageComponent extends React.PureComponent<Props, State> {
         getLoggedInUser()
             .then((loggedInUser) => this.props.setLoggedInUser(loggedInUser))
             .catch(() => undefined)
-        getTwitchStreams()
-            .then((streams: StreamResponse) => this.setState({streams}))
-        getPatreonProgress()
-            .then((patreonProgress: PatreonResponse) => this.setState({patreonProgress}))
     }
 
     public render() {
@@ -155,77 +146,11 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                 <Divider/>
                             </Grid>
                             <Grid item container xs={12} sm={6} lg={3}>
-                                <Card>
-                                    <CardHeader title={"Featured Twitch Streams"}/>
-                                    <CardContent>
-                                        {this.state.streams ? <>
-                                            {this.state.streams.streams.map((stream: Stream) => (
-                                                <a href={`https://twitch.tv/${stream.name}`} target={"_blank"}
-                                                   style={{textDecoration: "none"}}>
-                                                    <Grid item container xs={12} style={{padding: "25px"}}>
-                                                        <Grid item xs={12} md={3}>
-                                                            <img src={stream.thumbnail}/>
-                                                        </Grid>
-                                                        <Grid item xs={12} md={9}>
-                                                            <Typography noWrap
-                                                                        style={{fontStyle: "italic"}}>
-                                                                {stream.title}
-                                                            </Typography>
-                                                            <Typography noWrap
-                                                                        style={{fontWeight: "bold"}}>
-                                                                {stream.name}
-                                                            </Typography>
-                                                            <Typography noWrap
-                                                                        style={{color: "red"}}>
-                                                                {stream.viewers} viewers
-                                                            </Typography>
-                                                        </Grid>
-                                                    </Grid>
-                                                    <Grid item xs={12}>
-                                                        <Divider/>
-                                                    </Grid>
-                                                </a>
-                                            ))}
-                                        </> : null}
-                                    </CardContent>
-                                </Card>
-
+                                <Twitch/>
                             </Grid>
 
                             <Grid item container xs={12} sm={6} lg={3}>
-                                <Card>
-                                    <CardHeader title={"Patreon Goal Progress"}/>
-                                    <CardContent>
-                                        {this.state.patreonProgress ? (
-                                            <>
-                                                <div style={{marginBottom: "15px"}}>
-                                                    <Typography variant="h5">${this.state.patreonProgress.progress} /
-                                                        ${this.state.patreonProgress.total}</Typography>
-                                                </div>
-                                                <Grid item xs={12}>
-                                                    <LinearProgress variant="determinate"
-                                                                    value={this.state.patreonProgress.progress /
-                                                                    this.state.patreonProgress.total * 100.0}/>
-                                                </Grid>
-
-                                                <Grid item xs={12} container justify="flex-end">
-                                                    <a
-                                                        href={"https://patreon.com/calculated"}
-                                                        target="_blank"
-                                                        rel="noreferrer noopener"
-                                                        style={{textDecoration: "none"}}
-                                                    >
-                                                        <Button variant="text" size="small">
-                                                            <Typography variant="subtitle1">
-                                                                Link
-                                                            </Typography>
-                                                        </Button>
-                                                    </a>
-                                                </Grid>
-                                            </>) : null}
-                                    </CardContent>
-
-                                </Card>
+                                <Patreon/>
                             </Grid>
                         </Grid>
                     </div>
