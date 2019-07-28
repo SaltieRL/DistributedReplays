@@ -1,11 +1,12 @@
-import Card from "@material-ui/core/Card"
 import { CardHeader, Divider, Grid, Typography } from "@material-ui/core"
+import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import * as React from "react"
+import { Stream, StreamResponse } from "../../../Models/types/Homepage"
 import { getTwitchStreams } from "../../../Requests/Home"
 
 interface Props {
-
+    style: any
 }
 
 interface State {
@@ -13,7 +14,7 @@ interface State {
 }
 
 export class Twitch extends React.Component<Props, State> {
-    constructor(props: {}) {
+    constructor(props: Props) {
         super(props)
         this.state = {}
     }
@@ -25,7 +26,7 @@ export class Twitch extends React.Component<Props, State> {
 
     public render() {
         return (
-            <Card>
+            <Card style={this.props.style}>
                 <CardHeader title={"Featured Twitch Streams"}/>
                 <CardContent>
                     {this.state.streams ? <>
@@ -33,10 +34,10 @@ export class Twitch extends React.Component<Props, State> {
                             <a href={`https://twitch.tv/${stream.name}`} target={"_blank"}
                                style={{textDecoration: "none"}}>
                                 <Grid item container xs={12} style={{padding: "25px"}}>
-                                    <Grid item xs={12} md={3}>
-                                        <img alt="Thumbnail" src={stream.thumbnail}/>
+                                    <Grid item xs={12} md={6}>
+                                        <img width="90%" alt="Thumbnail" src={stream.thumbnail}/>
                                     </Grid>
-                                    <Grid item xs={12} md={9}>
+                                    <Grid item xs={12} md={6}>
                                         <Typography noWrap
                                                     style={{fontStyle: "italic"}}>
                                             {stream.title}
@@ -47,7 +48,10 @@ export class Twitch extends React.Component<Props, State> {
                                         </Typography>
                                         <Typography noWrap
                                                     style={{color: "red"}}>
-                                            {stream.viewers} viewers
+                                            {stream.viewers} {stream.viewers === 1 ? ("viewer") : ("viewers")}
+                                        </Typography>
+                                        <Typography style={{fontStyle: "italic"}}>
+                                            {stream.game}
                                         </Typography>
                                     </Grid>
                                 </Grid>

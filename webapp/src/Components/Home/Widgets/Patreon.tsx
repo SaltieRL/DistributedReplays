@@ -3,6 +3,7 @@ import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import * as React from "react"
+import { PatreonResponse } from "../../../Models/types/Homepage"
 import { getPatreonProgress } from "../../../Requests/Home"
 
 interface Props {

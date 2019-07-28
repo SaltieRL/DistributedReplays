@@ -13,6 +13,7 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory,
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
+from backend.blueprints.spa_api.service_layers.homepage.recent import RecentReplays
 from backend.blueprints.spa_api.service_layers.homepage.twitch import TwitchStreams
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
@@ -500,3 +501,8 @@ def get_twitch_streams():
 @bp.route('/home/patreon')
 def get_patreon_progress():
     return better_jsonify(PatreonProgress.create())
+
+
+@bp.route('/home/recent')
+def get_recent_replays():
+    return better_jsonify(RecentReplays.create())

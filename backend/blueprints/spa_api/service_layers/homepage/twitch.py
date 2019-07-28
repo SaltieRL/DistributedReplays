@@ -68,7 +68,7 @@ class TwitchStreams:
             r['data'] = r['data'][:5]
         stream_data = []
         for stream in r['data']:
-            stream['thumbnail_url'] = TwitchStreams.get_size(stream['thumbnail_url'], 80, 45)
+            stream['thumbnail_url'] = TwitchStreams.get_size(stream['thumbnail_url'], 800, 450)
             stream_data.append(stream)
         if lazy_get_redis() is not None:
             r = lazy_get_redis()

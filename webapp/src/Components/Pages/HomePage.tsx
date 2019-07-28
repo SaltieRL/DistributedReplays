@@ -22,13 +22,14 @@ import { LoggedInUserActions, StoreState } from "../../Redux"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { HomePageAppBar } from "../Home/HomePageAppBar"
 import { HomePageFooter } from "../Home/HomePageFooter"
+import { Patreon } from "../Home/Widgets/Patreon"
+import { Recent } from "../Home/Widgets/Recent"
+import { Twitch } from "../Home/Widgets/Twitch"
 import { LinkButton } from "../Shared/LinkButton"
 import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
 import { SideBar } from "../Shared/SideBar"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
-import { Twitch } from "../Home/Widgets/Twitch"
-import { Patreon } from "../Home/Widgets/Patreon"
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -146,11 +147,15 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                 <Divider/>
                             </Grid>
                             <Grid item container xs={12} sm={6} lg={3}>
-                                <Twitch/>
+                                <Twitch style={{width: "100%"}}/>
                             </Grid>
 
                             <Grid item container xs={12} sm={6} lg={3}>
                                 <Patreon style={{width: "100%"}}/>
+                            </Grid>
+
+                            <Grid item container xs={12} sm={6} lg={3}>
+                                <Recent style={{width: "100%"}}/>
                             </Grid>
                         </Grid>
                     </div>

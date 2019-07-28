@@ -1,5 +1,6 @@
 import { doGet } from "../apiHandler/apiHandler"
 import { useMockData } from "./Config"
+import { PatreonResponse, RecentReplaysResponse, StreamResponse } from "../Models/types/Homepage"
 
 export const getTwitchStreams = (): Promise<StreamResponse> => {
     if (useMockData) {
@@ -20,4 +21,9 @@ export const getTwitchStreams = (): Promise<StreamResponse> => {
 
 export const getPatreonProgress = (): Promise<PatreonResponse> => {
     return doGet("/home/patreon")
+}
+
+export const getRecentReplays = (): Promise<RecentReplaysResponse> => {
+    return doGet("/home/recent")
+
 }

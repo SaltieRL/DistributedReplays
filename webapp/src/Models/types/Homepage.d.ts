@@ -1,3 +1,5 @@
+import { Replay } from "replay-viewer/models/Replay"
+
 interface Stream {
     name: string
     game: string
@@ -13,4 +15,8 @@ interface StreamResponse {
 interface PatreonResponse {
     progress: number
     total: number
+}
+
+interface RecentReplaysResponse {
+    recent: Replay[]
 }
