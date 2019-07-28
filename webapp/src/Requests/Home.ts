@@ -1,6 +1,6 @@
 import { doGet } from "../apiHandler/apiHandler"
-import { useMockData } from "./Config"
 import { PatreonResponse, RecentReplaysResponse, StreamResponse } from "../Models/types/Homepage"
+import { useMockData } from "./Config"
 
 export const getTwitchStreams = (): Promise<StreamResponse> => {
     if (useMockData) {

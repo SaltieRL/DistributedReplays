@@ -22,6 +22,7 @@ import { LoggedInUserActions, StoreState } from "../../Redux"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { HomePageAppBar } from "../Home/HomePageAppBar"
 import { HomePageFooter } from "../Home/HomePageFooter"
+import { Leaderboards } from "../Home/Widgets/Leaderboards"
 import { Patreon } from "../Home/Widgets/Patreon"
 import { Recent } from "../Home/Widgets/Recent"
 import { Twitch } from "../Home/Widgets/Twitch"
@@ -30,7 +31,6 @@ import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
 import { SideBar } from "../Shared/SideBar"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
-import { Leaderboards } from "../Home/Widgets/Leaderboards"
 
 const styles = (theme: Theme) => createStyles({
     root: {

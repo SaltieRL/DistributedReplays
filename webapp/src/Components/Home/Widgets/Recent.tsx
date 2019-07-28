@@ -2,9 +2,9 @@ import { CardHeader, Divider, Grid, Typography } from "@material-ui/core"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import * as React from "react"
+import { Replay } from "replay-viewer/models/Replay"
 import { RecentReplaysResponse } from "../../../Models/types/Homepage"
 import { getRecentReplays } from "../../../Requests/Home"
-import { Replay } from "replay-viewer/models/Replay"
 
 interface Props {
     style: any
