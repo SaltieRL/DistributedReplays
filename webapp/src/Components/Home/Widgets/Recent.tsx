@@ -32,7 +32,7 @@ export class Recent extends React.Component<Props, State> {
                 <CardContent>
                     {this.state.recentReplays ? this.state.recentReplays.recent.map((replay: Replay) => {
                         return (
-                            <a href={`/replays/${replay.id}`} target={"_blank"}
+                            <a key={replay.id} href={`/replays/${replay.id}`} target={"_blank"}
                                style={{textDecoration: "none"}}>
                                 <Grid item container xs={12} style={{padding: "25px"}}>
                                     <Grid item xs={12} md={3}>
