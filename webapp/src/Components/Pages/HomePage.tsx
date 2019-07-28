@@ -30,6 +30,7 @@ import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
 import { SideBar } from "../Shared/SideBar"
 import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
+import { Leaderboards } from "../Home/Widgets/Leaderboards"
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -146,16 +147,19 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             <Grid item xs={12}>
                                 <Divider/>
                             </Grid>
-                            <Grid item container xs={12} sm={6} lg={3}>
+                            <Grid item container xs={12} sm={6} lg={4}>
                                 <Twitch style={{width: "100%"}}/>
                             </Grid>
 
-                            <Grid item container xs={12} sm={6} lg={3}>
-                                <Patreon style={{width: "100%"}}/>
+                            <Grid item container xs={12} sm={6} lg={4}>
+                                <Recent style={{width: "100%"}}/>
+                            </Grid>
+                            <Grid item container xs={12} sm={6} lg={4}>
+                                <Leaderboards style={{width: "100%"}}/>
                             </Grid>
 
-                            <Grid item container xs={12} sm={6} lg={3}>
-                                <Recent style={{width: "100%"}}/>
+                            <Grid item container xs={12} sm={6} lg={4}>
+                                <Patreon style={{width: "100%"}}/>
                             </Grid>
                         </Grid>
                     </div>

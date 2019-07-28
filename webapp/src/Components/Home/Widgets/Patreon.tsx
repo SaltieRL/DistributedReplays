@@ -28,7 +28,8 @@ export class Patreon extends React.Component<Props, State> {
     public render() {
         return (
             <Card style={this.props.style}>
-                <CardHeader title={"Patreon Goal Progress"}/>
+                <CardHeader title={"Patreon Goal Progress"}
+                subheader={"100% of contributions go to server costs"}/>
                 <CardContent>
                     {this.state.patreonProgress ? (
                         <>

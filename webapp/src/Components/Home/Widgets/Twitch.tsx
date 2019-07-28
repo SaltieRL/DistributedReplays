@@ -27,7 +27,8 @@ export class Twitch extends React.Component<Props, State> {
     public render() {
         return (
             <Card style={this.props.style}>
-                <CardHeader title={"Featured Twitch Streams"}/>
+                <CardHeader title={"Featured Twitch Streams"}
+                subheader={"Streamers that support us"}/>
                 <CardContent>
                     {this.state.streams ? <>
                         {this.state.streams.streams.map((stream: Stream) => (
