@@ -147,20 +147,41 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             <Grid item xs={12}>
                                 <Divider/>
                             </Grid>
-                            <Grid item container xs={12} sm={6} lg={4}>
-                                <Twitch style={{width: "100%"}}/>
-                            </Grid>
 
-                            <Grid item container xs={12} sm={6} lg={4}>
-                                <Recent style={{width: "100%"}}/>
-                            </Grid>
-                            <Grid item container xs={12} sm={6} lg={4}>
-                                <Leaderboards style={{width: "100%"}}/>
-                            </Grid>
+                            {isWidthUp("md", this.props.width) ?
+                                <>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Twitch style={{width: "100%"}}/>
+                                    </Grid>
 
-                            <Grid item container xs={12} sm={6} lg={4}>
-                                <Patreon style={{width: "100%"}}/>
-                            </Grid>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Recent style={{width: "100%"}}/>
+                                    </Grid>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Leaderboards style={{width: "100%"}}/>
+                                    </Grid>
+
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Patreon style={{width: "100%"}}/>
+                                    </Grid>
+                                </>
+                                :
+                                <>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Recent style={{width: "100%"}}/>
+                                    </Grid>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Leaderboards style={{width: "100%"}}/>
+                                    </Grid>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Twitch style={{width: "100%"}}/>
+                                    </Grid>
+
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Patreon style={{width: "100%"}}/>
+                                    </Grid>
+                                </>
+                            }
                         </Grid>
                     </div>
                 </UploadDialogWrapper>
