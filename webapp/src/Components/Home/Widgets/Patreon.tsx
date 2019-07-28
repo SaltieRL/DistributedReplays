@@ -6,7 +6,7 @@ import * as React from "react"
 import { getPatreonProgress } from "../../../Requests/Home"
 
 interface Props {
-
+    style: any
 }
 
 interface State {
@@ -14,7 +14,7 @@ interface State {
 }
 
 export class Patreon extends React.Component<Props, State> {
-    constructor(props: {}) {
+    constructor(props: Props) {
         super(props)
         this.state = {}
     }
@@ -26,7 +26,7 @@ export class Patreon extends React.Component<Props, State> {
 
     public render() {
         return (
-            <Card>
+            <Card style={this.props.style}>
                 <CardHeader title={"Patreon Goal Progress"}/>
                 <CardContent>
                     {this.state.patreonProgress ? (

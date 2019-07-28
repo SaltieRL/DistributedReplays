@@ -150,7 +150,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             </Grid>
 
                             <Grid item container xs={12} sm={6} lg={3}>
-                                <Patreon/>
+                                <Patreon style={{width: "100%"}}/>
                             </Grid>
                         </Grid>
                     </div>

@@ -34,7 +34,7 @@ export class Twitch extends React.Component<Props, State> {
                                style={{textDecoration: "none"}}>
                                 <Grid item container xs={12} style={{padding: "25px"}}>
                                     <Grid item xs={12} md={3}>
-                                        <img src={stream.thumbnail}/>
+                                        <img alt="Thumbnail" src={stream.thumbnail}/>
                                     </Grid>
                                     <Grid item xs={12} md={9}>
                                         <Typography noWrap
