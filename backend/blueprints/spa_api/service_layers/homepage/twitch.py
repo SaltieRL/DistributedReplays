@@ -12,6 +12,13 @@ try:
 except:
     TWITCH_CLIENT_ID = ""
 
+try:
+    import config
+
+    TWITCH_STREAMS = config.TWITCH_STREAMS
+except:
+    TWITCH_STREAMS = ['saucerboy', 'sciguymjm', 'twobackfromtheend', 'RLBotOfficial']
+
 headers = {'Client-ID': TWITCH_CLIENT_ID}
 
 
@@ -61,7 +68,7 @@ class TwitchStreams:
             if r.get('twitch_streams'):
                 return json.loads(r.get('twitch_streams'))
         r = requests.get("https://api.twitch.tv/helix/streams", headers=headers,
-                         params={'user_login': ['saucerboy', 'sciguymjm', 'twobackfromtheend', 'RLBotOfficial']}).json()
+                         params={'user_login': TWITCH_STREAMS}).json()
         if 'data' not in r or len(r['data']) == 0:
             r = requests.get("https://api.twitch.tv/helix/streams", headers=headers,
                              params={'game_id': '30921'}).json()  # RL streams
