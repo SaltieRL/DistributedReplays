@@ -40,8 +40,9 @@ class Test_UploadingProtos():
             'proto': encoded_proto,
             'pandas': encoded_pandas
         }
-        r = requests.post(LOCAL_URL + '/api/upload/proto', json=obj, params={'visibility': GameVisibilitySetting.PRIVATE.name,
-                                                                             'player_id': proto_game.players[0].id.id})
+        r = requests.post(LOCAL_URL + '/api/upload/proto', json=obj,
+                          params={'visibility': GameVisibilitySetting.PRIVATE.name,
+                                  'player_id': proto_game.players[0].id.id})
 
         r.raise_for_status()
         assert r.status_code == 200
