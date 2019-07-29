@@ -55,25 +55,25 @@ class Test_BasicServerCommands():
         def create_all_tags():
             created_tags = []
             for _tags in tags:
+                keys = []
                 for _tag in _tags:
-                    if _tag in created_tags:
-                        continue
-                    r = requests.put(LOCAL_URL + f'/api/tag/{_tag}')
-                    r.raise_for_status()
-                    created_tags.append(_tag)
+                    if _tag not in created_tags:
+                        r = requests.put(LOCAL_URL + f'/api/tag/{_tag}')
+                        r.raise_for_status()
+                        created_tags.append(_tag)
 
-                    # create private id
-                    r = requests.put(LOCAL_URL + f'/api/tag/{_tag}/private_key/{_tag}')
-                    r.raise_for_status()
+                        # create private id
+                        r = requests.put(LOCAL_URL + f'/api/tag/{_tag}/private_key/{_tag}')
+                        r.raise_for_status()
                     json = requests.get(LOCAL_URL + f'/api/tag/{_tag}/private_key').json()
-                    tag_keys.append(json)
+                    keys.append(json)
+                tag_keys.append(keys)
+
 
         for index, replay_url in enumerate(replay_list):
-            if index == 1:
+            if index == 0:
                 create_all_tags()
                 time.sleep(1)
-            _tags = tags[index]
-            _private_keys: List[str] = []
 
             params = {'visibility': privacy[index], 'player_id': users[index], 'private_tag_keys': tag_keys[index]}
             logger.debug('Testing:', replay_url)
