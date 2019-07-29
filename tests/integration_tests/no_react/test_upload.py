@@ -71,6 +71,7 @@ class Test_BasicServerCommands():
         for index, replay_url in enumerate(replay_list):
             if index == 1:
                 create_all_tags()
+                time.sleep(1)
             _tags = tags[index]
             _private_keys: List[str] = []
 
