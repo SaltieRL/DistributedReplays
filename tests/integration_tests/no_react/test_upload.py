@@ -50,6 +50,8 @@ class Test_BasicServerCommands():
             '76561198018756583'
         ]
 
+        tag_keys = []
+
         def create_all_tags():
             created_tags = []
             for _tags in tags:
@@ -60,18 +62,19 @@ class Test_BasicServerCommands():
                     r.raise_for_status()
                     created_tags.append(_tag)
 
+                    # create private id
+                    r = requests.put(LOCAL_URL + f'/api/tag/{_tag}/private_key/{_tag}')
+                    r.raise_for_status()
+                    json = requests.get(LOCAL_URL + f'/api/tag/{_tag}/private_key').json()
+                    tag_keys.append(json)
+
         for index, replay_url in enumerate(replay_list):
             if index == 1:
                 create_all_tags()
             _tags = tags[index]
             _private_keys: List[str] = []
-            for _tag in _tags:
-                # Add private ID to tag and get private key
-                requests.put(LOCAL_URL + f'/api/tag/{_tag}/private_key/TEST_PRIVATE_ID')
-                response = requests.get(LOCAL_URL + f'/api/tag/{_tag}/private_key')
-                _private_keys.append(response.content)
 
-            params = {'visibility': privacy[index], 'player_id': users[index], 'private_tag_keys': _private_keys}
+            params = {'visibility': privacy[index], 'player_id': users[index], 'private_tag_keys': tag_keys[index]}
             logger.debug('Testing:', replay_url)
             f = download_replay_discord(replay_url)
             r = requests.post(LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', f)}, params=params)
