@@ -18,6 +18,9 @@ export class HomePageAppBar extends React.PureComponent<Props> {
                         <Menu/>
                     </IconButton>
                     <span style={{flexGrow: 1}}/>
+
+                    {this.props.children}
+                    <span style={{flexGrow: 1}}/>
                     <ThemeContext.Consumer>
                         {(themeValue) => (
                             <Tooltip title="Toggle theme">
