@@ -50,7 +50,7 @@ class Test_BasicServerCommands():
             '76561198018756583'
         ]
 
-        tag_keys = []
+        tag_keys = ['invalid_key']
 
         def create_all_tags():
             created_tags = []
@@ -71,7 +71,7 @@ class Test_BasicServerCommands():
 
 
         for index, replay_url in enumerate(replay_list):
-            if index == 0:
+            if index == 1:
                 create_all_tags()
                 time.sleep(1)
 
