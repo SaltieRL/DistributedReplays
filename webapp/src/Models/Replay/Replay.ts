@@ -23,6 +23,7 @@ export interface Replay {
     players: ReplayPlayer[]
     tags: Tag[],
     visibility: GameVisibility
+    ranks: number[]
 }
 
 export const parseReplay = (data: any) => {
