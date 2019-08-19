@@ -3,7 +3,7 @@ import {
     CircularProgress,
     createStyles,
     DialogActions,
-    DialogContent,
+    DialogContent, LinearProgress,
     Theme,
     Typography,
     WithStyles,
@@ -35,12 +35,13 @@ interface State {
     files: File[]
     rejected: File[]
     uploadingStage?: "pressedUpload" | "uploaded"
+    filesRemaining: number
 }
 
 class UploadFormComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {files: [], rejected: []}
+        this.state = {files: [], rejected: [], filesRemaining: -1}
     }
 
     public render() {
@@ -81,17 +82,30 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                         </DialogActions>
                     </>
                     :
-                    <div style={{margin: "auto", textAlign: "center", padding: 20}}>
-                        <CircularProgress/>
-                    </div>
+                    <>
+                        <div style={{margin: "auto", textAlign: "center", padding: 20, flexGrow: 1}}>
+                            <CircularProgress/>
+                        </div>
+                        <div style={{flexGrow: 1, padding: 20}}>
+
+                            <Typography>
+                                Uploading
+                                 {this.state.files.length - this.state.filesRemaining} of {this.state.files.length}...
+                            </Typography>
+                            <LinearProgress variant="determinate"
+                                            color={"secondary"}
+                                            value={(1 - (this.state.filesRemaining / this.state.files.length)) * 100}
+                                            style={{width: "100% !important"}}/>
+                        </div>
+                    </>
                 }
             </>
         )
     }
 
     private readonly handleUpload = () => {
-        this.setState({uploadingStage: "pressedUpload"})
-        return this.uploadSingleFile(this.state.files)
+        this.setState({uploadingStage: "pressedUpload", filesRemaining: this.state.files.length})
+        return this.uploadSingleFile(this.state.files.slice(0))
             .catch(() => this.props.showNotification({
                 variant: "error",
                 message: "Could not upload replays."
@@ -104,7 +118,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
             console.log("Done uploading")
             addTaskIds(ids)
             this.clearFiles()
-            this.setState({uploadingStage: "uploaded"})
+            this.setState({uploadingStage: "uploaded", filesRemaining: -1})
             this.props.showNotification({
                 variant: "success",
                 message: "Successfully uploaded replays",
@@ -115,7 +129,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         const f = files.shift()
         if (f !== undefined) {
             return uploadReplays([f]).then((id: any) => {
-                console.log(id)
+                this.setState({filesRemaining: files.length})
                 this.uploadSingleFile(files, ids.concat(id))
             })
         } else {
