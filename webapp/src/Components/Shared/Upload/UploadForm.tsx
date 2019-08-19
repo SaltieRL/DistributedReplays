@@ -91,21 +91,36 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
     private readonly handleUpload = () => {
         this.setState({uploadingStage: "pressedUpload"})
-        uploadReplays(this.state.files)
-            .then(addTaskIds)
-            .then(this.clearFiles)
-            .then(() => {
-                this.setState({uploadingStage: "uploaded"})
-                this.props.showNotification({
-                    variant: "success",
-                    message: "Successfully uploaded replays",
-                    timeout: 5000
-                })
-            })
+        return this.uploadSingleFile(this.state.files)
             .catch(() => this.props.showNotification({
                 variant: "error",
                 message: "Could not upload replays."
             }))
+
+    }
+
+    private readonly uploadSingleFile = (files: File[], ids: any = []): any => {
+        if (files.length === 0) {
+            console.log("Done uploading")
+            addTaskIds(ids)
+            this.clearFiles()
+            this.setState({uploadingStage: "uploaded"})
+            this.props.showNotification({
+                variant: "success",
+                message: "Successfully uploaded replays",
+                timeout: 5000
+            })
+            return null
+        }
+        const f = files.shift()
+        if (f !== undefined) {
+            return uploadReplays([f]).then((id: any) => {
+                console.log(id)
+                this.uploadSingleFile(files, ids.concat(id))
+            })
+        } else {
+            return this.uploadSingleFile(files, ids)
+        }
     }
 
     private readonly handleDrop: DropFilesEventHandler = (accepted, rejected) => {
