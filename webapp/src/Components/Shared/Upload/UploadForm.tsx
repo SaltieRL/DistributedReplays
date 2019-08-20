@@ -115,7 +115,6 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
     private readonly uploadSingleFile = (files: File[], ids: any = []): any => {
         if (files.length === 0) {
-            console.log("Done uploading")
             addTaskIds(ids)
             this.clearFiles()
             this.setState({uploadingStage: "uploaded", filesRemaining: -1})
