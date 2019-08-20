@@ -5,10 +5,11 @@ import {
     createStyles,
     Divider,
     Grid,
+    IconButton,
     List,
     ListItem,
     ListItemIcon,
-    ListItemText,
+    Tooltip,
     Typography,
     withStyles,
     WithStyles
@@ -16,6 +17,7 @@ import {
 import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import People from "@material-ui/icons/People"
 import Person from "@material-ui/icons/Person"
+import VideogameAsset from "@material-ui/icons/VideogameAsset"
 import * as React from "react"
 import { Link } from "react-router-dom"
 import { PLAYER_PAGE_LINK } from "../../../../Globals"
@@ -41,6 +43,7 @@ interface PlayerInCommonStat {
     count: number
     id: string
     name: string
+    avatar: string
 }
 
 export interface PlayerStats {
@@ -120,15 +123,27 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                 <Grid item xs={12}>
                                     <List component="nav">
                                         {this.state.playerStats.playersInCommon.map((person) =>
-                                            <Link to={PLAYER_PAGE_LINK(person.id)} style={{textDecoration: "none"}}
-                                                  key={person.id}>
-                                                <ListItem button>
-                                                    <ListItemIcon>
-                                                        <Person/>
-                                                    </ListItemIcon>
-                                                    <ListItemText primary={person.name}/>
-                                                </ListItem>
-                                            </Link>
+                                            <>
+                                                <Link to={PLAYER_PAGE_LINK(person.id)} style={{textDecoration: "none"}}
+                                                      key={person.id}>
+                                                    <ListItem button>
+                                                        <ListItemIcon>
+                                                            {person.avatar ?
+                                                                <img alt={`${person.name}'s avatar`} height={"30px"}
+                                                                     src={person.avatar}/> : <Person/>}
+                                                        </ListItemIcon>
+                                                        {/*<ListItemText primary={person.name}/>*/}
+                                                        <Typography>{person.name}</Typography>
+                                                        <Tooltip title={"Search games played together"}>
+                                                            <Link style={{textDecoration: "none", marginLeft: "auto"}}
+                                                                  to={`/search/replays?player_ids=${person.id}` +
+                                                                  `&player_ids=${this.props.player.id}`}>
+                                                                <IconButton><VideogameAsset/></IconButton>
+                                                            </Link>
+                                                        </Tooltip>
+                                                    </ListItem>
+                                                </Link>
+                                            </>
                                         )}
                                     </List>
                                 </Grid>
