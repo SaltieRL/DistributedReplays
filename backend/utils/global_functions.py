@@ -33,7 +33,7 @@ def get_current_user_id(player_id=None) -> str:
     try:
         return UserManager.get_current_user().platformid
     except Exception as e:
-        logger.error(e)
+        logger.error("Error getting current user ID:", e)
 
 class UserManager:
     @staticmethod

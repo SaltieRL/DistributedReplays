@@ -11,6 +11,7 @@ from backend.blueprints.spa_api.errors.errors import ReplayNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting, GameVisibility
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
+from backend.utils.checks import is_admin
 from backend.utils.global_functions import get_current_user_id
 
 logger = logging.getLogger(__name__)
@@ -62,10 +63,9 @@ class PlayerWrapper:
                 PlayerGame.game != None)
 
         if filter_private:
-            if g.user is not None:
-                if not g.admin:
-                    query = query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
-                                             Game.players.any(get_current_user_id())))
+            if not is_admin():
+                query = query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
+                                         Game.players.any(get_current_user_id())))
             else:
                 query = query.filter(Game.visibility != GameVisibilitySetting.PRIVATE)
 

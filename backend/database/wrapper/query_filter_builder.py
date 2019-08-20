@@ -147,9 +147,12 @@ class QueryFilterBuilder:
 
         if self.is_game or has_joined_game:
             # Do visibility check
-            if not is_admin():
-                filtered_query = filtered_query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
-                                                           Game.players.any(get_current_user_id())))
+            try:
+                if not is_admin():
+                    filtered_query = filtered_query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
+                                                               Game.players.any(get_current_user_id())))
+            except:
+                pass
 
         if self.start_time is not None:
             filtered_query = filtered_query.filter(
