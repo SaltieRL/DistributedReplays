@@ -71,7 +71,9 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         const replayScore = <ColouredGameScore replay={replay}/>
         const replayResult = getReplayResult(replay, player)
 
-        const averageRank = Math.round(replay.ranks.reduce((previous, current, idx) => previous + current)
+        const averageRank = Math.round(replay.ranks
+                .filter((num) => num > 0)
+                .reduce((previous, current, idx) => previous + current)
             / replay.ranks.length)
         const averageMMR = Math.round(replay.mmrs.filter((num) => num > 0)
                 .reduce((previous, current, idx) => previous + current)
