@@ -24,6 +24,8 @@ import { PLAYER_PAGE_LINK } from "../../../../Globals"
 import { getStats } from "../../../../Requests/Player/getStats"
 import { roundNumberToMaxDP } from "../../../../Utils/String"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
+import ListItemText from "@material-ui/core/ListItemText"
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 
 const styles = createStyles({
     percentage: {
@@ -123,17 +125,16 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                 <Grid item xs={12}>
                                     <List component="nav">
                                         {this.state.playerStats.playersInCommon.map((person) =>
-                                            <>
-                                                <Link to={PLAYER_PAGE_LINK(person.id)} style={{textDecoration: "none"}}
-                                                      key={person.id}>
-                                                    <ListItem button>
-                                                        <ListItemIcon>
-                                                            {person.avatar ?
-                                                                <img alt={`${person.name}'s avatar`} height={"30px"}
-                                                                     src={person.avatar}/> : <Person/>}
-                                                        </ListItemIcon>
-                                                        {/*<ListItemText primary={person.name}/>*/}
-                                                        <Typography>{person.name}</Typography>
+                                            <Link to={PLAYER_PAGE_LINK(person.id)} style={{textDecoration: "none"}}
+                                                  key={person.id}>
+                                                <ListItem button>
+                                                    <ListItemIcon>
+                                                        {person.avatar ?
+                                                            <img alt={`${person.name}'s avatar`} height={"30px"}
+                                                                 src={person.avatar}/> : <Person/>}
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={person.name}/>
+                                                    <ListItemSecondaryAction>
                                                         <Tooltip title={"Search games played together"}>
                                                             <Link style={{textDecoration: "none", marginLeft: "auto"}}
                                                                   to={`/search/replays?player_ids=${person.id}` +
@@ -141,9 +142,9 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                                                 <IconButton><VideogameAsset/></IconButton>
                                                             </Link>
                                                         </Tooltip>
-                                                    </ListItem>
-                                                </Link>
-                                            </>
+                                                    </ListItemSecondaryAction>
+                                                </ListItem>
+                                            </Link>
                                         )}
                                     </List>
                                 </Grid>
