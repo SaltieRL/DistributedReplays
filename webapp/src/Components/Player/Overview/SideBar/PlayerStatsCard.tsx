@@ -9,6 +9,8 @@ import {
     List,
     ListItem,
     ListItemIcon,
+    ListItemSecondaryAction,
+    ListItemText,
     Tooltip,
     Typography,
     withStyles,
@@ -24,8 +26,6 @@ import { PLAYER_PAGE_LINK } from "../../../../Globals"
 import { getStats } from "../../../../Requests/Player/getStats"
 import { roundNumberToMaxDP } from "../../../../Utils/String"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
-import ListItemText from "@material-ui/core/ListItemText"
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 
 const styles = createStyles({
     percentage: {
