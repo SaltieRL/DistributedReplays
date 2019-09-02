@@ -204,7 +204,7 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          math_explanation='\\frac{\\textrm{total goals}}{\\textrm{total shots}}'),
         FieldExplanation('rank',
                          'Rank of the player'),
-        FieldExplanation('MMR',
+        FieldExplanation('mmr',
                          'MMR of the player'),
 
     ]
