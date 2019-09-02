@@ -17,9 +17,14 @@ class PlayerStatCreation(SharedStatCreation):
         super().__init__()
         self.dynamic_field_list = self.create_dynamic_fields()
         self.stat_explanation_list, self.stat_explanation_map = get_explanations(self.dynamic_field_list)
+        custom = []
+        custom_stats = ['rank', 'mmr']
+        for stat in custom_stats:
+            query_field = getattr(PlayerGame, stat)
+            custom.append(QueryFieldWrapper(query_field, dynamic_field=DynamicFieldResult(stat)))
         self.stat_list = self.create_stats_field_list(self.dynamic_field_list, self.stat_explanation_map,
                                                       PlayerGame,
-                                                      math_list=self.get_math_queries())
+                                                      math_list=self.get_math_queries(), custom=custom)
         self.stats_query, self.std_query, self.individual_query = self.get_stats_query(self.stat_list)
 
 

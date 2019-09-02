@@ -201,7 +201,11 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          short_name='turnover eff'),
         FieldExplanation('shot_%',
                          'Ratio of goals to shots',
-                         math_explanation='\\frac{\\textrm{total goals}}{\\textrm{total shots}}')
+                         math_explanation='\\frac{\\textrm{total goals}}{\\textrm{total shots}}'),
+        FieldExplanation('rank',
+                         'Rank of the player'),
+        FieldExplanation('MMR',
+                         'MMR of the player'),
 
     ]
     explanation_map = dict()
