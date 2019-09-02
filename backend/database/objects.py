@@ -232,6 +232,9 @@ class Game(DBObjectBase):
     team1possession = Column(Float)
     frames = Column(Integer)
     visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.DEFAULT)
+    # to update the DB
+    # ALTER TABLE GAMES
+    # ADD COLUMN primary_player VARCHAR(40) NULL;
     primary_player = Column(String(40))
     # to update the DB
     # ALTER TABLE games

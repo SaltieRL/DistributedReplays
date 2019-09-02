@@ -135,7 +135,9 @@ def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None,
         match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
         return
     query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
-    protobuf_game.game_metadata.primary_player.id = query_params['player_id']
+    if 'player_id' in query_params:
+        protobuf_game.game_metadata.primary_player.id = query_params['player_id']
+
     match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
 
     logger.debug("SUCCESS: Added base data to db adding query params")

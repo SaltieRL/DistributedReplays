@@ -168,6 +168,11 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
         for match in matches:
             session.delete(match)
 
+    for loadout in loadouts:
+        matches = session.query(Loadout).filter(Loadout.game == loadout.game).filter(
+            Loadout.player == loadout.player).all()
+        for match in matches:
+            session.delete(match)
     try:
         matches = session.query(Game).filter(Game.hash == game.hash).all()
         if matches is not None and len(matches) > 0:
@@ -209,10 +214,6 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
         session.add(team)
 
     for loadout in loadouts:
-        matches = session.query(Loadout).filter(Loadout.game == loadout.game).filter(
-            Loadout.player == loadout.player).all()
-        for match in matches:
-            session.delete(match)
         session.add(loadout)
 
     return match_exists
