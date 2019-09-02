@@ -13,17 +13,20 @@ export const getStats = (id: string): Promise<PlayerStats> => {
                 {
                     count: 3,
                     id: "76561198060924319",
-                    name: "synthex"
+                    name: "synthex",
+                    avatar: ""
                 },
                 {
                     count: 2,
                     id: "76561198296700336",
-                    name: "Starsy"
+                    name: "Starsy",
+                    avatar: ""
                 },
                 {
                     count: 1,
                     id: "76561198201788086",
-                    name: "Blitze"
+                    name: "Blitze",
+                    avatar: ""
                 }
             ]
         })

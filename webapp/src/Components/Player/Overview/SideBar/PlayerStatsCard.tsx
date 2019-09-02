@@ -5,10 +5,13 @@ import {
     createStyles,
     Divider,
     Grid,
+    IconButton,
     List,
     ListItem,
     ListItemIcon,
+    ListItemSecondaryAction,
     ListItemText,
+    Tooltip,
     Typography,
     withStyles,
     WithStyles
@@ -16,6 +19,7 @@ import {
 import DirectionsCar from "@material-ui/icons/DirectionsCar"
 import People from "@material-ui/icons/People"
 import Person from "@material-ui/icons/Person"
+import VideogameAsset from "@material-ui/icons/VideogameAsset"
 import * as React from "react"
 import { Link } from "react-router-dom"
 import { PLAYER_PAGE_LINK } from "../../../../Globals"
@@ -41,6 +45,7 @@ interface PlayerInCommonStat {
     count: number
     id: string
     name: string
+    avatar: string
 }
 
 export interface PlayerStats {
@@ -124,9 +129,20 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                                   key={person.id}>
                                                 <ListItem button>
                                                     <ListItemIcon>
-                                                        <Person/>
+                                                        {person.avatar ?
+                                                            <img alt={`${person.name}'s avatar`} height={"30px"}
+                                                                 src={person.avatar}/> : <Person/>}
                                                     </ListItemIcon>
                                                     <ListItemText primary={person.name}/>
+                                                    <ListItemSecondaryAction>
+                                                        <Tooltip title={"Search games played together"}>
+                                                            <Link style={{textDecoration: "none", marginLeft: "auto"}}
+                                                                  to={`/search/replays?player_ids=${person.id}` +
+                                                                  `&player_ids=${this.props.player.id}`}>
+                                                                <IconButton><VideogameAsset/></IconButton>
+                                                            </Link>
+                                                        </Tooltip>
+                                                    </ListItemSecondaryAction>
                                                 </ListItem>
                                             </Link>
                                         )}
