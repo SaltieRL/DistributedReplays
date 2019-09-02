@@ -37,7 +37,6 @@ class PlayerStatCreation(SharedStatCreation):
                                                                             'api.metadata.PlayerLoadout',
                                                                             'api.PlayerId'],
                                                    db_object=PlayerGame)
-        print(field_list)
         return field_list
 
     @staticmethod
