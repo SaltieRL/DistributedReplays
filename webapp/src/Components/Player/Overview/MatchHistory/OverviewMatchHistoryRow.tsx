@@ -70,6 +70,21 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         const replayGameMode = replay.gameMode
         const replayScore = <ColouredGameScore replay={replay}/>
         const replayResult = getReplayResult(replay, player)
+
+        const averageRank = Math.round(replay.ranks
+                .filter((num) => num > 0)
+                .reduce((previous, current, idx) => previous + current)
+            / replay.ranks.length)
+        const averageMMR = Math.round(replay.mmrs.filter((num) => num > 0)
+                .reduce((previous, current, idx) => previous + current)
+            / replay.mmrs.filter((num) => num > 0).length)
+        const replayRank = (
+            <Tooltip title={averageMMR.toString()}>
+                <img alt=""
+                     style={{width: 28, height: 28, margin: "auto"}}
+                     src={`${window.location.origin}/ranks/${averageRank}.png`}/>
+            </Tooltip>
+        )
         const chartIcon = (
             <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
                 <InsertChart/>
@@ -101,9 +116,14 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
                                     {replayScore}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={1}>
                                 <Typography variant={typographyVariant}>
                                     {replayResult}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={1}>
+                                <Typography variant={typographyVariant}>
+                                    {replayRank}
                                 </Typography>
                             </Grid>
                         </>
