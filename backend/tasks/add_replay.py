@@ -45,7 +45,7 @@ def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, a
 
 def parse_replay(self, filename, preserve_upload_date: bool = False,
                  # url parameters
-                 query_params:Dict[str, any] = None,
+                 query_params: Dict[str, any] = None,
                  # test parameters
                  custom_file_location: str = None, force_reparse: bool = False):
     """
@@ -127,17 +127,21 @@ def save_replay(proto_game, filename, pickled):
     return replay_id
 
 
-def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, preserve_upload_date=True):
+def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None, preserve_upload_date=True):
     logger.debug("Successfully parsed replay adding data to DB")
     # Process
+
+    if query_params is None:
+        match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
+        return
+    query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
+    protobuf_game.game_metadata.primary_player.id = query_params['player_id']
     match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
 
     logger.debug("SUCCESS: Added base data to db adding query params")
-
     if query_params is None:
         return
 
-    query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
     if len(query_params) == 0:
         return
 
@@ -166,4 +170,5 @@ def parsed_replay_processing(protobuf_game, query_params:Dict[str, any] = None, 
     if len(error_counter) == 0:
         logger.debug("SUCCESS: Processed all query params")
     else:
-        logger.warning('Found ' + str(len(error_counter)) + ' errors while processing query params: ' + str(error_counter))
+        logger.warning(
+            'Found ' + str(len(error_counter)) + ' errors while processing query params: ' + str(error_counter))

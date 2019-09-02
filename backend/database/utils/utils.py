@@ -44,7 +44,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
              playlist=game.game_metadata.playlist,
              game_server_id=0 if game.game_metadata.game_server_id == '' else game.game_metadata.game_server_id,
              server_name=game.game_metadata.server_name,
-             replay_id=game.game_metadata.id)
+             replay_id=game.game_metadata.id, primary_player=game.game_metadata.primary_player.id)
 
     player_games = []
     players = []
