@@ -68,14 +68,15 @@ const mapStateToProps = (state: StoreState) => ({
 export const getSkillAverages = (replay: Replay) => {
     let averageRank = 0
     let averageMMR = 0
-    if (replay.ranks.filter((num) => num > 0).length > 0) {
-        averageRank = Math.round(replay.ranks
-                .filter((num) => num > 0)
-                .reduce((previous, current, idx) => previous + current)
-            / replay.ranks.length)
-        averageMMR = Math.round(replay.mmrs.filter((num) => num > 0)
-                .reduce((previous, current, idx) => previous + current)
-            / replay.mmrs.filter((num) => num > 0).length)
+    const filteredRanks = replay.ranks.filter((num) => num > 0)
+    const filteredMMRs = replay.mmrs.filter((num) => num > 0)
+    if (filteredRanks.length > 0) {
+        averageRank = Math.round(filteredRanks.reduce((previous, current, idx) => previous + current)
+            / filteredRanks.length)
+        if (filteredMMRs.length > 0) {
+            averageMMR = Math.round(filteredMMRs.reduce((previous, current, idx) => previous + current)
+                / filteredMMRs.length)
+        }
     }
     return {averageRank, averageMMR}
 }
