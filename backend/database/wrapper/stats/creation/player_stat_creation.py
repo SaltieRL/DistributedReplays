@@ -21,12 +21,13 @@ class PlayerStatCreation(SharedStatCreation):
         custom_stats = ['rank', 'mmr']
         for stat in custom_stats:
             query_field = getattr(PlayerGame, stat)
-            custom.append(QueryFieldWrapper(query_field, dynamic_field=DynamicFieldResult(stat)))
+            qstat = QueryFieldWrapper(query_field, dynamic_field=DynamicFieldResult(stat))
+            qstat.is_averaged = True
+            custom.append(qstat)
         self.stat_list = self.create_stats_field_list(self.dynamic_field_list, self.stat_explanation_map,
                                                       PlayerGame,
                                                       math_list=self.get_math_queries(), custom=custom)
         self.stats_query, self.std_query, self.individual_query = self.get_stats_query(self.stat_list)
-
 
     @staticmethod
     def create_dynamic_fields() -> List[ProtoFieldResult]:
@@ -36,11 +37,11 @@ class PlayerStatCreation(SharedStatCreation):
                                                                             'api.metadata.PlayerLoadout',
                                                                             'api.PlayerId'],
                                                    db_object=PlayerGame)
+        print(field_list)
         return field_list
 
-
     @staticmethod
-    def get_math_queries() ->List[QueryFieldWrapper]:
+    def get_math_queries() -> List[QueryFieldWrapper]:
         return [
             QueryFieldWrapper(stat_math.get_shots_per_non_dribble(), DynamicFieldResult('shots/hit'), is_percent=True),
             QueryFieldWrapper(stat_math.get_passes_per_non_dribble(), DynamicFieldResult('passes/hit'),
