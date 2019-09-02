@@ -65,7 +65,20 @@ interface OwnProps {
 const mapStateToProps = (state: StoreState) => ({
     loggedInUser: state.loggedInUser
 })
-
+export const getSkillAverages = (replay: Replay) => {
+    let averageRank = 0
+    let averageMMR = 0
+    if (replay.ranks.length > 0) {
+        averageRank = Math.round(replay.ranks
+                .filter((num) => num > 0)
+                .reduce((previous, current, idx) => previous + current)
+            / replay.ranks.length)
+        averageMMR = Math.round(replay.mmrs.filter((num) => num > 0)
+                .reduce((previous, current, idx) => previous + current)
+            / replay.mmrs.filter((num) => num > 0).length)
+    }
+    return {averageRank, averageMMR}
+}
 type Props = OwnProps
     & WithStyles<typeof styles>
     & WithWidth
@@ -78,15 +91,9 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
         const dateFormat = isWidthUp("lg", width) ? "DD/MM/YYYY" : "DD/MM"
 
         // replay stuff
-        const averageRank = Math.round(replay.ranks
-                .filter((num) => num > 0)
-                .reduce((previous, current, idx) => previous + current)
-            / replay.ranks.length)
-        const averageMMR = Math.round(replay.mmrs.filter((num) => num > 0)
-                .reduce((previous, current, idx) => previous + current)
-            / replay.mmrs.filter((num) => num > 0).length)
+        const {averageRank, averageMMR} = getSkillAverages(replay)
         const replayRank = (
-            <Tooltip title={averageMMR.toString()}>
+            <Tooltip title={averageMMR > 0 ? averageMMR.toString() : "Unranked"}>
                 <img alt=""
                      style={{width: 28, height: 28, margin: "auto"}}
                      src={`${window.location.origin}/ranks/${averageRank}.png`}/>

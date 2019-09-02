@@ -20,6 +20,7 @@ import { REPLAY_PAGE_LINK } from "../../../../Globals"
 import { getReplayResult, Replay } from "../../../../Models"
 import { ReplayBoxScore } from "../../../Replay/ReplayBoxScore"
 import { ReplayChart } from "../../../Replay/ReplayChart"
+import { getSkillAverages } from "../../../ReplaysSearch/ReplayDisplayRow"
 import { ColouredGameScore } from "../../../Shared/ColouredGameScore"
 
 const styles = (theme: Theme) => createStyles({
@@ -71,15 +72,9 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         const replayScore = <ColouredGameScore replay={replay}/>
         const replayResult = getReplayResult(replay, player)
 
-        const averageRank = Math.round(replay.ranks
-                .filter((num) => num > 0)
-                .reduce((previous, current, idx) => previous + current)
-            / replay.ranks.length)
-        const averageMMR = Math.round(replay.mmrs.filter((num) => num > 0)
-                .reduce((previous, current, idx) => previous + current)
-            / replay.mmrs.filter((num) => num > 0).length)
+        const {averageRank, averageMMR} = getSkillAverages(replay)
         const replayRank = (
-            <Tooltip title={averageMMR.toString()}>
+            <Tooltip title={averageMMR > 0 ? averageMMR.toString() : "Unranked"}>
                 <img alt=""
                      style={{width: 28, height: 28, margin: "auto"}}
                      src={`${window.location.origin}/ranks/${averageRank}.png`}/>
