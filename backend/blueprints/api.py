@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 from functools import wraps
 
@@ -11,6 +12,8 @@ from sqlalchemy.sql import operators
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
+from backend.tasks.celery_tasks import calc_item_stats
+from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.cloud_handler import download_proto
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
@@ -225,6 +228,14 @@ def api_v1_get_playergames_by_rank(session=None):
     }
     return jsonify(data)
 
+
+@bp.route('/itemstats')
+def api_v1_get_itemstats():
+    r = lazy_get_redis()
+    if r.get('item_stats'):
+        return jsonify(json.loads(r.get('item_stats')))
+    calc_item_stats.delay()
+    return jsonify({})
 
 def convert_proto_to_json(proto):
     return MessageToJson(proto)
