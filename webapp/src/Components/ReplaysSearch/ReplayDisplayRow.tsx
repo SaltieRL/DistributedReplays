@@ -65,7 +65,21 @@ interface OwnProps {
 const mapStateToProps = (state: StoreState) => ({
     loggedInUser: state.loggedInUser
 })
-
+export const getSkillAverages = (replay: Replay) => {
+    let averageRank = 0
+    let averageMMR = 0
+    const filteredRanks = replay.ranks.filter((num) => num > 0)
+    const filteredMMRs = replay.mmrs.filter((num) => num > 0)
+    if (filteredRanks.length > 0) {
+        averageRank = Math.round(filteredRanks.reduce((previous, current, idx) => previous + current)
+            / filteredRanks.length)
+        if (filteredMMRs.length > 0) {
+            averageMMR = Math.round(filteredMMRs.reduce((previous, current, idx) => previous + current)
+                / filteredMMRs.length)
+        }
+    }
+    return {averageRank, averageMMR}
+}
 type Props = OwnProps
     & WithStyles<typeof styles>
     & WithWidth
@@ -76,6 +90,16 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
         const {classes, width, replay, selectProps} = this.props
         const typographyVariant = "subtitle1"
         const dateFormat = isWidthUp("lg", width) ? "DD/MM/YYYY" : "DD/MM"
+
+        // replay stuff
+        const {averageRank, averageMMR} = getSkillAverages(replay)
+        const replayRank = (
+            <Tooltip title={averageMMR > 0 ? averageMMR.toString() : "Unranked"}>
+                <img alt=""
+                     style={{width: 28, height: 28, margin: "auto"}}
+                     src={`${window.location.origin}/ranks/${averageRank}.png`}/>
+            </Tooltip>
+        )
 
         const aboveSm = isWidthUp("sm", width)
         const contents = (
@@ -134,6 +158,11 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                         <ColouredGameScore replay={replay}/>
                     </Typography>
                 </Grid>
+                {aboveSm && (
+                    <Grid item xs={1} className={classes.listGridItem}>
+                        {replayRank}
+                    </Grid>
+                )}
                 <Grid item xs="auto" className={classes.listGridItem}>
                     <IconButton
                         href={REPLAY_PAGE_LINK(replay.id)}
@@ -155,7 +184,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                     </ListItem>
                     :
                     <ExpansionPanel>
-                        <ExpansionPanelSummary expandIcon={<ExpandMore/>} >
+                        <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
                             {contents}
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails className={classes.panelDetails}>
