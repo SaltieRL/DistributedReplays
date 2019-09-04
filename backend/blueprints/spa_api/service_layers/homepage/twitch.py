@@ -39,7 +39,10 @@ class TwitchStreams:
 
     @classmethod
     def create(cls):
-        streams = cls.get_streams()
+        try:
+            streams = cls.get_streams()
+        except KeyError as e:
+            return cls([])
         objs = []
         for stream in streams:
             objs.append(Stream(stream['user_name'], game='Rocket League', title=stream['title'],

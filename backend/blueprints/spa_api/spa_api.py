@@ -241,13 +241,13 @@ def api_get_replay_data(id_):
 
 @bp.route('replay/<id_>/basic_player_stats')
 def api_get_replay_basic_player_stats(id_):
-    basic_stats = PlayerStatsChart.create_from_id(id_)
+    basic_stats = PlayerStatsChart.create_from_id(current_app, id_)
     return better_jsonify(basic_stats)
 
 
 @bp.route('replay/<id_>/basic_player_stats/download')
 def api_get_replay_basic_player_stats_download(id_):
-    basic_stats = PlayerStatsChart.create_from_id(id_)
+    basic_stats = PlayerStatsChart.create_from_id(current_app, id_)
     return convert_to_csv(basic_stats, id_ + '.csv')
 
 

@@ -14,7 +14,7 @@ from backend.database.objects import Game, PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.cloud_handler import download_proto
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
-from backend.database.utils.file_manager import parsed_directory, get_proto_path, get_replay_path
+from backend.database.utils.file_manager import parsed_directory, get_proto_path, get_replay_path, get_proto
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -160,18 +160,10 @@ def api_v1_get_stats(session=None):
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    pickle_path = get_proto_path(current_app, id_)
-    if not os.path.isfile(pickle_path):
-        g = download_proto(id_)
-    else:
-        try:
-            with open(pickle_path, 'rb') as f:
-                g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-        except Exception as e:
-            return jsonify({'error': 'Error opening game: ' + str(e)})
+    proto = get_proto(current_app, id_)
 
     response = Response(
-        response=convert_proto_to_json(g),
+        response=convert_proto_to_json(proto),
         status=200,
         mimetype='application/json'
     )
@@ -179,12 +171,12 @@ def api_v1_get_replay_info(id_):
     return response
 
     game = session.query(Game).filter(Game.hash == id_).first()
-    data = {'datetime': g.datetime, 'map': g.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': g.name,
-            'hash': game.hash, 'version': g.replay_version, 'id': g.id, 'frames': len(g.frames)}
-    data = player_interface(data, g, game.mmrs, game.ranks)
-    data = team_interface(data, g)
-    data = score_interface(data, g)
-    data = goals_interface(data, g)
+    data = {'datetime': proto.datetime, 'map': proto.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': proto.name,
+            'hash': game.hash, 'version': proto.replay_version, 'id': proto.id, 'frames': len(proto.frames)}
+    data = player_interface(data, proto, game.mmrs, game.ranks)
+    data = team_interface(data, proto)
+    data = score_interface(data, proto)
+    data = goals_interface(data, proto)
     return jsonify(data)
 
 
