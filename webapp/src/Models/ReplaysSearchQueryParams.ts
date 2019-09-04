@@ -13,7 +13,6 @@ export interface ReplaysSearchQueryParams {
     minLength?: number
     maxLength?: number
 }
-
 export const stringifyReplaySearchQueryParam = (queryParams: Partial<ReplaysSearchQueryParams>): string => {
     const parsedQueryParams: any = {
         ...queryParams

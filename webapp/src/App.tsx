@@ -15,15 +15,19 @@ import { ReplayPage } from "./Components/Pages/ReplayPage"
 import { ReplaysGroupPage } from "./Components/Pages/ReplaysGroupPage"
 import { ReplaysSearchPage } from "./Components/Pages/ReplaysSearchPage"
 import { StatusPage } from "./Components/Pages/StatusPage"
+import { TaggedMatchesPage } from "./Components/Pages/TaggedMatches"
 import { UploadPage } from "./Components/Pages/UploadPage"
 import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
     ABOUT_LINK,
     EXPLANATIONS_LINK,
-    GLOBAL_STATS_LINK, LEADERBOARDS_LINK,
+    GLOBAL_STATS_LINK,
+    LEADERBOARDS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_PAGE_LINK,
-    PLUGINS_LINK, PRIVACY_POLICY_LINK,
+    PLAYER_TAG_PAGE,
+    PLUGINS_LINK,
+    PRIVACY_POLICY_LINK,
     REPLAY_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
@@ -55,6 +59,7 @@ class AppComponent extends React.Component<Props> {
 
                             <Route exact path="/" component={HomePage}/>
                             <Route path={LEADERBOARDS_LINK} component={LeaderboardsPage}/>
+                            <Route path={PLAYER_TAG_PAGE(":id", ":tagname")} component={TaggedMatchesPage}/>
                             <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                             <Route path={PLAYER_COMPARE_PAGE_LINK} component={PlayerComparePage}/>
                             <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
