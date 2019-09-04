@@ -19,7 +19,7 @@
         "chart.js": "2.4.0",
         "d3": "^5.9.2",
         "heatmap.js": "^2.0.5",
-        "lodash": "^4.17.11",
+        "lodash": "^4.17.13",
         "material-ui-pickers": "^2.0.5",
         "mathjax": "^2.7.5",
         "moment": "^2.23.0",
@@ -37,7 +37,7 @@
         "redux": "^4.0.0",
         "redux-actions": "^2.6.4",
         "redux-devtools-extension": "^2.13.5",
-        "replay-viewer": "^0.3.3",
+        "replay-viewer": "^0.5.1",
         "three": "^0.104.0"
     },
     "scripts": {

@@ -44,7 +44,8 @@ export class VisibilityToggle extends React.PureComponent<Props, State> {
         }
     }
 
-    private readonly toggleVisibility = () => {
+    private readonly toggleVisibility: React.MouseEventHandler = (event) => {
+        event.stopPropagation()
         const visibility: GameVisibility = this.state.overwriteVisibility || this.props.replay.visibility
         const newVisibility = visibility === GameVisibility.PRIVATE ? GameVisibility.PUBLIC : GameVisibility.PRIVATE
         setVisibility(this.props.replay.id, newVisibility)

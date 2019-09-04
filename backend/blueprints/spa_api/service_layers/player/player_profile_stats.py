@@ -14,10 +14,11 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
 class PlayerInCommonStats:
-    def __init__(self, id: str, name: str, count: int):
+    def __init__(self, id: str, name: str, count: int, avatar: str):
         self.id = id
         self.name = name
         self.count = count
+        self.avatar = avatar
 
 
 class PlayerProfileStats:
@@ -51,9 +52,10 @@ class PlayerProfileStats:
         for p in result:
             player = session.query(Player).filter(Player.platformid == p[0]).first()
             if player is None or player.platformname == "":
-                players_in_common.append(PlayerInCommonStats(name=p[2], count=p[1], id=p[0]))
+                players_in_common.append(PlayerInCommonStats(name=p[2], count=p[1], id=p[0], avatar=player.avatar))
             else:
-                players_in_common.append(PlayerInCommonStats(name=player.platformname, count=p[1], id=p[0]))
+                players_in_common.append(
+                    PlayerInCommonStats(name=player.platformname, count=p[1], id=p[0], avatar=player.avatar))
 
         return players_in_common
 
