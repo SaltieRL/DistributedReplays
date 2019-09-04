@@ -29,7 +29,7 @@ export enum PlayerStatsSubcategory {
     POSSESION = "Possession",
     EFFICIENCY = "Efficiency",
     TEAM_POSITIONING = "Team Positioning",
-    BALL_CARRIES = "Ball Carries",
+    BALL_CARRIES = "Ball Carries"
 }
 
 export enum TeamStatsSubcategory {
