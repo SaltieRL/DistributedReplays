@@ -12,7 +12,7 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
-from utils.file_manager import parsed_directory, FileManager
+from backend.utils.file_manager import FileManager
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -151,7 +151,7 @@ def api_v1_get_ranks():
 def api_v1_get_stats(session=None):
     # TODO: stats?
     ct = session.query(Game).count()
-    dct = len([f for f in os.listdir(current_app.config[parsed_directory]) if f.endswith('pts')])
+    dct = len([f for f in os.listdir(FileManager.get_default_parse_folder()) if f.endswith('pts')])
     return jsonify({'db_count': ct, 'count': dct})
 
 
@@ -181,14 +181,14 @@ def api_v1_get_replay_info(id_):
 @bp.route('/parsed/list')
 @key_required
 def api_v1_list_parsed_replays():
-    fs = os.listdir(current_app.config[parsed_directory])
+    fs = os.listdir(FileManager.get_default_parse_folder())
     return jsonify(fs)
 
 
 @bp.route('/parsed/<path:fn>')
 @key_required
 def api_v1_download_parsed(fn):
-    return send_from_directory(current_app.config[parsed_directory], fn, as_attachment=True)
+    return send_from_directory(FileManager.get_default_parse_folder(), fn, as_attachment=True)
 
 
 @bp.route('/rank/<id_>')

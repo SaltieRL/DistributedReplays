@@ -202,9 +202,10 @@ FAKE DIRECTORIES
 # All files should be in the test directory
 @pytest.fixture(autouse=True)
 def fake_write_location(monkeypatch, temp_folder):
-    from backend.tasks import utils
+    from backend.utils.file_manager import FileManager
 
-    monkeypatch.setattr(utils, 'DEFAULT_PARSED_FOLDER', os.path.join(temp_folder, 'parsed'))
+    monkeypatch.setattr(FileManager, 'get_default_parse_folder', lambda: os.path.join(temp_folder, 'parsed'))
+
 
 @pytest.fixture(autouse=True)
 def fake_upload_location(monkeypatch, temp_folder):
