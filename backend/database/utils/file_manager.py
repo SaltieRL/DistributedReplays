@@ -18,48 +18,50 @@ class BucketType(Enum):
     REPLAY = 3
 
 
-def get_replay_path(current_app, replay_id: str):
-    return os.path.join(current_app.config[replay_directory], replay_id + '.replay')
+class ReplayFileManager:
+    @staticmethod
+    def get_replay_path(current_app, replay_id: str):
+        return os.path.join(current_app.config[replay_directory], replay_id + '.replay')
 
+    @staticmethod
+    def get_proto_path(current_app, replay_id: str):
+        return os.path.join(current_app.config[parsed_directory], replay_id + '.replay.pts')
 
-def get_proto_path(current_app, replay_id: str):
-    return os.path.join(current_app.config[parsed_directory], replay_id + '.replay.pts')
+    @staticmethod
+    def get_pandas_path(current_app, replay_id: str):
+        return os.path.join(current_app.config[parsed_directory], replay_id + '.replay.gzip')
 
+    @staticmethod
+    def get_replay(current_app, replay_id):
+        return ReplayFileManager.get_or_download(ReplayFileManager.get_replay_path(current_app, replay_id),
+                                                 lambda: download_replay(replay_id),
+                                                 lambda item_path: open(item_path, 'rb'))
 
-def get_pandas_path(current_app, replay_id: str):
-    return os.path.join(current_app.config[parsed_directory], replay_id + '.replay.gzip')
+    @staticmethod
+    def get_proto(current_app, replay_id):
+        return ReplayFileManager.get_or_download(ReplayFileManager.get_proto_path(current_app, replay_id),
+                                                 lambda: download_proto(replay_id),
+                                                 lambda item_path: proto_manager.ProtobufManager.read_proto_out_from_file(open(item_path, 'rb')))
 
+    @staticmethod
+    def get_pandas(current_app, replay_id):
+        return ReplayFileManager.get_or_download(ReplayFileManager.get_pandas_path(current_app, replay_id),
+                                                 lambda: download_df(replay_id),
+                                                 lambda item_path: pandas_manager.PandasManager.safe_read_pandas_to_memory(gzip.open(item_path, 'rb')))
 
-def get_replay(current_app, replay_id):
-    return get_or_download(get_replay_path(current_app, replay_id),
-                    lambda: download_replay(replay_id),
-                    lambda item_path: open(item_path, 'rb'))
-
-
-def get_proto(current_app, replay_id):
-    return get_or_download(get_proto_path(current_app, replay_id),
-                    lambda: download_proto(replay_id),
-                    lambda item_path: proto_manager.ProtobufManager.read_proto_out_from_file(open(item_path, 'rb')))
-
-
-def get_pandas(current_app, replay_id):
-    return get_or_download(get_pandas_path(current_app, replay_id),
-                    lambda: download_df(replay_id),
-                    lambda item_path: pandas_manager.PandasManager.safe_read_pandas_to_memory(gzip.open(item_path, 'rb')))
-
-
-def get_or_download(item_path, download_lambda, open_lambda):
-    if not os.path.isfile(item_path):
+    @staticmethod
+    def get_or_download(item_path, download_lambda, open_lambda):
+        if not os.path.isfile(item_path):
+            try:
+                return download_lambda()
+            except ReplayNotFound as e:
+                log_error(e)
+                raise e
+            except Exception as e:
+                log_error(e)
+                raise ReplayNotFound()
         try:
-            return download_lambda()
-        except ReplayNotFound as e:
-            log_error(e)
-            raise e
+            return open_lambda(item_path)
         except Exception as e:
             log_error(e)
-            raise ReplayNotFound()
-    try:
-        return open_lambda(item_path)
-    except Exception as e:
-        log_error(e)
-        raise ErrorOpeningGame(str(e))
+            raise ErrorOpeningGame(str(e))

@@ -2,7 +2,6 @@ import datetime
 import os
 from functools import wraps
 
-from carball.analysis.utils import proto_manager
 from flask import render_template, url_for, redirect, request, jsonify, send_from_directory, Blueprint, current_app, \
     Response
 from google.protobuf.json_format import MessageToJson
@@ -12,9 +11,8 @@ from sqlalchemy.sql import operators
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
-from backend.utils.cloud_handler import download_proto
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
-from backend.database.utils.file_manager import parsed_directory, get_proto_path, get_replay_path, get_proto
+from backend.database.utils.file_manager import parsed_directory, ReplayFileManager
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -160,7 +158,7 @@ def api_v1_get_stats(session=None):
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    proto = get_proto(current_app, id_)
+    proto = ReplayFileManager.get_proto(current_app, id_)
 
     response = Response(
         response=convert_proto_to_json(proto),

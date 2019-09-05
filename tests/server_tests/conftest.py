@@ -11,6 +11,7 @@ from testing import postgresql
 from backend.database.objects import Player
 from tests.utils.database_utils import create_initial_mock_database, add_initial_player, empty_database
 from tests.utils.replay_utils import clear_dir
+from tests.utils.test_utils import function_result_creator
 
 """
 #####################################
@@ -205,7 +206,6 @@ def fake_write_location(monkeypatch, temp_folder):
 
     monkeypatch.setattr(utils, 'DEFAULT_PARSED_FOLDER', os.path.join(temp_folder, 'parsed'))
 
-
 @pytest.fixture(autouse=True)
 def fake_upload_location(monkeypatch, temp_folder):
     from backend import server_constants
@@ -246,3 +246,55 @@ def fake_user(monkeypatch):
     monkeypatch.setattr(UserManager, 'get_current_user', get_fake_user)
 
     return FakeUser()
+
+
+@pytest.fixture()
+def fake_file_locations(monkeypatch, temp_folder):
+    from backend.database.utils.file_manager import ReplayFileManager
+
+    def get_replay_func(ext):
+        def get_path(ignore, replay_id):
+            return os.path.join(os.path.join(temp_folder, 'parsed'), replay_id + ext)
+
+    monkeypatch.setattr(ReplayFileManager, 'get_replay_path', get_replay_func('.replay'))
+    monkeypatch.setattr(ReplayFileManager, 'get_proto_path', get_replay_func('.replay.pts'))
+    monkeypatch.setattr(ReplayFileManager, 'get_pandas_path', get_replay_func('.replay.gzip'))
+
+
+
+@pytest.fixture()
+def mock_get_proto(monkeypatch):
+    from backend.database.utils.file_manager import ReplayFileManager
+
+    proto_set, get_proto = function_result_creator()
+
+    def wrapped(current_app, replay_id):
+        return get_proto()
+
+    monkeypatch.setattr(ReplayFileManager, 'get_proto', wrapped)
+    return proto_set
+
+@pytest.fixture()
+def mock_get_replay(monkeypatch):
+    from backend.database.utils.file_manager import ReplayFileManager
+
+    replay_set, get_replay = function_result_creator()
+
+    def wrapped(current_app, replay_id):
+        return get_replay()
+
+    monkeypatch.setattr(ReplayFileManager, 'get_replay', wrapped)
+    return replay_set
+
+
+@pytest.fixture()
+def mock_get_pandas(monkeypatch):
+    from backend.database.utils.file_manager import ReplayFileManager
+
+    pandas_set, get_pandas = function_result_creator()
+
+    def wrapped(current_app, replay_id):
+        return get_pandas()
+
+    monkeypatch.setattr(ReplayFileManager, 'get_pandas', wrapped)
+    return pandas_set
