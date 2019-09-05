@@ -114,18 +114,18 @@ def create_and_filter_proto_field(proto_message: message,
     :param whitelist_message_types A list of field types that are the only ones allowed.
     :return: A list of fields that can be used to go between protobuf and the database.
     """
-    list = get_proto_fields_as_flatten_list(proto_message)
+    field_list = get_proto_fields_as_flatten_list(proto_message)
 
     if whitelist_field_names is not None or whitelist_message_types is not None:
-        list = get_whitelist_proto_union(list, whitelist_field_names, whitelist_message_types)
+        field_list = get_whitelist_proto_union(field_list, whitelist_field_names, whitelist_message_types)
 
     if blacklist_field_names is not None or blacklist_message_types is not None:
-        list = filter_proto_fields(list, blacklist_field_names, blacklist_message_types)
+        field_list = filter_proto_fields(field_list, blacklist_field_names, blacklist_message_types)
 
     if db_object is not None:
-        list = get_db_proto_union(list, db_object)
+        field_list = get_db_proto_union(field_list, db_object)
 
-    return list
+    return field_list
 
 
 def get_proto_values(proto_object, fields: List[ProtoFieldResult]) -> List[any]:

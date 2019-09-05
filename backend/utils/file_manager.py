@@ -7,7 +7,7 @@ from carball.analysis.utils import proto_manager, pandas_manager
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
 from backend.utils.checks import log_error
 from backend.utils.cloud_handler import download_proto, download_df, download_replay
-from server_constants import BASE_FOLDER
+from backend.server_constants import BASE_FOLDER
 
 
 class BucketType(Enum):

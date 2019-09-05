@@ -69,6 +69,7 @@ class ChartStatsWrapper(SharedStatsWrapper):
                                                        dict(zip(self.soccer_field_names, player_stats))))
         return stat_output
 
+
     def wrap_chart_stats(self, database_data_point: List[DatabaseObjectDataPoint],
                          chart_metadata_list: List[ChartStatsMetadata]) -> List[OutputChartData]:
         all_chart_data = []
@@ -103,14 +104,3 @@ class ChartStatsWrapper(SharedStatsWrapper):
                 continue
             all_chart_data.append(chart_data)
         return all_chart_data
-
-    def merge_stats(self, wrapped_player_games: List[DatabaseObjectDataPoint], protobuf_stats: List[DatabaseObjectDataPoint]):
-        player_map = dict()
-
-        for player_game in wrapped_player_games:
-            player_map[player_game.name] = player_game
-        for protobuf_game in protobuf_stats:
-            player_game = player_map[protobuf_game.name]
-            player_game.stats.update(protobuf_game.stats)
-
-        return wrapped_player_games
