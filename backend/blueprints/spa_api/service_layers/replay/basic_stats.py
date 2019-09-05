@@ -10,9 +10,9 @@ wrapper = ChartStatsWrapper()
 
 class PlayerStatsChart:
     @staticmethod
-    def create_from_id(current_app, id_: str) -> List[OutputChartData]:
+    def create_from_id(id_: str) -> List[OutputChartData]:
         wrapped_player_games = wrapper.get_chart_stats_for_player(id_)
-        protobuf_stats = wrapper.get_protobuf_stats(current_app, id_)
+        protobuf_stats = wrapper.get_protobuf_stats(id_)
         all_basic_stats = wrapper.merge_stats(wrapped_player_games, protobuf_stats)
         return wrapper.wrap_chart_stats(all_basic_stats, player_group_stats_metadata)
 

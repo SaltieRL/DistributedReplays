@@ -6,7 +6,8 @@ import {
     faCircle,
     faFutbol,
     faHandshake,
-    faPercent, faShoppingCart,
+    faPercent,
+    faShoppingCart,
     IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
 import { faRocket } from "@fortawesome/free-solid-svg-icons/faRocket"

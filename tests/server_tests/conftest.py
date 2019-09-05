@@ -250,51 +250,51 @@ def fake_user(monkeypatch):
 
 @pytest.fixture()
 def fake_file_locations(monkeypatch, temp_folder):
-    from backend.database.utils.file_manager import ReplayFileManager
+    from utils.file_manager import FileManager
 
     def get_replay_func(ext):
         def get_path(ignore, replay_id):
             return os.path.join(os.path.join(temp_folder, 'parsed'), replay_id + ext)
 
-    monkeypatch.setattr(ReplayFileManager, 'get_replay_path', get_replay_func('.replay'))
-    monkeypatch.setattr(ReplayFileManager, 'get_proto_path', get_replay_func('.replay.pts'))
-    monkeypatch.setattr(ReplayFileManager, 'get_pandas_path', get_replay_func('.replay.gzip'))
+    monkeypatch.setattr(FileManager, 'get_replay_path', get_replay_func('.replay'))
+    monkeypatch.setattr(FileManager, 'get_proto_path', get_replay_func('.replay.pts'))
+    monkeypatch.setattr(FileManager, 'get_pandas_path', get_replay_func('.replay.gzip'))
 
 
 
 @pytest.fixture()
 def mock_get_proto(monkeypatch):
-    from backend.database.utils.file_manager import ReplayFileManager
+    from utils.file_manager import FileManager
 
     proto_set, get_proto = function_result_creator()
 
     def wrapped(current_app, replay_id):
         return get_proto()
 
-    monkeypatch.setattr(ReplayFileManager, 'get_proto', wrapped)
+    monkeypatch.setattr(FileManager, 'get_proto', wrapped)
     return proto_set
 
 @pytest.fixture()
 def mock_get_replay(monkeypatch):
-    from backend.database.utils.file_manager import ReplayFileManager
+    from utils.file_manager import FileManager
 
     replay_set, get_replay = function_result_creator()
 
     def wrapped(current_app, replay_id):
         return get_replay()
 
-    monkeypatch.setattr(ReplayFileManager, 'get_replay', wrapped)
+    monkeypatch.setattr(FileManager, 'get_replay', wrapped)
     return replay_set
 
 
 @pytest.fixture()
 def mock_get_pandas(monkeypatch):
-    from backend.database.utils.file_manager import ReplayFileManager
+    from utils.file_manager import FileManager
 
     pandas_set, get_pandas = function_result_creator()
 
     def wrapped(current_app, replay_id):
         return get_pandas()
 
-    monkeypatch.setattr(ReplayFileManager, 'get_pandas', wrapped)
+    monkeypatch.setattr(FileManager, 'get_pandas', wrapped)
     return pandas_set

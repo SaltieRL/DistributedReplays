@@ -10,7 +10,7 @@ from backend.database.wrapper.chart.chart_data import ChartStatsMetadata
 from backend.database.wrapper.chart.stat_point import DatabaseObjectDataPoint, StatDataPoint, OutputChartData
 from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
-from backend.database.utils.file_manager import ReplayFileManager
+from utils.file_manager import FileManager
 
 
 class ChartStatsWrapper(SharedStatsWrapper):
@@ -59,8 +59,8 @@ class ChartStatsWrapper(SharedStatsWrapper):
 
         return wrapped_team
 
-    def get_protobuf_stats(self, current_app, id_: str) -> List[DatabaseObjectDataPoint]:
-        game_proto = ReplayFileManager.get_proto(current_app, id_)
+    def get_protobuf_stats(self, id_: str) -> List[DatabaseObjectDataPoint]:
+        game_proto = FileManager.get_proto(id_)
         players = game_proto.players
         stat_output = []
         for player in players:

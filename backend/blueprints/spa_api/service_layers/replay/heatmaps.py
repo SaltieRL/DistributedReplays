@@ -2,17 +2,16 @@ import math
 
 import numpy as np
 from carball.generated.api.game_pb2 import Game
-from flask import current_app
 
-from backend.database.utils.file_manager import ReplayFileManager
+from utils.file_manager import FileManager
 
 
 class ReplayHeatmaps:
 
     @staticmethod
     def create_from_id(id_: str, type_="positioning") -> 'ReplayHeatmaps':
-        data_frame = ReplayFileManager.get_pandas(current_app, id_)
-        protobuf_game = ReplayFileManager.get_proto(current_app, id_)
+        data_frame = FileManager.get_pandas(id_)
+        protobuf_game = FileManager.get_proto(id_)
         # output = generate_heatmaps(data_frame, protobuf_game, type="hits")
         width = 400 / 500
         step = 350.0

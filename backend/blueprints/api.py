@@ -12,7 +12,7 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
-from backend.database.utils.file_manager import parsed_directory, ReplayFileManager
+from utils.file_manager import parsed_directory, FileManager
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -158,7 +158,7 @@ def api_v1_get_stats(session=None):
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    proto = ReplayFileManager.get_proto(current_app, id_)
+    proto = FileManager.get_proto(id_)
 
     response = Response(
         response=convert_proto_to_json(proto),

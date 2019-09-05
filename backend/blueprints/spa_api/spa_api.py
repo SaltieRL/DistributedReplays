@@ -27,7 +27,7 @@ from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
-from backend.database.utils.file_manager import ReplayFileManager
+from utils.file_manager import FileManager
 
 try:
     import config
@@ -242,13 +242,13 @@ def api_get_replay_data(id_):
 
 @bp.route('replay/<id_>/basic_player_stats')
 def api_get_replay_basic_player_stats(id_):
-    basic_stats = PlayerStatsChart.create_from_id(current_app, id_)
+    basic_stats = PlayerStatsChart.create_from_id(id_)
     return better_jsonify(basic_stats)
 
 
 @bp.route('replay/<id_>/basic_player_stats/download')
 def api_get_replay_basic_player_stats_download(id_):
-    basic_stats = PlayerStatsChart.create_from_id(current_app, id_)
+    basic_stats = PlayerStatsChart.create_from_id(id_)
     return convert_to_csv(basic_stats, id_ + '.csv')
 
 
@@ -303,7 +303,7 @@ def api_download_group():
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
     filename = id_ + ".replay"
-    path = ReplayFileManager.get_replay_path(current_app, id_)
+    path = FileManager.get_replay_path(id_)
     if os.path.isfile(path):
         return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
     elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):
