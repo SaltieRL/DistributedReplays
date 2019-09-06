@@ -27,7 +27,7 @@ from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
-from utils.file_manager import FileManager
+from backend.utils.file_manager import FileManager
 
 try:
     import config
