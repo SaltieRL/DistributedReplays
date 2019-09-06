@@ -19,18 +19,15 @@ from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
-from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
 from backend.database.startup import lazy_get_redis
-from backend.database.utils.file_manager import get_replay_path
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
-from backend.database.utils.file_manager import get_replay_path
 from backend.tasks.update import update_self
-
+from backend.utils.file_manager import FileManager
 
 try:
     import config
@@ -306,7 +303,7 @@ def api_download_group():
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
     filename = id_ + ".replay"
-    path = get_replay_path(current_app, id_)
+    path = FileManager.get_replay_path(id_)
     if os.path.isfile(path):
         return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
     elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):

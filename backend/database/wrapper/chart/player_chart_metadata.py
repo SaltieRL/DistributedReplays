@@ -13,6 +13,7 @@ class BasicStatSubcategory(ChartSubcatagory):
     Boosts = auto()
     Efficiency = auto()
     Team_Positioning = auto()
+    Ball_Carries = auto()
 
 
 SubCat = BasicStatSubcategory
@@ -26,6 +27,19 @@ player_stats_metadata = [
     Metadata('total_dribbles', ChartType.bar, SubCat.Hits),
     Metadata('total_passes', ChartType.bar, SubCat.Hits),
     Metadata('total_aerials', ChartType.bar, SubCat.Hits),
+    Metadata('total_flicks', ChartType.bar, SubCat.Hits),
+
+    # Carries
+    Metadata('total_carries', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('total_flicks', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('longest_carry', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('furthest_carry', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('total_carry_time', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('average_carry_time', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('fastest_carry_speed', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('total_carry_distance', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('average_carry_speed', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('distance_along_path', ChartType.bar, SubCat.Ball_Carries),
 
     # Ball
     Metadata('time_close_to_ball', ChartType.radar, SubCat.Ball),
@@ -69,6 +83,8 @@ player_stats_metadata = [
     Metadata('time_low_boost', ChartType.radar, SubCat.Boosts),
     Metadata('time_no_boost', ChartType.radar, SubCat.Boosts),
     Metadata('boost_ratio', ChartType.bar, SubCat.Boosts),
+    Metadata('wasted_big', ChartType.bar, SubCat.Boosts),
+    Metadata('wasted_small', ChartType.bar, SubCat.Boosts),
 
     # efficiency
     Metadata('collection_boost_efficiency', ChartType.bar, SubCat.Efficiency),
@@ -81,6 +97,13 @@ player_stats_metadata = [
 
     # team positioning
     Metadata('time_in_front_of_center_of_mass', ChartType.radar, SubCat.Team_Positioning),
+    Metadata('time_behind_center_of_mass', ChartType.radar, SubCat.Team_Positioning),
+    Metadata('time_most_forward_player', ChartType.bar, SubCat.Team_Positioning),
+    Metadata('time_most_back_player', ChartType.bar, SubCat.Team_Positioning),
+    Metadata('time_between_players', ChartType.bar, SubCat.Team_Positioning),
+
+    # team positioning
+    Metadata('time_in_front_of_center_of_mass', ChartType.bar, SubCat.Team_Positioning),
     Metadata('time_behind_center_of_mass', ChartType.radar, SubCat.Team_Positioning),
     Metadata('time_most_forward_player', ChartType.bar, SubCat.Team_Positioning),
     Metadata('time_most_back_player', ChartType.bar, SubCat.Team_Positioning),

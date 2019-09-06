@@ -2,8 +2,6 @@ import logging
 
 from typing import List
 
-from flask import current_app
-
 from backend.database.wrapper import player_wrapper
 from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 from backend.database.wrapper.chart.player_chart_metadata import player_group_stats_metadata
