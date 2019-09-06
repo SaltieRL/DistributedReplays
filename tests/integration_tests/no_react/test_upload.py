@@ -6,6 +6,7 @@ import requests
 
 from RLBotServer import start_server
 from backend.database.objects import GameVisibilitySetting, User, Player
+from backend.blueprints.spa_api.errors.errors import PlayerNotFound
 from tests.utils.killable_thread import KillableThread
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
@@ -29,7 +30,8 @@ class Test_BasicServerCommands():
         time.sleep(5)
         print('done waiting')
 
-    def test_upload_files(self, mock_user):
+    def test_upload_files(self, mock_user, no_errors_are_logged):
+        no_errors_are_logged.cancel_check()
 
         mock_user.set_fake_user(Player(platformid='76561198018756583', platformname='fake'))
 
@@ -72,6 +74,10 @@ class Test_BasicServerCommands():
         assert result[0]['name'].startswith('TAG')
         assert len(result) == 3
 
+        response = requests.get(LOCAL_URL + '/api/player/76561198018756583/match_history?page=0&limit=10')
+        assert response.status_code == 200
+        assert len(response.json()['replays']) >= 1
+
     @classmethod
     def teardown_class(cls):
         try:
@@ -79,3 +85,4 @@ class Test_BasicServerCommands():
         except:
             pass
         cls.thread.join()
+        time.sleep(2)

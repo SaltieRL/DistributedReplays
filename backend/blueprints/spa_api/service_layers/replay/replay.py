@@ -24,7 +24,8 @@ class GameScore:
 class Replay:
     def __init__(self, id_: str, name: str, date: str, map: str,
                  game_mode: str, game_score: GameScore,
-                 players: List[ReplayPlayer], tags: List[Tag], visibility: GameVisibilitySetting):
+                 players: List[ReplayPlayer], tags: List[Tag], visibility: GameVisibilitySetting,
+                 ranks: List[int], mmrs: List[int]):
         self.id = id_
         self.name = name
         self.date = date
@@ -32,8 +33,10 @@ class Replay:
         self.gameMode = game_mode
         self.gameScore = game_score.__dict__
         self.players = [player.__dict__ for player in players]
-        self.tags = [tag.__dict__ for tag in tags]
+        self.tags = [tag.to_JSON() for tag in tags]
         self.visibility = visibility.value
+        self.ranks = ranks
+        self.mmrs = mmrs
 
     @staticmethod
     @with_session
@@ -62,5 +65,8 @@ class Replay:
                 Tag.create_from_dbtag(tag)
                 for tag in game.tags if tag.owner == get_current_user_id()
             ],
-            visibility=game.visibility
+            visibility=game.visibility,
+            ranks=game.ranks,
+            mmrs=game.mmrs
+
         )

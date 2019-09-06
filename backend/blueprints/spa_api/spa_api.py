@@ -12,11 +12,13 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
 from werkzeug.utils import secure_filename, redirect
 
+from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
+from backend.blueprints.spa_api.service_layers.homepage.recent import RecentReplays
+from backend.blueprints.spa_api.service_layers.homepage.twitch import TwitchStreams
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
-from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
 from backend.database.startup import lazy_get_redis
@@ -24,12 +26,13 @@ from backend.tasks.add_replay import create_replay_task, parsed_replay_processin
 from backend.utils.checks import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
+from backend.tasks.update import update_self
+from backend.utils.file_manager import FileManager
 
 try:
     import config
 except ImportError:
     config = None
-
 
 try:
     import config
@@ -50,7 +53,7 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
 from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from .errors.errors import CalculatedError, MissingQueryParams, TagNotFound
+from .errors.errors import CalculatedError
 from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
@@ -210,7 +213,6 @@ def api_get_player_play_style(id_):
 @bp.route('player/<id_>/play_style/all')
 @with_query_params(accepted_query_params=playstyle_query_params)
 def api_get_player_play_style_all(id_, query_params=None):
-
     play_style_response = PlayStyleResponse.create_all_stats_from_id(id_, **query_params)
     return better_jsonify(play_style_response)
 
@@ -218,24 +220,15 @@ def api_get_player_play_style_all(id_, query_params=None):
 @bp.route('player/<id_>/play_style/progression')
 @with_query_params(accepted_query_params=progression_query_params)
 def api_get_player_play_style_progress(id_, query_params=None):
-
     play_style_progression = PlayStyleProgression.create_progression(id_, **query_params)
     return better_jsonify(play_style_progression)
 
 
 @bp.route('player/<id_>/match_history')
-def api_get_player_match_history(id_):
-    page = request.args.get('page')
-    limit = request.args.get('limit')
-
-    if page is None or limit is None:
-        missing_params = []
-        if page is None:
-            missing_params.append('page')
-        if limit is None:
-            missing_params.append('limit')
-        raise MissingQueryParams(missing_params)
-    match_history = MatchHistory.create_from_id(id_, int(page), int(limit))
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
+                                          QueryParam(name='limit', type_=int, optional=False)])
+def api_get_player_match_history(id_, query_params=None):
+    match_history = MatchHistory.create_from_id(id_, query_params['page'], query_params['limit'])
     return better_jsonify(match_history)
 
 
@@ -310,7 +303,7 @@ def api_download_group():
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
     filename = id_ + ".replay"
-    path = os.path.join(current_app.config['REPLAY_DIR'], filename)
+    path = FileManager.get_replay_path(id_)
     if os.path.isfile(path):
         return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
     elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):
@@ -365,7 +358,6 @@ def api_get_stat_explanations():
 @bp.route('/upload', methods=['POST'])
 @with_query_params(accepted_query_params=upload_file_query_params)
 def api_upload_replays(query_params=None):
-
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:
@@ -395,20 +387,18 @@ def api_upload_replays(query_params=None):
 
 
 @bp.route('/upload', methods=['GET'])
-def api_get_parse_status():
+@with_query_params(accepted_query_params=[QueryParam(name="ids", is_list=True, type_=str, optional=True)])
+def api_get_parse_status(query_params=None):
     ids = request.args.getlist("ids")
     states = [celery_tasks.get_task_state(id_).name for id_ in ids]
     return jsonify(states)
 
 
 @bp.route('/upload/proto', methods=['POST'])
-def api_upload_proto():
-    print('Proto uploaded')
-
+@with_query_params(accepted_query_params=upload_file_query_params)
+def api_upload_proto(query_params=None):
     # Convert to byte files from base64
     response = request.get_json()
-
-    print("Args:", request.args)
 
     proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
 
@@ -416,7 +406,7 @@ def api_upload_proto():
 
     # Process
     try:
-        parsed_replay_processing(protobuf_game)
+        parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
         log_error(e, logger=logger)
 
@@ -471,10 +461,14 @@ def api_get_tags(query_params=None):
 @bp.route('/tag/<name>/private_key', methods=["GET"])
 @require_user
 def api_get_tag_key(name: str):
-    tag = Tag.get_tag(name)
-    if tag.db_tag.private_id is None:
-        raise TagNotFound()
-    return better_jsonify(tag.db_tag.private_id)
+    return better_jsonify(Tag.get_encoded_private_key(name))
+
+
+@bp.route('/tag/<name>/private_key/<private_id>', methods=["PUT"])
+@require_user
+def api_add_tag_key(name: str, private_id: str):
+    Tag.add_private_key(name, private_id)
+    return better_jsonify(private_id), 204
 
 
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
@@ -491,8 +485,34 @@ def api_remove_tag_from_game(name: str, id_: str):
     return '', 204
 
 
+@bp.route('/internal/update', methods=["GET"])
+@require_user
+@with_query_params([QueryParam(name='update_code', type_=int, optional=False)])
+def update_server(query_params=None):
+    code = query_params['update_code']
+    update_self(code)
+    return '', 200
+
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):
+
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+# Homepage
+
+@bp.route('/home/twitch')
+def get_twitch_streams():
+    return better_jsonify(TwitchStreams.create())
+
+
+@bp.route('/home/patreon')
+def get_patreon_progress():
+    return better_jsonify(PatreonProgress.create())
+
+
+@bp.route('/home/recent')
+def get_recent_replays():
+    return better_jsonify(RecentReplays.create())

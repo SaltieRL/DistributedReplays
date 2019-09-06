@@ -1,13 +1,7 @@
-import gzip
-import os
 from typing import List
 
-from carball.analysis.utils import proto_manager, pandas_manager
-from flask import current_app
-
-from backend.utils.cloud_handler import download_df, download_proto
-from .replay_player import ReplayPlayer
-from ...errors.errors import ErrorOpeningGame
+from backend.utils.file_manager import FileManager
+from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
 
 
 class ReplayPositions:
@@ -24,22 +18,8 @@ class ReplayPositions:
 
     @staticmethod
     def create_from_id(id_: str) -> 'ReplayPositions':
-        pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
-        gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
-        replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-        if not os.path.isfile(pickle_path):
-            # GZIP
-            data_frame = download_df(id_)
-            # PROTO
-            protobuf_game = download_proto(id_)
-        else:
-            try:
-                with gzip.open(gzip_path, 'rb') as f:
-                    data_frame = pandas_manager.PandasManager.safe_read_pandas_to_memory(f)
-                with open(pickle_path, 'rb') as f:
-                    protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-            except Exception as e:
-                raise ErrorOpeningGame(str(e))
+        data_frame = FileManager.get_pandas(id_)
+        protobuf_game = FileManager.get_proto(id_)
 
         cs = ['pos_x', 'pos_y', 'pos_z']
         rot_cs = ['rot_x', 'rot_y', 'rot_z']

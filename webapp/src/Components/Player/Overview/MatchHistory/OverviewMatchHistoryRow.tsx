@@ -20,6 +20,7 @@ import { REPLAY_PAGE_LINK } from "../../../../Globals"
 import { getReplayResult, Replay } from "../../../../Models"
 import { ReplayBoxScore } from "../../../Replay/ReplayBoxScore"
 import { ReplayChart } from "../../../Replay/ReplayChart"
+import { getSkillAverages } from "../../../ReplaysSearch/ReplayDisplayRow"
 import { ColouredGameScore } from "../../../Shared/ColouredGameScore"
 
 const styles = (theme: Theme) => createStyles({
@@ -70,6 +71,15 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         const replayGameMode = replay.gameMode
         const replayScore = <ColouredGameScore replay={replay}/>
         const replayResult = getReplayResult(replay, player)
+
+        const {averageRank, averageMMR} = getSkillAverages(replay)
+        const replayRank = (
+            <Tooltip title={averageMMR > 0 ? averageMMR.toString() : "Unranked"}>
+                <img alt=""
+                     style={{width: 28, height: 28, margin: "auto"}}
+                     src={`${window.location.origin}/ranks/${averageRank}.png`}/>
+            </Tooltip>
+        )
         const chartIcon = (
             <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
                 <InsertChart/>
@@ -101,9 +111,14 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
                                     {replayScore}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={1}>
                                 <Typography variant={typographyVariant}>
                                     {replayResult}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={1}>
+                                <Typography variant={typographyVariant}>
+                                    {replayRank}
                                 </Typography>
                             </Grid>
                         </>
