@@ -269,7 +269,7 @@ def mock_get_proto(monkeypatch):
 
     proto_set, get_proto = function_result_creator()
 
-    def wrapped(current_app, replay_id):
+    def wrapped(replay_id):
         return get_proto()
 
     monkeypatch.setattr(FileManager, 'get_proto', wrapped)
@@ -281,7 +281,7 @@ def mock_get_replay(monkeypatch):
 
     replay_set, get_replay = function_result_creator()
 
-    def wrapped(current_app, replay_id):
+    def wrapped(replay_id):
         return get_replay()
 
     monkeypatch.setattr(FileManager, 'get_replay', wrapped)
@@ -294,7 +294,7 @@ def mock_get_pandas(monkeypatch):
 
     pandas_set, get_pandas = function_result_creator()
 
-    def wrapped(current_app, replay_id):
+    def wrapped(replay_id):
         return get_pandas()
 
     monkeypatch.setattr(FileManager, 'get_pandas', wrapped)

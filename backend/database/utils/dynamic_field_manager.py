@@ -79,14 +79,14 @@ def get_db_proto_union(proto_field_list: List[ProtoFieldResult], db_object: DBOb
 
 def get_whitelist_proto_union(proto_field_list: List[ProtoFieldResult],
                               whitelist_field_name: [str],
-                              whitelist_field_type: [str]) -> List[ProtoFieldResult]:
+                              whitelist_message_type: [str]) -> List[ProtoFieldResult]:
     result_list = []
     allowed = False
     for item in proto_field_list:
         if whitelist_field_name is not None and item.field_name in whitelist_field_name:
             allowed = True
-        if whitelist_field_type is not None:
-            for field_type in whitelist_field_type:
+        if whitelist_message_type is not None:
+            for field_type in whitelist_message_type:
                 if field_type in item.nested_parents:
                     allowed = True
         if allowed:
