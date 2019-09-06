@@ -251,7 +251,7 @@ def fake_user(monkeypatch):
 
 @pytest.fixture()
 def fake_file_locations(monkeypatch, temp_folder):
-    from utils.file_manager import FileManager
+    from backend.utils.file_manager import FileManager
 
     def get_replay_func(ext):
         def get_path(ignore, replay_id):
@@ -265,7 +265,7 @@ def fake_file_locations(monkeypatch, temp_folder):
 
 @pytest.fixture()
 def mock_get_proto(monkeypatch):
-    from utils.file_manager import FileManager
+    from backend.utils.file_manager import FileManager
 
     proto_set, get_proto = function_result_creator()
 
@@ -277,7 +277,7 @@ def mock_get_proto(monkeypatch):
 
 @pytest.fixture()
 def mock_get_replay(monkeypatch):
-    from utils.file_manager import FileManager
+    from backend.utils.file_manager import FileManager
 
     replay_set, get_replay = function_result_creator()
 
@@ -290,7 +290,7 @@ def mock_get_replay(monkeypatch):
 
 @pytest.fixture()
 def mock_get_pandas(monkeypatch):
-    from utils.file_manager import FileManager
+    from backend.utils.file_manager import FileManager
 
     pandas_set, get_pandas = function_result_creator()
 

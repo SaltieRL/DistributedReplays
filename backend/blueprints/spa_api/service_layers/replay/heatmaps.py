@@ -3,7 +3,7 @@ import math
 import numpy as np
 from carball.generated.api.game_pb2 import Game
 
-from utils.file_manager import FileManager
+from backend.utils.file_manager import FileManager
 
 
 class ReplayHeatmaps:

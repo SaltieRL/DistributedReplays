@@ -1,6 +1,6 @@
 from typing import List
 
-from utils.file_manager import FileManager
+from backend.utils.file_manager import FileManager
 from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
 
 

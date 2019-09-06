@@ -10,7 +10,7 @@ from backend.database.wrapper.chart.chart_data import ChartStatsMetadata
 from backend.database.wrapper.chart.stat_point import DatabaseObjectDataPoint, StatDataPoint, OutputChartData
 from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
-from utils.file_manager import FileManager
+from backend.utils.file_manager import FileManager
 
 
 class ChartStatsWrapper(SharedStatsWrapper):
