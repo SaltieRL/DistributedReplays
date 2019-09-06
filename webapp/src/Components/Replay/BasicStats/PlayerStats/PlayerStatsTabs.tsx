@@ -1,4 +1,5 @@
 import {
+    faArrowsAlt,
     faBraille,
     faBullseye,
     faCarSide,
@@ -8,7 +9,6 @@ import {
     faHandshake,
     faPercent,
     faShoppingCart,
-    faArrowsAlt,
     IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
 import { faRocket } from "@fortawesome/free-solid-svg-icons/faRocket"
