@@ -7,6 +7,7 @@ import {
     faFutbol,
     faHandshake,
     faPercent,
+    faShoppingCart,
     IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
 import { faRocket } from "@fortawesome/free-solid-svg-icons/faRocket"
@@ -34,7 +35,8 @@ export class PlayerStatsTabs extends React.PureComponent<Props> {
             "Positioning": faBraille,
             "Boosts": faRocket,
             "Efficiency": faPercent,
-            "Team Positioning": faHandshake
+            "Team Positioning": faHandshake,
+            "Ball Carries": faShoppingCart
         }
         const {selectedTab, handleChange} = this.props
 

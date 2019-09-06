@@ -1,8 +1,6 @@
 from typing import List
 
-from flask import current_app
-
-from backend.database.utils.file_manager import get_pandas, get_proto
+from backend.utils.file_manager import FileManager
 from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
 
 
@@ -20,8 +18,8 @@ class ReplayPositions:
 
     @staticmethod
     def create_from_id(id_: str) -> 'ReplayPositions':
-        data_frame = get_pandas(current_app, id_)
-        protobuf_game = get_proto(current_app, id_)
+        data_frame = FileManager.get_pandas(id_)
+        protobuf_game = FileManager.get_proto(id_)
 
         cs = ['pos_x', 'pos_y', 'pos_z']
         rot_cs = ['rot_x', 'rot_y', 'rot_z']
