@@ -99,10 +99,7 @@ class RLGarageAPI:
     def get_item_info(self, id_, paint_id=0):
         item = self.items[id_]
         if paint_id > 0 and item['hascoloredicons'] == 1:
-            if item['photo'] is None:
-                pic = item['name'].replace(' ', '').lower()
-            else:
-                pic = item['photo'].replace('.jpg', '')
+            pic = item['name'].replace(' ', '').replace('\'', '').lower()
             paint_name = self.paint_map[paint_id]
             item['image'] = f"https://rocket-league.com/content/media/items/avatar/220px/" \
                             f"{pic}/{pic}-{paint_name}.png"
