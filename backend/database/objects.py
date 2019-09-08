@@ -2,7 +2,8 @@
 import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint, \
+    and_
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
@@ -91,6 +92,38 @@ class Model(DBObjectBase):
                                                                                 self.total_reward, self.evaluated)
 
 
+class Loadout(DBObjectBase):
+    __tablename__ = "loadouts"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+
+    player = Column(String(40), ForeignKey('playergames.player'), index=True)
+    game = Column(String(40), ForeignKey('playergames.game'), index=True)
+
+    load_out_id = Column(Integer)
+    banner = Column(Integer)
+    boost = Column(Integer)
+    car = Column(Integer)
+    goal_explosion = Column(Integer)
+    skin = Column(Integer)
+    trail = Column(Integer)
+    wheels = Column(Integer)
+    version = Column(Integer)
+    topper = Column(Integer)
+    antenna = Column(Integer)
+    engine_audio = Column(Integer)
+
+    # Paints
+    banner_paint = Column(Integer)
+    boost_paint = Column(Integer)
+    car_paint = Column(Integer)
+    goal_explosion_paint = Column(Integer)
+    skin_paint = Column(Integer)
+    trail_paint = Column(Integer)
+    wheels_paint = Column(Integer)
+    topper_paint = Column(Integer)
+    antenna_paint = Column(Integer)
+
+
 class PlayerGame(DBObjectBase):
     __tablename__ = 'playergames'
 
@@ -100,6 +133,9 @@ class PlayerGame(DBObjectBase):
     player_object = relationship('Player', foreign_keys=[player])
     game = Column(String(40), ForeignKey('games.hash'), index=True)
     game_object = relationship("Game", foreign_keys=[game])
+
+    loadout = relationship("Loadout", primaryjoin=and_(Loadout.player == player, Loadout.game == game))
+
     rank = Column(Integer)
     division = Column(Integer, default=0)
     mmr = Column(Integer)
@@ -288,40 +324,6 @@ class CameraSettings(DBObjectBase):
     stiffness = Column(Float)
     height = Column(Integer)
     distance = Column(Integer)
-
-
-class Loadout(DBObjectBase):
-    __tablename__ = "loadouts"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-
-    player = Column(String(40), ForeignKey('players.platformid'), index=True)
-    player_object = relationship('Player', foreign_keys=[player])
-    game = Column(String(40), ForeignKey('games.hash'), index=True)
-    game_object = relationship("Game", foreign_keys=[game])
-
-    load_out_id = Column(Integer)
-    banner = Column(Integer)
-    boost = Column(Integer)
-    car = Column(Integer)
-    goal_explosion = Column(Integer)
-    skin = Column(Integer)
-    trail = Column(Integer)
-    wheels = Column(Integer)
-    version = Column(Integer)
-    topper = Column(Integer)
-    antenna = Column(Integer)
-    engine_audio = Column(Integer)
-
-    # Paints
-    banner_paint = Column(Integer)
-    boost_paint = Column(Integer)
-    car_paint = Column(Integer)
-    goal_explosion_paint = Column(Integer)
-    skin_paint = Column(Integer)
-    trail_paint = Column(Integer)
-    wheels_paint = Column(Integer)
-    topper_paint = Column(Integer)
-    antenna_paint = Column(Integer)
 
 
 class Group(DBObjectBase):

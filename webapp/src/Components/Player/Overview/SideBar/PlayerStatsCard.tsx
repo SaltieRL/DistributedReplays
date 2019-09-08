@@ -2,7 +2,7 @@ import {
     Card,
     CardContent,
     CardHeader,
-    createStyles,
+    createStyles, Dialog, DialogTitle,
     Divider,
     Grid,
     IconButton,
@@ -16,7 +16,9 @@ import {
     withStyles,
     WithStyles
 } from "@material-ui/core"
+import CardTravel from "@material-ui/icons/CardTravel"
 import DirectionsCar from "@material-ui/icons/DirectionsCar"
+import OpenInBrowser from "@material-ui/icons/OpenInBrowser"
 import People from "@material-ui/icons/People"
 import Person from "@material-ui/icons/Person"
 import VideogameAsset from "@material-ui/icons/VideogameAsset"
@@ -26,6 +28,7 @@ import { PLAYER_PAGE_LINK } from "../../../../Globals"
 import { getStats } from "../../../../Requests/Player/getStats"
 import { roundNumberToMaxDP } from "../../../../Utils/String"
 import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
+import { LoadoutDisplay } from "../../../Replay/ReplayTeamCard/LoadoutDisplay"
 
 const styles = createStyles({
     percentage: {
@@ -51,6 +54,7 @@ interface PlayerInCommonStat {
 export interface PlayerStats {
     car: CarStat
     playersInCommon: PlayerInCommonStat[]
+    loadout: Loadout
 }
 
 interface OwnProps {
@@ -63,12 +67,13 @@ type Props = OwnProps
 interface State {
     playerStats?: PlayerStats
     reloadSignal: boolean
+    loadoutOpen: boolean
 }
 
 class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false}
+        this.state = {reloadSignal: false, loadoutOpen: false}
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>): void {
@@ -110,6 +115,26 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                     </Grid>
                                 </Grid>
                             </Grid>
+                            <Grid container alignItems="center" justify="space-around" spacing={8}>
+                                <Grid item xs={3}>
+                                    <Typography> <CardTravel/> </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Typography variant="subtitle1">
+                                        loadout
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={3} container direction="column" alignItems="center">
+                                    <IconButton onClick={this.handleShowLoadout}>
+                                        <OpenInBrowser/>
+                                    </IconButton>
+                                </Grid>
+                                <Dialog open={this.state.loadoutOpen} onClose={this.handleCloseLoadout}>
+                                    <DialogTitle>Loadout</DialogTitle>
+                                    <LoadoutDisplay loadout={this.state.playerStats.loadout}/>
+                                </Dialog>
+                            </Grid>
+
                             <Grid container alignItems="center" justify="space-around" spacing={8}>
                                 <Grid item xs={3}>
                                     <Typography> <People/> </Typography>
@@ -164,6 +189,13 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
 
     private readonly triggerReload = () => {
         this.setState({reloadSignal: !this.state.reloadSignal})
+    }
+
+    private readonly handleShowLoadout = () => {
+        this.setState({loadoutOpen: true})
+    }
+    private readonly handleCloseLoadout = () => {
+        this.setState({loadoutOpen: false})
     }
 }
 
