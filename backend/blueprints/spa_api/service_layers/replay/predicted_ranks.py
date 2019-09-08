@@ -43,7 +43,7 @@ class PredictedRank:
 
         playergames = session.query(PlayerGame).filter(PlayerGame.game == id_).all()
 
-        if not is_local_dev():
+        if is_local_dev():
             import random
             ranks = [
                 PredictedRank(pg.player, random.randint(0, 19))
