@@ -37,4 +37,5 @@ interface Loadout {
 interface LoadoutItem {
     itemName: string
     imageUrl: string
+    paintId: number
 }

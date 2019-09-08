@@ -6,6 +6,7 @@ class LoadoutItem:
     def __init__(self, item_name: str, image_url: str, paint_id: int):
         self.itemName = item_name
         self.imageUrl = image_url
+        self.paintId = paint_id
 
     @staticmethod
     def create_from_item_id(id_: int, paint_id: int, api: RLGarageAPI):
