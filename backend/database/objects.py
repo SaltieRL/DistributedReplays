@@ -135,6 +135,7 @@ class PlayerGame(DBObjectBase):
     game_object = relationship("Game", foreign_keys=[game])
 
     loadout = relationship("Loadout", primaryjoin=and_(Loadout.player == player, Loadout.game == game))
+    UniqueConstraint(player, game, name="unique")
 
     rank = Column(Integer)
     division = Column(Integer, default=0)
