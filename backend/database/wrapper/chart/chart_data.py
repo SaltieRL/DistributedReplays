@@ -31,7 +31,8 @@ class ChartSubcatagory(Enum):
 
 
 class ChartStatsMetadata:
-    def __init__(self, stat_name: str, type_: ChartType, subcategory: ChartSubcatagory):
+    def __init__(self, stat_name: str, type_: ChartType, subcategory: ChartSubcatagory, is_protobuf=False):
+        self.is_protobuf = is_protobuf
         self.stat_name = stat_name
         self.type = type_.name
         self.subcategory = subcategory.name.replace('_', ' ')
