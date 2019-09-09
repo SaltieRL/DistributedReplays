@@ -38,8 +38,8 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
 
 
-def add_replay_parse_task(file_name, query_params: Dict[str, any] = None, **kwargs):
-    return parse_replay_task.delay(*[file_name], **{**kwargs, **{'query_params': query_params}}, )
+def add_replay_parse_task(replay_to_parse_path, query_params: Dict[str, any] = None, **kwargs):
+    return parse_replay_task.delay(*[replay_to_parse_path], **{**kwargs, **{'query_params': query_params}}, )
 
 
 @celery.task(bind=True, priority=5)
@@ -49,7 +49,7 @@ def parse_replay_task(self, *args, **kwargs):
 
 @celery.task(base=DBTask, bind=True, priority=9)
 def parse_replay_task_low_priority(self, fn):
-    return parse_replay_task(filename=fn, preserve_upload_date=True)
+    return parse_replay_task(replay_to_parse_path=fn, preserve_upload_date=True)
 
 
 @celery.task(base=DBTask, bind=True, priority=9)

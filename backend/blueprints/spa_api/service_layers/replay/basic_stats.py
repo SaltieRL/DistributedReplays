@@ -1,11 +1,10 @@
 from typing import List
 
-from flask import current_app
-
-from backend.database.wrapper.chart.player_chart_metadata import player_stats_metadata
+from backend.database.wrapper.chart.player_chart_metadata import player_group_stats_metadata
 from backend.database.wrapper.chart.stat_point import OutputChartData
 from backend.database.wrapper.chart.team_chart_metadata import team_stats_metadata
 from backend.database.wrapper.stats.chart_stats_wrapper import ChartStatsWrapper
+from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
 
 wrapper = ChartStatsWrapper()
 
@@ -14,11 +13,12 @@ class PlayerStatsChart:
     @staticmethod
     def create_from_id(id_: str) -> List[OutputChartData]:
         wrapped_player_games = wrapper.get_chart_stats_for_player(id_)
-        return wrapper.wrap_chart_stats(wrapped_player_games, player_stats_metadata)
+        protobuf_stats = wrapper.get_protobuf_stats(id_)
+        all_basic_stats = SharedStatsWrapper.merge_stats(wrapped_player_games, protobuf_stats)
+        return wrapper.wrap_chart_stats(all_basic_stats, player_group_stats_metadata)
 
 
 class TeamStatsChart:
     @staticmethod
     def create_from_id(id_: str) -> List[OutputChartData]:
-        wrapped_team_games = wrapper.get_chart_stats_for_team(id_)
-        return wrapper.wrap_chart_stats(wrapped_team_games, team_stats_metadata)
+        return wrapper.wrap_chart_stats(wrapper.get_chart_stats_for_team(id_), team_stats_metadata)
