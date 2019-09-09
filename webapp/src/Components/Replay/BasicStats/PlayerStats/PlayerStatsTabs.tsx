@@ -7,6 +7,7 @@ import {
     faFutbol,
     faHandshake,
     faPercent,
+    faShoppingCart,
     IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
 import { faRocket } from "@fortawesome/free-solid-svg-icons/faRocket"
@@ -36,7 +37,8 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
             "Positioning": faBraille,
             "Boosts": faRocket,
             "Efficiency": faPercent,
-            "Team Positioning": faHandshake
+            "Team Positioning": faHandshake,
+            "Ball Carries": faShoppingCart
         }
         const { width, selectedTab, handleChange } = this.props
         const belowMd = isWidthDown("md", width)

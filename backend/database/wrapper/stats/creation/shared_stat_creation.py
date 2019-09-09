@@ -21,7 +21,8 @@ class SharedStatCreation:
         self.individual_query = None
 
     @staticmethod
-    def create_stats_field_list(field_list, explanation_map, database_object, math_list=None) -> List[QueryFieldWrapper]:
+    def create_stats_field_list(field_list, explanation_map, database_object, math_list=None, custom=None) \
+            -> List[QueryFieldWrapper]:
         stat_list = []
         for dynamic_field in field_list:
             query_field = getattr(database_object, dynamic_field.field_name)
@@ -29,6 +30,9 @@ class SharedStatCreation:
 
         if math_list is not None:
             stat_list += math_list
+
+        if custom is not None:
+            stat_list += custom
 
         SharedStatCreation.assign_values(stat_list, explanation_map)
         return stat_list
