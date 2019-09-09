@@ -10,8 +10,9 @@ from celery.result import AsyncResult
 from celery.task import periodic_task
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
-from backend.database.startup import lazy_get_redis
+from backend.database.startup import lazy_get_redis, lazy_startup
 from backend.database.wrapper.player_wrapper import PlayerWrapper
+from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
@@ -34,6 +35,7 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 3, calc_global_stats.s(), name='calculate global stats every 3 hrs')
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
     sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
+    sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
 
 
 def add_replay_parse_task(replay_to_parse_path, query_params: Dict[str, any] = None, **kwargs):
@@ -83,6 +85,17 @@ def calc_global_dists(self):
     sess.close()
 
 
+@periodic_task(run_every=24 * 60 * 60 * 3, base=DBTask, bind=True, priority=0)
+def calc_item_stats(self, session=None):
+    if session is None:
+        sess = self.session()
+    else:
+        sess = session
+    results = ItemStatsWrapper.create_stats(sess)
+    if lazy_get_redis() is not None:
+        lazy_get_redis().set('item_stats', json.dumps(results))
+
+
 class ResultState(Enum):
     PENDING = auto()
     STARTED = auto()
@@ -94,3 +107,8 @@ class ResultState(Enum):
 def get_task_state(id_) -> ResultState:
     # NB: State will be PENDING for unknown ids.
     return ResultState[AsyncResult(id_, app=celery).state]
+
+
+if __name__ == '__main__':
+    sess = lazy_startup()
+    calc_item_stats(None, session=sess())

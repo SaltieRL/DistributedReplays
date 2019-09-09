@@ -109,4 +109,8 @@ class EngineStartup:
 
     @staticmethod
     def get_current_session():
-        return current_app.config['db']()
+        try:
+            return current_app.config['db']()
+        except:
+            _session = lazy_startup()
+            return _session()
