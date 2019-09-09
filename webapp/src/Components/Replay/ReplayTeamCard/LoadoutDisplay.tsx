@@ -7,7 +7,6 @@ interface Props {
     loadout: Loadout
 }
 
-
 export class LoadoutDisplay extends React.PureComponent<Props> {
     public render() {
         return (
@@ -15,7 +14,7 @@ export class LoadoutDisplay extends React.PureComponent<Props> {
                 <Grid container spacing={24} justify="center" alignItems="center">
                     {_.toPairs(this.props.loadout).map(([key, value]: [string, LoadoutItem]) => {
                         return (
-                            <LoadoutItemDisplay slot={key} item={value}/>
+                            <LoadoutItemDisplay key={key} slot={key} item={value}/>
                         )
                     })}
                     <Grid item xs={12} style={{padding: 24, textAlign: "center"}}>

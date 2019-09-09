@@ -27,8 +27,8 @@ import { Link } from "react-router-dom"
 import { PLAYER_PAGE_LINK } from "../../../../Globals"
 import { getStats } from "../../../../Requests/Player/getStats"
 import { roundNumberToMaxDP } from "../../../../Utils/String"
-import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 import { LoadoutDisplay } from "../../../Replay/ReplayTeamCard/LoadoutDisplay"
+import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
 
 const styles = createStyles({
     percentage: {

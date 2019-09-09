@@ -39,7 +39,6 @@ const PAINT_MAP = {
     13: "Saffron"
 }
 
-
 export class LoadoutItemDisplay extends React.PureComponent<Props> {
     public render() {
         const {slot, item} = this.props
