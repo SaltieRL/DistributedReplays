@@ -27,10 +27,14 @@ class QueryParam:
     def to_JSON(self):
         result = {
             'name': self.name,
-            'is_list': self.is_list,
-            'optional': self.optional,
             'type': 'string' if self.type is None else str(self.type)
         }
+
+        if not self.optional:
+            result['required'] = True
+
+        if self.is_list:
+            result['is_list'] = True
 
         if self.required_siblings is not None:
             result['required_siblings'] = self.required_siblings
