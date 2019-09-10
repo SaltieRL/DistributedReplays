@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import re
+import sys
 import uuid
 import zlib
 
@@ -516,3 +517,10 @@ def get_patreon_progress():
 @bp.route('/home/recent')
 def get_recent_replays():
     return better_jsonify(RecentReplays.create())
+
+
+@bp.route('/documentation')
+def get_endpoint_documentation():
+    from backend.blueprints.spa_api.service_layers.documentation import create_documentation_for_module
+    method_list = create_documentation_for_module(sys.modules[__name__])
+    return better_jsonify(method_list)

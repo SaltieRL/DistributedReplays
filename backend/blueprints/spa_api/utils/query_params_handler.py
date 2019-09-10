@@ -24,6 +24,22 @@ class QueryParam:
                 f"required params: {self.required_siblings}"
                 f"tip: {self.tip}")
 
+    def to_JSON(self):
+        result = {
+            'name': self.name,
+            'is_list': self.is_list,
+            'optional': self.optional,
+            'type': 'string' if self.type is None else str(self.type)
+        }
+
+        if self.required_siblings is not None:
+            result['required_siblings'] = self.required_siblings
+        if self.tip is not None:
+            result['tip'] = self.tip
+        if self.secondary_type is not None:
+            result['secondary_type'] = str(self.secondary_type)
+        return result
+
 
 def get_query_params(query_params: List[QueryParam], request: Request) -> Dict[str, Any]:
     # Check that all required query params exist
