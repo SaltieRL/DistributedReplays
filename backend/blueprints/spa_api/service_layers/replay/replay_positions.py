@@ -17,7 +17,7 @@ class ReplayPositions:
         self.frames = frames
 
     @staticmethod
-    def create_from_id(id_: str) -> 'ReplayPositions':
+    def create_from_id(id_: str, query_params=None) -> 'ReplayPositions':
         data_frame = FileManager.get_pandas(id_)
         protobuf_game = FileManager.get_proto(id_)
 
@@ -25,7 +25,7 @@ class ReplayPositions:
         rot_cs = ['rot_x', 'rot_y', 'rot_z']
 
         ball = data_frame['ball']
-        ball_df = ball[cs].fillna(-100).values.tolist()
+        ball_df = ball[cs].fillna(-100)
         players = protobuf_game.players
         names = [player.name for player in players]
 
@@ -40,13 +40,21 @@ class ReplayPositions:
             return player_data
 
         players_data = process_player_df(protobuf_game)
-        frame_data = data_frame['game'][['delta', 'seconds_remaining', 'time']].fillna(-100).values.tolist()
+        player_frames = data_frame['game'][['delta', 'seconds_remaining', 'time']].fillna(-100)
+
+        if query_params is not None and 'frame' in query_params:
+            ball_df, player_frames = ReplayPositions.filter_frames(ball_df, player_frames, query_params)
 
         return ReplayPositions(
             id_=id_,
-            ball=ball_df,
+            ball=ball_df.values.toList(),
             players=players_data,
             colors=[player.is_orange for player in players],
             names=[player.name for player in players],
-            frames=frame_data
+            frames=player_frames.values.tolist()
         )
+
+    @classmethod
+    def filter_frames(cls, ball_df, player_frames, query_params):
+        frames = query_params['frame']
+        return ball_df.loc[ball_df.index.isin(frames)], player_frames.loc[player_frames.index.isin(frames)]

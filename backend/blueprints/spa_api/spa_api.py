@@ -53,7 +53,7 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
 from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from .errors.errors import CalculatedError
+from .errors.errors import CalculatedError, NotYetImplemented
 from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from .service_layers.logged_in_user import LoggedInUser
 from .service_layers.player.play_style import PlayStyleResponse
@@ -265,9 +265,13 @@ def api_get_replay_basic_team_stats_download(id_):
 
 
 @bp.route('replay/<id_>/positions')
-def api_get_replay_positions(id_):
-    positions = ReplayPositions.create_from_id(id_)
-    return better_jsonify(positions)
+@with_query_params(accepted_query_params=[QueryParam(name='frame', type_=int, optional=True, is_list=True),
+                                          QueryParam(name='as_proto', type_=bool, optional=True)])
+def api_get_replay_positions(id_, query_params=None):
+    positions = ReplayPositions.create_from_id(id_, query_params=query_params)
+    if query_params is None or 'as_proto' not in query_params:
+        return better_jsonify(positions)
+    raise NotYetImplemented()
 
 
 @bp.route('replay/<id_>/heatmaps')
