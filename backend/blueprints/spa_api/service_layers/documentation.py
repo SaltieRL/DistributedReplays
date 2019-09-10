@@ -1,13 +1,14 @@
 import ast
 import inspect
 
-from backend.blueprints.spa_api.utils.decorators import with_query_params
+from backend.blueprints.spa_api.utils.decorators import with_query_params, require_user
 from backend.blueprints.spa_api.utils.query_params_handler import QueryParam
 from backend.blueprints.spa_api.utils import query_param_definitions
 
 query_param_decorator_name = with_query_params.__name__
 query_param_class_name = QueryParam.__name__
 query_param_definition_name = query_param_definitions.__name__
+require_user_name = require_user.__name__
 
 
 class FuncData:
@@ -49,10 +50,14 @@ class FuncData:
         path = self.decorators['route'].args[0].s
         query_params = []
         provided_params = []
-        if 'with_query_params' in self.decorators:
+        if query_param_decorator_name in self.decorators:
             self.get_query_param_info(imports, query_params, provided_params)
 
         result = {"name": self.name, "path": path}
+
+        if require_user_name in self.decorators:
+            result['logged_in'] = True
+
         if len(query_params) > 0:
             result["query_params"] = query_params
         if len(provided_params) > 0:

@@ -34,7 +34,12 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                     Object.keys(explanations).map((key: any) => {
                         return <>
                             <Card raised={true} style={{marginBottom: "20px"}}>
-                                <CardHeader title={key} />
+                                <CardHeader title={key}/>
+                                {explanations[key].logged_in && (
+                                    <div>
+                                        <span style={{ color: "Red", marginLeft: "20px"}}>Requires Login</span>
+                                    </div>
+                                )}
                                 <Divider/>
                                 <Table>
                                     <TableBody>
