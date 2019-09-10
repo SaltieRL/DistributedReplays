@@ -10,8 +10,8 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import { getDocumentation } from "../../Requests/Documentation"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { QueryParams } from "../Shared/Documentation/QueryParams"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
 interface State {
