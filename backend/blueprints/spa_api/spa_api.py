@@ -21,7 +21,8 @@ from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeat
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
-    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
+    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
+    player_id
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
@@ -326,7 +327,9 @@ def api_search_replays(query_params=None):
 
 
 @bp.route('replay/<id_>/visibility/<visibility>', methods=['PUT'])
-@with_query_params(accepted_query_params=visibility_params, provided_params=['player_id', 'visibility'])
+@require_user
+@with_query_params(accepted_query_params=visibility_params + player_id,
+                   provided_params=['player_id', 'visibility'])
 def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
     try:
         visibility_setting = convert_to_enum(GameVisibilitySetting)(visibility)

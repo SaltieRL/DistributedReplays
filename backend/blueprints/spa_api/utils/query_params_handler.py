@@ -1,4 +1,5 @@
-from typing import List, Dict, Any, Callable, Optional
+import enum
+from typing import List, Dict, Any, Callable, Optional, Type
 from urllib.parse import urlencode
 
 from flask import Request
@@ -9,7 +10,19 @@ from backend.blueprints.spa_api.errors.errors import MissingQueryParams, Invalid
 
 class QueryParam:
     def __init__(self, name: str, is_list: bool = False, optional: bool = False,
-                 type_: Callable = None, required_siblings: List=None, tip: str=None, secondary_type=None):
+                 type_: Callable = None, required_siblings: List[str] = None,
+                 tip: str = None, secondary_type=None,
+                 documentation_type: Type[any] = None):
+        """
+        :param name: The name of the query param.  This is the key for what ends up in the url
+        :param is_list:  If true then there is more than one key allowed.
+        :param optional:  If false the request will fail if this parameter is not there.
+        :param type_:  How to parse the input string into a python type.
+        :param required_siblings:  If these other query params do not exist then the request will fail.
+        :param tip:  For documentation and errors.
+        :param secondary_type:  For parsing after being passed through to tasks.
+        :param documentation_type:  Used as a human readable type.
+        """
         self.name = name
         self.is_list = is_list
         self.optional = optional
@@ -17,6 +30,7 @@ class QueryParam:
         self.required_siblings = required_siblings
         self.tip = tip
         self.secondary_type = secondary_type
+        self.documentation_type = documentation_type
 
     def __str__(self):
         return (f"QueryParam: {self.name}, is_list: {self.is_list},"
@@ -29,6 +43,9 @@ class QueryParam:
             'name': self.name,
             'type': 'string' if self.type is None else str(self.type)
         }
+
+        if self.documentation_type is not None:
+            result['type'] = str(self.documentation_type)
 
         if not self.optional:
             result['required'] = True
@@ -139,4 +156,3 @@ def create_validation_for_query_params(query_params: List[QueryParam], provided_
 
 def create_query_string(query_params):
     return urlencode(query_params)
-

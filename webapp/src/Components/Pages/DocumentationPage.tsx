@@ -6,79 +6,17 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableRow,
+    TableRow
 } from "@material-ui/core"
 import * as React from "react"
 import { getDocumentation } from "../../Requests/Documentation"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
-import ReactJson from "react-json-view"
+import {QueryParams} from "../Shared/Documentation/QueryParams"
 
 interface State {
     reloadSignal: boolean
     explanations?: Record<string, any>
-}
-
-interface Props {
-    queryParam: any
-}
-
-class QueryParams  extends React.PureComponent<Props> {
-    public render() {
-        return (
-            <>
-                <TableRow>
-                    {/* REQUIRED, LIST, NAME */}
-                    <TableCell>{
-                        this.props.queryParam.required !== null &&
-                        this.props.queryParam.required !== undefined &&
-                        this.props.queryParam.required &&
-                        (<span style={{fontWeight: "bold", color: "Red"}}>Required </span>)
-                    }
-                        {   this.props.queryParam.is_list !== null &&
-                        this.props.queryParam.is_list !== undefined &&
-                        this.props.queryParam.is_list &&
-                        (<span style={{fontWeight: "bold", color: "Blue"}}>List </span>)
-                        }
-                        <span style={{fontWeight: "bold"}}>"{this.props.queryParam.name}"</span>
-                    </TableCell>
-
-                    {/* TYPE*/}
-                    <TableCell>
-                        <span style={{fontWeight: "bold"}}>type: </span>
-                        {this.props.queryParam.type}
-                    </TableCell>
-
-                    {/* SIBLINGS */}
-                    {
-                        this.props.queryParam.required_siblings !== null &&
-                        this.props.queryParam.required_siblings !== undefined &&
-                        this.props.queryParam.required_siblings.length > 0 &&
-                        (<TableCell>
-                            <span style={{fontWeight: "bold"}}>Required Sibling Parameters: </span>
-                            <div>
-                                {Object.keys(this.props.queryParam.required_siblings).map((index2:any) => {
-                                    return (<span key={index2}>{this.props.queryParam.required_siblings[index2]}
-                                        {this.props.queryParam.required_siblings.length - 1 > index2 &&
-                                        (<span>, </span>)}</span>)
-                                })}
-                            </div>
-                        </TableCell>)
-                    }
-
-                    {/* TIP */}
-                    {   this.props.queryParam.tip !== null &&
-                    this.props.queryParam.tip !== undefined &&
-                    this.props.queryParam.tip &&
-                    (<TableCell>
-                        <span style={{fontWeight: "bold"}}>Tip: </span>
-                        {this.props.queryParam.tip}
-                    </TableCell>)
-                    }
-                </TableRow>
-            </>
-        )
-    }
 }
 
 export class DocumentationPage extends React.PureComponent<{}, State> {
@@ -113,17 +51,17 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                                                 <Table>
                                                     <TableBody>
                                                         {
-                                                        Object.keys(explanations[key].query_params)
-                                                            .map((index: any) => {
-                                                            return (
-                                                                <QueryParams key={index}
-                                                                             queryParam={explanations[key].
-                                                                                 query_params[index]}>
-
-                                                                </QueryParams>
-                                                            )
-                                                        })
-                                                    }
+                                                            Object.keys(explanations[key].query_params)
+                                                                .map((index: any) => {
+                                                                    return (
+                                                                        <QueryParams
+                                                                            key={index}
+                                                                            queryParam=
+                                                                                {explanations[key].query_params[index]}
+                                                                        />
+                                                                    )
+                                                            })
+                                                        }
                                                     </TableBody>
                                                 </Table>
                                             </TableCell>
@@ -135,7 +73,22 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                                         <TableRow>
                                             <TableCell>Path Params</TableCell>
                                             <TableCell>
-                                                <ReactJson src={explanations[key].path_params} />
+                                                <Table>
+                                                    <TableBody>
+                                                        {
+                                                            Object.keys(explanations[key].path_params)
+                                                                .map((index: any) => {
+                                                                    return (
+                                                                        <QueryParams
+                                                                            key={index}
+                                                                            queryParam=
+                                                                                {explanations[key].path_params[index]}
+                                                                        />
+                                                                    )
+                                                                })
+                                                        }
+                                                    </TableBody>
+                                                </Table>
                                             </TableCell>
                                         </TableRow>
                                         )}
