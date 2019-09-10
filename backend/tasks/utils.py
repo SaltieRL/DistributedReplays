@@ -1,3 +1,8 @@
+import gzip
+import os
+
+from carball.analysis.analysis_manager import AnalysisManager
+
 from backend.database.startup import get_strict_redis
 
 PRIORITY_SEP = '\x06\x16'
@@ -42,5 +47,3 @@ def get_queue_length(queue_name='celery'):
                       DEFAULT_PRIORITY_STEPS]
     r = get_strict_redis()
     return [r.llen(x) for x in priority_names]
-
-

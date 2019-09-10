@@ -1,13 +1,10 @@
 import base64
-import gzip
 import logging
 import os
 import shutil
-import traceback
 from typing import Dict
 
 import requests
-from carball import analyze_replay_file
 from requests import ReadTimeout
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
@@ -19,8 +16,9 @@ from backend.database.utils.utils import add_objects
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from backend.utils.file_manager import FileManager
-from backend.utils.checks import log_error
+from backend.utils.logging import log_error
 from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df, GCPManager
+from backend.utils.parsing_manager import parse_replay_wrapper
 
 logger = logging.getLogger(__name__)
 
@@ -66,30 +64,12 @@ def parse_replay(self, replay_to_parse_path, preserve_upload_date: bool = False,
     # Todo preparse replay ID here to save on extra parsing and on locks.  (remember to delete locks older than 1 day)
     if os.path.isfile(parsed_data_path) and not force_reparse:
         return
-    # try:
-    try:
-        analysis_manager = analyze_replay_file(replay_to_parse_path)  # type: ReplayGame
-    except Exception as e:
-        if not os.path.isdir(failed_dir):
-            os.makedirs(failed_dir)
-        shutil.move(replay_to_parse_path, os.path.join(failed_dir, os.path.basename(replay_to_parse_path)))
-        with open(os.path.join(failed_dir, os.path.basename(replay_to_parse_path) + '.txt'), 'a') as f:
-            f.write(str(e))
-            f.write(traceback.format_exc())
-        raise e
-    try:
-        # Temp write file to the original filename location
-        if not os.path.isdir(os.path.dirname(parsed_data_path)):
-            os.makedirs(os.path.dirname(parsed_data_path))
-        with open(parsed_data_path + '.pts', 'wb') as fo:
-            analysis_manager.write_proto_out_to_file(fo)
-        with gzip.open(parsed_data_path + '.gzip', 'wb') as fo:
-            analysis_manager.write_pandas_out_to_file(fo)
-    except Exception as e:
-        log_error(e, logger=logger)
-        with open(os.path.join(failed_dir, os.path.basename(replay_to_parse_path) + '.txt'), 'a') as f:
-            f.write(str(e))
-            f.write(traceback.format_exc())
+
+    analysis_manager = parse_replay_wrapper(replay_to_parse_path, parsed_data_path, failed_dir,
+                                            force_reparse, logger)
+
+    if analysis_manager is None:
+        return
 
     # success!
     proto_game = analysis_manager.protobuf_game

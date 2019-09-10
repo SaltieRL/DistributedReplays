@@ -140,9 +140,9 @@ def kill_database(request, engine, session, monkeypatch):
 @pytest.fixture(scope="session", autouse=True)
 def cleanup(request, postgres_factory):
     """Cleanup a testing directory once we are finished."""
-    def kill_database():
+    def cleanup():
         clear_dir()
-    request.addfinalizer(kill_database)
+    request.addfinalizer(cleanup)
 
 
 @pytest.fixture(autouse=True)
@@ -204,7 +204,7 @@ FAKE DIRECTORIES
 def fake_write_location(monkeypatch, temp_folder):
     from backend.utils.file_manager import FileManager
 
-    monkeypatch.setattr(FileManager, 'get_default_parse_folder', lambda: os.path.join(temp_folder, 'parsed'))
+    monkeypatch.setattr(FileManager, 'get_default_parse_folder', lambda: temp_folder)
 
 
 @pytest.fixture(autouse=True)

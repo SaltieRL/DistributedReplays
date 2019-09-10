@@ -23,7 +23,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
-from backend.utils.checks import log_error
+from backend.utils.logging import log_error
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self

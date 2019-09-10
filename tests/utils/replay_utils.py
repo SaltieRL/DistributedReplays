@@ -5,6 +5,7 @@ import requests
 from carball import analyze_replay_file
 
 from tests.utils.location_utils import get_test_folder, get_test_replay_folder
+from backend.utils.parsing_manager import write_replay_to_disk
 
 
 def get_test_file(file_name, temp_folder=None, is_replay=False):
@@ -24,16 +25,17 @@ def download_replay_discord(url):
     return replay.data
 
 
-def parse_file(replay):
-    replay_name = write_files_to_disk([replay])[0]
-    replay = analyze_replay_file(os.path.join(get_test_folder(), replay_name),
-                                 os.path.join(get_test_folder(), replay_name) + '.json')
-    proto = replay.protobuf_game
+def parse_file(analysis_manager):
+    replay_name = write_files_to_disk([analysis_manager])[0]
+    analysis_manager = analyze_replay_file(os.path.join(get_test_folder(), replay_name),
+                                           os.path.join(get_test_folder(), replay_name) + '.json')
+    write_replay_to_disk(analysis_manager, get_test_folder())
+    proto = analysis_manager.protobuf_game
     if proto.game_metadata.match_guid is not None and proto.game_metadata.match_guid != '':
         guid = proto.game_metadata.match_guid
     else:
         guid = proto.game_metadata.id
-    return replay, proto, guid
+    return analysis_manager, proto, guid
 
 
 def write_proto_pandas_to_file(filename):
@@ -83,14 +85,18 @@ def write_files_to_disk(replays, temp_folder=None):
     return file_names
 
 
-def clear_dir():
+def clear_dir(temp_folder=None):
     try:
-        os.remove(get_test_folder())
+        os.remove(get_test_folder(temp_folder))
     except:
         pass
-    for root, dirs, files in os.walk(get_test_folder()):
+    for root, dirs, files in os.walk(get_test_folder(temp_folder)):
         for file in files:
             try:
                 os.remove(file)
             except:
                 pass
+
+    # Double Check!
+    if temp_folder is not None:
+        clear_dir(temp_folder=None)

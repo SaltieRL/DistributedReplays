@@ -4,15 +4,17 @@ from tests.utils.database_utils import default_player_id
 
 
 @pytest.fixture(autouse=True)
-def temp_folder(tmpdir, monkeypatch):
-
+def temp_folder(monkeypatch, tmpdir):
     path = tmpdir.dirname
+    from utils.location_utils import TestFolderManager
+    monkeypatch.setattr(TestFolderManager, "get_internal_default_test_folder_location", lambda: path)
+
     return path
 
 
 @pytest.fixture(autouse=True)
 def no_errors_are_logged(request, mocker):
-    from backend.utils.checks import ErrorLogger
+    from backend.utils.logging import ErrorLogger
 
     def actually_log(logger, message):
         logger.debug(message)
@@ -21,7 +23,7 @@ def no_errors_are_logged(request, mocker):
         logger.error(message)
         logger.exception(message)
 
-    mocker.patch('backend.utils.checks.ErrorLogger.log_error', wraps=actually_log)
+    mocker.patch('backend.utils.logging.ErrorLogger.log_error', wraps=actually_log)
     cancel = False
 
     class Holder:

@@ -10,7 +10,7 @@ from backend.database.objects import Player, GameVisibility, Game
 from backend.blueprints.spa_api.utils.decorators import require_user
 from backend.database.objects import GameVisibilitySetting
 from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.utils.checks import log_error
+from backend.utils.logging import log_error
 
 
 class ReplayVisibility:
