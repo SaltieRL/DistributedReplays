@@ -1,5 +1,8 @@
-import * as React from "react";
-import {TableCell, TableRow} from "@material-ui/core";
+import {
+    TableCell,
+    TableRow
+} from "@material-ui/core"
+import * as React from "react"
 
 interface Props {
     queryParam: any

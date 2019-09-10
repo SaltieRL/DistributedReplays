@@ -11,8 +11,8 @@ import {
 import * as React from "react"
 import { getDocumentation } from "../../Requests/Documentation"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
+import { QueryParams } from "../Shared/Documentation/QueryParams"
 import { BasePage } from "./BasePage"
-import {QueryParams} from "../Shared/Documentation/QueryParams"
 
 interface State {
     reloadSignal: boolean
@@ -55,18 +55,17 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                                             <TableCell>
                                                 <Table>
                                                     <TableBody>
-                                                        {
-                                                            Object.keys(explanations[key].query_params)
-                                                                .map((index: any) => {
-                                                                    return (
-                                                                        <QueryParams
-                                                                            key={index}
-                                                                            queryParam=
-                                                                                {explanations[key].query_params[index]}
-                                                                        />
-                                                                    )
-                                                            })
-                                                        }
+                                                    {
+                                                        Object.keys(explanations[key].query_params)
+                                                            .map((index: any) => {
+                                                            return (
+                                                                <QueryParams
+                                                                    key={index}
+                                                                    queryParam={explanations[key].query_params[index]}
+                                                                />
+                                                            )
+                                                        })
+                                                    }
                                                     </TableBody>
                                                 </Table>
                                             </TableCell>
@@ -80,18 +79,17 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                                             <TableCell>
                                                 <Table>
                                                     <TableBody>
-                                                        {
-                                                            Object.keys(explanations[key].path_params)
-                                                                .map((index: any) => {
-                                                                    return (
-                                                                        <QueryParams
-                                                                            key={index}
-                                                                            queryParam=
-                                                                                {explanations[key].path_params[index]}
-                                                                        />
-                                                                    )
-                                                                })
-                                                        }
+                                                    {
+                                                        Object.keys(explanations[key].path_params)
+                                                            .map((index: any) => {
+                                                            return (
+                                                                <QueryParams
+                                                                    key={index}
+                                                                    queryParam={explanations[key].path_params[index]}
+                                                                />
+                                                            )
+                                                            })
+                                                    }
                                                     </TableBody>
                                                 </Table>
                                             </TableCell>
