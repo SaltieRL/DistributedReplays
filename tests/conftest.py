@@ -21,8 +21,7 @@ def use_test_paths(monkeypatch, temp_folder):
             def get_path():
                 return temp_folder
 
-            from backend.utils.file_manager import FileManager
-            monkeypatch.setattr(FileManager, 'get_default_parse_folder', get_path)
+            monkeypatch.setattr('backend.utils.file_manager.FileManager.get_default_parse_folder', get_path)
 
             monkeypatch.setattr('tests.utils.location_utils.TestFolderManager.get_internal_default_test_folder_location', get_path)
     return Patcher()
@@ -64,7 +63,6 @@ def no_errors_are_logged(request, mocker):
 
 @pytest.fixture()
 def mock_user(monkeypatch):
-    from backend.utils.global_functions import UserManager
     from backend.database.objects import Player
 
     class MockUser:
@@ -79,5 +77,5 @@ def mock_user(monkeypatch):
 
     mock_user = MockUser()
 
-    monkeypatch.setattr(UserManager, 'get_current_user', mock_user.get_fake_user)
+    monkeypatch.setattr('backend.utils.global_functions.UserManager.get_current_user', mock_user.get_fake_user)
     return mock_user
