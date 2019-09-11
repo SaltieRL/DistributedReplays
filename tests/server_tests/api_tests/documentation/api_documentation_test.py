@@ -15,4 +15,4 @@ class Test_api_documentation:
         print(data)
         assert 'get_endpoint_documentation' in data
         assert data['get_endpoint_documentation']['path'] == '/documentation'
-        assert data['get_endpoint_documentation']['name'] == '/get_endpoint_documentation'
+        assert data['get_endpoint_documentation']['name'] == 'get_endpoint_documentation'
