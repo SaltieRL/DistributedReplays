@@ -34,7 +34,7 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                     Object.keys(explanations).map((key: any) => {
                         return <>
                             <Card raised={true} style={{marginBottom: "20px"}}>
-                                <CardHeader title={key}/>
+                                <CardHeader title={explanations[key].path}/>
                                 {explanations[key].logged_in && (
                                     <div>
                                         <span style={{ color: "Red", marginLeft: "20px"}}>Requires Login</span>
@@ -44,8 +44,8 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                                 <Table>
                                     <TableBody>
                                         <TableRow>
-                                            <TableCell>Path</TableCell>
-                                            <TableCell>{explanations[key].path}</TableCell>
+                                            <TableCell>Function name</TableCell>
+                                            <TableCell>{key}</TableCell>
                                         </TableRow>
                                         {explanations[key].query_params !== null &&
                                          explanations[key].query_params !== undefined &&
