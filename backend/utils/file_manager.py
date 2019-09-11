@@ -5,7 +5,7 @@ from enum import Enum
 from carball.analysis.utils import proto_manager, pandas_manager
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
-from backend.utils.logging import log_error
+from backend.utils.logging import ErrorLogger
 from backend.utils.cloud_handler import download_proto, download_df, download_replay
 from backend.server_constants import BASE_FOLDER
 
@@ -65,13 +65,13 @@ class FileManager:
             try:
                 return download_lambda()
             except ReplayNotFound as e:
-                log_error(e)
+                ErrorLogger.log_error(e)
                 raise e
             except Exception as e:
-                log_error(e)
+                ErrorLogger.log_error(e)
                 raise ReplayNotFound()
         try:
             return open_lambda(item_path)
         except Exception as e:
-            log_error(e)
+            ErrorLogger.log_error(e)
             raise ErrorOpeningGame(str(e))

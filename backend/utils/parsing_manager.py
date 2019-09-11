@@ -7,7 +7,7 @@ from typing import Optional
 from carball import analyze_replay_file
 from carball.analysis.analysis_manager import AnalysisManager
 
-from backend.utils.logging import log_error
+from backend.utils.logging import ErrorLogger
 
 
 def write_replay_to_disk(analysis_manager: AnalysisManager, parsed_data_path: str):
@@ -51,7 +51,7 @@ def parse_replay_wrapper(replay_to_parse_path: str,
     try:
         write_replay_to_disk(analysis_manager, parsed_data_path)
     except Exception as e:
-        log_error(e, logger=logger)
+        ErrorLogger.log_error(e, logger=logger)
         with open(os.path.join(failed_dir, os.path.basename(replay_to_parse_path) + '.txt'), 'a') as f:
             f.write(str(e))
             f.write(traceback.format_exc())

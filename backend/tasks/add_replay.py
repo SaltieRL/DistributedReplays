@@ -16,7 +16,7 @@ from backend.database.utils.utils import add_objects
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from backend.utils.file_manager import FileManager
-from backend.utils.logging import log_error
+from backend.utils.logging import ErrorLogger
 from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df, GCPManager
 from backend.utils.parsing_manager import parse_replay_wrapper
 
@@ -146,13 +146,13 @@ def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None,
                               game_exists=match_exists)
     except CalculatedError as e:
         error_counter.append('visibility')
-        log_error(e, message='Error changing visibility', logger=logger)
+        ErrorLogger.log_error(e, message='Error changing visibility', logger=logger)
     # Add game visibility option
     try:
         apply_tags_to_game(query_params=query_params, game_id=game_id)
     except CalculatedError as e:
         error_counter.append('tags')
-        log_error(e, message='Error adding tags', logger=logger)
+        ErrorLogger.log_error(e, message='Error adding tags', logger=logger)
 
     if len(error_counter) == 0:
         logger.debug("SUCCESS: Processed all query params")
