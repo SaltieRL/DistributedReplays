@@ -6,7 +6,7 @@ from typing import List
 
 class TestImports:
 
-    global_allowed_imports = ['sqlalchemy', 'RLBotServer', 'carball', 'flask', 'redis', 'gzip'
+    global_allowed_imports = ['sqlalchemy', 'RLBotServer', 'carball', 'flask', 'redis', 'gzip',
                               'flask_cors', 'werkzeug', 'bs4', 'torch', 'pandas', 'numpy']
     test_imports = ['alchemy_mock', 'fakeredis', 'responses']
 
@@ -21,7 +21,9 @@ class TestImports:
             if first_module.startswith("_"):
                 continue
             result_modules[first_module] = True
-        nearly_final_list = list(result_modules.keys()) + self.global_allowed_imports
+        for allowed in self.global_allowed_imports:
+            result_modules[allowed] = True
+        nearly_final_list = list(result_modules.keys())
         for removed in self.black_list:
             if removed in nearly_final_list:
                 nearly_final_list.remove(removed)
