@@ -28,7 +28,7 @@ class Test_edit_private_replay:
         data = response.json
 
         # in the future assert each new stat that is being added.
-        assert len(data) == 61
+        assert len(data) == 67
 
     def test_replay_get_team_stats(self, test_client, fake_user, mock_get_proto):
         game = get_current_session().query(Game).first()

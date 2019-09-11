@@ -14,6 +14,7 @@ class BasicStatSubcategory(ChartSubcatagory):
     Efficiency = auto()
     Team_Positioning = auto()
     Ball_Carries = auto()
+    Kickoffs = auto()
 
 
 SubCat = BasicStatSubcategory
@@ -85,6 +86,16 @@ player_stats_metadata = [
     Metadata('boost_ratio', ChartType.bar, SubCat.Boosts),
     Metadata('wasted_big', ChartType.bar, SubCat.Boosts),
     Metadata('wasted_small', ChartType.bar, SubCat.Boosts),
+
+    # kickoffs
+    Metadata('total_kickoffs', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_boost', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_cheat', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_defend', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_go_to_ball', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_afk', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_first_touch', ChartType.bar, SubCat.Kickoffs),
+    Metadata('average_boost_used', ChartType.bar, SubCat.Kickoffs),
 
     # efficiency
     Metadata('collection_boost_efficiency', ChartType.bar, SubCat.Efficiency),
