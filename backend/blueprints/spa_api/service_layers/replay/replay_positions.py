@@ -23,6 +23,8 @@ class ReplayPositions:
             filter_frames = query_params['frame']
 
         data_frame = FileManager.get_pandas(id_)
+        if filter_frames is not None:
+            data_frame = ReplayPositions.filter_frames(filter_frames, data_frame)
         protobuf_game = FileManager.get_proto(id_)
 
         cs = ['pos_x', 'pos_y', 'pos_z']
@@ -42,17 +44,11 @@ class ReplayPositions:
                 data_frame[player].loc[:, 'pos_y'] = data_frame[player]['pos_y']
                 data_frame[player].loc[:, 'pos_z'] = data_frame[player]['pos_z']
                 player_positions = data_frame[player][cs + rot_cs + ['boost_active']].fillna(-100)
-                if filter_frames is not None:
-                    player_positions = ReplayPositions.filter_frames(filter_frames, player_positions)
                 player_data.append(player_positions.values.tolist())
             return player_data
 
         players_data = process_player_df(protobuf_game)
         game_frames = data_frame['game'][['delta', 'seconds_remaining', 'time']].fillna(-100)
-
-        if filter_frames is not None:
-            ball_df = ReplayPositions.filter_frames(filter_frames, ball_df)
-            game_frames = ReplayPositions.filter_frames(filter_frames, game_frames)
 
         return ReplayPositions(
             id_=id_,
