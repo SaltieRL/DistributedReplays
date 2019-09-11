@@ -1,6 +1,5 @@
 from backend.tasks.celery_tasks import parse_replay_task, calc_global_stats
-from tests.utils.replay_utils import write_files_to_disk, get_test_file, clear_dir, get_complex_replay_list
-from tests.utils.location_utils import get_test_folder
+from tests.utils.replay_utils import write_files_to_disk, get_test_file, get_complex_replay_list
 
 
 class TestCelerytasks():
