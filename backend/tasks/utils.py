@@ -1,8 +1,3 @@
-import gzip
-import os
-
-from carball.analysis.analysis_manager import AnalysisManager
-
 from backend.database.startup import get_strict_redis
 
 PRIORITY_SEP = '\x06\x16'
