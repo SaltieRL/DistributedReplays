@@ -38,6 +38,7 @@ def no_errors_are_logged(request, mocker):
         logger.exception(message)
 
     mocker.patch('backend.utils.logging.ErrorLogger.log_error', wraps=actually_log)
+    from backend.utils.logging import ErrorLogger
     cancel = False
 
     class Holder:
@@ -46,11 +47,9 @@ def no_errors_are_logged(request, mocker):
             cancel = True
 
         def mock_is_called(self):
-            from backend.utils.logging import ErrorLogger
             return ErrorLogger.log_error.called
 
         def get_mock(self):
-            from backend.utils.logging import ErrorLogger
             return ErrorLogger.log_error
 
     holder = Holder()
