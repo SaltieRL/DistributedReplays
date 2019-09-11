@@ -6,7 +6,7 @@ from typing import List
 
 class TestImports:
 
-    global_allowed_imports = ['sqlalchemy', 'RLBotServer', 'carball', 'flask', 'redis',
+    global_allowed_imports = ['sqlalchemy', 'RLBotServer', 'carball', 'flask', 'redis', 'gzip'
                               'flask_cors', 'werkzeug', 'bs4', 'torch', 'pandas', 'numpy']
     test_imports = ['alchemy_mock', 'fakeredis', 'responses']
 
