@@ -9,7 +9,7 @@ def temp_folder(monkeypatch, tmpdir):
 
     def get_path():
         return path
-    monkeypatch.setattr('utils.location_utils.TestFolderManager.get_internal_default_test_folder_location', get_path)
+    monkeypatch.setattr('tests.utils.location_utils.TestFolderManager.get_internal_default_test_folder_location', get_path)
 
     return path
 
@@ -24,8 +24,7 @@ def use_test_paths(monkeypatch, temp_folder):
             from backend.utils.file_manager import FileManager
             monkeypatch.setattr(FileManager, 'get_default_parse_folder', get_path)
 
-            from tests.utils.location_utils import TestFolderManager
-            monkeypatch.setattr(TestFolderManager, "get_internal_default_test_folder_location", get_path)
+            monkeypatch.setattr('tests.utils.location_utils.TestFolderManager.get_internal_default_test_folder_location', get_path)
     return Patcher()
 
 

@@ -299,7 +299,7 @@ def mock_get_pandas(monkeypatch):
 
 @pytest.fixture()
 def initialize_database(temp_folder):
-    session, protos, ids = initialize_db_with_replays(['3_KICKOFFS_4_SHOTS.replay'], temp_folder=temp_folder)
+    session, protos, ids = initialize_db_with_replays(['3_KICKOFFS_4_SHOTS.replay'])
 
     class wrapper:
         def get_session(self):
