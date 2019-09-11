@@ -1,6 +1,6 @@
 import os
 
-default_test_data_folder_location = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'test_data')
+default_test_data_folder_location = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'test_data')
 
 
 def get_test_replay_folder():

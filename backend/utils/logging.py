@@ -4,6 +4,7 @@ backup_logger = logging.getLogger(__name__)
 
 
 class ErrorLogger:
+
     @staticmethod
     def log_error(exception: Exception, message: str = None, logger: logging.Logger = backup_logger):
         """

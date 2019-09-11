@@ -29,13 +29,15 @@ def use_test_paths(monkeypatch, temp_folder):
 
 @pytest.fixture(autouse=True)
 def no_errors_are_logged(request, mocker):
+    from backend.utils.logging import backup_logger
 
-    def actually_log(logger, message):
-        logger.debug(message)
-        logger.info(message)
-        logger.warn(message)
-        logger.error(message)
-        logger.exception(message)
+    def actually_log(exception, message=None, logger=backup_logger):
+        output = str(exception) + (message if message is not None else "")
+        logger.debug(output)
+        logger.info(output)
+        logger.warn(output)
+        logger.error(output)
+        logger.exception(output)
 
     mocker.patch('backend.utils.logging.ErrorLogger.log_error', wraps=actually_log)
     from backend.utils.logging import ErrorLogger
