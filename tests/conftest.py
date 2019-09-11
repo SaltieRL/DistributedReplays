@@ -29,7 +29,6 @@ def use_test_paths(monkeypatch, temp_folder):
 
 @pytest.fixture(autouse=True)
 def no_errors_are_logged(request, mocker):
-    from backend.utils.logging import ErrorLogger
 
     def actually_log(logger, message):
         logger.debug(message)
@@ -47,9 +46,11 @@ def no_errors_are_logged(request, mocker):
             cancel = True
 
         def mock_is_called(self):
+            from backend.utils.logging import ErrorLogger
             return ErrorLogger.log_error.called
 
         def get_mock(self):
+            from backend.utils.logging import ErrorLogger
             return ErrorLogger.log_error
 
     holder = Holder()
