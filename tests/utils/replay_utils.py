@@ -25,16 +25,16 @@ def download_replay_discord(url):
     return replay.data
 
 
-def parse_file(analysis_manager):
-    replay_name = write_files_to_disk([analysis_manager])[0]
-    analysis_manager = analyze_replay_file(os.path.join(get_test_folder(), replay_name),
-                                           os.path.join(get_test_folder(), replay_name) + '.json')
-    write_replay_to_disk(analysis_manager, get_test_folder())
+def parse_file(analysis_manager, temp_folder=None):
+    replay_name = write_files_to_disk([analysis_manager], temp_folder=temp_folder)[0]
+    analysis_manager = analyze_replay_file(os.path.join(get_test_folder(temp_folder=temp_folder), replay_name),
+                                           os.path.join(get_test_folder(temp_folder=temp_folder), replay_name) + '.json')
     proto = analysis_manager.protobuf_game
     if proto.game_metadata.match_guid is not None and proto.game_metadata.match_guid != '':
         guid = proto.game_metadata.match_guid
     else:
         guid = proto.game_metadata.id
+    write_replay_to_disk(analysis_manager, os.path.join(get_test_folder(temp_folder=temp_folder), guid)+ ".replay")
     return analysis_manager, proto, guid
 
 
