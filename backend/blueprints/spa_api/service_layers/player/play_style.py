@@ -10,7 +10,7 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame
 from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 from backend.utils.psyonix_api_handler import get_rank
-from .player_profile_stats import player_stat_wrapper, player_wrapper
+from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_stat_wrapper, player_wrapper
 
 explanations = player_stat_wrapper.player_stats.stat_explanation_map
 

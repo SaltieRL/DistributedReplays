@@ -2,7 +2,7 @@ from flask import g
 
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.utils.checks import is_local_dev
-from ..errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 
 
 class LoggedInUser:
