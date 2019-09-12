@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import re
+import sys
 import uuid
 import zlib
 
@@ -20,7 +21,8 @@ from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeat
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
-    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
+    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
+    player_id
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.checks import log_error
@@ -325,7 +327,9 @@ def api_search_replays(query_params=None):
 
 
 @bp.route('replay/<id_>/visibility/<visibility>', methods=['PUT'])
-@with_query_params(accepted_query_params=visibility_params, provided_params=['player_id', 'visibility'])
+@require_user
+@with_query_params(accepted_query_params=visibility_params + player_id,
+                   provided_params=['player_id', 'visibility'])
 def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
     try:
         visibility_setting = convert_to_enum(GameVisibilitySetting)(visibility)
@@ -516,3 +520,10 @@ def get_patreon_progress():
 @bp.route('/home/recent')
 def get_recent_replays():
     return better_jsonify(RecentReplays.create())
+
+
+@bp.route('/documentation')
+def get_endpoint_documentation():
+    from backend.blueprints.spa_api.service_layers.documentation import create_documentation_for_module
+    method_list = create_documentation_for_module(sys.modules[__name__])
+    return better_jsonify(method_list)
