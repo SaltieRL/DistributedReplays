@@ -25,7 +25,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     player_id
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
-from backend.utils.checks import log_error
+from backend.utils.logging import ErrorLogger
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
@@ -267,9 +267,13 @@ def api_get_replay_basic_team_stats_download(id_):
 
 
 @bp.route('replay/<id_>/positions')
-def api_get_replay_positions(id_):
-    positions = ReplayPositions.create_from_id(id_)
-    return better_jsonify(positions)
+@with_query_params(accepted_query_params=[QueryParam(name='frame', type_=int, optional=True, is_list=True),
+                                          QueryParam(name='as_proto', type_=bool, optional=True)])
+def api_get_replay_positions(id_, query_params=None):
+    positions = ReplayPositions.create_from_id(id_, query_params=query_params)
+    if query_params is None or 'as_proto' not in query_params:
+        return better_jsonify(positions)
+    raise NotYetImplemented()
 
 
 @bp.route('replay/<id_>/heatmaps')
@@ -412,7 +416,7 @@ def api_upload_proto(query_params=None):
     try:
         parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
-        log_error(e, logger=logger)
+        ErrorLogger.log_error(e, logger=logger)
 
     return jsonify({'Success': True})
 

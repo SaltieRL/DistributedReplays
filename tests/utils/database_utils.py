@@ -38,14 +38,14 @@ def initialize_db():
     return session
 
 
-def initialize_db_with_replays(replay_list, session=None):
+def initialize_db_with_replays(replay_list, session=None, temp_folder=None):
     if session is None:
         session = initialize_db()
     add_initial_player(session)
     guids = []
     protos = []
     for replay in replay_list:
-        replay, proto, guid = parse_file(replay)
+        replay, proto, guid = parse_file(replay, temp_folder=temp_folder)
         add_objects(proto, session=session)
         guids.append(guid)
         protos.append(proto)

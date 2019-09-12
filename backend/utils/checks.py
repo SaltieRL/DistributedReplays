@@ -1,8 +1,4 @@
-import logging
-
 from flask import g
-
-logger = logging.getLogger(__name__)
 
 
 def get_local_dev() -> bool:
@@ -61,15 +57,3 @@ def is_local_dev():
 def ignore_filtering():
     return False
 
-
-# done in cases where we can't throw but want to make sure it is known an error occurs
-def log_error(exception, message=None, logger: logging.Logger = logger):
-    if message is None:
-        message = str(exception)
-    ErrorLogger.log_error(logger, message)
-
-
-class ErrorLogger:
-    @staticmethod
-    def log_error(logger, message):
-        logger.exception(message)

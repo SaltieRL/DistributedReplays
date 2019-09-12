@@ -1,12 +1,9 @@
 import base64
 import json
-import tempfile
 import time
-import unittest
 import zlib
 
 import requests
-from carball.decompile_replays import analyze_replay_file
 
 from RLBotServer import start_server
 from backend.database.objects import GameVisibilitySetting
