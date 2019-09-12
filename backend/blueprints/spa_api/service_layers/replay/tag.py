@@ -3,8 +3,8 @@ from typing import List, Dict
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.utils.global_functions import get_current_user_id
-from backend.utils.checks import log_error
-from ...errors.errors import CalculatedError, TagNotFound, PlayerNotFound
+from backend.utils.logging import ErrorLogger
+from backend.blueprints.spa_api.errors.errors import CalculatedError, TagNotFound, PlayerNotFound
 from backend.database.objects import Tag as DBTag, Player
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 
@@ -149,7 +149,7 @@ def apply_tags_to_game(query_params: Dict[str, any]=None, game_id=None, session=
     if len(tags) > 0:
         player_id = query_params['player_id']
         if session.query(Player).filter(Player.platformid == player_id).first() is None:
-            log_error(PlayerNotFound())
+            ErrorLogger.log_error(PlayerNotFound())
         else:
             for tag in tags:
                 created_tag = Tag.create(tag, session=session, player_id=player_id)

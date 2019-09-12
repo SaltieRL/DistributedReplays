@@ -82,3 +82,8 @@ class UnsupportedPlaylist(CalculatedError):
 class AuthorizationException(CalculatedError):
     status_code = 401
     message = "User not allowed for this request"
+
+
+class NotYetImplemented(CalculatedError):
+    status_code = 501
+    message = "This method is not yet implemented"

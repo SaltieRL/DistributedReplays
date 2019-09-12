@@ -8,7 +8,7 @@ import io
 import responses
 from requests import Request
 
-from backend.database.objects import Game, GameVisibilitySetting, GameVisibility, PlayerGame, Player
+from backend.database.objects import Game, GameVisibilitySetting, GameVisibility, Player
 from backend.database.startup import get_current_session
 from backend.utils.time_related import hour_rounder
 from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat
