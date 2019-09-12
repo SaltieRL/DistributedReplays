@@ -8,7 +8,7 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame, Game, Player
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
-from data.constants.car import get_car
+from backend.data.constants.car import get_car
 
 player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)

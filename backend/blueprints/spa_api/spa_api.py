@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import re
+import sys
 import uuid
 import zlib
 
@@ -20,10 +21,11 @@ from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeat
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
-    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
+    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
+    player_id
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
-from backend.utils.checks import log_error
+from backend.utils.logging import ErrorLogger
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
@@ -53,23 +55,23 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
 from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from .errors.errors import CalculatedError
-from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
-from .service_layers.logged_in_user import LoggedInUser
-from .service_layers.player.play_style import PlayStyleResponse
-from .service_layers.player.play_style_progression import PlayStyleProgression
-from .service_layers.player.player import Player
-from .service_layers.player.player_profile_stats import PlayerProfileStats
-from .service_layers.player.player_ranks import PlayerRanks
-from .service_layers.queue_status import QueueStatus
-from .service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
-from .service_layers.replay.groups import ReplayGroupChartData
-from .service_layers.replay.match_history import MatchHistory
-from .service_layers.replay.replay import Replay
-from .service_layers.replay.replay_positions import ReplayPositions
-from .service_layers.replay.tag import Tag
-from .utils.decorators import require_user, with_query_params
-from .utils.query_params_handler import QueryParam, get_query_params
+from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
+from backend.blueprints.spa_api.service_layers.logged_in_user import LoggedInUser
+from backend.blueprints.spa_api.service_layers.player.play_style import PlayStyleResponse
+from backend.blueprints.spa_api.service_layers.player.play_style_progression import PlayStyleProgression
+from backend.blueprints.spa_api.service_layers.player.player import Player
+from backend.blueprints.spa_api.service_layers.player.player_profile_stats import PlayerProfileStats
+from backend.blueprints.spa_api.service_layers.player.player_ranks import PlayerRanks
+from backend.blueprints.spa_api.service_layers.queue_status import QueueStatus
+from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
+from backend.blueprints.spa_api.service_layers.replay.groups import ReplayGroupChartData
+from backend.blueprints.spa_api.service_layers.replay.match_history import MatchHistory
+from backend.blueprints.spa_api.service_layers.replay.replay import Replay
+from backend.blueprints.spa_api.service_layers.replay.replay_positions import ReplayPositions
+from backend.blueprints.spa_api.service_layers.replay.tag import Tag
+from backend.blueprints.spa_api.utils.decorators import require_user, with_query_params
+from backend.blueprints.spa_api.utils.query_params_handler import QueryParam, get_query_params
 
 logger = logging.getLogger(__name__)
 
@@ -265,9 +267,13 @@ def api_get_replay_basic_team_stats_download(id_):
 
 
 @bp.route('replay/<id_>/positions')
-def api_get_replay_positions(id_):
-    positions = ReplayPositions.create_from_id(id_)
-    return better_jsonify(positions)
+@with_query_params(accepted_query_params=[QueryParam(name='frame', type_=int, optional=True, is_list=True),
+                                          QueryParam(name='as_proto', type_=bool, optional=True)])
+def api_get_replay_positions(id_, query_params=None):
+    positions = ReplayPositions.create_from_id(id_, query_params=query_params)
+    if query_params is None or 'as_proto' not in query_params:
+        return better_jsonify(positions)
+    raise NotYetImplemented()
 
 
 @bp.route('replay/<id_>/heatmaps')
@@ -325,7 +331,9 @@ def api_search_replays(query_params=None):
 
 
 @bp.route('replay/<id_>/visibility/<visibility>', methods=['PUT'])
-@with_query_params(accepted_query_params=visibility_params, provided_params=['player_id', 'visibility'])
+@require_user
+@with_query_params(accepted_query_params=visibility_params + player_id,
+                   provided_params=['player_id', 'visibility'])
 def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
     try:
         visibility_setting = convert_to_enum(GameVisibilitySetting)(visibility)
@@ -408,7 +416,7 @@ def api_upload_proto(query_params=None):
     try:
         parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
-        log_error(e, logger=logger)
+        ErrorLogger.log_error(e, logger=logger)
 
     return jsonify({'Success': True})
 
@@ -516,3 +524,10 @@ def get_patreon_progress():
 @bp.route('/home/recent')
 def get_recent_replays():
     return better_jsonify(RecentReplays.create())
+
+
+@bp.route('/documentation')
+def get_endpoint_documentation():
+    from backend.blueprints.spa_api.service_layers.documentation import create_documentation_for_module
+    method_list = create_documentation_for_module(sys.modules[__name__])
+    return better_jsonify(method_list)

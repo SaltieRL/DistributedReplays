@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = carball
+source = backend
 
 [report]
 exclude_lines =
@@ -10,3 +10,7 @@ exclude_lines =
     if __name__ == .__main__.:
 omit =
     tests/*
+    loader.py
+    imports_test.py
+    helpers/*
+    redis/*

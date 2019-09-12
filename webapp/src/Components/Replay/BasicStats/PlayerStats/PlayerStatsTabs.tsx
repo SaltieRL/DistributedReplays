@@ -1,4 +1,5 @@
 import {
+    faArrowsAlt,
     faBraille,
     faBullseye,
     faCarSide,
@@ -38,7 +39,8 @@ class PlayerStatsTabsComponent extends React.PureComponent<Props> {
             "Boosts": faRocket,
             "Efficiency": faPercent,
             "Team Positioning": faHandshake,
-            "Ball Carries": faShoppingCart
+            "Ball Carries": faShoppingCart,
+            "Kickoffs": faArrowsAlt
         }
         const { width, selectedTab, handleChange } = this.props
         const belowMd = isWidthDown("md", width)
