@@ -2,7 +2,7 @@ from flask import g, request
 from functools import wraps
 
 from backend.blueprints.spa_api.utils.query_params_handler import create_validation_for_query_params, get_query_params
-from ..errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 
 
 def require_user(decorated_function):

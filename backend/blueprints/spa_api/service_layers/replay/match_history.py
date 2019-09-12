@@ -1,13 +1,12 @@
 from typing import List
 
-from flask import current_app
 from sqlalchemy import desc
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
-from .replay import Replay
-from ..player.player_profile_stats import player_wrapper
+from backend.blueprints.spa_api.service_layers.replay.replay import Replay
+from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_wrapper
 
 
 class MatchHistory:

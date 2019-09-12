@@ -10,6 +10,7 @@ from flask import current_app
 from backend.utils.braacket_connection import Braacket
 from backend.database.objects import Player
 from backend.database.startup import lazy_startup
+from backend.server_constants import CODE_FOLDER
 
 fake_data = False
 try:
@@ -18,7 +19,7 @@ except ImportError:
     RL_API_KEY = None
     fake_data = True
 
-json_loc = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'data', 'categorized_items.json')
+json_loc = os.path.join(CODE_FOLDER, 'data', 'categorized_items.json')
 with open(json_loc, 'r') as f:
     item_dict = json.load(f)
 
