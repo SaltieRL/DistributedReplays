@@ -55,23 +55,23 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
 from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from .errors.errors import CalculatedError
-from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
-from .service_layers.logged_in_user import LoggedInUser
-from .service_layers.player.play_style import PlayStyleResponse
-from .service_layers.player.play_style_progression import PlayStyleProgression
-from .service_layers.player.player import Player
-from .service_layers.player.player_profile_stats import PlayerProfileStats
-from .service_layers.player.player_ranks import PlayerRanks
-from .service_layers.queue_status import QueueStatus
-from .service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
-from .service_layers.replay.groups import ReplayGroupChartData
-from .service_layers.replay.match_history import MatchHistory
-from .service_layers.replay.replay import Replay
-from .service_layers.replay.replay_positions import ReplayPositions
-from .service_layers.replay.tag import Tag
-from .utils.decorators import require_user, with_query_params
-from .utils.query_params_handler import QueryParam, get_query_params
+from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
+from backend.blueprints.spa_api.service_layers.logged_in_user import LoggedInUser
+from backend.blueprints.spa_api.service_layers.player.play_style import PlayStyleResponse
+from backend.blueprints.spa_api.service_layers.player.play_style_progression import PlayStyleProgression
+from backend.blueprints.spa_api.service_layers.player.player import Player
+from backend.blueprints.spa_api.service_layers.player.player_profile_stats import PlayerProfileStats
+from backend.blueprints.spa_api.service_layers.player.player_ranks import PlayerRanks
+from backend.blueprints.spa_api.service_layers.queue_status import QueueStatus
+from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
+from backend.blueprints.spa_api.service_layers.replay.groups import ReplayGroupChartData
+from backend.blueprints.spa_api.service_layers.replay.match_history import MatchHistory
+from backend.blueprints.spa_api.service_layers.replay.replay import Replay
+from backend.blueprints.spa_api.service_layers.replay.replay_positions import ReplayPositions
+from backend.blueprints.spa_api.service_layers.replay.tag import Tag
+from backend.blueprints.spa_api.utils.decorators import require_user, with_query_params
+from backend.blueprints.spa_api.utils.query_params_handler import QueryParam, get_query_params
 
 logger = logging.getLogger(__name__)
 
