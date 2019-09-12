@@ -1,5 +1,5 @@
 from typing import List
-from .player.player_profile_stats import player_wrapper, player_stat_wrapper
+from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_stat_wrapper
 
 
 class DataPoint:
