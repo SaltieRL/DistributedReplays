@@ -93,7 +93,7 @@ class Model(DBObjectBase):
 
 
 class Loadout(DBObjectBase):
-    __tablename__ = "loadouts"
+    __tablename__ = 'loadouts'
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     player = Column(String(40), ForeignKey('playergames.player'), index=True)
@@ -134,7 +134,7 @@ class PlayerGame(DBObjectBase):
     game = Column(String(40), ForeignKey('games.hash'), index=True)
     game_object = relationship("Game", foreign_keys=[game])
 
-    loadout = relationship("Loadout", primaryjoin=and_(Loadout.player == player, Loadout.game == game))
+    loadout_object = relationship("Loadout", primaryjoin=and_(Loadout.player == player, Loadout.game == game))
     UniqueConstraint(player, game, name="unique")
 
     rank = Column(Integer)
