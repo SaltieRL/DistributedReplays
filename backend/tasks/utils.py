@@ -42,5 +42,3 @@ def get_queue_length(queue_name='celery'):
                       DEFAULT_PRIORITY_STEPS]
     r = get_strict_redis()
     return [r.llen(x) for x in priority_names]
-
-

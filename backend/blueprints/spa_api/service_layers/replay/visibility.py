@@ -10,7 +10,7 @@ from backend.database.objects import Player, GameVisibility, Game
 from backend.blueprints.spa_api.utils.decorators import require_user
 from backend.database.objects import GameVisibilitySetting
 from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.utils.checks import log_error
+from backend.utils.logging import ErrorLogger
 
 
 class ReplayVisibility:
@@ -29,10 +29,10 @@ class ReplayVisibility:
             try:
                 apply_game_visibility_explicit(user_id, visibility, release_date, game_hash)
             except CalculatedError as e:
-                log_error(e)
+                ErrorLogger.log_error(e)
                 raise e
         else:
-            log_error(AuthorizationException())
+            ErrorLogger.log_error(AuthorizationException())
 
         return ReplayVisibility(game_hash, visibility)
 
