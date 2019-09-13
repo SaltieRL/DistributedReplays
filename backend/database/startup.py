@@ -83,7 +83,7 @@ class EngineStartup:
             try:
                 engine, session = login('postgresql://postgres:postgres@localhost/saltie')
             except Exception as e:
-                engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+                engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=False)
         return engine, session
 
     @staticmethod
