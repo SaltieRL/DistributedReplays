@@ -25,6 +25,6 @@ class SharedStatsTest(unittest.TestCase):
 
     def test_player_charts(self):
         # test for duplicates
-        stat_names: List[str] = [p.stat_name for p in player_stats_metadata]
+        stat_names: List[str] = [p.stat_name + str(p.subcategory) for p in player_stats_metadata]
         self.assertTrue(len(stat_names) == len(set(stat_names)),
                         msg="There are duplicate stat names in stat metadata list.")
