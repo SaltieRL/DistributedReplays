@@ -24,23 +24,29 @@ def get_checks(global_state=None):
     def is_admin():
         if local_dev:
             return True
-        if globals().user is None:
-            return False
-        return globals().admin
+        if hasattr(globals(), 'user'):
+            if globals().user is None:
+                return False
+            return globals().admin
+        return False
 
     def is_alpha():
         if is_admin():
             return True
-        if globals().user is None:
-            return False
-        return globals().alpha
+        if hasattr(globals(), 'user'):
+            if globals().user is None:
+                return False
+            return globals().alpha
+        return False
 
     def is_beta():
         if is_admin():
             return True
-        if globals().user is None:
-            return False
-        return is_alpha() or globals().beta
+        if hasattr(globals(), 'user'):
+            if globals().user is None:
+                return False
+            return is_alpha() or globals().beta
+        return False
 
     return is_admin, is_alpha, is_beta
 

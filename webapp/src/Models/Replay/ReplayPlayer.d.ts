@@ -22,5 +22,20 @@ interface CameraSettings {
 }
 
 interface Loadout {
-    car: string
+    antenna: LoadoutItem
+    banner: LoadoutItem
+    boost: LoadoutItem
+    car: LoadoutItem
+    engine_audio: LoadoutItem
+    goal_explosion: LoadoutItem
+    skin: LoadoutItem
+    topper: LoadoutItem
+    trail: LoadoutItem
+    wheels: LoadoutItem
+}
+
+interface LoadoutItem {
+    itemName: string
+    imageUrl: string
+    paintId: number
 }
