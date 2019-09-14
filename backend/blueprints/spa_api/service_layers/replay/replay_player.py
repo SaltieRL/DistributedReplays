@@ -3,21 +3,22 @@ from backend.utils.rlgarage_handler import RLGarageAPI
 
 
 class LoadoutItem:
-    def __init__(self, item_name: str, image_url: str, paint_id: int):
+    def __init__(self, item_name: str, image_url: str, paint_id: int, rarity: int):
         self.itemName = item_name
         self.imageUrl = image_url
         self.paintId = paint_id
+        self.rarity = rarity
 
     @staticmethod
     def create_from_item_id(id_: int, paint_id: int, api: RLGarageAPI):
         if id_ == 0:
-            return LoadoutItem("None", "", 0)
+            return LoadoutItem("None", "", 0, 0)
         try:
             item = api.get_item_info(id_, paint_id)
         except Exception as e:
             print("Error with loadout", e)
-            return LoadoutItem("Unknown", "", 0)
-        return LoadoutItem(item['name'], item['image'], paint_id)
+            return LoadoutItem("Unknown", "", 0, 0)
+        return LoadoutItem(item['name'], item['image'], paint_id, item['rarity'])
 
 
 class Loadout:
