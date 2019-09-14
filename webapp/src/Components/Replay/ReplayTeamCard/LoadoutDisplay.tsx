@@ -38,4 +38,3 @@ export class LoadoutDisplay extends React.PureComponent<Props> {
         )
     }
 }
-
