@@ -1,4 +1,4 @@
-import { Grid, Link, Typography } from "@material-ui/core"
+import { Grid, Typography } from "@material-ui/core"
 import * as _ from "lodash"
 import * as React from "react"
 import { LoadoutItemDisplay } from "./LoadoutItemDisplay"
@@ -19,12 +19,18 @@ export class LoadoutDisplay extends React.PureComponent<Props> {
                     })}
                     <Grid item xs={12} style={{padding: 24, textAlign: "center"}}>
                         <Typography>
-                            Images courtesy of <Link href={"https://rocket-league.com/"}
-                                                     style={{textDecoration: "none"}}>ROCKET LEAGUE GARAGE <img
-                            height={"20px"}
-                            alt={"RLGarage Logo"}
-                            src={"https://rocket-league.com/assets/images/logos/rocket-league-garage-footer.svg"}/>
-                        </Link>
+                            Images courtesy of <a
+                            href={"https://rocket-league.com/"}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            style={{textDecoration: "none", display: "inline-flex"}}
+                        > <Typography>ROCKET LEAGUE GARAGE</Typography>
+                            <img
+                                height={"20px"}
+                                alt={"RLGarage Logo"}
+                                style={{marginLeft: "5px"}}
+                                src={"https://rocket-league.com/assets/images/logos/rocket-league-garage-footer.svg"}/>
+                        </a>
                         </Typography>
                     </Grid>
                 </Grid>
@@ -32,3 +38,4 @@ export class LoadoutDisplay extends React.PureComponent<Props> {
         )
     }
 }
+
