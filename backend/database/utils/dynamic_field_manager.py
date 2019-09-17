@@ -1,3 +1,4 @@
+import math
 from typing import List
 from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf import message
@@ -141,7 +142,10 @@ def get_proto_values(proto_object, fields: List[ProtoFieldResult]) -> List[any]:
         if field.nested_names is not None:
             for field_name in field.nested_names:
                 current_object = getattr(current_object, field_name)
-        resulting_values.append(getattr(current_object, field.field_name))
+        value = getattr(current_object, field.field_name)
+        if math.isnan(value):
+            value = 0
+        resulting_values.append(value)
     return resulting_values
 
 
