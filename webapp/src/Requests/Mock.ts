@@ -339,7 +339,68 @@ export const MOCK_PLAY_STYLE_RAW: PlayStyleRawResponse = {
     ],
     name: "76561198055442516"
 }
-
+const loadout = {
+    antenna: {
+        imageUrl: "",
+        itemName: "None",
+        rarity: 3,
+        paintId: 0
+    },
+    banner: {
+        imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
+        itemName: "CRL Eastern",
+        rarity: 3,
+        paintId: 0
+    },
+    boost: {
+        imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
+        itemName: "Gold Rush (Alpha Reward)",
+        rarity: 3,
+        paintId: 0
+    },
+    car: {
+        imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
+        itemName: "Dominus",
+        rarity: 3,
+        paintId: 0
+    },
+    engine_audio: {
+        imageUrl: "",
+        itemName: "None",
+        rarity: 3,
+        paintId: 0
+    },
+    goal_explosion: {
+        imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
+        itemName: "Supernova III",
+        rarity: 3,
+        paintId: 13
+    },
+    skin: {
+        imageUrl: "",
+        itemName: "None",
+        rarity: 3,
+        paintId: 0
+    },
+    topper: {
+        imageUrl: "",
+        itemName: "None",
+        rarity: 3,
+        paintId: 0
+    },
+    trail: {
+        imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
+        itemName: "Season 4 - Gold",
+        rarity: 3,
+        paintId: 0
+    },
+    wheels: {
+        imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
+        itemName: "Emerald Pro",
+        rarity: 3,
+        paintId: 0
+    }
+}
 export const MOCK_REPLAY_1: Replay = {
     id: "21312512515FAB213",
     name: "Name",
@@ -366,58 +427,7 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 3,
                 transitionSpeed: 1
             },
-            loadout: {
-                antenna: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                banner: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
-                    itemName: "CRL Eastern",
-                    paintId: 0
-                },
-                boost: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
-                    itemName: "Gold Rush (Alpha Reward)",
-                    paintId: 0
-                },
-                car: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
-                    itemName: "Dominus",
-                    paintId: 0
-                },
-                engine_audio: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                goal_explosion: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
-                    itemName: "Supernova III",
-                    paintId: 13
-                },
-                skin: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                topper: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                trail: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
-                    itemName: "Season 4 - Gold",
-                    paintId: 0
-                },
-                wheels: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
-                    itemName: "Emerald Pro",
-                    paintId: 0
-                }
-            }
+            loadout
         },
         {
             id: "149019024",
@@ -437,58 +447,7 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 5,
                 transitionSpeed: 1
             },
-            loadout: {
-                antenna: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                banner: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
-                    itemName: "CRL Eastern",
-                    paintId: 0
-                },
-                boost: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
-                    itemName: "Gold Rush (Alpha Reward)",
-                    paintId: 0
-                },
-                car: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
-                    itemName: "Dominus",
-                    paintId: 0
-                },
-                engine_audio: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                goal_explosion: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
-                    itemName: "Supernova III",
-                    paintId: 13
-                },
-                skin: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                topper: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                trail: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
-                    itemName: "Season 4 - Gold",
-                    paintId: 0
-                },
-                wheels: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
-                    itemName: "Emerald Pro",
-                    paintId: 0
-                }
-            }
+            loadout
         },
         {
             id: "1248921984",
@@ -507,58 +466,8 @@ export const MOCK_REPLAY_1: Replay = {
                 stiffness: 0.5,
                 swivelSpeed: 9,
                 transitionSpeed: 1
-            }, loadout: {
-                antenna: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                banner: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
-                    itemName: "CRL Eastern",
-                    paintId: 0
-                },
-                boost: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
-                    itemName: "Gold Rush (Alpha Reward)",
-                    paintId: 0
-                },
-                car: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
-                    itemName: "Dominus",
-                    paintId: 0
-                },
-                engine_audio: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                goal_explosion: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
-                    itemName: "Supernova III",
-                    paintId: 13
-                },
-                skin: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                topper: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                trail: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
-                    itemName: "Season 4 - Gold",
-                    paintId: 0
-                },
-                wheels: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
-                    itemName: "Emerald Pro",
-                    paintId: 0
-                }
-            }
+            },
+            loadout
         },
         {
             id: "248129841",
@@ -577,58 +486,8 @@ export const MOCK_REPLAY_1: Replay = {
                 stiffness: 0.449999988079071,
                 swivelSpeed: 6,
                 transitionSpeed: 2
-            }, loadout: {
-                antenna: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                banner: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
-                    itemName: "CRL Eastern",
-                    paintId: 0
-                },
-                boost: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
-                    itemName: "Gold Rush (Alpha Reward)",
-                    paintId: 0
-                },
-                car: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
-                    itemName: "Dominus",
-                    paintId: 0
-                },
-                engine_audio: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                goal_explosion: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
-                    itemName: "Supernova III",
-                    paintId: 13
-                },
-                skin: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                topper: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                trail: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
-                    itemName: "Season 4 - Gold",
-                    paintId: 0
-                },
-                wheels: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
-                    itemName: "Emerald Pro",
-                    paintId: 0
-                }
-            }
+            },
+            loadout
         },
         {
             id: "8132482941",
@@ -647,58 +506,8 @@ export const MOCK_REPLAY_1: Replay = {
                 stiffness: 0.449999988079071,
                 swivelSpeed: 5,
                 transitionSpeed: 1
-            }, loadout: {
-                antenna: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                banner: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
-                    itemName: "CRL Eastern",
-                    paintId: 0
-                },
-                boost: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
-                    itemName: "Gold Rush (Alpha Reward)",
-                    paintId: 0
-                },
-                car: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
-                    itemName: "Dominus",
-                    paintId: 0
-                },
-                engine_audio: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                goal_explosion: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
-                    itemName: "Supernova III",
-                    paintId: 13
-                },
-                skin: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                topper: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                trail: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
-                    itemName: "Season 4 - Gold",
-                    paintId: 0
-                },
-                wheels: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
-                    itemName: "Emerald Pro",
-                    paintId: 0
-                }
-            }
+            },
+            loadout
         },
         {
             id: "189489124",
@@ -718,58 +527,7 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 4,
                 transitionSpeed: 1
             },
-            loadout: {
-                antenna: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                banner: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
-                    itemName: "CRL Eastern",
-                    paintId: 0
-                },
-                boost: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
-                    itemName: "Gold Rush (Alpha Reward)",
-                    paintId: 0
-                },
-                car: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
-                    itemName: "Dominus",
-                    paintId: 0
-                },
-                engine_audio: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                goal_explosion: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
-                    itemName: "Supernova III",
-                    paintId: 13
-                },
-                skin: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                topper: {
-                    imageUrl: "",
-                    itemName: "None",
-                    paintId: 0
-                },
-                trail: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
-                    itemName: "Season 4 - Gold",
-                    paintId: 0
-                },
-                wheels: {
-                    imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
-                    itemName: "Emerald Pro",
-                    paintId: 0
-                }
-            }
+            loadout
         }
     ],
     tags: [],
@@ -807,51 +565,61 @@ export const MOCK_REPLAY_2 = {
                 antenna: {
                     imageUrl: "",
                     itemName: "None",
+                    rarity: 3,
                     paintId: 0
                 },
                 banner: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
                     itemName: "CRL Eastern",
+                    rarity: 3,
                     paintId: 0
                 },
                 boost: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
                     itemName: "Gold Rush (Alpha Reward)",
+                    rarity: 3,
                     paintId: 0
                 },
                 car: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
                     itemName: "Dominus",
+                    rarity: 3,
                     paintId: 0
                 },
                 engine_audio: {
                     imageUrl: "",
                     itemName: "None",
+                    rarity: 3,
                     paintId: 0
                 },
                 goal_explosion: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
                     itemName: "Supernova III",
+                    rarity: 3,
                     paintId: 13
                 },
                 skin: {
                     imageUrl: "",
                     itemName: "None",
+                    rarity: 3,
                     paintId: 0
                 },
                 topper: {
                     imageUrl: "",
                     itemName: "None",
+                    rarity: 3,
                     paintId: 0
                 },
                 trail: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
                     itemName: "Season 4 - Gold",
+                    rarity: 3,
                     paintId: 0
                 },
                 wheels: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
                     itemName: "Emerald Pro",
+                    rarity: 3,
                     paintId: 0
                 }
             }
@@ -877,51 +645,61 @@ export const MOCK_REPLAY_2 = {
                 antenna: {
                     imageUrl: "",
                     itemName: "None",
+                    rarity: 3,
                     paintId: 0
                 },
                 banner: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1ad723c8e61538914741.png",
                     itemName: "CRL Eastern",
+                    rarity: 3,
                     paintId: 0
                 },
                 boost: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/a943e71c601436141243.png",
                     itemName: "Gold Rush (Alpha Reward)",
+                    rarity: 3,
                     paintId: 0
                 },
                 car: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/d0345504de1447516436.png",
                     itemName: "Dominus",
+                    rarity: 3,
                     paintId: 0
                 },
                 engine_audio: {
                     imageUrl: "",
                     itemName: "None",
+                    rarity: 3,
                     paintId: 0
                 },
                 goal_explosion: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/15bddf59e41535732469.png",
                     itemName: "Supernova III",
+                    rarity: 3,
                     paintId: 13
                 },
                 skin: {
                     imageUrl: "",
                     itemName: "None",
+                    rarity: 3,
                     paintId: 0
                 },
                 topper: {
                     imageUrl: "",
                     itemName: "None",
+                    rarity: 3,
                     paintId: 0
                 },
                 trail: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/f4fa8f49811499480724.png",
                     itemName: "Season 4 - Gold",
+                    rarity: 3,
                     paintId: 0
                 },
                 wheels: {
                     imageUrl: "https://rocket-league.com/content/media/items/avatar/220px/1a9256d75a1567239452.png",
                     itemName: "Emerald Pro",
+                    rarity: 3,
                     paintId: 0
                 }
             }

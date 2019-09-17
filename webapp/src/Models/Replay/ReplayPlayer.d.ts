@@ -38,4 +38,5 @@ interface LoadoutItem {
     itemName: string
     imageUrl: string
     paintId: number
+    rarity: number
 }
