@@ -27,6 +27,10 @@ class ReplayNotFound(CalculatedError):
     message = "Replay not found."
 
 
+class Redirect(CalculatedError):
+    def __init__(self, url):
+        super().__init__(301, url)
+
 class ErrorOpeningGame(CalculatedError):
     status_code = 500
 

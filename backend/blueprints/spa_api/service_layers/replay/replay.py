@@ -1,12 +1,12 @@
 from typing import List, cast
 
-from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
-from backend.utils.global_functions import get_current_user_id
-from backend.data.constants.playlist import get_playlist
+from backend.blueprints.spa_api.errors.errors import ReplayNotFound, Redirect
 from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
 from backend.blueprints.spa_api.service_layers.replay.tag import Tag
 from backend.blueprints.spa_api.service_layers.utils import sort_player_games_by_team_then_id, with_session
-from backend.blueprints.spa_api.errors.errors import ReplayNotFound
+from backend.data.constants.playlist import get_playlist
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
+from backend.utils.global_functions import get_current_user_id
 
 
 class GameScore:
@@ -41,7 +41,10 @@ class Replay:
     def create_from_id(id_: str, session=None) -> 'Replay':
         game = session.query(Game).filter(Game.hash == id_).first()
         if game is None:
-            raise ReplayNotFound()
+            game = session.query(Game).filter(Game.replay_id == id_).first()
+            if game is None:
+                raise ReplayNotFound()
+            raise Redirect("/replays/" + Game.hash)
         replay = Replay.create_from_game(game)
         return replay
 
