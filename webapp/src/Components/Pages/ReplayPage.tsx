@@ -59,6 +59,12 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
     private readonly getReplay = (): Promise<void> => {
         return Promise.all([getReplay(this.props.match.params.id), getExplanations()])
             .then((replay) => this.setState({replay: replay[0], explanations: replay[1]}))
+            .catch((response) => {
+                const code = response.code
+                if (code === 301) {
+                    window.location.href = response.message
+                }
+            })
     }
 
     private readonly handleUpdateTags = (tags: Tag[]) => {
