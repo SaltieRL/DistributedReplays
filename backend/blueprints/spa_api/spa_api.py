@@ -30,6 +30,7 @@ from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
+from blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
 
 try:
     import config
@@ -290,6 +291,11 @@ def api_get_replay_heatmaps(id_):
 def api_get_replay_boostmaps(id_):
     positions = Visualizations.create_from_id(id_)
     return jsonify(positions)
+
+@bp.route('replay/<id_>/kickoffs')
+def api_get_replay_kickoffs(id_):
+    kickoff_data = Kickoffs.create_from_id(id_)
+    return better_jsonify(kickoff_data)
 
 
 @bp.route('replay/group')
