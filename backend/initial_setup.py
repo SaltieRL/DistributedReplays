@@ -5,6 +5,8 @@ from typing import Dict, List, Tuple
 from flask import Flask, render_template, g, request, redirect, send_from_directory
 from flask import session as flask_session
 from flask_cors import CORS
+from prometheus_client import make_wsgi_app
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from backend.blueprints import steam, auth, debug, admin, api
 from backend.blueprints.spa_api import spa_api
@@ -16,15 +18,19 @@ from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER, BA
 from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
 from backend.utils.global_functions import create_jinja_globals
+from backend.utils.metrics import MetricsHandler
+from utils.logging import ErrorLogger
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")
 
 try:
     from config import ALLOWED_STEAM_ACCOUNTS
+    prod = True
 except ImportError:
     ALLOWED_STEAM_ACCOUNTS = []
     users = []
+    prod = False
 
 
 class CalculatedServer:
@@ -44,7 +50,9 @@ class CalculatedServer:
 
         with app.app_context():
             create_celery_config()
+
             CalculatedServer.register_blueprints(app)
+            CalculatedServer.setup_metrics(app)
 
             try:
                 import config
@@ -68,6 +76,16 @@ class CalculatedServer:
         return app, ids
 
     @staticmethod
+    def setup_metrics(app: Flask):
+        logger.info('Setting up metrics')
+        # provide app's version and deploy environment/config name to set a gauge metric
+        ErrorLogger.add_logging_callback(MetricsHandler.log_exception_for_metrics)
+        MetricsHandler.setup_metrics_callbacks(app, app_version=app.config['VERSION'])
+
+        # Plug metrics WSGI app to your main app with dispatcher
+        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
+
+    @staticmethod
     def create_needed_folders(app: Flask):
         folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
         for f in folders_to_make:
@@ -83,6 +101,7 @@ class CalculatedServer:
         app.config['BASE_URL'] = 'https://calculated.gg'
         app.config['REPLAY_DIR'] = os.path.join(BASE_FOLDER, 'data', 'rlreplays')
         app.config['PARSED_DIR'] = os.path.join(BASE_FOLDER, 'data', 'parsed')
+        app.config['VERSION'] = CalculatedServer.get_version()
         app.config.update(
             broker_url='redis://localhost:6379/0',
             result_backend='redis://',
@@ -159,3 +178,11 @@ class CalculatedServer:
     def __init__(self):
         self.app, self.ids = CalculatedServer.start_app()
         CalculatedServer.setup_routing_methods(self.app, self.ids)
+
+    @classmethod
+    def get_version(cls):
+        try:
+            # TODO use some sort of git lookup to get information
+            return "0.0.1"
+        except:
+            return "0.0.1"

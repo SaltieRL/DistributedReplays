@@ -30,6 +30,7 @@ from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
+from backend.utils.metrics import MetricsHandler
 
 try:
     import config
@@ -55,7 +56,7 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
 from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented
 from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from backend.blueprints.spa_api.service_layers.logged_in_user import LoggedInUser
 from backend.blueprints.spa_api.service_layers.player.play_style import PlayStyleResponse
@@ -501,9 +502,10 @@ def update_server(query_params=None):
     update_self(code)
     return '', 200
 
+
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):
-
+    MetricsHandler.log_exception_for_metrics(error)
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
