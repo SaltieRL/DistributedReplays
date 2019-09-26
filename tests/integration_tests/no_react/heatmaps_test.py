@@ -41,12 +41,12 @@ class Test_Heatmaps:
         self.test_heatmap(proto_game, has_ball=True)
 
         # test query params
-        self.test_heatmap(proto_game, query_params={"type", HeatMapType.POSITIONING.value}, has_ball=True)
-        self.test_heatmap(proto_game, query_params={"type", HeatMapType.BOOST.value})
-        self.test_heatmap(proto_game, query_params={"type", HeatMapType.BOOST_COLLECT.value})
-        self.test_heatmap(proto_game, query_params={"type", HeatMapType.BOOST_SPEED.value})
-        self.test_heatmap(proto_game, query_params={"type", HeatMapType.SLOW_SPEED.value})
-        self.test_heatmap(proto_game, query_params={"type", HeatMapType.HITS.value})
+        self.test_heatmap(proto_game, query_params={"type": HeatMapType.POSITIONING.value}, has_ball=True)
+        self.test_heatmap(proto_game, query_params={"type": HeatMapType.BOOST.value})
+        self.test_heatmap(proto_game, query_params={"type": HeatMapType.BOOST_COLLECT.value})
+        self.test_heatmap(proto_game, query_params={"type": HeatMapType.BOOST_SPEED.value})
+        self.test_heatmap(proto_game, query_params={"type": HeatMapType.SLOW_SPEED.value})
+        self.test_heatmap(proto_game, query_params={"type": HeatMapType.HITS.value})
 
     def test_heatmap(self, proto_game, query_params=None, has_ball=False):
         id = proto_game.game_metadata.match_guid
