@@ -95,11 +95,12 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                 <UploadDialogWrapper buttonStyle="floating">
                     <div className={classes.root}>
                         <SideBar open={this.state.sideBarOpen} onClose={this.toggleSideBar}/>
-                        <HomePageAppBar toggleSideBar={this.toggleSideBar}>
-                            <Logo imgStyle={{maxWidth: "80vw", maxHeight: 40}}/>
-                        </HomePageAppBar>
+                        <HomePageAppBar toggleSideBar={this.toggleSideBar}/>
                         <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}
                               style={{marginTop: "100px"}}>
+                            <Grid item xs={12} {...alignCenterProps}>
+                                <Logo imgStyle={{maxWidth: "80vw", maxHeight: 88}}/>
+                            </Grid>
                             <Grid item xs={11} {...alignCenterProps} style={{padding: "20px 0 20px 0"}}>
                                 <Search usePaper/>
                             </Grid>

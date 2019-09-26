@@ -1,15 +1,65 @@
 from backend.database.objects import PlayerGame
-from backend.utils.psyonix_api_handler import get_item_name_by_id
+from backend.utils.rlgarage_handler import RLGarageAPI
+
+
+class LoadoutItem:
+    def __init__(self, item_name: str, image_url: str, paint_id: int, rarity: int):
+        self.itemName = item_name
+        self.imageUrl = image_url
+        self.paintId = paint_id
+        self.rarity = rarity
+
+    @staticmethod
+    def create_from_item_id(id_: int, paint_id: int, api: RLGarageAPI):
+        if id_ == 0:
+            return LoadoutItem("None", "", 0, 0)
+        try:
+            item = api.get_item_info(id_, paint_id)
+        except Exception as e:
+            print("Error with loadout", e)
+            return LoadoutItem("Unknown", "", 0, 0)
+        return LoadoutItem(item['name'], item['image'], paint_id, item['rarity'])
 
 
 class Loadout:
-    def __init__(self, car: str):
-        self.car = car
+    def __init__(self, antenna: LoadoutItem, banner: LoadoutItem, boost: LoadoutItem, car: LoadoutItem,
+                 engine_audio: LoadoutItem, goal_explosion: LoadoutItem,
+                 skin: LoadoutItem, topper: LoadoutItem, trail: LoadoutItem, wheels):
+        self.antenna = antenna.__dict__
+        self.banner = banner.__dict__
+        self.boost = boost.__dict__
+        self.car = car.__dict__
+        self.engine_audio = engine_audio.__dict__
+        self.goal_explosion = goal_explosion.__dict__
+        self.skin = skin.__dict__
+        self.topper = topper.__dict__
+        self.trail = trail.__dict__
+        self.wheels = wheels.__dict__
 
     @staticmethod
     def create_from_player_game(player_game: PlayerGame):
+        api = RLGarageAPI()
+        item_list = [
+            'antenna', 'banner', 'boost', 'car', 'engine_audio', 'goal_explosion', 'skin', 'topper', 'trail',
+            'wheels'
+        ]
+        no_paint = [
+            "engine_audio"
+        ]
+        if len(player_game.loadout_object) > 0:
+            loadout = player_game.loadout_object[0]
+            item_info = {
+                item: LoadoutItem.create_from_item_id(getattr(loadout, item),
+                                                      getattr(loadout, item + "_paint") if item not in no_paint else 0,
+                                                      api)
+                for item in item_list
+            }
+        else:
+            item_info = {item: LoadoutItem.create_from_item_id(0, 0, api) for item in
+                         item_list}
+
         return Loadout(
-            car=get_item_name_by_id(str(player_game.car))
+            **item_info
         )
 
 

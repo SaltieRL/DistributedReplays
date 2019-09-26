@@ -111,14 +111,7 @@ player_stats_metadata = [
     Metadata('time_behind_center_of_mass', ChartType.radar, SubCat.Team_Positioning),
     Metadata('time_most_forward_player', ChartType.bar, SubCat.Team_Positioning),
     Metadata('time_most_back_player', ChartType.bar, SubCat.Team_Positioning),
-    Metadata('time_between_players', ChartType.bar, SubCat.Team_Positioning),
-
-    # team positioning
-    Metadata('time_in_front_of_center_of_mass', ChartType.bar, SubCat.Team_Positioning),
-    Metadata('time_behind_center_of_mass', ChartType.radar, SubCat.Team_Positioning),
-    Metadata('time_most_forward_player', ChartType.bar, SubCat.Team_Positioning),
-    Metadata('time_most_back_player', ChartType.bar, SubCat.Team_Positioning),
-    Metadata('time_between_players', ChartType.bar, SubCat.Team_Positioning),
+    Metadata('time_between_players', ChartType.bar, SubCat.Team_Positioning)
 ]
 
 player_group_stats_metadata = player_stats_metadata + [
