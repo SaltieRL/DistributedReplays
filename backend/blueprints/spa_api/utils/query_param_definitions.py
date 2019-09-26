@@ -6,14 +6,15 @@ from backend.blueprints.spa_api.utils.query_params_handler import QueryParam
 from backend.database.objects import GameVisibilitySetting
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.utils.time_related import hour_rounder, convert_to_datetime
+from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 
 T = TypeVar('T', bound=Enum)
 
 
 def convert_to_enum(enum: Type[T]) -> Callable[[str], T]:
-    # TODO: Type this to reject non-enums while stil typing the return of the function
+    # TODO: Type this to reject non-enums while still typing the return of the function
     def convert_string_to_enum(string: str) -> T:
-        return enum[string.upper()]
+        return enum[string.upper().replace(" ", "_")]
     return convert_string_to_enum
 
 
@@ -74,4 +75,10 @@ playstyle_query_params = [
     QueryParam(name='rank', optional=True, type_=int),
     QueryParam(name='replay_ids', optional=True),
     QueryParam(name='playlist', optional=True, type_=int),
+]
+
+heatmap_query_params = [
+    QueryParam(name='type', optional=True,
+               type_=convert_to_enum(HeatMapType),
+               documentation_type=HeatMapType,)
 ]

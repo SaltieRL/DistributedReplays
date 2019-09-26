@@ -22,7 +22,7 @@ from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import Pre
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
-    player_id
+    player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.logging import ErrorLogger
@@ -30,6 +30,7 @@ from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
+from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 
 try:
     import config
@@ -55,7 +56,7 @@ from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, 
 from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented
 from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
 from backend.blueprints.spa_api.service_layers.logged_in_user import LoggedInUser
 from backend.blueprints.spa_api.service_layers.player.play_style import PlayStyleResponse
@@ -277,11 +278,12 @@ def api_get_replay_positions(id_, query_params=None):
 
 
 @bp.route('replay/<id_>/heatmaps')
-def api_get_replay_heatmaps(id_):
-    if 'type' in request.args:
-        type_ = request.args['type'].lower()
+@with_query_params(accepted_query_params=heatmap_query_params)
+def api_get_replay_heatmaps(id_, query_params=None):
+    if query_params is not None and 'type' in query_params:
+        type_ = query_params['type']
     else:
-        type_ = 'positioning'
+        type_ = HeatMapType.POSITIONING
     positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
     return better_jsonify(positions)
 
