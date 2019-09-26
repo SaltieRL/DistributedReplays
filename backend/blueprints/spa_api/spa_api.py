@@ -22,7 +22,7 @@ from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import Pre
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
-    player_id
+    player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.utils.logging import ErrorLogger
@@ -31,6 +31,7 @@ from backend.blueprints.spa_api.service_layers.replay.visualizations import Visu
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
 from backend.utils.metrics import MetricsHandler
+from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 
 try:
     import config
@@ -278,11 +279,12 @@ def api_get_replay_positions(id_, query_params=None):
 
 
 @bp.route('replay/<id_>/heatmaps')
-def api_get_replay_heatmaps(id_):
-    if 'type' in request.args:
-        type_ = request.args['type'].lower()
+@with_query_params(accepted_query_params=heatmap_query_params)
+def api_get_replay_heatmaps(id_, query_params=None):
+    if query_params is not None and 'type' in query_params:
+        type_ = query_params['type']
     else:
-        type_ = 'positioning'
+        type_ = HeatMapType.POSITIONING
     positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
     return better_jsonify(positions)
 
