@@ -46,7 +46,7 @@ class Loadout:
         no_paint = [
             "engine_audio"
         ]
-        if len(player_game.loadout_object) > 0:
+        if player_game is not None and len(player_game.loadout_object) > 0:
             loadout = player_game.loadout_object[0]
             item_info = {
                 item: LoadoutItem.create_from_item_id(getattr(loadout, item),

@@ -22,7 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 import time
 
-
+import math
 from flask import request
 from prometheus_client import Counter, Histogram, Info
 
@@ -35,8 +35,14 @@ METRICS_REQUEST_LATENCY = Histogram(
     "app_request_latency_seconds", "Application Request Latency", ["method", "endpoint"]
 )
 
+METRICS_KEYED_REQUEST_ERRORS = Counter(
+    "exceptions_with_user_info",
+    "Internal Exceptions With User Info",
+    ["method", "full_endpoint", "endpoint", "exception_type"]
+)
+
 METRICS_REQUEST_ERRORS = Counter(
-    "exceptions", "Internal Exceptions", ["method", "full_endpoint", "cleaned_endpoint", "exception_type"]
+    "exceptions", "Internal Exceptions", ["method", "endpoint", "exception_type"]
 )
 
 METRICS_REQUEST_COUNT = Counter(
@@ -52,13 +58,17 @@ METRICS_INFO = Info("app_version", "Application Version")
 # Request callbacks
 #
 def create_clean_request_path() -> str:
-    if len(request.view_args) <= 0:
-        return request.path
+    try:
+        if request.view_args is None or len(request.view_args) <= 0:
+            return request.path
 
-    cleaned_path = request.path
-    for key, value in request.view_args:
-        cleaned_path = cleaned_path.replace(value, key)
-    return cleaned_path
+        cleaned_path = request.path
+        args = request.view_args
+        for key, value in args.items():
+            cleaned_path = cleaned_path.replace(value, key)
+        return cleaned_path
+    except Exception as e:
+        return request.path
 
 
 class MetricsHandler:
@@ -68,7 +78,9 @@ class MetricsHandler:
         Logs that an exception internally occurred and was caught by the handler
         :param exception: The exception that occurred
         """
-        METRICS_REQUEST_ERRORS.labels(request.method, request.path, create_clean_request_path(), type(exception).__name__).inc()
+        cleaned_path = create_clean_request_path()
+        METRICS_REQUEST_ERRORS.labels(request.method, cleaned_path, type(exception).__name__).inc()
+        METRICS_KEYED_REQUEST_ERRORS.labels(request.method, request.path, cleaned_path, type(exception).__name__).inc()
 
     @staticmethod
     def before_request():
@@ -82,14 +94,21 @@ class MetricsHandler:
         """
         Register Prometheus metrics after each request
         """
-        request_latency = time.time() - request._prometheus_metrics_request_start_time
         clean_path = create_clean_request_path()
-        METRICS_REQUEST_LATENCY.labels(request.method, clean_path).observe(
-            request_latency
-        )
+
+        # Count number of times request is called
         METRICS_REQUEST_COUNT.labels(
             request.method, clean_path, response.status_code
         ).inc()
+
+        # Count latency of request
+        request_latency = time.time() - request._prometheus_metrics_request_start_time
+        if not math.isinf(request_latency) and not math.isnan(request_latency):
+            METRICS_REQUEST_LATENCY.labels(request.method, clean_path).observe(
+                request_latency
+            )
+        else:
+            print(request_latency)
         return response
 
     @staticmethod
