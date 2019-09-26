@@ -31,24 +31,24 @@ class Test_Heatmaps:
         r.raise_for_status()
         assert(r.status_code == 202)
 
-        time.sleep(30)
+        time.sleep(35)
 
         r = requests.get(LOCAL_URL + '/api/global/replay_count')
         result = json.loads(r.content)
-        assert int(result) > 0
+        assert int(result) > 0, 'This test can not run without a replay in the database'
 
         # test default
         self.test_heatmap(proto_game, has_ball=True)
 
         # test query params
-        self.test_heatmap(proto_game, query_params={"type": HeatMapType.POSITIONING.value}, has_ball=True)
-        self.test_heatmap(proto_game, query_params={"type": HeatMapType.BOOST.value})
-        self.test_heatmap(proto_game, query_params={"type": HeatMapType.BOOST_COLLECT.value})
-        self.test_heatmap(proto_game, query_params={"type": HeatMapType.BOOST_SPEED.value})
-        self.test_heatmap(proto_game, query_params={"type": HeatMapType.SLOW_SPEED.value})
-        self.test_heatmap(proto_game, query_params={"type": HeatMapType.HITS.value})
+        self.assert_heatmap(proto_game, query_params={"type": HeatMapType.POSITIONING.value}, has_ball=True)
+        self.assert_heatmap(proto_game, query_params={"type": HeatMapType.BOOST.value})
+        self.assert_heatmap(proto_game, query_params={"type": HeatMapType.BOOST_COLLECT.value})
+        self.assert_heatmap(proto_game, query_params={"type": HeatMapType.BOOST_SPEED.value})
+        self.assert_heatmap(proto_game, query_params={"type": HeatMapType.SLOW_SPEED.value})
+        self.assert_heatmap(proto_game, query_params={"type": HeatMapType.HITS.value})
 
-    def test_heatmap(self, proto_game, query_params=None, has_ball=False):
+    def assert_heatmap(self, proto_game, query_params=None, has_ball=False):
         id = proto_game.game_metadata.match_guid
         r = requests.get(LOCAL_URL + '/api/replay/' + id + '/heatmaps',
                          params=query_params)
