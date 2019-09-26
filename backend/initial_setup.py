@@ -19,7 +19,7 @@ from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
 from backend.utils.global_functions import create_jinja_globals
 from backend.utils.metrics import MetricsHandler
-from utils.logging import ErrorLogger
+from backend.utils.logging import ErrorLogger
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")
