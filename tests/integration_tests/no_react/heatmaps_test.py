@@ -23,10 +23,10 @@ class Test_Heatmaps:
         print('done waiting')
 
     def test_heatmaps(self):
-        proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file("3_DRIBBLES_2_FLICKS.replay",
+        proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file("ALL_STAR.replay",
                                                                              is_replay=True))
 
-        f = download_replay_discord("3_DRIBBLES_2_FLICKS.replay")
+        f = download_replay_discord("ALL_STAR.replay")
         r = requests.post(LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', f)})
         r.raise_for_status()
         assert(r.status_code == 202)
