@@ -46,7 +46,6 @@ class Test_Heatmaps:
         self.assert_heatmap(proto_game, query_params={"type": HeatMapType.BOOST_COLLECT.value})
         self.assert_heatmap(proto_game, query_params={"type": HeatMapType.BOOST_SPEED.value})
         self.assert_heatmap(proto_game, query_params={"type": HeatMapType.SLOW_SPEED.value})
-        self.assert_heatmap(proto_game, query_params={"type": HeatMapType.HITS.value})
 
     def assert_heatmap(self, proto_game, query_params=None, has_ball=False):
         id = proto_game.game_metadata.match_guid
