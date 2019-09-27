@@ -7,7 +7,8 @@ from typing import List
 class TestImports:
 
     global_allowed_imports = ['sqlalchemy', 'RLBotServer', 'carball', 'flask', 'redis', 'gzip',
-                              'flask_cors', 'werkzeug', 'bs4', 'torch', 'pandas', 'numpy']
+                              'flask_cors', 'werkzeug', 'bs4', 'torch', 'pandas', 'numpy',
+                              'prometheus_client']
     test_imports = ['alchemy_mock', 'fakeredis', 'responses']
 
     black_list = ['utils']

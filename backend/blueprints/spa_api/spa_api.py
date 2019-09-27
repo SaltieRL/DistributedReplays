@@ -30,6 +30,7 @@ from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
+from backend.utils.metrics import MetricsHandler
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 
 try:
@@ -503,9 +504,10 @@ def update_server(query_params=None):
     update_self(code)
     return '', 200
 
+
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):
-
+    MetricsHandler.log_exception_for_metrics(error)
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
