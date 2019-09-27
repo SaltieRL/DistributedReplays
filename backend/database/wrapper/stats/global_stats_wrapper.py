@@ -9,7 +9,7 @@ path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..',
 print(path)
 sys.path.append(path)
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, UnsupportedPlaylist
 from backend.database.objects import PlayerGame, Game, Playlist
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.rank_wrapper import get_rank_tier
@@ -120,7 +120,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
                     if playlist is not None:
                         playlist = str(playlist)
                     if playlist not in stats_dict:
-                        raise CalculatedError(404, 'Playlist does not exist in global stats')
+                        raise UnsupportedPlaylist(404, 'Playlist does not exist in global stats')
                     stats_dict = stats_dict[playlist]
                     global_stats = []
                     global_stds = []
