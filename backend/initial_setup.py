@@ -26,6 +26,7 @@ logger.info("Setting up server.")
 
 try:
     from config import ALLOWED_STEAM_ACCOUNTS
+
     prod = True
 except ImportError:
     ALLOWED_STEAM_ACCOUNTS = []
@@ -84,6 +85,10 @@ class CalculatedServer:
 
         registry = CollectorRegistry()
         multiprocess.MultiProcessCollector(registry)
+        if os.path.isdir("./metrics"):
+            os.rmdir("./metrics")
+
+        os.mkdir("./metrics")
         # Plug metrics WSGI app to your main app with dispatcher
         app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app(registry)})
 
