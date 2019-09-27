@@ -18,7 +18,7 @@ class CalculatedError(Exception):
 
 
 class NotLoggedIn(CalculatedError):
-    status_code = 403
+    status_code = 401
     message = "User is not logged in."
 
 
@@ -87,7 +87,7 @@ class InvalidQueryParamFormat(CalculatedError):
 
 
 class TagError(CalculatedError):
-    status_code = 500
+    status_code = 409
     message = "Exception with tags"
 
 
