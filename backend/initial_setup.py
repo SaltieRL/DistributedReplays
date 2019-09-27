@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from typing import Dict, List, Tuple
 
 from flask import Flask, render_template, g, request, redirect, send_from_directory
@@ -85,10 +86,10 @@ class CalculatedServer:
 
         registry = CollectorRegistry()
         multiprocess.MultiProcessCollector(registry)
-        if os.path.isdir("./metrics"):
-            os.rmdir("./metrics")
+        if os.path.isdir("metrics"):
+            shutil.rmtree("metrics")
 
-        os.mkdir("./metrics")
+        os.mkdir("metrics")
         # Plug metrics WSGI app to your main app with dispatcher
         app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app(registry)})
 
