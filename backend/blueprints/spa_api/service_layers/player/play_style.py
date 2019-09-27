@@ -40,7 +40,7 @@ class PlayStyleResponse:
                                                                     rank=rank, replay_ids=replay_ids,
                                                                     playlist=playlist, win=win)
         except NoResultFound:
-            raise NoReplaysForPlaylist(f"User has no replays for the selected playlist: {playlist}")
+            raise NoReplaysForPlaylist(playlist)
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
 
         play_style_chart_datas: List[PlayStyleChartData] = []
