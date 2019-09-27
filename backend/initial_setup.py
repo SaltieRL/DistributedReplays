@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 from flask import Flask, render_template, g, request, redirect, send_from_directory
 from flask import session as flask_session
 from flask_cors import CORS
-from prometheus_client import make_wsgi_app
+from prometheus_client import make_wsgi_app, multiprocess, CollectorRegistry
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from backend.blueprints import steam, auth, debug, admin, api
@@ -82,8 +82,10 @@ class CalculatedServer:
         ErrorLogger.add_logging_callback(MetricsHandler.log_exception_for_metrics)
         MetricsHandler.setup_metrics_callbacks(app, app_version=app.config['VERSION'])
 
+        registry = CollectorRegistry()
+        multiprocess.MultiProcessCollector(registry)
         # Plug metrics WSGI app to your main app with dispatcher
-        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
+        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app(registry)})
 
     @staticmethod
     def create_needed_folders(app: Flask):
