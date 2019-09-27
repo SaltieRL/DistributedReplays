@@ -83,15 +83,19 @@ class CalculatedServer:
         # provide app's version and deploy environment/config name to set a gauge metric
         ErrorLogger.add_logging_callback(MetricsHandler.log_exception_for_metrics)
         MetricsHandler.setup_metrics_callbacks(app, app_version=app.config['VERSION'])
+        if 'prometheus_multiproc_dir' in os.environ:
+            # We're in a multiprocessing environment (i.e. gunicorn)
+            registry = CollectorRegistry()
+            multiprocess.MultiProcessCollector(registry)
+            if os.path.isdir("metrics"):
+                shutil.rmtree("metrics")
 
-        registry = CollectorRegistry()
-        multiprocess.MultiProcessCollector(registry)
-        if os.path.isdir("metrics"):
-            shutil.rmtree("metrics")
-
-        os.mkdir("metrics")
+            os.mkdir("metrics")
+            wsgi_app = make_wsgi_app(registry)
+        else:
+            wsgi_app = make_wsgi_app()
         # Plug metrics WSGI app to your main app with dispatcher
-        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app(registry)})
+        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": wsgi_app})
 
     @staticmethod
     def create_needed_folders(app: Flask):
