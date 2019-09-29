@@ -19,23 +19,8 @@ except ImportError:
     RL_API_KEY = None
     fake_data = True
 
-json_loc = os.path.join(CODE_FOLDER, 'data', 'categorized_items.json')
-with open(json_loc, 'r') as f:
-    item_dict = json.load(f)
 
 logger = logging.getLogger(__name__)
-
-
-def get_item_name_by_id(id_: str):
-    try:
-        return item_dict[id_]["LongLabel"]
-    except KeyError:
-        logger.warning(f'Cannot find item for id {id_}. Returning "Unknown"')
-        return "Unknown"
-
-
-def get_item_dict():
-    return item_dict
 
 
 def get_bot_by_steam_id(steam_id):
