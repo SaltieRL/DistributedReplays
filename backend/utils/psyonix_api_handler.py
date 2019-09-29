@@ -1,16 +1,15 @@
 import json
 import logging
-import os
 import random
 from typing import Union
 
 import redis
 import requests
 from flask import current_app
-from backend.utils.braacket_connection import Braacket
+
 from backend.database.objects import Player
 from backend.database.startup import lazy_startup
-from backend.server_constants import CODE_FOLDER
+from backend.utils.braacket_connection import Braacket
 
 fake_data = False
 try:
