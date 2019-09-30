@@ -2,7 +2,7 @@ from flask import g
 
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.utils.checks import is_local_dev
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import NotLoggedIn
 
 
 class LoggedInUser:
@@ -23,6 +23,6 @@ class LoggedInUser:
             avatar_link = mock_steam_profile['avatarfull']
             return LoggedInUser(name, id_, avatar_link, True, True, True)
         if g.user is None:
-            raise CalculatedError(404, "User is not logged in.")
+            raise NotLoggedIn()
         return LoggedInUser(g.user.platformname, g.user.platformid, g.user.avatar, g.admin, g.admin or g.alpha,
                             g.admin or g.alpha or g.beta)

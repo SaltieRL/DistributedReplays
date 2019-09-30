@@ -4,7 +4,7 @@ from typing import List, Dict
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.utils.global_functions import get_current_user_id
 from backend.utils.logging import ErrorLogger
-from backend.blueprints.spa_api.errors.errors import CalculatedError, TagNotFound, PlayerNotFound
+from backend.blueprints.spa_api.errors.errors import TagNotFound, PlayerNotFound, TagError
 from backend.database.objects import Tag as DBTag, Player
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 
@@ -68,7 +68,7 @@ class Tag:
         # Check if name already exists
         try:
             TagWrapper.get_tag_by_name(session, get_current_user_id(), new_name)
-            raise CalculatedError(409, f"Tag with name {new_name} already exists.")
+            raise TagError(409, f"Tag with name {new_name} already exists.")
         except DBTagNotFound:
             pass
 
