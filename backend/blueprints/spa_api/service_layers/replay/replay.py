@@ -44,7 +44,7 @@ class Replay:
             game = session.query(Game).filter(Game.replay_id == id_).first()
             if game is None:
                 raise ReplayNotFound()
-            raise Redirect("/replays/" + Game.hash)
+            raise Redirect("/replays/" + game.hash)
         replay = Replay.create_from_game(game)
         return replay
 
