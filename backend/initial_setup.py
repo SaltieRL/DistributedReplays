@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import subprocess
 from typing import Dict, List, Tuple
 
 from flask import Flask, render_template, g, request, redirect, send_from_directory
@@ -194,7 +195,8 @@ class CalculatedServer:
     @classmethod
     def get_version(cls):
         try:
-            # TODO use some sort of git lookup to get information
-            return "0.0.1"
-        except:
-            return "0.0.1"
+            return subprocess.check_output([
+                'git', 'rev-parse', '--short', 'HEAD'
+            ]).decode().strip()
+        except subprocess.CalledProcessError:
+            return 'unknown'
