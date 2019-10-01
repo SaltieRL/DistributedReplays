@@ -94,7 +94,7 @@ class FooterComponent extends React.PureComponent<Props> {
                     <Grid container spacing={24} justify="center" alignItems="center">
                         <Grid item xs={12} lg={3}>
                             <Typography align={isWidthUpLg ? "left" : "center"}>
-                                &copy; 2017-2019 Saltie Group
+                                &copy; 2018-{new Date().getFullYear()} Saltie Group
                             </Typography>
                         </Grid>
                         <Grid item xs={12} lg={5}
