@@ -77,6 +77,9 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('possession_time',
                          'Time this player had the ball. This continues until another hits the ball'
                          'or play is stopped.', field_rename='possession time', short_name='possession'),
+        FieldExplanation('turnover_efficiency',
+                         'Percentage of hits that were not turnovers.',
+                         short_name='turnover eff'),
 
         # averages
         FieldExplanation('average_speed',
@@ -182,8 +185,6 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                                           '\\textrm{wasted collected boost}}{100 \\times \\textrm{num large boosts}'
                                           ' + 12 \\times \\textrm{num small boosts}}',
                          short_name='boost efficiency'),
-        FieldExplanation('turnover_efficiency',
-                         'Percentage of hits that were not turnovers.'),
         FieldExplanation('average_boost_level',
                          'Average amount of boost this player possessed over the entire game'),
         FieldExplanation('wasted_big',
@@ -196,9 +197,6 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          math_explanation='\\frac{\\textrm{total aerials}}'
                                           '{\\textrm{time high in air + time low in air}}',
                          short_name='aerial eff'),
-        FieldExplanation('turnover_efficiency',
-                         'Ratio of turnovers to number of hits',
-                         short_name='turnover eff'),
         FieldExplanation('shot_%',
                          'Ratio of goals to shots',
                          math_explanation='\\frac{\\textrm{total goals}}{\\textrm{total shots}}'),
