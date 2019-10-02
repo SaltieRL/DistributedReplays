@@ -1,9 +1,21 @@
 import logging
+from typing import Callable
 
 backup_logger = logging.getLogger(__name__)
 
 
+logger_callbacks = []
+
+
 class ErrorLogger:
+
+    @staticmethod
+    def add_logging_callback(callback: Callable):
+        """
+        Adds a callback for logging purposes.
+        :param callback: A function that takes in an exception
+        """
+        logger_callbacks.append(callback)
 
     @staticmethod
     def log_error(exception: Exception, message: str = None, logger: logging.Logger = backup_logger):
@@ -19,3 +31,8 @@ class ErrorLogger:
         if message is None:
             message = str(exception)
         logger.exception(message)
+        try:
+            for callback in logger_callbacks:
+                callback(exception)
+        except Exception as e:
+            backup_logger.exception(e)
