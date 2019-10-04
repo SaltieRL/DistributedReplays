@@ -42,7 +42,11 @@ def apply_game_visibility(query_params=None, game_id=None, game_exists=True,
 
     # if it is a custom lobby we should try and fake it being a private game so scrims are not published.
     if not game_exists and proto_game is not None and proto_game.game_metadata.playlist == Playlist.CUSTOM_LOBBY:
-        query_params = {'player_id': proto_game.players[0].id.id,
+        if query_params is not None and 'player_id' in query_params:
+            player_id = query_params['player_id']
+        else:
+            player_id = proto_game.players[0].id.id
+        query_params = {'player_id': player_id,
                         'visibility': GameVisibilitySetting.PRIVATE}
 
     if query_params is None:
