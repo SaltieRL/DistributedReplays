@@ -1,6 +1,7 @@
 # Celery workers
 import base64
 import json
+import os
 from enum import Enum, auto
 from typing import Dict
 
@@ -10,6 +11,7 @@ from celery.result import AsyncResult
 from celery.task import periodic_task
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
+from backend.database.objects import PlayerGame, TrainingPack
 from backend.database.startup import lazy_get_redis, lazy_startup
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
@@ -18,6 +20,8 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
+from backend.tasks.training_packs.training_packs import create_pack_from_replays
+from backend.utils.cloud_handler import upload_training_pack
 
 celery = Celery(__name__, broker=celeryconfig.broker_url)
 
@@ -94,6 +98,31 @@ def calc_item_stats(self, session=None):
     results = ItemStatsWrapper.create_stats(sess)
     if lazy_get_redis() is not None:
         lazy_get_redis().set('item_stats', json.dumps(results))
+
+
+@celery.task(base=DBTask, bind=True, priority=9)
+def create_training_pack(self, id_, session=None):
+    n = 10
+    if session is None:
+        sess = self.session()
+    else:
+        sess = session
+    last_n_games = sess.query(PlayerGame.game).filter(PlayerGame.player == id_)[:n]
+    last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
+    result = create_pack_from_replays(last_n_games, id_)
+    if result is None:
+        return None
+    filename, shots = result
+    print("File:", filename)
+    url = upload_training_pack(filename)
+    print("URL:", url)
+    os.remove(filename)
+    guid = os.path.basename(filename).replace('.Tem', '')
+    tp = TrainingPack(guid=guid, player=id_, shots=shots)
+    sess.add(tp)
+    sess.commit()
+
+    return url
 
 
 class ResultState(Enum):

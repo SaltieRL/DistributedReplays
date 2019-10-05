@@ -25,6 +25,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
+from backend.tasks.celery_tasks import create_training_pack
 from backend.utils.logging import ErrorLogger
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
@@ -54,7 +55,7 @@ except:
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting
+from backend.database.objects import Game, GameVisibilitySetting, TrainingPack
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
@@ -513,6 +514,29 @@ def api_handle_error(error: CalculatedError):
     response.status_code = error.status_code
     return response
 
+
+
+
+@bp.route('/training/create')
+@require_user
+def api_create_trainingpack():
+    create_training_pack.delay(get_current_user_id())
+    return better_jsonify({'status': 'Success'})
+
+
+@bp.route('/training/list')
+@require_user
+@with_session
+def api_find_trainingpack(session=None):
+    player = get_current_user_id()
+    print(player)
+    packs = session.query(TrainingPack).filter(TrainingPack.player == player).all()
+    return better_jsonify({'packs': [
+        {
+            'guid': p.guid,
+            'shots': p.shots
+        } for p in packs
+    ]})
 
 # Homepage
 

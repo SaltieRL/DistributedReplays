@@ -3,7 +3,7 @@ import datetime
 import enum
 
 from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint, \
-    and_, ForeignKeyConstraint
+    and_, ForeignKeyConstraint, JSON
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
@@ -381,3 +381,11 @@ class GameVisibility(DBObjectBase):
     player = Column(String(40), ForeignKey('players.platformid'))
     visibility = Column(Enum(GameVisibilitySetting))
     release_date = Column(DateTime, default=datetime.datetime.max)
+
+
+class TrainingPack(DBObjectBase):
+    __tablename__ = "training_packs"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    guid = Column(String(40))
+    player = Column(String(40), ForeignKey('players.platformid'), index=True)
+    shots = Column(JSON)

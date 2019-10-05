@@ -9,12 +9,13 @@ from carball.analysis.utils import pandas_manager, proto_manager
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
 
 try:
-    from config import PARSED_BUCKET, PROTO_BUCKET, REPLAY_BUCKET, FAILED_BUCKET
+    from config import PARSED_BUCKET, PROTO_BUCKET, REPLAY_BUCKET, FAILED_BUCKET, TRAINING_PACK_BUCKET
 except:
     PARSED_BUCKET = None
     PROTO_BUCKET = None
     REPLAY_BUCKET = None
     FAILED_BUCKET = None
+    TRAINING_PACK_BUCKET = None
 
 try:
     from google.cloud import storage
@@ -76,8 +77,11 @@ def download_df(id_):
         with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as f:
             data_frame = pandas_manager.PandasManager.read_numpy_from_memory(f)
     except:
-        with io.BytesIO(r.content) as f:
-            data_frame = pandas_manager.PandasManager.read_numpy_from_memory(f)
+        try:
+            with io.BytesIO(r.content) as f:
+                data_frame = pandas_manager.PandasManager.read_numpy_from_memory(f)
+        except:
+            return None
     return data_frame
 
 
@@ -85,6 +89,11 @@ def upload_df(filepath, blob_name=None):
     if blob_name is None:
         blob_name = os.path.basename(filepath)
     return upload_to_bucket(blob_name, filepath, PARSED_BUCKET)
+
+def upload_training_pack(filepath, blob_name=None):
+    if blob_name is None:
+        blob_name = os.path.basename(filepath)
+    return upload_to_bucket(blob_name, filepath, TRAINING_PACK_BUCKET)
 
 
 def download_replay(id_):
