@@ -75,9 +75,8 @@ def create_shots_from_replay(replay, player_id):
             unit_x = ball_vel_x / magnitude
             unit_y = ball_vel_y / magnitude
             unit_z = ball_vel_z / magnitude
-
             pitch = math.asin(unit_z) * 65536.0 / (2 * math.pi)
-            yaw = math.acos(unit_x) * 65536.0 / (2 * math.pi)
+            yaw = math.atan2(unit_y, unit_x) * 65536.0 / (2 * math.pi)
             yaw = round(yaw, 2)
             if p.is_orange:
                 yaw += 65536.0 / 2
@@ -89,6 +88,8 @@ def create_shots_from_replay(replay, player_id):
             car_y = round(car_info['pos_y'], 3)
             car_z = round(car_info['pos_z'], 3)
 
+            # if car_z > 500:
+            #     continue
             car_rot_x = round(car_info['rot_x'] * 65536.0 / (2 * math.pi), 2)
             car_rot_y = round(car_info['rot_y'] * 65536.0 / (2 * math.pi), 2)
             car_rot_z = round(car_info['rot_z'] * 65536.0 / (2 * math.pi), 2)
