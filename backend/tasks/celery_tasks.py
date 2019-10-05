@@ -9,9 +9,10 @@ import requests
 from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
+from sqlalchemy import desc
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
-from backend.database.objects import PlayerGame, TrainingPack
+from backend.database.objects import PlayerGame, TrainingPack, Game
 from backend.database.startup import lazy_get_redis, lazy_startup
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
@@ -111,7 +112,8 @@ def create_training_pack(self, id_, session=None):
         sess = self.session()
     else:
         sess = session
-    last_n_games = sess.query(PlayerGame.game).filter(PlayerGame.player == id_)[:n]
+    last_n_games = sess.query(PlayerGame.game).join(Game, PlayerGame.game == Game.hash).filter(
+        PlayerGame.player == id_).order_by(desc(Game.match_date))[:n]
     last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
     result = create_pack_from_replays(last_n_games, id_)
     if result is None:
