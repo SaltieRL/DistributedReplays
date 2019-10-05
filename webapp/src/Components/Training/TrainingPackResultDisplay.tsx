@@ -1,12 +1,12 @@
 import { Card, CardHeader, Divider, List, Typography } from "@material-ui/core"
+import Button from "@material-ui/core/Button"
 import * as _ from "lodash"
 import * as React from "react"
+import { doGet } from "../../apiHandler/apiHandler"
 import { TrainingPack, TrainingPackResponse } from "../../Models/Player/TrainingPack"
+import { withNotifications, WithNotifications } from "../Shared/Notification/NotificationUtils"
 import { TrainingPackDisplayRow } from "./TrainingPackDisplayRow"
 import { TrainingPackTablePagination } from "./TrainingPackTablePagination"
-import { doGet } from "../../apiHandler/apiHandler"
-import Button from "@material-ui/core/Button"
-import { withNotifications, WithNotifications } from "../Shared/Notification/NotificationUtils"
 
 interface OwnProps {
     trainingPacks: TrainingPackResponse
@@ -16,7 +16,6 @@ interface OwnProps {
 
 type Props = OwnProps
     & WithNotifications
-
 
 interface State {
     selectable: boolean
@@ -30,7 +29,6 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
     }
 
     public render() {
-
 
         const linkButton = (
             <Button onClick={this.createPack}>
@@ -53,8 +51,7 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                 <div style={{display: "flex"}}>
                                     {linkButton}
                                 </div>
-                            </div>
-                        }/>
+                            </div>}/>
                         {selectable ?
                             <List dense>
                                 <Divider/>
@@ -119,8 +116,7 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
         }
     }
 
-
-    private createPack = () => {
+    private readonly createPack = () => {
         doGet("/training/create")
             .then(() => {
                 this.props.showNotification({
