@@ -119,7 +119,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                             {contents}
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails className={classes.panelDetails}>
-                            <Grid container xs={12}>
+                            <Grid container>
                                 {pack.shots.map((shot: TrainingPackShot, i) => {
                                     const minutes = Math.floor(shot.timeRemaining / 60)
                                     let seconds = (shot.timeRemaining % 60).toString()
@@ -127,7 +127,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                         seconds = "0" + seconds
                                     }
                                     return (
-                                        <Grid container item xs={12}>
+                                        <Grid container item xs={12} key={shot.game + shot.frame.toString()}>
                                             <Grid item xs={4}>
                                                 <Typography>
                                                     Shot {i + 1}

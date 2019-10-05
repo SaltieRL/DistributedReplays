@@ -11,6 +11,7 @@ import zlib
 
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
+from sqlalchemy import desc
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
@@ -530,7 +531,7 @@ def api_create_trainingpack():
 def api_find_trainingpack(session=None):
     player = get_current_user_id()
     print(player)
-    packs = session.query(TrainingPack).filter(TrainingPack.player == player)
+    packs = session.query(TrainingPack).filter(TrainingPack.player == player).order_by(desc(TrainingPack.creation_date))
     return better_jsonify({'packs': [
         {
             'guid': p.guid,

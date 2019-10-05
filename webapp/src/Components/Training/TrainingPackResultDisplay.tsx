@@ -3,6 +3,7 @@ import * as _ from "lodash"
 import * as React from "react"
 import { TrainingPack, TrainingPackResponse } from "../../Models/Player/TrainingPack"
 import { TrainingPackDisplayRow } from "./TrainingPackDisplayRow"
+import { TrainingPackResultsActions } from "./TrainingPackResultsActions"
 import { TrainingPackTablePagination } from "./TrainingPackTablePagination"
 
 interface Props {
@@ -31,8 +32,10 @@ export class TrainingPackResultDisplay extends React.PureComponent<Props, State>
                 {trainingPacks.packs.length > 0 ?
                     <Card>
                         <CardHeader title="Training Packs"
-                                    subheader={"Packs can be placed in Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining and accessed in Training > Created"}/>
-                        {/*<TrainingPackResultsActions/>*/}
+                                    subheader={"Packs can be placed in " +
+                                    "Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining " +
+                                    "and accessed in Training > Created"} action={
+                            <TrainingPackResultsActions to={"/test"}/>}/>
                         {selectable ?
                             <List dense>
                                 <Divider/>
