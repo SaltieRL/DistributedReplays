@@ -46,11 +46,13 @@ try:
     REPLAY_BUCKET = config.REPLAY_BUCKET
     PROTO_BUCKET = config.PROTO_BUCKET
     PARSED_BUCKET = config.PARSED_BUCKET
+    TRAINING_PACK_BUCKET = config.TRAINING_PACK_BUCKET
 except:
     print('Not uploading to buckets')
     REPLAY_BUCKET = ''
     PROTO_BUCKET = ''
     PARSED_BUCKET = ''
+    TRAINING_PACK_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -515,8 +517,6 @@ def api_handle_error(error: CalculatedError):
     return response
 
 
-
-
 @bp.route('/training/create')
 @require_user
 def api_create_trainingpack():
@@ -530,13 +530,17 @@ def api_create_trainingpack():
 def api_find_trainingpack(session=None):
     player = get_current_user_id()
     print(player)
-    packs = session.query(TrainingPack).filter(TrainingPack.player == player).all()
+    packs = session.query(TrainingPack).filter(TrainingPack.player == player)
     return better_jsonify({'packs': [
         {
             'guid': p.guid,
-            'shots': p.shots
-        } for p in packs
-    ]})
+            'shots': p.shots,
+            'date': p.creation_date,
+            'link': f'https://storage.googleapis.com/{TRAINING_PACK_BUCKET}/{p.guid}.Tem'
+        } for p in packs.all()
+    ],
+        'totalCount': packs.count()})
+
 
 # Homepage
 

@@ -11,7 +11,7 @@ class Shot:
     def __init__(self, game: str, frame: int, time_remaining: int):
         self.game = game
         self.frame = int(frame)
-        self.time_remaining = int(time_remaining)
+        self.timeRemaining = int(time_remaining)
 
 
 def load_replay(replay):

@@ -1,7 +1,10 @@
 import qs from "qs"
 import { doGet, doPost } from "../apiHandler/apiHandler"
+import { TrainingPackResponse } from "../Models/Player/TrainingPack"
 import { playlists } from "../Utils/Playlists"
 import { useMockData } from "./Config"
+import moment from "moment"
+import { parsePlayStyleProgression } from "../Models/Player"
 
 export const getReplayCount = (): Promise<number> => {
     if (useMockData) {
@@ -63,3 +66,18 @@ export const getUploadStatuses = (ids: string[]): Promise<UploadStatus[]> => {
 }
 
 export const getLoggedInUser = (): Promise<LoggedInUser> => doGet("/me")
+
+export const getTrainingPacks = (): Promise<TrainingPackResponse> => {
+    return doGet("/training/list")
+        .then((data: TrainingPackResponse) => {
+            data.packs = data.packs.map(parseTrainingPack)
+            return data
+        })
+}
+
+export const parseTrainingPack = (data: any) => {
+    return {
+        ...data,
+        date: moment(data.date)
+    }
+}

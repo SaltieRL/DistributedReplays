@@ -2,8 +2,8 @@
 import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint, \
-    and_, ForeignKeyConstraint, JSON
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, UniqueConstraint, \
+    ForeignKeyConstraint, JSON
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
@@ -389,3 +389,4 @@ class TrainingPack(DBObjectBase):
     guid = Column(String(40))
     player = Column(String(40), ForeignKey('players.platformid'), index=True)
     shots = Column(JSON)
+    creation_date = Column(DateTime, default=datetime.datetime.utcnow)

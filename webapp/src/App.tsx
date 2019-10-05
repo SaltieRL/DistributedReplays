@@ -28,9 +28,10 @@ import {
     REPLAY_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
-    STATUS_PAGE_LINK,
+    STATUS_PAGE_LINK, TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
+import { TrainingPackPage } from "./Components/Pages/TrainingPackPage"
 
 const styles = createStyles({
     App: {
@@ -55,6 +56,7 @@ class AppComponent extends React.Component<Props> {
                             <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")}/>
 
                             <Route exact path="/" component={HomePage}/>
+                            <Route path={TRAINING_LINK} component={TrainingPackPage}/>
                             <Route path={LEADERBOARDS_LINK} component={LeaderboardsPage}/>
                             <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                             <Route path={PLAYER_COMPARE_PAGE_LINK} component={PlayerComparePage}/>
