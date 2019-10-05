@@ -57,54 +57,61 @@ def create_shots_from_replay(replay, player_id):
         for i, frame in enumerate(frame_numbers[:]):
             last_hit = last_hits[i]
             if last_hit is not None:
-                row = df.iloc[last_hit + 1]
+                frame_start = last_hit + 1
             else:
-                row = df.iloc[frame - 60]
-            time_remaining = row['game']['seconds_remaining']
-            ball_info = row['ball']
-            ball_x = ball_info['pos_x']
-            ball_y = ball_info['pos_y']
-            ball_z = ball_info['pos_z']
-            n = 12.1
-            ball_vel_x = ball_info['vel_x'] / n
-            ball_vel_y = ball_info['vel_y'] / n
-            ball_vel_z = ball_info['vel_z'] / n
-            magnitude = (ball_vel_x ** 2 + ball_vel_y ** 2 + ball_vel_z ** 2) ** 0.5
+                frame_start = frame - 60
+            for frame_num in range(frame_start, frame):
+                row = df.iloc[frame_num]
+                time_remaining = row['game']['seconds_remaining']
+                ball_info = row['ball']
+                ball_x = ball_info['pos_x']
+                ball_y = ball_info['pos_y']
+                ball_z = ball_info['pos_z']
+                n = 12.1
+                ball_vel_x = ball_info['vel_x'] / n
+                ball_vel_y = ball_info['vel_y'] / n
+                ball_vel_z = ball_info['vel_z'] / n
+                magnitude = (ball_vel_x ** 2 + ball_vel_y ** 2 + ball_vel_z ** 2) ** 0.5
+                # xy_mag = (ball_vel_x ** 2 + ball_vel_y ** 2) ** 0.5
+                unit_x = ball_vel_x / magnitude
+                unit_y = ball_vel_y / magnitude
+                unit_z = ball_vel_z / magnitude
+                pitch = math.asin(unit_z) * 65536.0 / (2 * math.pi)
+                yaw = math.atan2(unit_y, unit_x) * 65536.0 / (2 * math.pi)
+                yaw = round(yaw, 2)
+                if p.is_orange:
+                    yaw += 65536.0 / 2
+                    ball_x = -ball_x
+                    ball_y = -ball_y
 
-            # xy_mag = (ball_vel_x ** 2 + ball_vel_y ** 2) ** 0.5
-            unit_x = ball_vel_x / magnitude
-            unit_y = ball_vel_y / magnitude
-            unit_z = ball_vel_z / magnitude
-            pitch = math.asin(unit_z) * 65536.0 / (2 * math.pi)
-            yaw = math.atan2(unit_y, unit_x) * 65536.0 / (2 * math.pi)
-            yaw = round(yaw, 2)
-            if p.is_orange:
-                yaw += 65536.0 / 2
-                ball_x = -ball_x
-                ball_y = -ball_y
+                car_info = row[player]
+                car_x = round(car_info['pos_x'], 3)
+                car_y = round(car_info['pos_y'], 3)
+                car_z = round(car_info['pos_z'], 3)
 
-            car_info = row[player]
-            car_x = round(car_info['pos_x'], 3)
-            car_y = round(car_info['pos_y'], 3)
-            car_z = round(car_info['pos_z'], 3)
+                car_rot_x = round(car_info['rot_x'] * 65536.0 / (2 * math.pi), 2)
+                car_rot_y = round(car_info['rot_y'] * 65536.0 / (2 * math.pi), 2)
+                car_rot_z = round(car_info['rot_z'] * 65536.0 / (2 * math.pi), 2)
 
-            # if car_z > 500:
-            #     continue
-            car_rot_x = round(car_info['rot_x'] * 65536.0 / (2 * math.pi), 2)
-            car_rot_y = round(car_info['rot_y'] * 65536.0 / (2 * math.pi), 2)
-            car_rot_z = round(car_info['rot_z'] * 65536.0 / (2 * math.pi), 2)
+                if p.is_orange:
+                    car_x = -car_x
+                    car_y = -car_y
+                    car_rot_y += 65536.0 / 2
 
-            if p.is_orange:
-                car_x = -car_x
-                car_y = -car_y
-                car_rot_y += 65536.0 / 2
-            shots_list.append(create_shot(ball_x=ball_x, ball_y=ball_y,
-                                          ball_z=ball_z, ball_vel_p=pitch,
-                                          ball_vel_y=yaw,
-                                          ball_vel_r=0.0, ball_vel_mag=round(magnitude, 5),
-                                          car_x=car_x, car_y=car_y, car_z=car_z,
-                                          car_rot_p=car_rot_z, car_rot_y=car_rot_y, car_rot_r=car_rot_x))
-            shots_documentation.append(Shot(guid, frame, time_remaining))
+                print(car_z, magnitude)
+                filters = [
+                    car_z < 50,
+                    magnitude > 100
+                ]
+                if all(filters):
+                    shots_list.append(create_shot(ball_x=ball_x, ball_y=ball_y,
+                                                  ball_z=ball_z, ball_vel_p=pitch,
+                                                  ball_vel_y=yaw,
+                                                  ball_vel_r=0.0, ball_vel_mag=round(magnitude, 5),
+                                                  car_x=car_x, car_y=car_y, car_z=car_z,
+                                                  car_rot_p=car_rot_z, car_rot_y=car_rot_y, car_rot_r=car_rot_x))
+                    shots_documentation.append(Shot(guid, frame, time_remaining))
+                    break
     return shots_list, shots_documentation
 
 
