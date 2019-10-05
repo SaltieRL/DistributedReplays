@@ -35,6 +35,11 @@ except ImportError:
     users = []
     prod = False
 
+try:
+    from config import BASE_URL
+except ImportError:
+    BASE_URL = 'https://calculated.gg'
+
 
 class CalculatedServer:
 
@@ -111,7 +116,7 @@ class CalculatedServer:
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
         app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
         app.config['TEMPLATES_AUTO_RELOAD'] = True
-        app.config['BASE_URL'] = 'https://calculated.gg'
+        app.config['BASE_URL'] = 'https://calculated.gg' if BASE_URL is None else BASE_URL
         app.config['REPLAY_DIR'] = os.path.join(BASE_FOLDER, 'data', 'rlreplays')
         app.config['PARSED_DIR'] = os.path.join(BASE_FOLDER, 'data', 'parsed')
         app.config['VERSION'] = CalculatedServer.get_version()
