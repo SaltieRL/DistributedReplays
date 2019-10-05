@@ -94,6 +94,11 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                         </Typography>
                     </Tooltip>
                 </Grid>
+                <Grid item xs={2} sm={3} className={classes.listGridItem}>
+                    <Typography variant={typographyVariant}>
+                        {pack.shots.length} shots
+                    </Typography>
+                </Grid>
                 <Grid item xs="auto" className={classes.listGridItem}>
                     <IconButton
                         href={pack.link}
@@ -165,4 +170,5 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
     }
 }
 
-export const TrainingPackDisplayRow = withWidth()(withStyles(styles)(connect(mapStateToProps)(TrainingPackDisplayRowComponent)))
+export const TrainingPackDisplayRow = withWidth()(withStyles(styles)(
+    connect(mapStateToProps)(TrainingPackDisplayRowComponent)))

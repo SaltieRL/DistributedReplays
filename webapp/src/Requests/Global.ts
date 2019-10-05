@@ -1,9 +1,9 @@
+import moment from "moment"
 import qs from "qs"
 import { doGet, doPost } from "../apiHandler/apiHandler"
 import { TrainingPackResponse } from "../Models/Player/TrainingPack"
 import { playlists } from "../Utils/Playlists"
 import { useMockData } from "./Config"
-import moment from "moment"
 
 export const getReplayCount = (): Promise<number> => {
     if (useMockData) {
