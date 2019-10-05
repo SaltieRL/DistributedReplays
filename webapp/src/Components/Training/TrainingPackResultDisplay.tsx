@@ -3,27 +3,41 @@ import * as _ from "lodash"
 import * as React from "react"
 import { TrainingPack, TrainingPackResponse } from "../../Models/Player/TrainingPack"
 import { TrainingPackDisplayRow } from "./TrainingPackDisplayRow"
-import { TrainingPackResultsActions } from "./TrainingPackResultsActions"
 import { TrainingPackTablePagination } from "./TrainingPackTablePagination"
+import { doGet } from "../../apiHandler/apiHandler"
+import Button from "@material-ui/core/Button"
+import { withNotifications, WithNotifications } from "../Shared/Notification/NotificationUtils"
 
-interface Props {
+interface OwnProps {
     trainingPacks: TrainingPackResponse
     page: number
     limit: number
 }
+
+type Props = OwnProps
+    & WithNotifications
+
 
 interface State {
     selectable: boolean
     selectedReplayIds: string[]
 }
 
-export class TrainingPackResultDisplay extends React.PureComponent<Props, State> {
+class TrainingPackResultDisplayComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectable: false, selectedReplayIds: []}
     }
 
     public render() {
+
+
+        const linkButton = (
+            <Button onClick={this.createPack}>
+                Create pack
+            </Button>
+        )
+
         const {trainingPacks, page, limit} = this.props
         const {selectable} = this.state
 
@@ -35,7 +49,12 @@ export class TrainingPackResultDisplay extends React.PureComponent<Props, State>
                                     subheader={"Packs can be placed in " +
                                     "Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining " +
                                     "and accessed in Training > Created"} action={
-                            <TrainingPackResultsActions to={"/test"}/>}/>
+                            <div style={{paddingRight: 8}}>
+                                <div style={{display: "flex"}}>
+                                    {linkButton}
+                                </div>
+                            </div>
+                        }/>
                         {selectable ?
                             <List dense>
                                 <Divider/>
@@ -70,7 +89,8 @@ export class TrainingPackResultDisplay extends React.PureComponent<Props, State>
                     </Card>
                     :
                     <Typography variant="subtitle1" align="center">
-                        <i>No replays match the selected filters.</i>
+                        <i>No training packs exist.</i>
+                        {linkButton}
                     </Typography>
                 }
             </>
@@ -99,9 +119,23 @@ export class TrainingPackResultDisplay extends React.PureComponent<Props, State>
         }
     }
 
+
+    private createPack = () => {
+        doGet("/training/create")
+            .then(() => {
+                this.props.showNotification({
+                    variant: "success",
+                    message: "Successfully created! Give up to a minute for generation to complete",
+                    timeout: 5000
+                })
+            })
+    }
+
     // private readonly getGroupLink = () => {
     //     const url = qs.stringify({ids: this.state.selectedReplayIds},
     //         {arrayFormat: "repeat", addQueryPrefix: true})
     //     return REPLAYS_GROUP_PAGE_LINK + url
     // }
 }
+
+export const TrainingPackResultDisplay = withNotifications()(TrainingPackResultDisplayComponent)

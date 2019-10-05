@@ -16,13 +16,13 @@ import {
 } from "@material-ui/core"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
+import InsertChart from "@material-ui/icons/InsertChart"
 import OpenInNew from "@material-ui/icons/OpenInNew"
 import * as React from "react"
 import { connect } from "react-redux"
 import { REPLAY_PAGE_LINK } from "../../Globals"
 import { TrainingPack, TrainingPackShot } from "../../Models/Player/TrainingPack"
 import { StoreState } from "../../Redux"
-import InsertChart from "@material-ui/icons/InsertChart"
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {
@@ -127,25 +127,29 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                         seconds = "0" + seconds
                                     }
                                     return (
-                                        <Grid container item xs={12} key={shot.game + shot.frame.toString()}>
-                                            <Grid item xs={4}>
-                                                <Typography>
-                                                    Shot {i + 1}
-                                                </Typography>
+                                        <>
+                                            <Grid container item xs={12} key={shot.game + shot.frame.toString()}>
+                                                <Grid item xs={4}>
+                                                    <Typography>
+                                                        Shot {i + 1}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography>
+                                                        {minutes}:{seconds} remaining
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <Typography>
+                                                        <IconButton
+                                                            className={classes.iconButton}
+                                                            href={REPLAY_PAGE_LINK(shot.game)}>
+                                                            <InsertChart/>
+                                                        </IconButton>
+                                                    </Typography>
+                                                </Grid>
                                             </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography>
-                                                    {minutes}:{seconds} remaining
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={2}>
-                                                <Typography>
-                                                    <IconButton
-                                                        className={classes.iconButton}
-                                                        href={REPLAY_PAGE_LINK(shot.game)}><InsertChart/></IconButton>
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
+                                        </>
                                     )
                                 })}
                             </Grid>
