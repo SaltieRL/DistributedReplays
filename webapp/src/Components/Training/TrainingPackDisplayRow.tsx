@@ -5,7 +5,7 @@ import {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
-    IconButton,
+    IconButton, List,
     ListItem,
     Theme,
     Tooltip,
@@ -24,6 +24,7 @@ import { connect } from "react-redux"
 import { REPLAY_PAGE_LINK } from "../../Globals"
 import { TrainingPack, TrainingPackShot } from "../../Models/Player/TrainingPack"
 import { StoreState } from "../../Redux"
+import Divider from "@material-ui/core/Divider"
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {
@@ -126,7 +127,8 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                             {contents}
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails className={classes.panelDetails}>
-                            <Grid container>
+                            <List dense style={{width: "100%"}}>
+                                <Divider/>
                                 {pack.shots.map((shot: TrainingPackShot, i) => {
                                     const minutes = Math.floor(shot.timeRemaining / 60)
                                     let seconds = (shot.timeRemaining % 60).toString()
@@ -135,44 +137,48 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                     }
                                     return (
                                         <>
-                                            <Grid container item xs={12} key={shot.game + shot.frame.toString()}>
-                                                <Grid item xs={4}>
-                                                    <Typography>
-                                                        Shot {i + 1}
-                                                    </Typography>
+                                            <ListItem>
+                                                <Grid container key={shot.game + shot.frame.toString()}>
+                                                    <Grid item xs={4}>
+                                                        <Typography>
+                                                            Shot {i + 1}
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        <Typography>
+                                                            {minutes}:{seconds} remaining
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={2}>
+                                                        <Typography>
+                                                            <IconButton
+                                                                className={classes.iconButton}
+                                                                href={REPLAY_PAGE_LINK(shot.game)}>
+                                                                <InsertChart/>
+                                                            </IconButton>
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={2}>
+                                                        <Typography>
+                                                            <IconButton
+                                                                className={classes.iconButton}
+                                                                onClick={() => {
+                                                                    this.props.selectShotHandler(i)
+                                                                }}
+                                                                href={"#"}
+                                                            >
+                                                                <Visibility/>
+                                                            </IconButton>
+                                                        </Typography>
+                                                    </Grid>
+
                                                 </Grid>
-                                                <Grid item xs={4}>
-                                                    <Typography>
-                                                        {minutes}:{seconds} remaining
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={2}>
-                                                    <Typography>
-                                                        <IconButton
-                                                            className={classes.iconButton}
-                                                            href={REPLAY_PAGE_LINK(shot.game)}>
-                                                            <InsertChart/>
-                                                        </IconButton>
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={2}>
-                                                    <Typography>
-                                                        <IconButton
-                                                            className={classes.iconButton}
-                                                            onClick={() => {
-                                                                this.props.selectShotHandler(i)
-                                                            }}
-                                                            href={"#"}
-                                                        >
-                                                            <Visibility/>
-                                                        </IconButton>
-                                                    </Typography>
-                                                </Grid>
-                                            </Grid>
+                                            </ListItem>
+                                            {i !== pack.shots.length - 1 && <Divider/>}
                                         </>
                                     )
                                 })}
-                            </Grid>
+                            </List>
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
                 }
