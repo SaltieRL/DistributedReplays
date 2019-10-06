@@ -128,6 +128,36 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails className={classes.panelDetails}>
                             <List dense style={{width: "100%"}}>
+                                <ListItem>
+                                    <Grid container key={"header"}>
+                                        <Grid item xs={2}>
+                                            <Typography variant="subtitle2">
+                                                Shot number
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <Typography variant="subtitle2">
+                                                Time remaining
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Typography variant="subtitle2">
+                                                Game
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <Typography variant="subtitle2">
+                                                View game stats
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <Typography variant="subtitle2">
+                                                Preview shot
+                                            </Typography>
+                                        </Grid>
+
+                                    </Grid>
+                                </ListItem>
                                 <Divider/>
                                 {pack.shots.map((shot: TrainingPackShot, i) => {
                                     const minutes = Math.floor(shot.timeRemaining / 60)
@@ -139,14 +169,19 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                         <>
                                             <ListItem>
                                                 <Grid container key={shot.game + shot.frame.toString()}>
-                                                    <Grid item xs={4}>
+                                                    <Grid item xs={2}>
                                                         <Typography>
                                                             Shot {i + 1}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={4}>
+                                                    <Grid item xs={2}>
                                                         <Typography>
                                                             {minutes}:{seconds} remaining
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        <Typography noWrap>
+                                                            {shot.game}
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={2}>
