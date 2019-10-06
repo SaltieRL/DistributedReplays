@@ -22,6 +22,7 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
+from backend.tasks.training_packs.task import TrainingPackCreation
 
 try:
     from backend.tasks.training_packs.training_packs import create_pack_from_replays
@@ -112,37 +113,7 @@ def create_training_pack(self, id_, n=10, date=None, session=None):
         sess = self.session()
     else:
         sess = session
-    playlists = [
-        Playlist.UNRANKED_DUELS,
-        Playlist.UNRANKED_DOUBLES,
-        Playlist.UNRANKED_STANDARD,
-        Playlist.UNRANKED_CHAOS,
-        Playlist.RANKED_DUELS,
-        Playlist.RANKED_DOUBLES,
-        Playlist.RANKED_SOLO_STANDARD,
-        Playlist.RANKED_STANDARD
-    ]
-    last_n_games = sess.query(PlayerGame.game).join(Game, PlayerGame.game == Game.hash).filter(
-        PlayerGame.player == id_).filter(Game.playlist.in_(tuple(playlist.value for playlist in playlists))) \
-        .order_by(desc(Game.match_date))
-    if date is not None:
-        date = datetime.date.fromtimestamp(float(date))
-        last_n_games = last_n_games.filter(func.date(Game.match_date) == date)
-    last_n_games = last_n_games[:n]
-    last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
-    result = create_pack_from_replays(last_n_games, id_)
-    if result is None:
-        return None
-    filename, shots = result
-    print("File:", filename)
-    url = upload_training_pack(filename)
-    print("URL:", url)
-    os.remove(filename)
-    guid = os.path.basename(filename).replace('.Tem', '')
-    tp = TrainingPack(guid=guid, player=id_, shots=shots)
-    sess.add(tp)
-    sess.commit()
-
+    url = TrainingPackCreation.create_from_player(id_, n, date, sess)
     return url
 
 

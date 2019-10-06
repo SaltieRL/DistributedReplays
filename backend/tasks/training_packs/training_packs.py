@@ -1,7 +1,7 @@
+import datetime
 import math
 import os
 import uuid
-import datetime
 
 from backend.tasks.training_packs.decrypt import create_shot, load_pack, reserialize
 from backend.utils.file_manager import FileManager
@@ -47,7 +47,7 @@ def create_shots_from_replay(replay, player_id):
             continue  # skip players outside of the selected person
         hits = proto.game_stats.hits
         player_hits = [(hit, hits[i - 1] if i > 0 else None) for i, hit in enumerate(hits) if
-                       hit.player_id.id == id_ and hit.shot]
+                       hit.player_id.id == id_ and hit.shot and not hit.dribble_continuation]
         try:
             frame_numbers = [hit[0].frame_number for hit in player_hits]
             last_hits = [hit[1].frame_number for hit in player_hits]
@@ -55,6 +55,7 @@ def create_shots_from_replay(replay, player_id):
             # TODO: investigate training pack errors
             return [], []
         for i, frame in enumerate(frame_numbers[:]):
+            player_hit = player_hits[i][0]
             last_hit = last_hits[i]
             if last_hit is not None:
                 frame_start = last_hit + 1
@@ -79,6 +80,8 @@ def create_shots_from_replay(replay, player_id):
                 pitch = math.asin(unit_z) * 65536.0 / (2 * math.pi)
                 yaw = math.atan2(unit_y, unit_x) * 65536.0 / (2 * math.pi)
                 yaw = round(yaw, 2)
+                if player_hit.dribble:
+                    magnitude = 0
                 if p.is_orange:
                     yaw += 65536.0 / 2
                     ball_x = -ball_x
@@ -155,3 +158,5 @@ def create_pack_from_replays(replays, player_id):
         output.write(tpack)
     print("FN:", filename)
     return filename, [s.__dict__ for s in shots_documentation]
+
+
