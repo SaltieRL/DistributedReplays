@@ -1,14 +1,16 @@
 import { Card, CardHeader, Divider, List, Typography } from "@material-ui/core"
 import Button from "@material-ui/core/Button"
+import Grid from "@material-ui/core/Grid"
 import * as _ from "lodash"
+import * as moment from "moment"
 import * as React from "react"
 import { doGet } from "../../apiHandler/apiHandler"
 import { TrainingPack, TrainingPackResponse, TrainingPackShot } from "../../Models/Player/TrainingPack"
+import { Viewer } from "../Replay/ReplayViewer/Viewer"
+import { ClearableDatePicker } from "../Shared/ClearableDatePicker"
 import { withNotifications, WithNotifications } from "../Shared/Notification/NotificationUtils"
 import { TrainingPackDisplayRow } from "./TrainingPackDisplayRow"
 import { TrainingPackTablePagination } from "./TrainingPackTablePagination"
-import { Viewer } from "../Replay/ReplayViewer/Viewer"
-import Grid from "@material-ui/core/Grid"
 
 interface OwnProps {
     trainingPacks: TrainingPackResponse
@@ -24,18 +26,19 @@ interface State {
     selectedReplayIds: string[]
     game?: string
     frame?: number
+    date: moment.Moment | null
 }
 
 class TrainingPackResultDisplayComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectable: false, selectedReplayIds: []}
+        this.state = {selectable: false, selectedReplayIds: [], date: null}
     }
 
     public render() {
 
         const linkButton = (
-            <Button onClick={this.createPack}>
+            <Button onClick={this.createPack} variant={"outlined"}>
                 Create pack
             </Button>
         )
@@ -52,6 +55,11 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                         "and accessed in Training > Created"} action={
                                 <div style={{paddingRight: 8}}>
                                     <div style={{display: "flex"}}>
+                                        <ClearableDatePicker
+                                            placeholder={"Date filter"}
+                                            onChange={this.handleDateChange}
+                                            value={this.state.date}
+                                            helperText="Leave blank to default to recent games"/>
                                         {linkButton}
                                     </div>
                                 </div>}/>
@@ -102,7 +110,10 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                 </Grid>
                 {this.state.game && this.state.frame &&
                 <Grid item xs={5}>
-                    <Viewer replayId={this.state.game} frameMin={this.state.frame} frameCount={150} pauseOnStart={true}/>
+                    <Viewer replayId={this.state.game}
+                            frameMin={this.state.frame}
+                            frameCount={150}
+                            pauseOnStart={true}/>
                 </Grid>
                 }
             </Grid>
@@ -137,7 +148,7 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
     }
 
     private readonly createPack = () => {
-        doGet("/training/create")
+        doGet("/training/create" + (this.state.date ? "?date=" + this.state.date.unix() : ""))
             .then(() => {
                 this.props.showNotification({
                     variant: "success",
@@ -145,6 +156,10 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                     timeout: 5000
                 })
             })
+    }
+
+    private readonly handleDateChange = (date: moment.Moment | null) => {
+        this.setState({date})
     }
 
     // private readonly getGroupLink = () => {

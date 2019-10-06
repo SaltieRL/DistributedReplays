@@ -1,5 +1,6 @@
 # Celery workers
 import base64
+import datetime
 import json
 import os
 from enum import Enum, auto
@@ -9,7 +10,7 @@ import requests
 from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.database.objects import PlayerGame, TrainingPack, Game
@@ -106,14 +107,17 @@ def calc_item_stats(self, session=None):
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
-def create_training_pack(self, id_, session=None):
-    n = 10
+def create_training_pack(self, id_, n=10, date=None, session=None):
     if session is None:
         sess = self.session()
     else:
         sess = session
     last_n_games = sess.query(PlayerGame.game).join(Game, PlayerGame.game == Game.hash).filter(
-        PlayerGame.player == id_).order_by(desc(Game.match_date))[:n]
+        PlayerGame.player == id_).order_by(desc(Game.match_date))
+    if date is not None:
+        date = datetime.date.fromtimestamp(float(date))
+        last_n_games = last_n_games.filter(func.date(Game.match_date) == date)
+    last_n_games = last_n_games[:n]
     last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
     result = create_pack_from_replays(last_n_games, id_)
     if result is None:
