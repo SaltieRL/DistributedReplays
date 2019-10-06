@@ -274,8 +274,12 @@ def api_get_replay_basic_team_stats_download(id_):
 
 
 @bp.route('replay/<id_>/positions')
-@with_query_params(accepted_query_params=[QueryParam(name='frame', type_=int, optional=True, is_list=True),
-                                          QueryParam(name='as_proto', type_=bool, optional=True)])
+@with_query_params(accepted_query_params=[
+    QueryParam(name='frame', type_=int, optional=True, is_list=True),
+    QueryParam(name='frame_start', type_=int, optional=True),
+    QueryParam(name='frame_count', type_=int, optional=True),
+    QueryParam(name='as_proto', type_=bool, optional=True)
+])
 def api_get_replay_positions(id_, query_params=None):
     positions = ReplayPositions.create_from_id(id_, query_params=query_params)
     if query_params is None or 'as_proto' not in query_params:
@@ -530,7 +534,6 @@ def api_create_trainingpack():
 @with_session
 def api_find_trainingpack(session=None):
     player = get_current_user_id()
-    print(player)
     packs = session.query(TrainingPack).filter(TrainingPack.player == player).order_by(desc(TrainingPack.creation_date))
     return better_jsonify({'packs': [
         {

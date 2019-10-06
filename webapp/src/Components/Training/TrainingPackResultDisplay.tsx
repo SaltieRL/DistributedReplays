@@ -3,10 +3,12 @@ import Button from "@material-ui/core/Button"
 import * as _ from "lodash"
 import * as React from "react"
 import { doGet } from "../../apiHandler/apiHandler"
-import { TrainingPack, TrainingPackResponse } from "../../Models/Player/TrainingPack"
+import { TrainingPack, TrainingPackResponse, TrainingPackShot } from "../../Models/Player/TrainingPack"
 import { withNotifications, WithNotifications } from "../Shared/Notification/NotificationUtils"
 import { TrainingPackDisplayRow } from "./TrainingPackDisplayRow"
 import { TrainingPackTablePagination } from "./TrainingPackTablePagination"
+import { Viewer } from "../Replay/ReplayViewer/Viewer"
+import Grid from "@material-ui/core/Grid"
 
 interface OwnProps {
     trainingPacks: TrainingPackResponse
@@ -20,6 +22,8 @@ type Props = OwnProps
 interface State {
     selectable: boolean
     selectedReplayIds: string[]
+    game?: string
+    frame?: number
 }
 
 class TrainingPackResultDisplayComponent extends React.PureComponent<Props, State> {
@@ -35,65 +39,81 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                 Create pack
             </Button>
         )
-
         const {trainingPacks, page, limit} = this.props
         const {selectable} = this.state
-
         return (
-            <>
-                {trainingPacks.packs.length > 0 ?
-                    <Card>
-                        <CardHeader title="Training Packs"
-                                    subheader={"Packs can be placed in " +
-                                    "Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining " +
-                                    "and accessed in Training > Created"} action={
-                            <div style={{paddingRight: 8}}>
-                                <div style={{display: "flex"}}>
-                                    {linkButton}
-                                </div>
-                            </div>}/>
-                        {selectable ?
-                            <List dense>
-                                <Divider/>
-                                {this.props.trainingPacks.packs.map((pack: TrainingPack, i) =>
-                                    <>
-                                        <TrainingPackDisplayRow
-                                            key={pack.guid}
-                                            pack={pack}
-                                            selectProps={{
-                                                selected: _.includes(
-                                                    this.state.selectedReplayIds,
-                                                    pack.guid
-                                                ),
-                                                handleSelectChange: this.handleSelectChange(pack.guid)
-                                            }}/>
-                                        {!(i === this.props.trainingPacks.packs.length) && <Divider/>}
-                                    </>
-                                )}
-                            </List>
-                            :
-                            this.props.trainingPacks.packs.map((pack: TrainingPack) =>
-                                <TrainingPackDisplayRow
-                                    key={pack.guid}
-                                    pack={pack}
-                                />
-                            )
-                        }
-                        <TrainingPackTablePagination
-                            totalCount={trainingPacks.totalCount}
-                            page={page}
-                            limit={limit}/>
-                    </Card>
-                    :
-                    <Typography variant="subtitle1" align="center">
-                        <i>No training packs exist.</i>
-                        {linkButton}
-                    </Typography>
+            <Grid container>
+                <Grid item xs={this.state.game ? 7 : 12}>
+                    {trainingPacks.packs.length > 0 ?
+                        <Card>
+                            <CardHeader title="Training Packs"
+                                        subheader={"Packs can be placed in " +
+                                        "Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining " +
+                                        "and accessed in Training > Created"} action={
+                                <div style={{paddingRight: 8}}>
+                                    <div style={{display: "flex"}}>
+                                        {linkButton}
+                                    </div>
+                                </div>}/>
+                            {selectable ?
+                                <List dense>
+                                    <Divider/>
+                                    {this.props.trainingPacks.packs.map((pack: TrainingPack, i) =>
+                                        <>
+                                            <TrainingPackDisplayRow
+                                                key={pack.guid}
+                                                pack={pack}
+                                                selectProps={{
+                                                    selected: _.includes(
+                                                        this.state.selectedReplayIds,
+                                                        pack.guid
+                                                    ),
+                                                    handleSelectChange: this.handleSelectChange(pack.guid)
+                                                }}
+                                                selectShotHandler={(shotNum: number) => {
+                                                    this.handleSelectShot(i, shotNum)
+                                                }}/>
+                                            {!(i === this.props.trainingPacks.packs.length) && <Divider/>}
+                                        </>
+                                    )}
+                                </List>
+                                :
+                                this.props.trainingPacks.packs.map((pack: TrainingPack, i) =>
+                                    <TrainingPackDisplayRow
+                                        key={pack.guid}
+                                        pack={pack}
+                                        selectShotHandler={(shotNum: number) => {
+                                            this.handleSelectShot(i, shotNum)
+                                        }}
+                                    />
+                                )
+                            }
+                            <TrainingPackTablePagination
+                                totalCount={trainingPacks.totalCount}
+                                page={page}
+                                limit={limit}/>
+                        </Card>
+                        :
+                        <Typography variant="subtitle1" align="center">
+                            <i>No training packs exist.</i>
+                            {linkButton}
+                        </Typography>
+                    }
+                </Grid>
+                {this.state.game && this.state.frame &&
+                <Grid item xs={5}>
+                    <Viewer replayId={this.state.game} frameMin={this.state.frame} frameCount={150} pauseOnStart={true}/>
+                </Grid>
                 }
-            </>
+            </Grid>
         )
     }
 
+    private readonly handleSelectShot = (pack: number, shotNumber: number) => {
+        console.log(pack, shotNumber)
+        const shot: TrainingPackShot = this.props.trainingPacks.packs[pack].shots[shotNumber]
+        this.setState({game: shot.game, frame: shot.frame})
+    }
     // private readonly handleSelectableChange = (event: React.ChangeEvent<HTMLInputElement>,
     //                                            selectable: boolean) => {
     //     this.setState({selectable})

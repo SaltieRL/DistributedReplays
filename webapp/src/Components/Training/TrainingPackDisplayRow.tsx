@@ -18,6 +18,7 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import OpenInNew from "@material-ui/icons/OpenInNew"
+import Visibility from "@material-ui/icons/Visibility"
 import * as React from "react"
 import { connect } from "react-redux"
 import { REPLAY_PAGE_LINK } from "../../Globals"
@@ -54,6 +55,7 @@ interface SelectProps {
 interface OwnProps {
     pack: TrainingPack
     selectProps?: SelectProps
+    selectShotHandler: any
 }
 
 const mapStateToProps = (state: StoreState) => ({
@@ -139,7 +141,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                                         Shot {i + 1}
                                                     </Typography>
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={4}>
                                                     <Typography>
                                                         {minutes}:{seconds} remaining
                                                     </Typography>
@@ -150,6 +152,19 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                                             className={classes.iconButton}
                                                             href={REPLAY_PAGE_LINK(shot.game)}>
                                                             <InsertChart/>
+                                                        </IconButton>
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    <Typography>
+                                                        <IconButton
+                                                            className={classes.iconButton}
+                                                            onClick={() => {
+                                                                this.props.selectShotHandler(i)
+                                                            }}
+                                                            href={"#"}
+                                                        >
+                                                            <Visibility/>
                                                         </IconButton>
                                                     </Typography>
                                                 </Grid>

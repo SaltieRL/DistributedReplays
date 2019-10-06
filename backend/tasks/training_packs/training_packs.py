@@ -101,7 +101,7 @@ def create_shots_from_replay(replay, player_id):
                 print(car_z, magnitude)
                 filters = [
                     car_z < 50,
-                    magnitude > 100
+                    magnitude > 500
                 ]
                 if all(filters):
                     shots_list.append(create_shot(ball_x=ball_x, ball_y=ball_y,
@@ -110,7 +110,7 @@ def create_shots_from_replay(replay, player_id):
                                                   ball_vel_r=0.0, ball_vel_mag=round(magnitude, 5),
                                                   car_x=car_x, car_y=car_y, car_z=car_z,
                                                   car_rot_p=car_rot_z, car_rot_y=car_rot_y, car_rot_r=car_rot_x))
-                    shots_documentation.append(Shot(guid, frame, time_remaining))
+                    shots_documentation.append(Shot(guid, frame_num, time_remaining))
                     break
     return shots_list, shots_documentation
 
