@@ -65,6 +65,7 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                         frameMin={this.state.frame}
                         frameCount={150}
                         pauseOnStart={true}
+                        compact={true}
                 />
             </Grid>
         ) : null

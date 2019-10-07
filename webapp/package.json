@@ -31,15 +31,15 @@
         "react-dom": "^16.8.6",
         "react-dropzone": "^5.1.0",
         "react-ga": "^2.5.7",
+        "react-json-view": "latest",
         "react-redux": "^5.0.7",
         "react-router-dom": "^4.3.1",
         "react-scripts": "^3.0.1",
         "redux": "^4.0.0",
         "redux-actions": "^2.6.4",
         "redux-devtools-extension": "^2.13.5",
-        "replay-viewer": "^0.5.1",
-        "three": "^0.104.0",
-        "react-json-view": "latest"
+        "replay-viewer": "^0.5.2",
+        "three": "^0.104.0"
     },
     "scripts": {
         "analyze": "source-map-explorer build/static/js/main.*",

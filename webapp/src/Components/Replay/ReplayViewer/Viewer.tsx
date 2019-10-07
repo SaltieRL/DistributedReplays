@@ -1,6 +1,7 @@
 import { Grid } from "@material-ui/core"
 import React, { Component } from "react"
 import {
+    CompactPlayControls,
     FieldCameraControls,
     FPSClock,
     GameBuilderOptions,
@@ -21,6 +22,7 @@ interface Props {
     frameMin?: number
     frameCount?: number
     pauseOnStart?: boolean
+    compact?: boolean
 }
 
 interface State {
@@ -64,24 +66,32 @@ export class Viewer extends Component<Props, State> {
                 style={{padding: 32}}
             >
                 <Grid item style={{minHeight: 0, width: "100%"}}>
-                    <ReplayViewer gameManager={gameManager}/>
+                    <ReplayViewer gameManager={gameManager}>
+                        {this.props.compact &&
+                        <CompactPlayControls/>
+                        }
+                    </ReplayViewer>
                 </Grid>
-                <Grid item>
-                    <Grid container justify="space-between" alignItems="center" spacing={24}>
-                        <Grid item>
-                            <PlayControls/>
-                        </Grid>
-                        <Grid item>
-                            <FieldCameraControls/>
+                {!this.props.compact &&
+                <>
+                    <Grid item>
+                        <Grid container justify="space-between" alignItems="center" spacing={24}>
+                            <Grid item>
+                                <PlayControls/>
+                            </Grid>
+                            <Grid item>
+                                <FieldCameraControls/>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
-                <Grid item>
-                    <PlayerCameraControls/>
-                </Grid>
-                <Grid item>
-                    <Slider/>
-                </Grid>
+                    <Grid item>
+                        <PlayerCameraControls/>
+                    </Grid>
+                    <Grid item>
+                        <Slider/>
+                    </Grid>
+                </>
+                }
             </Grid>
         )
     }
