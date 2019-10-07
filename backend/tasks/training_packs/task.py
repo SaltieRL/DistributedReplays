@@ -13,6 +13,7 @@ playlists = [
     Playlist.UNRANKED_DOUBLES,
     Playlist.UNRANKED_STANDARD,
     Playlist.UNRANKED_CHAOS,
+    Playlist.CUSTOM_LOBBY,
     Playlist.RANKED_DUELS,
     Playlist.RANKED_DOUBLES,
     Playlist.RANKED_SOLO_STANDARD,
@@ -74,18 +75,15 @@ class TrainingPackCreation:
     def create_from_player(id_, n=10, date_start=None, date_end=None, sess=None):
         # filter to standard maps and standard playlists (to exclude ranked rumble)
         # we can't get everything but this covers everything but custom games in private matches
-        builder = QueryFilterBuilder()
-        builder.initial_query = sess.query(PlayerGame.game) \
+        query = sess.query(PlayerGame.game) \
+            .join(Game, Game.hash == PlayerGame.game) \
             .filter(PlayerGame.player == id_) \
-            .filter(Game.map.in_(maps))
-        builder.with_playlists(list(playlist.value for playlist in playlists))
+            .filter(Game.map.in_(maps)) \
+            .filter(Game.playlist.in_(list(playlist.value for playlist in playlists)))
         if date_start is not None:
-            print(datetime.datetime.fromtimestamp(float(date_start)), datetime.datetime.fromtimestamp(float(date_end)))
-            builder.with_timeframe(
-                datetime.datetime.fromtimestamp(float(date_start)),
-                datetime.datetime.fromtimestamp(float(date_end)) + datetime.timedelta(days=1)
-            )
-        last_n_games = builder.build_query(sess).order_by(desc(Game.match_date))
+            query = query.filter(Game.match_date >= date_start).filter(
+                Game.match_date <= date_end + datetime.timedelta(days=1))
+        last_n_games = query.order_by(desc(Game.match_date))
         if date_start is not None:
             last_n_games = last_n_games.all()  # we don't want to overdo it, but we want to max the pack
         else:
