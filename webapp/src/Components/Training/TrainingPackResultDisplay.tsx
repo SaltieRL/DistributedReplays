@@ -183,7 +183,6 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
     }
 
     private readonly handleSelectShot = (pack: number, shotNumber: number) => {
-        console.log(pack, shotNumber)
         const shot: TrainingPackShot = this.props.trainingPacks.packs[pack].shots[shotNumber]
         this.setState({game: shot.game, frame: shot.frame})
     }

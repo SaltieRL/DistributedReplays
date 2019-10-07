@@ -1,4 +1,5 @@
 import { Grid } from "@material-ui/core"
+import Typography from "@material-ui/core/Typography"
 import * as React from "react"
 import { connect } from "react-redux"
 import { TrainingPackResponse } from "../../Models/Player/TrainingPack"
@@ -7,7 +8,6 @@ import { getTrainingPacks } from "../../Requests/Global"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { TrainingPackResultDisplay } from "../Training/TrainingPackResultDisplay"
 import { BasePage } from "./BasePage"
-import Typography from "@material-ui/core/Typography"
 
 const mapStateToProps = (state: StoreState) => ({
     loggedInUser: state.loggedInUser

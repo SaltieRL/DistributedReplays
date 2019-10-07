@@ -15,6 +15,7 @@ import {
     withStyles,
     withWidth
 } from "@material-ui/core"
+import Divider from "@material-ui/core/Divider"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
@@ -25,7 +26,6 @@ import { connect } from "react-redux"
 import { REPLAY_PAGE_LINK } from "../../Globals"
 import { TrainingPack, TrainingPackShot } from "../../Models/Player/TrainingPack"
 import { StoreState } from "../../Redux"
-import Divider from "@material-ui/core/Divider"
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {

@@ -16,6 +16,7 @@ import { ReplayPage } from "./Components/Pages/ReplayPage"
 import { ReplaysGroupPage } from "./Components/Pages/ReplaysGroupPage"
 import { ReplaysSearchPage } from "./Components/Pages/ReplaysSearchPage"
 import { StatusPage } from "./Components/Pages/StatusPage"
+import { TrainingPackPage } from "./Components/Pages/TrainingPackPage"
 import { UploadPage } from "./Components/Pages/UploadPage"
 import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
@@ -31,7 +32,6 @@ import {
     STATUS_PAGE_LINK, TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
-import { TrainingPackPage } from "./Components/Pages/TrainingPackPage"
 
 const styles = createStyles({
     App: {
