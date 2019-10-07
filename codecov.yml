@@ -43,3 +43,4 @@ ingore:
   - "redis/*"
   - "loader.py"
   - "imports_test.py"
+  - "training_packs/parsing/*"

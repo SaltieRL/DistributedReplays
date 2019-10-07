@@ -14,3 +14,4 @@ omit =
     imports_test.py
     helpers/*
     redis/*
+    training_packs/parsing/*
