@@ -1,8 +1,6 @@
 # Celery workers
 import base64
-import datetime
 import json
-import os
 import time
 from enum import Enum, auto
 from typing import Dict
@@ -11,10 +9,8 @@ import requests
 from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
-from sqlalchemy import desc, func
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
-from backend.database.objects import PlayerGame, TrainingPack, Game, Playlist
 from backend.database.startup import lazy_get_redis, lazy_startup
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
@@ -23,14 +19,17 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
-from backend.tasks.training_packs.task import TrainingPackCreation
-from backend.utils.metrics import METRICS_TRAINING_PACK_CREATION_TIME
+try:
+    from backend.tasks.training_packs.task import TrainingPackCreation
+    from backend.utils.metrics import METRICS_TRAINING_PACK_CREATION_TIME
+except (ModuleNotFoundError, ImportError):
+    TrainingPackCreation = None
+    print("Missing config or AES Key and CRC, not creating training packs")
 
 try:
     from backend.tasks.training_packs.training_packs import create_pack_from_replays
 except:
     pass
-from backend.utils.cloud_handler import upload_training_pack
 
 celery = Celery(__name__, broker=celeryconfig.broker_url)
 
