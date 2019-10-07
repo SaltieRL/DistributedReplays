@@ -57,10 +57,14 @@ def create_shots_from_replay(replay, player_id):
         for i, frame in enumerate(frame_numbers[:]):
             player_hit = player_hits[i][0]
             last_hit = last_hits[i]
+            if player_hits[i][0].goal_number != player_hits[i][1].goal_number:
+                # we don't want to accidentally use kickoffs as a "shot"
+                # this causes shots that are going into the goal because the "next hit" is this player's kickoff
+                continue
             if last_hit is not None:
                 frame_start = last_hit + 1
             else:
-                frame_start = frame - 60
+                continue  # skip this one
             for frame_num in range(frame_start, frame):
                 row = df.iloc[frame_num]
                 time_remaining = row['game']['seconds_remaining']
@@ -158,5 +162,3 @@ def create_pack_from_replays(replays, player_id):
         output.write(tpack)
     print("FN:", filename)
     return filename, [s.__dict__ for s in shots_documentation]
-
-
