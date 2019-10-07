@@ -33,10 +33,6 @@ class Property:
         type_length = struct.pack("<I", len(self.property_type) + 1)
         property_type = bytes(self.property_type.encode() + '\x00'.encode())
 
-        # value = reader.ReadUInt64()
-        # string_length = reader.ReadUInt32()
-        # string_value = reader.ReadFixedString(string_length)
-
         if self.property_type == "IntProperty":
             value = struct.pack("<Q", self.value)
         elif self.property_type == "ByteProperty":
@@ -153,19 +149,7 @@ def read_property(reader: BinaryReader):
         return None
     elif property_name == 'TAGame.TrainingEditorData_TA':
         return None
-    # length_of_property_name = reader.ReadUInt32()
-    # if length_of_property_name == 0:
-    #     return read_property(reader, in_object_property)
-    # elif length_of_property_name == 1:
-    #     return read_property(reader)
-    # padding = reader.ReadBytes(3)
-    # property_name = reader.ReadFixedString(length_of_property_name).decode()
-    # length_of_property_type = reader.ReadUInt32()
-    # padding = reader.ReadBytes(3)
-    # property_type = reader.ReadFixedString(length_of_property_type).decode()
     property_type = reader.ReadString()
-
-    # read type of property
 
     if property_type == "StructProperty":
         value = StructProperty.read(reader)
@@ -196,8 +180,6 @@ def read_property(reader: BinaryReader):
 
 
 def read_objectproperty(reader):
-    # gibberish = reader.ReadBytes(16 + 9)
-    # gibberish = reader.ReadBytes(12)
     length = reader.ReadInt32()
     extra = reader.ReadInt64()
 
@@ -318,7 +300,7 @@ def serialize(properties: List[Property]):
 
     return bytes(recreated)
 
-
+# no idea what this does but it's part of every replay file
 part2 = bytes([
     0x07, 0x00, 0x00, 0x00, 0x52, 0x6f, 0x75, 0x6e, 0x64, 0x73, 0x00, 0x0e, 0x00, 0x00, 0x00, 0x41,
     0x72, 0x72, 0x61, 0x79, 0x50, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74, 0x79, 0x00, 0xa8, 0x02, 0x00,
