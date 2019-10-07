@@ -4,6 +4,7 @@ import os
 from sqlalchemy import desc, func
 
 from backend.database.objects import Playlist, PlayerGame, Game, TrainingPack
+from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.tasks.training_packs.training_packs import create_pack_from_replays
 from backend.utils.cloud_handler import upload_training_pack
 
@@ -70,18 +71,25 @@ maps = [
 
 class TrainingPackCreation:
     @staticmethod
-    def create_from_player(id_, n=10, date=None, sess=None):
+    def create_from_player(id_, n=10, date_start=None, date_end=None, sess=None):
         # filter to standard maps and standard playlists (to exclude ranked rumble)
         # we can't get everything but this covers everything but custom games in private matches
-        last_n_games = sess.query(PlayerGame.game).join(Game, PlayerGame.game == Game.hash).filter(
-            PlayerGame.player == id_) \
-            .filter(Game.playlist.in_(tuple(playlist.value for playlist in playlists))) \
-            .filter(Game.map.in_(maps)) \
-            .order_by(desc(Game.match_date))
-        if date is not None:
-            date = datetime.date.fromtimestamp(float(date))
-            last_n_games = last_n_games.filter(func.date(Game.match_date) == date)
-        last_n_games = last_n_games[:n]
+        builder = QueryFilterBuilder()
+        builder.initial_query = sess.query(PlayerGame.game) \
+            .filter(PlayerGame.player == id_) \
+            .filter(Game.map.in_(maps))
+        builder.with_playlists(list(playlist.value for playlist in playlists))
+        if date_start is not None:
+            print(datetime.datetime.fromtimestamp(float(date_start)), datetime.datetime.fromtimestamp(float(date_end)))
+            builder.with_timeframe(
+                datetime.datetime.fromtimestamp(float(date_start)),
+                datetime.datetime.fromtimestamp(float(date_end)) + datetime.timedelta(days=1)
+            )
+        last_n_games = builder.build_query(sess).order_by(desc(Game.match_date))
+        if date_start is not None:
+            last_n_games = last_n_games.all()  # we don't want to overdo it, but we want to max the pack
+        else:
+            last_n_games = last_n_games[:n]  # use default of last n games
         last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
         result = create_pack_from_replays(last_n_games, id_)
         if result is None:

@@ -5,7 +5,8 @@ import {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
-    IconButton, List,
+    IconButton,
+    List,
     ListItem,
     Theme,
     Tooltip,
@@ -147,7 +148,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                         </Grid>
                                         <Grid item xs={2}>
                                             <Typography variant="subtitle2">
-                                                View game stats
+                                                View game
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={2}>
@@ -176,7 +177,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                                     </Grid>
                                                     <Grid item xs={2}>
                                                         <Typography>
-                                                            {minutes}:{seconds} remaining
+                                                            {minutes}:{seconds}
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={4}>

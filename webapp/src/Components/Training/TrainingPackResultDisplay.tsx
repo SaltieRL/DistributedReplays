@@ -1,9 +1,21 @@
-import { Card, CardHeader, Divider, List, Typography, withWidth } from "@material-ui/core"
+import {
+    Card,
+    CardHeader,
+    Dialog, DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Divider,
+    List,
+    Typography,
+    withWidth
+} from "@material-ui/core"
 import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import * as _ from "lodash"
 import * as moment from "moment"
+import * as qs from "qs"
 import * as React from "react"
 import { doGet } from "../../apiHandler/apiHandler"
 import { TrainingPack, TrainingPackResponse, TrainingPackShot } from "../../Models/Player/TrainingPack"
@@ -28,21 +40,23 @@ interface State {
     selectedReplayIds: string[]
     game?: string
     frame?: number
-    date: moment.Moment | null
+    dateStart: moment.Moment | null
+    dateEnd: moment.Moment | null
+    openDialog: boolean
 }
 
 class TrainingPackResultDisplayComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {selectable: false, selectedReplayIds: [], date: null}
+        this.state = {selectable: false, selectedReplayIds: [], dateStart: null, dateEnd: null, openDialog: false}
     }
 
     public render() {
         const {width} = this.props
         const isWidthUpLg = isWidthUp("lg", width)
         const linkButton = (
-            <Button onClick={this.createPack} variant={"outlined"}>
-                Create pack
+            <Button onClick={this.openDialog} variant={"outlined"}>
+                New pack
             </Button>
         )
         const viewer = (this.state.game && this.state.frame) ? (
@@ -54,6 +68,48 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                 />
             </Grid>
         ) : null
+
+        const createPackDialog = (
+            <Dialog open={this.state.openDialog}
+                    onClose={this.closeDialog}
+                    scroll="paper"
+                    PaperProps={
+                        {style: {width: 600, maxWidth: "90vw"}}}>
+                <DialogTitle id="form-dialog-title">Create pack</DialogTitle>
+                <DialogContent>
+                    <Grid container>
+                        <Grid xs={12}>
+                            <DialogContentText>
+                                Leave all fields blank for defaults (use most recent games).
+                            </DialogContentText>
+                        </Grid>
+                        <Grid xs={12}>
+                            <ClearableDatePicker
+                                placeholder={"Date filter start"}
+                                onChange={this.handleDateChangeStart}
+                                value={this.state.dateStart}
+                                helperText="Leave blank to default to recent games"/>
+                        </Grid>
+                        <Grid xs={12}>
+                            <ClearableDatePicker
+                                placeholder={"Date filter end"}
+                                onChange={this.handleDateChangeEnd}
+                                value={this.state.dateEnd}
+                                helperText="Leave blank to default to recent games"/>
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {
+                        this.closeDialog()
+                        this.createPack()
+                    }} variant={"outlined"}>
+                        Create pack
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        )
+
         const {trainingPacks, page, limit} = this.props
         const {selectable} = this.state
         return (
@@ -69,11 +125,6 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                         "and accessed in Training > Created"} action={
                                 <div style={{paddingRight: 8}}>
                                     <div style={{display: "flex"}}>
-                                        <ClearableDatePicker
-                                            placeholder={"Date filter"}
-                                            onChange={this.handleDateChange}
-                                            value={this.state.date}
-                                            helperText="Leave blank to default to recent games"/>
                                         {linkButton}
                                     </div>
                                 </div>}/>
@@ -126,6 +177,7 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                     }
                 </Grid>
                 {isWidthUpLg && viewer}
+                {createPackDialog}
             </Grid>
         )
     }
@@ -158,7 +210,11 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
     }
 
     private readonly createPack = () => {
-        doGet("/training/create" + (this.state.date ? "?date=" + this.state.date.unix() : ""))
+        const params = {
+            date_start: this.state.dateStart ? this.state.dateStart.unix() : undefined,
+            date_end: this.state.dateEnd ? this.state.dateEnd.unix() : undefined
+        }
+        doGet("/training/create" + qs.stringify(params, {addQueryPrefix: true}))
             .then(() => {
                 this.props.showNotification({
                     variant: "success",
@@ -168,15 +224,19 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
             })
     }
 
-    private readonly handleDateChange = (date: moment.Moment | null) => {
-        this.setState({date})
+    private readonly handleDateChangeStart = (date: moment.Moment | null) => {
+        this.setState({dateStart: date})
+    }
+    private readonly handleDateChangeEnd = (date: moment.Moment | null) => {
+        this.setState({dateEnd: date})
     }
 
-    // private readonly getGroupLink = () => {
-    //     const url = qs.stringify({ids: this.state.selectedReplayIds},
-    //         {arrayFormat: "repeat", addQueryPrefix: true})
-    //     return REPLAYS_GROUP_PAGE_LINK + url
-    // }
+    private readonly closeDialog = () => {
+        this.setState({openDialog: false})
+    }
+    private readonly openDialog = () => {
+        this.setState({openDialog: true})
+    }
 }
 
 export const TrainingPackResultDisplay = withWidth()(withNotifications()(TrainingPackResultDisplayComponent))

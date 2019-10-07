@@ -108,12 +108,12 @@ def calc_item_stats(self, session=None):
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
-def create_training_pack(self, id_, n=10, date=None, session=None):
+def create_training_pack(self, id_, n=10, date_start=None, date_end=None, session=None):
     if session is None:
         sess = self.session()
     else:
         sess = session
-    url = TrainingPackCreation.create_from_player(id_, n, date, sess)
+    url = TrainingPackCreation.create_from_player(id_, n, date_start, date_end, sess)
     return url
 
 

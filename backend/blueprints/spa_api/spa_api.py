@@ -524,12 +524,18 @@ def api_handle_error(error: CalculatedError):
 
 @bp.route('/training/create')
 @require_user
-@with_query_params(accepted_query_params=[QueryParam(name="date", type_=str, optional=True)])
+@with_query_params(accepted_query_params=[
+    QueryParam(name="date_start", type_=str, optional=True),
+    QueryParam(name="date_end", type_=str, optional=True)
+])
 def api_create_trainingpack(query_params=None):
-    date = None
-    if 'date' in query_params:
-        date = query_params['date']
-    create_training_pack.delay(get_current_user_id(), 10, date)
+    date_start = None
+    date_end = None
+    if 'date_start' in query_params:
+        date_start = query_params['date_start']
+    if 'date_end' in query_params:
+        date_end = query_params['date_end']
+    create_training_pack.delay(get_current_user_id(), 10, date_start, date_end)
     return better_jsonify({'status': 'Success'})
 
 
