@@ -68,7 +68,7 @@ def create_shots_from_replay(replay, player_id):
                 ball_x = ball_info['pos_x']
                 ball_y = ball_info['pos_y']
                 ball_z = ball_info['pos_z']
-                n = 12.1
+                n = 11
                 ball_vel_x = ball_info['vel_x'] / n
                 ball_vel_y = ball_info['vel_y'] / n
                 ball_vel_z = ball_info['vel_z'] / n
