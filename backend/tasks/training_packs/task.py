@@ -1,10 +1,9 @@
 import datetime
 import os
 
-from sqlalchemy import desc, func
+from sqlalchemy import desc
 
 from backend.database.objects import Playlist, PlayerGame, Game, TrainingPack
-from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.tasks.training_packs.training_packs import create_pack_from_replays
 from backend.utils.cloud_handler import upload_training_pack
 

@@ -3,7 +3,7 @@ import math
 import os
 import uuid
 
-from backend.tasks.training_packs.decrypt import create_shot, load_pack, reserialize
+from backend.tasks.training_packs.parsing.decrypt import create_shot, load_pack, reserialize
 from backend.utils.file_manager import FileManager
 
 
