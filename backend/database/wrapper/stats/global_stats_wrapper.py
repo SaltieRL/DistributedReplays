@@ -151,7 +151,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
             from flask import current_app
             return current_app.config['STAT_DAY_LIMIT']
         except:
-            return 30 * 6
+            return 30
 
 
 if __name__ == '__main__':
