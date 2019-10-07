@@ -104,8 +104,6 @@ def create_shots_from_replay(replay, player_id):
                     car_x = -car_x
                     car_y = -car_y
                     car_rot_y += 65536.0 / 2
-
-                print(car_z, magnitude)
                 filters = [
                     car_z < 50,
                     magnitude > 500
@@ -123,7 +121,6 @@ def create_shots_from_replay(replay, player_id):
 
 
 def create_pack_from_replays(replays, player_id):
-    print(replays, player_id)
     shot_list = []
     shots_documentation = []
     for replay in replays:
@@ -131,7 +128,6 @@ def create_pack_from_replays(replays, player_id):
         new_shots, new_shots_documentation = result
         shot_list += new_shots
         shots_documentation += new_shots_documentation
-    print(replays, player_id)
     if len(shot_list) == 0:
         print("Player", player_id, "had zero shots. Skipping...")
         return
@@ -143,7 +139,7 @@ def create_pack_from_replays(replays, player_id):
     pack = os.path.join(dirname, "packs", "1ShotBeckwithDefault.Tem")
     parsed_properties = load_pack(pack)
     shots = parsed_properties[6]
-    print("Found", len(shot_list), "shots")
+    print("Found" + str(len(shot_list)) + "shots")
     shots.value = shot_list
     parsed_properties[6] = shots
     # Create new guid to make it unique

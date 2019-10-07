@@ -26,40 +26,43 @@ def get_checks(global_state=None):
     def is_admin():
         if local_dev:
             return True
-        if current_app is None:
+        try:
+            if hasattr(globals(), 'user'):
+                if globals().user is None:
+                    return False
+                return globals().admin
+        except:
             return False
-        if hasattr(globals(), 'user'):
-            if globals().user is None:
-                return False
-            return globals().admin
         return False
 
     def is_alpha():
         if is_admin():
             return True
-        if current_app is None:
+        try:
+            if hasattr(globals(), 'user'):
+                if globals().user is None:
+                    return False
+                return globals().alpha
+        except:
             return False
-        if hasattr(globals(), 'user'):
-            if globals().user is None:
-                return False
-            return globals().alpha
         return False
 
     def is_beta():
         if is_admin():
             return True
-        if current_app is None:
+        try:
+            if hasattr(globals(), 'user'):
+                if globals().user is None:
+                    return False
+                return is_alpha() or globals().beta
+        except:
             return False
-        if hasattr(globals(), 'user'):
-            if globals().user is None:
-                return False
-            return is_alpha() or globals().beta
         return False
 
     return is_admin, is_alpha, is_beta
 
-is_admin, is_alpha, is_beta = get_checks()
 
+is_admin, is_alpha, is_beta = get_checks()
 
 IS_LOCAL_DEV = get_local_dev()
 
@@ -70,4 +73,3 @@ def is_local_dev():
 
 def ignore_filtering():
     return False
-
