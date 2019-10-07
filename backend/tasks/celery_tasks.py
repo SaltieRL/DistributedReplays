@@ -3,6 +3,7 @@ import base64
 import datetime
 import json
 import os
+import time
 from enum import Enum, auto
 from typing import Dict
 
@@ -23,6 +24,7 @@ from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
 from backend.tasks.training_packs.task import TrainingPackCreation
+from backend.utils.metrics import METRICS_TRAINING_PACK_CREATION_TIME
 
 try:
     from backend.tasks.training_packs.training_packs import create_pack_from_replays
@@ -113,7 +115,12 @@ def create_training_pack(self, id_, n=10, date_start=None, date_end=None, sessio
         sess = self.session()
     else:
         sess = session
+    start = time.time()
     url = TrainingPackCreation.create_from_player(id_, n, date_start, date_end, sess)
+    end = time.time()
+    METRICS_TRAINING_PACK_CREATION_TIME.observe(
+        start - end
+    )
     return url
 
 

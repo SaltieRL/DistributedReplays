@@ -535,8 +535,8 @@ def api_create_trainingpack(query_params=None):
         date_start = query_params['date_start']
     if 'date_end' in query_params:
         date_end = query_params['date_end']
-    create_training_pack.delay(get_current_user_id(), 10, date_start, date_end)
-    return better_jsonify({'status': 'Success'})
+    task = create_training_pack.delay(get_current_user_id(), 10, date_start, date_end)
+    return better_jsonify({'status': 'Success', 'id': task.id})
 
 
 @bp.route('/training/list')
