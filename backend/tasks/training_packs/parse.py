@@ -3,7 +3,7 @@ import json
 import struct
 from typing import List
 
-from .binary_reader import BinaryReader
+from backend.tasks.training_packs.binary_reader import BinaryReader
 
 
 class TrainingPack:
