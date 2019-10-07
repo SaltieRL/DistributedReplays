@@ -43,6 +43,7 @@ def create_shots_from_replay(replay, player_id):
     for p in players:
         player = p.name
         id_ = p.id.id
+        is_orange = p.is_orange
         if id_ != player_id:
             continue  # skip players outside of the selected person
         hits = proto.game_stats.hits
@@ -66,73 +67,67 @@ def create_shots_from_replay(replay, player_id):
             else:
                 continue  # skip this one
             for frame_num in range(frame_start, frame):
-                row = df.iloc[frame_num]
-                time_remaining = row['game']['seconds_remaining']
-                ball_info = row['ball']
-                ball_x = ball_info['pos_x']
-                ball_y = ball_info['pos_y']
-                ball_z = ball_info['pos_z']
-                n = 11
-                ball_vel_x = ball_info['vel_x'] / n
-                ball_vel_y = ball_info['vel_y'] / n
-                ball_vel_z = ball_info['vel_z'] / n
-                magnitude = (ball_vel_x ** 2 + ball_vel_y ** 2 + ball_vel_z ** 2) ** 0.5
-                # xy_mag = (ball_vel_x ** 2 + ball_vel_y ** 2) ** 0.5
-                unit_x = ball_vel_x / magnitude
-                unit_y = ball_vel_y / magnitude
-                unit_z = ball_vel_z / magnitude
-                pitch = math.asin(unit_z) * 65536.0 / (2 * math.pi)
-                yaw = math.atan2(unit_y, unit_x) * 65536.0 / (2 * math.pi)
-                yaw = round(yaw, 2)
-                if player_hit.dribble:
-                    magnitude = 0
-                if p.is_orange:
-                    yaw += 65536.0 / 2
-                    ball_x = -ball_x
-                    ball_y = -ball_y
-
-                car_info = row[player]
-                car_x = round(car_info['pos_x'], 3)
-                car_y = round(car_info['pos_y'], 3)
-                car_z = round(car_info['pos_z'], 3)
-
-                car_rot_x = round(car_info['rot_x'] * 65536.0 / (2 * math.pi), 2)
-                car_rot_y = round(car_info['rot_y'] * 65536.0 / (2 * math.pi), 2)
-                car_rot_z = round(car_info['rot_z'] * 65536.0 / (2 * math.pi), 2)
-
-                if p.is_orange:
-                    car_x = -car_x
-                    car_y = -car_y
-                    car_rot_y += 65536.0 / 2
-                filters = [
-                    car_z < 50,
-                    magnitude > 500
-                ]
+                filters, shot, shot_doc = create_shot_from_frame(df, frame_num, player, player_hit, is_orange, guid)
                 if all(filters):
-                    shots_list.append(create_shot(ball_x=ball_x, ball_y=ball_y,
-                                                  ball_z=ball_z, ball_vel_p=pitch,
-                                                  ball_vel_y=yaw,
-                                                  ball_vel_r=0.0, ball_vel_mag=round(magnitude, 5),
-                                                  car_x=car_x, car_y=car_y, car_z=car_z,
-                                                  car_rot_p=car_rot_z, car_rot_y=car_rot_y, car_rot_r=car_rot_x))
-                    shots_documentation.append(Shot(guid, frame_num, time_remaining))
+                    shots_list.append(shot)
+                    shots_documentation.append(shot_doc)
                     break
     return shots_list, shots_documentation
 
 
-def create_pack_from_replays(replays, player_id):
-    shot_list = []
-    shots_documentation = []
-    for replay in replays:
-        result = create_shots_from_replay(replay, player_id)
-        new_shots, new_shots_documentation = result
-        shot_list += new_shots
-        shots_documentation += new_shots_documentation
-    if len(shot_list) == 0:
-        print("Player", player_id, "had zero shots. Skipping...")
-        return
-    if len(shot_list) > 50:
-        shot_list = shot_list[:50]
+def create_shot_from_frame(df, frame_num, player, player_hit, is_orange, guid):
+    row = df.iloc[frame_num]
+    time_remaining = row['game']['seconds_remaining']
+    ball_info = row['ball']
+    ball_x = ball_info['pos_x']
+    ball_y = ball_info['pos_y']
+    ball_z = ball_info['pos_z']
+    n = 11
+    ball_vel_x = ball_info['vel_x'] / n
+    ball_vel_y = ball_info['vel_y'] / n
+    ball_vel_z = ball_info['vel_z'] / n
+    magnitude = (ball_vel_x ** 2 + ball_vel_y ** 2 + ball_vel_z ** 2) ** 0.5
+    # xy_mag = (ball_vel_x ** 2 + ball_vel_y ** 2) ** 0.5
+    unit_x = ball_vel_x / magnitude
+    unit_y = ball_vel_y / magnitude
+    unit_z = ball_vel_z / magnitude
+    pitch = math.asin(unit_z) * 65536.0 / (2 * math.pi)
+    yaw = math.atan2(unit_y, unit_x) * 65536.0 / (2 * math.pi)
+    yaw = round(yaw, 2)
+    if player_hit.dribble:
+        magnitude = 0
+    if is_orange:
+        # flip ball around
+        yaw += 65536.0 / 2
+        ball_x = -ball_x
+        ball_y = -ball_y
+    car_info = row[player]
+    car_x = round(car_info['pos_x'], 3)
+    car_y = round(car_info['pos_y'], 3)
+    car_z = round(car_info['pos_z'], 3)
+    car_rot_x = round(car_info['rot_x'] * 65536.0 / (2 * math.pi), 2)
+    car_rot_y = round(car_info['rot_y'] * 65536.0 / (2 * math.pi), 2)
+    car_rot_z = round(car_info['rot_z'] * 65536.0 / (2 * math.pi), 2)
+    if is_orange:
+        # flip car around
+        car_x = -car_x
+        car_y = -car_y
+        car_rot_y += 65536.0 / 2
+    filters = [
+        car_z < 50,
+        magnitude > 500
+    ]
+    shot = create_shot(ball_x=ball_x, ball_y=ball_y,
+                       ball_z=ball_z, ball_vel_p=pitch,
+                       ball_vel_y=yaw,
+                       ball_vel_r=0.0, ball_vel_mag=round(magnitude, 5),
+                       car_x=car_x, car_y=car_y, car_z=car_z,
+                       car_rot_p=car_rot_z, car_rot_y=car_rot_y, car_rot_r=car_rot_x)
+    shot_doc = Shot(guid, frame_num, time_remaining)
+    return filters, shot, shot_doc
+
+
+def write_pack(shot_list, player_id):
     dirname = os.path.dirname(os.path.abspath(__file__))
     # Use a basic pack to start with, to prevent having to write the skeleton out
     # We just want to replace the shots/name/guid
@@ -157,4 +152,21 @@ def create_pack_from_replays(replays, player_id):
     with open(filename, "wb") as output:
         output.write(tpack)
     print("FN:", filename)
+    return filename
+
+
+def create_pack_from_replays(replays, player_id):
+    shot_list = []
+    shots_documentation = []
+    for replay in replays:
+        result = create_shots_from_replay(replay, player_id)
+        new_shots, new_shots_documentation = result
+        shot_list += new_shots
+        shots_documentation += new_shots_documentation
+    if len(shot_list) == 0:
+        print("Player", player_id, "had zero shots. Skipping...")
+        return
+    if len(shot_list) > 50:
+        shot_list = shot_list[:50]
+    filename = write_pack(shot_list, player_id)
     return filename, [s.__dict__ for s in shots_documentation]
