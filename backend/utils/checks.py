@@ -1,4 +1,4 @@
-from flask import g
+from flask import g, current_app
 
 
 def get_local_dev() -> bool:
@@ -15,6 +15,8 @@ def get_local_dev() -> bool:
 
 def get_checks(global_state=None):
     def globals():
+        if current_app is None:
+            return
         if global_state is None:
             return g
         return global_state
@@ -24,6 +26,8 @@ def get_checks(global_state=None):
     def is_admin():
         if local_dev:
             return True
+        if current_app is None:
+            return False
         if hasattr(globals(), 'user'):
             if globals().user is None:
                 return False
@@ -33,6 +37,8 @@ def get_checks(global_state=None):
     def is_alpha():
         if is_admin():
             return True
+        if current_app is None:
+            return False
         if hasattr(globals(), 'user'):
             if globals().user is None:
                 return False
@@ -42,6 +48,8 @@ def get_checks(global_state=None):
     def is_beta():
         if is_admin():
             return True
+        if current_app is None:
+            return False
         if hasattr(globals(), 'user'):
             if globals().user is None:
                 return False

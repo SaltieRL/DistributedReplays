@@ -9,9 +9,9 @@ from typing import List
 from Crypto import Random
 from Crypto.Cipher import AES
 
+from backend.tasks.training_packs.crc import create_crc
+from backend.tasks.training_packs.parse import parse, serialize, Property
 from config import AES_KEY
-from .crc import create_crc
-from .parse import parse, serialize, Property
 
 PARSED_DIR = "parsed"
 PACK_DIR = "pack"
