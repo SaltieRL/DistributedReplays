@@ -3,6 +3,7 @@ import os
 
 from sqlalchemy import desc
 
+from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
 from backend.database.objects import Playlist, PlayerGame, Game, TrainingPack
 from backend.tasks.training_packs.training_packs import create_pack_from_replays
 from backend.utils.cloud_handler import upload_training_pack
@@ -89,6 +90,8 @@ class TrainingPackCreation:
             query = query.filter(Game.match_date >= date_start).filter(
                 Game.match_date <= date_end + datetime.timedelta(days=1))
         last_n_games = query.order_by(desc(Game.match_date))
+        if query.count() == 0:
+            raise UserHasNoReplays()
         if date_start is not None:
             last_n_games = last_n_games.all()  # we don't want to overdo it, but we want to max the pack
         else:
