@@ -27,6 +27,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.tasks.celery_tasks import create_training_pack
+from backend.tasks.training_packs.task import TrainingPackCreation
 from backend.utils.logging import ErrorLogger
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
@@ -544,16 +545,7 @@ def api_create_trainingpack(query_params=None):
 @with_session
 def api_find_trainingpack(session=None):
     player = get_current_user_id()
-    packs = session.query(TrainingPack).filter(TrainingPack.player == player).order_by(desc(TrainingPack.creation_date))
-    return better_jsonify({'packs': [
-        {
-            'guid': p.guid,
-            'shots': p.shots,
-            'date': p.creation_date,
-            'link': f'https://storage.googleapis.com/{TRAINING_PACK_BUCKET}/{p.guid}.Tem'
-        } for p in packs.all()
-    ],
-        'totalCount': packs.count()})
+    return better_jsonify(TrainingPackCreation.list_packs(player, session))
 
 
 # Homepage

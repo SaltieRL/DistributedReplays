@@ -7,6 +7,10 @@ from backend.database.objects import Playlist, PlayerGame, Game, TrainingPack
 from backend.tasks.training_packs.training_packs import create_pack_from_replays
 from backend.utils.cloud_handler import upload_training_pack
 
+try:
+    from config import TRAINING_PACK_BUCKET
+except:
+    TRAINING_PACK_BUCKET = None
 playlists = [
     Playlist.UNRANKED_DUELS,
     Playlist.UNRANKED_DOUBLES,
@@ -80,6 +84,8 @@ class TrainingPackCreation:
             .filter(Game.map.in_(maps)) \
             .filter(Game.playlist.in_(list(playlist.value for playlist in playlists)))
         if date_start is not None:
+            date_start = datetime.date.fromtimestamp(float(date_start))
+            date_end = datetime.date.fromtimestamp(float(date_end))
             query = query.filter(Game.match_date >= date_start).filter(
                 Game.match_date <= date_end + datetime.timedelta(days=1))
         last_n_games = query.order_by(desc(Game.match_date))
@@ -100,3 +106,17 @@ class TrainingPackCreation:
         tp = TrainingPack(guid=guid, player=id_, shots=shots)
         sess.add(tp)
         sess.commit()
+
+    @staticmethod
+    def list_packs(id_, session):
+        packs = session.query(TrainingPack).filter(TrainingPack.player == id_).order_by(
+            desc(TrainingPack.creation_date))
+        return {'packs': [
+            {
+                'guid': p.guid,
+                'shots': p.shots,
+                'date': p.creation_date,
+                'link': f'https://storage.googleapis.com/{TRAINING_PACK_BUCKET}/{p.guid}.Tem'
+            } for p in packs.all()
+        ],
+            'totalCount': packs.count()}
