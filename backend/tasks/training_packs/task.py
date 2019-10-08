@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 
 from sqlalchemy import desc
@@ -12,6 +13,8 @@ try:
     from config import TRAINING_PACK_BUCKET
 except:
     TRAINING_PACK_BUCKET = None
+
+logger = logging.getLogger(__name__)
 playlists = [
     Playlist.UNRANKED_DUELS,
     Playlist.UNRANKED_DOUBLES,
@@ -101,9 +104,9 @@ class TrainingPackCreation:
         if result is None:
             return None
         filename, shots = result
-        print("File:", filename)
+        logger.info("File:", filename)
         url = upload_training_pack(filename)
-        print("URL:", url)
+        logger.info("URL:", url)
         os.remove(filename)
         guid = os.path.basename(filename).replace('.Tem', '')
         tp = TrainingPack(guid=guid, player=id_, shots=shots)

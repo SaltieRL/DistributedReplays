@@ -1,5 +1,6 @@
 import gzip
 import io
+import logging
 import os
 from typing import Callable
 
@@ -17,10 +18,11 @@ except:
     FAILED_BUCKET = None
     TRAINING_PACK_BUCKET = None
 
+logger = logging.getLogger(__name__)
 try:
     from google.cloud import storage
 except:
-    print("Google Cloud Storage is not installed. Install it with `pip install google-cloud-storage`")
+    logger.warning("Google Cloud Storage is not installed. Install it with `pip install google-cloud-storage`")
     storage = None
 
 
@@ -81,7 +83,7 @@ def download_df(id_):
             with io.BytesIO(r.content) as f:
                 data_frame = pandas_manager.PandasManager.read_numpy_from_memory(f)
         except:
-            return None
+            raise ReplayNotFound()
     return data_frame
 
 
