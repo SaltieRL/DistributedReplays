@@ -27,7 +27,6 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.tasks.celery_tasks import create_training_pack
-from backend.tasks.training_packs.task import TrainingPackCreation
 from backend.utils.logging import ErrorLogger
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
@@ -80,6 +79,12 @@ from backend.blueprints.spa_api.service_layers.replay.replay_positions import Re
 from backend.blueprints.spa_api.service_layers.replay.tag import Tag
 from backend.blueprints.spa_api.utils.decorators import require_user, with_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import QueryParam, get_query_params
+
+try:
+    from backend.tasks.training_packs.task import TrainingPackCreation
+except (ModuleNotFoundError, ImportError):
+    TrainingPackCreation = None
+    print("Missing config or AES Key and CRC, not creating training packs")
 
 logger = logging.getLogger(__name__)
 
