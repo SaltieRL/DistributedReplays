@@ -3,7 +3,6 @@ from carball.generated.api.stats.events_pb2 import Kickoff
 from utils.file_manager import FileManager
 
 
-
 class Kickoffs:
 
     def __init__(self, replay_id):
@@ -16,7 +15,11 @@ class Kickoffs:
 
     def create_from_id(self, replay_id: str):
         protobuf_game = FileManager.get_proto(replay_id)
-        kickoffs = protobuf_game.game_stats.kickoffs
+        kickoffs = protobuf_game.game_stats.kickoffs_stats
+
+        kickoff_data = []
+        for i in range(len(kickoffs)):
+            kickoff_data.append(self.get_stats_from_kickoff(kickoffs[i]))
 
     def get_stats_from_kickoff(self, kickoff: Kickoff):
         players = kickoff.touch.players
@@ -28,7 +31,9 @@ class Kickoffs:
         start_y = None
         if player.start_position is None:
             if self.pandas is None:
-                self.load_pandas()
-
-    def load_pandas(self):
-        self.pandas = FileManager.get_pandas(self.replay_id)
+                self.pandas = FileManager.get_pandas(self.replay_id)
+            start_x = self.pandas[player.name]['pos_x'][start_frame]
+            start_y = self.pandas[player.name]['pos_x'][start_frame]
+        else:
+            start_x = player.start_position.pos_x
+            start_y = player.start_position.pos_y
