@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import subprocess
 from typing import Dict, List, Tuple
 
 from flask import Flask, render_template, g, request, redirect, send_from_directory
@@ -33,6 +34,11 @@ except ImportError:
     ALLOWED_STEAM_ACCOUNTS = []
     users = []
     prod = False
+
+try:
+    from config import BASE_URL
+except ImportError:
+    BASE_URL = 'https://calculated.gg'
 
 
 class CalculatedServer:
@@ -110,7 +116,7 @@ class CalculatedServer:
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
         app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
         app.config['TEMPLATES_AUTO_RELOAD'] = True
-        app.config['BASE_URL'] = 'https://calculated.gg'
+        app.config['BASE_URL'] = 'https://calculated.gg' if BASE_URL is None else BASE_URL
         app.config['REPLAY_DIR'] = os.path.join(BASE_FOLDER, 'data', 'rlreplays')
         app.config['PARSED_DIR'] = os.path.join(BASE_FOLDER, 'data', 'parsed')
         app.config['VERSION'] = CalculatedServer.get_version()
@@ -194,7 +200,8 @@ class CalculatedServer:
     @classmethod
     def get_version(cls):
         try:
-            # TODO use some sort of git lookup to get information
-            return "0.0.1"
-        except:
-            return "0.0.1"
+            return subprocess.check_output([
+                'git', 'rev-parse', '--short', 'HEAD'
+            ]).decode().strip()
+        except subprocess.CalledProcessError:
+            return 'unknown'

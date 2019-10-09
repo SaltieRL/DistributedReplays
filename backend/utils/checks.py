@@ -1,4 +1,4 @@
-from flask import g
+from flask import g, current_app
 
 
 def get_local_dev() -> bool:
@@ -15,6 +15,8 @@ def get_local_dev() -> bool:
 
 def get_checks(global_state=None):
     def globals():
+        if current_app is None:
+            return
         if global_state is None:
             return g
         return global_state
@@ -24,34 +26,43 @@ def get_checks(global_state=None):
     def is_admin():
         if local_dev:
             return True
-        if hasattr(globals(), 'user'):
-            if globals().user is None:
-                return False
-            return globals().admin
+        try:
+            if hasattr(globals(), 'user'):
+                if globals().user is None:
+                    return False
+                return globals().admin
+        except:
+            return False
         return False
 
     def is_alpha():
         if is_admin():
             return True
-        if hasattr(globals(), 'user'):
-            if globals().user is None:
-                return False
-            return globals().alpha
+        try:
+            if hasattr(globals(), 'user'):
+                if globals().user is None:
+                    return False
+                return globals().alpha
+        except:
+            return False
         return False
 
     def is_beta():
         if is_admin():
             return True
-        if hasattr(globals(), 'user'):
-            if globals().user is None:
-                return False
-            return is_alpha() or globals().beta
+        try:
+            if hasattr(globals(), 'user'):
+                if globals().user is None:
+                    return False
+                return is_alpha() or globals().beta
+        except:
+            return False
         return False
 
     return is_admin, is_alpha, is_beta
 
-is_admin, is_alpha, is_beta = get_checks()
 
+is_admin, is_alpha, is_beta = get_checks()
 
 IS_LOCAL_DEV = get_local_dev()
 
@@ -62,4 +73,3 @@ def is_local_dev():
 
 def ignore_filtering():
     return False
-

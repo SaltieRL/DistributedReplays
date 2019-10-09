@@ -41,3 +41,4 @@ Werkzeug==0.15.3
 xlrd==1.1.0
 alembic==1.0.10
 prometheus_client
+pycryptodome

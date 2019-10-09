@@ -11,6 +11,7 @@ import zlib
 
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
+from sqlalchemy import desc
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
@@ -25,6 +26,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
+from backend.tasks.celery_tasks import create_training_pack
 from backend.utils.logging import ErrorLogger
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
@@ -45,16 +47,18 @@ try:
     REPLAY_BUCKET = config.REPLAY_BUCKET
     PROTO_BUCKET = config.PROTO_BUCKET
     PARSED_BUCKET = config.PARSED_BUCKET
+    TRAINING_PACK_BUCKET = config.TRAINING_PACK_BUCKET
 except:
     print('Not uploading to buckets')
     REPLAY_BUCKET = ''
     PROTO_BUCKET = ''
     PARSED_BUCKET = ''
+    TRAINING_PACK_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting
+from backend.database.objects import Game, GameVisibilitySetting, TrainingPack
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
@@ -75,6 +79,12 @@ from backend.blueprints.spa_api.service_layers.replay.replay_positions import Re
 from backend.blueprints.spa_api.service_layers.replay.tag import Tag
 from backend.blueprints.spa_api.utils.decorators import require_user, with_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import QueryParam, get_query_params
+
+try:
+    from backend.tasks.training_packs.task import TrainingPackCreation
+except (ModuleNotFoundError, ImportError):
+    TrainingPackCreation = None
+    print("Missing config or AES Key and CRC, not creating training packs")
 
 logger = logging.getLogger(__name__)
 
@@ -270,8 +280,12 @@ def api_get_replay_basic_team_stats_download(id_):
 
 
 @bp.route('replay/<id_>/positions')
-@with_query_params(accepted_query_params=[QueryParam(name='frame', type_=int, optional=True, is_list=True),
-                                          QueryParam(name='as_proto', type_=bool, optional=True)])
+@with_query_params(accepted_query_params=[
+    QueryParam(name='frame', type_=int, optional=True, is_list=True),
+    QueryParam(name='frame_start', type_=int, optional=True),
+    QueryParam(name='frame_count', type_=int, optional=True),
+    QueryParam(name='as_proto', type_=bool, optional=True)
+])
 def api_get_replay_positions(id_, query_params=None):
     positions = ReplayPositions.create_from_id(id_, query_params=query_params)
     if query_params is None or 'as_proto' not in query_params:
@@ -512,6 +526,31 @@ def api_handle_error(error: CalculatedError):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+@bp.route('/training/create')
+@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name="date_start", type_=str, optional=True),
+    QueryParam(name="date_end", type_=str, optional=True)
+])
+def api_create_trainingpack(query_params=None):
+    date_start = None
+    date_end = None
+    if 'date_start' in query_params:
+        date_start = query_params['date_start']
+    if 'date_end' in query_params:
+        date_end = query_params['date_end']
+    task = create_training_pack.delay(get_current_user_id(), 10, date_start, date_end)
+    return better_jsonify({'status': 'Success', 'id': task.id})
+
+
+@bp.route('/training/list')
+@require_user
+@with_session
+def api_find_trainingpack(session=None):
+    player = get_current_user_id()
+    return better_jsonify(TrainingPackCreation.list_packs(player, session))
 
 
 # Homepage

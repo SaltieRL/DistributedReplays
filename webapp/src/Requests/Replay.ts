@@ -34,6 +34,10 @@ export const getReplayViewerData = (id: string): Promise<any> => {
     return doGet(`/replay/${id}/positions`)
 }
 
+export const getReplayViewerDataRange = (id: string, frameStart: number, count: number): Promise<any> => {
+    return doGet(`/replay/${id}/positions?frame_start=${frameStart}&frame_count=${count}`)
+}
+
 // TODO: Fix Promise return type
 export const getReplayMetadata = (id: string): Promise<any> => {
     return doGet(`/v1/replay/${id}?key=1`)

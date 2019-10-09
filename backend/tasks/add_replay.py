@@ -143,7 +143,7 @@ def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None,
     # Add game visibility option
     try:
         apply_game_visibility(query_params=query_params, game_id=game_id,
-                              game_exists=match_exists)
+                              game_exists=match_exists, proto_game=protobuf_game)
     except CalculatedError as e:
         error_counter.append('visibility')
         ErrorLogger.log_error(e, message='Error changing visibility', logger=logger)
