@@ -79,5 +79,5 @@ def mock_user(monkeypatch):
 
     mock_user = MockUser()
 
-    monkeypatch.setattr('backend.utils.global_functions.UserManager.get_current_user', mock_user.get_fake_user)
+    monkeypatch.setattr('backend.utils.safe_flask_globals.UserManager.get_current_user', mock_user.get_fake_user)
     return mock_user

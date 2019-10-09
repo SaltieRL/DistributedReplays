@@ -19,7 +19,6 @@ from backend.database.wrapper.player_wrapper import create_default_player
 from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER, BASE_FOLDER
 from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
-from backend.utils.global_functions import create_jinja_globals
 from backend.utils.metrics import MetricsHandler
 from backend.utils.logging import ErrorLogger
 
@@ -78,8 +77,6 @@ class CalculatedServer:
             app.config['groups'] = ids_to_group
             _session.commit()
             _session.close()
-
-        create_jinja_globals(app, g)
 
         return app, ids
 
