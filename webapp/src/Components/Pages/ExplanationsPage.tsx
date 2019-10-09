@@ -18,12 +18,12 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
         this.state = {reloadSignal: false}
     }
 
-    componentDidMount () {
-        MathJax.Hub.Queue(["Typeset",MathJax.Hub, ReactDOM.findDOMNode(this)]);
+    public componentDidMount() {
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, ReactDOM.findDOMNode(this)])
     }
 
-    componentDidUpdate () {
-        MathJax.Hub.Queue(["Typeset",MathJax.Hub, ReactDOM.findDOMNode(this)]);
+    public componentDidUpdate() {
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, ReactDOM.findDOMNode(this)])
     }
 
     public render() {
