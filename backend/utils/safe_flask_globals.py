@@ -3,8 +3,8 @@ Safely gets global values from flask in locations where flask values may not exi
 """
 import logging
 
-from database.objects import Player
-from utils.logging import ErrorLogger
+from backend.database.objects import Player
+from backend.utils.logging import ErrorLogger
 
 logger = logging.getLogger(__name__)
 
