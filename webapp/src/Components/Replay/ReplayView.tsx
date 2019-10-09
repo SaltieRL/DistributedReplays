@@ -3,7 +3,6 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import CloudDownload from "@material-ui/icons/CloudDownload"
 import * as React from "react"
-import { LOCAL_LINK } from "../../Globals"
 import { Replay } from "../../Models"
 import { ColouredGameScore } from "../Shared/ColouredGameScore"
 import { TagDialogWrapper } from "../Shared/Tag/TagDialogWrapper"
@@ -29,7 +28,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
         const downloadButton = (
             <Tooltip title="Download replay">
                 <IconButton
-                    href={LOCAL_LINK + `/api/replay/${replay.id}/download`}
+                    href={`/api/replay/${replay.id}/download`}
                     download
                 >
                     <CloudDownload/>
@@ -40,7 +39,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
         const dataExportButton = (
             <Tooltip title="Download data .csv">
                 <IconButton
-                    href={LOCAL_LINK + `/api/replay/${replay.id}/basic_player_stats/download`}
+                    href={`/api/replay/${replay.id}/basic_player_stats/download`}
                     download
                 >
                     <ArrowDownward/>

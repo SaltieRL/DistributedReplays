@@ -19,12 +19,19 @@ class ReplayPositions:
     @staticmethod
     def create_from_id(id_: str, query_params=None) -> 'ReplayPositions':
         filter_frames = None
+        filter_frame_start = None
+        filter_frame_count = None
         if query_params is not None and 'frame' in query_params:
             filter_frames = query_params['frame']
+        if query_params is not None and 'frame_start' in query_params and 'frame_count' in query_params:
+            filter_frame_start = query_params['frame_start']
+            filter_frame_count = query_params['frame_count']
 
         data_frame = FileManager.get_pandas(id_)
         if filter_frames is not None:
             data_frame = ReplayPositions.filter_frames(filter_frames, data_frame)
+        if filter_frame_start is not None and filter_frame_count is not None:
+            data_frame = ReplayPositions.filter_frames_range(filter_frame_start, filter_frame_count, data_frame)
         protobuf_game = FileManager.get_proto(id_)
 
         cs = ['pos_x', 'pos_y', 'pos_z']
@@ -62,3 +69,7 @@ class ReplayPositions:
     @staticmethod
     def filter_frames(frames, data_frame):
         return data_frame.loc[data_frame.index.isin(frames)]
+
+    @staticmethod
+    def filter_frames_range(fmin, count, data_frame):
+        return data_frame.loc[(data_frame.index >= fmin) & (data_frame.index < fmin + count)]

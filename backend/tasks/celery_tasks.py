@@ -1,6 +1,7 @@
 # Celery workers
 import base64
 import json
+import time
 from enum import Enum, auto
 from typing import Dict
 
@@ -18,6 +19,17 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
+try:
+    from backend.tasks.training_packs.task import TrainingPackCreation
+    from backend.utils.metrics import METRICS_TRAINING_PACK_CREATION_TIME
+except (ModuleNotFoundError, ImportError):
+    TrainingPackCreation = None
+    print("Missing config or AES Key and CRC, not creating training packs")
+
+try:
+    from backend.tasks.training_packs.training_packs import create_pack_from_replays
+except:
+    pass
 
 celery = Celery(__name__, broker=celeryconfig.broker_url)
 
@@ -32,7 +44,7 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 60 * 3, calc_global_stats.s(), name='calculate global stats every 3 hrs')
+    sender.add_periodic_task(60 * 60 * 24 * 3, calc_global_stats.s(), name='calculate global stats every 3 days')
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
     sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
     sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
@@ -94,6 +106,21 @@ def calc_item_stats(self, session=None):
     results = ItemStatsWrapper.create_stats(sess)
     if lazy_get_redis() is not None:
         lazy_get_redis().set('item_stats', json.dumps(results))
+
+
+@celery.task(base=DBTask, bind=True, priority=9)
+def create_training_pack(self, id_, n=10, date_start=None, date_end=None, session=None):
+    if session is None:
+        sess = self.session()
+    else:
+        sess = session
+    start = time.time()
+    url = TrainingPackCreation.create_from_player(id_, n, date_start, date_end, sess)
+    end = time.time()
+    METRICS_TRAINING_PACK_CREATION_TIME.observe(
+        start - end
+    )
+    return url
 
 
 class ResultState(Enum):

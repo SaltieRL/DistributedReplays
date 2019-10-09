@@ -34,6 +34,9 @@ from backend.blueprints.spa_api.errors.errors import CalculatedError
 METRICS_REQUEST_LATENCY = Histogram(
     "app_request_latency_seconds", "Application Request Latency", ["method", "endpoint"]
 )
+METRICS_TRAINING_PACK_CREATION_TIME = Histogram(
+    "app_training_pack_creation_seconds", "Training Pack Creation Time"
+)
 
 METRICS_KEYED_REQUEST_ERRORS = Counter(
     "exceptions_with_user_info",
