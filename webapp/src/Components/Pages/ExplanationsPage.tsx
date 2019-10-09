@@ -56,7 +56,7 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
                                             <TableCell>{key}</TableCell>
                                             <TableCell>{explanations[key].simple_explanation}</TableCell>
                                             <TableCell>{explanations[key].math_explanation !== null ?
-                                                `\\(${explanations[key].math_explanation}\\)` : ""}</TableCell>
+                                                `$$${explanations[key].math_explanation}$$` : ""}</TableCell>
 
                                         </TableRow>
                                     </>
