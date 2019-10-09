@@ -6,7 +6,7 @@ from sqlalchemy.dialects import postgresql
 
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
 from backend.utils.checks import is_admin
-from utils.safe_flask_globals import get_current_user_id
+from backend.utils.safe_flask_globals import get_current_user_id
 
 
 class QueryFilterBuilder:

@@ -6,7 +6,7 @@ from backend.utils.logging import ErrorLogger
 from backend.blueprints.spa_api.errors.errors import TagNotFound, PlayerNotFound, TagError
 from backend.database.objects import Tag as DBTag, Player
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
-from utils.safe_flask_globals import get_current_user_id
+from backend.utils.safe_flask_globals import get_current_user_id
 
 
 class Tag:

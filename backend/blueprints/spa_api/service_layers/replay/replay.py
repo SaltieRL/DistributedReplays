@@ -6,7 +6,7 @@ from backend.blueprints.spa_api.service_layers.replay.tag import Tag
 from backend.blueprints.spa_api.service_layers.utils import sort_player_games_by_team_then_id, with_session
 from backend.data.constants.playlist import get_playlist
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
-from utils.safe_flask_globals import get_current_user_id
+from backend.utils.safe_flask_globals import get_current_user_id
 
 
 class GameScore:
