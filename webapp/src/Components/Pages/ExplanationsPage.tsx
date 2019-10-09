@@ -1,11 +1,11 @@
 import { Card, CardHeader, Divider, Grid, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import * as React from "react"
+import * as ReactDOM from "react-dom"
 import { getExplanations } from "../../Requests/Replay"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
-declare var MathJax: any;
+declare var MathJax: any
 
 interface State {
     reloadSignal: boolean
