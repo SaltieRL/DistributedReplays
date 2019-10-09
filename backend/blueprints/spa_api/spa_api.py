@@ -32,7 +32,7 @@ from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
 from backend.utils.metrics import MetricsHandler
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
-from utils.safe_flask_globals import get_current_user_id
+from backend.utils.safe_flask_globals import get_current_user_id
 
 try:
     import config

@@ -29,7 +29,7 @@ from prometheus_client import Counter, Histogram, Info
 # Metrics registration
 #
 from backend.blueprints.spa_api.errors.errors import CalculatedError
-from utils.safe_flask_globals import get_request
+from backend.utils.safe_flask_globals import get_request
 
 METRICS_REQUEST_LATENCY = Histogram(
     "app_request_latency_seconds", "Application Request Latency", ["method", "endpoint"]
