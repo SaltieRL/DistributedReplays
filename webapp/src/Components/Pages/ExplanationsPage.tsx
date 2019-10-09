@@ -1,8 +1,11 @@
 import { Card, CardHeader, Divider, Grid, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
 import * as React from "react"
+import * as ReactDOM from 'react-dom';
 import { getExplanations } from "../../Requests/Replay"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
+
+declare var MathJax: any;
 
 interface State {
     reloadSignal: boolean
@@ -13,6 +16,14 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
     constructor(props: any) {
         super(props)
         this.state = {reloadSignal: false}
+    }
+
+    componentDidMount () {
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub, ReactDOM.findDOMNode(this)]);
+    }
+
+    componentDidUpdate () {
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub, ReactDOM.findDOMNode(this)]);
     }
 
     public render() {
@@ -45,7 +56,7 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
                                             <TableCell>{key}</TableCell>
                                             <TableCell>{explanations[key].simple_explanation}</TableCell>
                                             <TableCell>{explanations[key].math_explanation !== null ?
-                                                `$$${explanations[key].math_explanation}$$` : ""}</TableCell>
+                                                `\\(${explanations[key].math_explanation}\\)` : ""}</TableCell>
 
                                         </TableRow>
                                     </>
