@@ -106,7 +106,7 @@ class TrainingPackCreation:
         filename, shots = result
         logger.info("File:", filename)
         url = upload_training_pack(filename)
-        logger.info("URL:", url)
+        logger.info("URL:", str(url))
         os.remove(filename)
         guid = os.path.basename(filename).replace('.Tem', '')
         tp = TrainingPack(guid=guid, player=id_, shots=shots)

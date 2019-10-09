@@ -8,7 +8,11 @@ from Crypto.Cipher import AES
 
 from backend.tasks.training_packs.parsing.crc import create_crc
 from backend.tasks.training_packs.parsing.parse import parse, serialize, Property
-from config import AES_KEY
+
+try:
+    from config import AES_KEY
+except:
+    AES_KEY = None
 
 PARSED_DIR = "parsed"
 PACK_DIR = "pack"

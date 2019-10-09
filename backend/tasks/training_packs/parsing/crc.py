@@ -1,6 +1,8 @@
 import ctypes
-
-from config import crcTables
+try:
+    from config import crcTables
+except (ImportError, ModuleNotFoundError):
+    crcTables = []
 
 
 def calc_crc(data, startPos, len, crc):
