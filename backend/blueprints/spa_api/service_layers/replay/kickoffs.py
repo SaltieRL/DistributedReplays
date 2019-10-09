@@ -37,3 +37,6 @@ class Kickoffs:
         else:
             start_x = player.start_position.pos_x
             start_y = player.start_position.pos_y
+
+        end_x = player.touch_position.pos_x
+        end_y = player.touch_position.pos_y
