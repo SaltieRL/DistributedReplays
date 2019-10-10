@@ -26,7 +26,7 @@ def load_replay(replay):
         return None, None
 
 
-def create_shots_from_replay(replay, player_id):
+def create_shots_from_replay(replay, player_id, frame=None):
     try:
         proto, df = load_replay(replay)
     except:
@@ -46,6 +46,11 @@ def create_shots_from_replay(replay, player_id):
         is_orange = p.is_orange
         if id_ != player_id:
             continue  # skip players outside of the selected person
+        if frame is not None:
+            filters, shot, shot_doc = create_shot_from_frame(df, frame, player, None, is_orange, guid)
+            shots_list.append(shot)
+            shots_documentation.append(shot_doc)
+            break
         hits = proto.game_stats.hits
         player_hits = [(hit, hits[i - 1] if i > 0 else None) for i, hit in enumerate(hits) if
                        hit.player_id.id == id_ and hit.shot and not hit.dribble_continuation]
@@ -94,7 +99,7 @@ def create_shot_from_frame(df, frame_num, player, player_hit, is_orange, guid):
     pitch = math.asin(unit_z) * 65536.0 / (2 * math.pi)
     yaw = math.atan2(unit_y, unit_x) * 65536.0 / (2 * math.pi)
     yaw = round(yaw, 2)
-    if player_hit.dribble:
+    if player_hit is not None and player_hit.dribble:
         magnitude = 0
     if is_orange:
         # flip ball around
@@ -127,7 +132,7 @@ def create_shot_from_frame(df, frame_num, player, player_hit, is_orange, guid):
     return filters, shot, shot_doc
 
 
-def write_pack(shot_list, player_id, name=None):
+def write_pack(shot_list, name=None):
     dirname = os.path.dirname(os.path.abspath(__file__))
     # Use a basic pack to start with, to prevent having to write the skeleton out
     # We just want to replace the shots/name/guid
@@ -168,5 +173,22 @@ def create_pack_from_replays(replays, player_id, name=None):
         return
     if len(shot_list) > 50:
         shot_list = shot_list[:50]
-    filename = write_pack(shot_list, player_id, name)
+    filename = write_pack(shot_list, name)
+    return filename, [s.__dict__ for s in shots_documentation]
+
+
+def create_custom_pack_from_replays(replays, players, frames, name=None):
+    shot_list = []
+    shots_documentation = []
+    for replay, player_id, frame in zip(replays, players, frames):
+        result = create_shots_from_replay(replay, player_id, frame)
+        new_shots, new_shots_documentation = result
+        shot_list += new_shots
+        shots_documentation += new_shots_documentation
+    if len(shot_list) == 0:
+        print("Zero shots. Skipping...")
+        return
+    if len(shot_list) > 50:
+        shot_list = shot_list[:50]
+    filename = write_pack(shot_list, name)
     return filename, [s.__dict__ for s in shots_documentation]

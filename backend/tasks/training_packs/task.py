@@ -7,7 +7,7 @@ from sqlalchemy import desc
 from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.database.objects import Playlist, PlayerGame, Game, TrainingPack
-from backend.tasks.training_packs.training_packs import create_pack_from_replays
+from backend.tasks.training_packs.training_packs import create_pack_from_replays, create_custom_pack_from_replays
 from backend.utils.cloud_handler import upload_training_pack
 
 try:
@@ -109,12 +109,31 @@ class TrainingPackCreation:
         if result is None:
             return None
         filename, shots = result
-        logger.info("File:" + str(filename))
+        logger.info("File: " + str(filename))
         url = upload_training_pack(filename)
-        logger.info("URL:" + str(url))
+        logger.info("URL: " + str(url))
         os.remove(filename)
         guid = os.path.basename(filename).replace('.Tem', '')
         tp = TrainingPack(guid=guid, name=name, player=requester_id, pack_player=pack_player_id, shots=shots,
+                          task_id=task_id)
+        sess.add(tp)
+        sess.commit()
+
+    @staticmethod
+    def create_custom_pack(task_id, requester_id, players, replays, frames, name=None,
+                           sess=None):
+        if name is None or name == "":
+            name = f"Custom Pack {datetime.datetime.now().strftime('%d/%m/%y %H:%M')}"
+        result = create_custom_pack_from_replays(replays, players, frames, name)
+        if result is None:
+            return None
+        filename, shots = result
+        logger.info("File: " + str(filename))
+        url = upload_training_pack(filename)
+        logger.info("URL: " + str(url))
+        os.remove(filename)
+        guid = os.path.basename(filename).replace('.Tem', '')
+        tp = TrainingPack(guid=guid, name=name, player=requester_id, pack_player="0", shots=shots,
                           task_id=task_id)
         sess.add(tp)
         sess.commit()

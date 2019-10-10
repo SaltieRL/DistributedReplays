@@ -126,6 +126,23 @@ def create_training_pack(self, requester_id, pack_player_id, name=None, n=10, da
     return url
 
 
+@celery.task(base=DBTask, bind=True, priority=9)
+def create_custom_training_pack(self, requester_id, players, replays, frames, name=None,
+                                session=None):
+    if session is None:
+        sess = self.session()
+    else:
+        sess = session
+    start = time.time()
+    url = TrainingPackCreation.create_custom_pack(self.request.id, requester_id, players, replays, frames, name,
+                                                  sess)
+    end = time.time()
+    METRICS_TRAINING_PACK_CREATION_TIME.observe(
+        start - end
+    )
+    return url
+
+
 class ResultState(Enum):
     PENDING = auto()
     STARTED = auto()

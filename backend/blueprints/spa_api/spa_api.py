@@ -26,7 +26,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
-from backend.tasks.celery_tasks import create_training_pack
+from backend.tasks.celery_tasks import create_training_pack, create_custom_training_pack
 from backend.utils.logging import ErrorLogger
 from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
@@ -554,6 +554,22 @@ def api_create_trainingpack(query_params=None):
     if 'name' in query_params:
         name = query_params['name']
     task = create_training_pack.delay(requester_id, pack_player_id, name, 10, date_start, date_end)
+    return better_jsonify({'status': 'Success', 'id': task.id})
+
+
+@bp.route('/training/build', methods=['POST'])
+def api_create_custom_trainingpack():
+    _json = request.get_json(silent=True)
+    if _json is None:
+        raise CalculatedError(400, 'No JSON supplied.')
+
+    players = _json['players']
+    replays = _json['replays']
+    frames = [int(frame) for frame in _json['frames']]
+    name = None
+    if 'name' in _json:
+        name = _json['name']
+    task = create_custom_training_pack.delay(None, players, replays, frames, name)
     return better_jsonify({'status': 'Success', 'id': task.id})
 
 
