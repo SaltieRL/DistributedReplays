@@ -46,7 +46,7 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('total_passes', 'Total hits followed by a teammate hit.', field_rename='passes'),
         FieldExplanation('total_hits', 'Total number of hits (using hit detection).',
                          field_rename='hits'),
-        FieldExplanation('total_dribble_conts ', 'The second, third, … touch of a dribble.'),
+        FieldExplanation('total_dribble_conts ', 'Total amount of dribble continuations or consecutive touches with the ball.'),
         FieldExplanation('total_aerials', 'Number of hits > than the height of the goal.', field_rename='aerials'),
         FieldExplanation('total_dribbles', 'Number of dribbles.',
                          field_rename='dribbles'),
@@ -117,7 +117,10 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Total time spent on the ground.'),
         FieldExplanation('time_low_in_air',
                          'Total time spent above ground but below the max height of '
-                         'double jumping (roughly goal height)'),
+                         'double jumping (roughly goal height).'),
+        FieldExplanation('time_high_in_air',
+                         'Total time spent above the max height of '
+                         'double jumping (roughly goal height).'),
         FieldExplanation('time_in_defending_half',
                          'Total time the player is in the defending half.',
                          short_name='def 1/2'),
@@ -149,6 +152,10 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Total time being the player closest to the positional center of their team.'),
         FieldExplanation('time_furthest_from_team_center',
                          'Total time being the player furthest from the positional center of their team.'),
+        FieldExplanation('time_in_corner',
+                         'Total time spent in the corners of the pitch.'),
+        FieldExplanation('time_near_wall',
+                         'Total time spent near the walls of the pitch.'),
 
         # distance
         FieldExplanation('ball_hit_forward',
@@ -156,16 +163,28 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('ball_hit_backward',
                          'Summed distance of hits towards own goal.'),
 
-        FieldExplanation('is_keyboard',
-                         'True, if the player is using a keyboard.'),
+        # team positioning
+        FieldExplanation('time_in_front_of_center_of_mass',
+                         'Total time the player is in front of the relative center of the team\'s positioning.'),
+        FieldExplanation('time_behind_center_of_mass',
+                         'Total time the player is behind the relative center of the team\'s positioning.'),
+        FieldExplanation('time_between_players',
+                         'Total time the player positioned between teammates (when the player is not the most forward or most backward player).',
+                         math_explanation='\\textrm{time in game}-(\\textrm{time most back player}+\\textrm{time most forward player})'),
+        FieldExplanation('time_most_back_player',
+                         'Total time the player is positioned as the most back player of the team.'),
+        FieldExplanation('time_most_forward_player',
+                         'Total time the player is positioned as the most forward player of the team.'),
 
         # speed
         FieldExplanation('time_at_boost_speed',
-                         'Total time at a speed only reachable by using boost (or flips).'),
+                         'Total time driving at any speed higher than maximum speed obtained by just pure throttle.'
+                         'Achieved via dodges or boosting.'),
         FieldExplanation('time_at_slow_speed',
-                         'Total time at half the car speed reachable by just driving.'),
+                         'Total time at half the maximum car speed obtained by just pure throttle.'),
         FieldExplanation('time_at_super_sonic',
-                         'Time time at max car speed. Trail is showing.'),
+                         'Total time at true max car speed of 2300 uu/s (83 kph or 51 mph).'
+                         'Achieved by tapping boost for a short time after the super sonic trail is showing.'),
 
         FieldExplanation('boost_ratio',
                          'Ratio of small boost pad pickups to large pickups.',
@@ -201,9 +220,19 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Ratio of goals to shots',
                          math_explanation='\\frac{\\textrm{total goals}}{\\textrm{total shots}}'),
         FieldExplanation('rank',
-                         'Rank of the player'),
+                         'Average rank of all games in all playlists.'),
         FieldExplanation('mmr',
-                         'MMR of the player'),
+                         'MMR of the player for the given playlist.'),
+
+        #misc stats
+        FieldExplanation('first_frame_in_game',
+                         'First frame where the player is completely loaded in the game and is able to interact with physics.'),
+        FieldExplanation('is_keyboard',
+                         'How likely the player is using a keyboard.'),
+        FieldExplanation('time_in_game',
+                         'Total amount of time spent in the match in seconds. Normally, 300 seconds but can differ in matches with overtime, '
+                         'joining late/leaving early in unranked matches.'),
+
 
     ]
     explanation_map = dict()
