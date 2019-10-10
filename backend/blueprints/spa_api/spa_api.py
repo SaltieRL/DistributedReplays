@@ -585,6 +585,8 @@ def api_find_trainingpack(query_params=None, session=None):
     player = get_current_user_id()
     if 'player_id' in query_params:
         player = query_params['player_id']
+    elif player is None:
+        raise CalculatedError(400, "Anonymous requests require 'player_id' parameter.")
     return better_jsonify(TrainingPackCreation.list_packs(player, session))
 
 
