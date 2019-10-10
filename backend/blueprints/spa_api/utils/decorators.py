@@ -2,7 +2,7 @@ from functools import wraps
 
 from backend.blueprints.spa_api.utils.query_params_handler import create_validation_for_query_params, get_query_params
 from backend.blueprints.spa_api.errors.errors import NotLoggedIn
-from utils.safe_flask_globals import UserManager, get_request
+from backend.utils.safe_flask_globals import UserManager, get_request
 
 
 def require_user(decorated_function):

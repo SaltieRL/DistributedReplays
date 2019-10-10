@@ -11,7 +11,7 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting, GameVisibility
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.utils.safe_flask_globals import get_current_user_id, UserManager
-from utils.checks import is_admin
+from backend.utils.checks import is_admin
 
 logger = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ from typing import List
 
 from flask import current_app
 
-from utils.safe_flask_globals import get_redis
+from backend.utils.safe_flask_globals import get_redis
 
 logger = logging.getLogger(__name__)
 

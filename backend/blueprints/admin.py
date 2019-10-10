@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, current_app, redirect, g, request, url_for, jsonify
+from flask import Blueprint, redirect, g, request, url_for, jsonify
 
 from backend.blueprints.shared_renders import render_with_session
 
@@ -9,7 +9,7 @@ from backend.database.objects import Player, Group
 from backend.database.wrapper.stats import global_stats_wrapper
 from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists
 from backend.utils.checks import is_local_dev
-from utils.safe_flask_globals import get_redis
+from backend.utils.safe_flask_globals import get_redis
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
