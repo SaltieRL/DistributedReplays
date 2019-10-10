@@ -132,11 +132,21 @@ def create_shot_from_frame(df, frame_num, player, player_hit, is_orange, guid):
     return filters, shot, shot_doc
 
 
-def write_pack(shot_list, name=None):
+def write_pack(shot_list, name=None, mode=False):
+    """
+    Write the training pack given a shot list
+    :param shot_list: Shots to place in pack
+    :param name: Name of pack
+    :param mode: Mode (false=striker, true=goalie)
+    :return: filename
+    """
     dirname = os.path.dirname(os.path.abspath(__file__))
     # Use a basic pack to start with, to prevent having to write the skeleton out
     # We just want to replace the shots/name/guid
-    pack = os.path.join(dirname, "packs", "1ShotBeckwithDefault.Tem")
+    base_pack = "1ShotBeckwithDefault.Tem"
+    if mode:
+        base_pack = "1ShotBeckwithDefaultGoalie.Tem"
+    pack = os.path.join(dirname, "packs", base_pack)
     parsed_properties = load_pack(pack)
     shots = parsed_properties[6]
     print("Found" + str(len(shot_list)) + "shots")
@@ -160,7 +170,7 @@ def write_pack(shot_list, name=None):
     return filename
 
 
-def create_pack_from_replays(replays, player_id, name=None):
+def create_pack_from_replays(replays, player_id, name=None, mode=False):
     shot_list = []
     shots_documentation = []
     for replay in replays:
@@ -173,11 +183,11 @@ def create_pack_from_replays(replays, player_id, name=None):
         return
     if len(shot_list) > 50:
         shot_list = shot_list[:50]
-    filename = write_pack(shot_list, name)
+    filename = write_pack(shot_list, name, mode=mode)
     return filename, [s.__dict__ for s in shots_documentation]
 
 
-def create_custom_pack_from_replays(replays, players, frames, name=None):
+def create_custom_pack_from_replays(replays, players, frames, name=None, mode=False):
     shot_list = []
     shots_documentation = []
     for replay, player_id, frame in zip(replays, players, frames):
@@ -190,5 +200,5 @@ def create_custom_pack_from_replays(replays, players, frames, name=None):
         return
     if len(shot_list) > 50:
         shot_list = shot_list[:50]
-    filename = write_pack(shot_list, name)
+    filename = write_pack(shot_list, name, mode=mode)
     return filename, [s.__dict__ for s in shots_documentation]

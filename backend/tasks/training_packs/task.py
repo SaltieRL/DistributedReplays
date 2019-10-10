@@ -120,11 +120,11 @@ class TrainingPackCreation:
         sess.commit()
 
     @staticmethod
-    def create_custom_pack(task_id, requester_id, players, replays, frames, name=None,
+    def create_custom_pack(task_id, requester_id, players, replays, frames, name=None, mode=False,
                            sess=None):
         if name is None or name == "":
             name = f"Custom Pack {datetime.datetime.now().strftime('%d/%m/%y %H:%M')}"
-        result = create_custom_pack_from_replays(replays, players, frames, name)
+        result = create_custom_pack_from_replays(replays, players, frames, name, mode=mode)
         if result is None:
             return None
         filename, shots = result

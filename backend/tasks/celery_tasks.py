@@ -127,14 +127,14 @@ def create_training_pack(self, requester_id, pack_player_id, name=None, n=10, da
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
-def create_custom_training_pack(self, requester_id, players, replays, frames, name=None,
+def create_custom_training_pack(self, requester_id, players, replays, frames, name=None, mode=False,
                                 session=None):
     if session is None:
         sess = self.session()
     else:
         sess = session
     start = time.time()
-    url = TrainingPackCreation.create_custom_pack(self.request.id, requester_id, players, replays, frames, name,
+    url = TrainingPackCreation.create_custom_pack(self.request.id, requester_id, players, replays, frames, name, mode,
                                                   sess)
     end = time.time()
     METRICS_TRAINING_PACK_CREATION_TIME.observe(

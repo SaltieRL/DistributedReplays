@@ -566,10 +566,13 @@ def api_create_custom_trainingpack():
     players = _json['players']
     replays = _json['replays']
     frames = [int(frame) for frame in _json['frames']]
+    mode = False
     name = None
     if 'name' in _json:
         name = _json['name']
-    task = create_custom_training_pack.delay(None, players, replays, frames, name)
+    if 'mode' in _json:
+        mode = _json['mode'].lower() == 'goalie'
+    task = create_custom_training_pack.delay(None, players, replays, frames, name, mode)
     return better_jsonify({'status': 'Success', 'id': task.id})
 
 
