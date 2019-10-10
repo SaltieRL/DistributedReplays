@@ -127,7 +127,7 @@ def create_shot_from_frame(df, frame_num, player, player_hit, is_orange, guid):
     return filters, shot, shot_doc
 
 
-def write_pack(shot_list, player_id):
+def write_pack(shot_list, player_id, name=None):
     dirname = os.path.dirname(os.path.abspath(__file__))
     # Use a basic pack to start with, to prevent having to write the skeleton out
     # We just want to replace the shots/name/guid
@@ -146,7 +146,10 @@ def write_pack(shot_list, player_id):
     # guid
     parsed_properties[2].value = ("Guid", new_hex, string_value)
     # Name of pack
-    parsed_properties[3].value = f"{player_id} {datetime.datetime.now().strftime('%d/%m/%y %H:%M')}"
+    pack_name = f"{player_id} {datetime.datetime.now().strftime('%d/%m/%y %H:%M')}"
+    if name is not None:
+        pack_name = name
+    parsed_properties[3].value = pack_name
     tpack = reserialize(parsed_properties)
     filename = os.path.join("data", [p.value[2].upper() for p in parsed_properties if p.name == "TM_Guid"][0] + ".Tem")
     with open(filename, "wb") as output:
@@ -155,7 +158,7 @@ def write_pack(shot_list, player_id):
     return filename
 
 
-def create_pack_from_replays(replays, player_id):
+def create_pack_from_replays(replays, player_id, name=None):
     shot_list = []
     shots_documentation = []
     for replay in replays:
@@ -168,5 +171,5 @@ def create_pack_from_replays(replays, player_id):
         return
     if len(shot_list) > 50:
         shot_list = shot_list[:50]
-    filename = write_pack(shot_list, player_id)
+    filename = write_pack(shot_list, player_id, name)
     return filename, [s.__dict__ for s in shots_documentation]

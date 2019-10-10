@@ -529,28 +529,53 @@ def api_handle_error(error: CalculatedError):
 
 
 @bp.route('/training/create')
-@require_user
 @with_query_params(accepted_query_params=[
     QueryParam(name="date_start", type_=str, optional=True),
-    QueryParam(name="date_end", type_=str, optional=True)
+    QueryParam(name="date_end", type_=str, optional=True),
+    QueryParam(name="player_id", type_=str, optional=True),
+    QueryParam(name="name", type_=str, optional=True)
 ])
 def api_create_trainingpack(query_params=None):
     date_start = None
     date_end = None
+    try:
+        requester_id = get_current_user_id()
+        pack_player_id = get_current_user_id()
+    except:
+        requester_id = None
+        pack_player_id = None
+    name = None
     if 'date_start' in query_params:
         date_start = query_params['date_start']
     if 'date_end' in query_params:
         date_end = query_params['date_end']
-    task = create_training_pack.delay(get_current_user_id(), 10, date_start, date_end)
+    if 'player_id' in query_params:
+        pack_player_id = query_params['player_id']
+    if 'name' in query_params:
+        name = query_params['name']
+    task = create_training_pack.delay(requester_id, pack_player_id, name, 10, date_start, date_end)
     return better_jsonify({'status': 'Success', 'id': task.id})
 
 
 @bp.route('/training/list')
-@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name="player_id", type_=str, optional=True)
+])
 @with_session
-def api_find_trainingpack(session=None):
+def api_find_trainingpack(query_params=None, session=None):
     player = get_current_user_id()
+    if 'player_id' in query_params:
+        player = query_params['player_id']
     return better_jsonify(TrainingPackCreation.list_packs(player, session))
+
+
+@bp.route('/training/poll')
+@with_query_params(accepted_query_params=[
+    QueryParam(name="task_id", type_=str, optional=False)
+])
+@with_session
+def api_poll_trainingpack(query_params=None, session=None):
+    return better_jsonify(TrainingPackCreation.poll_pack(query_params['task_id'], session))
 
 
 # Homepage

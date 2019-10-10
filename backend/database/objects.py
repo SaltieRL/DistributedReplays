@@ -387,6 +387,13 @@ class TrainingPack(DBObjectBase):
     __tablename__ = "training_packs"
     id = Column(Integer, primary_key=True, autoincrement=True)
     guid = Column(String(40))
+    task_id = Column(String(37))
+    name = Column(String(100))
     player = Column(String(40), ForeignKey('players.platformid'), index=True)
+    pack_player = Column(String(40), ForeignKey('players.platformid'), index=True)
     shots = Column(JSON)
     creation_date = Column(DateTime, default=datetime.datetime.utcnow)
+    # ALTER TABLE training_packs
+    #     ADD COLUMN name        VARCHAR(100),
+    #     ADD COLUMN pack_player VARCHAR(40),
+    #     ADD COLUMN task_id VARCHAR(37);
