@@ -4,6 +4,8 @@ from typing import List
 
 from flask import current_app
 
+from backend.utils.safe_flask_globals import get_redis
+
 logger = logging.getLogger(__name__)
 
 
@@ -27,7 +29,7 @@ class GlobalStatsGraph:
 
     @staticmethod
     def create() -> List['GlobalStatsGraph']:
-        r = current_app.config['r']
+        r = get_redis()
         return json.loads(r.get('global_distributions'))
 
 
@@ -38,5 +40,5 @@ class GlobalStatsChart:
 
     @staticmethod
     def create() -> List['GlobalStatsGraph']:
-        r = current_app.config['r']
+        r = get_redis()
         return json.loads(r.get('global_stats'))

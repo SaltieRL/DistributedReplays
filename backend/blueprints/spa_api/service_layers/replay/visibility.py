@@ -1,8 +1,6 @@
 import time
 from datetime import datetime
 
-from flask import g
-
 from backend.blueprints.spa_api.errors.errors import PlayerNotFound, ReplayNotFound, AuthorizationException, \
     CalculatedError
 from backend.blueprints.spa_api.service_layers.utils import with_session
