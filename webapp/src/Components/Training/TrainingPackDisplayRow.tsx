@@ -94,7 +94,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
 
                 <Grid item xs={selectProps ? 2 : 3} zeroMinWidth
                       className={classes.listGridItem}>
-                    <Tooltip title={pack.guid + ".Tem"}>
+                    <Tooltip title={pack.name}>
                         <Typography variant={typographyVariant} noWrap>
                             {pack.name}
                         </Typography>
@@ -113,13 +113,16 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                     </Typography>
                 </Grid>
                 <Grid item xs="auto" className={classes.listGridItem}>
-                    <IconButton
-                        href={pack.link}
-                        className={classes.iconButton}
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        <OpenInNew/>
-                    </IconButton>
+
+                    <Tooltip title={pack.guid + ".Tem"}>
+                        <IconButton
+                            href={pack.link}
+                            className={classes.iconButton}
+                            onClick={(event) => event.stopPropagation()}
+                        >
+                            <OpenInNew/>
+                        </IconButton>
+                    </Tooltip>
                 </Grid>
             </Grid>
         )

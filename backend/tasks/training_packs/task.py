@@ -102,6 +102,9 @@ class TrainingPackCreation:
         else:
             last_n_games = last_n_games[:n]  # use default of last n games
         last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
+
+        if name is None or name == "":
+            name = f"{pack_player_id} {datetime.datetime.now().strftime('%d/%m/%y %H:%M')}"
         result = create_pack_from_replays(last_n_games, pack_player_id, name)
         if result is None:
             return None

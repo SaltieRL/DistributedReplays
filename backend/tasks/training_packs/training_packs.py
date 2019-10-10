@@ -146,10 +146,7 @@ def write_pack(shot_list, player_id, name=None):
     # guid
     parsed_properties[2].value = ("Guid", new_hex, string_value)
     # Name of pack
-    pack_name = f"{player_id} {datetime.datetime.now().strftime('%d/%m/%y %H:%M')}"
-    if name is not None:
-        pack_name = name
-    parsed_properties[3].value = pack_name
+    parsed_properties[3].value = name
     tpack = reserialize(parsed_properties)
     filename = os.path.join("data", [p.value[2].upper() for p in parsed_properties if p.name == "TM_Guid"][0] + ".Tem")
     with open(filename, "wb") as output:
