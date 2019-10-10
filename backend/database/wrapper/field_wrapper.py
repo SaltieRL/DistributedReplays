@@ -81,7 +81,7 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Number of first hits that gained possession back from the other team.',
                          field_rename='takeaways'),
         FieldExplanation('possession_time',
-                         'Time this player had the ball. This continues until another hits the ball'
+                         'Time this player had the ball. This continues until another hits the ball '
                          'or play is stopped.', field_rename='possession time', short_name='possession'),
         FieldExplanation('turnover_efficiency',
                          'Percentage of hits that were not turnovers.',
@@ -184,13 +184,13 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
 
         # speed
         FieldExplanation('time_at_boost_speed',
-                         'Total time driving at any speed higher than maximum speed obtained by just pure throttle.'
+                         'Total time driving at any speed higher than maximum speed obtained by just pure throttle. '
                          'Achieved via dodges or boosting.'),
         FieldExplanation('time_at_slow_speed',
                          'Total time at half the maximum car speed obtained by just pure throttle.'),
         FieldExplanation('time_at_super_sonic',
-                         'Total time at true max car speed of 2300 uu/s (83 kph or 51 mph).'
-                         'Achieved by tapping boost for a short time after the super sonic trail is showing.'),
+                         'Total time at true max car speed of 2300 uu/s (83 kph or 51 mph). '
+                         'Achieved by tapping boost just once after the supersonic trail is showing.'),
 
         FieldExplanation('boost_ratio',
                          'Ratio of small boost pad pickups to large pickups.',
@@ -218,12 +218,12 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('wasted_small',
                          'Amount of wasted boost from small boosts.'),
         FieldExplanation('aerial_efficiency',
-                         'Ratio of aerials to time in the air',
+                         'Ratio of aerials to time in the air.',
                          math_explanation='\\frac{\\textrm{total aerials}}'
                                           '{\\textrm{time high in air + time low in air}}',
                          short_name='aerial eff'),
         FieldExplanation('shot_%',
-                         'Ratio of goals to shots',
+                         'Ratio of goals to shots.',
                          math_explanation='\\frac{\\textrm{total goals}}{\\textrm{total shots}}'),
         FieldExplanation('rank',
                          'Average rank of all games in all playlists.'),
@@ -236,8 +236,8 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
         FieldExplanation('is_keyboard',
                          'How likely the player is using a keyboard.'),
         FieldExplanation('time_in_game',
-                         'Total amount of time spent in the match in seconds. Normally, 300 seconds but can differ in matches with overtime, '
-                         'joining late/leaving early in unranked matches.'),
+                         'Total amount of time spent in the match in seconds. Typically, 300 seconds but can differ if the match went '
+                         'into overtime, or the player joined late/left early in unranked matches.'),
 
 
     ]
