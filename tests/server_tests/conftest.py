@@ -243,7 +243,7 @@ def fake_user(monkeypatch):
             nonlocal fake_user
             fake_user = Player(platformid=platformId)
 
-    monkeypatch.setattr('backend.utils.global_functions.UserManager.get_current_user', get_fake_user)
+    monkeypatch.setattr('backend.utils.safe_flask_globals.UserManager.get_current_user', get_fake_user)
 
     return FakeUser()
 
