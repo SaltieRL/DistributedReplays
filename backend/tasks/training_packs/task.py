@@ -81,33 +81,41 @@ maps = [
 class TrainingPackCreation:
     @staticmethod
     def create_from_player(task_id, requester_id, pack_player_id, n=10, date_start=None, date_end=None, name=None,
+                           replays=None,
                            sess=None):
         # filter to standard maps and standard playlists (to exclude ranked rumble)
         # we can't get everything but this covers everything but custom games in private matches
-        query = sess.query(PlayerGame.game) \
-            .join(Game, Game.hash == PlayerGame.game) \
-            .filter(PlayerGame.player == pack_player_id) \
-            .filter(Game.map.in_(maps)) \
-            .filter(Game.playlist.in_(list(playlist.value for playlist in playlists)))
-        if date_start is not None:
-            date_start = datetime.date.fromtimestamp(float(date_start))
-            date_end = datetime.date.fromtimestamp(float(date_end))
-            query = query.filter(Game.match_date >= date_start).filter(
-                Game.match_date <= date_end + datetime.timedelta(days=1))
-        last_n_games = query.order_by(desc(Game.match_date))
-        if query.count() == 0:
-            raise UserHasNoReplays()
-        if date_start is not None:
-            last_n_games = last_n_games.all()  # we don't want to overdo it, but we want to max the pack
+        if replays is None:
+            query = sess.query(PlayerGame.game) \
+                .join(Game, Game.hash == PlayerGame.game) \
+                .filter(PlayerGame.player == pack_player_id) \
+                .filter(Game.map.in_(maps)) \
+                .filter(Game.playlist.in_(list(playlist.value for playlist in playlists)))
+            if date_start is not None:
+                date_start = datetime.date.fromtimestamp(float(date_start))
+                date_end = datetime.date.fromtimestamp(float(date_end))
+                query = query.filter(Game.match_date >= date_start).filter(
+                    Game.match_date <= date_end + datetime.timedelta(days=1))
+            last_n_games = query.order_by(desc(Game.match_date))
+            if query.count() == 0:
+                raise UserHasNoReplays()
+            if date_start is not None:
+                last_n_games = last_n_games.all()  # we don't want to overdo it, but we want to max the pack
+            else:
+                last_n_games = last_n_games[:n]  # use default of last n games
+            last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
         else:
-            last_n_games = last_n_games[:n]  # use default of last n games
-        last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
-
+            print(replays)
+            last_n_games = replays
         if name is None or name == "":
             name = f"{pack_player_id} {datetime.datetime.now().strftime('%d/%m/%y %H:%M')}"
         result = create_pack_from_replays(last_n_games, pack_player_id, name)
         if result is None:
             return None
+        TrainingPackCreation.upload_and_commit_pack(name, pack_player_id, requester_id, result, sess, task_id)
+
+    @staticmethod
+    def upload_and_commit_pack(name, pack_player_id, requester_id, result, sess, task_id):
         filename, shots = result
         logger.info("File: " + str(filename))
         url = upload_training_pack(filename)
@@ -127,16 +135,7 @@ class TrainingPackCreation:
         result = create_custom_pack_from_replays(replays, players, frames, name, mode=mode)
         if result is None:
             return None
-        filename, shots = result
-        logger.info("File: " + str(filename))
-        url = upload_training_pack(filename)
-        logger.info("URL: " + str(url))
-        os.remove(filename)
-        guid = os.path.basename(filename).replace('.Tem', '')
-        tp = TrainingPack(guid=guid, name=name, player=requester_id, pack_player="0", shots=shots,
-                          task_id=task_id)
-        sess.add(tp)
-        sess.commit()
+        TrainingPackCreation.upload_and_commit_pack(name, "0", requester_id, result, sess, task_id)
 
     @staticmethod
     def list_packs(id_, session):

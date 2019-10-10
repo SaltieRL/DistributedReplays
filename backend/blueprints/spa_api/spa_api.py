@@ -533,6 +533,7 @@ def api_handle_error(error: CalculatedError):
     QueryParam(name="date_start", type_=str, optional=True),
     QueryParam(name="date_end", type_=str, optional=True),
     QueryParam(name="player_id", type_=str, optional=True),
+    QueryParam(name="replays", type_=str, optional=True, is_list=True),
     QueryParam(name="name", type_=str, optional=True)
 ])
 def api_create_trainingpack(query_params=None):
@@ -545,15 +546,19 @@ def api_create_trainingpack(query_params=None):
         requester_id = None
         pack_player_id = None
     name = None
+    replays = None
+    if 'name' in query_params:
+        name = query_params['name']
+    if 'player_id' in query_params:
+        pack_player_id = query_params['player_id']
+
+    if 'replays' in query_params:
+        replays = query_params['replays']
     if 'date_start' in query_params:
         date_start = query_params['date_start']
     if 'date_end' in query_params:
         date_end = query_params['date_end']
-    if 'player_id' in query_params:
-        pack_player_id = query_params['player_id']
-    if 'name' in query_params:
-        name = query_params['name']
-    task = create_training_pack.delay(requester_id, pack_player_id, name, 10, date_start, date_end)
+    task = create_training_pack.delay(requester_id, pack_player_id, name, 10, date_start, date_end, replays)
     return better_jsonify({'status': 'Success', 'id': task.id})
 
 
