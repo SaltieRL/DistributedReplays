@@ -1,5 +1,5 @@
 import numpy as np
-from utils.file_manager import FileManager
+from backend.utils.file_manager import FileManager
 
 FULL_BOOST_POSITIONS = np.array([
     (3000, -4100),

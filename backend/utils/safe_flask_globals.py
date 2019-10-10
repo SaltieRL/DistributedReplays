@@ -59,7 +59,7 @@ def get_redis() -> redis.Redis:
     except Exception as e:
         ErrorLogger.log_error(e)
         try:
-            from database.startup import lazy_get_redis
+            from backend.database.startup import lazy_get_redis
             return lazy_get_redis()
         except Exception as e:
             ErrorLogger.log_error(e)
