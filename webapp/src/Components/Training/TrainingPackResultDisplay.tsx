@@ -146,7 +146,9 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                                 }}
                                                 selectShotHandler={(shotNum: number) => {
                                                     this.handleSelectShot(i, shotNum)
-                                                }}/>
+                                                }}
+                                                gameMap={this.props.trainingPacks.games}
+                                            />
                                             {!(i === this.props.trainingPacks.packs.length) && <Divider/>}
                                         </>
                                     )}
@@ -160,6 +162,7 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                             selectShotHandler={(shotNum: number) => {
                                                 this.handleSelectShot(i, shotNum)
                                             }}
+                                            gameMap={this.props.trainingPacks.games}
                                         />
                                     )
                                     }

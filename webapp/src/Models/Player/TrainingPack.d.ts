@@ -3,6 +3,7 @@ import moment from "moment"
 interface TrainingPackResponse {
     packs: TrainingPack[]
     totalCount: number
+    games: any
 }
 
 interface TrainingPack {
@@ -10,6 +11,7 @@ interface TrainingPack {
     shots: TrainingPackShot[]
     date: moment.Moment
     link: string
+    name: string
 }
 
 interface TrainingPackShot {

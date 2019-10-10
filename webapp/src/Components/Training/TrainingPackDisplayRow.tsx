@@ -20,12 +20,15 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import OpenInNew from "@material-ui/icons/OpenInNew"
-import Visibility from "@material-ui/icons/Visibility"
+import PlayArrow from "@material-ui/icons/PlayArrow"
+import moment from "moment"
 import * as React from "react"
 import { connect } from "react-redux"
 import { REPLAY_PAGE_LINK } from "../../Globals"
+import { Replay } from "../../Models"
 import { TrainingPack, TrainingPackShot } from "../../Models/Player/TrainingPack"
 import { StoreState } from "../../Redux"
+import { ColouredGameScore } from "../Shared/ColouredGameScore"
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {
@@ -46,6 +49,9 @@ const styles = (theme: Theme) => createStyles({
     },
     listGridItem: {
         margin: "auto"
+    },
+    cell: {
+        textAlign: "center"
     }
 })
 
@@ -58,6 +64,7 @@ interface OwnProps {
     pack: TrainingPack
     selectProps?: SelectProps
     selectShotHandler: any
+    gameMap: Record<string, Replay>
 }
 
 const mapStateToProps = (state: StoreState) => ({
@@ -87,9 +94,11 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
 
                 <Grid item xs={selectProps ? 2 : 3} zeroMinWidth
                       className={classes.listGridItem}>
-                    <Typography variant={typographyVariant} noWrap>
-                        {pack.guid}
-                    </Typography>
+                    <Tooltip title={pack.guid + ".Tem"}>
+                        <Typography variant={typographyVariant} noWrap>
+                            {pack.name}
+                        </Typography>
+                    </Tooltip>
                 </Grid>
                 <Grid item xs={2} sm={3} className={classes.listGridItem}>
                     <Tooltip title={pack.date.format("LLLL")} enterDelay={200} placement="bottom-start">
@@ -131,27 +140,38 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                             <List dense style={{width: "100%"}}>
                                 <ListItem>
                                     <Grid container key={"header"}>
-                                        <Grid item xs={2}>
+                                        <Grid item xs={1} className={classes.cell}>
                                             <Typography variant="subtitle2">
-                                                Shot number
+                                                Shot
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={2}>
+                                        <Grid item xs={2} className={classes.cell}>
                                             <Typography variant="subtitle2">
                                                 Time remaining
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={4}>
+                                        <Grid item xs={2} className={classes.cell}>
                                             <Typography variant="subtitle2">
-                                                Game
+                                                Game date
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={2}>
+                                        <Grid item xs={2} className={classes.cell}>
+                                            <Typography variant="subtitle2">
+                                                Game playlist
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={2} className={classes.cell}>
+                                            <Typography variant="subtitle2">
+                                                Game score
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={1} className={classes.cell}/>
+                                        <Grid item xs={1} className={classes.cell}>
                                             <Typography variant="subtitle2">
                                                 View game
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={2}>
+                                        <Grid item xs={1} className={classes.cell}>
                                             <Typography variant="subtitle2">
                                                 Preview shot
                                             </Typography>
@@ -166,26 +186,45 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                     if (seconds.length === 1) {
                                         seconds = "0" + seconds
                                     }
+                                    const replay = this.props.gameMap[shot.game]
+                                    const replayTime = moment(replay.date)
+                                    const replayDate = (
+                                        <Tooltip title={replayTime.format("LLLL")} enterDelay={200}
+                                                 placement="bottom-start">
+                                            <Typography>
+                                                {replayTime.format(dateFormat)}
+                                            </Typography>
+                                        </Tooltip>
+                                    )
                                     return (
                                         <>
                                             <ListItem>
                                                 <Grid container key={shot.game + shot.frame.toString()}>
-                                                    <Grid item xs={2}>
+                                                    <Grid item xs={1} className={classes.cell}>
                                                         <Typography>
-                                                            Shot {i + 1}
+                                                            {i + 1}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={2}>
+                                                    <Grid item xs={2} className={classes.cell}>
                                                         <Typography>
                                                             {minutes}:{seconds}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={4}>
+                                                    <Grid item xs={2} className={classes.cell}>
+                                                        {replayDate}
+                                                    </Grid>
+                                                    <Grid item xs={2} className={classes.cell}>
                                                         <Typography noWrap>
-                                                            {shot.game}
+                                                            {replay.gameMode}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={2}>
+                                                    <Grid item xs={2} className={classes.cell}>
+                                                        <Typography noWrap>
+                                                            <ColouredGameScore replay={replay}/>
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={1} className={classes.cell}/>
+                                                    <Grid item xs={1} className={classes.cell}>
                                                         <Typography>
                                                             <IconButton
                                                                 className={classes.iconButton}
@@ -194,7 +233,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                                             </IconButton>
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={2}>
+                                                    <Grid item xs={1} className={classes.cell}>
                                                         <Typography>
                                                             <IconButton
                                                                 className={classes.iconButton}
@@ -203,7 +242,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                                                 }}
                                                                 href={"#"}
                                                             >
-                                                                <Visibility/>
+                                                                <PlayArrow/>
                                                             </IconButton>
                                                         </Typography>
                                                     </Grid>
