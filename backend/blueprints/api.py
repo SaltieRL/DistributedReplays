@@ -1,8 +1,8 @@
 import datetime
+import json
 import os
 from functools import wraps
 
-from carball.analysis.utils import proto_manager
 from flask import render_template, url_for, redirect, request, jsonify, send_from_directory, Blueprint, current_app, \
     Response
 from google.protobuf.json_format import MessageToJson
@@ -11,10 +11,11 @@ from sqlalchemy.sql import operators
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
+from backend.tasks.celery_tasks import calc_item_stats
+from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
-from backend.utils.cloud_handler import download_proto
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
-from backend.database.utils.file_manager import parsed_directory, get_proto_path, get_replay_path
+from backend.utils.file_manager import FileManager
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -153,25 +154,17 @@ def api_v1_get_ranks():
 def api_v1_get_stats(session=None):
     # TODO: stats?
     ct = session.query(Game).count()
-    dct = len([f for f in os.listdir(current_app.config[parsed_directory]) if f.endswith('pts')])
+    dct = len([f for f in os.listdir(FileManager.get_default_parse_folder()) if f.endswith('pts')])
     return jsonify({'db_count': ct, 'count': dct})
 
 
 @bp.route('/replay/<id_>')
 @key_required
 def api_v1_get_replay_info(id_):
-    pickle_path = get_proto_path(current_app, id_)
-    if not os.path.isfile(pickle_path):
-        g = download_proto(id_)
-    else:
-        try:
-            with open(pickle_path, 'rb') as f:
-                g = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-        except Exception as e:
-            return jsonify({'error': 'Error opening game: ' + str(e)})
+    proto = FileManager.get_proto(id_)
 
     response = Response(
-        response=convert_proto_to_json(g),
+        response=convert_proto_to_json(proto),
         status=200,
         mimetype='application/json'
     )
@@ -179,26 +172,26 @@ def api_v1_get_replay_info(id_):
     return response
 
     game = session.query(Game).filter(Game.hash == id_).first()
-    data = {'datetime': g.datetime, 'map': g.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': g.name,
-            'hash': game.hash, 'version': g.replay_version, 'id': g.id, 'frames': len(g.frames)}
-    data = player_interface(data, g, game.mmrs, game.ranks)
-    data = team_interface(data, g)
-    data = score_interface(data, g)
-    data = goals_interface(data, g)
+    data = {'datetime': proto.datetime, 'map': proto.map, 'mmrs': game.mmrs, 'ranks': game.ranks, 'name': proto.name,
+            'hash': game.hash, 'version': proto.replay_version, 'id': proto.id, 'frames': len(proto.frames)}
+    data = player_interface(data, proto, game.mmrs, game.ranks)
+    data = team_interface(data, proto)
+    data = score_interface(data, proto)
+    data = goals_interface(data, proto)
     return jsonify(data)
 
 
 @bp.route('/parsed/list')
 @key_required
 def api_v1_list_parsed_replays():
-    fs = os.listdir(current_app.config[parsed_directory])
+    fs = os.listdir(FileManager.get_default_parse_folder())
     return jsonify(fs)
 
 
 @bp.route('/parsed/<path:fn>')
 @key_required
 def api_v1_download_parsed(fn):
-    return send_from_directory(current_app.config[parsed_directory], fn, as_attachment=True)
+    return send_from_directory(FileManager.get_default_parse_folder(), fn, as_attachment=True)
 
 
 @bp.route('/rank/<id_>')
@@ -225,6 +218,14 @@ def api_v1_get_playergames_by_rank(session=None):
     }
     return jsonify(data)
 
+
+@bp.route('/itemstats')
+def api_v1_get_itemstats():
+    r = lazy_get_redis()
+    if r.get('item_stats'):
+        return jsonify(json.loads(r.get('item_stats')))
+    calc_item_stats.delay()
+    return jsonify({})
 
 def convert_proto_to_json(proto):
     return MessageToJson(proto)

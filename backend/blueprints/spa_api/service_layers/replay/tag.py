@@ -2,7 +2,10 @@ import base64
 from typing import List, Dict
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.database.objects import Tag as DBTag
+from backend.utils.global_functions import get_current_user_id
+from backend.utils.logging import ErrorLogger
+from backend.blueprints.spa_api.errors.errors import TagNotFound, PlayerNotFound, TagError
+from backend.database.objects import Tag as DBTag, Player
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 from backend.utils.global_functions import get_current_user_id
 from ...errors.errors import CalculatedError, TagNotFound
@@ -72,7 +75,7 @@ class Tag:
         # Check if name already exists
         try:
             TagWrapper.get_tag_by_name(session, get_current_user_id(), new_name)
-            raise CalculatedError(409, f"Tag with name {new_name} already exists.")
+            raise TagError(409, f"Tag with name {new_name} already exists.")
         except DBTagNotFound:
             pass
 
@@ -150,6 +153,14 @@ def apply_tags_to_game(query_params: Dict[str, any] = None, game_id=None, sessio
     if 'private_tag_keys' not in query_params:
         return None
     private_ids = query_params['private_tag_keys'] if 'private_tag_keys' in query_params else []
+    if len(tags) > 0:
+        player_id = query_params['player_id']
+        if session.query(Player).filter(Player.platformid == player_id).first() is None:
+            ErrorLogger.log_error(PlayerNotFound())
+        else:
+            for tag in tags:
+                created_tag = Tag.create(tag, session=session, player_id=player_id)
+                TagWrapper.add_tag_to_game(session, game_id, created_tag.db_tag)
 
     for private_id in private_ids:
         tag_id, private_key = Tag.decode_tag(private_id)

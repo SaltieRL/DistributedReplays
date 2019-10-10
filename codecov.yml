@@ -40,5 +40,7 @@ comment:
 
 ingore:
   - "helpers/*"
-  - "data/*"
   - "redis/*"
+  - "loader.py"
+  - "imports_test.py"
+  - "**/training_packs/parsing/*"

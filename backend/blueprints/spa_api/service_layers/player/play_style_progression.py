@@ -1,13 +1,11 @@
 import datetime
 from typing import List
 
-from flask import current_app
-
 from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
 from backend.blueprints.spa_api.service_layers.stat import ProgressionDataPoint, DataPoint
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
-from .player_profile_stats import player_stat_wrapper, player_wrapper
+from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_stat_wrapper, player_wrapper
 
 
 class PlayStyleProgressionDataPoint(ProgressionDataPoint):

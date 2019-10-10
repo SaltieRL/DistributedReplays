@@ -2,14 +2,14 @@ from flask import g, request
 from functools import wraps
 
 from backend.blueprints.spa_api.utils.query_params_handler import create_validation_for_query_params, get_query_params
-from ..errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import NotLoggedIn
 
 
 def require_user(decorated_function):
     @wraps(decorated_function)
     def wrapper_require_user(*args, **kwargs):
         if g.user is None and 'internal_user' not in kwargs:
-            raise CalculatedError(404, "User is not logged in.")
+            raise NotLoggedIn()
         return decorated_function(*args, **kwargs)
     return wrapper_require_user
 

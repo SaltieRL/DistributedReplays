@@ -1,5 +1,6 @@
 from typing import List
 
+from carball.generated.api.stats.player_stats_pb2 import PlayerStats
 from sqlalchemy import func
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
@@ -8,9 +9,16 @@ from backend.database.objects import PlayerGame, Game, TeamStat
 from backend.database.wrapper.chart.chart_data import ChartStatsMetadata
 from backend.database.wrapper.chart.stat_point import DatabaseObjectDataPoint, StatDataPoint, OutputChartData
 from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
+from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
+from backend.utils.file_manager import FileManager
 
 
 class ChartStatsWrapper(SharedStatsWrapper):
+    soccer_player_stats = create_and_filter_proto_field(PlayerStats,
+                                                        blacklist_message_types=["api.stats.CameraChange",
+                                                                                 "api.stats.RumbleStats"])
+    soccer_field_names = [field.field_name for field in soccer_player_stats]
+    rumble_player_stats = create_and_filter_proto_field(PlayerStats, whitelist_message_types=["api.stats.RumbleStats"])
 
     @with_session
     def get_chart_stats_for_player(self, id_: str, session=None) -> List[DatabaseObjectDataPoint]:
@@ -50,6 +58,17 @@ class ChartStatsWrapper(SharedStatsWrapper):
         wrapped_team = sorted(sorted(wrapped_team, key=lambda x: x.id), key=lambda x: x.is_orange)
 
         return wrapped_team
+
+    def get_protobuf_stats(self, id_: str) -> List[DatabaseObjectDataPoint]:
+        game_proto = FileManager.get_proto(id_)
+        players = game_proto.players
+        stat_output = []
+        for player in players:
+            player_stats = get_proto_values(player.stats, self.soccer_player_stats)
+            stat_output.append(DatabaseObjectDataPoint(player.id.id, player.name, player.is_orange,
+                                                       dict(zip(self.soccer_field_names, player_stats))))
+        return stat_output
+
 
     def wrap_chart_stats(self, database_data_point: List[DatabaseObjectDataPoint],
                          chart_metadata_list: List[ChartStatsMetadata]) -> List[OutputChartData]:

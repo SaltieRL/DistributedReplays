@@ -5,13 +5,33 @@ from typing import List
 from carball.generated.api import game_pb2
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.database.objects import Game, PlayerGame, Player, TeamStat
+from backend.database.objects import Game, PlayerGame, Player, TeamStat, Loadout
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
 from backend.database.wrapper.rank_wrapper import get_rank_obj_by_mapping
 from backend.utils.psyonix_api_handler import get_rank_batch
 
 
-def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, list):
+def process_loadout_to_obj(game: game_pb2) -> List[Loadout]:
+    replay_id = game.game_metadata.match_guid
+    if replay_id == '' or replay_id is None:
+        replay_id = game.game_metadata.id
+    player_objs = game.players
+
+    loadouts = []
+    for p in player_objs:
+        loadout = p.loadout
+        fields = create_and_filter_proto_field(p, ['name', 'title_id', 'is_orange'],
+                                               ['api.metadata.CameraSettings',
+                                                'api.PlayerId'], Loadout)
+        values = get_proto_values(p, fields)
+        kwargs = {k.field_name: v for k, v in zip(fields, values)}
+        l = Loadout(game=replay_id, player=str(p.id.id), **kwargs)
+        loadouts.append(l)
+
+    return loadouts
+
+
+def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, list, List[Loadout]):
     """
     Converts pickled games into various database objects.
 
@@ -44,7 +64,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
              playlist=game.game_metadata.playlist,
              game_server_id=0 if game.game_metadata.game_server_id == '' else game.game_metadata.game_server_id,
              server_name=game.game_metadata.server_name,
-             replay_id=game.game_metadata.id)
+             replay_id=game.game_metadata.id, primary_player=game.game_metadata.primary_player.id)
 
     player_games = []
     players = []
@@ -112,10 +132,13 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
             pid = pid[:40]
         p = Player(platformid=pid, platformname=p.name, avatar="", ranks=[], groups=[])
         players.append(p)
-    return g, player_games, players, teamstats
+
+    loadouts = process_loadout_to_obj(game)
+    return g, player_games, players, teamstats, loadouts
 
 
 def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Player], teamstats: List[TeamStat],
+                   loadouts: List[Loadout],
                    session,
                    preserve_upload_date=False, preserve_ranks=True):
     match_exists = False
@@ -145,6 +168,11 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
         for match in matches:
             session.delete(match)
 
+    for loadout in loadouts:
+        matches = session.query(Loadout).filter(Loadout.game == loadout.game).filter(
+            Loadout.player == loadout.player).all()
+        for match in matches:
+            session.delete(match)
     try:
         matches = session.query(Game).filter(Game.hash == game.hash).all()
         if matches is not None and len(matches) > 0:
@@ -185,12 +213,15 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
     for team in teamstats:
         session.add(team)
 
+    for loadout in loadouts:
+        session.add(loadout)
+
     return match_exists
 
 
 @with_session
 def add_objects(protobuf_game, session=None, preserve_upload_date=True):
-    game, player_games, players, teamstats = convert_pickle_to_db(protobuf_game)
-    match_exists = add_objs_to_db(game, player_games, players, teamstats, session, preserve_upload_date)
+    game, player_games, players, teamstats, loadouts = convert_pickle_to_db(protobuf_game)
+    match_exists = add_objs_to_db(game, player_games, players, teamstats, loadouts, session, preserve_upload_date)
     session.commit()
     return match_exists

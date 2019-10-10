@@ -17,14 +17,31 @@ class CalculatedError(Exception):
         }
 
 
+class NotLoggedIn(CalculatedError):
+    status_code = 401
+    message = "User is not logged in."
+
+
 class UserHasNoReplays(CalculatedError):
     status_code = 404
     message = "This user has no replays."
 
 
+class NoReplaysForPlaylist(CalculatedError):
+    status_code = 404
+
+    def __init__(self, playlist):
+        super().__init__(message=f"User has no replays for the selected playlist: {playlist}")
+
+
 class ReplayNotFound(CalculatedError):
     status_code = 404
     message = "Replay not found."
+
+
+class Redirect(CalculatedError):
+    def __init__(self, url):
+        super().__init__(301, url)
 
 
 class ErrorOpeningGame(CalculatedError):
@@ -69,7 +86,12 @@ class InvalidQueryParamFormat(CalculatedError):
         super().__init__(self.status_code, message)
 
 
-class TagNotFound(CalculatedError):
+class TagError(CalculatedError):
+    status_code = 409
+    message = "Exception with tags"
+
+
+class TagNotFound(TagError):
     status_code = 404
     message = "Tag not found"
 
@@ -82,3 +104,13 @@ class UnsupportedPlaylist(CalculatedError):
 class AuthorizationException(CalculatedError):
     status_code = 401
     message = "User not allowed for this request"
+
+
+class NotYetImplemented(CalculatedError):
+    status_code = 501
+    message = "This method is not yet implemented"
+
+
+class ReplayUploadError(CalculatedError):
+    status_code = 400
+    message = "Replay failed to upload"
