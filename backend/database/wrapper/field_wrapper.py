@@ -41,12 +41,18 @@ class QueryFieldWrapper:
 
 def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[FieldExplanation]):
     field_list = [
-        FieldExplanation('assists', 'Total number of passes that led to goals.'),
-        FieldExplanation('shots', 'Total number of hits towards the enemy goal.'),
+        FieldExplanation('goals', 'Total number of goals scored by the player obtained from the match data.'),
+        FieldExplanation('saves', 'Total number of saves by the player obtained from the match data.'),
+        FieldExplanation('score', 'In-game player score for the match obtained from the match data.'),
+        FieldExplanation('assists', 'Total number of passes that led to goals obtained from the match data.'),
+        FieldExplanation('shots', 'Total number of hits towards the enemy goal obtained from the match data.'),
         FieldExplanation('total_passes', 'Total hits followed by a teammate hit.', field_rename='passes'),
         FieldExplanation('total_hits', 'Total number of hits (using hit detection).',
                          field_rename='hits'),
-        FieldExplanation('total_dribble_conts ', 'Total amount of dribble continuations or consecutive touches with the ball.'),
+        FieldExplanation('total_goals', 'Total number of goals used for hit analysis.'),
+        FieldExplanation('total_saves', 'Total number of saves used for hit analysis.'),
+        FieldExplanation('total_shots', 'Total number of shots used for hit analysis.'),
+        FieldExplanation('total_dribble_conts', 'Total amount of dribble continuations or consecutive touches with the ball.'),
         FieldExplanation('total_aerials', 'Number of hits > than the height of the goal.', field_rename='aerials'),
         FieldExplanation('total_dribbles', 'Number of dribbles.',
                          field_rename='dribbles'),
