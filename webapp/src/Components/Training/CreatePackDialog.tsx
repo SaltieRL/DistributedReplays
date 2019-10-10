@@ -13,7 +13,6 @@ interface OwnProps {
     onCloseDialog: () => void
 }
 
-
 type Props = OwnProps
     & WithNotifications
 
