@@ -8,7 +8,7 @@ from flask import jsonify, request, redirect, url_for, Blueprint
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player
 from backend.database.wrapper.player_wrapper import get_random_player, create_default_player
-from utils.safe_flask_globals import get_redis
+from backend.utils.safe_flask_globals import get_redis
 
 try:
     from config import STEAM_API_KEY

@@ -8,7 +8,7 @@ import requests
 from backend.database.objects import Player
 from backend.database.startup import lazy_startup
 from backend.utils.braacket_connection import Braacket
-from utils.safe_flask_globals import get_redis
+from backend.utils.safe_flask_globals import get_redis
 
 fake_data = False
 try:
