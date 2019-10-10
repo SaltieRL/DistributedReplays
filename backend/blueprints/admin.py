@@ -9,6 +9,7 @@ from backend.database.objects import Player, Group
 from backend.database.wrapper.stats import global_stats_wrapper
 from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists
 from backend.utils.checks import is_local_dev
+from utils.safe_flask_globals import get_redis
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -101,7 +102,7 @@ def view_users(session=None):
 @bp.route('/globalstats')
 @with_session
 def ping(session=None):
-    r = current_app.config['r']
+    r = get_redis()
     result = r.get('global_stats')
     if result is not None:
         return jsonify({'result': json.loads(result)})

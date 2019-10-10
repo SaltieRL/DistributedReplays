@@ -5,11 +5,10 @@ from typing import Union
 
 import redis
 import requests
-from flask import current_app
-
 from backend.database.objects import Player
 from backend.database.startup import lazy_startup
 from backend.utils.braacket_connection import Braacket
+from utils.safe_flask_globals import get_redis
 
 fake_data = False
 try:
@@ -47,7 +46,7 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
     if fake_data or RL_API_KEY is None:
         return make_fake_data(ids)
     try:
-        _redis = current_app.config['r']  # type: redis.Redis
+        _redis = get_redis()
     except KeyError:
         _redis = None
         ids_to_find = ids

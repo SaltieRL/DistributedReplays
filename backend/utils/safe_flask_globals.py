@@ -3,6 +3,8 @@ Safely gets global values from flask in locations where flask values may not exi
 """
 import logging
 
+import redis
+
 from backend.database.objects import Player
 from backend.utils.logging import ErrorLogger
 
@@ -35,8 +37,29 @@ def get_current_user_id(player_id=None) -> str:
 class UserManager:
     @staticmethod
     def get_current_user() -> Player:
+        """
+        Tries to get the current user.
+        Returns None if there are problems.
+        """
         try:
             from flask import g
             return g.user
         except:
             return None
+
+
+def get_redis() -> redis.Redis:
+    """
+    Tries to get redis.
+    Does a fallback if redis is not able to be grabbed from flask.
+    """
+    try:
+        from flask import current_app
+        return current_app.config['r']
+    except Exception as e:
+        ErrorLogger.log_error(e)
+        try:
+            from database.startup import lazy_get_redis
+            return lazy_get_redis()
+        except Exception as e:
+            ErrorLogger.log_error(e)

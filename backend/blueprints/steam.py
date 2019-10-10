@@ -3,11 +3,12 @@ import logging
 import traceback
 
 import requests
-from flask import jsonify, request, redirect, url_for, Blueprint, current_app
+from flask import jsonify, request, redirect, url_for, Blueprint
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player
 from backend.database.wrapper.player_wrapper import get_random_player, create_default_player
+from utils.safe_flask_globals import get_redis
 
 try:
     from config import STEAM_API_KEY
@@ -56,7 +57,7 @@ def get_steam_profile_or_random_response(steam_id):
 def steam_id_to_profile(steam_id):
     key = 'steam_id_' + steam_id
     try:
-        redis_instance = current_app.config['r']
+        redis_instance = get_redis()
     except:
         redis_instance = None
     if redis_instance is not None:
@@ -109,7 +110,7 @@ def get_vanity_to_steam_id_or_random_response(vanity, session=None):
 def vanity_to_steam_id(vanity):
     key = 'vanity_' + vanity
     try:
-        redis_instance = current_app.config['r']
+        redis_instance = get_redis()
     except:
         redis_instance = None
     if redis_instance is not None:

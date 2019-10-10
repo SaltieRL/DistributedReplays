@@ -10,7 +10,7 @@ from flask_cors import CORS
 from prometheus_client import make_wsgi_app, multiprocess, CollectorRegistry
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
-from backend.blueprints import steam, auth, debug, admin, api
+from backend.blueprints import steam, auth, admin, api
 from backend.blueprints.spa_api import spa_api
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
@@ -130,7 +130,6 @@ class CalculatedServer:
         app.register_blueprint(api.bp)
         app.register_blueprint(spa_api.bp)
         app.register_blueprint(auth.bp)
-        app.register_blueprint(debug.bp)
         app.register_blueprint(admin.bp)
 
     @staticmethod
