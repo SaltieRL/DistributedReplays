@@ -2,7 +2,6 @@ import logging
 import random
 from typing import List
 
-from flask import g
 from sqlalchemy import func, cast, String, desc, or_
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -11,7 +10,8 @@ from backend.blueprints.spa_api.errors.errors import ReplayNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting, GameVisibility
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
-from backend.utils.global_functions import get_current_user_id
+from backend.utils.safe_flask_globals import get_current_user_id, UserManager
+from backend.utils.checks import is_admin
 
 logger = logging.getLogger(__name__)
 
@@ -62,8 +62,8 @@ class PlayerWrapper:
                 PlayerGame.game != None)
 
         if filter_private:
-            if g.user is not None:
-                if not g.admin:
+            if UserManager.get_current_user() is not None:
+                if not is_admin():
                     query = query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
                                              Game.players.any(get_current_user_id())))
             else:

@@ -10,7 +10,7 @@ from flask_cors import CORS
 from prometheus_client import make_wsgi_app, multiprocess, CollectorRegistry
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
-from backend.blueprints import steam, auth, debug, admin, api
+from backend.blueprints import steam, auth, admin, api
 from backend.blueprints.spa_api import spa_api
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
@@ -19,7 +19,6 @@ from backend.database.wrapper.player_wrapper import create_default_player
 from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER, BASE_FOLDER
 from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
-from backend.utils.global_functions import create_jinja_globals
 from backend.utils.metrics import MetricsHandler
 from backend.utils.logging import ErrorLogger
 
@@ -79,8 +78,6 @@ class CalculatedServer:
             _session.commit()
             _session.close()
 
-        create_jinja_globals(app, g)
-
         return app, ids
 
     @staticmethod
@@ -133,7 +130,6 @@ class CalculatedServer:
         app.register_blueprint(api.bp)
         app.register_blueprint(spa_api.bp)
         app.register_blueprint(auth.bp)
-        app.register_blueprint(debug.bp)
         app.register_blueprint(admin.bp)
 
     @staticmethod

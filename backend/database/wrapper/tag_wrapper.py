@@ -1,6 +1,5 @@
 from typing import List
 
-from flask import current_app
 from sqlalchemy import func
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
