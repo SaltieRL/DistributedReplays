@@ -11,7 +11,6 @@ import zlib
 
 from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
-from sqlalchemy import desc
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
@@ -28,12 +27,12 @@ from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.tasks.celery_tasks import create_training_pack, create_custom_training_pack
 from backend.utils.logging import ErrorLogger
-from backend.utils.global_functions import get_current_user_id
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
 from backend.utils.metrics import MetricsHandler
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
+from backend.utils.safe_flask_globals import get_current_user_id
 
 try:
     import config
