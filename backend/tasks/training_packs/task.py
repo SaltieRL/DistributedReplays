@@ -17,6 +17,7 @@ except:
 
 logger = logging.getLogger(__name__)
 playlists = [
+    Playlist.UNKNOWN_CUSTOM,
     Playlist.UNRANKED_DUELS,
     Playlist.UNRANKED_DOUBLES,
     Playlist.UNRANKED_STANDARD,

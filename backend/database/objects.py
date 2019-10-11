@@ -26,6 +26,7 @@ class MatchType(enum.Enum):
 
 
 class Playlist(enum.Enum):
+    UNKNOWN_CUSTOM = 0
     UNRANKED_DUELS = 1
     UNRANKED_DOUBLES = 2
     UNRANKED_STANDARD = 3
