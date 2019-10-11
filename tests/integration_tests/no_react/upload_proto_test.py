@@ -1,5 +1,6 @@
 import base64
 import json
+import logging
 import time
 import zlib
 
@@ -17,6 +18,7 @@ class Test_UploadingProtos():
 
     @classmethod
     def setup_class(cls):
+        logging.basicConfig(level=logging.ERROR)
         cls.thread = KillableThread(target=start_server)
         cls.thread.daemon = True
         cls.thread.start()

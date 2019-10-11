@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 
 import requests
@@ -15,6 +16,7 @@ class Test_Heatmaps:
 
     @classmethod
     def setup_class(cls):
+        logging.basicConfig(level=logging.ERROR)
         cls.thread = KillableThread(target=start_server)
         cls.thread.daemon = True
         cls.thread.start()

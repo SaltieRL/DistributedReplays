@@ -1,13 +1,11 @@
 import json
 import logging
 import time
-from typing import List
 
 import requests
 
 from RLBotServer import start_server
-from backend.database.objects import GameVisibilitySetting, User, Player
-from backend.blueprints.spa_api.errors.errors import PlayerNotFound
+from backend.database.objects import GameVisibilitySetting, Player
 from tests.utils.killable_thread import KillableThread
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
@@ -24,6 +22,8 @@ class Test_BasicServerCommands():
 
     @classmethod
     def setup_class(cls):
+        logging.basicConfig(level=logging.ERROR)
+        logger.setLevel(logging.DEBUG)
         cls.thread = KillableThread(target=start_server)
         cls.thread.daemon = True
         cls.thread.start()
@@ -68,7 +68,6 @@ class Test_BasicServerCommands():
                     json = requests.get(LOCAL_URL + f'/api/tag/{_tag}/private_key').json()
                     keys.append(json)
                 tag_keys.append(keys)
-
 
         for index, replay_url in enumerate(replay_list):
             if index == 1:
