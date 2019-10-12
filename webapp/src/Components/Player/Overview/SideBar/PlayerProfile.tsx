@@ -5,6 +5,7 @@ import { connect } from "react-redux"
 import { doGet } from "../../../../apiHandler/apiHandler"
 import { StoreState } from "../../../../Redux"
 import { withNotifications, WithNotifications } from "../../../Shared/Notification/NotificationUtils"
+import { GroupIndicator } from "../GroupIndicator"
 import { PlayerNameDropdown } from "./PlayerNameDropdown"
 import { PlayerProfilePicture } from "./PlayerProfilePicture"
 
@@ -43,7 +44,7 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
         const {player, classes} = this.props
         return (
             <Card className={classes.card}>
-                <PlayerProfilePicture image={player.avatarLink} groups={player.groups}/>
+                <PlayerProfilePicture image={player.avatarLink}/>
                 <CardContent className={classes.content}>
                     <Grid container alignContent="space-around" style={{height: "100%"}}>
                         <Grid item xs={12}>
@@ -52,6 +53,7 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                                     {player.name}
                                 </Typography>
                                 {player.pastNames.length > 0 && <PlayerNameDropdown pastNames={player.pastNames}/>}
+                                <GroupIndicator groups={player.groups} variant={"subtitle1"}/>
                             </div>
                         </Grid>
                         <Grid item xs={12} container justify="flex-end">
@@ -71,20 +73,27 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                         {this.props.loggedInUser && this.props.loggedInUser.admin &&
                         <>
                             <Grid item xs={12} container justify="flex-end">
-                                <Button variant="text" size="small" onClick={() => {
-                                    this.addGroupToUser(player.id, 3)
-                                }}>
-                                    <Typography>
-                                        Add patron
-                                    </Typography>
-                                </Button>
-                                <Button variant="text" size="small" onClick={() => {
-                                    this.removeGroupFromUser(player.id, 3)
-                                }}>
-                                    <Typography>
-                                        Remove patron
-                                    </Typography>
-                                </Button>
+                                {[4, 2, 3].map((num) => {
+                                    return <>
+                                        {player.groups.indexOf(num) === -1 ?
+                                            <Button variant="text" size="small" onClick={() => {
+                                                this.addGroupToUser(player.id, num)
+                                            }}
+                                                    style={{textTransform: "none"}}
+                                            >
+                                                <GroupIndicator groups={[num]} faded={true}/>
+                                            </Button> :
+                                            <Button variant="text" size="small" onClick={() => {
+                                                this.removeGroupFromUser(player.id, num)
+                                            }}
+                                                    style={{textTransform: "none"}}
+                                            >
+                                                <GroupIndicator groups={[num]}/>
+                                            </Button>
+                                        }
+                                    </>
+                                })}
+
                             </Grid>
                         </>
                         }
@@ -101,6 +110,9 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                 message: "Successfully added group to user",
                 timeout: 3000
             })
+            setTimeout(() => {
+                window.location.reload()
+            }, 3000)
         }).catch((err) => {
             this.props.showNotification({
                 variant: "error",
@@ -116,6 +128,9 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                 message: "Successfully removed group from user",
                 timeout: 3000
             })
+            setTimeout(() => {
+                window.location.reload()
+            }, 3000)
         }).catch((err) => {
             this.props.showNotification({
                 variant: "error",

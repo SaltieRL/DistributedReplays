@@ -35,7 +35,7 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center">
-                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
+                    {(this.props.loggedInUser && this.props.loggedInUser.admin) ?
                         <>
                             <Grid item xs={12}>
                                 <LoadableWrapper load={this.getAdminLogs} reloadSignal={this.state.reloadSignal}>
@@ -55,7 +55,7 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         </>
                         :
-                        <Typography>In beta, Patrons only.</Typography>
+                        <Typography>Admins only.</Typography>
                     }
                 </Grid>
             </BasePage>
