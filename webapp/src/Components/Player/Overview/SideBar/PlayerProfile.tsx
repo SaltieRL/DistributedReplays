@@ -3,6 +3,10 @@ import * as React from "react"
 import { Button, Card, CardContent, createStyles, Grid, Typography, WithStyles, withStyles } from "@material-ui/core"
 import { PlayerNameDropdown } from "./PlayerNameDropdown"
 import { PlayerProfilePicture } from "./PlayerProfilePicture"
+import { StoreState } from "../../../../Redux"
+import { connect } from "react-redux"
+import { doGet } from "../../../../apiHandler/apiHandler"
+import { withNotifications, WithNotifications } from "../../../Shared/Notification/NotificationUtils"
 
 const styles = createStyles({
     card: {
@@ -21,12 +25,18 @@ const styles = createStyles({
     }
 })
 
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+
 interface OwnProps {
     player: Player
 }
 
 type Props = OwnProps
     & WithStyles<typeof styles>
+    & ReturnType<typeof mapStateToProps>
+    & WithNotifications
 
 class PlayerProfileComponent extends React.PureComponent<Props> {
     public render() {
@@ -58,11 +68,64 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                                 </Button>
                             </a>
                         </Grid>
+                        {this.props.loggedInUser && this.props.loggedInUser.admin &&
+                        <>
+                            <Grid item xs={12} container justify="flex-end">
+                                <Button variant="text" size="small" onClick={() => {
+                                    this.addGroupToUser(player.id, 3)
+                                }}>
+                                    <Typography>
+                                        Add patron
+                                    </Typography>
+                                </Button>
+                                <Button variant="text" size="small" onClick={() => {
+                                    this.removeGroupFromUser(player.id, 3)
+                                }}>
+                                    <Typography>
+                                        Remove patron
+                                    </Typography>
+                                </Button>
+                            </Grid>
+                        </>
+                        }
                     </Grid>
                 </CardContent>
             </Card>
         )
     }
+
+    private readonly addGroupToUser = (id: string, group: number) => {
+        doGet(`/admin/group/add/${id}/${group}`).then(() => {
+            this.props.showNotification({
+                variant: "success",
+                message: "Successfully added group to user",
+                timeout: 3000
+            })
+        }).catch((err) => {
+            this.props.showNotification({
+                variant: "error",
+                message: "Error",
+                timeout: 10000
+            })
+        })
+    }
+    private readonly removeGroupFromUser = (id: string, group: number) => {
+        doGet(`/admin/group/remove/${id}/${group}`).then(() => {
+            this.props.showNotification({
+                variant: "success",
+                message: "Successfully removed group from user",
+                timeout: 3000
+            })
+        }).catch((err) => {
+            this.props.showNotification({
+                variant: "error",
+                message: "Error",
+                timeout: 10000
+            })
+        })
+    }
+
 }
 
-export const PlayerProfile = (withStyles(styles)(PlayerProfileComponent))
+export const PlayerProfile = withNotifications()(
+    connect(mapStateToProps)(withStyles(styles)(PlayerProfileComponent)))
