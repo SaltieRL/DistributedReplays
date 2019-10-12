@@ -158,7 +158,9 @@ class TrainingPackCreation:
     def import_pack(guid, session):
         pack_query = session.query(TrainingPack).filter(TrainingPack.guid == guid)
         if pack_query.count() == 0:
-            raise CalculatedError(400, "Invalid pack GUID.")
+            pack_query = session.query(TrainingPack).filter(TrainingPack.task_id == guid)
+            if pack_query.count() == 0:
+                raise CalculatedError(400, "Invalid pack GUID.")
         pack: TrainingPack = duplicate_object(pack_query.first(), ['id'])
         user_id = get_current_user_id()
         pack.player = user_id
