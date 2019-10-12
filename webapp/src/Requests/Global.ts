@@ -70,8 +70,8 @@ export const getUploadStatuses = (ids: string[]): Promise<UploadStatus[]> => {
 
 export const getLoggedInUser = (): Promise<LoggedInUser> => doGet("/me")
 
-export const getTrainingPacks = (): Promise<TrainingPackResponse> => {
-    return doGet("/training/list")
+export const getTrainingPacks = (page: number, limit: number): Promise<TrainingPackResponse> => {
+    return doGet(`/training/list?page=${page}&limit=${limit}`)
         .then((data: TrainingPackResponse) => {
             data.packs = data.packs.map(parseTrainingPack)
             return data

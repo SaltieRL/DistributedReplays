@@ -25,7 +25,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
-from backend.tasks.celery_tasks import create_training_pack
+from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.utils.logging import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
@@ -528,28 +528,96 @@ def api_handle_error(error: CalculatedError):
 
 
 @bp.route('/training/create')
-@require_user
 @with_query_params(accepted_query_params=[
     QueryParam(name="date_start", type_=str, optional=True),
-    QueryParam(name="date_end", type_=str, optional=True)
+    QueryParam(name="date_end", type_=str, optional=True),
+    QueryParam(name="player_id", type_=str, optional=True),
+    QueryParam(name="replays", type_=str, optional=True, is_list=True),
+    QueryParam(name="name", type_=str, optional=True)
 ])
 def api_create_trainingpack(query_params=None):
     date_start = None
     date_end = None
+    try:
+        requester_id = get_current_user_id()
+        pack_player_id = get_current_user_id()
+    except:
+        requester_id = None
+        pack_player_id = None
+    name = None
+    replays = None
+    if 'name' in query_params:
+        name = query_params['name']
+    if 'player_id' in query_params:
+        pack_player_id = query_params['player_id']
+
+    if 'replays' in query_params:
+        replays = query_params['replays']
     if 'date_start' in query_params:
         date_start = query_params['date_start']
     if 'date_end' in query_params:
         date_end = query_params['date_end']
-    task = create_training_pack.delay(get_current_user_id(), 10, date_start, date_end)
+    task = auto_create_training_pack.delay(requester_id, pack_player_id, name, 10, date_start, date_end, replays)
+    return better_jsonify({'status': 'Success', 'id': task.id})
+
+
+@bp.route('/training/build', methods=['POST'])
+def api_create_custom_trainingpack():
+    _json = request.get_json(silent=True)
+    if _json is None:
+        raise CalculatedError(400, 'No JSON supplied.')
+
+    requester_id = get_current_user_id()
+    players = _json['players']
+    replays = _json['replays']
+    frames = [int(frame) for frame in _json['frames']]
+    mode = False
+    name = None
+    if 'name' in _json:
+        name = _json['name']
+    if 'mode' in _json:
+        mode = _json['mode'].lower() == 'goalie'
+    task = create_manual_training_pack.delay(requester_id, players, replays, frames, name, mode)
     return better_jsonify({'status': 'Success', 'id': task.id})
 
 
 @bp.route('/training/list')
-@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name="player_id", type_=str, optional=True),
+    QueryParam(name='page', type_=int, optional=False),
+    QueryParam(name='limit', type_=int, optional=False)
+])
 @with_session
-def api_find_trainingpack(session=None):
+def api_find_trainingpack(query_params=None, session=None):
     player = get_current_user_id()
-    return better_jsonify(TrainingPackCreation.list_packs(player, session))
+    if 'player_id' in query_params:
+        player = query_params['player_id']
+    elif player is None:
+        raise CalculatedError(400, "Anonymous requests require 'player_id' parameter.")
+    return better_jsonify(TrainingPackCreation.list_packs(player, query_params['page'], query_params['limit'], session))
+
+
+@bp.route('/training/poll')
+@with_query_params(accepted_query_params=[
+    QueryParam(name="task_id", type_=str, optional=False)
+])
+@with_session
+def api_poll_trainingpack(query_params=None, session=None):
+    return better_jsonify(TrainingPackCreation.poll_pack(query_params['task_id'], session))
+
+
+@bp.route('/training/import')
+@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name="guid", type_=str, optional=False)
+])
+@with_session
+def api_import_trainingpack(query_params=None, session=None):
+    if TrainingPackCreation.import_pack(query_params['guid'], session):
+        return redirect('/training')
+    return better_jsonify({
+        'error': 'Error importing pack.'
+    })
 
 
 # Homepage

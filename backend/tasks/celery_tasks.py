@@ -19,6 +19,7 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
+
 try:
     from backend.tasks.training_packs.task import TrainingPackCreation
     from backend.utils.metrics import METRICS_TRAINING_PACK_CREATION_TIME
@@ -107,15 +108,34 @@ def calc_item_stats(self, session=None):
     if lazy_get_redis() is not None:
         lazy_get_redis().set('item_stats', json.dumps(results))
 
-
+# Uses fancy algorithm to make pack
 @celery.task(base=DBTask, bind=True, priority=9)
-def create_training_pack(self, id_, n=10, date_start=None, date_end=None, session=None):
+def auto_create_training_pack(self, requester_id, pack_player_id, name=None, n=10, date_start=None, date_end=None,
+                              replays=None, session=None):
     if session is None:
         sess = self.session()
     else:
         sess = session
     start = time.time()
-    url = TrainingPackCreation.create_from_player(id_, n, date_start, date_end, sess)
+    url = TrainingPackCreation.create_from_player(self.request.id, requester_id, pack_player_id, n, date_start,
+                                                  date_end, name, replays, sess)
+    end = time.time()
+    METRICS_TRAINING_PACK_CREATION_TIME.observe(
+        start - end
+    )
+    return url
+
+# Must specify all attributes
+@celery.task(base=DBTask, bind=True, priority=9)
+def create_manual_training_pack(self, requester_id, players, replays, frames, name=None, mode=False,
+                                session=None):
+    if session is None:
+        sess = self.session()
+    else:
+        sess = session
+    start = time.time()
+    url = TrainingPackCreation.create_custom_pack(self.request.id, requester_id, players, replays, frames, name, mode,
+                                                  sess)
     end = time.time()
     METRICS_TRAINING_PACK_CREATION_TIME.observe(
         start - end

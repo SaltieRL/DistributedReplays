@@ -225,3 +225,17 @@ def add_objects(protobuf_game, session=None, preserve_upload_date=True):
     match_exists = add_objs_to_db(game, player_games, players, teamstats, loadouts, session, preserve_upload_date)
     session.commit()
     return match_exists
+
+
+def duplicate_object(row, ignored_columns=None):
+    if ignored_columns is None:
+        ignored_columns = []
+    copy = type(row)()
+    for col in row.__table__.columns:
+        if col.name not in ignored_columns:
+            try:
+                copy.__setattr__(col.name, getattr(row, col.name))
+            except Exception as e:
+                print(e)
+                continue
+    return copy
