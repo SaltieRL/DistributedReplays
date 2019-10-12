@@ -1,4 +1,4 @@
-import { Card, CardHeader, Divider, List, Typography, withWidth } from "@material-ui/core"
+import { Card, CardHeader, Divider, List, TablePagination, Typography, withWidth } from "@material-ui/core"
 import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
 import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
@@ -8,12 +8,13 @@ import { TrainingPack, TrainingPackResponse, TrainingPackShot } from "../../Mode
 import { Viewer } from "../Replay/ReplayViewer/Viewer"
 import { CreatePackDialog } from "./CreatePackDialog"
 import { TrainingPackDisplayRow } from "./TrainingPackDisplayRow"
-import { TrainingPackTablePagination } from "./TrainingPackTablePagination"
 
 interface OwnProps {
     trainingPacks: TrainingPackResponse
     page: number
     limit: number
+    handleChangePage: (event: unknown, page: number) => void
+    handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>
 }
 
 type Props = OwnProps
@@ -115,10 +116,16 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                     }
                                 </div>
                             }
-                            <TrainingPackTablePagination
-                                totalCount={trainingPacks.totalCount}
+                            <TablePagination
+                                component="div"
+                                count={trainingPacks.totalCount}
+                                onChangePage={this.props.handleChangePage}
+                                onChangeRowsPerPage={this.props.handleChangeRowsPerPage}
                                 page={page}
-                                limit={limit}/>
+                                rowsPerPage={limit}
+                                rowsPerPageOptions={[10, 25, 50]}
+                            />
+
                         </Card>
                         :
                         <Typography variant="subtitle1" align="center">

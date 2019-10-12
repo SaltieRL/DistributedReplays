@@ -583,7 +583,9 @@ def api_create_custom_trainingpack():
 
 @bp.route('/training/list')
 @with_query_params(accepted_query_params=[
-    QueryParam(name="player_id", type_=str, optional=True)
+    QueryParam(name="player_id", type_=str, optional=True),
+    QueryParam(name='page', type_=int, optional=False),
+    QueryParam(name='limit', type_=int, optional=False)
 ])
 @with_session
 def api_find_trainingpack(query_params=None, session=None):
@@ -592,7 +594,7 @@ def api_find_trainingpack(query_params=None, session=None):
         player = query_params['player_id']
     elif player is None:
         raise CalculatedError(400, "Anonymous requests require 'player_id' parameter.")
-    return better_jsonify(TrainingPackCreation.list_packs(player, session))
+    return better_jsonify(TrainingPackCreation.list_packs(player, query_params['page'], query_params['limit'], session))
 
 
 @bp.route('/training/poll')

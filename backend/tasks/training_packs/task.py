@@ -141,10 +141,10 @@ class TrainingPackCreation:
         TrainingPackCreation.upload_and_commit_pack(name, "0", requester_id, result, sess, task_id)
 
     @staticmethod
-    def list_packs(id_, session):
+    def list_packs(id_, page: int, limit: int, session):
         packs = session.query(TrainingPack).filter(TrainingPack.player == id_).order_by(
             desc(TrainingPack.creation_date))
-        return TrainingPackCreation.create_pack_response(packs.all(), packs.count(), session)
+        return TrainingPackCreation.create_pack_response(packs[page * limit: (page + 1) * limit], packs.count(), session)
 
     @staticmethod
     def poll_pack(id_, session):
