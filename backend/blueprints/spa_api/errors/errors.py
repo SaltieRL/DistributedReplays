@@ -110,7 +110,7 @@ class UnsupportedPlaylist(CalculatedError):
 
 class AuthorizationException(CalculatedError):
     status_code = 401
-    message = "User not allowed for this request"
+    message = "User not authorized to make this request"
 
 
 class NotYetImplemented(CalculatedError):
