@@ -91,6 +91,13 @@ class TagError(CalculatedError):
     message = "Exception with tags"
 
 
+class TagKeyError(TagError):
+    status_code = 400
+
+    def __init__(self, tag_key, exception):
+        self.message = f'Unable to decode tag_key; [{tag_key}] ' + str(exception)
+
+
 class TagNotFound(TagError):
     status_code = 404
     message = "Tag not found"

@@ -21,6 +21,7 @@ from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
 from backend.utils.metrics import MetricsHandler
 from backend.utils.logging import ErrorLogger
+from backend.utils.safe_flask_globals import UserManager
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")

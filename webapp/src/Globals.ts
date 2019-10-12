@@ -12,6 +12,7 @@ export const STATUS_PAGE_LINK = "/status"
 
 export const LEADERBOARDS_LINK = `/leaderboards`
 export const TRAINING_LINK = `/training`
+export const TRAINING_IMPORT_LINK = (guid: string) => `/api/training/import?guid=${guid}`
 
 export const PLAYER_PAGE_LINK = (id: string) => `/players/${id}`
 export const PLAYER_MATCH_HISTORY_PAGE_LINK = (id: string) => `/players/${id}/match_history`
@@ -27,6 +28,8 @@ export const REPLAYS_SEARCH_PAGE_LINK = (queryParams?: Partial<ReplaysSearchQuer
     }
     return pageLink
 }
+
+export const TAGS_PAGE_LINK = "/tags"
 
 export const GLOBAL_STATS_LINK = "/global/stats"
 export const STEAM_LOGIN_LINK = "/auth/steam"
