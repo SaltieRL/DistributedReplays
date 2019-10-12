@@ -25,7 +25,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
-from backend.tasks.celery_tasks import create_training_pack, create_custom_training_pack
+from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.utils.logging import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
@@ -557,7 +557,7 @@ def api_create_trainingpack(query_params=None):
         date_start = query_params['date_start']
     if 'date_end' in query_params:
         date_end = query_params['date_end']
-    task = create_training_pack.delay(requester_id, pack_player_id, name, 10, date_start, date_end, replays)
+    task = auto_create_training_pack.delay(requester_id, pack_player_id, name, 10, date_start, date_end, replays)
     return better_jsonify({'status': 'Success', 'id': task.id})
 
 
@@ -577,7 +577,7 @@ def api_create_custom_trainingpack():
         name = _json['name']
     if 'mode' in _json:
         mode = _json['mode'].lower() == 'goalie'
-    task = create_custom_training_pack.delay(requester_id, players, replays, frames, name, mode)
+    task = create_manual_training_pack.delay(requester_id, players, replays, frames, name, mode)
     return better_jsonify({'status': 'Success', 'id': task.id})
 
 

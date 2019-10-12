@@ -108,10 +108,10 @@ def calc_item_stats(self, session=None):
     if lazy_get_redis() is not None:
         lazy_get_redis().set('item_stats', json.dumps(results))
 
-
+# Uses fancy algorithm to make pack
 @celery.task(base=DBTask, bind=True, priority=9)
-def create_training_pack(self, requester_id, pack_player_id, name=None, n=10, date_start=None, date_end=None,
-                         replays=None, session=None):
+def auto_create_training_pack(self, requester_id, pack_player_id, name=None, n=10, date_start=None, date_end=None,
+                              replays=None, session=None):
     if session is None:
         sess = self.session()
     else:
@@ -125,9 +125,9 @@ def create_training_pack(self, requester_id, pack_player_id, name=None, n=10, da
     )
     return url
 
-
+# Must specify all attributes
 @celery.task(base=DBTask, bind=True, priority=9)
-def create_custom_training_pack(self, requester_id, players, replays, frames, name=None, mode=False,
+def create_manual_training_pack(self, requester_id, players, replays, frames, name=None, mode=False,
                                 session=None):
     if session is None:
         sess = self.session()
