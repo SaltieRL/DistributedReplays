@@ -61,10 +61,15 @@ class ErrorLogger:
 
     @staticmethod
     @with_session
-    def log_replay(payload, query_params, session=None):
+    def log_replay(payload, query_params, proto_game=None, session=None):
         replay_uuid = None if 'uuid' not in payload else payload['uuid']
+        game_hash = None
+        if proto_game is not None:
+            game_hash = proto_game.game_metadata.match_guid
+            if game_hash == "":
+                game_hash = proto_game.game_metadata.id
         log = ReplayLog(uuid=replay_uuid, result=ReplayResult.SUCCESS, error_type="",
-                        log="", params=str(query_params))
+                        log="", params=str(query_params), game=game_hash)
         session.add(log)
         session.commit()
 

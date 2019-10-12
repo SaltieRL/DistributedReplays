@@ -441,7 +441,7 @@ def api_upload_proto(session=None, query_params=None):
         ErrorLogger.log_replay_error(payload, query_params, proto_game=protobuf_game)
         ErrorLogger.log_error(e, logger=logger)
         return jsonify({'Success': False})
-    ErrorLogger.log_replay(payload, query_params)
+    ErrorLogger.log_replay(payload, query_params, proto_game=protobuf_game)
     return jsonify({'Success': True})
 
 
