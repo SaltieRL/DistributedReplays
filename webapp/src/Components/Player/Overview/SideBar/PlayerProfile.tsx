@@ -1,12 +1,12 @@
 import * as React from "react"
 
 import { Button, Card, CardContent, createStyles, Grid, Typography, WithStyles, withStyles } from "@material-ui/core"
-import { PlayerNameDropdown } from "./PlayerNameDropdown"
-import { PlayerProfilePicture } from "./PlayerProfilePicture"
-import { StoreState } from "../../../../Redux"
 import { connect } from "react-redux"
 import { doGet } from "../../../../apiHandler/apiHandler"
+import { StoreState } from "../../../../Redux"
 import { withNotifications, WithNotifications } from "../../../Shared/Notification/NotificationUtils"
+import { PlayerNameDropdown } from "./PlayerNameDropdown"
+import { PlayerProfilePicture } from "./PlayerProfilePicture"
 
 const styles = createStyles({
     card: {

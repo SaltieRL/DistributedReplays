@@ -3,6 +3,7 @@ import * as React from "react"
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom"
 import { AppListener } from "./AppListener"
 import { AboutPage } from "./Components/Pages/AboutPage"
+import { AdminPage } from "./Components/Pages/AdminPage"
 import { DocumentationPage } from "./Components/Pages/DocumentationPage"
 import { ExplanationsPage } from "./Components/Pages/ExplanationsPage"
 import { GlobalStatsPage } from "./Components/Pages/GlobalStatsPage"
@@ -34,7 +35,6 @@ import {
     TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
-import { AdminPage } from "./Components/Pages/AdminPage"
 
 const styles = createStyles({
     App: {
