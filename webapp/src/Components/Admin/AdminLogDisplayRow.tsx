@@ -1,7 +1,19 @@
-import { createStyles, Grid, ListItem, Theme, Typography, WithStyles, withStyles, withWidth } from "@material-ui/core"
+import {
+    createStyles,
+    Grid,
+    IconButton,
+    ListItem,
+    Theme,
+    Typography,
+    WithStyles,
+    withStyles,
+    withWidth
+} from "@material-ui/core"
 import { WithWidth } from "@material-ui/core/withWidth"
+import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
 import { connect } from "react-redux"
+import { REPLAY_PAGE_LINK } from "../../Globals"
 import { StoreState } from "../../Redux"
 
 const styles = (theme: Theme) => createStyles({
@@ -26,7 +38,6 @@ const styles = (theme: Theme) => createStyles({
     }
 })
 
-
 interface OwnProps {
     log: AdminLog
 }
@@ -50,7 +61,7 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                         {log.id}
                     </Typography>
                 </Grid>
-                <Grid item xs={1} className={classes.listGridItem}>
+                <Grid item xs={3} className={classes.listGridItem}>
                     <Typography>
                         {log.uuid}
                     </Typography>
@@ -77,7 +88,14 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
                     <Typography>
-                        {log.game}
+                        {log.game &&
+                        <IconButton
+                            href={REPLAY_PAGE_LINK(log.game)}
+                            className={classes.iconButton}
+                            onClick={(event) => event.stopPropagation()}
+                        >
+                            <InsertChart/>
+                        </IconButton>}
                     </Typography>
                 </Grid>
             </Grid>
