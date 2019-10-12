@@ -44,8 +44,8 @@ class Test_BasicServerCommands():
                    GameVisibilitySetting.PRIVATE.name,
                    GameVisibilitySetting.PRIVATE.name]
         users = [
-            'invalid',
             '76561198018756583',
+            'invalid',
             '76561198018756583',
             '76561198018756583'
         ]
@@ -72,6 +72,8 @@ class Test_BasicServerCommands():
 
         for index, replay_url in enumerate(replay_list):
             if index == 1:
+                logger.error("CREATING INITIAL TAG DATA")
+                time.sleep(20)
                 create_all_tags()
                 time.sleep(1)
 

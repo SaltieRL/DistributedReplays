@@ -21,6 +21,7 @@ from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
 from backend.utils.metrics import MetricsHandler
 from backend.utils.logging import ErrorLogger
+from utils.safe_flask_globals import UserManager
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")
@@ -173,7 +174,7 @@ class CalculatedServer:
             elif is_local_dev():
                 logger.error("CREATING REQUEST WITH LOCAL USER IN DEV MODE")
                 g.user = create_default_player(session=session)
-                logger.error("LOCAL USER CREATED " + g.user.platformid)
+                logger.error("LOCAL USER CREATED " + UserManager.get_current_user().platformid)
                 g.admin = True
 
         # Serve React App
