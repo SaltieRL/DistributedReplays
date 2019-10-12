@@ -16,6 +16,7 @@ import { ReplayPage } from "./Components/Pages/ReplayPage"
 import { ReplaysGroupPage } from "./Components/Pages/ReplaysGroupPage"
 import { ReplaysSearchPage } from "./Components/Pages/ReplaysSearchPage"
 import { StatusPage } from "./Components/Pages/StatusPage"
+import { TagsPage } from "./Components/Pages/TagsPage"
 import { TrainingPackPage } from "./Components/Pages/TrainingPackPage"
 import { UploadPage } from "./Components/Pages/UploadPage"
 import { Notifications } from "./Components/Shared/Notification/Notifications"
@@ -29,7 +30,8 @@ import {
     REPLAY_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
-    STATUS_PAGE_LINK, TRAINING_LINK,
+    STATUS_PAGE_LINK, TAGS_PAGE_LINK,
+    TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
 
@@ -71,6 +73,7 @@ class AppComponent extends React.Component<Props> {
                             <Route exact path={EXPLANATIONS_LINK} component={ExplanationsPage}/>
                             <Route exact path={DOCUMENTATION_LINK} component={DocumentationPage}/>
                             <Route exact path={PRIVACY_POLICY_LINK} component={PrivacyPolicyPage}/>
+                            <Route exact path={TAGS_PAGE_LINK} component={TagsPage}/>
                             {/*Redirect unknowns to root*/}
                             <Redirect from="*" to="/"/>
                         </Switch>

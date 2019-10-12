@@ -443,13 +443,13 @@ def api_upload_proto(query_params=None):
 @bp.route('/tag/<name>', methods=["PUT"])
 @require_user
 @with_query_params(accepted_query_params=[
-    QueryParam(name='private_key', type_=str, optional=True)
+    QueryParam(name='private_id', type_=str, optional=True)
 ])
 def api_create_tag(name: str, query_params=None):
-    private_key = None
-    if 'private_key' in query_params:
-        private_key = query_params['private_key']
-    tag = Tag.create(name, private_key=private_key)
+    private_id = None
+    if 'private_id' in query_params:
+        private_id = query_params['private_id']
+    tag = Tag.create(name, private_id=private_id)
     return better_jsonify(tag), 201
 
 
