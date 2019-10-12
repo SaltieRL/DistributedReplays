@@ -12,13 +12,13 @@ import {
     withWidth
 } from "@material-ui/core"
 import { WithWidth } from "@material-ui/core/withWidth"
+import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
+import OpenInNew from "@material-ui/icons/OpenInNew"
 import * as React from "react"
 import { connect } from "react-redux"
 import { REPLAY_PAGE_LINK } from "../../Globals"
 import { StoreState } from "../../Redux"
-import OpenInNew from "@material-ui/icons/OpenInNew"
-import ExpandMore from "@material-ui/icons/ExpandMore"
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {
