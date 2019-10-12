@@ -3,7 +3,7 @@ from typing import Callable, List
 
 from sqlalchemy import desc, or_
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError
+from backend.blueprints.spa_api.errors.errors import CalculatedError, AuthorizationException
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import ReplayLog, ReplayResult
 from backend.utils.checks import is_admin
@@ -77,7 +77,7 @@ class ErrorLogger:
     @with_session
     def get_logs(page, limit, search, session=None):
         if not is_admin():
-            raise CalculatedError(401, "Unauthorized")
+            raise AuthorizationException()
         logs = session.query(ReplayLog).order_by(desc(ReplayLog.id))
         if search is not None:
             search = f"%{search}%"
