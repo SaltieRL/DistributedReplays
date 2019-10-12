@@ -6,7 +6,6 @@ from backend.database.objects import ReplayLog, ReplayResult
 
 backup_logger = logging.getLogger(__name__)
 
-
 logger_callbacks = []
 
 
@@ -47,5 +46,14 @@ class ErrorLogger:
         error_type = None if 'error_type' not in payload else payload['error_type']
         log = ReplayLog(uuid=replay_uuid, result=ReplayResult.ERROR, error_type=error_type,
                         log=payload['stack'], params=str(query_params))
+        session.add(log)
+        session.commit()
+
+    @staticmethod
+    @with_session
+    def log_replay(payload, query_params, session=None):
+        replay_uuid = None if 'uuid' not in payload else payload['uuid']
+        log = ReplayLog(uuid=replay_uuid, result=ReplayResult.SUCCESS, error_type="",
+                        log="", params=str(query_params))
         session.add(log)
         session.commit()

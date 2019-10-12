@@ -437,7 +437,8 @@ def api_upload_proto(session=None, query_params=None):
     except Exception as e:
         ErrorLogger.log_replay_error(payload, query_params)
         ErrorLogger.log_error(e, logger=logger)
-
+        return jsonify({'Success': False})
+    ErrorLogger.log_replay(payload, query_params)
     return jsonify({'Success': True})
 
 
