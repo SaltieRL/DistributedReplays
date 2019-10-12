@@ -423,11 +423,11 @@ def api_get_parse_status(query_params=None):
 
 @bp.route('/upload/proto', methods=['POST'])
 @with_query_params(accepted_query_params=upload_file_query_params)
-def api_upload_proto(query_params=None):
+def api_upload_proto(session=None, query_params=None):
     # Convert to byte files from base64
-    response = request.get_json()
+    payload = request.get_json()
 
-    proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
+    proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(payload['proto'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
@@ -435,6 +435,7 @@ def api_upload_proto(query_params=None):
     try:
         parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
+        ErrorLogger.log_replay_error(payload, query_params)
         ErrorLogger.log_error(e, logger=logger)
 
     return jsonify({'Success': True})
@@ -442,15 +443,9 @@ def api_upload_proto(query_params=None):
 
 @bp.route('/upload/proto/error', methods=['POST'])
 @with_query_params(accepted_query_params=upload_file_query_params)
-@with_session
-def api_upload_proto_error(session=None, query_params=None):
+def api_upload_proto_error(query_params=None):
     payload = request.get_json()
-    replay_uuid = None if 'uuid' not in payload else payload['uuid']
-    error_type = None if 'error_type' not in payload else payload['error_type']
-    log = ReplayLog(uuid=replay_uuid, result=ReplayResult.ERROR, error_type=error_type,
-                    log=payload['stack'], params=str(query_params))
-    session.add(log)
-    session.commit()
+    ErrorLogger.log_replay_error(payload, query_params)
     return jsonify({'Success': True})
 
 

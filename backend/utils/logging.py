@@ -1,6 +1,9 @@
 import logging
 from typing import Callable
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.database.objects import ReplayLog, ReplayResult
+
 backup_logger = logging.getLogger(__name__)
 
 
@@ -36,3 +39,13 @@ class ErrorLogger:
                 callback(exception)
         except Exception as e:
             backup_logger.exception(e)
+
+    @staticmethod
+    @with_session
+    def log_replay_error(payload, query_params, session=None):
+        replay_uuid = None if 'uuid' not in payload else payload['uuid']
+        error_type = None if 'error_type' not in payload else payload['error_type']
+        log = ReplayLog(uuid=replay_uuid, result=ReplayResult.ERROR, error_type=error_type,
+                        log=payload['stack'], params=str(query_params))
+        session.add(log)
+        session.commit()
