@@ -406,3 +406,4 @@ class ReplayLog(DBObjectBase):
     error_type = Column(String(40))
     log = Column(String)
     params = Column(String, default=None)
+    game = Column(String(40), default=None)
