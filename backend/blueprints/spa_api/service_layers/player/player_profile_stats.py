@@ -3,38 +3,43 @@ from typing import List
 from sqlalchemy import func, desc, cast, String, literal_column
 from sqlalchemy.dialects import postgresql
 
+from backend.blueprints.spa_api.service_layers.replay.replay_player import Loadout
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame, Game, Player
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
-from data.constants.car import get_car
+from backend.data.constants.car import get_car
 
 player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 
 class PlayerInCommonStats:
-    def __init__(self, id: str, name: str, count: int):
+    def __init__(self, id: str, name: str, count: int, avatar: str):
         self.id = id
         self.name = name
         self.count = count
+        self.avatar = avatar
 
 
 class PlayerProfileStats:
-    def __init__(self, favourite_car: str, car_percentage: float, players_in_common: List[PlayerInCommonStats]):
+    def __init__(self, favourite_car: str, car_percentage: float, players_in_common: List[PlayerInCommonStats],
+                 loadout: Loadout):
         self.car = {
             "carName": favourite_car,
             "carPercentage": car_percentage
         }
         self.playersInCommon = [player_in_common.__dict__ for player_in_common in players_in_common]
+        self.loadout = loadout.__dict__
 
     @staticmethod
     @with_session
     def create_from_id(id_: str, session=None) -> 'PlayerProfileStats':
         favourite_car, car_percentage = PlayerProfileStats._get_favourite_car(id_, session)
         players_in_common = PlayerProfileStats._get_most_played_with(id_, session)
+        loadout = PlayerProfileStats._get_most_recent_loadout(id_, session)
         return PlayerProfileStats(favourite_car=favourite_car, car_percentage=car_percentage,
-                                  players_in_common=players_in_common)
+                                  players_in_common=players_in_common, loadout=loadout)
 
     @staticmethod
     def _get_most_played_with(id_: str, session):
@@ -51,9 +56,10 @@ class PlayerProfileStats:
         for p in result:
             player = session.query(Player).filter(Player.platformid == p[0]).first()
             if player is None or player.platformname == "":
-                players_in_common.append(PlayerInCommonStats(name=p[2], count=p[1], id=p[0]))
+                players_in_common.append(PlayerInCommonStats(name=p[2], count=p[1], id=p[0], avatar=player.avatar))
             else:
-                players_in_common.append(PlayerInCommonStats(name=player.platformname, count=p[1], id=p[0]))
+                players_in_common.append(
+                    PlayerInCommonStats(name=player.platformname, count=p[1], id=p[0], avatar=player.avatar))
 
         return players_in_common
 
@@ -75,3 +81,13 @@ class PlayerProfileStats:
             total_games = player_wrapper.get_total_games(session, id_)
             car_percentage = fav_car_str[1] / total_games
         return favourite_car, car_percentage
+
+    @staticmethod
+    def _get_most_recent_loadout(id_: str, session):
+        pg = session.query(PlayerGame) \
+            .join(Game, PlayerGame.game == Game.hash) \
+            .distinct(PlayerGame.player) \
+            .filter(PlayerGame.player == id_) \
+            .order_by(desc(PlayerGame.player), desc(Game.match_date)) \
+            .first()
+        return Loadout.create_from_player_game(pg)

@@ -17,11 +17,15 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
-import { LOCAL_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, UPLOAD_LINK } from "../../Globals"
+import { PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, UPLOAD_LINK } from "../../Globals"
 import { LoggedInUserActions, StoreState } from "../../Redux"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { HomePageAppBar } from "../Home/HomePageAppBar"
 import { HomePageFooter } from "../Home/HomePageFooter"
+import { Leaderboards } from "../Home/Widgets/Leaderboards"
+import { Patreon } from "../Home/Widgets/Patreon"
+import { Recent } from "../Home/Widgets/Recent"
+import { Twitch } from "../Home/Widgets/Twitch"
 import { LinkButton } from "../Shared/LinkButton"
 import { Logo } from "../Shared/Logo/Logo"
 import { Search } from "../Shared/Search"
@@ -92,10 +96,15 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                     <div className={classes.root}>
                         <SideBar open={this.state.sideBarOpen} onClose={this.toggleSideBar}/>
                         <HomePageAppBar toggleSideBar={this.toggleSideBar}/>
-                        <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}>
-                            <Grid item xs={12} {...alignCenterProps} style={{minHeight: 300}} direction="column">
+                        <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}
+                              style={{marginTop: "100px"}}>
+                            <Grid item xs={12} {...alignCenterProps}>
                                 <Logo imgStyle={{maxWidth: "80vw", maxHeight: 88}}/>
-                                <br/>
+                            </Grid>
+                            <Grid item xs={11} {...alignCenterProps} style={{padding: "20px 0 20px 0"}}>
+                                <Search usePaper/>
+                            </Grid>
+                            <Grid item xs={12} {...alignCenterProps} style={{padding: "15px"}} direction="column">
                                 <Typography>
                                     <i>
                                         {this.state.replayCount
@@ -104,9 +113,6 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                         }
                                     </i>
                                 </Typography>
-                            </Grid>
-                            <Grid item xs={11} {...alignCenterProps} style={{padding: "20px 0 20px 0"}}>
-                                <Search usePaper/>
                             </Grid>
                             <Grid item xs={12} sm={10} md={8} container spacing={16} alignItems="center"
                                   style={{maxWidth: 550}}>
@@ -121,7 +127,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                             </Button>
                                         </Link>
                                         :
-                                        <LinkButton to={LOCAL_LINK + STEAM_LOGIN_LINK} isExternalLink
+                                        <LinkButton to={STEAM_LOGIN_LINK} isExternalLink
                                                     iconType="fontawesome" icon={faSteam}>
                                             {isWidthUp("sm", width) ? "Log in with Steam" : "Log in"}
                                         </LinkButton>
@@ -139,6 +145,44 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             <Grid item xs={12} sm={8} md={8} lg={6} xl={4}>
                                 <HomePageFooter/>
                             </Grid>
+                            <Grid item xs={12}>
+                                <Divider/>
+                            </Grid>
+
+                            {isWidthUp("md", this.props.width) ?
+                                <>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Twitch style={{width: "100%"}}/>
+                                    </Grid>
+
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Recent style={{width: "100%"}}/>
+                                    </Grid>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Leaderboards style={{width: "100%"}}/>
+                                    </Grid>
+
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Patreon style={{width: "100%"}}/>
+                                    </Grid>
+                                </>
+                                :
+                                <>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Recent style={{width: "100%"}}/>
+                                    </Grid>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Leaderboards style={{width: "100%"}}/>
+                                    </Grid>
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Twitch style={{width: "100%"}}/>
+                                    </Grid>
+
+                                    <Grid item container xs={12} sm={6} lg={4}>
+                                        <Patreon style={{width: "100%"}}/>
+                                    </Grid>
+                                </>
+                            }
                         </Grid>
                     </div>
                 </UploadDialogWrapper>

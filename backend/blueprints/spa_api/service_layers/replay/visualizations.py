@@ -1,12 +1,5 @@
-import gzip
-import os
-
 import numpy as np
-from carball.analysis.utils import pandas_manager, proto_manager
-from flask import current_app
-
-from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
-from backend.utils.cloud_handler import download_df, download_proto
+from backend.utils.file_manager import FileManager
 
 FULL_BOOST_POSITIONS = np.array([
     (3000, -4100),
@@ -17,26 +10,14 @@ FULL_BOOST_POSITIONS = np.array([
     (-3000, 4100),
 ])
 
+
 class Visualizations:
 
     @staticmethod
     def create_from_id(id_: str) -> 'ReplayHeatmaps':
-        pickle_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.pts')
-        gzip_path = os.path.join(current_app.config['PARSED_DIR'], id_ + '.replay.gzip')
-        replay_path = os.path.join(current_app.config['REPLAY_DIR'], id_ + '.replay')
-        if os.path.isfile(replay_path) and not os.path.isfile(pickle_path):
-            raise ReplayNotFound()
-        if not os.path.isfile(gzip_path):
-            df = download_df(id_)
-            protobuf_game = download_proto(id_)
-        else:
-            try:
-                with gzip.open(gzip_path, 'rb') as gz:
-                    df = pandas_manager.PandasManager.safe_read_pandas_to_memory(gz)
-                with open(pickle_path, 'rb') as f:
-                    protobuf_game = proto_manager.ProtobufManager.read_proto_out_from_file(f)
-            except Exception as e:
-                raise ErrorOpeningGame(str(e))
+        df = FileManager.get_pandas(id_)
+        protobuf_game = FileManager.get_proto(id_)
+
         id_to_name_map = {p.id.id: p.name for p in protobuf_game.players}
         if protobuf_game.teams[0].is_orange:
             orange_team = protobuf_game.teams[0]

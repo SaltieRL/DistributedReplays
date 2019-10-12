@@ -6,7 +6,7 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.database.objects import Player as DBPlayer
 from backend.database.objects import PlayerGame
-from ...errors.errors import PlayerNotFound
+from backend.blueprints.spa_api.errors.errors import PlayerNotFound
 
 
 class Player:

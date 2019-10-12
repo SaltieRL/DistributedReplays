@@ -6,6 +6,7 @@ from backend.database.wrapper.stats.creation.player_stat_creation import PlayerS
 from backend.database.wrapper.stats.creation.replay_group_stat_creation import ReplayGroupStatCreation
 from backend.database.wrapper.stats.creation.shared_stat_creation import SharedStatCreation
 from backend.database.wrapper.stats.creation.team_stat_creation import TeamStatCreation
+from backend.database.wrapper.chart.stat_point import DatabaseObjectDataPoint
 
 logger = logging.getLogger(__name__)
 
@@ -74,3 +75,15 @@ class SharedStatsWrapper:
             return None
         else:
             return float(f)
+
+    @staticmethod
+    def merge_stats(wrapped_player_games: List[DatabaseObjectDataPoint], protobuf_stats: List[DatabaseObjectDataPoint]):
+        player_map = dict()
+
+        for player_game in wrapped_player_games:
+            player_map[player_game.name] = player_game
+        for protobuf_game in protobuf_stats:
+            player_game = player_map[protobuf_game.name]
+            player_game.stats.update(protobuf_game.stats)
+
+        return wrapped_player_games

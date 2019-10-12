@@ -13,8 +13,3 @@ def render_with_session(template, session, **kwargs):
     response = render_template(template, **kwargs)
     session.close()
     return response
-
-
-def return_error(msg):
-    return render_template('error.html', error=msg)
-    # return jsonify({'error': msg})

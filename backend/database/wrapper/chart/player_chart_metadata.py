@@ -13,6 +13,8 @@ class BasicStatSubcategory(ChartSubcatagory):
     Boosts = auto()
     Efficiency = auto()
     Team_Positioning = auto()
+    Ball_Carries = auto()
+    Kickoffs = auto()
 
 
 SubCat = BasicStatSubcategory
@@ -26,6 +28,19 @@ player_stats_metadata = [
     Metadata('total_dribbles', ChartType.bar, SubCat.Hits),
     Metadata('total_passes', ChartType.bar, SubCat.Hits),
     Metadata('total_aerials', ChartType.bar, SubCat.Hits),
+    Metadata('total_flicks', ChartType.bar, SubCat.Hits),
+
+    # Carries
+    Metadata('total_carries', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('total_flicks', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('longest_carry', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('furthest_carry', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('total_carry_time', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('average_carry_time', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('fastest_carry_speed', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('total_carry_distance', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('average_carry_speed', ChartType.bar, SubCat.Ball_Carries),
+    Metadata('distance_along_path', ChartType.bar, SubCat.Ball_Carries),
 
     # Ball
     Metadata('time_close_to_ball', ChartType.radar, SubCat.Ball),
@@ -69,6 +84,18 @@ player_stats_metadata = [
     Metadata('time_low_boost', ChartType.radar, SubCat.Boosts),
     Metadata('time_no_boost', ChartType.radar, SubCat.Boosts),
     Metadata('boost_ratio', ChartType.bar, SubCat.Boosts),
+    Metadata('wasted_big', ChartType.bar, SubCat.Boosts),
+    Metadata('wasted_small', ChartType.bar, SubCat.Boosts),
+
+    # kickoffs
+    Metadata('total_kickoffs', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_boost', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_cheat', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_defend', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_go_to_ball', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_afk', ChartType.bar, SubCat.Kickoffs),
+    Metadata('num_time_first_touch', ChartType.bar, SubCat.Kickoffs),
+    Metadata('average_boost_used', ChartType.bar, SubCat.Kickoffs),
 
     # efficiency
     Metadata('collection_boost_efficiency', ChartType.bar, SubCat.Efficiency),
@@ -84,7 +111,7 @@ player_stats_metadata = [
     Metadata('time_behind_center_of_mass', ChartType.radar, SubCat.Team_Positioning),
     Metadata('time_most_forward_player', ChartType.bar, SubCat.Team_Positioning),
     Metadata('time_most_back_player', ChartType.bar, SubCat.Team_Positioning),
-    Metadata('time_between_players', ChartType.bar, SubCat.Team_Positioning),
+    Metadata('time_between_players', ChartType.bar, SubCat.Team_Positioning)
 ]
 
 player_group_stats_metadata = player_stats_metadata + [

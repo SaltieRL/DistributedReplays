@@ -1,15 +1,14 @@
 import json
 import logging
-import os
 import random
 from typing import Union
 
 import redis
 import requests
-from flask import current_app
-from backend.utils.braacket_connection import Braacket
 from backend.database.objects import Player
 from backend.database.startup import lazy_startup
+from backend.utils.braacket_connection import Braacket
+from backend.utils.safe_flask_globals import get_redis
 
 fake_data = False
 try:
@@ -18,23 +17,8 @@ except ImportError:
     RL_API_KEY = None
     fake_data = True
 
-json_loc = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'data', 'categorized_items.json')
-with open(json_loc, 'r') as f:
-    item_dict = json.load(f)
 
 logger = logging.getLogger(__name__)
-
-
-def get_item_name_by_id(id_: str):
-    try:
-        return item_dict[id_]["LongLabel"]
-    except KeyError:
-        logger.warning(f'Cannot find item for id {id_}. Returning "Unknown"')
-        return "Unknown"
-
-
-def get_item_dict():
-    return item_dict
 
 
 def get_bot_by_steam_id(steam_id):
@@ -62,7 +46,7 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
     if fake_data or RL_API_KEY is None:
         return make_fake_data(ids)
     try:
-        _redis = current_app.config['r']  # type: redis.Redis
+        _redis = get_redis()
     except KeyError:
         _redis = None
         ids_to_find = ids
@@ -139,7 +123,7 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
                     }
 
             if _redis is not None:
-                _redis.set(unique_id, json.dumps(rank_datas), ex=30 * 60)
+                _redis.set(unique_id, json.dumps(rank_datas), ex=2 * 60)
             rank_datas_for_players[unique_id] = rank_datas
         else:
             rank_datas_for_players[unique_id] = {}

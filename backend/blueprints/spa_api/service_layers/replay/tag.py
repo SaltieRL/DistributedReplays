@@ -1,11 +1,13 @@
+import base64
 from typing import List, Dict
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.utils.global_functions import get_current_user_id
-from backend.utils.checks import log_error
-from ...errors.errors import CalculatedError, TagNotFound, PlayerNotFound
+from backend.utils.logging import ErrorLogger
+from backend.blueprints.spa_api.errors.errors import TagNotFound, PlayerNotFound, TagError
 from backend.database.objects import Tag as DBTag, Player
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
+from backend.utils.safe_flask_globals import get_current_user_id
+
 
 class Tag:
     def __init__(self, name: str, owner: str, db_tag: DBTag = None):
@@ -14,7 +16,7 @@ class Tag:
         self.owner_id = owner
         self.db_tag = db_tag
 
-    def to_JSON(self, with_id=None):
+    def to_JSON(self, with_id=False):
         if with_id:
             return {
                 "name": self.name,
@@ -33,12 +35,21 @@ class Tag:
 
     @staticmethod
     @with_session
+    def add_private_key(name: str, private_key: str, session=None, player_id=None):
+        try:
+            TagWrapper.add_private_key_to_tag(session, get_current_user_id(player_id=player_id), name, private_key)
+        except DBTagNotFound:
+            raise TagNotFound()
+
+    @staticmethod
+    @with_session
     def create(name: str, session=None, player_id=None, private_key=None) -> 'Tag':
         """
         Creates a new instance of Tag, add one to the db if it does not exist.
         :param name: Tag name
         :param session: Database session
         :param player_id
+        :param private_key
         :return:
         """
         # Check if tag exists
@@ -58,7 +69,7 @@ class Tag:
         # Check if name already exists
         try:
             TagWrapper.get_tag_by_name(session, get_current_user_id(), new_name)
-            raise CalculatedError(409, f"Tag with name {new_name} already exists.")
+            raise TagError(409, f"Tag with name {new_name} already exists.")
         except DBTagNotFound:
             pass
 
@@ -106,25 +117,47 @@ class Tag:
         except DBTagNotFound:
             raise TagNotFound()
 
+    @staticmethod
+    @with_session
+    def get_encoded_private_key(name: str, session=None) -> str:
+        tag = Tag.get_tag(name, session=session)
+        if tag.db_tag.private_id is None:
+            raise TagNotFound()
+        return Tag.encode_tag(tag.db_tag.id, tag.db_tag.private_id)
+
+    @staticmethod
+    def encode_tag(tag_id: int, private_id: str) -> str:
+        merged = str(tag_id + 1000) + ":" + private_id
+        return base64.b85encode(merged.encode(encoding="utf-8")).decode('utf-8')
+
+    @staticmethod
+    def decode_tag(encoded_key: str):
+        decoded_key_bytes = base64.b85decode(encoded_key)
+        decoded_key = decoded_key_bytes.decode(encoding="utf-8")
+        first_index = decoded_key.find(':')
+        tag_id = int(decoded_key[0: first_index]) - 1000
+        decoded_private_id = decoded_key[first_index + 1:]
+        return tag_id, decoded_private_id
+
 @with_session
 def apply_tags_to_game(query_params: Dict[str, any]=None, game_id=None, session=None):
     if query_params is None:
         return None
-    if 'tags' not in query_params and 'tag_ids' not in query_params:
+    if 'tags' not in query_params and 'private_tag_keys' not in query_params:
         return None
     tags = query_params['tags'] if 'tags' in query_params else []
-    tag_ids = query_params['tag_ids'] if 'tag_ids' in query_params else []
     private_ids = query_params['private_tag_keys'] if 'private_tag_keys' in query_params else []
     if len(tags) > 0:
         player_id = query_params['player_id']
         if session.query(Player).filter(Player.platformid == player_id).first() is None:
-            log_error(PlayerNotFound())
+            ErrorLogger.log_error(PlayerNotFound())
         else:
             for tag in tags:
                 created_tag = Tag.create(tag, session=session, player_id=player_id)
                 TagWrapper.add_tag_to_game(session, game_id, created_tag.db_tag)
 
-    for index, tag_id in enumerate(tag_ids):
+    for private_id in private_ids:
+        tag_id, private_key = Tag.decode_tag(private_id)
         tag = TagWrapper.get_tag_by_id(session, tag_id)
-        if tag.private_id is not None and tag.private_id == private_ids[index]:
+        if tag.private_id is not None and tag.private_id == private_key:
             TagWrapper.add_tag_to_game(session, game_id, tag)

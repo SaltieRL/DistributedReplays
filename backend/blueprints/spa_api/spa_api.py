@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import re
+import sys
 import uuid
 import zlib
 
@@ -13,17 +14,27 @@ from flask import jsonify, Blueprint, current_app, request, send_from_directory,
 from werkzeug.utils import secure_filename, redirect
 
 from backend.blueprints.spa_api.service_layers.admin import AdminPanelHandler
+from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
+from backend.blueprints.spa_api.service_layers.homepage.recent import RecentReplays
+from backend.blueprints.spa_api.service_layers.homepage.twitch import TwitchStreams
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
-    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum
+    replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
+    player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
-from backend.utils.checks import log_error
-from backend.utils.global_functions import get_current_user_id
+from backend.tasks.celery_tasks import create_training_pack
+from backend.utils.logging import ErrorLogger
+from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
+from backend.tasks.update import update_self
+from backend.utils.file_manager import FileManager
+from backend.utils.metrics import MetricsHandler
+from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
+from backend.utils.safe_flask_globals import get_current_user_id
 
 try:
     import config
@@ -37,35 +48,44 @@ try:
     REPLAY_BUCKET = config.REPLAY_BUCKET
     PROTO_BUCKET = config.PROTO_BUCKET
     PARSED_BUCKET = config.PARSED_BUCKET
+    TRAINING_PACK_BUCKET = config.TRAINING_PACK_BUCKET
 except:
     print('Not uploading to buckets')
     REPLAY_BUCKET = ''
     PROTO_BUCKET = ''
     PARSED_BUCKET = ''
+    TRAINING_PACK_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting
+from backend.database.objects import Game, GameVisibilitySetting, TrainingPack
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
-from .errors.errors import CalculatedError, MissingQueryParams, TagNotFound
-from .service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
-from .service_layers.logged_in_user import LoggedInUser
-from .service_layers.player.play_style import PlayStyleResponse
-from .service_layers.player.play_style_progression import PlayStyleProgression
-from .service_layers.player.player import Player
-from .service_layers.player.player_profile_stats import PlayerProfileStats
-from .service_layers.player.player_ranks import PlayerRanks
-from .service_layers.queue_status import QueueStatus
-from .service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
-from .service_layers.replay.groups import ReplayGroupChartData
-from .service_layers.replay.match_history import MatchHistory
-from .service_layers.replay.replay import Replay
-from .service_layers.replay.replay_positions import ReplayPositions
-from .service_layers.replay.tag import Tag
-from .utils.decorators import require_user, with_query_params
-from .utils.query_params_handler import QueryParam, get_query_params
+from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
+    ReplayUploadError
+from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
+from backend.blueprints.spa_api.service_layers.logged_in_user import LoggedInUser
+from backend.blueprints.spa_api.service_layers.player.play_style import PlayStyleResponse
+from backend.blueprints.spa_api.service_layers.player.play_style_progression import PlayStyleProgression
+from backend.blueprints.spa_api.service_layers.player.player import Player
+from backend.blueprints.spa_api.service_layers.player.player_profile_stats import PlayerProfileStats
+from backend.blueprints.spa_api.service_layers.player.player_ranks import PlayerRanks
+from backend.blueprints.spa_api.service_layers.queue_status import QueueStatus
+from backend.blueprints.spa_api.service_layers.replay.basic_stats import PlayerStatsChart, TeamStatsChart
+from backend.blueprints.spa_api.service_layers.replay.groups import ReplayGroupChartData
+from backend.blueprints.spa_api.service_layers.replay.match_history import MatchHistory
+from backend.blueprints.spa_api.service_layers.replay.replay import Replay
+from backend.blueprints.spa_api.service_layers.replay.replay_positions import ReplayPositions
+from backend.blueprints.spa_api.service_layers.replay.tag import Tag
+from backend.blueprints.spa_api.utils.decorators import require_user, with_query_params
+from backend.blueprints.spa_api.utils.query_params_handler import QueryParam, get_query_params
+
+try:
+    from backend.tasks.training_packs.task import TrainingPackCreation
+except (ModuleNotFoundError, ImportError):
+    TrainingPackCreation = None
+    print("Missing config or AES Key and CRC, not creating training packs")
 
 logger = logging.getLogger(__name__)
 
@@ -153,14 +173,14 @@ def api_get_player(id_or_name):
         # Treat as name
         response = get_vanity_to_steam_id_or_random_response(id_or_name)
         if response is None:
-            raise CalculatedError(404, "User not found")
+            raise PlayerNotFound(404, "User not found")
         steam_id = response['response']['steamid']
         return jsonify(steam_id)
     else:
         # Treat as id
         result = steam_id_to_profile(id_or_name)
         if result is None:
-            raise CalculatedError(404, "User not found")
+            raise PlayerNotFound(404, "User not found")
         return jsonify(id_or_name)
 
 
@@ -221,18 +241,10 @@ def api_get_player_play_style_progress(id_, query_params=None):
 
 
 @bp.route('player/<id_>/match_history')
-def api_get_player_match_history(id_):
-    page = request.args.get('page')
-    limit = request.args.get('limit')
-
-    if page is None or limit is None:
-        missing_params = []
-        if page is None:
-            missing_params.append('page')
-        if limit is None:
-            missing_params.append('limit')
-        raise MissingQueryParams(missing_params)
-    match_history = MatchHistory.create_from_id(id_, int(page), int(limit))
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
+                                          QueryParam(name='limit', type_=int, optional=False)])
+def api_get_player_match_history(id_, query_params=None):
+    match_history = MatchHistory.create_from_id(id_, query_params['page'], query_params['limit'])
     return better_jsonify(match_history)
 
 
@@ -269,17 +281,26 @@ def api_get_replay_basic_team_stats_download(id_):
 
 
 @bp.route('replay/<id_>/positions')
-def api_get_replay_positions(id_):
-    positions = ReplayPositions.create_from_id(id_)
-    return better_jsonify(positions)
+@with_query_params(accepted_query_params=[
+    QueryParam(name='frame', type_=int, optional=True, is_list=True),
+    QueryParam(name='frame_start', type_=int, optional=True),
+    QueryParam(name='frame_count', type_=int, optional=True),
+    QueryParam(name='as_proto', type_=bool, optional=True)
+])
+def api_get_replay_positions(id_, query_params=None):
+    positions = ReplayPositions.create_from_id(id_, query_params=query_params)
+    if query_params is None or 'as_proto' not in query_params:
+        return better_jsonify(positions)
+    raise NotYetImplemented()
 
 
 @bp.route('replay/<id_>/heatmaps')
-def api_get_replay_heatmaps(id_):
-    if 'type' in request.args:
-        type_ = request.args['type'].lower()
+@with_query_params(accepted_query_params=heatmap_query_params)
+def api_get_replay_heatmaps(id_, query_params=None):
+    if query_params is not None and 'type' in query_params:
+        type_ = query_params['type']
     else:
-        type_ = 'positioning'
+        type_ = HeatMapType.POSITIONING
     positions = ReplayHeatmaps.create_from_id(id_, type_=type_)
     return better_jsonify(positions)
 
@@ -307,7 +328,7 @@ def api_download_group():
 @bp.route('/replay/<id_>/download')
 def download_replay(id_):
     filename = id_ + ".replay"
-    path = os.path.join(current_app.config['REPLAY_DIR'], filename)
+    path = FileManager.get_replay_path(id_)
     if os.path.isfile(path):
         return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
     elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):
@@ -329,7 +350,9 @@ def api_search_replays(query_params=None):
 
 
 @bp.route('replay/<id_>/visibility/<visibility>', methods=['PUT'])
-@with_query_params(accepted_query_params=visibility_params, provided_params=['player_id', 'visibility'])
+@require_user
+@with_query_params(accepted_query_params=visibility_params + player_id,
+                   provided_params=['player_id', 'visibility'])
 def api_update_replay_visibility(id_: str, visibility: str, query_params=None):
     try:
         visibility_setting = convert_to_enum(GameVisibilitySetting)(visibility)
@@ -365,7 +388,7 @@ def api_upload_replays(query_params=None):
     uploaded_files = request.files.getlist("replays")
     logger.info(f"Uploaded files: {uploaded_files}")
     if uploaded_files is None or 'replays' not in request.files or len(uploaded_files) == 0:
-        raise CalculatedError(400, 'No files uploaded')
+        raise ReplayUploadError(400, 'No files uploaded')
     task_ids = []
 
     errors = []
@@ -374,10 +397,10 @@ def api_upload_replays(query_params=None):
         file.seek(0, os.SEEK_END)
         file_length = file.tell()
         if file_length > 5000000:
-            errors.append(CalculatedError(413, 'Replay file is too big'))
+            errors.append(ReplayUploadError(413, 'Replay file is too big'))
             continue
         if not file.filename.endswith('replay'):
-            errors.append(CalculatedError(415, 'Replay uploads must end in .replay'))
+            errors.append(ReplayUploadError(415, 'Replay uploads must end in .replay'))
             continue
         file.seek(0)
         ud = uuid.uuid4()
@@ -391,20 +414,18 @@ def api_upload_replays(query_params=None):
 
 
 @bp.route('/upload', methods=['GET'])
-def api_get_parse_status():
+@with_query_params(accepted_query_params=[QueryParam(name="ids", is_list=True, type_=str, optional=True)])
+def api_get_parse_status(query_params=None):
     ids = request.args.getlist("ids")
     states = [celery_tasks.get_task_state(id_).name for id_ in ids]
     return jsonify(states)
 
 
 @bp.route('/upload/proto', methods=['POST'])
-def api_upload_proto():
-    print('Proto uploaded')
-
+@with_query_params(accepted_query_params=upload_file_query_params)
+def api_upload_proto(query_params=None):
     # Convert to byte files from base64
     response = request.get_json()
-
-    print("Args:", request.args)
 
     proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
 
@@ -412,9 +433,9 @@ def api_upload_proto():
 
     # Process
     try:
-        parsed_replay_processing(protobuf_game)
+        parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
-        log_error(e, logger=logger)
+        ErrorLogger.log_error(e, logger=logger)
 
     return jsonify({'Success': True})
 
@@ -467,10 +488,14 @@ def api_get_tags(query_params=None):
 @bp.route('/tag/<name>/private_key', methods=["GET"])
 @require_user
 def api_get_tag_key(name: str):
-    tag = Tag.get_tag(name)
-    if tag.db_tag.private_id is None:
-        raise TagNotFound()
-    return better_jsonify(tag.db_tag.private_id)
+    return better_jsonify(Tag.get_encoded_private_key(name))
+
+
+@bp.route('/tag/<name>/private_key/<private_id>', methods=["PUT"])
+@require_user
+def api_add_tag_key(name: str, private_id: str):
+    Tag.add_private_key(name, private_id)
+    return better_jsonify(private_id), 204
 
 
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
@@ -487,11 +512,70 @@ def api_remove_tag_from_game(name: str, id_: str):
     return '', 204
 
 
+@bp.route('/internal/update', methods=["GET"])
+@require_user
+@with_query_params([QueryParam(name='update_code', type_=int, optional=False)])
+def update_server(query_params=None):
+    code = query_params['update_code']
+    update_self(code)
+    return '', 200
+
+
 @bp.errorhandler(CalculatedError)
 def api_handle_error(error: CalculatedError):
+    MetricsHandler.log_exception_for_metrics(error)
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+@bp.route('/training/create')
+@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name="date_start", type_=str, optional=True),
+    QueryParam(name="date_end", type_=str, optional=True)
+])
+def api_create_trainingpack(query_params=None):
+    date_start = None
+    date_end = None
+    if 'date_start' in query_params:
+        date_start = query_params['date_start']
+    if 'date_end' in query_params:
+        date_end = query_params['date_end']
+    task = create_training_pack.delay(get_current_user_id(), 10, date_start, date_end)
+    return better_jsonify({'status': 'Success', 'id': task.id})
+
+
+@bp.route('/training/list')
+@require_user
+@with_session
+def api_find_trainingpack(session=None):
+    player = get_current_user_id()
+    return better_jsonify(TrainingPackCreation.list_packs(player, session))
+
+
+# Homepage
+
+@bp.route('/home/twitch')
+def get_twitch_streams():
+    return better_jsonify(TwitchStreams.create())
+
+
+@bp.route('/home/patreon')
+def get_patreon_progress():
+    return better_jsonify(PatreonProgress.create())
+
+
+@bp.route('/home/recent')
+def get_recent_replays():
+    return better_jsonify(RecentReplays.create())
+
+
+@bp.route('/documentation')
+def get_endpoint_documentation():
+    from backend.blueprints.spa_api.service_layers.documentation import create_documentation_for_module
+    method_list = create_documentation_for_module(sys.modules[__name__])
+    return better_jsonify(method_list)
 
 
 # ADMIN
