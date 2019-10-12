@@ -1,8 +1,12 @@
 import logging
-from typing import Callable
+from typing import Callable, List
 
+from sqlalchemy import desc
+
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import ReplayLog, ReplayResult
+from backend.utils.checks import is_admin
 
 backup_logger = logging.getLogger(__name__)
 
@@ -63,3 +67,25 @@ class ErrorLogger:
                         log="", params=str(query_params))
         session.add(log)
         session.commit()
+
+    @staticmethod
+    @with_session
+    def get_logs(page, limit, session=None):
+        # if is_admin():
+        #     raise CalculatedError(401, "Unauthorized")
+        logs = session.query(ReplayLog).order_by(desc(ReplayLog.id))
+        return {
+            'logs': [
+                {
+                    'id': log.id,
+                    'uuid': log.uuid,
+                    'game': log.game,
+                    'errorType': log.error_type,
+                    'log': log.log,
+                    'params': log.params,
+                    'result': log.result.value
+
+                } for log in logs[page * limit: (page + 1) * limit]
+            ],
+            'count': logs.count()
+        }

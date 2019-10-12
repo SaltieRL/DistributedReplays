@@ -12,6 +12,7 @@ export const STATUS_PAGE_LINK = "/status"
 
 export const LEADERBOARDS_LINK = `/leaderboards`
 export const TRAINING_LINK = `/training`
+export const ADMIN_LINK = `/admin`
 export const TRAINING_IMPORT_LINK = (guid: string) => `/api/training/import?guid=${guid}`
 
 export const PLAYER_PAGE_LINK = (id: string) => `/players/${id}`

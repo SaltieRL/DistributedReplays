@@ -415,3 +415,4 @@ class ReplayLog(DBObjectBase):
     log = Column(String)
     params = Column(String, default=None)
     game = Column(String(40), default=None)
+    date = Column(DateTime, default=datetime.datetime.utcnow)

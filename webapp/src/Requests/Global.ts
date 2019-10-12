@@ -84,3 +84,6 @@ export const parseTrainingPack = (data: any) => {
         date: moment(data.date)
     }
 }
+export const getAdminLogs = (page: number, limit: number): Promise<AdminLogsResponse> => {
+    return doGet(`/admin/logs?page=${page}&limit=${limit}`)
+}

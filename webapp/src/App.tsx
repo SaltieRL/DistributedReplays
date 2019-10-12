@@ -21,7 +21,7 @@ import { TrainingPackPage } from "./Components/Pages/TrainingPackPage"
 import { UploadPage } from "./Components/Pages/UploadPage"
 import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
-    ABOUT_LINK, DOCUMENTATION_LINK,
+    ABOUT_LINK, ADMIN_LINK, DOCUMENTATION_LINK,
     EXPLANATIONS_LINK,
     GLOBAL_STATS_LINK, LEADERBOARDS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
@@ -34,6 +34,7 @@ import {
     TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
+import { AdminPage } from "./Components/Pages/AdminPage"
 
 const styles = createStyles({
     App: {
@@ -56,8 +57,8 @@ class AppComponent extends React.Component<Props> {
                             {/*Migrate old paths*/}
                             <Redirect exact from={"/players/overview/:id"} to={PLAYER_PAGE_LINK(":id")}/>
                             <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")}/>
-
                             <Route exact path="/" component={HomePage}/>
+                            <Route path={ADMIN_LINK} component={AdminPage}/>
                             <Route path={TRAINING_LINK} component={TrainingPackPage}/>
                             <Route path={LEADERBOARDS_LINK} component={LeaderboardsPage}/>
                             <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>

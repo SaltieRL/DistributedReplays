@@ -677,3 +677,11 @@ def api_admin_remove_group(user_id: str, group: str):
     except ValueError:
         raise CalculatedError(400, "Invalid group number format")
     return AdminPanelHandler.remove_group_from_user(user_id, group)
+
+
+@bp.route('/admin/logs')
+# @require_user
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
+                                          QueryParam(name='limit', type_=int, optional=False)])
+def api_admin_get_logs(query_params=None):
+    return jsonify(ErrorLogger.get_logs(query_params['page'], query_params['limit']))
