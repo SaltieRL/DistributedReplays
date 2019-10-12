@@ -41,33 +41,33 @@ class CreatePackDialogComponent extends React.Component<Props, State> {
                         {style: {width: 600, maxWidth: "90vw"}}}>
                 <DialogTitle id="form-dialog-title">Create pack</DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={16} style={{paddingTop: 16}}>
-                        <Grid xs={12}>
+                    <Grid container spacing={8} style={{paddingTop: 8}}>
+                        <Grid item xs={12}>
                             <DialogContentText>
                                 Leave all fields blank for defaults (use most recent games).
                             </DialogContentText>
                         </Grid>
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <ClearableDatePicker
                                 placeholder={"Date filter start"}
                                 onChange={this.handleDateChangeStart}
                                 value={this.state.dateStart}
                                 helperText="Leave blank to default to recent games"/>
                         </Grid>
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <ClearableDatePicker
                                 placeholder={"Date filter end"}
                                 onChange={this.handleDateChangeEnd}
                                 value={this.state.dateEnd}
                                 helperText="Leave blank to default to recent games"/>
                         </Grid>
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <TextField value={this.state.playerId}
                                        onChange={this.handlePlayerIdChange}
                                        label="Player ID to use"
                             />
                         </Grid>
-                        <Grid xs={12}>
+                        <Grid item xs={12}>
                             <TextField value={this.state.name}
                                        onChange={this.handleNameChange}
                                        label="Name of pack"
@@ -77,6 +77,16 @@ class CreatePackDialogComponent extends React.Component<Props, State> {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => {
+                        if (this.state.dateStart !== null || this.state.dateEnd !== null) {
+                            if (this.state.dateStart == null || this.state.dateEnd == null) {
+                                this.props.showNotification({
+                                    variant: "error",
+                                    message: "Date start and end must both have values or be empty!",
+                                    timeout: 5000
+                                })
+                                return
+                            }
+                        }
                         this.props.onCloseDialog()
                         this.createPack()
                     }} variant={"outlined"}>
