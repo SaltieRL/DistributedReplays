@@ -18,6 +18,7 @@ interface State {
     reloadSignal: boolean
     page: number
     limit: number
+    search: string
 }
 
 type Props = ReturnType<typeof mapStateToProps>
@@ -25,7 +26,7 @@ type Props = ReturnType<typeof mapStateToProps>
 class AdminPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false, page: 0, limit: 10}
+        this.state = {reloadSignal: false, page: 0, limit: 10, search: ""}
     }
 
     public render() {
@@ -39,7 +40,9 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
                                 <AdminLogResultDisplay adminLogs={this.state.adminLogs} page={this.state.page}
                                                        limit={this.state.limit}
                                                        handleChangePage={this.handleChangePage}
-                                                       handleChangeRowsPerPage={this.handleChangeRowsPerPage}/>
+                                                       handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                                       handleChangeSearch={this.handleChangeSearch}
+                                />
                             </Grid>
                             }
 
@@ -53,7 +56,7 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getAdminLogs = (): Promise<void> => {
-        return getAdminLogs(this.state.page, this.state.limit)
+        return getAdminLogs(this.state.page, this.state.limit, this.state.search)
             .then((packs: AdminLogsResponse) => this.setState({adminLogs: packs}))
     }
 
@@ -69,6 +72,11 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
                 this.getAdminLogs()
             })
         }
+    private readonly handleChangeSearch = (search: string) => {
+        this.setState({search}, () => {
+            this.getAdminLogs()
+        })
+    }
 }
 
 export const AdminPage = connect(mapStateToProps)(AdminPageComponent)

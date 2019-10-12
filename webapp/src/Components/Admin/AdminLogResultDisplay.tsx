@@ -1,4 +1,4 @@
-import { Card, CardHeader, Divider, TablePagination, Typography, withWidth } from "@material-ui/core"
+import { Card, CardHeader, Divider, TablePagination, TextField, withWidth } from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import { WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
@@ -11,7 +11,7 @@ interface OwnProps {
     limit: number
     handleChangePage: (event: unknown, page: number) => void
     handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>
-
+    handleChangeSearch: any
 }
 
 type Props = OwnProps
@@ -19,6 +19,7 @@ type Props = OwnProps
     & WithWidth
 
 interface State {
+
 }
 
 class AdminLogResultDisplayComponent extends React.PureComponent<Props, State> {
@@ -32,42 +33,40 @@ class AdminLogResultDisplayComponent extends React.PureComponent<Props, State> {
         return (
             <Grid container>
                 <Grid item xs={12}>
-                    {adminLogs.logs.length > 0 ?
-                        <Card>
-                            <CardHeader title="Admin Logs"
-                                        subheader={"Packs can be placed in " +
-                                        "Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining " +
-                                        "and accessed in Training > Created"}/>
-                                <div>
-                                    {this.props.adminLogs.logs.map((log: AdminLog, i) =>
-                                        <>
-                                            <AdminLogDisplayRow
-                                                key={log.id}
-                                                log={log}/>
+                    <Card>
+                        <CardHeader title="Admin Logs" action={
+                            <TextField onChange={this.handleSearchChange}/>
+                        }/>
+                        <div>
+                            {this.props.adminLogs.logs.map((log: AdminLog, i) =>
+                                <>
+                                    <AdminLogDisplayRow
+                                        key={log.id}
+                                        log={log}/>
 
-                                            {!(i === this.props.adminLogs.logs.length) && <Divider/>}
-                                        </>
-                                    )
-                                    }
-                                </div>
-                            <TablePagination
-                                component="div"
-                                count={adminLogs.count}
-                                onChangePage={this.props.handleChangePage}
-                                onChangeRowsPerPage={this.props.handleChangeRowsPerPage}
-                                page={page}
-                                rowsPerPage={limit}
-                                rowsPerPageOptions={[10, 25, 50]}
-                            />
-                        </Card>
-                        :
-                        <Typography variant="subtitle1" align="center">
-                            <i>No logs exist.</i>
-                        </Typography>
+                                    {!(i === this.props.adminLogs.logs.length) && <Divider/>}
+                                </>
+                            )
+                            }
+                        </div>
+                        <TablePagination
+                            component="div"
+                            count={adminLogs.count}
+                            onChangePage={this.props.handleChangePage}
+                            onChangeRowsPerPage={this.props.handleChangeRowsPerPage}
+                            page={page}
+                            rowsPerPage={limit}
+                            rowsPerPageOptions={[10, 25, 50]}
+                        />
+                    </Card>
                     }
                 </Grid>
             </Grid>
         )
+    }
+
+    private readonly handleSearchChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        this.props.handleChangeSearch(e.target.value)
     }
 }
 

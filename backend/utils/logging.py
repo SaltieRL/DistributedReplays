@@ -1,7 +1,7 @@
 import logging
 from typing import Callable, List
 
-from sqlalchemy import desc
+from sqlalchemy import desc, or_
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -75,10 +75,20 @@ class ErrorLogger:
 
     @staticmethod
     @with_session
-    def get_logs(page, limit, session=None):
+    def get_logs(page, limit, search, session=None):
         # if is_admin():
         #     raise CalculatedError(401, "Unauthorized")
         logs = session.query(ReplayLog).order_by(desc(ReplayLog.id))
+        if search is not None:
+            search = f"%{search}%"
+            logs = logs.filter(or_(
+                ReplayLog.uuid.like(search),
+                ReplayLog.game.like(search),
+                ReplayLog.error_type.like(search),
+                ReplayLog.log.like(search),
+                ReplayLog.params.like(search)
+            ))
+
         return {
             'logs': [
                 {
