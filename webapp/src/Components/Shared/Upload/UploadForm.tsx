@@ -44,7 +44,6 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {files: [], rejected: [], selectedPrivateKeys: [], filesRemaining: -1}
-        this.state = {files: [], rejected: [], filesRemaining: -1}
     }
 
     public render() {

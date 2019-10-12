@@ -66,7 +66,6 @@ class Test_BasicServerCommands():
                         r = requests.put(LOCAL_URL + f'/api/tag/{_tag}/private_key/{_tag}')
                         r.raise_for_status()
                     json = requests.get(LOCAL_URL + f'/api/tag/{_tag}/private_key').json()
-                    logger.info('adding key' + str(json))
                     keys.append(json)
                 tag_keys.append(keys)
 
