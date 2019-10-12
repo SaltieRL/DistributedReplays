@@ -59,7 +59,7 @@ except:
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting, TrainingPack
+from backend.database.objects import Game, GameVisibilitySetting, TrainingPack, ReplayLog, ReplayResult
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
@@ -437,6 +437,20 @@ def api_upload_proto(query_params=None):
     except Exception as e:
         ErrorLogger.log_error(e, logger=logger)
 
+    return jsonify({'Success': True})
+
+
+@bp.route('/upload/proto/error', methods=['POST'])
+@with_query_params(accepted_query_params=upload_file_query_params)
+@with_session
+def api_upload_proto_error(session=None, query_params=None):
+    payload = request.get_json()
+    replay_uuid = None if 'uuid' not in payload else payload['uuid']
+    error_type = None if 'error_type' not in payload else payload['error_type']
+    log = ReplayLog(uuid=replay_uuid, result=ReplayResult.ERROR, error_type=error_type,
+                    log=payload['stack'], params=str(query_params))
+    session.add(log)
+    session.commit()
     return jsonify({'Success': True})
 
 

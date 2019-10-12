@@ -25,6 +25,12 @@ class MatchType(enum.Enum):
     public = 3
 
 
+class ReplayResult(enum.Enum):
+    SUCCESS = 1
+    ERROR = 2
+    UNKNOWN = 3
+
+
 class Playlist(enum.Enum):
     UNRANKED_DUELS = 1
     UNRANKED_DOUBLES = 2
@@ -390,3 +396,13 @@ class TrainingPack(DBObjectBase):
     player = Column(String(40), ForeignKey('players.platformid'), index=True)
     shots = Column(JSON)
     creation_date = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class ReplayLog(DBObjectBase):
+    __tablename__ = "replay_logs"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    uuid = Column(String(36))
+    result = Column(Enum(ReplayResult))
+    error_type = Column(String(40))
+    log = Column(String)
+    params = Column(String, default=None)
