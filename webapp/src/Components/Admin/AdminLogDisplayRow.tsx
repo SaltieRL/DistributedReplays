@@ -1,8 +1,10 @@
 import {
     createStyles,
+    ExpansionPanel,
+    ExpansionPanelDetails,
+    ExpansionPanelSummary,
     Grid,
     IconButton,
-    ListItem,
     Theme,
     Typography,
     WithStyles,
@@ -15,6 +17,8 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { REPLAY_PAGE_LINK } from "../../Globals"
 import { StoreState } from "../../Redux"
+import OpenInNew from "@material-ui/icons/OpenInNew"
+import ExpandMore from "@material-ui/icons/ExpandMore"
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {
@@ -72,13 +76,16 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                     </Typography>
                 </Grid>
                 <Grid item xs={2} className={classes.listGridItem}>
-                    <Typography noWrap>
+                    <Typography>
                         {log.errorType}
                     </Typography>
                 </Grid>
                 <Grid item xs={3} className={classes.listGridItem}>
-                    <Typography noWrap>
-                        {log.log}
+                    <Typography>
+                        {log.log && <>
+                            {log.log.substr(0, 30)}
+                            {log.log.length > 30 && "..."}
+                        </>}
                     </Typography>
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
@@ -96,15 +103,31 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                         >
                             <InsertChart/>
                         </IconButton>}
+                        {log.result === 2 &&
+                        <IconButton
+                            href={"/api/admin/failed/download?id=" + log.uuid}
+                            className={classes.iconButton}
+                            onClick={(event) => event.stopPropagation()}
+                        > <OpenInNew/>
+                        </IconButton>}
                     </Typography>
                 </Grid>
             </Grid>
         )
 
         return (
-            <ListItem>
-                {contents}
-            </ListItem>
+            <ExpansionPanel>
+                <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
+                    {contents}
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails className={classes.panelDetails}>
+                    <div style={{width: "100%"}}>
+                        <pre>
+                            {log.log}
+                        </pre>
+                    </div>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
         )
     }
 }

@@ -48,12 +48,14 @@ try:
 
     REPLAY_BUCKET = config.REPLAY_BUCKET
     PROTO_BUCKET = config.PROTO_BUCKET
+    FAILED_BUCKET = config.FAILED_BUCKET
     PARSED_BUCKET = config.PARSED_BUCKET
     TRAINING_PACK_BUCKET = config.TRAINING_PACK_BUCKET
 except:
     print('Not uploading to buckets')
     REPLAY_BUCKET = ''
     PROTO_BUCKET = ''
+    FAILED_BUCKET = ''
     PARSED_BUCKET = ''
     TRAINING_PACK_BUCKET = ''
 
@@ -691,3 +693,10 @@ def api_admin_get_logs(query_params=None):
     if 'search' in query_params and query_params['search'] != "":
         search = query_params['search']
     return jsonify(ErrorLogger.get_logs(query_params['page'], query_params['limit'], search))
+
+
+@bp.route('/admin/failed/download')
+@require_user
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def api_admin_get_replay(query_params=None):
+    return redirect(f"https://storage.googleapis.com/{FAILED_BUCKET}/{query_params['id']}.replay")
