@@ -604,6 +604,20 @@ def api_poll_trainingpack(query_params=None, session=None):
     return better_jsonify(TrainingPackCreation.poll_pack(query_params['task_id'], session))
 
 
+@bp.route('/training/import')
+@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name="guid", type_=str, optional=False)
+])
+@with_session
+def api_import_trainingpack(query_params=None, session=None):
+    if TrainingPackCreation.import_pack(query_params['guid'], session):
+        return redirect('/training')
+    return better_jsonify({
+        'error': 'Error importing pack.'
+    })
+
+
 # Homepage
 
 @bp.route('/home/twitch')

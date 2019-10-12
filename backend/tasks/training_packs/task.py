@@ -4,11 +4,13 @@ import os
 
 from sqlalchemy import desc
 
-from backend.blueprints.spa_api.errors.errors import UserHasNoReplays
+from backend.blueprints.spa_api.errors.errors import UserHasNoReplays, CalculatedError
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.database.objects import Playlist, PlayerGame, Game, TrainingPack
+from backend.database.utils.utils import duplicate_object
 from backend.tasks.training_packs.training_packs import create_pack_from_replays, create_custom_pack_from_replays
 from backend.utils.cloud_handler import upload_training_pack
+from backend.utils.safe_flask_globals import get_current_user_id
 
 try:
     from config import TRAINING_PACK_BUCKET
@@ -151,6 +153,18 @@ class TrainingPackCreation:
         packs_list = pack_query.all()
 
         return TrainingPackCreation.create_pack_response(packs_list, pack_query.count(), session)
+
+    @staticmethod
+    def import_pack(guid, session):
+        pack_query = session.query(TrainingPack).filter(TrainingPack.guid == guid)
+        if pack_query.count() == 0:
+            raise CalculatedError(400, "Invalid pack GUID.")
+        pack: TrainingPack = duplicate_object(pack_query.first(), ['id'])
+        user_id = get_current_user_id()
+        pack.player = user_id
+        session.add(pack)
+        session.commit()
+        return True
 
     @staticmethod
     def create_pack_response(packs_list, count, session):
