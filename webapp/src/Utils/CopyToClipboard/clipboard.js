@@ -25,19 +25,19 @@ export default function clipboardCopy(text) {
     // Use the Async Clipboard API when available. Requires a secure browsing
     // context (i.e. HTTPS)
     if (navigator.clipboard) {
-        return navigator.clipboard.writeText(text).catch(function (err) {
-            throw (err !== undefined ? err : new DOMException('The request is not allowed', 'NotAllowedError'))
-        })
+        return navigator.clipboard.writeText(text).catch(function(err) {
+            throw (err !== undefined ? err : new DOMException("The request is not allowed", "NotAllowedError"));
+        });
     }
 
     // ...Otherwise, use document.execCommand() fallback
 
     // Put the text to copy into a <span>
-    const span = document.createElement('span');
+    const span = document.createElement("span");
     span.textContent = text;
 
     // Preserve consecutive spaces and newlines
-    span.style.whiteSpace = 'pre';
+    span.style.whiteSpace = "pre";
 
     // Add the <span> to the page
     document.body.appendChild(span);
@@ -52,9 +52,9 @@ export default function clipboardCopy(text) {
     // Copy text to the clipboard
     let success = false;
     try {
-        success = window.document.execCommand('copy')
+        success = window.document.execCommand("copy");
     } catch (err) {
-        console.log('error', err)
+        success = false;
     }
 
     // Cleanup
@@ -63,5 +63,5 @@ export default function clipboardCopy(text) {
 
     return success
         ? Promise.resolve()
-        : Promise.reject(new DOMException('The request is not allowed', 'NotAllowedError'))
+        : Promise.reject(new DOMException("The request is not allowed", "NotAllowedError"));
 }
