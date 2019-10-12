@@ -662,6 +662,7 @@ def get_endpoint_documentation():
 # ADMIN
 
 @bp.route('/admin/group/add/<user_id>/<group>', methods=["GET"])
+@require_user
 def api_admin_add_group(user_id: str, group: str):
     try:
         group: int = int(group)
@@ -671,6 +672,7 @@ def api_admin_add_group(user_id: str, group: str):
 
 
 @bp.route('/admin/group/remove/<user_id>/<group>', methods=["GET"])
+@require_user
 def api_admin_remove_group(user_id: str, group: str):
     try:
         group: int = int(group)
@@ -680,7 +682,7 @@ def api_admin_remove_group(user_id: str, group: str):
 
 
 @bp.route('/admin/logs')
-# @require_user
+@require_user
 @with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
                                           QueryParam(name='limit', type_=int, optional=False),
                                           QueryParam(name='search', type_=str, optional=True)])

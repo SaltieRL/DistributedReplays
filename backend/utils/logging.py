@@ -76,8 +76,8 @@ class ErrorLogger:
     @staticmethod
     @with_session
     def get_logs(page, limit, search, session=None):
-        # if is_admin():
-        #     raise CalculatedError(401, "Unauthorized")
+        if not is_admin():
+            raise CalculatedError(401, "Unauthorized")
         logs = session.query(ReplayLog).order_by(desc(ReplayLog.id))
         if search is not None:
             search = f"%{search}%"
