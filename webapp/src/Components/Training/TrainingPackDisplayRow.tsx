@@ -21,14 +21,17 @@ import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import OpenInNew from "@material-ui/icons/OpenInNew"
 import PlayArrow from "@material-ui/icons/PlayArrow"
+import Share from "@material-ui/icons/Share"
 import moment from "moment"
 import * as React from "react"
 import { connect } from "react-redux"
-import { REPLAY_PAGE_LINK } from "../../Globals"
+import { REPLAY_PAGE_LINK, TRAINING_IMPORT_LINK } from "../../Globals"
 import { Replay } from "../../Models"
 import { TrainingPack, TrainingPackShot } from "../../Models/Player/TrainingPack"
 import { StoreState } from "../../Redux"
+import clipboardCopy from "../../Utils/CopyToClipboard/clipboard"
 import { ColouredGameScore } from "../Shared/ColouredGameScore"
+import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
 
 const styles = (theme: Theme) => createStyles({
     iconButton: {
@@ -74,6 +77,7 @@ const mapStateToProps = (state: StoreState) => ({
 type Props = OwnProps
     & WithStyles<typeof styles>
     & WithWidth
+    & WithNotifications
     & ReturnType<typeof mapStateToProps>
 
 class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
@@ -112,8 +116,27 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                         {pack.shots.length} shots
                     </Typography>
                 </Grid>
+                <Grid item xs={1} className={classes.listGridItem}>
+                    <Tooltip title={"Share this pack"}>
+                        <IconButton
+                            href={"#"}
+                            className={classes.iconButton}
+                            onClick={(event) => {
+                                clipboardCopy(window.location.origin + TRAINING_IMPORT_LINK(pack.guid)).then(() => {
+                                    this.props.showNotification({
+                                        variant: "success",
+                                        message: "Successfully copied share link to clipboard!",
+                                        timeout: 3000
+                                    })
+                                })
+                                event.stopPropagation()
+                            }}
+                        >
+                            <Share/>
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
                 <Grid item xs="auto" className={classes.listGridItem}>
-
                     <Tooltip title={pack.guid + ".Tem"}>
                         <IconButton
                             href={pack.link}
@@ -269,5 +292,5 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
     }
 }
 
-export const TrainingPackDisplayRow = withWidth()(withStyles(styles)(
-    connect(mapStateToProps)(TrainingPackDisplayRowComponent)))
+export const TrainingPackDisplayRow = withWidth()(withStyles(styles)(withNotifications()(
+    connect(mapStateToProps)(TrainingPackDisplayRowComponent))))
