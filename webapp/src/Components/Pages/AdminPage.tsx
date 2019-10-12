@@ -1,7 +1,8 @@
-import { Grid } from "@material-ui/core"
+import { Button, Grid, TextField } from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
 import * as React from "react"
 import { connect } from "react-redux"
+import { doGet } from "../../apiHandler/apiHandler"
 import { StoreState } from "../../Redux"
 import { getAdminLogs } from "../../Requests/Global"
 import { AdminLogResultDisplay } from "../Admin/AdminLogResultDisplay"
@@ -19,6 +20,7 @@ interface State {
     page: number
     limit: number
     search: string
+    key: string
 }
 
 type Props = ReturnType<typeof mapStateToProps>
@@ -26,7 +28,7 @@ type Props = ReturnType<typeof mapStateToProps>
 class AdminPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false, page: 0, limit: 10, search: ""}
+        this.state = {reloadSignal: false, page: 0, limit: 10, search: "", key: ""}
     }
 
     public render() {
@@ -34,19 +36,24 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
             <BasePage>
                 <Grid container spacing={24} justify="center">
                     {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
-                        <LoadableWrapper load={this.getAdminLogs} reloadSignal={this.state.reloadSignal}>
-                            {this.state.adminLogs &&
-                            <Grid item xs={12} md={8}>
-                                <AdminLogResultDisplay adminLogs={this.state.adminLogs} page={this.state.page}
-                                                       limit={this.state.limit}
-                                                       handleChangePage={this.handleChangePage}
-                                                       handleChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                                       handleChangeSearch={this.handleChangeSearch}
-                                />
+                        <>
+                            <Grid item xs={12}>
+                                <LoadableWrapper load={this.getAdminLogs} reloadSignal={this.state.reloadSignal}>
+                                    {this.state.adminLogs &&
+                                    <AdminLogResultDisplay adminLogs={this.state.adminLogs} page={this.state.page}
+                                                           limit={this.state.limit}
+                                                           handleChangePage={this.handleChangePage}
+                                                           handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                                           handleChangeSearch={this.handleChangeSearch}
+                                    />
+                                    }
+                                </LoadableWrapper>
                             </Grid>
-                            }
-
-                        </LoadableWrapper>
+                            <Grid item xs={12}>
+                                <TextField onChange={this.handleKeyChange}/>
+                                <Button variant="outlined" onClick={this.updateServer}>Update server</Button>
+                            </Grid>
+                        </>
                         :
                         <Typography>In beta, Patrons only.</Typography>
                     }
@@ -76,6 +83,13 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
         this.setState({search}, () => {
             this.getAdminLogs()
         })
+    }
+
+    private readonly handleKeyChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        this.setState({key: e.target.value})
+    }
+    private readonly updateServer = () => {
+        doGet("/internal/update?update_code=" + this.state.key)
     }
 }
 
