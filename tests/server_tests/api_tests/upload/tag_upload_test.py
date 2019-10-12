@@ -322,3 +322,24 @@ class Test_upload_file_with_tags:
             test_id, test_key = ServiceTag.decode_tag(encoded)
             assert test_id == id
             assert test_key == keys[index]
+
+    def test_tag_creation_encoding(self, test_client):
+
+        tags = [['TAG1'], ['TAG2'], ['TAG3'], ['TAG4', 'TAG2']]
+
+        tag_keys = ['invalid_key']
+        created_tags = []
+        for _tags in tags:
+            keys = []
+            for _tag in _tags:
+                if _tag not in created_tags:
+                    r = test_client.send(Request('PUT', LOCAL_URL + f'/api/tag/{_tag}'))
+                    assert r.status_code == 201
+                    created_tags.append(_tag)
+
+                    # create private id
+                    r = test_client.send(Request('PUT', LOCAL_URL + f'/api/tag/{_tag}/private_key/{_tag}'))
+                    assert r.status_code == 204
+                json = test_client.send(Request('GET', LOCAL_URL + f'/api/tag/{_tag}/private_key')).json
+                keys.append(json)
+            tag_keys.append(keys)

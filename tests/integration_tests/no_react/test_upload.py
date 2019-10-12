@@ -66,7 +66,7 @@ class Test_BasicServerCommands():
                         r = requests.put(LOCAL_URL + f'/api/tag/{_tag}/private_key/{_tag}')
                         r.raise_for_status()
                     json = requests.get(LOCAL_URL + f'/api/tag/{_tag}/private_key').json()
-                    logger.info('adding key', str(json))
+                    logger.info('adding key' + str(json))
                     keys.append(json)
                 tag_keys.append(keys)
 
@@ -76,8 +76,8 @@ class Test_BasicServerCommands():
                 time.sleep(1)
 
             params = {'visibility': privacy[index], 'player_id': users[index], 'private_tag_keys': tag_keys[index]}
-            logger.debug('TESTING URL:', str(replay_url))
-            logger.debug('TESTING PARAMS:', str(params))
+            logger.debug('TESTING URL:' + str(replay_url))
+            logger.debug('TESTING PARAMS:' + str(params))
             f = download_replay_discord(replay_url)
             r = requests.post(LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', f)}, params=params)
             r.raise_for_status()
