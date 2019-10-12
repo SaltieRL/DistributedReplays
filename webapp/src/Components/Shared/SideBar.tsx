@@ -11,6 +11,7 @@ import ShowChart from "@material-ui/icons/ShowChart"
 import TableChart from "@material-ui/icons/TableChart"
 import * as React from "react"
 import { Link } from "react-router-dom"
+import { ThemeContext } from "../../Contexts/ThemeContext"
 import {
     ABOUT_LINK,
     EXPLANATIONS_LINK,
@@ -23,7 +24,6 @@ import {
     REPLAYS_SEARCH_PAGE_LINK,
     UPLOAD_LINK
 } from "../../Globals"
-import { ThemeContext } from "../../Theme"
 
 interface Props {
     open: boolean

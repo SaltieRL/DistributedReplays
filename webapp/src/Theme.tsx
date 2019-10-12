@@ -1,14 +1,7 @@
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"
 import Chart from "chart.js"
 import * as React from "react"
-
-interface ThemeContextType {
-    dark: boolean
-    toggleTheme: () => void
-}
-
-// tslint:disable-next-line:no-empty
-export const ThemeContext = React.createContext<ThemeContextType>({dark: false, toggleTheme: () => undefined})
+import { ThemeContext } from "./Contexts/ThemeContext"
 
 const getTheme = (dark: boolean) => createMuiTheme({
     palette: {

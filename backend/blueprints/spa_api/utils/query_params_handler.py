@@ -1,5 +1,4 @@
 from typing import List, Dict, Any, Callable, Optional, Type
-from urllib.parse import urlencode
 
 from flask import Request
 
@@ -151,7 +150,3 @@ def create_validation_for_query_params(query_params: List[QueryParam], provided_
                                                      len(created_query_params[query]),
                                                      len(created_query_params[sibling_query.name]))
     return validate
-
-
-def create_query_string(query_params):
-    return urlencode(query_params)
