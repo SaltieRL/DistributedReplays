@@ -35,8 +35,7 @@ class AdminLogResultDisplayComponent extends React.PureComponent<Props, State> {
                 <Grid item xs={12}>
                     <Card>
                         <CardHeader title="Admin Logs" action={
-                            <TextField onChange={this.handleSearchChange}/>
-                        }/>
+                            <TextField onChange={this.handleSearchChange}/>} />
                         <div>
                             {this.props.adminLogs.logs.map((log: AdminLog, i) =>
                                 <>
@@ -59,7 +58,6 @@ class AdminLogResultDisplayComponent extends React.PureComponent<Props, State> {
                             rowsPerPageOptions={[10, 25, 50]}
                         />
                     </Card>
-                    }
                 </Grid>
             </Grid>
         )

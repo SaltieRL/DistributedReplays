@@ -71,12 +71,12 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                         {log.result === 1 ? "SUCCESS" : "ERROR"}
                     </Typography>
                 </Grid>
-                <Grid item xs={1} className={classes.listGridItem}>
+                <Grid item xs={2} className={classes.listGridItem}>
                     <Typography noWrap>
                         {log.errorType}
                     </Typography>
                 </Grid>
-                <Grid item xs={2} className={classes.listGridItem}>
+                <Grid item xs={3} className={classes.listGridItem}>
                     <Typography noWrap>
                         {log.log}
                     </Typography>
