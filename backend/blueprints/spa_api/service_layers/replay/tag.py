@@ -1,5 +1,6 @@
 import base64
 from typing import List, Dict
+from urllib.parse import unquote, quote
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.spa_api.errors.errors import TagNotFound, TagError, TagKeyError
@@ -131,11 +132,11 @@ class Tag:
     @staticmethod
     def encode_tag(tag_id: int, private_id: str) -> str:
         merged = str(tag_id + 1000) + ":" + private_id
-        return base64.b85encode(merged.encode(encoding="utf-8")).decode('utf-8')
+        return quote(base64.b85encode(merged.encode(encoding="utf-8")).decode('utf-8'))
 
     @staticmethod
     def decode_tag(encoded_key: str):
-        decoded_key_bytes = base64.b85decode(encoded_key.encode('utf-8'))
+        decoded_key_bytes = base64.b85decode(unquote(encoded_key).encode('utf-8'))
 
         try:
             decoded_key = decoded_key_bytes.decode(encoding="utf-8")
