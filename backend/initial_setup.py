@@ -171,7 +171,9 @@ class CalculatedServer:
                 g.alpha = ids['alpha'] in g.user.groups
                 g.beta = ids['beta'] in g.user.groups
             elif is_local_dev():
+                logger.error("CREATING REQUEST WITH LOCAL USER IN DEV MODE")
                 g.user = create_default_player(session=session)
+                logger.error("LOCAL USER CREATED " + g.user.platformid)
                 g.admin = True
 
         # Serve React App
