@@ -97,9 +97,9 @@ def better_jsonify(response: object):
 
     try:
         return jsonify(response)
-    except TypeError:
+    except TypeError as e:
         if isinstance(response, list):
-            return jsonify([value.__dict__ for value in response])
+            return jsonify([better_jsonify(value) for value in response])
         else:
             return jsonify(response.__dict__)
 
@@ -296,9 +296,10 @@ def api_get_replay_boostmaps(id_):
     positions = Visualizations.create_from_id(id_)
     return jsonify(positions)
 
+
 @bp.route('replay/<id_>/kickoffs')
-def api_get_replay_kickoffs(id_):
-    kickoff_data = Kickoffs.create_from_id(id_)
+def api_get_replay_kickoffs(id_: str):
+    kickoff_data = Kickoffs(id_).create_from_id()
     return better_jsonify(kickoff_data)
 
 

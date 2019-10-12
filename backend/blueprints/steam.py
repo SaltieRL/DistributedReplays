@@ -97,7 +97,7 @@ def get_vanity_to_steam_id_or_random_response(vanity, session=None):
         return vanity_to_steam_id(vanity)
     except BaseException as e:
         logger.warning(e)
-        traceback.print_exc()
+        logger.info("Returning a random player instead")
         player = get_random_player(session)
         return {
             'response': {
