@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import sys
+import traceback
 import uuid
 import zlib
 
@@ -435,6 +436,8 @@ def api_upload_proto(session=None, query_params=None):
     try:
         parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
+        payload['stack'] = traceback.format_exc()
+        payload['error_type'] = type(e).__name__
         ErrorLogger.log_replay_error(payload, query_params, proto_game=protobuf_game)
         ErrorLogger.log_error(e, logger=logger)
         return jsonify({'Success': False})

@@ -44,13 +44,14 @@ class ErrorLogger:
     def log_replay_error(payload, query_params, proto_game=None, session=None):
         replay_uuid = None if 'uuid' not in payload else payload['uuid']
         error_type = None if 'error_type' not in payload else payload['error_type']
+        stack = None if 'stack' not in payload else payload['stack']
         game_hash = None
         if proto_game is not None:
             game_hash = proto_game.game_metadata.match_guid
             if game_hash == "":
                 game_hash = proto_game.game_metadata.id
         log = ReplayLog(uuid=replay_uuid, result=ReplayResult.ERROR, error_type=error_type,
-                        log=payload['stack'], params=str(query_params), game=game_hash)
+                        log=stack, params=str(query_params), game=game_hash)
         session.add(log)
         session.commit()
 
