@@ -2,9 +2,8 @@ import base64
 from typing import List, Dict
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.utils.logging import ErrorLogger
-from backend.blueprints.spa_api.errors.errors import TagNotFound, PlayerNotFound, TagError
-from backend.database.objects import Tag as DBTag, Player
+from backend.blueprints.spa_api.errors.errors import TagNotFound, TagError, TagKeyError
+from backend.database.objects import Tag as DBTag
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 from backend.utils.safe_flask_globals import get_current_user_id
 
@@ -136,8 +135,13 @@ class Tag:
 
     @staticmethod
     def decode_tag(encoded_key: str):
-        decoded_key_bytes = base64.b85decode(encoded_key)
-        decoded_key = decoded_key_bytes.decode(encoding="utf-8")
+        decoded_key_bytes = base64.b85decode(encoded_key.encode('utf-8'))
+
+        try:
+            decoded_key = decoded_key_bytes.decode(encoding="utf-8")
+        except UnicodeDecodeError as e:
+            raise TagKeyError(encoded_key, e)
+
         first_index = decoded_key.find(':')
         tag_id = int(decoded_key[0: first_index]) - 1000
         decoded_private_id = decoded_key[first_index + 1:]

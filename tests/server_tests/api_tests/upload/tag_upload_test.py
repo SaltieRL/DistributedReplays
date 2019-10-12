@@ -174,6 +174,14 @@ class Test_upload_file_with_tags:
         assert(response.status_code == 200)
         assert response.json == ServiceTag.encode_tag(tag.id, fake_private_id)
 
+    def test_tag_encodes_decodes_correctly(self):
+        str1 = 150
+        str2 = "World"
+        encoded = ServiceTag.encode_tag(str1, str2)
+        out1, out2 = ServiceTag.decode_tag(encoded)
+        assert out1 == str1
+        assert out2 == str2
+
     def test_tag_modification_with_private_key(self, test_client, mock_user):
         fake_session = get_current_session()
 
