@@ -1,6 +1,5 @@
 from typing import List, Tuple
 
-from flask import current_app
 from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -11,6 +10,7 @@ from backend.database.objects import PlayerGame
 from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 from backend.utils.psyonix_api_handler import get_rank
 from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_stat_wrapper, player_wrapper
+from backend.utils.safe_flask_globals import get_redis
 
 explanations = player_stat_wrapper.player_stats.stat_explanation_map
 
@@ -36,7 +36,7 @@ class PlayStyleResponse:
             rank = get_rank(id_)
         try:
             averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_,
-                                                                    redis=current_app.config['r'], raw=raw,
+                                                                    redis=get_redis(), raw=raw,
                                                                     rank=rank, replay_ids=replay_ids,
                                                                     playlist=playlist, win=win)
         except NoResultFound:
@@ -68,7 +68,7 @@ class PlayStyleResponse:
         if rank is None:
             rank = get_rank(id_)
         averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_,
-                                                                redis=current_app.config['r'], raw=True,
+                                                                redis=get_redis(), raw=True,
                                                                 rank=rank, replay_ids=replay_ids,
                                                                 playlist=playlist, win=win)
         if len(id_) == 11 and id_[0] == 'b' and id_[-1] == 'b':

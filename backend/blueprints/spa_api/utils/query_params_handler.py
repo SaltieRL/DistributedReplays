@@ -1,4 +1,3 @@
-import enum
 from typing import List, Dict, Any, Callable, Optional, Type
 from urllib.parse import urlencode
 
