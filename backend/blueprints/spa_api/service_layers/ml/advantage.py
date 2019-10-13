@@ -215,12 +215,14 @@ def get_game_df_prepared(df, proto_game: Game = None):
 
 def predict_on_game(df, proto_game: Game = None, num_players=1):
     gdf = get_game_df_prepared(df, proto_game)
-    output = gdf.copy()
-    x = output.drop(droplist, axis=1)
+    input_df = gdf.copy()
+    output = pd.DataFrame(index=input_df.index)
+    x = input_df.drop(droplist, axis=1)
     mx = mirror_df(x.copy(), num_players)
 
-    # Get models
+    # Use models
     models = []
+    preds = []
     count = 0
     for mp in os.listdir(model_path):
         r_str = f"{ranges[count][0]}-{ranges[count][1]}"
