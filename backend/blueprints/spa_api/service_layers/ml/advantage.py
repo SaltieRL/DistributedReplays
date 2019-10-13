@@ -8,7 +8,10 @@ from tensorflow import keras
 from keras.models import load_model
 # Sklearn
 from sklearn.preprocessing import MinMaxScaler
+from typing import List
 
+from backend.blueprints.spa_api.service_layers.replay.replay_positions import ReplayPositions
+from backend.utils.file_manager import FileManager
 from carball.generated.api.game_pb2 import Game
 
 try:
@@ -236,3 +239,25 @@ def predict_on_game(df, proto_game: Game = None, num_players=1):
         output['o_' + r_str] = mpred
 
     return output
+
+
+def predict_on_id(id_: str, query_params=None) -> 'ReplayPositions':
+    filter_frames = None
+    filter_frame_start = None
+    filter_frame_count = None
+    if query_params is not None and 'frame' in query_params:
+        filter_frames = query_params['frame']
+    if query_params is not None and 'frame_start' in query_params and 'frame_count' in query_params:
+        filter_frame_start = query_params['frame_start']
+        filter_frame_count = query_params['frame_count']
+
+    data_frame = FileManager.get_pandas(id_)
+    if filter_frames is not None:
+        data_frame = ReplayPositions.filter_frames(filter_frames, data_frame)
+    if filter_frame_start is not None and filter_frame_count is not None:
+        data_frame = ReplayPositions.filter_frames_range(filter_frame_start, filter_frame_count, data_frame)
+
+    protobuf_game = FileManager.get_proto(id_)
+    # Predict with Models
+    preds = predict_on_game(data_frame, protobuf_game, 1)  # third arg len of protobuf.players/2?
+    return preds
