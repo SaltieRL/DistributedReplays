@@ -209,7 +209,8 @@ def get_game_df_prepared(df, proto_game: Game = None):
 def predict_on_game(df, proto_game: Game = None, num_players=1):
     gdf = get_game_df_prepared(df, proto_game)
     input_df = gdf.copy()
-    output = pd.DataFrame(index=input_df.index)
+    orange = pd.DataFrame(0, index=input_df.index, columns=range(0, 16))
+    blue = pd.DataFrame(0, index=input_df.index, columns=range(0, 16))
     x = input_df.drop(droplist, axis=1)
     mx = mirror_inputs(x.copy(), num_players)
     scaler = load(CODE_FOLDER + model_path + 'scaler.joblib')
@@ -219,24 +220,29 @@ def predict_on_game(df, proto_game: Game = None, num_players=1):
     models = []
     preds = []
     count = 0
+    coverage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for mp in os.listdir(CODE_FOLDER + model_path):
         if 'scaler.joblib' in mp:
             continue
         r_str = f"{ranges[count][0]}-{ranges[count][1]}"
-        count += 1
+
         model = load_model(CODE_FOLDER + model_path + mp, compile=False)
         models.append(model)
-        pred = model.predict_proba(x)  # [:,0] maybe
-        mpred = model.predict_proba(mx)  # [:,0] maybe
-        # Make tuple of the predictions
-        output['z_' + r_str] = pred
-        output['o_' + r_str] = mpred
+        pred = model.predict_proba(x)[:, 0]
+        mpred = model.predict_proba(mx)[:, 0]
+        # Add and average the predictions across seconds range
+        for second in range(ranges[count][0], ranges[count][1]):
+            coverage[second] += 1
+            blue[second] -= mpred
+            orange[second] += pred
+        count += 1
+    for index in range(len(coverage)):
+        blue[index] /= coverage[index]
+        orange[index] /= coverage[index]
+    return blue, orange
 
-    return output
 
-
-@with_session
-def predict_on_id(id_: str, query_params=None, session=None):
+def predict_on_id(id_: str, query_params=None):
     filter_frames = None
     filter_frame_start = None
     filter_frame_count = None
@@ -270,5 +276,5 @@ def predict_on_id(id_: str, query_params=None, session=None):
     # mmrs['avg'] /= non_zero
 
     # Predict with Models
-    preds = predict_on_game(data_frame, protobuf_game, 1)  # third arg len of protobuf.players/2?
-    return preds.values.tolist()
+    blue, orange = predict_on_game(data_frame, protobuf_game, 1)  # third arg len of protobuf.players/2?
+    return blue.values.tolist(), orange.values.tolist()

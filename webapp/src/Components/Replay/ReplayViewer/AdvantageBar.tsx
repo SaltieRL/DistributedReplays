@@ -29,10 +29,12 @@ export class AdvantageBarChart extends React.PureComponent<Props> {
             }),
             datasets: [{
                 data: this.props.blue,
+                label: 'blue',
                 backgroundColor: "#00BB00"
             },
             {
                 data: this.props.orange,
+                label: 'orange',
                 backgroundColor: "#BB0000"
             },
             ]
@@ -45,12 +47,9 @@ export class AdvantageBarChart extends React.PureComponent<Props> {
             scales: {
                 xAxes: [
                     {
-                        stacked: true,
-                        ticks: { max: 1, stepSize:0.2, beginAtZero: true},
+                        stacked: false,
+                        ticks: { max: 1, min: -1, stepSize:0.2, beginAtZero: true},
                         bounds: 'ticks',
-                        afterFit: (scaleInstance) => {
-                            scaleInstance.width = 100
-                        }
                     }
 
                 ],
@@ -59,14 +58,10 @@ export class AdvantageBarChart extends React.PureComponent<Props> {
                     gridLines: {
                         display: false
                     },
-                    barThickness: 25,
-                    afterFit: (scaleInstance) => {
-                        scaleInstance.width = 50
-                    }
                 }]
             },
-            maintainAspectRatio: false,
-            responsive: true,
+            maintainAspectRatio: true,
+            responsive: false,
             tooltips: {
                 callbacks: {
                     label: roundLabelToMaxDPCallback
