@@ -104,10 +104,12 @@ export class Viewer extends Component<Props, State> {
                         <Slider/>
                     </Grid>
                     <Grid item xs={12}>
-                        {this.state.advantageData && this.state.frame &&
-                        <AdvantageBarChart key={0} blue={this.state.advantageData[0][this.state.frame]}
-                                           orange={this.state.advantageData[1][this.state.frame]}/>
-                        }
+                        <LoadableWrapper load={this.getMlData} reloadSignal={this.state.reloadSignal}>
+                            {this.state.advantageData && this.state.frame &&
+                            <AdvantageBarChart key={0} blue={this.state.advantageData[0][this.state.frame]}
+                                               orange={this.state.advantageData[1][this.state.frame]}/>
+                            }
+                        </LoadableWrapper>
                     </Grid>
                 </>
                 }
@@ -136,16 +138,24 @@ export class Viewer extends Component<Props, State> {
         } else {
             dataPromise = getReplayViewerData(replayId)
         }
-        return Promise.all([dataPromise, getReplayMetadata(replayId), doGet(`/replay/${replayId}/advantage`)]).then(
-            ([replayData, replayMetadata, advantage]) => {
+        return Promise.all([dataPromise, getReplayMetadata(replayId)]).then(
+            ([replayData, replayMetadata]) => {
                 this.setState({
                     options: {
                         clock: FPSClock.convertReplayToClock(replayData),
                         replayData,
                         replayMetadata
                     },
-                    advantageData: advantage
                 })
+            }
+        )
+    }
+
+    private readonly getMlData = () => {
+        const {replayId} = this.props
+        return Promise.all([doGet(`/replay/${replayId}/advantage`)])
+            .then(([advantage]) => {
+                this.setState({advantageData: advantage})
             }
         )
     }
