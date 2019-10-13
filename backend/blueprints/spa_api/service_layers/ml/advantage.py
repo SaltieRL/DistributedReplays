@@ -222,12 +222,16 @@ def predict_on_game(df, proto_game: Game = None, num_players=1):
     output = pd.DataFrame(index=input_df.index)
     x = input_df.drop(droplist, axis=1)
     mx = mirror_df(x.copy(), num_players)
-
+    scaler = load(model_path + 'scaler.joblib')
+    x = scaler.transform(x)
+    mx = scaler.transform(mx)
     # Use models
     models = []
     preds = []
     count = 0
     for mp in os.listdir(model_path):
+        if 'scaler.joblib' in mp:
+            continue
         r_str = f"{ranges[count][0]}-{ranges[count][1]}"
         count += 1
         model = load_model(mp)
@@ -241,7 +245,7 @@ def predict_on_game(df, proto_game: Game = None, num_players=1):
     return output
 
 
-def predict_on_id(id_: str, query_params=None) -> 'ReplayPositions':
+def predict_on_id(id_: str, query_params=None) -> 'pd.DataFrame':
     filter_frames = None
     filter_frame_start = None
     filter_frame_count = None
