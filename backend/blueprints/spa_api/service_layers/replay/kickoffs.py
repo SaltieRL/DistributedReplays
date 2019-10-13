@@ -1,6 +1,5 @@
 from typing import Dict
 
-from carball.generated.api.game_pb2 import Game
 from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.events_pb2 import Kickoff
 from carball.generated.api.stats.kickoff_pb2 import KickoffType
@@ -19,10 +18,18 @@ class Kickoffs:
         protobuf_game = FileManager.get_proto(self.replay_id)
         kickoffs = protobuf_game.game_stats.kickoff_stats
         player_map = create_player_map(protobuf_game)
-
-        kickoff_data = []
+        kickoff_list = []
         for i in range(len(kickoffs)):
-            kickoff_data.append(self.get_stats_from_kickoff(kickoffs[i], player_map))
+            kickoff_list.append(self.get_stats_from_kickoff(kickoffs[i], player_map))
+
+        player_list = {}
+        for player in protobuf_game.players:
+            player_list[player.id.id] = {"name": player.name, "is_orange": player.is_orange}
+
+        kickoff_data = {
+            "players": player_list,
+            "kickoffs": kickoff_list
+        }
         return kickoff_data
 
     def get_stats_from_kickoff(self, kickoff: Kickoff, player_map: Dict[str, Player]):
@@ -33,17 +40,25 @@ class Kickoffs:
                 'kickoff_type': KickoffType.Name(kickoff.type)
             }
 
-        kickoff_data = {
-            'time_till_goal': kickoff.touch.kickoff_goal,
-            'first_touch': player_map[kickoff.touch.first_touch_player.id].name,
-            'touch_time': kickoff.touch_time,
-            'kickoff_type': KickoffType.Name(kickoff.type)
-        }
+        if kickoff.touch.first_touch_player is None or kickoff.touch.first_touch_player.id == "":
+            first_touch = ""
+        else:
+            first_touch = player_map[kickoff.touch.first_touch_player.id].name
+
+        player_data = []
 
         players = kickoff.touch.players
         for index in range(len(players)):
             player_name = player_map[players[index].player.id].name
-            kickoff_data[player_name] = self.get_stats_from_player(players[index], kickoff.start_frame, player_name)
+            player_data.append(self.get_stats_from_player(players[index], kickoff.start_frame, player_name))
+
+        kickoff_data = {
+            'players': player_data,
+            'time_till_goal': kickoff.touch.kickoff_goal,
+            'first_touch': first_touch,
+            'touch_time': kickoff.touch_time,
+            'kickoff_type': KickoffType.Name(kickoff.type)
+        }
 
         return kickoff_data
 
@@ -61,6 +76,7 @@ class Kickoffs:
         end_y = player.player_position.pos_y
 
         return {
+            'player_id': player.player.id,
             'jumps': [jump for jump in player.jumps],
             'boost_level': player.boost,
             'time_to_boost': player.boost_time,

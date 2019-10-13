@@ -99,7 +99,7 @@ def better_jsonify(response: object):
         return jsonify(response)
     except TypeError as e:
         if isinstance(response, list):
-            return jsonify([better_jsonify(value) for value in response])
+            return jsonify([value.__dict__ for value in response])
         else:
             return jsonify(response.__dict__)
 
