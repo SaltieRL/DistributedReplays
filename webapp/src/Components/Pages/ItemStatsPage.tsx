@@ -14,10 +14,10 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { RouteComponentProps } from "react-router-dom"
 import { StoreState } from "../../Redux"
-import { getItemInfo, getItems } from "../../Requests/Global"
+import { getItemInfo, getItems, getItemGraph } from "../../Requests/Global"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
-import { Item, ItemFull, ItemListResponse } from "../../Models/ItemStats"
+import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
 
 const styles = createStyles({
     itemListCard: {
@@ -50,6 +50,7 @@ interface State {
     search: string
     itemID?: number
     itemData?: ItemFull
+    itemUsage?: ItemUsage
 }
 
 type Props = ReturnType<typeof mapStateToProps>
@@ -87,7 +88,8 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                                                 <Grid item xs={3}>
                                                     <Grid item xs={12}>
                                                         <Card className={classes.itemCard}>
-                                                            <CardMedia style={{flex: "0 0 128px"}} image={itemData.image}/>
+                                                            <CardMedia style={{flex: "0 0 128px"}}
+                                                                       image={itemData.image}/>
                                                             <CardContent className={classes.content}>
                                                                 <Typography>
                                                                     {itemData.name}
@@ -139,8 +141,8 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
 
     private readonly getItem = (): Promise<void> => {
         if (this.state.itemID) {
-            return getItemInfo(this.state.itemID)
-                .then((item: ItemFull) => this.setState({itemData: item}))
+            return Promise.all([getItemInfo(this.state.itemID), getItemGraph(this.state.itemID)])
+                .then((data) => this.setState({itemData: data[0], itemUsage: data[1]}))
         }
         return getItemInfo(0).then(() => {
         })

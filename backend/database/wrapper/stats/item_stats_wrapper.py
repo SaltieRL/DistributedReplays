@@ -1,7 +1,7 @@
 import datetime
 
 from carball.generated.api.metadata import player_loadout_pb2
-from sqlalchemy import func, desc, literal, Date
+from sqlalchemy import func, desc, literal, Date, Float
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Loadout, Game
@@ -52,7 +52,7 @@ class ItemStatsWrapper:
 
     @staticmethod
     @with_session
-    def get_item_stats(id_, session):
+    def get_item_usage_over_time(id_, session):
         date = func.date(Game.match_date)
         inner = session.query(date.label('date'),
                               Loadout.player,
@@ -62,10 +62,26 @@ class ItemStatsWrapper:
             .filter(Loadout.wheels == id_) \
             .group_by(date, Loadout.player, Loadout.antenna) \
             .subquery()
-        stats = session.query(inner.c.date, func.count(inner.c.player).label("count")) \
-            .group_by(inner.c.date).order_by(inner.c.date)
-        return stats.all()
+        inner2 = session.query(date.label('date'),
+                               Loadout.player) \
+            .join(Game, Loadout.game == Game.hash) \
+            .distinct(Loadout.player, date) \
+            .group_by(date, Loadout.player) \
+            .subquery()
+        stats = session.query(inner.c.date, func.count(inner.c.player).label('count')) \
+            .group_by(inner.c.date).subquery()
+        stats2 = session.query(inner2.c.date, func.count(inner2.c.player).label('count')) \
+            .group_by(inner2.c.date).subquery()
+        final = session.query(stats.c.date, stats.c.count, stats2.c.count) \
+            .join(stats2, stats.c.date == stats2.c.date).order_by(stats.c.date)
+        return {'data': [
+            {
+                'date': r[0],
+                'count': r[1],
+                'total': r[2]
+            } for r in final.all()]
+        }
 
 
 if __name__ == '__main__':
-    print(ItemStatsWrapper.get_item_stats(3000))
+    print(ItemStatsWrapper.get_item_usage_over_time(3000))

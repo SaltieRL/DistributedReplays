@@ -27,6 +27,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
+from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.utils.logger import ErrorLogger
@@ -684,6 +685,14 @@ def api_get_items_list(query_params=None):
 def api_get_item(query_params=None):
     api = RLGarageAPI()
     return better_jsonify(api.get_item(query_params['id']))
+
+
+@bp.route('/items/usage')
+@with_query_params(accepted_query_params=[
+    QueryParam(name='id', type_=int, optional=True)
+])
+def api_get_item_usage(query_params=None):
+    return better_jsonify(ItemStatsWrapper.get_item_usage_over_time(query_params['id']))
 
 
 # ADMIN

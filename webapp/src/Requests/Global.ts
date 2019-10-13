@@ -1,10 +1,10 @@
 import moment from "moment"
 import qs from "qs"
 import { doGet, doPost } from "../apiHandler/apiHandler"
+import { ItemFull, ItemListResponse, ItemUsage } from "../Models/ItemStats"
 import { TrainingPackResponse } from "../Models/Player/TrainingPack"
 import { playlists } from "../Utils/Playlists"
 import { useMockData } from "./Config"
-import { ItemFull, ItemListResponse } from "../Models/ItemStats"
 
 export const getReplayCount = (): Promise<number> => {
     if (useMockData) {
@@ -99,4 +99,8 @@ export const getItems = (page: number, limit: number,
 
 export const getItemInfo = (id: number): Promise<ItemFull> => {
     return doGet(`/items/info?id=${id}`)
+}
+
+export const getItemGraph = (id: number): Promise<ItemUsage> => {
+    return doGet(`/items/usage?id=${id}`)
 }

@@ -32,3 +32,12 @@ export interface ItemFull {
     translations: any
     unlockmethod: number
 }
+export interface ItemUsage {
+    data: ItemDataPoint[]
+}
+
+export interface ItemDataPoint {
+    count: number
+    date: string
+    total: number
+}
