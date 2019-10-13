@@ -1,6 +1,9 @@
-from carball.generated.api.metadata import player_loadout_pb2
-from sqlalchemy import func, desc, literal
+import datetime
 
+from carball.generated.api.metadata import player_loadout_pb2
+from sqlalchemy import func, desc, literal, Date
+
+from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Loadout, Game
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field
 
@@ -46,3 +49,23 @@ class ItemStatsWrapper:
             results = [ItemResult(*s).__dict__ for s in stats]
             result_map[dynamic_field.field_name] = results
         return result_map
+
+    @staticmethod
+    @with_session
+    def get_item_stats(id_, session):
+        date = func.date(Game.match_date)
+        inner = session.query(date.label('date'),
+                              Loadout.player,
+                              Loadout.antenna) \
+            .join(Game, Loadout.game == Game.hash) \
+            .distinct(Loadout.player, date) \
+            .filter(Loadout.wheels == id_) \
+            .group_by(date, Loadout.player, Loadout.antenna) \
+            .subquery()
+        stats = session.query(inner.c.date, func.count(inner.c.player).label("count")) \
+            .group_by(inner.c.date).order_by(inner.c.date)
+        return stats.all()
+
+
+if __name__ == '__main__':
+    print(ItemStatsWrapper.get_item_stats(3000))

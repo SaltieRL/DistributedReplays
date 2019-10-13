@@ -26,12 +26,13 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
-from backend.utils.logging import ErrorLogger
+from backend.utils.logger import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
 from backend.utils.metrics import MetricsHandler
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
+from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.utils.safe_flask_globals import get_current_user_id
 
 try:
@@ -642,3 +643,18 @@ def get_endpoint_documentation():
     from backend.blueprints.spa_api.service_layers.documentation import create_documentation_for_module
     method_list = create_documentation_for_module(sys.modules[__name__])
     return better_jsonify(method_list)
+
+
+# Items
+@bp.route('/items/list')
+@with_query_params(accepted_query_params=[
+    QueryParam(name='category', type_=int, optional=True),
+    QueryParam(name='page', type_=int, optional=False),
+    QueryParam(name='limit', type_=int, optional=False)
+])
+def get_items_list(query_params=None):
+    api = RLGarageAPI()
+    if 'category' in query_params:
+        return better_jsonify(
+            api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit']))
+    return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
