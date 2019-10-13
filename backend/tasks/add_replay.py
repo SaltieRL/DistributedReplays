@@ -16,7 +16,7 @@ from backend.database.utils.utils import add_objects
 from backend.tasks import celery_tasks
 from backend.tasks.utils import get_queue_length
 from backend.utils.file_manager import FileManager
-from backend.utils.logging import ErrorLogger
+from backend.utils.logger import ErrorLogger
 from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df, GCPManager
 from backend.utils.parsing_manager import parse_replay_wrapper
 

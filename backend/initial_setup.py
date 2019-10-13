@@ -20,7 +20,7 @@ from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER, BA
 from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
 from backend.utils.metrics import MetricsHandler
-from backend.utils.logging import ErrorLogger
+from backend.utils.logger import ErrorLogger
 from backend.utils.safe_flask_globals import UserManager
 
 logger = logging.getLogger(__name__)
