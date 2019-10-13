@@ -12,7 +12,7 @@ from sklearn.preprocessing import MinMaxScaler
 from carball.generated.api.game_pb2 import Game
 
 try:
-    from .config import ranges, model_path, droplist
+    from backend.blueprints.spa_api.service_layers.ml.config import ranges, model_path, droplist
 except ImportError:
     print("No config.py file")
     raise ImportError
@@ -213,7 +213,8 @@ def get_game_df_prepared(df, proto_game: Game = None):
     return gdf
 
 
-def predict_on_game_df(gdf, num_players):
+def predict_on_game(df, proto_game: Game = None, num_players=1):
+    gdf = get_game_df_prepared(df, proto_game)
     output = gdf.copy()
     x = output.drop(droplist, axis=1)
     mx = mirror_df(x.copy(), num_players)

@@ -2,12 +2,13 @@ from typing import List
 
 from backend.utils.file_manager import FileManager
 from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
+from backend.blueprints.spa_api.service_layers.ml.advantage import predict_on_game
 
 
 class ReplayPositions:
     def __init__(self, id_: str,
                  ball: List[float], players: List[ReplayPlayer], colors: List[int], names: List[str],
-                 frames: List[float]):
+                 frames: List[float], predictions: List[float]):
         self.id = id_
 
         self.ball = ball
@@ -15,6 +16,7 @@ class ReplayPositions:
         self.colors = colors
         self.names = names
         self.frames = frames
+        self.predictions = predictions
 
     @staticmethod
     def create_from_id(id_: str, query_params=None) -> 'ReplayPositions':
@@ -33,7 +35,9 @@ class ReplayPositions:
         if filter_frame_start is not None and filter_frame_count is not None:
             data_frame = ReplayPositions.filter_frames_range(filter_frame_start, filter_frame_count, data_frame)
         protobuf_game = FileManager.get_proto(id_)
-
+        # Predict with Models
+        preds = predict_on_game(data_frame, protobuf_game, 1) #third arg len of protobuf.players/2?
+        #
         cs = ['pos_x', 'pos_y', 'pos_z']
         rot_cs = ['rot_x', 'rot_y', 'rot_z']
 
@@ -63,7 +67,8 @@ class ReplayPositions:
             players=players_data,
             colors=[player.is_orange for player in players],
             names=[player.name for player in players],
-            frames=game_frames.values.tolist()
+            frames=game_frames.values.tolist(),
+            predictions=preds.values.tolist()
         )
 
     @staticmethod
