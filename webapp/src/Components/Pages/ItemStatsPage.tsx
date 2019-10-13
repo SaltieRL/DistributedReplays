@@ -20,6 +20,65 @@ import { ItemStatsGraph } from "../ItemStats/ItemStatsGraph"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
+// const CATEGORIES = [
+//     {
+//         id: 1,
+//         name: "Bodies"
+//     },
+//     {
+//         id: 2,
+//         name: "Wheels"
+//     },
+//     {
+//         id: 3,
+//         name: "Rocket Boosts"
+//     },
+//     {
+//         id: 4,
+//         name: "Toppers"
+//     },
+//     {
+//         id: 5,
+//         name: "Antennas"
+//     },
+//     {
+//         id: 6,
+//         name: "Decals"
+//     },
+//     {
+//         id: 7,
+//         name: "Crates"
+//     },
+//     {
+//         id: 8,
+//         name: "Paint Finishes"
+//     },
+//     {
+//         id: 9,
+//         name: "Trails"
+//     },
+//     {
+//         id: 10,
+//         name: "Goal Explosions"
+//     },
+//     {
+//         id: 11,
+//         name: "Banners"
+//     },
+//     {
+//         id: 12,
+//         name: "Engine Audio"
+//     },
+//     {
+//         id: 13,
+//         name: "Avatar Borders"
+//     },
+//     {
+//         id: 14,
+//         name: "Titles"
+//     }
+// ]
+
 const styles = createStyles({
     itemListCard: {
         // maxWidth: 150
@@ -142,7 +201,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getItems = (): Promise<void> => {
-        return getItems(this.state.page, this.state.limit, this.state.search, 3)
+        return getItems(this.state.page, this.state.limit, this.state.search, 2)
             .then((packs: ItemListResponse) => this.setState({itemList: packs}))
     }
 
