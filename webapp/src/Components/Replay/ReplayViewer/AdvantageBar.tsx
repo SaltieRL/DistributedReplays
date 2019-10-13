@@ -9,11 +9,16 @@ interface Props {
 
 export class AdvantageBarChart extends React.PureComponent<Props> {
     public render() {
-        const data = this.getChartData()
-        console.log(data)
-        return (
-            <Bar data={data} options={this.getChartOptions()}/>
-        )
+        try {
+            const data = this.getChartData()
+            console.log(data)
+            return (
+                <Bar data={data} options={this.getChartOptions()}/>
+            )
+        } catch(err) {
+            console.log(err)
+            return ("")
+        }
     }
 
     private readonly getChartData = (): ChartData => {

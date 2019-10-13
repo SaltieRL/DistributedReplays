@@ -300,8 +300,11 @@ def api_get_replay_positions(id_, query_params=None):
     QueryParam(name='as_proto', type_=bool, optional=True)
 ])
 def api_get_replay_advantage_predictions(id_, query_params=None):
-    from backend.blueprints.spa_api.service_layers.ml.advantage import predict_on_id
-    return better_jsonify(predict_on_id(id_, query_params))
+    try:
+        from backend.blueprints.spa_api.service_layers.ml.advantage import predict_on_id
+        return better_jsonify(predict_on_id(id_, query_params))
+    except:
+        return better_jsonify([[[]],[[]]])
 
 
 @bp.route('replay/<id_>/heatmaps')
