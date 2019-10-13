@@ -38,7 +38,7 @@ export class ItemStatsGraph extends React.PureComponent<Props> {
                                 y: dataPoint.count / dataPoint.total * 100
                             } as ChartPoint
                         }),
-                    fill: false,
+                    fill: true,
                     backgroundColor: primaryColours[0] + "44",
                     pointBackgroundColor: primaryColours[0] + "bb",
                     borderColor: primaryColours[0] + "88",
