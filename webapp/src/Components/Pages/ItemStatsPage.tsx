@@ -16,6 +16,7 @@ import { RouteComponentProps } from "react-router-dom"
 import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
 import { StoreState } from "../../Redux"
 import { getItemGraph, getItemInfo, getItems } from "../../Requests/Global"
+import { ItemStatsGraph } from "../ItemStats/ItemStatsGraph"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
@@ -84,19 +85,25 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                             <Grid item xs={12}>
                                 {this.state.itemID ? <>
                                         {itemData && (
-                                            <Grid container>
-                                                <Grid item xs={3}>
+                                            <Grid container spacing={24}>
+                                                <Grid item xs={4} lg={2}>
                                                     <Grid item xs={12}>
                                                         <Card className={classes.itemCard}>
                                                             <CardMedia style={{flex: "0 0 128px"}}
                                                                        image={itemData.image}/>
                                                             <CardContent className={classes.content}>
-                                                                <Typography>
+                                                                <Typography variant="h4">
                                                                     {itemData.name}
                                                                 </Typography>
                                                             </CardContent>
                                                         </Card>
                                                     </Grid>
+                                                </Grid>
+                                                <Grid item xs={8} lg={10}>
+                                                    {this.state.itemData && this.state.itemUsage &&
+                                                    <ItemStatsGraph item={this.state.itemData}
+                                                                    itemUsage={this.state.itemUsage}/>
+                                                    }
                                                 </Grid>
                                             </Grid>
                                         )}
