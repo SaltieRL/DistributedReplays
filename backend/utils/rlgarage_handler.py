@@ -119,13 +119,32 @@ class RLGarageAPI:
             item['image'] = f"https://rocket-league.com/content/media/items/avatar/220px/{item['image']}"
         return item
 
+    def get_item(self, id_):
+        return self.item_map[str(id_)]
+
     def get_item_list(self, page, limit):
-        if limit > 50:
-            limit = 50
-        return self.item_list[page * limit: (page + 1) * limit]
+        if limit > 500:
+            limit = 500
+        return {
+            'items': self.get_item_response(self.item_list[page * limit: (page + 1) * limit]),
+            'count': len(self.item_list)
+        }
 
     def get_item_list_by_category(self, category, page, limit):
         category = str(category)
-        if limit > 50:
-            limit = 50
-        return self.category_map[category][page * limit: (page + 1) * limit], len(self.category_map[category])
+        if limit > 500:
+            limit = 500
+        return {
+            'items': self.get_item_response(self.category_map[category][page * limit: (page + 1) * limit]),
+            'count': len(self.category_map[category])
+        }
+
+    def get_item_response(self, items):
+        return [
+            {
+                'image': item['image'],
+                'name': item['name'],
+                'ingameid': item['ingameid'],
+                'rarity': item['rarity']
+            } for item in items
+        ]

@@ -4,6 +4,7 @@ import { doGet, doPost } from "../apiHandler/apiHandler"
 import { TrainingPackResponse } from "../Models/Player/TrainingPack"
 import { playlists } from "../Utils/Playlists"
 import { useMockData } from "./Config"
+import { ItemFull, ItemListResponse } from "../Models/ItemStats"
 
 export const getReplayCount = (): Promise<number> => {
     if (useMockData) {
@@ -86,4 +87,16 @@ export const parseTrainingPack = (data: any) => {
 }
 export const getAdminLogs = (page: number, limit: number, search: string): Promise<AdminLogsResponse> => {
     return doGet(`/admin/logs?page=${page}&limit=${limit}&search=${search}`)
+}
+export const getItems = (page: number, limit: number,
+                         search: string, category: number): Promise<ItemListResponse> => {
+    let queryString = `/items/list?page=${page}&limit=${limit}&search=${search}`
+    if (category) {
+        queryString += `&category=${category}`
+    }
+    return doGet(queryString)
+}
+
+export const getItemInfo = (id: number): Promise<ItemFull> => {
+    return doGet(`/items/info?id=${id}`)
 }

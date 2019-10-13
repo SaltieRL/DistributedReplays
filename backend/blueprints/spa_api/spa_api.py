@@ -669,12 +669,21 @@ def get_endpoint_documentation():
     QueryParam(name='page', type_=int, optional=False),
     QueryParam(name='limit', type_=int, optional=False)
 ])
-def get_items_list(query_params=None):
+def api_get_items_list(query_params=None):
     api = RLGarageAPI()
     if 'category' in query_params:
         return better_jsonify(
             api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit']))
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
+
+
+@bp.route('/items/info')
+@with_query_params(accepted_query_params=[
+    QueryParam(name='id', type_=int, optional=True)
+])
+def api_get_item(query_params=None):
+    api = RLGarageAPI()
+    return better_jsonify(api.get_item(query_params['id']))
 
 
 # ADMIN

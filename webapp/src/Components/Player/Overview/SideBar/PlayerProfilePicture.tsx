@@ -22,7 +22,7 @@ class PlayerProfilePictureComponent extends React.PureComponent<Props> {
 }
 
 const styles = createStyles({
-    card: {
+    itemListCard: {
         display: "flex"
     },
     avatar: {
