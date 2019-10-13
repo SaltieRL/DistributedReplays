@@ -10,6 +10,8 @@ from keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 from typing import List
 
+from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.server_constants import *
 from backend.blueprints.spa_api.service_layers.replay.replay_positions import ReplayPositions
 from backend.utils.file_manager import FileManager
 from carball.generated.api.game_pb2 import Game
@@ -23,7 +25,7 @@ except ImportError:
     # ranges = [(0, 3), (2, 5), (3, 7), (4, 8), (6, 10), (7, 12), (9, 14), (11, 16)]
     # droplist = ['z_0_dodge_active', 'z_0_jump_active', 'z_0_double_jump_active', 'o_0_dodge_active', 'o_0_jump_active',
     #             'o_0_double_jump_active', 'ball_rot_x', 'ball_rot_y', 'ball_rot_z', 'ball_ang_vel_x', 'ball_ang_vel_y',
-    #             'ball_ang_vel_z', 'game_seconds_remaining', 'score_zero', 'score_one']
+    #             'ball_ang_vel_z', 'game_seconds_remaining']
     # model_path = 'models/'
 
 
@@ -85,7 +87,7 @@ def df_to_int(input_df, mul=False):
     return df
 
 
-def mirror_df(input_df, num_players):
+def mirror_inputs(input_df, num_players):
     # Only works for 1v1 right now!
     # Prepare flipping teams
     cols = input_df.columns.tolist()
@@ -116,10 +118,6 @@ def mirror_df(input_df, num_players):
             # 'Decode' the first change
             df.loc[df[e + 'rot_y'] < -my_pi, e + 'rot_y'] += 10000
             df[e + 'rot_y'] = df[e + 'rot_y'].astype(col_type)
-    # (1 -> -1) (0 -> 0)
-    df['next_goal_one'] *= -1
-    # (-1 -> 0) (0 -> 1)
-    df['next_goal_one'] += 1
     return df
 
 
@@ -135,8 +133,7 @@ def get_game_df_prepared(df, proto_game: Game = None):
             else:
                 print("Column value error.")
                 raise ValueError
-    # goal_seconds, goal_frames, goal_scorers, goal_teams, gdf = restructure_and_get_goals(proto_game, gdf)
-    goal_seconds, goal_frames, goal_scorers, goal_teams = [], [], [], []
+
     # Player Data
     # ~1 in 3 games have the blue team as team "1" instead of "0". We have to fix the team order in these cases.
     team_names = [[], []]
@@ -152,14 +149,6 @@ def get_game_df_prepared(df, proto_game: Game = None):
         else:
             team_names[team_index[0]].append(player.name)
 
-    for goal in game.goals:
-        goal_frames.append(goal.frame_number)
-        goal_seconds.append(gdf.iloc[goal_frames[-1]]['game_seconds_remaining'])
-        goal_scorers.append(goal.player_id)  # Currently unused
-        if goal.player_id in proto_game.teams[0].player_ids:
-            goal_teams.append(team_index[0])
-        elif goal.player_id in proto_game.teams[1].player_ids:
-            goal_teams.append(team_index[1])
     # Dictionary for rename
     rename_dict = {}
     for tup in gdf.columns:
@@ -178,6 +167,7 @@ def get_game_df_prepared(df, proto_game: Game = None):
         rename_dict[tup] = sub
 
     gdf = gdf.rename(rename_dict, axis='columns')
+
     num_players = len(team_names[0])
     # Add demo columns
     for team in ['z_', 'o_']:
@@ -221,20 +211,20 @@ def predict_on_game(df, proto_game: Game = None, num_players=1):
     input_df = gdf.copy()
     output = pd.DataFrame(index=input_df.index)
     x = input_df.drop(droplist, axis=1)
-    mx = mirror_df(x.copy(), num_players)
-    scaler = load(model_path + 'scaler.joblib')
+    mx = mirror_inputs(x.copy(), num_players)
+    scaler = load(CODE_FOLDER + model_path + 'scaler.joblib')
     x = scaler.transform(x)
     mx = scaler.transform(mx)
     # Use models
     models = []
     preds = []
     count = 0
-    for mp in os.listdir(model_path):
+    for mp in os.listdir(CODE_FOLDER + model_path):
         if 'scaler.joblib' in mp:
             continue
         r_str = f"{ranges[count][0]}-{ranges[count][1]}"
         count += 1
-        model = load_model(mp)
+        model = load_model(CODE_FOLDER + model_path + mp, compile=False)
         models.append(model)
         pred = model.predict_proba(x)  # [:,0] maybe
         mpred = model.predict_proba(mx)  # [:,0] maybe
@@ -245,7 +235,8 @@ def predict_on_game(df, proto_game: Game = None, num_players=1):
     return output
 
 
-def predict_on_id(id_: str, query_params=None) -> 'pd.DataFrame':
+@with_session
+def predict_on_id(id_: str, query_params=None, session=None):
     filter_frames = None
     filter_frame_start = None
     filter_frame_count = None
@@ -262,6 +253,22 @@ def predict_on_id(id_: str, query_params=None) -> 'pd.DataFrame':
         data_frame = ReplayPositions.filter_frames_range(filter_frame_start, filter_frame_count, data_frame)
 
     protobuf_game = FileManager.get_proto(id_)
+    # Get MMRs (later)
+    # game = session.query(Game).filter(Game.hash == id_).first()
+    # game.mmrs
+    # mmrs = {'min': 3000, 'max': 0, 'avg': 0}
+    # non_zero = 0
+    # for mmr in game.mmrs:
+    #     if mmr == 0:
+    #         continue
+    #     non_zero += 1
+    #     if mmr < mmrs['min']:
+    #         mmrs['min'] = mmr
+    #     if mmr > mmrs['max']:
+    #         mmrs['max'] = mmr
+    #     mmrs['avg'] += mmr
+    # mmrs['avg'] /= non_zero
+
     # Predict with Models
     preds = predict_on_game(data_frame, protobuf_game, 1)  # third arg len of protobuf.players/2?
-    return preds
+    return preds.values.tolist()

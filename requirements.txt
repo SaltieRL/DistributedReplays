@@ -1,6 +1,7 @@
 joblib
 scikit-learn
-tensorflow
+tensorflow==1.14
+keras==2.2.5
 amqp==2.4.0
 arrow==0.12.1
 Babel==2.6.0
