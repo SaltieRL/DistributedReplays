@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import sys
+import traceback
 import uuid
 import zlib
 
@@ -13,6 +14,7 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
 from werkzeug.utils import secure_filename, redirect
 
+from backend.blueprints.spa_api.service_layers.admin import AdminPanelHandler
 from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
 from backend.blueprints.spa_api.service_layers.homepage.recent import RecentReplays
 from backend.blueprints.spa_api.service_layers.homepage.twitch import TwitchStreams
@@ -20,6 +22,7 @@ from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
+from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
     player_id, heatmap_query_params
@@ -46,19 +49,21 @@ try:
 
     REPLAY_BUCKET = config.REPLAY_BUCKET
     PROTO_BUCKET = config.PROTO_BUCKET
+    FAILED_BUCKET = config.FAILED_BUCKET
     PARSED_BUCKET = config.PARSED_BUCKET
     TRAINING_PACK_BUCKET = config.TRAINING_PACK_BUCKET
 except:
     print('Not uploading to buckets')
     REPLAY_BUCKET = ''
     PROTO_BUCKET = ''
+    FAILED_BUCKET = ''
     PARSED_BUCKET = ''
     TRAINING_PACK_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting, TrainingPack
+from backend.database.objects import Game, GameVisibilitySetting, TrainingPack, ReplayLog, ReplayResult
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
@@ -422,11 +427,11 @@ def api_get_parse_status(query_params=None):
 
 @bp.route('/upload/proto', methods=['POST'])
 @with_query_params(accepted_query_params=upload_file_query_params)
-def api_upload_proto(query_params=None):
+def api_upload_proto(session=None, query_params=None):
     # Convert to byte files from base64
-    response = request.get_json()
+    payload = request.get_json()
 
-    proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
+    proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(payload['proto'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
@@ -434,8 +439,20 @@ def api_upload_proto(query_params=None):
     try:
         parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
+        payload['stack'] = traceback.format_exc()
+        payload['error_type'] = type(e).__name__
+        ErrorLogger.log_replay_error(payload, query_params, proto_game=protobuf_game)
         ErrorLogger.log_error(e, logger=logger)
+        return jsonify({'Success': False})
+    ErrorLogger.log_replay(payload, query_params, proto_game=protobuf_game)
+    return jsonify({'Success': True})
 
+
+@bp.route('/upload/proto/error', methods=['POST'])
+@with_query_params(accepted_query_params=upload_file_query_params)
+def api_upload_proto_error(query_params=None):
+    payload = request.get_json()
+    ErrorLogger.log_replay_error(payload, query_params)
     return jsonify({'Success': True})
 
 
@@ -658,3 +675,44 @@ def get_items_list(query_params=None):
         return better_jsonify(
             api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit']))
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
+
+
+# ADMIN
+
+@bp.route('/admin/group/add/<user_id>/<group>', methods=["GET"])
+@require_user
+def api_admin_add_group(user_id: str, group: str):
+    try:
+        group: int = int(group)
+    except ValueError:
+        raise CalculatedError(400, "Invalid group number format")
+    return AdminPanelHandler.add_group_to_user(user_id, group)
+
+
+@bp.route('/admin/group/remove/<user_id>/<group>', methods=["GET"])
+@require_user
+def api_admin_remove_group(user_id: str, group: str):
+    try:
+        group: int = int(group)
+    except ValueError:
+        raise CalculatedError(400, "Invalid group number format")
+    return AdminPanelHandler.remove_group_from_user(user_id, group)
+
+
+@bp.route('/admin/logs')
+@require_user
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
+                                          QueryParam(name='limit', type_=int, optional=False),
+                                          QueryParam(name='search', type_=str, optional=True)])
+def api_admin_get_logs(query_params=None):
+    search = None
+    if 'search' in query_params and query_params['search'] != "":
+        search = query_params['search']
+    return jsonify(ErrorLogger.get_logs(query_params['page'], query_params['limit'], search))
+
+
+@bp.route('/admin/failed/download')
+@require_user
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def api_admin_get_replay(query_params=None):
+    return redirect(f"https://storage.googleapis.com/{FAILED_BUCKET}/{query_params['id']}.replay")

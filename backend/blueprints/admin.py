@@ -31,15 +31,6 @@ def check_admin():
         return redirect('/')
 
 
-@bp.route('/')
-@with_session
-def home(session=None):
-    players = session.query(Player).all()
-    groups = session.query(Group).all()
-    id_to_groups = {g.id: g.name for g in groups}
-    return render_with_session('admin.html', session, players=players, groups=groups, id_to_groups=id_to_groups)
-
-
 @bp.route('/addrole/<id>/<role>')
 @with_session
 def addrole(id, role, session=None):
