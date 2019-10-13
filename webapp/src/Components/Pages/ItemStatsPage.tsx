@@ -13,11 +13,11 @@ import qs from "qs"
 import * as React from "react"
 import { connect } from "react-redux"
 import { RouteComponentProps } from "react-router-dom"
+import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
 import { StoreState } from "../../Redux"
-import { getItemInfo, getItems, getItemGraph } from "../../Requests/Global"
+import { getItemGraph, getItemInfo, getItems } from "../../Requests/Global"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
-import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
 
 const styles = createStyles({
     itemListCard: {

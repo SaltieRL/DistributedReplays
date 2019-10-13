@@ -8,6 +8,7 @@ import { DocumentationPage } from "./Components/Pages/DocumentationPage"
 import { ExplanationsPage } from "./Components/Pages/ExplanationsPage"
 import { GlobalStatsPage } from "./Components/Pages/GlobalStatsPage"
 import { HomePage } from "./Components/Pages/HomePage"
+import { ItemsStatsPage } from "./Components/Pages/ItemStatsPage"
 import { LeaderboardsPage } from "./Components/Pages/LeaderboardsPage"
 import { PlayerComparePage } from "./Components/Pages/PlayerComparePage"
 import { PlayerPage } from "./Components/Pages/PlayerPage"
@@ -35,7 +36,6 @@ import {
     TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
-import { ItemsStatsPage } from "./Components/Pages/ItemStatsPage"
 
 const styles = createStyles({
     App: {
