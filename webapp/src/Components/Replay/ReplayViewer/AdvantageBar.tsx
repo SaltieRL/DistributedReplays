@@ -40,7 +40,7 @@ export class AdvantageBarChart extends React.PureComponent<Props> {
             legend: {display: false},
             scales: {
                 yAxes: [
-                    {ticks: {maxTicksLimit: 5, beginAtZero: true}, bounds: 'ticks'}
+                    {ticks: { max: 1, stepSize:0.2, beginAtZero: true}, bounds: 'ticks'}
                 ]
             },
             responsive: true,
