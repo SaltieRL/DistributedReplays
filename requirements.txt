@@ -1,3 +1,6 @@
+joblib
+scikit-learn
+tensorflow
 amqp==2.4.0
 arrow==0.12.1
 Babel==2.6.0
@@ -22,7 +25,7 @@ kiwisolver==1.0.1
 kombu==4.4
 MarkupSafe==1.0
 matplotlib==2.2.3
-numpy==1.15.1
+numpy==1.17.2
 pandas==0.24.2
 proj==0.1.0
 protobuf==3.6.1
