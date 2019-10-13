@@ -75,7 +75,6 @@ from backend.blueprints.spa_api.service_layers.replay.groups import ReplayGroupC
 from backend.blueprints.spa_api.service_layers.replay.match_history import MatchHistory
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.replay.replay_positions import ReplayPositions
-from backend.blueprints.spa_api.service_layers.ml.advantage import predict_on_id
 from backend.blueprints.spa_api.service_layers.replay.tag import Tag
 from backend.blueprints.spa_api.utils.decorators import require_user, with_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import QueryParam, get_query_params
@@ -301,6 +300,7 @@ def api_get_replay_positions(id_, query_params=None):
     QueryParam(name='as_proto', type_=bool, optional=True)
 ])
 def api_get_replay_advantage_predictions(id_, query_params=None):
+    from backend.blueprints.spa_api.service_layers.ml.advantage import predict_on_id
     return better_jsonify(predict_on_id(id_, query_params))
 
 
