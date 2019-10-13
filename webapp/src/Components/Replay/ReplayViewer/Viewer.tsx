@@ -13,9 +13,12 @@ import {
     Slider
 } from "replay-viewer"
 
+import { addFrameListener, FrameEvent } from "replay-viewer/eventbus/events/frame"
+import { doGet } from "../../../apiHandler/apiHandler"
 import { Replay } from "../../../Models"
 import { getReplayMetadata, getReplayViewerData, getReplayViewerDataRange } from "../../../Requests/Replay"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
+import { AdvantageBarChart } from "./AdvantageBar"
 
 interface Props {
     replayId: Replay["id"]
@@ -29,16 +32,26 @@ interface State {
     options?: GameBuilderOptions
     gameManager?: GameManager
     reloadSignal: boolean
+    frame: number
+    advantageData?: number[][]
 }
 
 export class Viewer extends Component<Props, State> {
     constructor(props: any) {
         super(props)
-        this.state = {reloadSignal: false}
+        this.state = {reloadSignal: false, frame: 0}
+    }
+
+    public componentDidMount(): void {
+        addFrameListener((frameEvent: FrameEvent) => {
+            this.setState({frame: frameEvent.frame})
+
+        })
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
         if (prevProps.replayId !== this.props.replayId || prevProps.frameMin !== this.props.frameMin) {
+
             this.setState({reloadSignal: !this.state.reloadSignal})
         }
     }
@@ -90,6 +103,10 @@ export class Viewer extends Component<Props, State> {
                     <Grid item>
                         <Slider/>
                     </Grid>
+                    <Grid item xs={12}>
+                        {this.state.advantageData && this.state.frame &&
+                        <AdvantageBarChart data={this.state.advantageData[this.state.frame]}/>}
+                    </Grid>
                 </>
                 }
             </Grid>
@@ -117,16 +134,18 @@ export class Viewer extends Component<Props, State> {
         } else {
             dataPromise = getReplayViewerData(replayId)
         }
-        return Promise.all([dataPromise, getReplayMetadata(replayId)]).then(
-            ([replayData, replayMetadata]) => {
+        return Promise.all([dataPromise, getReplayMetadata(replayId), doGet(`/replay/${replayId}/advantage`)]).then(
+            ([replayData, replayMetadata, advantage]) => {
                 this.setState({
                     options: {
                         clock: FPSClock.convertReplayToClock(replayData),
                         replayData,
                         replayMetadata
-                    }
+                    },
+                    advantageData: advantage
                 })
             }
         )
     }
+
 }
