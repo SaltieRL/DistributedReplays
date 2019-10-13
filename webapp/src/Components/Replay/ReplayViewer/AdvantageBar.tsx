@@ -1,10 +1,11 @@
 import { ChartData, ChartOptions } from "chart.js"
 import * as React from "react"
-import { Bar } from "react-chartjs-2"
+import {HorizontalBar} from "react-chartjs-2"
 import { roundLabelToMaxDPCallback } from "../../../Utils/Chart"
 
 interface Props {
-    data: number[]
+    blue: number[]
+    orange: number[]
 }
 
 export class AdvantageBarChart extends React.PureComponent<Props> {
@@ -13,7 +14,7 @@ export class AdvantageBarChart extends React.PureComponent<Props> {
             const data = this.getChartData()
             console.log(data)
             return (
-                <Bar data={data} options={this.getChartOptions()}/>
+                <HorizontalBar data={data} options={this.getChartOptions()}/>
             )
         } catch(err) {
             console.log(err)
@@ -23,15 +24,18 @@ export class AdvantageBarChart extends React.PureComponent<Props> {
 
     private readonly getChartData = (): ChartData => {
         return {
-            labels: this.props.data.map((value, i) => {
+            labels: this.props.blue.map((value, i) => {
                 return i.toString()
             }),
             datasets: [{
-
-                data: this.props.data,
+                data: this.props.blue,
+                backgroundColor: "#00BB00"
+            },
+            {
+                data: this.props.orange,
                 backgroundColor: "#BB0000"
-
-            }]
+            },
+            ]
         }
     }
 
@@ -39,10 +43,29 @@ export class AdvantageBarChart extends React.PureComponent<Props> {
         return {
             legend: {display: false},
             scales: {
-                yAxes: [
-                    {ticks: { max: 1, stepSize:0.2, beginAtZero: true}, bounds: 'ticks'}
-                ]
+                xAxes: [
+                    {
+                        stacked: true,
+                        ticks: { max: 1, stepSize:0.2, beginAtZero: true},
+                        bounds: 'ticks',
+                        afterFit: (scaleInstance) => {
+                            scaleInstance.width = 100
+                        }
+                    }
+
+                ],
+                yAxes: [{
+                    stacked: true,
+                    gridLines: {
+                        display: false
+                    },
+                    barThickness: 25,
+                    afterFit: (scaleInstance) => {
+                        scaleInstance.width = 50
+                    }
+                }]
             },
+            maintainAspectRatio: false,
             responsive: true,
             tooltips: {
                 callbacks: {

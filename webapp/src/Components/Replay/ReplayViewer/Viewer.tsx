@@ -105,10 +105,8 @@ export class Viewer extends Component<Props, State> {
                     </Grid>
                     <Grid item xs={12}>
                         {this.state.advantageData && this.state.frame &&
-                        <AdvantageBarChart key={0} data={this.state.advantageData[0][this.state.frame]}/>
-                        }
-                        {this.state.advantageData && this.state.frame &&
-                        <AdvantageBarChart key={1} data={this.state.advantageData[0][this.state.frame]}/>
+                        <AdvantageBarChart key={0} blue={this.state.advantageData[0][this.state.frame]}
+                                           orange={this.state.advantageData[1][this.state.frame]}/>
                         }
                     </Grid>
                 </>
