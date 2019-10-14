@@ -18,6 +18,7 @@ import { WithNotifications, withNotifications } from "../Notification/Notificati
 import { BakkesModAd } from "./BakkesModAd"
 import { addTaskIds } from "./StatusUtils"
 import { UploadDropzone } from "./UploadDropzone"
+import { UploadTags } from "./UploadTags"
 
 const styles = (theme: Theme) => createStyles({
     leftIcon: {
@@ -35,13 +36,14 @@ interface State {
     files: File[]
     rejected: File[]
     uploadingStage?: "pressedUpload" | "uploaded"
+    selectedPrivateKeys: string[]
     filesRemaining: number
 }
 
 class UploadFormComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {files: [], rejected: [], filesRemaining: -1}
+        this.state = {files: [], rejected: [], selectedPrivateKeys: [], filesRemaining: -1}
     }
 
     public render() {
@@ -60,6 +62,10 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                                 ".replay".
                             </Typography>
                             }
+
+                            <UploadTags
+                                selectedPrivateKeys={this.state.selectedPrivateKeys}
+                                handlePrivateKeysChange={this.handlePrivateKeysChange}/>
                         </DialogContent>
                         <DialogActions>
                             <Button variant="outlined"
@@ -127,7 +133,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         }
         const f = files.shift()
         if (f !== undefined) {
-            return uploadReplays([f]).then((id: any) => {
+            return uploadReplays([f], this.state.selectedPrivateKeys).then((id: any) => {
                 this.setState({filesRemaining: files.length})
                 this.uploadSingleFile(files, ids.concat(id))
             })
@@ -145,6 +151,10 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
     private readonly clearFiles = () => {
         this.setState({files: [], rejected: []})
+    }
+
+    private readonly handlePrivateKeysChange = (selectedPrivateKeys: string[]) => {
+        this.setState({selectedPrivateKeys})
     }
 }
 

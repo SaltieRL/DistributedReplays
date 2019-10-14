@@ -17,6 +17,8 @@ interface State {
     trainingPacks?: TrainingPackResponse
     timerID?: number
     reloadSignal: boolean
+    page: number
+    limit: number
 }
 
 type Props = ReturnType<typeof mapStateToProps>
@@ -24,7 +26,7 @@ type Props = ReturnType<typeof mapStateToProps>
 class TrainingPackPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false}
+        this.state = {reloadSignal: false, page: 0, limit: 10}
     }
 
     public render() {
@@ -32,11 +34,15 @@ class TrainingPackPageComponent extends React.PureComponent<Props, State> {
             <BasePage>
                 <Grid container spacing={24} justify="center">
                     {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
-                        <LoadableWrapper load={this.getLeaderboards} reloadSignal={this.state.reloadSignal}>
+                        <LoadableWrapper load={this.getTrainingPacks} reloadSignal={this.state.reloadSignal}>
                             {this.state.trainingPacks &&
                             <Grid item xs={12} md={8}>
-                                <TrainingPackResultDisplay trainingPacks={this.state.trainingPacks} page={0}
-                                                           limit={10}/>
+                                <TrainingPackResultDisplay trainingPacks={this.state.trainingPacks}
+                                                           page={this.state.page}
+                                                           limit={this.state.limit}
+                                                           handleChangePage={this.handleChangePage}
+                                                           handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                />
                             </Grid>
                             }
 
@@ -53,9 +59,23 @@ class TrainingPackPageComponent extends React.PureComponent<Props, State> {
     //     this.setState({reloadSignal: !this.state.reloadSignal})
     // }, 5000)
 
-    private readonly getLeaderboards = (): Promise<void> => {
-        return getTrainingPacks()
+    private readonly getTrainingPacks = (): Promise<void> => {
+        return getTrainingPacks(this.state.page, this.state.limit)
             .then((packs: TrainingPackResponse) => this.setState({trainingPacks: packs}))
     }
+
+    private readonly handleChangePage = (event: unknown, page: number) => {
+        this.setState({page}, () => {
+            this.getTrainingPacks()
+        })
+    }
+
+    private readonly handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> =
+        (event) => {
+            this.setState({limit: Number(event.target.value)}, () => {
+                this.getTrainingPacks()
+            })
+        }
 }
-export const TrainingPackPage =  connect(mapStateToProps)(TrainingPackPageComponent)
+
+export const TrainingPackPage = connect(mapStateToProps)(TrainingPackPageComponent)

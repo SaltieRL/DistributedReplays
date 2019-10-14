@@ -89,6 +89,7 @@ def steam_process(session=None):
             session.add(u)
         session.commit()
         flask_session['openid'] = user_id
+        flask_session.permanent = True
         return redirect(url_for('home'))
     return jsonify({'error': 'invalid openid credentials'})
 

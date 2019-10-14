@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import sys
+import traceback
 import uuid
 import zlib
 
@@ -13,6 +14,7 @@ from carball.analysis.utils.proto_manager import ProtobufManager
 from flask import jsonify, Blueprint, current_app, request, send_from_directory, Response
 from werkzeug.utils import secure_filename, redirect
 
+from backend.blueprints.spa_api.service_layers.admin import AdminPanelHandler
 from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonProgress
 from backend.blueprints.spa_api.service_layers.homepage.recent import RecentReplays
 from backend.blueprints.spa_api.service_layers.homepage.twitch import TwitchStreams
@@ -20,12 +22,13 @@ from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
+from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
-from backend.tasks.celery_tasks import create_training_pack
+from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.utils.logging import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
@@ -45,19 +48,21 @@ try:
 
     REPLAY_BUCKET = config.REPLAY_BUCKET
     PROTO_BUCKET = config.PROTO_BUCKET
+    FAILED_BUCKET = config.FAILED_BUCKET
     PARSED_BUCKET = config.PARSED_BUCKET
     TRAINING_PACK_BUCKET = config.TRAINING_PACK_BUCKET
 except:
     print('Not uploading to buckets')
     REPLAY_BUCKET = ''
     PROTO_BUCKET = ''
+    FAILED_BUCKET = ''
     PARSED_BUCKET = ''
     TRAINING_PACK_BUCKET = ''
 
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting, TrainingPack
+from backend.database.objects import Game, GameVisibilitySetting, TrainingPack, ReplayLog, ReplayResult
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
@@ -436,11 +441,11 @@ def api_get_parse_status(query_params=None):
 
 @bp.route('/upload/proto', methods=['POST'])
 @with_query_params(accepted_query_params=upload_file_query_params)
-def api_upload_proto(query_params=None):
+def api_upload_proto(session=None, query_params=None):
     # Convert to byte files from base64
-    response = request.get_json()
+    payload = request.get_json()
 
-    proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(response['proto'])))
+    proto_in_memory = io.BytesIO(zlib.decompress(base64.b64decode(payload['proto'])))
 
     protobuf_game = ProtobufManager.read_proto_out_from_file(proto_in_memory)
 
@@ -448,8 +453,20 @@ def api_upload_proto(query_params=None):
     try:
         parsed_replay_processing(protobuf_game, query_params=query_params)
     except Exception as e:
+        payload['stack'] = traceback.format_exc()
+        payload['error_type'] = type(e).__name__
+        ErrorLogger.log_replay_error(payload, query_params, proto_game=protobuf_game)
         ErrorLogger.log_error(e, logger=logger)
+        return jsonify({'Success': False})
+    ErrorLogger.log_replay(payload, query_params, proto_game=protobuf_game)
+    return jsonify({'Success': True})
 
+
+@bp.route('/upload/proto/error', methods=['POST'])
+@with_query_params(accepted_query_params=upload_file_query_params)
+def api_upload_proto_error(query_params=None):
+    payload = request.get_json()
+    ErrorLogger.log_replay_error(payload, query_params)
     return jsonify({'Success': True})
 
 
@@ -458,13 +475,13 @@ def api_upload_proto(query_params=None):
 @bp.route('/tag/<name>', methods=["PUT"])
 @require_user
 @with_query_params(accepted_query_params=[
-    QueryParam(name='private_key', type_=str, optional=True)
+    QueryParam(name='private_id', type_=str, optional=True)
 ])
 def api_create_tag(name: str, query_params=None):
-    private_key = None
-    if 'private_key' in query_params:
-        private_key = query_params['private_key']
-    tag = Tag.create(name, private_key=private_key)
+    private_id = None
+    if 'private_id' in query_params:
+        private_id = query_params['private_id']
+    tag = Tag.create(name, private_id=private_id)
     return better_jsonify(tag), 201
 
 
@@ -543,28 +560,96 @@ def api_handle_error(error: CalculatedError):
 
 
 @bp.route('/training/create')
-@require_user
 @with_query_params(accepted_query_params=[
     QueryParam(name="date_start", type_=str, optional=True),
-    QueryParam(name="date_end", type_=str, optional=True)
+    QueryParam(name="date_end", type_=str, optional=True),
+    QueryParam(name="player_id", type_=str, optional=True),
+    QueryParam(name="replays", type_=str, optional=True, is_list=True),
+    QueryParam(name="name", type_=str, optional=True)
 ])
 def api_create_trainingpack(query_params=None):
     date_start = None
     date_end = None
+    try:
+        requester_id = get_current_user_id()
+        pack_player_id = get_current_user_id()
+    except:
+        requester_id = None
+        pack_player_id = None
+    name = None
+    replays = None
+    if 'name' in query_params:
+        name = query_params['name']
+    if 'player_id' in query_params:
+        pack_player_id = query_params['player_id']
+
+    if 'replays' in query_params:
+        replays = query_params['replays']
     if 'date_start' in query_params:
         date_start = query_params['date_start']
     if 'date_end' in query_params:
         date_end = query_params['date_end']
-    task = create_training_pack.delay(get_current_user_id(), 10, date_start, date_end)
+    task = auto_create_training_pack.delay(requester_id, pack_player_id, name, 10, date_start, date_end, replays)
+    return better_jsonify({'status': 'Success', 'id': task.id})
+
+
+@bp.route('/training/build', methods=['POST'])
+def api_create_custom_trainingpack():
+    _json = request.get_json(silent=True)
+    if _json is None:
+        raise CalculatedError(400, 'No JSON supplied.')
+
+    requester_id = get_current_user_id()
+    players = _json['players']
+    replays = _json['replays']
+    frames = [int(frame) for frame in _json['frames']]
+    mode = False
+    name = None
+    if 'name' in _json:
+        name = _json['name']
+    if 'mode' in _json:
+        mode = _json['mode'].lower() == 'goalie'
+    task = create_manual_training_pack.delay(requester_id, players, replays, frames, name, mode)
     return better_jsonify({'status': 'Success', 'id': task.id})
 
 
 @bp.route('/training/list')
-@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name="player_id", type_=str, optional=True),
+    QueryParam(name='page', type_=int, optional=False),
+    QueryParam(name='limit', type_=int, optional=False)
+])
 @with_session
-def api_find_trainingpack(session=None):
+def api_find_trainingpack(query_params=None, session=None):
     player = get_current_user_id()
-    return better_jsonify(TrainingPackCreation.list_packs(player, session))
+    if 'player_id' in query_params:
+        player = query_params['player_id']
+    elif player is None:
+        raise CalculatedError(400, "Anonymous requests require 'player_id' parameter.")
+    return better_jsonify(TrainingPackCreation.list_packs(player, query_params['page'], query_params['limit'], session))
+
+
+@bp.route('/training/poll')
+@with_query_params(accepted_query_params=[
+    QueryParam(name="task_id", type_=str, optional=False)
+])
+@with_session
+def api_poll_trainingpack(query_params=None, session=None):
+    return better_jsonify(TrainingPackCreation.poll_pack(query_params['task_id'], session))
+
+
+@bp.route('/training/import')
+@require_user
+@with_query_params(accepted_query_params=[
+    QueryParam(name="guid", type_=str, optional=False)
+])
+@with_session
+def api_import_trainingpack(query_params=None, session=None):
+    if TrainingPackCreation.import_pack(query_params['guid'], session):
+        return redirect('/training')
+    return better_jsonify({
+        'error': 'Error importing pack.'
+    })
 
 
 # Homepage
@@ -589,3 +674,44 @@ def get_endpoint_documentation():
     from backend.blueprints.spa_api.service_layers.documentation import create_documentation_for_module
     method_list = create_documentation_for_module(sys.modules[__name__])
     return better_jsonify(method_list)
+
+
+# ADMIN
+
+@bp.route('/admin/group/add/<user_id>/<group>', methods=["GET"])
+@require_user
+def api_admin_add_group(user_id: str, group: str):
+    try:
+        group: int = int(group)
+    except ValueError:
+        raise CalculatedError(400, "Invalid group number format")
+    return AdminPanelHandler.add_group_to_user(user_id, group)
+
+
+@bp.route('/admin/group/remove/<user_id>/<group>', methods=["GET"])
+@require_user
+def api_admin_remove_group(user_id: str, group: str):
+    try:
+        group: int = int(group)
+    except ValueError:
+        raise CalculatedError(400, "Invalid group number format")
+    return AdminPanelHandler.remove_group_from_user(user_id, group)
+
+
+@bp.route('/admin/logs')
+@require_user
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
+                                          QueryParam(name='limit', type_=int, optional=False),
+                                          QueryParam(name='search', type_=str, optional=True)])
+def api_admin_get_logs(query_params=None):
+    search = None
+    if 'search' in query_params and query_params['search'] != "":
+        search = query_params['search']
+    return jsonify(ErrorLogger.get_logs(query_params['page'], query_params['limit'], search))
+
+
+@bp.route('/admin/failed/download')
+@require_user
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def api_admin_get_replay(query_params=None):
+    return redirect(f"https://storage.googleapis.com/{FAILED_BUCKET}/{query_params['id']}.replay")

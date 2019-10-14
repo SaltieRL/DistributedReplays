@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { AppBar, IconButton, Toolbar, Tooltip } from "@material-ui/core"
 import Menu from "@material-ui/icons/Menu"
 import * as React from "react"
-import { ThemeContext } from "../../Theme"
+import { ThemeContext } from "../../Contexts/ThemeContext"
 
 interface Props {
     toggleSideBar: () => void
