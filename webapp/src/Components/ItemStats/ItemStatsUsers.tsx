@@ -65,7 +65,7 @@ export class ItemStatsUsers extends React.PureComponent<Props> {
                 :
                 (
                     <Typography variant="h5" style={{color: "#d20000"}}>
-                        -{roundNumberToMaxDP(change, 2)}%
+                        {roundNumberToMaxDP(change, 2)}%
                     </Typography>
                 )
         }
