@@ -127,13 +127,13 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
 
         const itemView = itemData ? (
             <Grid container spacing={24}>
-                <Grid item xs={6} lg={2}>
+                <Grid item xs={6} lg={3}>
                     <Grid item xs={12}>
                         <ItemDisplay item={itemData} paint={0}/>
                     </Grid>
                 </Grid>
                 {this.state.itemData && this.state.itemUsage && <>
-                    <Grid item xs={6} lg={2}>
+                    <Grid item xs={6} lg={3}>
                         <ItemStatsUsers item={this.state.itemData}
                                         itemUsage={this.state.itemUsage}/>
                     </Grid>
