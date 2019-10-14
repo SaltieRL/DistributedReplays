@@ -17,8 +17,8 @@ export class ItemStatsGraph extends React.PureComponent<Props> {
         return (
 
             <Card>
-                <CardHeader title={"Item Usage"}/>
-                <CardContent style={{minHeight: "50vh"}}>
+                <CardHeader title={"Item usage over time"}/>
+                <CardContent style={{minHeight: "30vh"}}>
                     <Line data={this.getChartData()} options={this.getChartOptions()}/>
                 </CardContent>
             </Card>

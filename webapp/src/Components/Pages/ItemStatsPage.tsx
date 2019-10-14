@@ -1,10 +1,9 @@
 import {
     Card,
     CardActionArea,
-    CardContent,
     CardMedia,
     createStyles,
-    Grid,
+    Grid, Tab, Tabs,
     Typography,
     withStyles,
     WithStyles
@@ -17,67 +16,61 @@ import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemSt
 import { StoreState } from "../../Redux"
 import { getItemGraph, getItemInfo, getItems } from "../../Requests/Global"
 import { ItemStatsGraph } from "../ItemStats/ItemStatsGraph"
+import { ItemStatsUsers } from "../ItemStats/ItemStatsUsers"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
+import { ItemDisplay } from "../ItemStats/ItemDisplay"
 
-// const CATEGORIES = [
-//     {
-//         id: 1,
-//         name: "Bodies"
-//     },
-//     {
-//         id: 2,
-//         name: "Wheels"
-//     },
-//     {
-//         id: 3,
-//         name: "Rocket Boosts"
-//     },
-//     {
-//         id: 4,
-//         name: "Toppers"
-//     },
-//     {
-//         id: 5,
-//         name: "Antennas"
-//     },
-//     {
-//         id: 6,
-//         name: "Decals"
-//     },
-//     {
-//         id: 7,
-//         name: "Crates"
-//     },
-//     {
-//         id: 8,
-//         name: "Paint Finishes"
-//     },
-//     {
-//         id: 9,
-//         name: "Trails"
-//     },
-//     {
-//         id: 10,
-//         name: "Goal Explosions"
-//     },
-//     {
-//         id: 11,
-//         name: "Banners"
-//     },
-//     {
-//         id: 12,
-//         name: "Engine Audio"
-//     },
-//     {
-//         id: 13,
-//         name: "Avatar Borders"
-//     },
-//     {
-//         id: 14,
-//         name: "Titles"
-//     }
-// ]
+const CATEGORIES = [
+    {
+        id: 1,
+        name: "Bodies"
+    },
+    {
+        id: 2,
+        name: "Wheels"
+    },
+    {
+        id: 3,
+        name: "Rocket Boosts"
+    },
+    {
+        id: 4,
+        name: "Toppers"
+    },
+    {
+        id: 5,
+        name: "Antennas"
+    },
+    {
+        id: 6,
+        name: "Decals"
+    },
+    {
+        id: 8,
+        name: "Paint Finishes"
+    },
+    {
+        id: 9,
+        name: "Trails"
+    },
+    {
+        id: 10,
+        name: "Goal Explosions"
+    },
+    {
+        id: 11,
+        name: "Banners"
+    },
+    {
+        id: 12,
+        name: "Engine Audio"
+    },
+    {
+        id: 13,
+        name: "Avatar Borders"
+    }
+]
 
 const styles = createStyles({
     itemListCard: {
@@ -85,13 +78,6 @@ const styles = createStyles({
     },
     media: {
         height: 150
-    },
-    content: {
-        width: "calc(100% - 128px)"
-    },
-    itemCard: {
-        display: "flex",
-        minHeight: 128
     }
 })
 const mapStateToProps = (state: StoreState) => ({
@@ -104,6 +90,7 @@ interface ItemQueryParams {
 
 interface State {
     itemReloadSignal: boolean
+    listReloadSignal: boolean
     itemList?: ItemListResponse
     page: number
     limit: number
@@ -111,6 +98,7 @@ interface State {
     itemID?: number
     itemData?: ItemFull
     itemUsage?: ItemUsage
+    category: number
 }
 
 type Props = ReturnType<typeof mapStateToProps>
@@ -120,7 +108,7 @@ type Props = ReturnType<typeof mapStateToProps>
 class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {itemReloadSignal: false, page: 0, limit: 500, search: ""}
+        this.state = {itemReloadSignal: false, listReloadSignal: false, page: 0, limit: 500, search: "", category: 2}
     }
 
     public componentDidMount() {
@@ -136,60 +124,70 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     public render() {
         const {classes} = this.props
         const {itemData} = this.state
+
+        const itemView = itemData ? (
+            <Grid container spacing={24}>
+                <Grid item xs={4} lg={2}>
+                    <Grid item xs={12}>
+                        <ItemDisplay item={itemData} paint={0}/>
+                    </Grid>
+                </Grid>
+                {this.state.itemData && this.state.itemUsage && <>
+                    <Grid item xs={6} lg={2}>
+                        <ItemStatsUsers item={this.state.itemData}
+                                        itemUsage={this.state.itemUsage}/>
+                    </Grid>
+                    <Grid item xs={12} lg={6}>
+                        <ItemStatsGraph item={this.state.itemData}
+                                        itemUsage={this.state.itemUsage}/>
+
+                    </Grid>
+                </>}
+            </Grid>
+        ) : null
+
+        const itemsList = (
+            <>
+                <Tabs
+                    value={this.state.category}
+                    onChange={this.handleSelectTab}
+                >
+
+                    {CATEGORIES.map((category: any) => {
+                        return <Tab key={category.id} label={category.name} value={category.id}/>
+                    })}
+                </Tabs>
+                <LoadableWrapper load={this.getItems} reloadSignal={this.state.listReloadSignal}>
+                    {this.state.itemList && <Grid container spacing={16}>
+                        {this.state.itemList.items.map((item: Item) => {
+                            return (
+                                <Grid item xs={6} sm={2} lg={1} key={item.ingameid}>
+                                    <Card className={classes.itemListCard}>
+                                        <CardActionArea onClick={() => {
+                                            this.selectItem(item)
+                                        }}>
+                                            <CardMedia
+                                                className={classes.media}
+                                                image={item.image}
+                                                title={item.name}
+                                            />
+                                        </CardActionArea>
+                                    </Card>
+                                </Grid>
+                            )
+                        })}
+                    </Grid>}
+                </LoadableWrapper>
+            </>
+        )
+
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center">
                     {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
                         <>
                             <Grid item xs={12}>
-                                {this.state.itemID ? <>
-                                        {itemData && (
-                                            <Grid container spacing={24}>
-                                                <Grid item xs={4} lg={2}>
-                                                    <Grid item xs={12}>
-                                                        <Card className={classes.itemCard}>
-                                                            <CardMedia style={{flex: "0 0 128px"}}
-                                                                       image={itemData.image}/>
-                                                            <CardContent className={classes.content}>
-                                                                <Typography variant="h4">
-                                                                    {itemData.name}
-                                                                </Typography>
-                                                            </CardContent>
-                                                        </Card>
-                                                    </Grid>
-                                                </Grid>
-                                                <Grid item xs={8} lg={10}>
-                                                    {this.state.itemData && this.state.itemUsage &&
-                                                    <ItemStatsGraph item={this.state.itemData}
-                                                                    itemUsage={this.state.itemUsage}/>
-                                                    }
-                                                </Grid>
-                                            </Grid>
-                                        )}
-                                    </>
-                                    :
-                                    <LoadableWrapper load={this.getItems}>
-                                        {this.state.itemList && <Grid container spacing={16}>
-                                            {this.state.itemList.items.map((item: Item) => {
-                                                return (
-                                                    <Grid item xs={6} sm={2} lg={1} key={item.ingameid}>
-                                                        <Card className={classes.itemListCard}>
-                                                            <CardActionArea onClick={() => {
-                                                                this.selectItem(item)
-                                                            }}>
-                                                                <CardMedia
-                                                                    className={classes.media}
-                                                                    image={item.image}
-                                                                    title={item.name}
-                                                                />
-                                                            </CardActionArea>
-                                                        </Card>
-                                                    </Grid>
-                                                )
-                                            })}
-                                        </Grid>}
-                                    </LoadableWrapper>
-                                }
+                                {this.state.itemID ? itemView : itemsList}
                             </Grid>
                         </>
                         :
@@ -201,7 +199,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getItems = (): Promise<void> => {
-        return getItems(this.state.page, this.state.limit, this.state.search, 2)
+        return getItems(this.state.page, this.state.limit, this.state.search, this.state.category)
             .then((packs: ItemListResponse) => this.setState({itemList: packs}))
     }
 
@@ -248,6 +246,9 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
         }
     }
 
+    private readonly handleSelectTab = (_: React.ChangeEvent<{}>, selectedTab: number) => {
+        this.setState({category: selectedTab, listReloadSignal: !this.state.listReloadSignal})
+    }
     // private readonly handleChangePage = (event: unknown, page: number) => {
     //     this.setState({page}, () => {
     //         this.getItems()
