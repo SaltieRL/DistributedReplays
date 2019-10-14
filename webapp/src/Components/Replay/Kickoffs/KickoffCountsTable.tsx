@@ -1,6 +1,5 @@
 import {
-    FormControlLabel,
-    Paper, Switch,
+    Paper,
     Table,
     TableBody,
     TableCell,
@@ -16,9 +15,10 @@ interface Props {
     kickoff: any
     players: any
     replay: Replay
+    highlight: 0
 }
 
-const HEADERS = ['jumps', 'boost_level', 'ball_distance', 'location']
+const HEADERS = ['location', 'jumps', 'boost_level', 'ball_distance']
 const HEADERS_NAMES = ['Jumps', 'Boost Level', 'Ball Distance', 'location']
 
 export class KickoffCountsTable extends React.PureComponent<Props> {
@@ -44,25 +44,23 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Kickoff</TableCell>
-                                {HEADERS.map((playerId: string, index: number) => (
-                                    <TableCell align="right" key={playerId}>{HEADERS_NAMES[index]}</TableCell>
+                                {HEADERS.map((headerKey: string, index: number) => (
+                                    <TableCell align="right" key={headerKey}>{HEADERS_NAMES[index]}</TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.props.players.map((player_id: any, i: number) => (
+                            {Object.keys(this.props.players).map((player_id: string, i: number) => (
                                 <TableRow
-                                    key={name}
+                                    key={player_id}
                                     selected={this.props.highlight === i}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {name}
+                                        {this.props.players[player_id].name}
                                     </TableCell>
-                                    {this.props.replay.players.map((player) => (
-                                        <TableCell key={player.name + name} align="right">
-                                            {this.props.data[i].map((point: any) =>
-                                                point.playerName === player.name ? 1 : 0
-                                            ).reduce((acc: number, a: number) => acc + a, 0)}
+                                    {HEADERS.map((headerKey) => (
+                                        <TableCell key={headerKey + player_id} align="right">
+                                            {this.props.players[player_id][headerKey]}
                                         </TableCell>
                                     ))}
                                 </TableRow>

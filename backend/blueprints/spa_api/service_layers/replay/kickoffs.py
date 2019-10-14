@@ -2,7 +2,7 @@ from typing import Dict
 
 from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.events_pb2 import Kickoff
-from carball.generated.api.stats.kickoff_pb2 import KickoffType
+from carball.generated.api.stats.kickoff_pb2 import KickoffType, TouchPosition
 
 from backend.blueprints.spa_api.service_layers.utils import create_player_map
 from backend.utils.file_manager import FileManager
@@ -33,7 +33,6 @@ class Kickoffs:
         return kickoff_data
 
     def get_stats_from_kickoff(self, kickoff: Kickoff, player_map: Dict[str, Player]):
-
         if kickoff.touch is None:
             return {
                 'touch_time': kickoff.touch_time,
@@ -81,6 +80,7 @@ class Kickoffs:
             'boost_level': player.boost,
             'time_to_boost': player.boost_time,
             'ball_distance': player.ball_dist,
+            'location': TouchPosition.Name(player.touch_position),
             'start': {
                 'x': start_x,
                 'y': start_y
