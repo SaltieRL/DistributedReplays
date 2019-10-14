@@ -38,33 +38,37 @@ export class ItemStatsUsers extends React.PureComponent<Props> {
         } else if (percentage > 0.01) {
             percentageString = roundNumberToMaxDP(percentage, 3)
         }
-        const previousPercentage = previousDataPoint.count / previousDataPoint.total * 100
-        const icon = (percentage > previousPercentage) ?
-            (
-                <span style={{color: "#00d300"}}>
+        let changeComponent
+        let icon
+        if (previousDataPoint !== undefined) {
+            const previousPercentage = previousDataPoint.count / previousDataPoint.total * 100
+            icon = (percentage > previousPercentage) ?
+                (
+                    <span style={{color: "#00d300"}}>
                     <TrendingUp fontSize={"large"}/>
                 </span>
-            )
-            :
-            (
-                <span style={{color: "#d20000"}}>
+                )
+                :
+                (
+                    <span style={{color: "#d20000"}}>
                     <TrendingDown fontSize={"large"}/>
                 </span>
-            )
+                )
 
-        const change = (percentage - previousPercentage)
-        const changeComponent = (percentage > previousPercentage) ?
-            (
-                <Typography variant="h5" style={{color: "#00d300"}}>
-                    +{roundNumberToMaxDP(change, 2)}%
-                </Typography>
-            )
-            :
-            (
-                <Typography variant="h5" style={{color: "#d20000"}}>
-                    -{roundNumberToMaxDP(change, 2)}%
-                </Typography>
-            )
+            const change = (percentage - previousPercentage)
+            changeComponent = (percentage > previousPercentage) ?
+                (
+                    <Typography variant="h5" style={{color: "#00d300"}}>
+                        +{roundNumberToMaxDP(change, 2)}%
+                    </Typography>
+                )
+                :
+                (
+                    <Typography variant="h5" style={{color: "#d20000"}}>
+                        -{roundNumberToMaxDP(change, 2)}%
+                    </Typography>
+                )
+        }
         return (
             <Card>
                 <CardHeader title={"Current users"}/>

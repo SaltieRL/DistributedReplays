@@ -6,6 +6,7 @@ from sqlalchemy import func, desc, literal, Date, Float
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Loadout, Game
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field
+from backend.utils.rlgarage_handler import RLGarageAPI
 
 
 class ItemResult:
@@ -53,15 +54,29 @@ class ItemStatsWrapper:
     @staticmethod
     @with_session
     def get_item_usage_over_time(id_, session):
+        category_map = {
+            1: Loadout.car,
+            2: Loadout.wheels,
+            3: Loadout.boost,
+            4: Loadout.topper,
+            5: Loadout.antenna,
+            6: Loadout.skin,
+            9: Loadout.trail,
+            10: Loadout.goal_explosion,
+            11: Loadout.banner,
+            12: Loadout.engine_audio
+        }
+        category = RLGarageAPI().get_item(id_)['category']
+        loadout_item = category_map[category]
         date = func.date(Game.match_date)
         inner = session.query(date.label('date'),
                               Loadout.player,
-                              Loadout.antenna) \
+                              loadout_item) \
             .join(Game, Loadout.game == Game.hash) \
             .distinct(Loadout.player, date) \
-            .filter(Loadout.wheels == id_) \
+            .filter(loadout_item == id_) \
             .filter(date >= datetime.date(2019, 9, 13)) \
-            .group_by(date, Loadout.player, Loadout.antenna) \
+            .group_by(date, Loadout.player, loadout_item) \
             .subquery()
         inner2 = session.query(date.label('date'),
                                Loadout.player) \

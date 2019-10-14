@@ -114,10 +114,12 @@ const rarities = [{
 
 const CATEGORIES = [
     "Body",
-    "Wheel",
+    "Wheels",
     "Rocket Boost",
-    "Topper", "Antenna",
-    "Decal", "Crate",
+    "Topper",
+    "Antenna",
+    "Decal",
+    "Crate",
     "Paint Finish",
     "Trail",
     "Goal Explosion",
@@ -151,7 +153,7 @@ export class ItemDisplayComponent extends React.PureComponent<Props> {
                         {item.name}
                     </Typography>
                     <Typography style={{color: rarities[item.rarity].rlgend}} variant="subtitle1">
-                        {RARITY_NAMES[item.rarity - 1]}  {CATEGORIES[item.category - 1]}
+                        {RARITY_NAMES[item.rarity - 1]} {CATEGORIES[item.category - 1]}
                     </Typography>
                 </CardContent>
             </Card>

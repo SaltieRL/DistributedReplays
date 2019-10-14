@@ -46,10 +46,10 @@ const CATEGORIES = [
         id: 6,
         name: "Decals"
     },
-    {
-        id: 8,
-        name: "Paint Finishes"
-    },
+    // {
+    //     id: 8,
+    //     name: "Paint Finishes"
+    // },
     {
         id: 9,
         name: "Trails"
@@ -65,11 +65,11 @@ const CATEGORIES = [
     {
         id: 12,
         name: "Engine Audio"
-    },
-    {
-        id: 13,
-        name: "Avatar Borders"
     }
+    // {
+    //     id: 13,
+    //     name: "Avatar Borders"
+    // }
 ]
 
 const styles = createStyles({
@@ -127,7 +127,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
 
         const itemView = itemData ? (
             <Grid container spacing={24}>
-                <Grid item xs={4} lg={2}>
+                <Grid item xs={6} lg={2}>
                     <Grid item xs={12}>
                         <ItemDisplay item={itemData} paint={0}/>
                     </Grid>
