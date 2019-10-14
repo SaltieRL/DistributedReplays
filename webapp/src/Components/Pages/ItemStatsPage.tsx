@@ -213,7 +213,12 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly selectItem = (item: Item) => {
-        this.setState({itemID: item.ingameid, itemReloadSignal: !this.state.itemReloadSignal},
+        this.setState({
+                itemData: undefined,
+                itemUsage: undefined,
+                itemID: item.ingameid,
+                itemReloadSignal: !this.state.itemReloadSignal
+            },
             () => {
                 this.setQueryParams()
                 this.getItem()
