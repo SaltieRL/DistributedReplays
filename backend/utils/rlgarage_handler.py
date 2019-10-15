@@ -136,7 +136,6 @@ class RLGarageAPI:
             limit = 500
         if order is not None:
             items = self.item_map
-            print(items.keys())
             return {
                 'items': self.get_item_response(
                     [items[str(i)] for i in order[page * limit: (page + 1) * limit] if str(i) in items]),
