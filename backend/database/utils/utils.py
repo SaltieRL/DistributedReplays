@@ -19,14 +19,13 @@ def process_loadout_to_obj(game: game_pb2) -> List[Loadout]:
 
     loadouts = []
     for p in player_objs:
-        loadout = p.loadout
         fields = create_and_filter_proto_field(p, ['name', 'title_id', 'is_orange'],
                                                ['api.metadata.CameraSettings',
                                                 'api.PlayerId'], Loadout)
         values = get_proto_values(p, fields)
         kwargs = {k.field_name: v for k, v in zip(fields, values)}
-        l = Loadout(game=replay_id, player=str(p.id.id), **kwargs)
-        loadouts.append(l)
+        kwargs['player'] = kwargs['player'][:40]  # limit to 40 chars
+        loadouts.append(Loadout(game=replay_id, player=str(p.id.id), **kwargs))
 
     return loadouts
 
@@ -102,7 +101,7 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
         orange_score = game.game_metadata.score.team_1_score
         is_orange = p.is_orange
 
-        pid = str(p.id.id)
+        pid = str(p.id.id)[:40]
         rank = None
         mmr = None
         division = None
@@ -128,8 +127,6 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
                         is_orange=p.is_orange, rank=rank, division=division, mmr=mmr,
                         win=win, **kwargs)
         player_games.append(pg)
-        if len(str(pid)) > 40:
-            pid = pid[:40]
         p = Player(platformid=pid, platformname=p.name, avatar="", ranks=[], groups=[])
         players.append(p)
 

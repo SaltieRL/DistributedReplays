@@ -33,7 +33,6 @@ class Player:
             groups = []
         try:
             steam_profile = get_steam_profile_or_random_response(id_)['response']['players'][0]
-            print(steam_profile)
         except TypeError:
             if len(names_and_counts) > 0:
                 return Player(id_=id_, name=names_and_counts[0][0], past_names=names_and_counts, profile_link="",
