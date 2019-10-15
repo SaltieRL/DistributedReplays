@@ -3,7 +3,7 @@ import {
     CardActionArea,
     CardMedia,
     createStyles,
-    Grid, Tab, Tabs,
+    Grid, Tab, Tabs, TextField,
     Typography,
     withStyles,
     WithStyles
@@ -125,6 +125,11 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
         const {classes} = this.props
         const {itemData} = this.state
 
+        const itemSearch = (
+            <TextField value={this.state.search} onChange={this.handleSearchChange} placeholder={"Filter"}/>
+        )
+
+
         const itemView = itemData ? (
             <Grid container spacing={24}>
                 <Grid item xs={6} lg={3}>
@@ -145,9 +150,14 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                 </>}
             </Grid>
         ) : null
-
+        const filteredList = this.state.itemList ?
+            this.state.itemList.items.filter(
+                (item) => item.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1)
+            :
+            []
         const itemsList = (
             <>
+                {itemSearch}
                 <Tabs
                     value={this.state.category}
                     onChange={this.handleSelectTab}
@@ -159,7 +169,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                 </Tabs>
                 <LoadableWrapper load={this.getItems} reloadSignal={this.state.listReloadSignal}>
                     {this.state.itemList && <Grid container spacing={16}>
-                        {this.state.itemList.items.map((item: Item) => {
+                        {filteredList.map((item: Item) => {
                             return (
                                 <Grid item xs={6} sm={2} lg={1} key={item.ingameid}>
                                     <Card className={classes.itemListCard}>
@@ -199,7 +209,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getItems = (): Promise<void> => {
-        return getItems(this.state.page, this.state.limit, this.state.search, this.state.category)
+        return getItems(this.state.page, this.state.limit, this.state.category)
             .then((packs: ItemListResponse) => this.setState({itemList: packs}))
     }
 
@@ -254,6 +264,10 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     private readonly handleSelectTab = (_: React.ChangeEvent<{}>, selectedTab: number) => {
         this.setState({category: selectedTab, listReloadSignal: !this.state.listReloadSignal})
     }
+    private readonly handleSearchChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        this.setState({search: e.target.value})
+    }
+
     // private readonly handleChangePage = (event: unknown, page: number) => {
     //     this.setState({page}, () => {
     //         this.getItems()
