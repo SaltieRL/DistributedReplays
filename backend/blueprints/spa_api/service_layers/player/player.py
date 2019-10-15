@@ -26,7 +26,11 @@ class Player:
         names_and_counts: List[Tuple[str, int]] = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')) \
                                                       .filter(PlayerGame.player == id_) \
                                                       .group_by(PlayerGame.name).order_by(desc('c'))[:5]
-        groups = session.query(DBPlayer.groups).filter(DBPlayer.platformid == id_).first()[0]
+        query = session.query(DBPlayer.groups).filter(DBPlayer.platformid == id_)
+        if query.count() > 0:
+            groups = query.first()[0]
+        else:
+            groups = []
         try:
             steam_profile = get_steam_profile_or_random_response(id_)['response']['players'][0]
             print(steam_profile)
