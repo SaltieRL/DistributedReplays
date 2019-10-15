@@ -130,10 +130,18 @@ class RLGarageAPI:
             'count': len(self.item_list)
         }
 
-    def get_item_list_by_category(self, category, page, limit):
+    def get_item_list_by_category(self, category, page, limit, order=None):
         category = str(category)
         if limit > 500:
             limit = 500
+        if order is not None:
+            items = self.item_map
+            print(items.keys())
+            return {
+                'items': self.get_item_response(
+                    [items[str(i)] for i in order[page * limit: (page + 1) * limit] if str(i) in items]),
+                'count': len(self.category_map[category])
+            }
         return {
             'items': self.get_item_response(self.category_map[category][page * limit: (page + 1) * limit]),
             'count': len(self.category_map[category])

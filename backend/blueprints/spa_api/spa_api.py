@@ -673,8 +673,10 @@ def get_endpoint_documentation():
 def api_get_items_list(query_params=None):
     api = RLGarageAPI()
     if 'category' in query_params:
+        order = ItemStatsWrapper.create_unpainted_stats(query_params['category'])
         return better_jsonify(
-            api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit']))
+            api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit'],
+                                          order=order))
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
 
 
@@ -693,6 +695,11 @@ def api_get_item(query_params=None):
 ])
 def api_get_item_usage(query_params=None):
     return better_jsonify(ItemStatsWrapper.get_item_usage_over_time(query_params['id']))
+
+
+@bp.route('/items/order')
+def api_get_item_order():
+    return better_jsonify(ItemStatsWrapper.create_unpainted_stats())
 
 
 # ADMIN

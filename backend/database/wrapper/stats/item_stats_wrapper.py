@@ -1,7 +1,7 @@
 import datetime
 
 from carball.generated.api.metadata import player_loadout_pb2
-from sqlalchemy import func, desc, literal, Date, Float
+from sqlalchemy import func, desc, literal
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Loadout, Game
@@ -98,6 +98,58 @@ class ItemStatsWrapper:
             } for r in final.all()]
         }
 
+    @staticmethod
+    def get_most_used_by_column(field_name, session):
+        inner = session.query(Loadout) \
+            .join(Game, Game.hash == Loadout.game) \
+            .filter(Loadout.player != Game.primary_player) \
+            .distinct(Loadout.player) \
+            .order_by(desc(Loadout.player), desc(Game.match_date)) \
+            .subquery()
+
+        query_field = getattr(inner.c, field_name)
+        stats = session.query(query_field,
+                              literal(0),
+                              func.count(inner.c.id).label('count')) \
+            .group_by(query_field) \
+            .order_by(desc('count'))
+        stats = stats.all()
+        stats = [s for s in stats if s[0] != 0]
+        return stats
+
+    @staticmethod
+    @with_session
+    def create_unpainted_stats(category=None, session=None):
+
+        category_map = {
+            'car': 1,
+            'wheels': 2,
+            'boost': 3,
+            'topper': 4,
+            'antenna': 5,
+            'skin': 6,
+            'trail': 9,
+            'goal_explosion': 10,
+            'banner': 11,
+            'engine_audio': 12,
+        }
+        category_map_inv = {v: k for k, v in category_map.items()}
+        if category is not None:
+            stats = ItemStatsWrapper.get_most_used_by_column(category_map_inv[category], session)
+            return [ItemResult(*s).__dict__['item_id'] for s in stats]
+
+        dynamic_field_list = create_and_filter_proto_field(player_loadout_pb2.PlayerLoadout, ['load_out_id', 'version'],
+                                                           [],
+                                                           Loadout)
+        dynamic_field_list = [field for field in dynamic_field_list if 'paint' not in field.field_name]
+        result_map = {}
+
+        for dynamic_field in dynamic_field_list:
+            stats = ItemStatsWrapper.get_most_used_by_column(dynamic_field.field_name, session)
+            results = [ItemResult(*s).__dict__['item_id'] for s in stats]
+            result_map[category_map[dynamic_field.field_name]] = results
+        return result_map
+
 
 if __name__ == '__main__':
-    print(ItemStatsWrapper.get_item_usage_over_time(3000))
+    print(ItemStatsWrapper.create_unpainted_stats())
