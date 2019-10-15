@@ -14,7 +14,7 @@ export class AddReplayInput extends React.PureComponent<Props> {
             <form onSubmit={this.handleFormSubmit}>
                 <TextField value={this.props.value}
                            onChange={this.props.onChange}
-                           label="Enter a replay id"
+                           label="Enter a replay ID"
                            fullWidth
                            InputProps={{
                                endAdornment: (
