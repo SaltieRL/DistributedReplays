@@ -75,12 +75,14 @@ class ItemStatsWrapper:
             .join(Game, Loadout.game == Game.hash) \
             .distinct(Loadout.player, date) \
             .filter(loadout_item == id_) \
+            .filter(Loadout.player != Game.primary_player) \
             .filter(date >= datetime.date(2019, 9, 13)) \
             .group_by(date, Loadout.player, loadout_item) \
             .subquery()
         inner2 = session.query(date.label('date'),
                                Loadout.player) \
             .join(Game, Loadout.game == Game.hash) \
+            .filter(Loadout.player != Game.primary_player) \
             .distinct(Loadout.player, date) \
             .group_by(date, Loadout.player) \
             .subquery()
