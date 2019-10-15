@@ -1,4 +1,5 @@
 import {
+    faArrowsAlt,
     faBraille,
     faBullseye,
     faCarSide,
@@ -36,7 +37,8 @@ export class PlayerStatsTabs extends React.PureComponent<Props> {
             "Boosts": faRocket,
             "Efficiency": faPercent,
             "Team Positioning": faHandshake,
-            "Ball Carries": faShoppingCart
+            "Ball Carries": faShoppingCart,
+            "Kickoffs": faArrowsAlt
         }
         const {selectedTab, handleChange} = this.props
 

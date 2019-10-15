@@ -41,13 +41,18 @@ stages:
 jobs:
   include:
     - stage: lint
-      name: "style checks"
+      name: "style checks javascript"
       install:
         - cd webapp
         - npm install
         - cd $TRAVIS_BUILD_DIR
       script:
         - chmod 777 .travis/tslint.sh && .travis/tslint.sh
+    - stage: lint
+      name: "style checks python"
+      script:
+        - cd $TRAVIS_BUILD_DIR
+        - pytest imports_test.py
     - stage: test
       name: "server unit tests 3.6"
       python:
@@ -78,7 +83,7 @@ jobs:
         - cd webapp
         - npm start &
         - cd $TRAVIS_BUILD_DIR
-        - celery -A backend.tasks.celery_worker.celery worker --pool=solo -l debug &
+        - celery -A backend.tasks.celery_worker.celery worker --pool=solo -l WARNING &
           # Wait for all other systems to be setup
         - sleep 30
         - pytest tests/integration_tests --cov=./

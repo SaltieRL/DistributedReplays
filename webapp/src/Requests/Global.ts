@@ -1,5 +1,7 @@
+import moment from "moment"
 import qs from "qs"
 import { doGet, doPost } from "../apiHandler/apiHandler"
+import { TrainingPackResponse } from "../Models/Player/TrainingPack"
 import { playlists } from "../Utils/Playlists"
 import { useMockData } from "./Config"
 
@@ -46,13 +48,17 @@ export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
 // TODO(Sciguymjm) Type this thing.
 
 // @return taskIds of uploaded replays
-export const uploadReplays = (replays: File[]): Promise<string[]> => {
+export const uploadReplays = (replays: File[], privateTagKeys?: string[]): Promise<string[]> => {
     const formData = new FormData()
     replays.forEach((file) => {
         formData.append("replays", file)
     })
+    const tagParams = qs.stringify(
+        {private_tag_keys: privateTagKeys},
+        {arrayFormat: "repeat", addQueryPrefix: true}
+    )
 
-    return doPost("/upload", formData)
+    return doPost("/upload" + tagParams, formData)
 }
 
 export const getUploadStatuses = (ids: string[]): Promise<UploadStatus[]> => {
@@ -63,3 +69,21 @@ export const getUploadStatuses = (ids: string[]): Promise<UploadStatus[]> => {
 }
 
 export const getLoggedInUser = (): Promise<LoggedInUser> => doGet("/me")
+
+export const getTrainingPacks = (page: number, limit: number): Promise<TrainingPackResponse> => {
+    return doGet(`/training/list?page=${page}&limit=${limit}`)
+        .then((data: TrainingPackResponse) => {
+            data.packs = data.packs.map(parseTrainingPack)
+            return data
+        })
+}
+
+export const parseTrainingPack = (data: any) => {
+    return {
+        ...data,
+        date: moment(data.date)
+    }
+}
+export const getAdminLogs = (page: number, limit: number, search: string): Promise<AdminLogsResponse> => {
+    return doGet(`/admin/logs?page=${page}&limit=${limit}&search=${search}`)
+}

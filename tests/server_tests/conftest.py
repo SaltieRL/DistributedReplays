@@ -9,7 +9,8 @@ from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
 from backend.database.objects import Player
-from tests.utils.database_utils import create_initial_mock_database, add_initial_player, empty_database
+from tests.utils.database_utils import create_initial_mock_database, add_initial_player, empty_database, \
+    initialize_db_with_replays
 from tests.utils.replay_utils import clear_dir
 from tests.utils.test_utils import function_result_creator
 
@@ -140,9 +141,9 @@ def kill_database(request, engine, session, monkeypatch):
 @pytest.fixture(scope="session", autouse=True)
 def cleanup(request, postgres_factory):
     """Cleanup a testing directory once we are finished."""
-    def kill_database():
+    def cleanup():
         clear_dir()
-    request.addfinalizer(kill_database)
+    request.addfinalizer(cleanup)
 
 
 @pytest.fixture(autouse=True)
@@ -202,16 +203,16 @@ FAKE DIRECTORIES
 # All files should be in the test directory
 @pytest.fixture(autouse=True)
 def fake_write_location(monkeypatch, temp_folder):
-    from backend.utils.file_manager import FileManager
 
-    monkeypatch.setattr(FileManager, 'get_default_parse_folder', lambda: os.path.join(temp_folder, 'parsed'))
+    def get_path():
+        return temp_folder
+
+    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_default_parse_folder', get_path)
 
 
 @pytest.fixture(autouse=True)
 def fake_upload_location(monkeypatch, temp_folder):
-    from backend import server_constants
-
-    monkeypatch.setattr(server_constants, 'UPLOAD_FOLDER', temp_folder)
+    monkeypatch.setattr('backend.server_constants.UPLOAD_FOLDER', temp_folder)
 
 
 @pytest.fixture()
@@ -226,13 +227,11 @@ def app():
 
 @pytest.fixture(autouse=True)
 def make_celery_testable(monkeypatch):
-    from backend.tasks import celeryconfig
-    monkeypatch.setattr(celeryconfig, 'task_always_eager', True, raising=False)
-    monkeypatch.setattr(celeryconfig, 'task_eager_propagates', True, raising=False)
+    monkeypatch.setattr('backend.tasks.celeryconfig.task_always_eager', True, raising=False)
+    monkeypatch.setattr('backend.tasks.celeryconfig.task_eager_propagates', True, raising=False)
 
 @pytest.fixture()
 def fake_user(monkeypatch):
-    from backend.utils.global_functions import UserManager
 
     fake_user = None
 
@@ -244,58 +243,70 @@ def fake_user(monkeypatch):
             nonlocal fake_user
             fake_user = Player(platformid=platformId)
 
-    monkeypatch.setattr(UserManager, 'get_current_user', get_fake_user)
+    monkeypatch.setattr('backend.utils.safe_flask_globals.UserManager.get_current_user', get_fake_user)
 
     return FakeUser()
 
 
 @pytest.fixture()
 def fake_file_locations(monkeypatch, temp_folder):
-    from backend.utils.file_manager import FileManager
 
     def get_replay_func(ext):
-        def get_path(ignore, replay_id):
-            return os.path.join(os.path.join(temp_folder, 'parsed'), replay_id + ext)
+        def get_path(replay_id):
+            return os.path.join(temp_folder, replay_id + ext)
+        return get_path
 
-    monkeypatch.setattr(FileManager, 'get_replay_path', get_replay_func('.replay'))
-    monkeypatch.setattr(FileManager, 'get_proto_path', get_replay_func('.replay.pts'))
-    monkeypatch.setattr(FileManager, 'get_pandas_path', get_replay_func('.replay.gzip'))
+    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_replay_path', get_replay_func('.replay'))
+    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_proto_path', get_replay_func('.replay.pts'))
+    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_pandas_path', get_replay_func('.replay.gzip'))
 
 
 
 @pytest.fixture()
 def mock_get_proto(monkeypatch):
-    from backend.utils.file_manager import FileManager
 
     proto_set, get_proto = function_result_creator()
 
     def wrapped(replay_id):
         return get_proto()
 
-    monkeypatch.setattr(FileManager, 'get_proto', wrapped)
+    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_proto', wrapped)
     return proto_set
 
 @pytest.fixture()
 def mock_get_replay(monkeypatch):
-    from backend.utils.file_manager import FileManager
 
     replay_set, get_replay = function_result_creator()
 
     def wrapped(replay_id):
         return get_replay()
 
-    monkeypatch.setattr(FileManager, 'get_replay', wrapped)
+    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_replay', wrapped)
     return replay_set
 
 
 @pytest.fixture()
 def mock_get_pandas(monkeypatch):
-    from backend.utils.file_manager import FileManager
 
     pandas_set, get_pandas = function_result_creator()
 
     def wrapped(replay_id):
         return get_pandas()
 
-    monkeypatch.setattr(FileManager, 'get_pandas', wrapped)
+    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_pandas', wrapped)
     return pandas_set
+
+
+@pytest.fixture()
+def initialize_database(temp_folder):
+    session, protos, ids = initialize_db_with_replays(['3_KICKOFFS_4_SHOTS.replay'])
+
+    class wrapper:
+        def get_session(self):
+            return session
+        def get_protos(self):
+            return protos
+        def get_ids(self):
+            return ids
+
+    return wrapper()

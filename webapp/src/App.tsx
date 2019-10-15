@@ -3,6 +3,8 @@ import * as React from "react"
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom"
 import { AppListener } from "./AppListener"
 import { AboutPage } from "./Components/Pages/AboutPage"
+import { AdminPage } from "./Components/Pages/AdminPage"
+import { DocumentationPage } from "./Components/Pages/DocumentationPage"
 import { ExplanationsPage } from "./Components/Pages/ExplanationsPage"
 import { GlobalStatsPage } from "./Components/Pages/GlobalStatsPage"
 import { HomePage } from "./Components/Pages/HomePage"
@@ -15,10 +17,12 @@ import { ReplayPage } from "./Components/Pages/ReplayPage"
 import { ReplaysGroupPage } from "./Components/Pages/ReplaysGroupPage"
 import { ReplaysSearchPage } from "./Components/Pages/ReplaysSearchPage"
 import { StatusPage } from "./Components/Pages/StatusPage"
+import { TagsPage } from "./Components/Pages/TagsPage"
+import { TrainingPackPage } from "./Components/Pages/TrainingPackPage"
 import { UploadPage } from "./Components/Pages/UploadPage"
 import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
-    ABOUT_LINK,
+    ABOUT_LINK, ADMIN_LINK, DOCUMENTATION_LINK,
     EXPLANATIONS_LINK,
     GLOBAL_STATS_LINK, LEADERBOARDS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
@@ -27,7 +31,8 @@ import {
     REPLAY_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
-    STATUS_PAGE_LINK,
+    STATUS_PAGE_LINK, TAGS_PAGE_LINK,
+    TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
 
@@ -52,8 +57,9 @@ class AppComponent extends React.Component<Props> {
                             {/*Migrate old paths*/}
                             <Redirect exact from={"/players/overview/:id"} to={PLAYER_PAGE_LINK(":id")}/>
                             <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")}/>
-
                             <Route exact path="/" component={HomePage}/>
+                            <Route path={ADMIN_LINK} component={AdminPage}/>
+                            <Route path={TRAINING_LINK} component={TrainingPackPage}/>
                             <Route path={LEADERBOARDS_LINK} component={LeaderboardsPage}/>
                             <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
                             <Route path={PLAYER_COMPARE_PAGE_LINK} component={PlayerComparePage}/>
@@ -66,7 +72,9 @@ class AppComponent extends React.Component<Props> {
                             <Route exact path={PLUGINS_LINK} component={PluginsPage}/>
                             <Route exact path={STATUS_PAGE_LINK} component={StatusPage}/>
                             <Route exact path={EXPLANATIONS_LINK} component={ExplanationsPage}/>
+                            <Route exact path={DOCUMENTATION_LINK} component={DocumentationPage}/>
                             <Route exact path={PRIVACY_POLICY_LINK} component={PrivacyPolicyPage}/>
+                            <Route exact path={TAGS_PAGE_LINK} component={TagsPage}/>
                             {/*Redirect unknowns to root*/}
                             <Redirect from="*" to="/"/>
                         </Switch>

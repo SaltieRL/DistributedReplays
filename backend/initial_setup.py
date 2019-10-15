@@ -1,12 +1,16 @@
 import logging
 import os
+import shutil
+import subprocess
 from typing import Dict, List, Tuple
 
 from flask import Flask, render_template, g, request, redirect, send_from_directory
 from flask import session as flask_session
 from flask_cors import CORS
+from prometheus_client import make_wsgi_app, multiprocess, CollectorRegistry
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
-from backend.blueprints import steam, auth, debug, admin, api
+from backend.blueprints import steam, auth, admin, api
 from backend.blueprints.spa_api import spa_api
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
@@ -15,16 +19,26 @@ from backend.database.wrapper.player_wrapper import create_default_player
 from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER, BASE_FOLDER
 from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
-from backend.utils.global_functions import create_jinja_globals
+from backend.utils.metrics import MetricsHandler
+from backend.utils.logging import ErrorLogger
+from backend.utils.safe_flask_globals import UserManager
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")
 
 try:
     from config import ALLOWED_STEAM_ACCOUNTS
+
+    prod = True
 except ImportError:
     ALLOWED_STEAM_ACCOUNTS = []
     users = []
+    prod = False
+
+try:
+    from config import BASE_URL
+except ImportError:
+    BASE_URL = 'https://calculated.gg'
 
 
 class CalculatedServer:
@@ -44,7 +58,9 @@ class CalculatedServer:
 
         with app.app_context():
             create_celery_config()
+
             CalculatedServer.register_blueprints(app)
+            CalculatedServer.setup_metrics(app)
 
             try:
                 import config
@@ -63,9 +79,23 @@ class CalculatedServer:
             _session.commit()
             _session.close()
 
-        create_jinja_globals(app, g)
-
         return app, ids
+
+    @staticmethod
+    def setup_metrics(app: Flask):
+        logger.info('Setting up metrics')
+        # provide app's version and deploy environment/config name to set a gauge metric
+        ErrorLogger.add_logging_callback(MetricsHandler.log_exception_for_metrics)
+        MetricsHandler.setup_metrics_callbacks(app, app_version=app.config['VERSION'])
+        if 'prometheus_multiproc_dir' in os.environ:
+            # We're in a multiprocessing environment (i.e. gunicorn)
+            registry = CollectorRegistry()
+            multiprocess.MultiProcessCollector(registry)
+            wsgi_app = make_wsgi_app(registry)
+        else:
+            wsgi_app = make_wsgi_app()
+        # Plug metrics WSGI app to your main app with dispatcher
+        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": wsgi_app})
 
     @staticmethod
     def create_needed_folders(app: Flask):
@@ -80,9 +110,10 @@ class CalculatedServer:
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
         app.config['MAX_CONTENT_LENGTH'] = 512 * 1024 * 1024
         app.config['TEMPLATES_AUTO_RELOAD'] = True
-        app.config['BASE_URL'] = 'https://calculated.gg'
+        app.config['BASE_URL'] = 'https://calculated.gg' if BASE_URL is None else BASE_URL
         app.config['REPLAY_DIR'] = os.path.join(BASE_FOLDER, 'data', 'rlreplays')
         app.config['PARSED_DIR'] = os.path.join(BASE_FOLDER, 'data', 'parsed')
+        app.config['VERSION'] = CalculatedServer.get_version()
         app.config.update(
             broker_url='redis://localhost:6379/0',
             result_backend='redis://',
@@ -96,7 +127,6 @@ class CalculatedServer:
         app.register_blueprint(api.bp)
         app.register_blueprint(spa_api.bp)
         app.register_blueprint(auth.bp)
-        app.register_blueprint(debug.bp)
         app.register_blueprint(admin.bp)
 
     @staticmethod
@@ -159,3 +189,12 @@ class CalculatedServer:
     def __init__(self):
         self.app, self.ids = CalculatedServer.start_app()
         CalculatedServer.setup_routing_methods(self.app, self.ids)
+
+    @classmethod
+    def get_version(cls):
+        try:
+            return subprocess.check_output([
+                'git', 'rev-parse', '--short', 'HEAD'
+            ]).decode().strip()
+        except subprocess.CalledProcessError:
+            return 'unknown'

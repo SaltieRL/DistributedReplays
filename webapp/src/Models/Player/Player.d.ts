@@ -5,4 +5,5 @@ interface Player {
     platform: string
     profileLink: string
     avatarLink: string
+    groups: number[]
 }

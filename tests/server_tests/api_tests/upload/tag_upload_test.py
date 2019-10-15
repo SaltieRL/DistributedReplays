@@ -3,6 +3,7 @@ import io
 import urllib
 import zlib
 
+import pytest
 import responses
 from requests import Request
 from backend.blueprints.spa_api.service_layers.replay.tag import Tag as ServiceTag
@@ -27,6 +28,7 @@ class Test_upload_file_with_tags:
         self.file = f
         self.stream = io.BytesIO(self.file)
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_replay_basic_server_upload_with_tag(self, test_client):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
@@ -52,7 +54,7 @@ class Test_upload_file_with_tags:
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
 
-
+    @pytest.mark.skip(reason="tag names are disabled")
     @responses.activate
     def test_replay_basic_server_upload_with_tags_gcp(self, test_client, gcp):
         responses.add(responses.POST, gcp.get_url())
@@ -76,6 +78,7 @@ class Test_upload_file_with_tags:
         assert query_result['tags'] == [TAG_NAME, TAG_NAME + "hello"]
         assert query_result['uuid'] is not None
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_replay_basic_server_upload_with_multiple_tags(self, test_client):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
@@ -108,6 +111,7 @@ class Test_upload_file_with_tags:
         assert response.status_code == 200
         assert len(response.json['replays']) == 1
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_replay_basic_server_upload_with_duplicate_tags(self, test_client):
         fake_session = get_current_session()
         game = fake_session.query(Game).first()
@@ -133,6 +137,7 @@ class Test_upload_file_with_tags:
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_replay_basic_server_upload_tag_replay_no_player(self, test_client):
         params = {'tags': TAG_NAME}
         r = Request('POST', LOCAL_URL + '/api/upload',
@@ -142,9 +147,12 @@ class Test_upload_file_with_tags:
 
         assert(response.status_code == 400)
 
-    def test_tag_creation_private_key(self, test_client, mock_user):
+    def test_tag_creation_private_id(self, test_client, mock_user):
+        fake_private_id = 'fake_private_id'
+
         fake_session = get_current_session()
-        params = {'private_key': 'fake_private_key'}
+
+        params = {'private_id': fake_private_id}
         r = Request('PUT', LOCAL_URL + '/api/tag/TAG',
                     params=params)
 
@@ -153,35 +161,45 @@ class Test_upload_file_with_tags:
         assert(response.status_code == 201)
         data = response.json
         assert data['name'] == 'TAG'
-        assert data['owner_id'] == default_player_id()
+        assert data['ownerId'] == default_player_id()
 
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
         assert tag.owner == default_player_id()
-        assert tag.private_id == 'fake_private_key'
+        assert tag.private_id == fake_private_id
 
         r = Request('GET', LOCAL_URL + '/api/tag/TAG/private_key')
 
         response = test_client.send(r)
         assert(response.status_code == 200)
-        assert response.json == ServiceTag.encode_tag(tag.id, 'fake_private_key')
+        assert response.json == ServiceTag.encode_tag(tag.id, fake_private_id)
+
+    def test_tag_encodes_decodes_correctly(self):
+        str1 = 150
+        str2 = "World"
+        encoded = ServiceTag.encode_tag(str1, str2)
+        out1, out2 = ServiceTag.decode_tag(encoded)
+        assert out1 == str1
+        assert out2 == str2
 
     def test_tag_modification_with_private_key(self, test_client, mock_user):
         fake_session = get_current_session()
+
+        # Create tag
         r = Request('PUT', LOCAL_URL + '/api/tag/TAG')
         response = test_client.send(r)
 
         assert(response.status_code == 201)
         data = response.json
         assert data['name'] == 'TAG'
-        assert data['owner_id'] == default_player_id()
+        assert data['ownerId'] == default_player_id()
 
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
         assert tag.owner == default_player_id()
         assert tag.private_id is None
 
-        r = Request('PUT', LOCAL_URL + '/api/tag/TAG/private_key/fake_private_key')
+        r = Request('PUT', LOCAL_URL + '/api/tag/TAG/private_key/fake_private_id')
         response = test_client.send(r)
         assert(response.status_code == 204)
 
@@ -191,13 +209,13 @@ class Test_upload_file_with_tags:
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
         assert tag.owner == default_player_id()
-        assert tag.private_id == 'fake_private_key'
+        assert tag.private_id == 'fake_private_id'
 
         r = Request('GET', LOCAL_URL + '/api/tag/TAG/private_key')
         response = test_client.send(r)
 
         assert(response.status_code == 200)
-        assert response.json == ServiceTag.encode_tag(tag.id, 'fake_private_key')
+        assert response.json == ServiceTag.encode_tag(tag.id, 'fake_private_id')
 
     def test_tag_creation_no_private_key(self, test_client, mock_user):
         fake_session = get_current_session()
@@ -208,7 +226,7 @@ class Test_upload_file_with_tags:
         assert(response.status_code == 201)
         data = response.json
         assert data['name'] == 'TAG'
-        assert data['owner_id'] == default_player_id()
+        assert data['ownerId'] == default_player_id()
 
         tag = fake_session.query(Tag).first()
         assert tag.name == 'TAG'
@@ -225,7 +243,7 @@ class Test_upload_file_with_tags:
         game = fake_session.query(Game).first()
         assert game is None
 
-        params = {'private_key': 'fake_private_key'}
+        params = {'private_id': 'fake_private_id'}
         r = Request('PUT', LOCAL_URL + '/api/tag/' + TAG_NAME,
                     params=params)
         response = test_client.send(r)
@@ -257,13 +275,13 @@ class Test_upload_file_with_tags:
         assert(game.tags[0].name == TAG_NAME)
         assert(game.tags[0].owner == default_player_id())
         assert(game.tags[0].games[0] == game)
-        assert(game.tags[0].private_id == 'fake_private_key')
+        assert(game.tags[0].private_id == 'fake_private_id')
 
         player = fake_session.query(Player.platformid == '76561198018756583').first()
         assert(player is not None)
 
+    @pytest.mark.skip(reason="tag names are disabled")
     def test_proto_upload_with_tags(self, test_client):
-
         proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file(get_complex_replay_list()[0],
                                                                              is_replay=True))
 
@@ -304,3 +322,24 @@ class Test_upload_file_with_tags:
             test_id, test_key = ServiceTag.decode_tag(encoded)
             assert test_id == id
             assert test_key == keys[index]
+
+    def test_tag_creation_encoding(self, test_client):
+
+        tags = [['TAG1'], ['TAG2'], ['TAG3'], ['TAG4', 'TAG2']]
+
+        tag_keys = ['invalid_key']
+        created_tags = []
+        for _tags in tags:
+            keys = []
+            for _tag in _tags:
+                if _tag not in created_tags:
+                    r = test_client.send(Request('PUT', LOCAL_URL + f'/api/tag/{_tag}'))
+                    assert r.status_code == 201
+                    created_tags.append(_tag)
+
+                    # create private id
+                    r = test_client.send(Request('PUT', LOCAL_URL + f'/api/tag/{_tag}/private_key/{_tag}'))
+                    assert r.status_code == 204
+                json = test_client.send(Request('GET', LOCAL_URL + f'/api/tag/{_tag}/private_key')).json
+                keys.append(json)
+            tag_keys.append(keys)
