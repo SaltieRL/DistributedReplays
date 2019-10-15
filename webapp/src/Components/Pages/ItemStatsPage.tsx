@@ -3,23 +3,25 @@ import {
     CardActionArea,
     CardMedia,
     createStyles,
-    Grid, Tab, Tabs, TextField,
+    Grid, Paper, Tab, Tabs, TextField,
     Typography,
     withStyles,
     WithStyles
 } from "@material-ui/core"
+import { Breadcrumbs } from "@material-ui/lab"
 import qs from "qs"
 import * as React from "react"
 import { connect } from "react-redux"
-import { RouteComponentProps } from "react-router-dom"
+import { Link, RouteComponentProps } from "react-router-dom"
+import { ITEMS_LINK } from "../../Globals"
 import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
 import { StoreState } from "../../Redux"
 import { getItemGraph, getItemInfo, getItems } from "../../Requests/Global"
+import { ItemDisplay } from "../ItemStats/ItemDisplay"
 import { ItemStatsGraph } from "../ItemStats/ItemStatsGraph"
 import { ItemStatsUsers } from "../ItemStats/ItemStatsUsers"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
-import { ItemDisplay } from "../ItemStats/ItemDisplay"
 
 const CATEGORIES = [
     {
@@ -124,14 +126,26 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     public render() {
         const {classes} = this.props
         const {itemData} = this.state
-
+        const breadCrumbs = itemData ? (
+            <Paper elevation={0}>
+                <Breadcrumbs aria-label="breadcrumb" style={{padding: "5px"}}>
+                    <Link color="inherit" to={ITEMS_LINK} style={{textDecoration: "none"}}>
+                        <Typography variant="subtitle1" color="textPrimary">
+                            Items
+                        </Typography>
+                    </Link>
+                    <Typography variant="subtitle1" color="textPrimary">{itemData.name}</Typography>
+                </Breadcrumbs>
+            </Paper>
+        ) : null
         const itemSearch = (
             <TextField value={this.state.search} onChange={this.handleSearchChange} placeholder={"Filter"}/>
         )
-
-
         const itemView = itemData ? (
             <Grid container spacing={24}>
+                <Grid item xs={12}>
+                    {breadCrumbs}
+                </Grid>
                 <Grid item xs={6} lg={3}>
                     <Grid item xs={12}>
                         <ItemDisplay item={itemData} paint={0}/>
