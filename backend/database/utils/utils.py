@@ -24,8 +24,7 @@ def process_loadout_to_obj(game: game_pb2) -> List[Loadout]:
                                                 'api.PlayerId'], Loadout)
         values = get_proto_values(p, fields)
         kwargs = {k.field_name: v for k, v in zip(fields, values)}
-        kwargs['player'] = kwargs['player'][:40]  # limit to 40 chars
-        loadouts.append(Loadout(game=replay_id, player=str(p.id.id), **kwargs))
+        loadouts.append(Loadout(game=replay_id, player=str(p.id.id)[:40], **kwargs))
 
     return loadouts
 
