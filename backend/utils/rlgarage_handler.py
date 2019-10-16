@@ -72,11 +72,14 @@ class RLGarageAPI:
                 items[item['ingameid']] = self.parse_item(item)
             except Exception as e:
                 print("Error", e)
-            category = item['category']
-            if category in category_map:
-                category_map[category].append(item)
-            else:
-                category_map[category] = [item]
+            try:
+                category = item['category']
+                if category in category_map:
+                    category_map[category].append(item)
+                else:
+                    category_map[category] = [item]
+            except Exception as e:
+                print("Error", e)
         return items, category_map
 
     def get_editions(self):

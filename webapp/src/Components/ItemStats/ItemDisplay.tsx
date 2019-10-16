@@ -158,53 +158,6 @@ export class ItemDisplayComponent extends React.PureComponent<Props> {
                 </CardContent>
             </Card>
         )
-        // (
-        {/*    <div style={{*/
-        }
-        {/*        position: "relative",*/
-        }
-        {/*        border: `${rarities[item.rarity].rlgend} 2px solid`*/
-        }
-        {/*    }}>*/
-        }
-        {/*        <img alt={item.name} src={item.image} height={"134px"}/>*/
-        }
-        {/*        {paint ? (*/
-        }
-        {/*            <Tooltip title={PAINT_MAP[paint]}>*/
-        }
-        {/*                <div style={{*/
-        }
-        {/*                    backgroundColor: PAINT_COLOR_MAP[paint],*/
-        }
-        {/*                    border: "2px solid rgba(255,255,255,.3)",*/
-        }
-        {/*                    transform: "rotate(45deg)",*/
-        }
-        {/*                    width: "35px",*/
-        }
-        {/*                    height: "20px",*/
-        }
-        {/*                    position: "absolute",*/
-        }
-        {/*                    left: "85%",*/
-        }
-        {/*                    top: "-6px",*/
-        }
-        {/*                    zIndex: 999*/
-        }
-        {/*                }}/>*/
-        }
-        {/*            </Tooltip>*/
-        }
-        {/*        ) : null}*/
-        }
-        {/*    </div>*/
-        }
-        {/*)*/
-        }
-
-        // )
     }
 }
 
