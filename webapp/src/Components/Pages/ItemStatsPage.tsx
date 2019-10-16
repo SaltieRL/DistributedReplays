@@ -63,11 +63,11 @@ const CATEGORIES = [
     {
         id: 11,
         name: "Banners"
-    },
-    {
-        id: 12,
-        name: "Engine Audio"
     }
+    // {
+    //     id: 12,
+    //     name: "Engine Audio"
+    // }
     // {
     //     id: 13,
     //     name: "Avatar Borders"
@@ -232,7 +232,9 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
             return Promise.all([getItemInfo(this.state.itemID), getItemGraph(this.state.itemID)])
                 .then((data) => this.setState({itemData: data[0], itemUsage: data[1]}))
         }
-        return getItemInfo(0).then(() => null)
+        return getItemInfo(0).then(() => {
+            this.setState({itemData: undefined})
+        })
     }
 
     private readonly selectItem = (item: Item) => {
