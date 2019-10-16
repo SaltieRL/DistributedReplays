@@ -208,7 +208,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center">
-                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
+                    {(this.props.loggedInUser && this.props.loggedInUser.alpha) ?
                         <>
                             <Grid item xs={12}>
                                 {this.state.itemID ? itemView : itemsList}
