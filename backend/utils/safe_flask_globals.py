@@ -28,7 +28,10 @@ def get_current_user_id(player_id=None) -> str:
     if player_id is not None:
         return player_id
     try:
-        return UserManager.get_current_user().platformid
+        user = UserManager.get_current_user()
+        if user is None:
+            return ""
+        return user.platformid
     except Exception as e:
         ErrorLogger.log_error(e)
         return ""
@@ -36,7 +39,7 @@ def get_current_user_id(player_id=None) -> str:
 
 class UserManager:
     @staticmethod
-    def get_current_user() -> Player:
+    def get_current_user() -> Player or None:
         """
         Tries to get the current user.
         Returns None if there are problems.

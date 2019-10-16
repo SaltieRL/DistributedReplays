@@ -91,10 +91,6 @@ class CalculatedServer:
             # We're in a multiprocessing environment (i.e. gunicorn)
             registry = CollectorRegistry()
             multiprocess.MultiProcessCollector(registry)
-            if os.path.isdir("metrics"):
-                shutil.rmtree("metrics")
-
-            os.mkdir("metrics")
             wsgi_app = make_wsgi_app(registry)
         else:
             wsgi_app = make_wsgi_app()
