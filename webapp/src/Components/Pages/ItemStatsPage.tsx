@@ -232,8 +232,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
             return Promise.all([getItemInfo(this.state.itemID), getItemGraph(this.state.itemID)])
                 .then((data) => this.setState({itemData: data[0], itemUsage: data[1]}))
         }
-        return getItemInfo(0).then(() => {
-        })
+        return getItemInfo(0).then(() => null)
     }
 
     private readonly selectItem = (item: Item) => {
