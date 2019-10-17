@@ -7,7 +7,7 @@ from typing import Optional
 from carball import analyze_replay_file
 from carball.analysis.analysis_manager import AnalysisManager
 
-from backend.utils.logging import ErrorLogger
+from backend.utils.logger import ErrorLogger
 
 
 def write_replay_to_disk(analysis_manager: AnalysisManager, parsed_data_path: str):

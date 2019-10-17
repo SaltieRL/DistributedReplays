@@ -1,6 +1,7 @@
 import moment from "moment"
 import qs from "qs"
 import { doGet, doPost } from "../apiHandler/apiHandler"
+import { ItemFull, ItemListResponse, ItemUsage } from "../Models/ItemStats"
 import { TrainingPackResponse } from "../Models/Player/TrainingPack"
 import { playlists } from "../Utils/Playlists"
 import { useMockData } from "./Config"
@@ -86,4 +87,20 @@ export const parseTrainingPack = (data: any) => {
 }
 export const getAdminLogs = (page: number, limit: number, search: string): Promise<AdminLogsResponse> => {
     return doGet(`/admin/logs?page=${page}&limit=${limit}&search=${search}`)
+}
+export const getItems = (page: number, limit: number,
+                         category: number): Promise<ItemListResponse> => {
+    let queryString = `/items/list?page=${page}&limit=${limit}`
+    if (category) {
+        queryString += `&category=${category}`
+    }
+    return doGet(queryString)
+}
+
+export const getItemInfo = (id: number): Promise<ItemFull> => {
+    return doGet(`/items/info?id=${id}`)
+}
+
+export const getItemGraph = (id: number): Promise<ItemUsage> => {
+    return doGet(`/items/usage?id=${id}`)
 }
