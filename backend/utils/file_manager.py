@@ -5,7 +5,7 @@ from enum import Enum
 from carball.analysis.utils import proto_manager, pandas_manager
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
-from backend.utils.logging import ErrorLogger
+from backend.utils.logger import ErrorLogger
 from backend.utils.cloud_handler import download_proto, download_df, download_replay
 from backend.server_constants import BASE_FOLDER
 

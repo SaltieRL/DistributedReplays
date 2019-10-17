@@ -49,13 +49,8 @@ class RLGarageAPI:
     }
 
     def __init__(self):
-        items = self.get_cached_items()
-        self.items = {}
-        for item in items.values():
-            try:
-                self.items[item['ingameid']] = item
-            except:
-                print("Error", item)
+        self.item_map, self.category_map = self.get_cached_items()
+        self.item_list = list(self.item_map.values())
 
     def _get(self, url):
         headers = {
@@ -69,7 +64,23 @@ class RLGarageAPI:
         Gets all items
         :return:
         """
-        return self._get("getAll.php")
+        data = self._get("getAll.php")
+        items = {}
+        category_map = {}
+        for item in data.values():
+            try:
+                items[item['ingameid']] = self.parse_item(item)
+            except Exception as e:
+                print("Error", e)
+            try:
+                category = item['category']
+                if category in category_map:
+                    category_map[category].append(item)
+                else:
+                    category_map[category] = [item]
+            except Exception as e:
+                print("Error", e)
+        return items, category_map
 
     def get_editions(self):
         """
@@ -88,16 +99,20 @@ class RLGarageAPI:
     def get_cached_items(self):
         r = lazy_get_redis()
         if r is not None:
-            if r.get("rlgarage_items") is not None:
-                return json.loads(r.get("rlgarage_items"))
-        items = self.get_items()
+            if r.get("rlgarage_items") is not None and r.get("rlgarage_category_map") is not None:
+                return json.loads(r.get("rlgarage_items")), json.loads(r.get("rlgarage_category_map"))
+        items, category_map = self.get_items()
 
         if r is not None:
             r.set("rlgarage_items", json.dumps(items), ex=60 * 60 * 24)
-        return items
+            r.set("rlgarage_category_map", json.dumps(category_map), ex=60 * 60 * 24)
+        return items, category_map
 
     def get_item_info(self, id_, paint_id=0):
-        item = self.items[id_]
+        item = self.item_map[id_]
+        return self.parse_item(item, paint_id)
+
+    def parse_item(self, item, paint_id=0):
         if paint_id > 0 and item['hascoloredicons'] == 1:
             pic = item['name'].replace(' ', '').replace('\'', '').lower()
             paint_name = self.paint_map[paint_id]
@@ -106,3 +121,40 @@ class RLGarageAPI:
         else:
             item['image'] = f"https://rocket-league.com/content/media/items/avatar/220px/{item['image']}"
         return item
+
+    def get_item(self, id_):
+        return self.item_map[str(id_)]
+
+    def get_item_list(self, page, limit):
+        if limit > 500:
+            limit = 500
+        return {
+            'items': self.get_item_response(self.item_list[page * limit: (page + 1) * limit]),
+            'count': len(self.item_list)
+        }
+
+    def get_item_list_by_category(self, category, page, limit, order=None):
+        category = str(category)
+        if limit > 500:
+            limit = 500
+        if order is not None:
+            items = self.item_map
+            return {
+                'items': self.get_item_response(
+                    [items[str(i)] for i in order[page * limit: (page + 1) * limit] if str(i) in items]),
+                'count': len(self.category_map[category])
+            }
+        return {
+            'items': self.get_item_response(self.category_map[category][page * limit: (page + 1) * limit]),
+            'count': len(self.category_map[category])
+        }
+
+    def get_item_response(self, items):
+        return [
+            {
+                'image': item['image'],
+                'name': item['name'],
+                'ingameid': item['ingameid'],
+                'rarity': item['rarity']
+            } for item in items
+        ]
