@@ -29,7 +29,7 @@ def use_test_paths(monkeypatch, temp_folder):
 
 @pytest.fixture(autouse=True)
 def no_errors_are_logged(request, mocker):
-    from backend.utils.logging import backup_logger
+    from backend.utils.logger import backup_logger
 
     def actually_log(exception, message=None, logger=backup_logger):
         output = str(exception) + (message if message is not None else "")
@@ -39,8 +39,8 @@ def no_errors_are_logged(request, mocker):
         logger.error(output)
         logger.exception(output)
 
-    mocker.patch('backend.utils.logging.ErrorLogger.log_error', wraps=actually_log)
-    from backend.utils.logging import ErrorLogger
+    mocker.patch('backend.utils.logger.ErrorLogger.log_error', wraps=actually_log)
+    from backend.utils.logger import ErrorLogger
     cancel = False
 
     class Holder:

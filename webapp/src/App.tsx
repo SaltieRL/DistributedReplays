@@ -8,6 +8,7 @@ import { DocumentationPage } from "./Components/Pages/DocumentationPage"
 import { ExplanationsPage } from "./Components/Pages/ExplanationsPage"
 import { GlobalStatsPage } from "./Components/Pages/GlobalStatsPage"
 import { HomePage } from "./Components/Pages/HomePage"
+import { ItemsStatsPage } from "./Components/Pages/ItemStatsPage"
 import { LeaderboardsPage } from "./Components/Pages/LeaderboardsPage"
 import { PlayerComparePage } from "./Components/Pages/PlayerComparePage"
 import { PlayerPage } from "./Components/Pages/PlayerPage"
@@ -24,7 +25,7 @@ import { Notifications } from "./Components/Shared/Notification/Notifications"
 import {
     ABOUT_LINK, ADMIN_LINK, DOCUMENTATION_LINK,
     EXPLANATIONS_LINK,
-    GLOBAL_STATS_LINK, LEADERBOARDS_LINK,
+    GLOBAL_STATS_LINK, ITEMS_LINK, LEADERBOARDS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_PAGE_LINK,
     PLUGINS_LINK, PRIVACY_POLICY_LINK,
@@ -59,6 +60,7 @@ class AppComponent extends React.Component<Props> {
                             <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")}/>
                             <Route exact path="/" component={HomePage}/>
                             <Route path={ADMIN_LINK} component={AdminPage}/>
+                            <Route path={ITEMS_LINK} component={ItemsStatsPage}/>
                             <Route path={TRAINING_LINK} component={TrainingPackPage}/>
                             <Route path={LEADERBOARDS_LINK} component={LeaderboardsPage}/>
                             <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
