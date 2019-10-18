@@ -7,7 +7,7 @@ from backend.blueprints.shared_renders import render_with_session
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
 from backend.database.wrapper.stats import global_stats_wrapper
-from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists
+from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists, cache_item_stats
 from backend.utils.checks import is_local_dev
 from backend.utils.safe_flask_globals import get_redis
 
@@ -112,4 +112,10 @@ def calc_dists():
 @bp.route('/calcstats')
 def calc_stats():
     calc_global_stats.delay()
+    return jsonify({'result': 'Success'})
+
+
+@bp.route('/cacheitemstats')
+def calc_stats():
+    cache_item_stats.delay()
     return jsonify({'result': 'Success'})
