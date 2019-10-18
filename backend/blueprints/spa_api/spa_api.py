@@ -673,10 +673,14 @@ def get_endpoint_documentation():
 def api_get_items_list(query_params=None):
     api = RLGarageAPI()
     if 'category' in query_params:
-        order = ItemStatsWrapper.create_unpainted_stats(query_params['category'])
-        return better_jsonify(
-            api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit'],
-                                          order=order))
+        order = ItemStatsWrapper.create_unpainted_stats(query_params['category'], counts=True)
+        result = api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit'],
+                                               order=[o['item_id'] for o in order])
+        result['items'] = [{
+            'count': order[i]['count'],
+            **item
+        } for i, item in enumerate(result['items'])]
+        return better_jsonify(result)
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
 
 
@@ -698,8 +702,14 @@ def api_get_item_usage(query_params=None):
 
 
 @bp.route('/items/order')
-def api_get_item_order():
-    return better_jsonify(ItemStatsWrapper.create_unpainted_stats(counts=True))
+@with_query_params(accepted_query_params=[
+    QueryParam(name='category', type_=str, optional=True)
+])
+def api_get_item_order(query_params):
+    stats = ItemStatsWrapper.create_unpainted_stats(counts=True)
+    if query_params['category'] is not None:
+        stats = stats[str(query_params['category'])]
+    return better_jsonify(stats)
 
 
 # ADMIN

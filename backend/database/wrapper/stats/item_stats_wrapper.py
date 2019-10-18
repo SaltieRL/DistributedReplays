@@ -167,21 +167,25 @@ class ItemStatsWrapper:
             'engine_audio': 12,
         }
         category_map_inv = {v: k for k, v in category_map.items()}
+        if counts:
+            total_count = ItemStatsWrapper.get_loadout_count(session)
+        else:
+            total_count = 1
         if category is not None:
             stats = ItemStatsWrapper.get_most_used_by_column(category_map_inv[category], session)
-            stats = [ItemResult(*s).__dict__['item_id'] for s in stats]
-            ItemStatsWrapper.set_redis_result_if_exists("items_create_unpainted_stats_", key, stats)
-            return stats
+            if counts:
+                stats = [[stat[0], stat[1], stat[2] / total_count] for stat in stats]
+                results = [ItemResult(*s).__dict__ for s in stats]
+            else:
+                results = [ItemResult(*s).__dict__['item_id'] for s in stats]
+            ItemStatsWrapper.set_redis_result_if_exists("items_create_unpainted_stats_", key, results)
+            return results
 
         dynamic_field_list = create_and_filter_proto_field(player_loadout_pb2.PlayerLoadout, ['load_out_id', 'version'],
                                                            [],
                                                            Loadout)
         dynamic_field_list = [field for field in dynamic_field_list if 'paint' not in field.field_name]
         result_map = {}
-        if counts:
-            total_count = ItemStatsWrapper.get_loadout_count(session)
-        else:
-            total_count = 1
 
         for dynamic_field in dynamic_field_list:
             stats = ItemStatsWrapper.get_most_used_by_column(dynamic_field.field_name, session)

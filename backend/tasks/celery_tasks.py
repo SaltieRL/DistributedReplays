@@ -16,7 +16,7 @@ from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
-from backend.tasks.add_replay import parse_replay
+# from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
 from backend.utils.rlgarage_handler import RLGarageAPI
