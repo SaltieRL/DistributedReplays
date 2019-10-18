@@ -116,6 +116,6 @@ def calc_stats():
 
 
 @bp.route('/cacheitemstats')
-def calc_stats():
+def calc_item_stats():
     cache_item_stats.delay()
     return jsonify({'result': 'Success'})
