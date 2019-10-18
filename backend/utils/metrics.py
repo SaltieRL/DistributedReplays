@@ -55,7 +55,17 @@ METRICS_REQUEST_COUNT = Counter(
     ["method", "endpoint", "http_status"],
 )
 
+
+METRICS_SAVED_REPLAY_COUNT = Counter(
+    "app_saved_replay_count",
+    "Saved replay count",
+)
+
 METRICS_INFO = Info("app_version", "Application Version")
+
+
+def add_saved_replay():
+    METRICS_SAVED_REPLAY_COUNT.inc()
 
 
 #
@@ -85,7 +95,8 @@ class MetricsHandler:
         request = get_request()
         cleaned_path = create_clean_request_path()
         METRICS_REQUEST_ERRORS.labels(request.method, cleaned_path, type(exception).__name__).inc()
-        METRICS_KEYED_REQUEST_ERRORS.labels(request.method, request.path, cleaned_path, type(exception).__name__).inc()
+        # We do not have a need for this and it takes more space than other metrics
+        # METRICS_KEYED_REQUEST_ERRORS.labels(request.method, request.path, cleaned_path, type(exception).__name__).inc()
 
     @staticmethod
     def before_request():
