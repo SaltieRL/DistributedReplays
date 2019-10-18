@@ -212,11 +212,14 @@ class ItemStatsWrapper:
         return None
 
     @staticmethod
-    def set_redis_result_if_exists(prefix: str, id_: int or str, value):
+    def set_redis_result_if_exists(prefix: str, id_: int or str, value, ex=None):
         redis_key = prefix + str(id_)
         r = lazy_get_redis()
         if r is not None:
-            r.set(redis_key, json.dumps(value, default=date_converter))
+            if ex is not None:
+                r.set(redis_key, json.dumps(value, default=date_converter), ex=ex)
+            else:
+                r.set(redis_key, json.dumps(value, default=date_converter), ex=12 * 60 * 60)
 
 
 if __name__ == '__main__':
