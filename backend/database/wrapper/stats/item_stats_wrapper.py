@@ -128,9 +128,11 @@ class ItemStatsWrapper:
         result = ItemStatsWrapper.get_redis_result_if_exists("items_get_most_used_by_column_", field_name)
         if not override and result is not None:
             return result
+        # only use loadouts from the last 30 days
         inner = session.query(Loadout) \
             .join(Game, Game.hash == Loadout.game) \
             .filter(Loadout.player != Game.primary_player) \
+            .filter(Game.match_date > (datetime.datetime.now() - datetime.timedelta(days=30))) \
             .distinct(Loadout.player) \
             .order_by(desc(Loadout.player), desc(Game.match_date)) \
             .subquery()
