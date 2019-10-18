@@ -6,7 +6,7 @@ import logging
 import redis
 
 from backend.database.objects import Player
-from backend.utils.logging import ErrorLogger
+from backend.utils.logger import ErrorLogger
 
 logger = logging.getLogger(__name__)
 

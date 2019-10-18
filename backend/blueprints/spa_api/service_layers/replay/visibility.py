@@ -8,7 +8,7 @@ from backend.database.objects import Player, GameVisibility, Game, Playlist
 from backend.blueprints.spa_api.utils.decorators import require_user
 from backend.database.objects import GameVisibilitySetting
 from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.utils.logging import ErrorLogger
+from backend.utils.logger import ErrorLogger
 
 
 class ReplayVisibility:
