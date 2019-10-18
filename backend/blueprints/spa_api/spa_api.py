@@ -37,7 +37,6 @@ from backend.utils.metrics import MetricsHandler, add_saved_replay
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.utils.safe_flask_globals import get_current_user_id
-from tasks.task_creators import create_replay_task
 
 try:
     import config
@@ -410,7 +409,7 @@ def api_upload_replays(query_params=None):
         file.seek(0)
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
-        create_replay_task(file, filename, ud, task_ids, query_params)
+        celery_tasks.create_replay_task(file, filename, ud, task_ids, query_params)
 
     if len(errors) == 1:
         raise errors[0]
