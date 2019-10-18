@@ -27,7 +27,7 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
-from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
+from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.utils.logger import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
@@ -37,6 +37,7 @@ from backend.utils.metrics import MetricsHandler, add_saved_replay
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.utils.safe_flask_globals import get_current_user_id
+from tasks.task_creators import create_replay_task
 
 try:
     import config
@@ -63,7 +64,7 @@ except:
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting, TrainingPack, ReplayLog, ReplayResult
+from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \

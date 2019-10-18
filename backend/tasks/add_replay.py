@@ -1,11 +1,7 @@
-import base64
 import logging
 import os
 import shutil
 from typing import Dict
-
-import requests
-from requests import ReadTimeout
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.blueprints.spa_api.service_layers.replay.tag import apply_tags_to_game
@@ -13,33 +9,13 @@ from backend.blueprints.spa_api.service_layers.replay.visibility import apply_ga
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params
 from backend.database.utils.utils import add_objects
-from backend.tasks import celery_tasks
-from backend.tasks.utils import get_queue_length
+
 from backend.utils.file_manager import FileManager, PROTO_EXTENSION, PANDAS_EXTENSION
 from backend.utils.logger import ErrorLogger
-from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df, GCPManager
+from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df
 from backend.utils.parsing_manager import parse_replay_wrapper
 
 logger = logging.getLogger(__name__)
-
-
-def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, any] = None):
-    if GCPManager.should_go_to_gcp(get_queue_length):
-        encoded_file = base64.b64encode(file.read())
-        try:
-            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=0.5,
-                              params={**{'uuid': uuid}, **query_params})
-        except ReadTimeout as e:
-            pass  # we don't care, it's given
-        except Exception as e:
-            # make sure we do not lose the replay file
-            file.seek(0)
-            file.save(filename)  # oops, error so lets save the file
-            raise e
-    else:
-        file.save(filename)
-        result = celery_tasks.add_replay_parse_task(os.path.abspath(filename), query_params)
-        task_ids.append(result.id)
 
 
 def parse_replay(self, replay_to_parse_path, preserve_upload_date: bool = False,
