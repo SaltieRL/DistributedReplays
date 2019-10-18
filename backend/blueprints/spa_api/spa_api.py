@@ -683,7 +683,8 @@ def api_get_items_list(query_params=None):
             'count': order[i]['count'],
             **item
         } for i, item in enumerate(result['items'])]
-        ItemStatsWrapper.set_redis_result_if_exists("api_get_items_list_", query_params['category'], ex=60 * 60 * 12)
+        ItemStatsWrapper.set_redis_result_if_exists("api_get_items_list_", query_params['category'], result,
+                                                    ex=60 * 60 * 12)
         return better_jsonify(result)
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
 

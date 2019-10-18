@@ -219,7 +219,7 @@ class ItemStatsWrapper:
             if ex is not None:
                 r.set(redis_key, json.dumps(value, default=date_converter), ex=ex)
             else:
-                r.set(redis_key, json.dumps(value, default=date_converter), ex=12 * 60 * 60)
+                r.set(redis_key, json.dumps(value, default=date_converter))
 
 
 if __name__ == '__main__':
