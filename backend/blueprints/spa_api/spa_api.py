@@ -22,7 +22,6 @@ from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
-from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
     player_id, heatmap_query_params
@@ -34,7 +33,7 @@ from backend.utils.logger import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
-from backend.utils.metrics import MetricsHandler
+from backend.utils.metrics import MetricsHandler, add_saved_replay
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.utils.safe_flask_globals import get_current_user_id
@@ -438,7 +437,8 @@ def api_upload_proto(session=None, query_params=None):
 
     # Process
     try:
-        parsed_replay_processing(protobuf_game, query_params=query_params)
+        match_exists = parsed_replay_processing(protobuf_game, query_params=query_params)
+        add_saved_replay(match_exists)
     except Exception as e:
         payload['stack'] = traceback.format_exc()
         payload['error_type'] = type(e).__name__

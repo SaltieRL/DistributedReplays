@@ -16,6 +16,9 @@ class BucketType(Enum):
     REPLAY = 3
 
 
+REPLAY_EXTENSION = ".replay"
+PROTO_EXTENSION = ".pts"
+PANDAS_EXTENSION = ".gzip"
 DEFAULT_REPLAY_FOLDER = os.path.join(BASE_FOLDER, 'data', 'rlreplays')
 DEFAULT_PARSED_FOLDER = os.path.join(BASE_FOLDER, 'data', 'parsed')
 
@@ -31,15 +34,15 @@ class FileManager:
 
     @staticmethod
     def get_replay_path(replay_id: str):
-        return os.path.join(FileManager.get_default_replay_folder(), replay_id + '.replay')
+        return os.path.join(FileManager.get_default_replay_folder(), replay_id + REPLAY_EXTENSION)
 
     @staticmethod
     def get_proto_path(replay_id: str):
-        return os.path.join(FileManager.get_default_parse_folder(), replay_id + '.replay.pts')
+        return os.path.join(FileManager.get_default_parse_folder(), replay_id + REPLAY_EXTENSION + PROTO_EXTENSION)
 
     @staticmethod
     def get_pandas_path(replay_id: str):
-        return os.path.join(FileManager.get_default_parse_folder(), replay_id + '.replay.gzip')
+        return os.path.join(FileManager.get_default_parse_folder(), replay_id + REPLAY_EXTENSION + PANDAS_EXTENSION)
 
     @staticmethod
     def get_replay(replay_id):
@@ -57,7 +60,7 @@ class FileManager:
     def get_pandas(replay_id):
         return FileManager.get_or_download(FileManager.get_pandas_path(replay_id),
                                            lambda: download_df(replay_id),
-                                           lambda item_path: pandas_manager.PandasManager.safe_read_pandas_to_memory(gzip.open(item_path, 'rb')))
+                                           lambda item_path: pandas_manager.PandasManager.read_numpy_from_memory(gzip.open(item_path, 'rb')))
 
     @staticmethod
     def get_or_download(item_path, download_lambda, open_lambda):

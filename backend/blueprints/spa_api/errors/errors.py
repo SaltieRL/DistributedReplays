@@ -45,7 +45,7 @@ class Redirect(CalculatedError):
 
 
 class ErrorOpeningGame(CalculatedError):
-    status_code = 500
+    status_code = 510  # 510 means that the server failed to parse a replay/proto/pandas
 
     def __init__(self, error: str):
         message = f'Error opening game: {error}'
