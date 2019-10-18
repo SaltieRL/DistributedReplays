@@ -202,6 +202,24 @@ class ItemStatsWrapper:
         return result_map
 
     @staticmethod
+    def create_item_list(query_params):
+
+        api = RLGarageAPI()
+        result = ItemStatsWrapper.get_redis_result_if_exists("api_get_items_list_", query_params['category'])
+        if result is not None:
+            return result
+        order = ItemStatsWrapper.create_unpainted_stats(query_params['category'], counts=True)
+        result = api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit'],
+                                               order=[o['item_id'] for o in order])
+        result['items'] = [{
+            'count': order[i]['count'],
+            **item
+        } for i, item in enumerate(result['items'])]
+        ItemStatsWrapper.set_redis_result_if_exists("api_get_items_list_", query_params['category'], result,
+                                                    ex=60 * 60 * 12)
+        return result
+
+    @staticmethod
     def get_redis_result_if_exists(prefix: str, id_):
         redis_key = prefix + str(id_)
         r = lazy_get_redis()
@@ -212,11 +230,14 @@ class ItemStatsWrapper:
         return None
 
     @staticmethod
-    def set_redis_result_if_exists(prefix: str, id_: int or str, value):
+    def set_redis_result_if_exists(prefix: str, id_: int or str, value, ex=None):
         redis_key = prefix + str(id_)
         r = lazy_get_redis()
         if r is not None:
-            r.set(redis_key, json.dumps(value, default=date_converter))
+            if ex is not None:
+                r.set(redis_key, json.dumps(value, default=date_converter), ex=ex)
+            else:
+                r.set(redis_key, json.dumps(value, default=date_converter))
 
 
 if __name__ == '__main__':
