@@ -671,21 +671,9 @@ def get_endpoint_documentation():
     QueryParam(name='limit', type_=int, optional=False)
 ])
 def api_get_items_list(query_params=None):
-    api = RLGarageAPI()
     if 'category' in query_params:
-        result = ItemStatsWrapper.get_redis_result_if_exists("api_get_items_list_", query_params['category'])
-        if result is not None:
-            return jsonify(result)
-        order = ItemStatsWrapper.create_unpainted_stats(query_params['category'], counts=True)
-        result = api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit'],
-                                               order=[o['item_id'] for o in order])
-        result['items'] = [{
-            'count': order[i]['count'],
-            **item
-        } for i, item in enumerate(result['items'])]
-        ItemStatsWrapper.set_redis_result_if_exists("api_get_items_list_", query_params['category'], result,
-                                                    ex=60 * 60 * 12)
-        return better_jsonify(result)
+        return better_jsonify(ItemStatsWrapper.create_item_list(query_params))
+    api = RLGarageAPI()
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
 
 
