@@ -1,10 +1,12 @@
 import datetime
+import json
 
 from carball.generated.api.metadata import player_loadout_pb2
 from sqlalchemy import func, desc, literal
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Loadout, Game
+from backend.database.startup import lazy_get_redis
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field
 from backend.utils.rlgarage_handler import RLGarageAPI
 
@@ -14,6 +16,11 @@ class ItemResult:
         self.item_id = item_id
         self.item_paint = item_paint
         self.count = count
+
+
+def date_converter(o):
+    if isinstance(o, datetime.datetime) or isinstance(o, datetime.date):
+        return o.__str__()
 
 
 class ItemStatsWrapper:
@@ -54,6 +61,9 @@ class ItemStatsWrapper:
     @staticmethod
     @with_session
     def get_item_usage_over_time(id_, session):
+        result = ItemStatsWrapper.get_redis_result_if_exists("items_get_item_usage_over_time_", id_)
+        if result is not None:
+            return result
         category_map = {
             1: Loadout.car,
             2: Loadout.wheels,
@@ -92,16 +102,21 @@ class ItemStatsWrapper:
             .group_by(inner2.c.date).subquery()
         final = session.query(stats.c.date, stats.c.count, stats2.c.count) \
             .join(stats2, stats.c.date == stats2.c.date).order_by(stats.c.date)
-        return {'data': [
+        data = {'data': [
             {
                 'date': r[0],
                 'count': r[1],
                 'total': r[2]
             } for r in final.all()]
         }
+        ItemStatsWrapper.set_redis_result_if_exists("items_get_item_usage_over_time_", id_, data)
+        return data
 
     @staticmethod
     def get_most_used_by_column(field_name, session):
+        result = ItemStatsWrapper.get_redis_result_if_exists("items_get_most_used_by_column_", field_name)
+        if result is not None:
+            return result
         inner = session.query(Loadout) \
             .join(Game, Game.hash == Loadout.game) \
             .filter(Loadout.player != Game.primary_player) \
@@ -117,12 +132,17 @@ class ItemStatsWrapper:
             .order_by(desc('count'))
         stats = stats.all()
         stats = [s for s in stats if s[0] != 0]
+        ItemStatsWrapper.set_redis_result_if_exists("items_get_most_used_by_column_", field_name, stats)
         return stats
 
     @staticmethod
     @with_session
     def create_unpainted_stats(category=None, session=None):
-
+        key = category if category is not None else "None"
+        result = ItemStatsWrapper.get_redis_result_if_exists("items_create_unpainted_stats_",
+                                                             key)
+        if result is not None:
+            return result
         category_map = {
             'car': 1,
             'wheels': 2,
@@ -138,7 +158,9 @@ class ItemStatsWrapper:
         category_map_inv = {v: k for k, v in category_map.items()}
         if category is not None:
             stats = ItemStatsWrapper.get_most_used_by_column(category_map_inv[category], session)
-            return [ItemResult(*s).__dict__['item_id'] for s in stats]
+            stats = [ItemResult(*s).__dict__['item_id'] for s in stats]
+            ItemStatsWrapper.set_redis_result_if_exists("items_create_unpainted_stats_", key, stats)
+            return stats
 
         dynamic_field_list = create_and_filter_proto_field(player_loadout_pb2.PlayerLoadout, ['load_out_id', 'version'],
                                                            [],
@@ -150,7 +172,25 @@ class ItemStatsWrapper:
             stats = ItemStatsWrapper.get_most_used_by_column(dynamic_field.field_name, session)
             results = [ItemResult(*s).__dict__['item_id'] for s in stats]
             result_map[category_map[dynamic_field.field_name]] = results
+        ItemStatsWrapper.set_redis_result_if_exists("items_create_unpainted_stats_", key, result_map)
         return result_map
+
+    @staticmethod
+    def get_redis_result_if_exists(prefix: str, id_):
+        redis_key = prefix + str(id_)
+        r = lazy_get_redis()
+        if r is not None:
+            result = r.get(redis_key)
+            if result is not None:
+                return json.loads(result)
+        return None
+
+    @staticmethod
+    def set_redis_result_if_exists(prefix: str, id_: int or str, value):
+        redis_key = prefix + str(id_)
+        r = lazy_get_redis()
+        if r is not None:
+            r.set(redis_key, json.dumps(value, default=date_converter), ex=12 * 60 * 60)
 
 
 if __name__ == '__main__':
