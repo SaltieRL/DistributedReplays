@@ -60,9 +60,9 @@ class ItemStatsWrapper:
 
     @staticmethod
     @with_session
-    def get_item_usage_over_time(id_, session):
+    def get_item_usage_over_time(id_, session, override=False):
         result = ItemStatsWrapper.get_redis_result_if_exists("items_get_item_usage_over_time_", id_)
-        if result is not None:
+        if not override and result is not None:
             return result
         category_map = {
             1: Loadout.car,
@@ -116,9 +116,9 @@ class ItemStatsWrapper:
         return data
 
     @staticmethod
-    def get_most_used_by_column(field_name, session):
+    def get_most_used_by_column(field_name, session, override=False):
         result = ItemStatsWrapper.get_redis_result_if_exists("items_get_most_used_by_column_", field_name)
-        if result is not None:
+        if not override and result is not None:
             return result
         inner = session.query(Loadout) \
             .join(Game, Game.hash == Loadout.game) \
@@ -140,11 +140,11 @@ class ItemStatsWrapper:
 
     @staticmethod
     @with_session
-    def create_unpainted_stats(category=None, session=None):
+    def create_unpainted_stats(category=None, session=None, override=False):
         key = category if category is not None else "None"
         result = ItemStatsWrapper.get_redis_result_if_exists("items_create_unpainted_stats_",
                                                              key)
-        if result is not None:
+        if not override and result is not None:
             return result
         category_map = {
             'car': 1,
@@ -193,7 +193,7 @@ class ItemStatsWrapper:
         redis_key = prefix + str(id_)
         r = lazy_get_redis()
         if r is not None:
-            r.set(redis_key, json.dumps(value, default=date_converter), ex=12 * 60 * 60)
+            r.set(redis_key, json.dumps(value, default=date_converter))
 
 
 if __name__ == '__main__':

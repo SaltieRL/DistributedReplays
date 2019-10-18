@@ -19,6 +19,7 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
+from backend.utils.rlgarage_handler import RLGarageAPI
 
 try:
     from backend.tasks.training_packs.task import TrainingPackCreation
@@ -49,6 +50,7 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
     sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
     sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
+    sender.add_periodic_task(60 * 60 * 12, cache_item_stats.s(), name='cache item stats every 12 hours')
 
 
 def add_replay_parse_task(replay_to_parse_path, query_params: Dict[str, any] = None, **kwargs):
@@ -147,6 +149,39 @@ def create_manual_training_pack(self, requester_id, players, replays, frames, na
     return url
 
 
+@celery.task(base=DBTask, bind=True, priority=9)
+def cache_item_stats(self, session=None):
+    if session is None:
+        session = self.session()
+    api = RLGarageAPI()
+    items = api.get_item_list(0, 10000, override=True)['items']
+    category_map = {
+        'car': 1,
+        'wheels': 2,
+        'boost': 3,
+        'topper': 4,
+        'antenna': 5,
+        'skin': 6,
+        'trail': 9,
+        'goal_explosion': 10,
+        'banner': 11,
+        'engine_audio': 12,
+    }
+    for value in category_map.values():
+        ItemStatsWrapper.create_unpainted_stats(value, session=session, override=True)
+    for key in category_map:
+        ItemStatsWrapper.get_most_used_by_column(key, session=session, override=True)
+    for item in items:
+        id_ = item['ingameid']
+        if id_ is None:
+            continue
+        print("Item", item)
+        try:
+            ItemStatsWrapper.get_item_usage_over_time(id_, session=session, override=True)
+        except:
+            print("Error")
+
+
 class ResultState(Enum):
     PENDING = auto()
     STARTED = auto()
@@ -162,4 +197,4 @@ def get_task_state(id_) -> ResultState:
 
 if __name__ == '__main__':
     sess = lazy_startup()
-    calc_item_stats(None, session=sess())
+    cache_item_stats()

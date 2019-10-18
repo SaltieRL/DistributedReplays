@@ -119,8 +119,8 @@ class RLGarageAPI:
             item['image'] = f"https://rocket-league.com/content/media/items/avatar/220px/{item['image']}"
         return item
 
-    def get_item_list(self, page, limit):
-        if limit > 500:
+    def get_item_list(self, page, limit, override=False):
+        if not override and limit > 500:
             limit = 500
         return {
             'items': self.get_item_response(self.item_list[page * limit: (page + 1) * limit]),
