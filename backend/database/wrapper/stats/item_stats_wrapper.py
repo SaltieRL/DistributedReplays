@@ -120,6 +120,7 @@ class ItemStatsWrapper:
         return session.query(Loadout) \
             .join(Game, Game.hash == Loadout.game) \
             .filter(Loadout.player != Game.primary_player) \
+            .filter(Game.match_date > (datetime.datetime.now() - datetime.timedelta(days=30))) \
             .distinct(Loadout.player) \
             .count()
 
