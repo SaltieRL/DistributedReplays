@@ -699,7 +699,7 @@ def api_get_item_usage(query_params=None):
 
 @bp.route('/items/order')
 def api_get_item_order():
-    return better_jsonify(ItemStatsWrapper.create_unpainted_stats())
+    return better_jsonify(ItemStatsWrapper.create_unpainted_stats(counts=True))
 
 
 # ADMIN

@@ -167,6 +167,8 @@ def cache_item_stats(self, session=None):
         'banner': 11,
         'engine_audio': 12,
     }
+    ItemStatsWrapper.create_unpainted_stats(session=session, override=True)
+    ItemStatsWrapper.create_unpainted_stats(session=session, counts=True, override=True)
     for value in category_map.values():
         ItemStatsWrapper.create_unpainted_stats(value, session=session, override=True)
     for key in category_map:

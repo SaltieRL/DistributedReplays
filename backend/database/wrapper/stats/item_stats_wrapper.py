@@ -116,6 +116,14 @@ class ItemStatsWrapper:
         return data
 
     @staticmethod
+    def get_loadout_count(session):
+        return session.query(Loadout) \
+            .join(Game, Game.hash == Loadout.game) \
+            .filter(Loadout.player != Game.primary_player) \
+            .distinct(Loadout.player) \
+            .count()
+
+    @staticmethod
     def get_most_used_by_column(field_name, session, override=False):
         result = ItemStatsWrapper.get_redis_result_if_exists("items_get_most_used_by_column_", field_name)
         if not override and result is not None:
@@ -140,9 +148,9 @@ class ItemStatsWrapper:
 
     @staticmethod
     @with_session
-    def create_unpainted_stats(category=None, session=None, override=False):
+    def create_unpainted_stats(category=None, counts=False, session=None, override=False):
         key = category if category is not None else "None"
-        result = ItemStatsWrapper.get_redis_result_if_exists("items_create_unpainted_stats_",
+        result = ItemStatsWrapper.get_redis_result_if_exists(f"items_create_unpainted_stats_{counts}_",
                                                              key)
         if not override and result is not None:
             return result
@@ -170,12 +178,20 @@ class ItemStatsWrapper:
                                                            Loadout)
         dynamic_field_list = [field for field in dynamic_field_list if 'paint' not in field.field_name]
         result_map = {}
+        if counts:
+            total_count = ItemStatsWrapper.get_loadout_count(session)
+        else:
+            total_count = 1
 
         for dynamic_field in dynamic_field_list:
             stats = ItemStatsWrapper.get_most_used_by_column(dynamic_field.field_name, session)
-            results = [ItemResult(*s).__dict__['item_id'] for s in stats]
+            if counts:
+                stats = [[stat[0], stat[1], stat[2] / total_count] for stat in stats]
+                results = [ItemResult(*s).__dict__ for s in stats]
+            else:
+                results = [ItemResult(*s).__dict__['item_id'] for s in stats]
             result_map[category_map[dynamic_field.field_name]] = results
-        ItemStatsWrapper.set_redis_result_if_exists("items_create_unpainted_stats_", key, result_map)
+        ItemStatsWrapper.set_redis_result_if_exists(f"items_create_unpainted_stats_{counts}_", key, result_map)
         return result_map
 
     @staticmethod
