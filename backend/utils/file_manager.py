@@ -77,4 +77,4 @@ class FileManager:
             return open_lambda(item_path)
         except Exception as e:
             ErrorLogger.log_error(e)
-            raise ErrorOpeningGame(str(e))
+            raise ErrorOpeningGame(str(e), game_data=item_path)

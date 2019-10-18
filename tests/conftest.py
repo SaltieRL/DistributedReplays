@@ -5,7 +5,7 @@ from tests.utils.database_utils import default_player_id
 
 @pytest.fixture(autouse=True)
 def temp_folder(monkeypatch, tmpdir):
-    path = tmpdir.dirname
+    path = tmpdir
 
     def get_path():
         return path
@@ -24,7 +24,16 @@ def use_test_paths(monkeypatch, temp_folder):
             monkeypatch.setattr('backend.utils.file_manager.FileManager.get_default_parse_folder', get_path)
 
             monkeypatch.setattr('tests.utils.location_utils.TestFolderManager.get_internal_default_test_folder_location', get_path)
+
+        def get_temp_path(self):
+            return temp_folder
     return Patcher()
+
+@pytest.fixture()
+def temp_file(tmpdir):
+    temp_file = tmpdir.mkdir("sub").join("hello.txt")
+    temp_file.write("content")
+    return temp_file
 
 
 @pytest.fixture(autouse=True)
