@@ -3,7 +3,11 @@ import {
     CardActionArea,
     CardMedia,
     createStyles,
-    Grid, Paper, Tab, Tabs, TextField,
+    Grid,
+    Paper,
+    Tab,
+    Tabs,
+    TextField,
     Typography,
     withStyles,
     WithStyles
@@ -17,6 +21,7 @@ import { ITEMS_LINK } from "../../Globals"
 import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
 import { StoreState } from "../../Redux"
 import { getItemGraph, getItemInfo, getItems } from "../../Requests/Global"
+import { roundNumberToMaxDP } from "../../Utils/String"
 import { ItemDisplay } from "../ItemStats/ItemDisplay"
 import { ItemStatsGraph } from "../ItemStats/ItemStatsGraph"
 import { ItemStatsUsers } from "../ItemStats/ItemStatsUsers"
@@ -186,7 +191,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                         {filteredList.map((item: Item) => {
                             return (
                                 <Grid item xs={6} sm={2} lg={1} key={item.ingameid}>
-                                    <Card className={classes.itemListCard}>
+                                    <Card className={classes.itemListCard} style={{position: "relative"}}>
                                         <CardActionArea onClick={() => {
                                             this.selectItem(item)
                                         }}>
@@ -196,7 +201,22 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                                                 title={item.name}
                                             />
                                         </CardActionArea>
+
+                                        <div style={{
+                                            position: "absolute",
+                                            top: 3,
+                                            right: 3,
+                                            zIndex: 1000,
+                                            background: "#0089d2",
+                                            padding: "2px 5px 0px",
+                                            borderRadius: "15px"
+                                        }}>
+                                            <Typography style={{color: "white"}}>
+                                                {item.count && roundNumberToMaxDP(item.count * 100, 1)}%
+                                            </Typography>
+                                        </div>
                                     </Card>
+
                                 </Grid>
                             )
                         })}
@@ -224,7 +244,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
 
     private readonly getItems = (): Promise<void> => {
         return getItems(this.state.page, this.state.limit, this.state.category)
-            .then((packs: ItemListResponse) => this.setState({itemList: packs}))
+            .then((result) => this.setState({itemList: result}))
     }
 
     private readonly getItem = (): Promise<void> => {
@@ -236,7 +256,6 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
             this.setState({itemData: undefined})
         })
     }
-
     private readonly selectItem = (item: Item) => {
         this.setState({
                 itemData: undefined,

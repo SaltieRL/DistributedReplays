@@ -8,6 +8,7 @@ interface Item {
     ingameid: number
     name: string
     rarity: number
+    count?: number
 }
 
 export interface ItemFull {
@@ -32,6 +33,7 @@ export interface ItemFull {
     translations: any
     unlockmethod: number
 }
+
 export interface ItemUsage {
     data: ItemDataPoint[]
 }
