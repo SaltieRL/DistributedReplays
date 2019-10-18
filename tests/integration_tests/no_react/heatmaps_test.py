@@ -38,7 +38,7 @@ class Test_Heatmaps:
         }
         r = requests.post(LOCAL_URL + '/api/upload/proto', json=obj)
         r.raise_for_status()
-        assert(r.status_code == 202)
+        assert(r.status_code == 200)
 
         time.sleep(5)
 
