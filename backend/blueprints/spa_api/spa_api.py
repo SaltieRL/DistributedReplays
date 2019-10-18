@@ -686,12 +686,9 @@ def get_endpoint_documentation():
     QueryParam(name='limit', type_=int, optional=False)
 ])
 def api_get_items_list(query_params=None):
-    api = RLGarageAPI()
     if 'category' in query_params:
-        order = ItemStatsWrapper.create_unpainted_stats(query_params['category'])
-        return better_jsonify(
-            api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit'],
-                                          order=order))
+        return better_jsonify(ItemStatsWrapper.create_item_list(query_params))
+    api = RLGarageAPI()
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
 
 
@@ -713,8 +710,14 @@ def api_get_item_usage(query_params=None):
 
 
 @bp.route('/items/order')
-def api_get_item_order():
-    return better_jsonify(ItemStatsWrapper.create_unpainted_stats())
+@with_query_params(accepted_query_params=[
+    QueryParam(name='category', type_=str, optional=True)
+])
+def api_get_item_order(query_params):
+    stats = ItemStatsWrapper.create_unpainted_stats(counts=True)
+    if query_params['category'] is not None:
+        stats = stats[str(query_params['category'])]
+    return better_jsonify(stats)
 
 
 # ADMIN

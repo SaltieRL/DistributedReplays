@@ -14,7 +14,7 @@ class LoadoutItem:
         if id_ == 0:
             return LoadoutItem("None", "", 0, 0)
         try:
-            item = api.get_item_info(id_, paint_id)
+            item = api.get_item(id_, paint_id)
         except Exception as e:
             print("Error with loadout", e)
             return LoadoutItem("Unknown", "", 0, 0)
