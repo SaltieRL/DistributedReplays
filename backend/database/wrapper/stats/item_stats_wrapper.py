@@ -87,6 +87,7 @@ class ItemStatsWrapper:
             .filter(loadout_item == id_) \
             .filter(Loadout.player != Game.primary_player) \
             .filter(date >= datetime.date(2019, 9, 13)) \
+            .filter(date < datetime.date.fromtimestamp(datetime.datetime.utcnow().timestamp())) \
             .group_by(date, Loadout.player, loadout_item) \
             .subquery()
         inner2 = session.query(date.label('date'),
