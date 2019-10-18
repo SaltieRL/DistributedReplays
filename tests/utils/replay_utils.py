@@ -7,7 +7,7 @@ from carball import analyze_replay_file
 
 from tests.utils.location_utils import get_test_replay_folder, TestFolderManager
 from backend.utils.parsing_manager import write_replay_to_disk
-from utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION
+from backend.utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION
 
 
 def get_test_file(file_name, temp_folder=None, is_replay=False):

@@ -8,10 +8,10 @@ import requests
 
 from RLBotServer import start_server
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
-from tasks.add_replay import save_replay
+from backend.tasks.add_replay import save_replay
 from tests.utils.killable_thread import KillableThread
 from tests.utils.replay_utils import write_proto_pandas_to_file, get_test_file, download_replay_discord
-from utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION
+from backend.utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION
 
 LOCAL_URL = 'http://localhost:8000'
 
