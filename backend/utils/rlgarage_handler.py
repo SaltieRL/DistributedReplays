@@ -69,7 +69,7 @@ class RLGarageAPI:
         category_map = {}
         for item in data.values():
             try:
-                items[item['ingameid']] = self.parse_item(item)
+                items[item['ingameid']] = item
             except Exception as e:
                 print("Error", e)
             try:
@@ -108,11 +108,8 @@ class RLGarageAPI:
             r.set("rlgarage_category_map", json.dumps(category_map), ex=60 * 60 * 24)
         return items, category_map
 
-    def get_item_info(self, id_, paint_id=0):
-        item = self.item_map[id_]
-        return self.parse_item(item, paint_id)
-
-    def parse_item(self, item, paint_id=0):
+    def get_item(self, id_, paint_id=0):
+        item = self.item_map[str(id_)]
         if paint_id > 0 and item['hascoloredicons'] == 1:
             pic = item['name'].replace(' ', '').replace('\'', '').lower()
             paint_name = self.paint_map[paint_id]
@@ -121,9 +118,6 @@ class RLGarageAPI:
         else:
             item['image'] = f"https://rocket-league.com/content/media/items/avatar/220px/{item['image']}"
         return item
-
-    def get_item(self, id_):
-        return self.item_map[str(id_)]
 
     def get_item_list(self, page, limit):
         if limit > 500:
@@ -138,10 +132,10 @@ class RLGarageAPI:
         if limit > 500:
             limit = 500
         if order is not None:
-            items = self.item_map
             return {
                 'items': self.get_item_response(
-                    [items[str(i)] for i in order[page * limit: (page + 1) * limit] if str(i) in items]),
+                    [self.get_item(str(i)) for i in order[page * limit: (page + 1) * limit] if
+                     str(i) in self.item_map]),
                 'count': len(self.category_map[category])
             }
         return {
