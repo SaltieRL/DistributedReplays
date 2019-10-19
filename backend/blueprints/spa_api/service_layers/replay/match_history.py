@@ -7,6 +7,7 @@ from backend.database.objects import Game
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_wrapper
+from blueprints.spa_api.service_layers.replay.json_tag import JsonTag
 
 
 class MatchHistory:
@@ -26,7 +27,13 @@ class MatchHistory:
     @staticmethod
     @with_session
     def create_with_filters(page: int, limit: int, session=None, **kwargs) -> 'MatchHistory':
+        tags = JsonTag.get_tags_from_query_params(**kwargs, session=session)
+
         builder = QueryFilterBuilder().as_game()
+
+        if len(tags) > 0:
+            builder.with_tags([tag.id for tag in tags])
+
         QueryFilterBuilder.apply_arguments_to_query(builder, kwargs)
         query = builder.build_query(session)
 

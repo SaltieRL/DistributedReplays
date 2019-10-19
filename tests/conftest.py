@@ -113,18 +113,30 @@ def mock_user(dynamic_monkey_patcher):
 
     class MockUser:
         def __init__(self):
+            self.logged_out = False
             self.user = Player(platformid=default_player_id(), platformname="default")
 
-        def get_fake_user(self) -> Player:
+        def get_user(self) -> Player:
+            if self.logged_out:
+                return None
             return self.user
 
-        def set_fake_user(self, user: Player):
+        def set_user_id(self, user_id: str):
+            self.user = Player(platformid=user_id)
+
+        def set_user(self, user: Player):
             self.user = user
+
+        def logout(self):
+            self.logged_out = True
+
+        def login(self):
+            self.logged_out = False
 
     mock_user = MockUser()
 
     from backend.utils.safe_flask_globals import UserManager
-    dynamic_monkey_patcher.patch_object(UserManager, 'get_current_user', mock_user.get_fake_user)
+    dynamic_monkey_patcher.patch_object(UserManager, 'get_current_user', mock_user.get_user)
 
     return mock_user
 

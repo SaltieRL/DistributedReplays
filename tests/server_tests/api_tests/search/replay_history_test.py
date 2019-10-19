@@ -1,6 +1,7 @@
 from requests import Request
 
 from backend.database.objects import Game
+from blueprints.spa_api.service_layers.replay.json_tag import JsonTag
 from tests.utils.location_utils import LOCAL_URL
 from tests.utils.test_utils import check_array_equal
 
@@ -12,6 +13,22 @@ class TestReplayHistory:
 
         response = test_client.send(r)
         assert(response.status_code == 400)
+
+    def test_get_replays_not_logged_in_fails(self, test_client, mock_user):
+        mock_user.logout()
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
+                                                              'tag_names': ['one']})
+
+        response = test_client.send(r)
+        assert(response.status_code == 401)
+
+    def test_get_replays_none_in_server(self, test_client):
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0})
+
+        response = test_client.send(r)
+        assert(response.status_code == 200)
+        data = response.json
+        assert data['totalCount'] == len(data['replays']) == 0
 
     def test_get_all_replays(self, initialize_database_tags, test_client):
         session = initialize_database_tags.get_session()
@@ -142,22 +159,19 @@ class TestReplayHistory:
         r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
                                                               'team_size': 2})
 
-
         response = test_client.send(r)
         assert(response.status_code == 200)
         data = response.json
 
         assert data['totalCount'] == len(data['replays']) == 3
 
-    def test_get_all_replays_with_tags(self, initialize_database_tags, test_client):
-        query_player = ['76561197998150808', '76561198041178440']
-        session = initialize_database_tags.get_session()
+    def test_get_all_replays_with_tags(self, initialize_database_tags, test_client, mock_user):
+
         tags = initialize_database_tags.get_tags()
         tagged_games = initialize_database_tags.get_tagged_games()
+        tag_name = tags[0][0]
         r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
-                                                              'player_ids': query_player})
-
-        games = session.query(Game).all()
+                                                              'tag_names': tag_name})
 
         response = test_client.send(r)
         assert(response.status_code == 200)
@@ -165,10 +179,77 @@ class TestReplayHistory:
 
         # Check that every player we are querying exists in the replay, and no extras.
         for replay in data['replays']:
-            player_count = []
-            for players in replay['players']:
-                if players['id'] in query_player:
-                    player_count.append(players['id'])
-            check_array_equal(player_count, query_player)
+            assert replay['id'] in tagged_games[tag_name]
 
         assert data['totalCount'] == len(data['replays']) == 5
+
+    def test_get_all_replays_with_tags_do_union(self, initialize_database_tags, test_client, mock_user):
+        tags = initialize_database_tags.get_tags()
+        tagged_games = initialize_database_tags.get_tagged_games()
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
+                                                              'tag_names': [tags[-1][0], tags[-2][0]]})
+
+        response = test_client.send(r)
+        assert(response.status_code == 200)
+        data = response.json
+
+        assert data['totalCount'] != len(data['replays']) == 5
+
+    def test_get_all_replays_with_tags_inside(self, initialize_database_tags, test_client, mock_user):
+        tags = initialize_database_tags.get_tags()
+        tagged_games = initialize_database_tags.get_tagged_games()
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
+                                                              'tag_names': [tags[0][0], tags[1][0]]})
+
+        response = test_client.send(r)
+        assert(response.status_code == 200)
+        data = response.json
+
+        assert data['totalCount'] != len(data['replays']) == 5
+
+    def test_get_all_replays_with_tags_no_overlap(self, initialize_database_tags, test_client, mock_user):
+        tags = initialize_database_tags.get_tags()
+        tagged_games = initialize_database_tags.get_tagged_games()
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
+                                                              'tag_names': [tags[0][0], tags[3][0]]})
+
+        response = test_client.send(r)
+        assert(response.status_code == 200)
+        data = response.json
+
+        assert data['totalCount'] == len(data['replays']) == 9
+
+    def test_get_all_replays_with_tags_private_id(self, initialize_database_tags, test_client, mock_user):
+        tags = initialize_database_tags.get_tags()
+        tagged_games = initialize_database_tags.get_tagged_games()
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
+                                                              'private_tag_keys': [tags[0][3]]})
+
+        response = test_client.send(r)
+        assert(response.status_code == 200)
+        data = response.json
+
+        assert data['totalCount'] == len(data['replays']) == 5
+
+    def test_get_all_replays_with_tags_private_id_and_name(self, initialize_database_tags, test_client, mock_user):
+        tags = initialize_database_tags.get_tags()
+        tagged_games = initialize_database_tags.get_tagged_games()
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
+                                                              'tag_names': [tags[3][0]],
+                                                              'private_tag_keys': [tags[0][3], tags[2][3]]})
+
+        response = test_client.send(r)
+        assert(response.status_code == 200)
+        data = response.json
+
+        assert data['totalCount'] == len(data['replays']) == 10
+
+    def test_get_all_replays_with_tags_invalid_private_id(self, initialize_database_tags, test_client, mock_user):
+        tags = initialize_database_tags.get_tags()
+        tagged_games = initialize_database_tags.get_tagged_games()
+        invalid_private_id = JsonTag.encode_tag(2, 'invalid_key')
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
+                                                              'private_tag_keys': [invalid_private_id]})
+
+        response = test_client.send(r)
+        assert(response.status_code == 400)

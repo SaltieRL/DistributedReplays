@@ -63,7 +63,8 @@ replay_search_query_params = [
     QueryParam(name='max_length', optional=True, type_=float),
     QueryParam(name='map', optional=True),
     QueryParam(name='tag_names', optional=True, type_=str, is_list=True,
-               tip='User mused be logged in to use this parameter')
+               tip='User mused be logged in to use this parameter',
+               require_user=True)
 ] + tag_params + pagination_query_params
 
 

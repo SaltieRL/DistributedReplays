@@ -1,9 +1,9 @@
 import base64
 import urllib
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.blueprints.spa_api.errors.errors import TagNotFound, TagError, TagKeyError
+from backend.blueprints.spa_api.errors.errors import TagNotFound, TagError, TagKeyError, AuthorizationException
 from backend.database.objects import Tag as DBTag
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 from backend.utils.safe_flask_globals import get_current_user_id
@@ -136,7 +136,7 @@ class JsonTag:
         return urllib.parse.quote(base64.b85encode(merged.encode(encoding="utf-8")).decode('utf-8'))
 
     @staticmethod
-    def decode_tag(encoded_key: str):
+    def decode_tag(encoded_key: str) -> Tuple[int, str]:
         decoded_key_bytes = base64.b85decode(urllib.parse.unquote(encoded_key).encode('utf-8'))
 
         try:
@@ -148,6 +148,30 @@ class JsonTag:
         tag_id = int(decoded_key[0: first_index]) - 1000
         decoded_private_id = decoded_key[first_index + 1:]
         return tag_id, decoded_private_id
+
+    @staticmethod
+    @with_session
+    def get_tag_by_key(private_key: str, session=None) -> DBTag:
+        tag_id, decoded_private_id = JsonTag.decode_tag(private_key)
+        tag = TagWrapper.get_tag_by_id(session, tag_id)
+        if tag.private_id != decoded_private_id:
+            raise TagKeyError(private_key, AuthorizationException())
+        return tag
+
+    @staticmethod
+    @with_session
+    def get_tags_from_query_params(tag_names: List[str] = (),
+                                   private_tag_keys: List[str] = (),
+                                   session=None) -> List[DBTag]:
+        tags = []
+        user_id = get_current_user_id()
+        for tag_name in tag_names:
+            tags.append(TagWrapper.get_tag_by_name(session, user_id, tag_name))
+
+        for private_key in private_tag_keys:
+            tags.append(JsonTag.get_tag_by_key(private_key, session=session))
+
+        return tags
 
 
 @with_session

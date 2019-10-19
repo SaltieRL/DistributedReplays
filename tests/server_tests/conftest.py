@@ -288,25 +288,6 @@ def make_celery_testable(monkeypatch):
 
 
 @pytest.fixture()
-def fake_user(dynamic_monkey_patcher):
-
-    fake_user = None
-
-    def get_fake_user():
-        return fake_user
-
-    class FakeUser:
-        def setUser(self, platformId):
-            nonlocal fake_user
-            fake_user = Player(platformid=platformId)
-
-    from backend.utils.safe_flask_globals import UserManager
-    dynamic_monkey_patcher.patch_object(UserManager, 'get_current_user', get_fake_user)
-
-    return FakeUser()
-
-
-@pytest.fixture()
 def fake_file_locations(dynamic_monkey_patcher, temp_folder):
 
     def get_replay_func(ext):
