@@ -29,6 +29,7 @@ class MatchHistory:
     def create_with_filters(page: int, limit: int, session=None, **kwargs) -> 'MatchHistory':
         tags = JsonTag.get_tags_from_query_params(**kwargs, session=session)
 
+
         builder = QueryFilterBuilder().as_game()
 
         if len(tags) > 0:

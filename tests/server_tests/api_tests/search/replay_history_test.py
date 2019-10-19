@@ -2,6 +2,7 @@ from requests import Request
 
 from backend.database.objects import Game
 from blueprints.spa_api.service_layers.replay.json_tag import JsonTag
+from database.wrapper.tag_wrapper import TagWrapper
 from tests.utils.location_utils import LOCAL_URL
 from tests.utils.test_utils import check_array_equal
 
@@ -220,10 +221,12 @@ class TestReplayHistory:
         assert data['totalCount'] == len(data['replays']) == 9
 
     def test_get_all_replays_with_tags_private_id(self, initialize_database_tags, test_client, mock_user):
+        session = initialize_database_tags.get_session()
         tags = initialize_database_tags.get_tags()
         tagged_games = initialize_database_tags.get_tagged_games()
+        encoded_key_0 = JsonTag.get_encoded_private_key(tags[0][0], session=session)
         r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
-                                                              'private_tag_keys': [tags[0][3]]})
+                                                              'private_tag_keys': [encoded_key_0]})
 
         response = test_client.send(r)
         assert(response.status_code == 200)
@@ -232,22 +235,27 @@ class TestReplayHistory:
         assert data['totalCount'] == len(data['replays']) == 5
 
     def test_get_all_replays_with_tags_private_id_and_name(self, initialize_database_tags, test_client, mock_user):
+        session = initialize_database_tags.get_session()
         tags = initialize_database_tags.get_tags()
         tagged_games = initialize_database_tags.get_tagged_games()
+        encoded_key_0 = JsonTag.get_encoded_private_key(tags[0][0], session=session)
+        encoded_key_2 = JsonTag.get_encoded_private_key(tags[2][0], session=session)
         r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
                                                               'tag_names': [tags[3][0]],
-                                                              'private_tag_keys': [tags[0][3], tags[2][3]]})
+                                                              'private_tag_keys': [encoded_key_0, encoded_key_2]})
 
         response = test_client.send(r)
         assert(response.status_code == 200)
         data = response.json
 
-        assert data['totalCount'] == len(data['replays']) == 10
+        assert data['totalCount'] != len(data['replays']) == 10
 
     def test_get_all_replays_with_tags_invalid_private_id(self, initialize_database_tags, test_client, mock_user):
+        session = initialize_database_tags.get_session()
         tags = initialize_database_tags.get_tags()
-        tagged_games = initialize_database_tags.get_tagged_games()
-        invalid_private_id = JsonTag.encode_tag(2, 'invalid_key')
+
+        tag_id = TagWrapper.get_tag_by_name(session, mock_user.get_user().platformid, tags[0][0]).id
+        invalid_private_id = JsonTag.encode_tag(tag_id, 'invalid_key')
         r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
                                                               'private_tag_keys': [invalid_private_id]})
 

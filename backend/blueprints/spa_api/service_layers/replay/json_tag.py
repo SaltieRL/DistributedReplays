@@ -162,7 +162,7 @@ class JsonTag:
     @with_session
     def get_tags_from_query_params(tag_names: List[str] = (),
                                    private_tag_keys: List[str] = (),
-                                   session=None) -> List[DBTag]:
+                                   session=None, **kwargs) -> List[DBTag]:
         tags = []
         user_id = get_current_user_id()
         for tag_name in tag_names:
