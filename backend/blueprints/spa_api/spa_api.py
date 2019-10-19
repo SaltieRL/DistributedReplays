@@ -22,19 +22,18 @@ from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
-from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
-from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
+from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.utils.logger import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
-from backend.utils.metrics import MetricsHandler
+from backend.utils.metrics import MetricsHandler, add_saved_replay
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.utils.safe_flask_globals import get_current_user_id
@@ -64,7 +63,7 @@ except:
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting, TrainingPack, ReplayLog, ReplayResult
+from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
@@ -410,7 +409,7 @@ def api_upload_replays(query_params=None):
         file.seek(0)
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
-        create_replay_task(file, filename, ud, task_ids, query_params)
+        celery_tasks.create_replay_task(file, filename, ud, task_ids, query_params)
 
     if len(errors) == 1:
         raise errors[0]
@@ -438,7 +437,8 @@ def api_upload_proto(session=None, query_params=None):
 
     # Process
     try:
-        parsed_replay_processing(protobuf_game, query_params=query_params)
+        match_exists = parsed_replay_processing(protobuf_game, query_params=query_params)
+        add_saved_replay(match_exists)
     except Exception as e:
         payload['stack'] = traceback.format_exc()
         payload['error_type'] = type(e).__name__

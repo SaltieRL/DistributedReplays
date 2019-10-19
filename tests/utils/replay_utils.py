@@ -1,3 +1,4 @@
+import gzip
 import os
 import tempfile
 
@@ -6,6 +7,7 @@ from carball import analyze_replay_file
 
 from tests.utils.location_utils import get_test_replay_folder, TestFolderManager
 from backend.utils.parsing_manager import write_replay_to_disk
+from backend.utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION
 
 
 def get_test_file(file_name, temp_folder=None, is_replay=False):
@@ -40,12 +42,17 @@ def parse_file(analysis_manager, temp_folder=None):
 
 def write_proto_pandas_to_file(filename):
     proto_manager = analyze_replay_file(filename)
+
     _, proto_name = tempfile.mkstemp(dir=TestFolderManager.get_test_folder())
+    proto_name = proto_name + PROTO_EXTENSION
     with open(proto_name, 'wb') as f:
         proto_manager.write_proto_out_to_file(f)
+
     _, pandas_name = tempfile.mkstemp(dir=TestFolderManager.get_test_folder())
-    with open(pandas_name, 'wb') as f:
+    pandas_name = pandas_name + PANDAS_EXTENSION
+    with gzip.open(pandas_name, 'wb') as f:
         proto_manager.write_pandas_out_to_file(f)
+
     return proto_name, pandas_name, proto_manager.protobuf_game
 
 

@@ -1,13 +1,17 @@
+import base64
 import json
 import logging
 import time
+import zlib
 
 import requests
 
 from RLBotServer import start_server
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
+from backend.tasks.add_replay import save_replay
 from tests.utils.killable_thread import KillableThread
 from tests.utils.replay_utils import write_proto_pandas_to_file, get_test_file, download_replay_discord
+from backend.utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION
 
 LOCAL_URL = 'http://localhost:8000'
 
@@ -24,16 +28,25 @@ class Test_Heatmaps:
         time.sleep(5)
         print('done waiting')
 
-    def test_heatmaps(self):
+    def test_heatmaps(self, use_test_paths, temp_file):
+        use_test_paths.patch()
+
+        test_path = use_test_paths.get_temp_path()
+
         proto, pandas, proto_game = write_proto_pandas_to_file(get_test_file("ALL_STAR.replay",
                                                                              is_replay=True))
 
-        f = download_replay_discord("ALL_STAR.replay")
-        r = requests.post(LOCAL_URL + '/api/upload', files={'replays': ('fake_file.replay', f)})
+        with open(proto, 'rb') as f:
+            encoded_proto = base64.b64encode(zlib.compress(f.read())).decode()
+        obj = {
+            'status': '200',
+            'proto': encoded_proto
+        }
+        r = requests.post(LOCAL_URL + '/api/upload/proto', json=obj)
         r.raise_for_status()
-        assert(r.status_code == 202)
+        assert(r.status_code == 200)
 
-        time.sleep(35)
+        save_replay(proto_game, temp_file, pandas[:-len(PANDAS_EXTENSION)], proto[:-len(PROTO_EXTENSION)])
 
         r = requests.get(LOCAL_URL + '/api/global/replay_count')
         result = json.loads(r.content)
