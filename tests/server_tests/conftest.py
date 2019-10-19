@@ -10,7 +10,7 @@ from testing import postgresql
 
 from backend.database.objects import Player
 from tests.utils.database_utils import create_initial_mock_database, add_initial_player, empty_database, \
-    initialize_db_with_replays
+    initialize_db_with_replays, initialize_db_with_parsed_replays, default_player_id
 from tests.utils.replay_utils import clear_dir
 from tests.utils.test_utils import function_result_creator
 
@@ -115,6 +115,63 @@ def fake_db(monkeypatch, session, fake_redis):
     monkeypatch.setattr('backend.database.startup.EngineStartup.get_strict_redis', fake_redis)
 
     return local_alchemy
+
+
+@pytest.fixture()
+def initialize_database_small_replays(fake_db, parse_small_replays):
+    proto_games = parse_small_replays.get_protos()
+    session = fake_db()
+    session = initialize_db_with_parsed_replays(proto_games, session=session)
+
+    class wrapper:
+        def get_session(self):
+            return session
+        def get_protos(self):
+            return parse_small_replays.get_protos()
+        def get_ids(self):
+            return parse_small_replays.get_guids()
+
+    return wrapper()
+
+
+@pytest.fixture()
+def initialize_database_tags(initialize_database_small_replays):
+    from blueprints.spa_api.service_layers.replay.json_tag import JsonTag
+    from database.wrapper.tag_wrapper import TagWrapper
+
+    session = initialize_database_small_replays.get_session()
+    replay_ids = initialize_database_small_replays.get_ids()
+
+    tags = [("tag1", 0, 5, "private_id1"),  # grabs the first 5 replays in the list
+            ("tag2", 2, 2, None),  # starts at the 2nd replay and then gets the next 2
+            ("tag3", -5, 4, "private_id2"),  # grabs the last 4 replays in the list
+            ("tag4", -6, 4, None),  # starts 6 back from the end and grabs 4 replays
+            ]
+
+    tagged_games = {}
+    for tag in tags:
+        tagged_games[tag[0]] = []
+
+        created_tag = JsonTag.create(tag[0], session=session, player_id=default_player_id(), private_id=tag[3])
+        game_ids = replay_ids[tag[1]: tag[1] + tag[2]]
+        for game_id in game_ids:
+            tagged_games[tag[0]].append(game_id)
+            TagWrapper.add_tag_to_game(session, game_id, created_tag.db_tag)
+
+    class wrapper:
+        def get_session(self):
+            return session
+        def get_protos(self):
+            return initialize_database_small_replays.get_protos()
+        def get_ids(self):
+            return replay_ids
+        def get_tags(self):
+            return tags
+        def get_tagged_games(self):
+            return tagged_games
+
+    return wrapper()
+
 
 
 @pytest.fixture()

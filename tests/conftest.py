@@ -1,7 +1,7 @@
 import pytest
 
 from tests.utils.database_utils import default_player_id
-from utils.replay_utils import get_small_replays, parse_replays
+from tests.utils.replay_utils import get_small_replays, parse_replays
 
 
 @pytest.fixture()

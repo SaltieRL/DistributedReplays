@@ -40,7 +40,8 @@ def initialize_db():
 
 def initialize_db_with_replays(replay_list, session=None, temp_folder=None):
     protos, guids, replay_paths = parse_replays(replay_list, temp_folder=temp_folder)
-    initialize_db_with_parsed_replays(protos, session)
+    session = initialize_db_with_parsed_replays(protos, session)
+    return session, protos, guids
 
 
 def initialize_db_with_parsed_replays(parsed_replays, session=None):
@@ -50,6 +51,8 @@ def initialize_db_with_parsed_replays(parsed_replays, session=None):
 
     for proto in parsed_replays:
         add_objects(proto, session=session)
+
+    return session
 
 
 
