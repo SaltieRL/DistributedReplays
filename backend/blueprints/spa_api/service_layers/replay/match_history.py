@@ -26,12 +26,11 @@ class MatchHistory:
     @staticmethod
     @with_session
     def create_with_filters(page: int, limit: int, session=None, **kwargs) -> 'MatchHistory':
-        # TODO: move this somewhere else and make it reusable
-        if limit > 100:
-            limit = 100
-        builder = QueryFilterBuilder().as_game().with_stat_query([Game])
+        builder = QueryFilterBuilder().as_game()
         QueryFilterBuilder.apply_arguments_to_query(builder, kwargs)
         query = builder.build_query(session)
+
+        games = session.query(Game).all()
 
         if 'min_length' in kwargs:
             query = query.filter(Game.length > kwargs['min_length'])
@@ -39,7 +38,7 @@ class MatchHistory:
             query = query.filter(Game.length < kwargs['max_length'])
         if 'map' in kwargs:
             query = query.filter(Game.map == kwargs['map'])
-        count = query.count()
+        count = query.all()
         games = query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
         matches = MatchHistory(count, [Replay.create_from_game(game) for game in games])
         return matches

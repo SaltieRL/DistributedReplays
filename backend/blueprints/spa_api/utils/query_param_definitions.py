@@ -46,9 +46,13 @@ player_id = [QueryParam(name='player_id', optional=True, type_=str)]
 upload_file_query_params = player_id + visibility_params + tag_params
 
 
-replay_search_query_params = [
+pagination_query_params = [
     QueryParam(name='page', type_=int),
-    QueryParam(name='limit', type_=int),
+    QueryParam(name='limit', type_=lambda param: min(100, int(param))),
+]
+
+
+replay_search_query_params = [
     QueryParam(name='player_ids', optional=True, is_list=True),
     QueryParam(name='playlists', optional=True, is_list=True, type_=int),
     QueryParam(name='rank', optional=True, type_=int),
@@ -58,7 +62,9 @@ replay_search_query_params = [
     QueryParam(name='min_length', optional=True, type_=float),
     QueryParam(name='max_length', optional=True, type_=float),
     QueryParam(name='map', optional=True),
-]
+    QueryParam(name='tag_names', optional=True, type_=str, is_list=True,
+               tip='User mused be logged in to use this parameter')
+] + tag_params + pagination_query_params
 
 
 progression_query_params = [

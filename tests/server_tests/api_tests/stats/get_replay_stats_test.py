@@ -3,8 +3,7 @@ from requests import Request
 from backend.database.objects import Game
 from backend.database.startup import get_current_session
 from tests.utils.database_utils import initialize_db_with_replays
-
-LOCAL_URL = 'http://localhost:8000'
+from tests.utils.location_utils import LOCAL_URL
 
 
 class Test_edit_private_replay:

@@ -45,6 +45,7 @@ def initialize_db_with_replays(replay_list, session=None, temp_folder=None):
     guids = []
     protos = []
     for replay in replay_list:
+        print('initialing ' + replay)
         replay, proto, guid = parse_file(replay, temp_folder=temp_folder)
         add_objects(proto, session=session)
         guids.append(guid)

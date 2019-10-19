@@ -2,7 +2,7 @@ from typing import List, cast
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, Redirect
 from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
-from backend.blueprints.spa_api.service_layers.replay.tag import Tag
+from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
 from backend.blueprints.spa_api.service_layers.utils import sort_player_games_by_team_then_id, with_session
 from backend.data.constants.playlist import get_playlist
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
@@ -22,7 +22,7 @@ class GameScore:
 class Replay:
     def __init__(self, id_: str, name: str, date: str, map: str,
                  game_mode: str, game_score: GameScore,
-                 players: List[ReplayPlayer], tags: List[Tag], visibility: GameVisibilitySetting,
+                 players: List[ReplayPlayer], tags: List[JsonTag], visibility: GameVisibilitySetting,
                  ranks: List[int], mmrs: List[int]):
         self.id = id_
         self.name = name
@@ -63,7 +63,7 @@ class Replay:
                     cast(List[PlayerGame], game.playergames))
             ],
             tags=[
-                Tag.create_from_dbtag(tag)
+                JsonTag.create_from_dbtag(tag)
                 for tag in game.tags if tag.owner == get_current_user_id()
             ],
             visibility=game.visibility,

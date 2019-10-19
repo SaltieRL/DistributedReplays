@@ -88,7 +88,6 @@ def fake_db(monkeypatch, session, fake_redis):
     Allows for a replacement mock if a replacement engine is needed.
     :return: the initial instance of the database
     """
-    from backend.database.startup import EngineStartup
 
     local_alchemy = session
 
@@ -101,8 +100,8 @@ def fake_db(monkeypatch, session, fake_redis):
 
     def fake_session_instance():
         return local_alchemy()
-    monkeypatch.setattr(EngineStartup, 'startup', fake_startup)
-    monkeypatch.setattr(EngineStartup, 'get_current_session', fake_session_instance)
+    monkeypatch.setattr('backend.database.startup.EngineStartup.startup', fake_startup)
+    monkeypatch.setattr('backend.database.startup.EngineStartup.get_current_session', fake_session_instance)
 
     # Add redis
     local_redis = fake_redis
@@ -112,8 +111,8 @@ def fake_db(monkeypatch, session, fake_redis):
             nonlocal local_redis
             local_redis = replacement
         return local_redis
-    monkeypatch.setattr(EngineStartup, 'get_redis', fake_redis)
-    monkeypatch.setattr(EngineStartup, 'get_strict_redis', fake_redis)
+    monkeypatch.setattr('backend.database.startup.EngineStartup.get_redis', fake_redis)
+    monkeypatch.setattr('backend.database.startup.EngineStartup.get_strict_redis', fake_redis)
 
     return local_alchemy
 
@@ -230,8 +229,9 @@ def make_celery_testable(monkeypatch):
     monkeypatch.setattr('backend.tasks.celeryconfig.task_always_eager', True, raising=False)
     monkeypatch.setattr('backend.tasks.celeryconfig.task_eager_propagates', True, raising=False)
 
+
 @pytest.fixture()
-def fake_user(monkeypatch):
+def fake_user(dynamic_monkey_patcher):
 
     fake_user = None
 
@@ -243,18 +243,24 @@ def fake_user(monkeypatch):
             nonlocal fake_user
             fake_user = Player(platformid=platformId)
 
-    monkeypatch.setattr('backend.utils.safe_flask_globals.UserManager.get_current_user', get_fake_user)
+    from utils.safe_flask_globals import UserManager
+    dynamic_monkey_patcher.patch_object(UserManager, 'get_current_user', get_fake_user)
 
     return FakeUser()
 
 
 @pytest.fixture()
-def fake_file_locations(monkeypatch, temp_folder):
+def fake_file_locations(dynamic_monkey_patcher, temp_folder):
 
     def get_replay_func(ext):
         def get_path(replay_id):
             return os.path.join(temp_folder, replay_id + ext)
         return get_path
+
+    from utils.file_manager import FileManager
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_replay_path', get_replay_func(REPLAY_EXTENSION))
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_proto_path', get_replay_func('.replay.pts'))
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_pandas_path', get_replay_func('.replay.gzip'))
 
     monkeypatch.setattr('backend.utils.file_manager.FileManager.get_replay_path', get_replay_func('.replay'))
     monkeypatch.setattr('backend.utils.file_manager.FileManager.get_proto_path', get_replay_func('.replay.pts'))

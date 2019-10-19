@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import cast, String, or_
 from sqlalchemy.dialects import postgresql
 
-from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, Tag
 from backend.utils.checks import is_admin
 from backend.utils.safe_flask_globals import get_current_user_id
 
@@ -19,7 +19,7 @@ class QueryFilterBuilder:
         self.end_time: datetime.datetime = None
         self.players: List[str] = None
         self.contains_all_players: List[str] = None
-        self.tags = None  # TODO: Add tags
+        self.tags = None
         self.stats_query = None
         self.rank: int = None
         self.initial_query = None  # This is a query that is created with initial values
@@ -144,6 +144,9 @@ class QueryFilterBuilder:
                 filtered_query = filtered_query.join(Game)
             has_joined_game = True
 
+        if self.tags is not None:
+            filtered_query = filtered_query.join(Tag)
+
         if self.is_game or has_joined_game:
             # Do visibility check
             if not is_admin():
@@ -186,7 +189,11 @@ class QueryFilterBuilder:
                 filtered_query = filtered_query.filter(Game.hash == self.replay_ids)
             else:
                 filtered_query = filtered_query.filter(PlayerGame.game == self.replay_ids)
-        # Todo: implement tags remember to handle table joins correctly
+        if self.tags is not None:
+            if len(self.tags) == 1:
+                filtered_query = filtered_query.filter(Tag.id == self.tags[0])
+            else:
+                filtered_query = filtered_query.filter(self.handle_list(Tag.id, self.tags))
 
         return filtered_query
 

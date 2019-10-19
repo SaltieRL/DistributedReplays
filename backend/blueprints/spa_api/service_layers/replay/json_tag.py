@@ -9,7 +9,7 @@ from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
 from backend.utils.safe_flask_globals import get_current_user_id
 
 
-class Tag:
+class JsonTag:
     def __init__(self, name: str, owner: str, privateKey: str = None, db_tag: DBTag = None):
         super().__init__()
         self.name = name
@@ -34,8 +34,8 @@ class Tag:
 
     @staticmethod
     def create_from_dbtag(tag: DBTag):
-        private_key = None if tag.private_id is None else Tag.encode_tag(tag.id, tag.private_id)
-        return Tag(tag.name, tag.owner, privateKey=private_key, db_tag=tag)
+        private_key = None if tag.private_id is None else JsonTag.encode_tag(tag.id, tag.private_id)
+        return JsonTag(tag.name, tag.owner, privateKey=private_key, db_tag=tag)
 
     @staticmethod
     @with_session
@@ -47,7 +47,7 @@ class Tag:
 
     @staticmethod
     @with_session
-    def create(name: str, session=None, player_id=None, private_id=None) -> 'Tag':
+    def create(name: str, session=None, player_id=None, private_id=None) -> 'JsonTag':
         """
         Creates a new instance of Tag, add one to the db if it does not exist.
         :param name: Tag name
@@ -59,17 +59,17 @@ class Tag:
         # Check if tag exists
         try:
             dbtag = TagWrapper.get_tag_by_name(session, get_current_user_id(player_id=player_id), name)
-            tag = Tag.create_from_dbtag(dbtag)
+            tag = JsonTag.create_from_dbtag(dbtag)
             return tag
         except DBTagNotFound:
             pass
         dbtag = TagWrapper.create_tag(session, get_current_user_id(player_id=player_id), name, private_id=private_id)
-        tag = Tag.create_from_dbtag(dbtag)
+        tag = JsonTag.create_from_dbtag(dbtag)
         return tag
 
     @staticmethod
     @with_session
-    def rename(current_name: str, new_name: str, session=None) -> 'Tag':
+    def rename(current_name: str, new_name: str, session=None) -> 'JsonTag':
         # Check if name already exists
         try:
             TagWrapper.get_tag_by_name(session, get_current_user_id(), new_name)
@@ -81,7 +81,7 @@ class Tag:
             dbtag = TagWrapper.rename_tag(session, get_current_user_id(), current_name, new_name)
         except DBTagNotFound:
             raise TagNotFound()
-        tag = Tag.create_from_dbtag(dbtag)
+        tag = JsonTag.create_from_dbtag(dbtag)
         return tag
 
     @staticmethod
@@ -94,16 +94,16 @@ class Tag:
 
     @staticmethod
     @with_session
-    def get_all(session=None) -> List['Tag']:
+    def get_all(session=None) -> List['JsonTag']:
         dbtags = TagWrapper.get_tags(session, get_current_user_id())
-        tags = [Tag.create_from_dbtag(dbtag) for dbtag in dbtags]
+        tags = [JsonTag.create_from_dbtag(dbtag) for dbtag in dbtags]
         return tags
 
     @staticmethod
     @with_session
-    def get_tag(name: str, session=None) -> 'Tag':
+    def get_tag(name: str, session=None) -> 'JsonTag':
         dbtag = TagWrapper.get_tag_by_name(session, get_current_user_id(), name)
-        return Tag.create_from_dbtag(dbtag)
+        return JsonTag.create_from_dbtag(dbtag)
 
     @staticmethod
     @with_session
@@ -124,10 +124,10 @@ class Tag:
     @staticmethod
     @with_session
     def get_encoded_private_key(name: str, session=None) -> str:
-        tag = Tag.get_tag(name, session=session)
+        tag = JsonTag.get_tag(name, session=session)
         if tag.db_tag.private_id is None:
             raise TagNotFound()
-        return Tag.encode_tag(tag.db_tag.id, tag.db_tag.private_id)
+        return JsonTag.encode_tag(tag.db_tag.id, tag.db_tag.private_id)
 
     @staticmethod
     def encode_tag(tag_id: int, private_id: str) -> str:
@@ -158,7 +158,7 @@ def apply_tags_to_game(query_params: Dict[str, any] = None, game_id=None, sessio
     private_ids = query_params['private_tag_keys'] if 'private_tag_keys' in query_params else []
 
     for private_id in private_ids:
-        tag_id, private_key = Tag.decode_tag(private_id)
+        tag_id, private_key = JsonTag.decode_tag(private_id)
         tag = TagWrapper.get_tag_by_id(session, tag_id)
         if tag.private_id is not None and tag.private_id == private_key:
             TagWrapper.add_tag_to_game(session, game_id, tag)

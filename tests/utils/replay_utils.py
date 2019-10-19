@@ -27,8 +27,13 @@ def download_replay_discord(url):
 
 def parse_file(analysis_manager, temp_folder=None):
     replay_name = write_files_to_disk([analysis_manager], temp_folder=temp_folder)[0]
-    analysis_manager = analyze_replay_file(os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), replay_name),
-                                           os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), replay_name) + '.json')
+    try:
+        analysis_manager = analyze_replay_file(
+            os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), replay_name))
+    except Exception as e:
+        print('error parsing ', replay_name)
+        raise e
+
     proto = analysis_manager.protobuf_game
     if proto.game_metadata.match_guid is not None and proto.game_metadata.match_guid != '':
         guid = proto.game_metadata.match_guid
@@ -65,6 +70,14 @@ def get_complex_replay_list():
     ]
 
 
+def get_small_replays():
+    replay_folder_name = 'small_replays'
+    replay_path = os.path.join(get_test_replay_folder(), replay_folder_name)
+
+    return [os.path.join(replay_folder_name, f) for f in os.listdir(replay_path)
+            if os.path.isfile(os.path.join(replay_path, f))]
+
+
 def write_files_to_disk(replays, temp_folder=None):
     if not os.path.exists(TestFolderManager.get_test_folder(temp_folder=temp_folder)):
         os.mkdir(TestFolderManager.get_test_folder(temp_folder=temp_folder))
@@ -80,6 +93,10 @@ def write_files_to_disk(replays, temp_folder=None):
             file_name = replay_url[replay_url.rfind('/') + 1:]
             file_names.append(file_name)
             f = download_replay_discord(replay_url)
+
+        full_path = os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), file_name)
+        if not os.path.exists(os.path.dirname(full_path)):
+            os.makedirs(os.path.dirname(full_path))
         with open(os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), file_name), 'wb') as real_file:
             real_file.write(f)
     return file_names
