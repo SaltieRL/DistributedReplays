@@ -1,9 +1,7 @@
-import inspect
-import os
-
 import pytest
 
 from tests.utils.database_utils import default_player_id
+from utils.replay_utils import get_small_replays, parse_replays
 
 
 @pytest.fixture()
@@ -37,7 +35,7 @@ def dynamic_mocker(mocker):
 
 @pytest.fixture(autouse=True)
 def temp_folder(tmpdir, dynamic_monkey_patcher):
-    path = tmpdir.dirname
+    path = tmpdir
 
     def get_path():
         return path
@@ -60,7 +58,16 @@ def use_test_paths(dynamic_monkey_patcher, temp_folder):
 
             from utils.location_utils import TestFolderManager
             dynamic_monkey_patcher.patch_object(TestFolderManager, 'get_internal_default_test_folder_location', get_path)
+
+        def get_temp_path(self):
+            return temp_folder
     return Patcher()
+
+@pytest.fixture()
+def temp_file(tmpdir):
+    temp_file = tmpdir.mkdir("sub").join("hello.txt")
+    temp_file.write("content")
+    return temp_file
 
 
 @pytest.fixture(autouse=True)
@@ -120,3 +127,22 @@ def mock_user(dynamic_monkey_patcher):
     dynamic_monkey_patcher.patch_object(UserManager, 'get_current_user', mock_user.get_fake_user)
 
     return mock_user
+
+
+@pytest.fixture(scope='session')
+def parse_small_replays():
+    """
+    Parses a bunch of replays.
+    This only happens once per a session
+    """
+    protos, guids, replay_paths = parse_replays(get_small_replays())
+
+    class Wrapper:
+        def get_protos(self):
+            return protos
+        def get_guids(self):
+            return guids
+        def get_replay_paths(self):
+            return replay_paths
+
+    return Wrapper()

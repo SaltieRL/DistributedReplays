@@ -1,11 +1,7 @@
-import base64
 import logging
 import os
 import shutil
 from typing import Dict
-
-import requests
-from requests import ReadTimeout
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.blueprints.spa_api.service_layers.replay.json_tag import apply_tags_to_game
@@ -13,33 +9,13 @@ from backend.blueprints.spa_api.service_layers.replay.visibility import apply_ga
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params
 from backend.database.utils.utils import add_objects
-from backend.tasks import celery_tasks
-from backend.tasks.utils import get_queue_length
-from backend.utils.file_manager import FileManager
+
+from backend.utils.file_manager import FileManager, PROTO_EXTENSION, PANDAS_EXTENSION
 from backend.utils.logger import ErrorLogger
-from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df, GCPManager
+from backend.utils.cloud_handler import upload_replay, upload_proto, upload_df
 from backend.utils.parsing_manager import parse_replay_wrapper
 
 logger = logging.getLogger(__name__)
-
-
-def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, any] = None):
-    if GCPManager.should_go_to_gcp(get_queue_length):
-        encoded_file = base64.b64encode(file.read())
-        try:
-            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=0.5,
-                              params={**{'uuid': uuid}, **query_params})
-        except ReadTimeout as e:
-            pass  # we don't care, it's given
-        except Exception as e:
-            # make sure we do not lose the replay file
-            file.seek(0)
-            file.save(filename)  # oops, error so lets save the file
-            raise e
-    else:
-        file.save(filename)
-        result = celery_tasks.add_replay_parse_task(os.path.abspath(filename), query_params)
-        task_ids.append(result.id)
 
 
 def parse_replay(self, replay_to_parse_path, preserve_upload_date: bool = False,
@@ -79,14 +55,15 @@ def parse_replay(self, replay_to_parse_path, preserve_upload_date: bool = False,
 
     parsed_replay_processing(proto_game, query_params, preserve_upload_date=preserve_upload_date)
 
-    return save_replay(proto_game, replay_to_parse_path, parsed_data_path)
+    return save_replay(proto_game, replay_to_parse_path, parsed_data_path, parsed_data_path)
 
 
-def save_replay(proto_game, replay_to_parse_path, parsed_data_path) -> str:
+def save_replay(proto_game, replay_to_parse_path, parsed_data_pandas_path, parsed_data_protos_path) -> str:
     """
     :param proto_game: Representing the parsed data.
     :param replay_to_parse_path: The file path to the replay we want to parse.
-    :param parsed_data_path: The path to parsed data with the initial unparsed filename.
+    :param parsed_data_pandas_path: The path to parsed pandas data with the initial unparsed filename.
+    :param parsed_data_protos_path: The path to parsed proto data with the initial unparsed filename.
     :return: The replay ID.
     """
     replay_id = proto_game.game_metadata.match_guid
@@ -97,8 +74,8 @@ def save_replay(proto_game, replay_to_parse_path, parsed_data_path) -> str:
     proto_path = FileManager.get_proto_path(replay_id)
     pandas_path = FileManager.get_pandas_path(replay_id)
     shutil.move(replay_to_parse_path, replay_path)
-    shutil.move(parsed_data_path + '.pts', proto_path)
-    shutil.move(parsed_data_path + '.gzip', pandas_path)
+    shutil.move(parsed_data_protos_path + PROTO_EXTENSION, proto_path)
+    shutil.move(parsed_data_pandas_path + PANDAS_EXTENSION, pandas_path)
 
     result = upload_replay(replay_path)
     if result is not None:
@@ -112,13 +89,14 @@ def save_replay(proto_game, replay_to_parse_path, parsed_data_path) -> str:
     return replay_id
 
 
-def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None, preserve_upload_date=True):
+def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None, preserve_upload_date=True) -> bool:
     logger.debug("Successfully parsed replay adding data to DB")
     # Process
 
-    if query_params is None:
+    if query_params is None or len(query_params) == 0:
         match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
-        return
+        return match_exists
+
     query_params = parse_query_params(upload_file_query_params, query_params, add_secondary=True)
     if 'player_id' in query_params:
         protobuf_game.game_metadata.primary_player.id = query_params['player_id']
@@ -126,11 +104,8 @@ def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None,
     match_exists = add_objects(protobuf_game, preserve_upload_date=preserve_upload_date)
 
     logger.debug("SUCCESS: Added base data to db adding query params")
-    if query_params is None:
-        return
-
-    if len(query_params) == 0:
-        return
+    if query_params is None or len(query_params) == 0:
+        return match_exists
 
     try:
         game_id = protobuf_game.game_metadata.match_guid
@@ -159,3 +134,5 @@ def parsed_replay_processing(protobuf_game, query_params: Dict[str, any] = None,
     else:
         logger.warning(
             'Found ' + str(len(error_counter)) + ' errors while processing query params: ' + str(error_counter))
+
+    return match_exists

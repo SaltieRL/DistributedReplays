@@ -1,11 +1,14 @@
 # Celery workers
-import base64
 import json
 import time
+import base64
+import os
+import requests
 from enum import Enum, auto
 from typing import Dict
 
-import requests
+from requests import ReadTimeout
+
 from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
@@ -20,6 +23,8 @@ from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_distributions
 from backend.utils.rlgarage_handler import RLGarageAPI
+from backend.tasks.utils import get_queue_length
+from backend.utils.cloud_handler import GCPManager
 
 try:
     from backend.tasks.training_packs.task import TrainingPackCreation
@@ -51,6 +56,34 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
     sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
     sender.add_periodic_task(60 * 60 * 12, cache_item_stats.s(), name='cache item stats every 12 hours')
+
+
+def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, any] = None):
+    """
+    Creates a new replay task.  It may optionally upload to GCP
+    :param file:
+    :param filename:
+    :param uuid:
+    :param task_ids:
+    :param query_params:
+    :return:
+    """
+    if GCPManager.should_go_to_gcp(get_queue_length):
+        encoded_file = base64.b64encode(file.read())
+        try:
+            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=0.5,
+                              params={**{'uuid': uuid}, **query_params})
+        except ReadTimeout as e:
+            pass  # we don't care, it's given
+        except Exception as e:
+            # make sure we do not lose the replay file
+            file.seek(0)
+            file.save(filename)  # oops, error so lets save the file
+            raise e
+    else:
+        file.save(filename)
+        result = add_replay_parse_task(os.path.abspath(filename), query_params)
+        task_ids.append(result.id)
 
 
 def add_replay_parse_task(replay_to_parse_path, query_params: Dict[str, any] = None, **kwargs):
