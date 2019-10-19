@@ -30,15 +30,13 @@ class MatchHistory:
         QueryFilterBuilder.apply_arguments_to_query(builder, kwargs)
         query = builder.build_query(session)
 
-        games = session.query(Game).all()
-
         if 'min_length' in kwargs:
             query = query.filter(Game.length > kwargs['min_length'])
         if 'max_length' in kwargs:
             query = query.filter(Game.length < kwargs['max_length'])
         if 'map' in kwargs:
             query = query.filter(Game.map == kwargs['map'])
-        count = query.all()
+        count = query.count()
         games = query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
         matches = MatchHistory(count, [Replay.create_from_game(game) for game in games])
         return matches
