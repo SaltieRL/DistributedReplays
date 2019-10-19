@@ -138,6 +138,16 @@ class TestReplayHistory:
 
         assert data['totalCount'] == len(data['replays']) == 11
 
+    def test_get_all_replays_with_team_size(self, initialize_database_tags, test_client):
+        r = Request('GET', LOCAL_URL + '/api/replay', params={'limit': 200, 'page': 0,
+                                                              'team_size': 2})
+
+
+        response = test_client.send(r)
+        assert(response.status_code == 200)
+        data = response.json
+
+        assert data['totalCount'] == len(data['replays']) == 3
 
     def test_get_all_replays_with_tags(self, initialize_database_tags, test_client):
         query_player = ['76561197998150808', '76561198041178440']
