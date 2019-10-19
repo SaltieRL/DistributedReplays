@@ -1,6 +1,6 @@
 from requests import Request
 
-from database.objects import Game
+from backend.database.objects import Game
 from tests.utils.location_utils import LOCAL_URL
 from tests.utils.test_utils import check_array_equal
 

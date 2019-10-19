@@ -136,8 +136,8 @@ def initialize_database_small_replays(fake_db, parse_small_replays):
 
 @pytest.fixture()
 def initialize_database_tags(initialize_database_small_replays):
-    from blueprints.spa_api.service_layers.replay.json_tag import JsonTag
-    from database.wrapper.tag_wrapper import TagWrapper
+    from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
+    from backend.database.wrapper.tag_wrapper import TagWrapper
 
     session = initialize_database_small_replays.get_session()
     replay_ids = initialize_database_small_replays.get_ids()
@@ -300,7 +300,7 @@ def fake_user(dynamic_monkey_patcher):
             nonlocal fake_user
             fake_user = Player(platformid=platformId)
 
-    from utils.safe_flask_globals import UserManager
+    from backend.utils.safe_flask_globals import UserManager
     dynamic_monkey_patcher.patch_object(UserManager, 'get_current_user', get_fake_user)
 
     return FakeUser()
@@ -314,7 +314,7 @@ def fake_file_locations(dynamic_monkey_patcher, temp_folder):
             return os.path.join(temp_folder, replay_id + ext)
         return get_path
 
-    from utils.file_manager import FileManager, REPLAY_EXTENSION, PROTO_EXTENSION, PANDAS_EXTENSION
+    from backend.utils.file_manager import FileManager, REPLAY_EXTENSION, PROTO_EXTENSION, PANDAS_EXTENSION
 
     dynamic_monkey_patcher.patch_object(FileManager, 'get_replay_path', get_replay_func(REPLAY_EXTENSION))
     dynamic_monkey_patcher.patch_object(FileManager, 'get_proto_path', get_replay_func(REPLAY_EXTENSION +
@@ -331,7 +331,7 @@ def mock_get_proto(dynamic_monkey_patcher):
     def wrapped(replay_id):
         return get_proto()
 
-    from utils.file_manager import FileManager
+    from backend.utils.file_manager import FileManager
     dynamic_monkey_patcher.patch_object(FileManager, 'get_proto', wrapped)
 
     return proto_set
@@ -345,7 +345,7 @@ def mock_get_replay(dynamic_monkey_patcher):
     def wrapped(replay_id):
         return get_replay()
 
-    from utils.file_manager import FileManager
+    from backend.utils.file_manager import FileManager
     dynamic_monkey_patcher.patch_object(FileManager, 'get_replay', wrapped)
     return replay_set
 
@@ -358,7 +358,7 @@ def mock_get_pandas(dynamic_monkey_patcher):
     def wrapped(replay_id):
         return get_pandas()
 
-    from utils.file_manager import FileManager
+    from backend.utils.file_manager import FileManager
     dynamic_monkey_patcher.patch_object(FileManager, 'get_pandas', wrapped)
 
     return pandas_set

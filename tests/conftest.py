@@ -53,7 +53,7 @@ def use_test_paths(dynamic_monkey_patcher, temp_folder):
             def get_path():
                 return temp_folder
 
-            from utils.file_manager import FileManager
+            from backend.utils.file_manager import FileManager
             dynamic_monkey_patcher.patch_object(FileManager, 'get_default_parse_folder', get_path)
 
             from utils.location_utils import TestFolderManager
@@ -123,7 +123,7 @@ def mock_user(dynamic_monkey_patcher):
 
     mock_user = MockUser()
 
-    from utils.safe_flask_globals import UserManager
+    from backend.utils.safe_flask_globals import UserManager
     dynamic_monkey_patcher.patch_object(UserManager, 'get_current_user', mock_user.get_fake_user)
 
     return mock_user
