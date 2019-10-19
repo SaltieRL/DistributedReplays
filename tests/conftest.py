@@ -56,7 +56,7 @@ def use_test_paths(dynamic_monkey_patcher, temp_folder):
             from backend.utils.file_manager import FileManager
             dynamic_monkey_patcher.patch_object(FileManager, 'get_default_parse_folder', get_path)
 
-            from utils.location_utils import TestFolderManager
+            from tests.utils.location_utils import TestFolderManager
             dynamic_monkey_patcher.patch_object(TestFolderManager, 'get_internal_default_test_folder_location', get_path)
 
         def get_temp_path(self):
