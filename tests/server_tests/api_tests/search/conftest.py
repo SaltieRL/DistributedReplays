@@ -4,13 +4,13 @@ import pytest
 
 from blueprints.spa_api.service_layers.replay.json_tag import JsonTag
 from database.wrapper.tag_wrapper import TagWrapper
-from tests.utils.database_utils import initialize_db_with_replays, default_player_id
+from tests.utils.database_utils import default_player_id, initialize_db_with_parsed_replays
 from tests.utils.replay_utils import get_small_replays
 
 
-@pytest.fixture(scope='package')
-def initialize_database_small_replays():
-    session, protos, ids = initialize_db_with_replays(get_small_replays())
+@pytest.fixture()
+def initialize_database_small_replays(fake_db, parse_small_replays):
+    session, protos, ids = initialize_db_with_parsed_replays(get_small_replays(), session=fake_db)
 
     class wrapper:
         def get_session(self):
@@ -56,5 +56,4 @@ def initialize_database_tags(initialize_database_small_replays):
         def get_tagged_games(self):
             return tagged_games
 
-    time.sleep(1)
     return wrapper()

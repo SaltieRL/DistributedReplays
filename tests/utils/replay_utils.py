@@ -7,7 +7,7 @@ from carball import analyze_replay_file
 
 from tests.utils.location_utils import get_test_replay_folder, TestFolderManager
 from backend.utils.parsing_manager import write_replay_to_disk
-from backend.utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION
+from backend.utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION, REPLAY_EXTENSION
 
 
 def get_test_file(file_name, temp_folder=None, is_replay=False):
@@ -41,8 +41,11 @@ def parse_file(analysis_manager, temp_folder=None):
         guid = proto.game_metadata.match_guid
     else:
         guid = proto.game_metadata.id
-    write_replay_to_disk(analysis_manager, os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), guid)+ ".replay")
-    return analysis_manager, proto, guid
+
+    replay_path = os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), guid) + REPLAY_EXTENSION
+
+    write_replay_to_disk(analysis_manager, replay_path)
+    return analysis_manager, proto, guid, replay_path
 
 
 def write_proto_pandas_to_file(filename):
@@ -59,6 +62,19 @@ def write_proto_pandas_to_file(filename):
         proto_manager.write_pandas_out_to_file(f)
 
     return proto_name, pandas_name, proto_manager.protobuf_game
+
+
+def parse_replays(replay_list, temp_folder=None):
+    guids = []
+    protos = []
+    replay_paths = {}
+    for replay in replay_list:
+        print('initialing ' + replay)
+        replay, proto, guid, replay_path = parse_file(replay, temp_folder=temp_folder)
+        guids.append(guid)
+        protos.append(proto)
+        replay_paths[guid] = replay_path
+    return protos, guids, replay_paths
 
 
 def get_complex_replay_list():

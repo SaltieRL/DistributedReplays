@@ -257,49 +257,53 @@ def fake_file_locations(dynamic_monkey_patcher, temp_folder):
             return os.path.join(temp_folder, replay_id + ext)
         return get_path
 
-    from utils.file_manager import FileManager
+    from utils.file_manager import FileManager, REPLAY_EXTENSION, PROTO_EXTENSION, PANDAS_EXTENSION
+
     dynamic_monkey_patcher.patch_object(FileManager, 'get_replay_path', get_replay_func(REPLAY_EXTENSION))
-    dynamic_monkey_patcher.patch_object(FileManager, 'get_proto_path', get_replay_func('.replay.pts'))
-    dynamic_monkey_patcher.patch_object(FileManager, 'get_pandas_path', get_replay_func('.replay.gzip'))
-
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_replay_path', get_replay_func('.replay'))
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_proto_path', get_replay_func('.replay.pts'))
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_pandas_path', get_replay_func('.replay.gzip'))
-
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_proto_path', get_replay_func(REPLAY_EXTENSION +
+                                                                                       PROTO_EXTENSION))
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_pandas_path', get_replay_func(REPLAY_EXTENSION +
+                                                                                        PANDAS_EXTENSION))
 
 
 @pytest.fixture()
-def mock_get_proto(monkeypatch):
+def mock_get_proto(dynamic_monkey_patcher):
 
     proto_set, get_proto = function_result_creator()
 
     def wrapped(replay_id):
         return get_proto()
 
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_proto', wrapped)
+    from utils.file_manager import FileManager
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_proto', wrapped)
+
     return proto_set
 
+
 @pytest.fixture()
-def mock_get_replay(monkeypatch):
+def mock_get_replay(dynamic_monkey_patcher):
 
     replay_set, get_replay = function_result_creator()
 
     def wrapped(replay_id):
         return get_replay()
 
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_replay', wrapped)
+    from utils.file_manager import FileManager
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_replay', wrapped)
     return replay_set
 
 
 @pytest.fixture()
-def mock_get_pandas(monkeypatch):
+def mock_get_pandas(dynamic_monkey_patcher):
 
     pandas_set, get_pandas = function_result_creator()
 
     def wrapped(replay_id):
         return get_pandas()
 
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_pandas', wrapped)
+    from utils.file_manager import FileManager
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_pandas', wrapped)
+
     return pandas_set
 
 
