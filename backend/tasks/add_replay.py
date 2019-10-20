@@ -4,7 +4,7 @@ import shutil
 from typing import Dict
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError
-from backend.blueprints.spa_api.service_layers.replay.tag import apply_tags_to_game
+from backend.blueprints.spa_api.service_layers.replay.json_tag import apply_tags_to_game
 from backend.blueprints.spa_api.service_layers.replay.visibility import apply_game_visibility
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import parse_query_params

@@ -81,7 +81,7 @@ from backend.blueprints.spa_api.service_layers.replay.groups import ReplayGroupC
 from backend.blueprints.spa_api.service_layers.replay.match_history import MatchHistory
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.replay.replay_positions import ReplayPositions
-from backend.blueprints.spa_api.service_layers.replay.tag import Tag
+from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
 from backend.blueprints.spa_api.utils.decorators import require_user, with_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import QueryParam, get_query_params
 
@@ -468,7 +468,7 @@ def api_create_tag(name: str, query_params=None):
     private_id = None
     if 'private_id' in query_params:
         private_id = query_params['private_id']
-    tag = Tag.create(name, private_id=private_id)
+    tag = JsonTag.create(name, private_id=private_id)
     return better_jsonify(tag), 201
 
 
@@ -478,14 +478,14 @@ def api_rename_tag(current_name: str):
     accepted_query_params = [QueryParam(name='new_name')]
     query_params = get_query_params(accepted_query_params, request)
 
-    tag = Tag.rename(current_name, query_params['new_name'])
+    tag = JsonTag.rename(current_name, query_params['new_name'])
     return better_jsonify(tag), 200
 
 
 @bp.route('/tag/<name>', methods=['DELETE'])
 @require_user
 def api_delete_tag(name: str):
-    Tag.delete(name)
+    JsonTag.delete(name)
     return '', 204
 
 
@@ -495,7 +495,7 @@ def api_delete_tag(name: str):
     QueryParam(name='with_id', type_=bool, optional=True)
 ])
 def api_get_tags(query_params=None):
-    tags = Tag.get_all()
+    tags = JsonTag.get_all()
     with_id = False
     if 'with_id' in query_params:
         with_id = query_params['with_id']
@@ -505,27 +505,27 @@ def api_get_tags(query_params=None):
 @bp.route('/tag/<name>/private_key', methods=["GET"])
 @require_user
 def api_get_tag_key(name: str):
-    return better_jsonify(Tag.get_encoded_private_key(name))
+    return better_jsonify(JsonTag.get_encoded_private_key(name))
 
 
 @bp.route('/tag/<name>/private_key/<private_id>', methods=["PUT"])
 @require_user
 def api_add_tag_key(name: str, private_id: str):
-    Tag.add_private_key(name, private_id)
+    JsonTag.add_private_key(name, private_id)
     return better_jsonify(private_id), 204
 
 
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
 @require_user
 def api_add_tag_to_game(name: str, id_: str):
-    Tag.add_tag_to_game(name, id_)
+    JsonTag.add_tag_to_game(name, id_)
     return '', 204
 
 
 @bp.route('/tag/<name>/replay/<id_>', methods=["DELETE"])
 @require_user
 def api_remove_tag_from_game(name: str, id_: str):
-    Tag.remove_tag_from_game(name, id_)
+    JsonTag.remove_tag_from_game(name, id_)
     return '', 204
 
 

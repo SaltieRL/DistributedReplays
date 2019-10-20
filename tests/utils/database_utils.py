@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql.base import PGInspector
 from backend.database import startup
 from backend.database.objects import Player
 from backend.database.utils.utils import add_objects
-from tests.utils.replay_utils import parse_file
+from tests.utils.replay_utils import parse_file, parse_replays
 
 
 def create_initial_mock_database(existing_data: List[Tuple] = None) -> Tuple[UnifiedAlchemyMagicMock, List[Tuple]]:
@@ -39,17 +39,21 @@ def initialize_db():
 
 
 def initialize_db_with_replays(replay_list, session=None, temp_folder=None):
+    protos, guids, replay_paths = parse_replays(replay_list, temp_folder=temp_folder)
+    session = initialize_db_with_parsed_replays(protos, session)
+    return session, protos, guids
+
+
+def initialize_db_with_parsed_replays(parsed_replays, session=None):
     if session is None:
         session = initialize_db()
     add_initial_player(session)
-    guids = []
-    protos = []
-    for replay in replay_list:
-        replay, proto, guid = parse_file(replay, temp_folder=temp_folder)
+
+    for proto in parsed_replays:
         add_objects(proto, session=session)
-        guids.append(guid)
-        protos.append(proto)
-    return session, protos, guids
+
+    return session
+
 
 
 def print_entire_db(inspector: PGInspector, session):

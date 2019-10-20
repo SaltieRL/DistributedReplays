@@ -7,7 +7,7 @@ from carball import analyze_replay_file
 
 from tests.utils.location_utils import get_test_replay_folder, TestFolderManager
 from backend.utils.parsing_manager import write_replay_to_disk
-from backend.utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION
+from backend.utils.file_manager import PANDAS_EXTENSION, PROTO_EXTENSION, REPLAY_EXTENSION
 
 
 def get_test_file(file_name, temp_folder=None, is_replay=False):
@@ -29,15 +29,23 @@ def download_replay_discord(url):
 
 def parse_file(analysis_manager, temp_folder=None):
     replay_name = write_files_to_disk([analysis_manager], temp_folder=temp_folder)[0]
-    analysis_manager = analyze_replay_file(os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), replay_name),
-                                           os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), replay_name) + '.json')
+    try:
+        analysis_manager = analyze_replay_file(
+            os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), replay_name))
+    except Exception as e:
+        print('error parsing ', replay_name)
+        raise e
+
     proto = analysis_manager.protobuf_game
     if proto.game_metadata.match_guid is not None and proto.game_metadata.match_guid != '':
         guid = proto.game_metadata.match_guid
     else:
         guid = proto.game_metadata.id
-    write_replay_to_disk(analysis_manager, os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), guid)+ ".replay")
-    return analysis_manager, proto, guid
+
+    replay_path = os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), guid) + REPLAY_EXTENSION
+
+    write_replay_to_disk(analysis_manager, replay_path)
+    return analysis_manager, proto, guid, replay_path
 
 
 def write_proto_pandas_to_file(filename):
@@ -56,6 +64,19 @@ def write_proto_pandas_to_file(filename):
     return proto_name, pandas_name, proto_manager.protobuf_game
 
 
+def parse_replays(replay_list, temp_folder=None):
+    guids = []
+    protos = []
+    replay_paths = {}
+    for replay in replay_list:
+        print('initialing ' + replay)
+        replay, proto, guid, replay_path = parse_file(replay, temp_folder=temp_folder)
+        guids.append(guid)
+        protos.append(proto)
+        replay_paths[guid] = replay_path
+    return protos, guids, replay_paths
+
+
 def get_complex_replay_list():
     """
     Replays for testing that are small.
@@ -70,6 +91,14 @@ def get_complex_replay_list():
         'FAKE_BOTS_SkyBot.replay',
         'WASTED_BOOST_WHILE_SUPER_SONIC.replay',
     ]
+
+
+def get_small_replays():
+    replay_folder_name = 'small_replays'
+    replay_path = os.path.join(get_test_replay_folder(), replay_folder_name)
+
+    return [os.path.join(replay_folder_name, f) for f in os.listdir(replay_path)
+            if os.path.isfile(os.path.join(replay_path, f))]
 
 
 def write_files_to_disk(replays, temp_folder=None):
@@ -87,6 +116,10 @@ def write_files_to_disk(replays, temp_folder=None):
             file_name = replay_url[replay_url.rfind('/') + 1:]
             file_names.append(file_name)
             f = download_replay_discord(replay_url)
+
+        full_path = os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), file_name)
+        if not os.path.exists(os.path.dirname(full_path)):
+            os.makedirs(os.path.dirname(full_path))
         with open(os.path.join(TestFolderManager.get_test_folder(temp_folder=temp_folder), file_name), 'wb') as real_file:
             real_file.write(f)
     return file_names

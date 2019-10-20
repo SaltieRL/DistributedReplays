@@ -6,14 +6,14 @@ import zlib
 import pytest
 import responses
 from requests import Request
-from backend.blueprints.spa_api.service_layers.replay.tag import Tag as ServiceTag
+from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag as ServiceTag
 from backend.database.objects import Game, Player, Tag
 from backend.database.startup import get_current_session
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord, write_proto_pandas_to_file, \
     get_test_file
 from tests.utils.database_utils import default_player_id
 
-LOCAL_URL = 'http://localhost:8000'
+from tests.utils.location_utils import LOCAL_URL
 
 TAG_NAME = 'FAKE_TAG'
 
