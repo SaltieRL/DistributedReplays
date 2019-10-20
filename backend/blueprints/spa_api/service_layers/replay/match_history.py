@@ -7,7 +7,7 @@ from backend.database.objects import Game
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_wrapper
-from blueprints.spa_api.service_layers.replay.json_tag import JsonTag
+from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
 
 
 class MatchHistory:

@@ -2,7 +2,7 @@ from requests import Request
 
 from backend.database.objects import Game
 from blueprints.spa_api.service_layers.replay.json_tag import JsonTag
-from database.wrapper.tag_wrapper import TagWrapper
+from backend.database.wrapper.tag_wrapper import TagWrapper
 from tests.utils.location_utils import LOCAL_URL
 from tests.utils.test_utils import check_array_equal
 
