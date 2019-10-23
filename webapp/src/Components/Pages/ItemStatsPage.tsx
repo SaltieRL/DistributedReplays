@@ -6,13 +6,10 @@ import { RouteComponentProps } from "react-router-dom"
 import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
 import { StoreState } from "../../Redux"
 import { getItemGraph, getItemInfo, getItems } from "../../Requests/Global"
-import { ItemBreadcrumbs } from "../ItemStats/ItemBreadcrumbs"
-import { ItemDisplay } from "../ItemStats/ItemDisplay"
 import { ItemListCard } from "../ItemStats/ItemListCard"
-import { ItemStatsGraph } from "../ItemStats/ItemStatsGraph"
-import { ItemStatsUsers } from "../ItemStats/ItemStatsUsers"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
+import { ItemView } from "../ItemStats/ItemView"
 
 const CATEGORIES = [
     {
@@ -117,34 +114,12 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     public render() {
         const {classes} = this.props
         const {itemData} = this.state
-        const breadCrumbs = itemData ? (
-            <ItemBreadcrumbs itemData={itemData}/>
-        ) : null
         const itemSearch = (
             <TextField value={this.state.search} onChange={this.handleSearchChange} placeholder={"Filter"}/>
         )
         const itemView = itemData ? (
-            <Grid container spacing={24}>
-                <Grid item xs={12}>
-                    {breadCrumbs}
-                </Grid>
-                <Grid item xs={6} lg={3}>
-                    <Grid item xs={12}>
-                        <ItemDisplay item={itemData} paint={0}/>
-                    </Grid>
-                </Grid>
-                {this.state.itemData && this.state.itemUsage && <>
-                    <Grid item xs={6} lg={3}>
-                        <ItemStatsUsers item={this.state.itemData}
-                                        itemUsage={this.state.itemUsage}/>
-                    </Grid>
-                    <Grid item xs={12} lg={6}>
-                        <ItemStatsGraph item={this.state.itemData}
-                                        itemUsage={this.state.itemUsage}/>
-
-                    </Grid>
-                </>}
-            </Grid>
+            <ItemView item={itemData} itemData={this.state.itemData}
+                      itemUsage={this.state.itemUsage}/>
         ) : null
         const filteredList = this.state.itemList ?
             this.state.itemList.items.filter(
