@@ -89,7 +89,7 @@ export const getAdminLogs = (page: number, limit: number, search: string): Promi
     return doGet(`/admin/logs?page=${page}&limit=${limit}&search=${search}`)
 }
 export const getItems = (page: number, limit: number,
-                         category: number): Promise<ItemListResponse> => {
+                         category: number | undefined): Promise<ItemListResponse> => {
     let queryString = `/items/list?page=${page}&limit=${limit}`
     if (category) {
         queryString += `&category=${category}`

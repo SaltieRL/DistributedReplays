@@ -109,7 +109,10 @@ class RLGarageAPI:
         return items, category_map
 
     def get_item(self, id_, paint_id=0):
-        item = self.item_map[str(id_)]
+        try:
+            item = self.item_map[str(id_)]
+        except:
+            return None
         if paint_id > 0 and item['hascoloredicons'] == 1:
             pic = item['name'].replace(' ', '').replace('\'', '').lower()
             paint_name = self.paint_map[paint_id]
@@ -120,10 +123,10 @@ class RLGarageAPI:
         return item
 
     def get_item_list(self, page, limit, override=False):
-        if not override and limit > 500:
-            limit = 500
+        items = self.item_list[page * limit: (page + 1) * limit]
+        processed_items = [self.get_item(str(i['ingameid'])) for i in items]
         return {
-            'items': self.get_item_response(self.item_list[page * limit: (page + 1) * limit]),
+            'items': self.get_item_response(processed_items),
             'count': len(self.item_list)
         }
 
@@ -150,5 +153,5 @@ class RLGarageAPI:
                 'name': item['name'],
                 'ingameid': item['ingameid'],
                 'rarity': item['rarity']
-            } for item in items
+            } for item in items if item is not None
         ]
