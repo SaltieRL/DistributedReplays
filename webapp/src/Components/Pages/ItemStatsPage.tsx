@@ -1,28 +1,14 @@
-import {
-    Card,
-    CardActionArea,
-    CardMedia,
-    createStyles,
-    Grid,
-    Paper,
-    Tab,
-    Tabs,
-    TextField,
-    Typography,
-    withStyles,
-    WithStyles
-} from "@material-ui/core"
-import { Breadcrumbs } from "@material-ui/lab"
+import { createStyles, Grid, Tab, Tabs, TextField, Typography, withStyles, WithStyles } from "@material-ui/core"
 import qs from "qs"
 import * as React from "react"
 import { connect } from "react-redux"
-import { Link, RouteComponentProps } from "react-router-dom"
-import { ITEMS_LINK } from "../../Globals"
+import { RouteComponentProps } from "react-router-dom"
 import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
 import { StoreState } from "../../Redux"
 import { getItemGraph, getItemInfo, getItems } from "../../Requests/Global"
-import { roundNumberToMaxDP } from "../../Utils/String"
+import { ItemBreadcrumbs } from "../ItemStats/ItemBreadcrumbs"
 import { ItemDisplay } from "../ItemStats/ItemDisplay"
+import { ItemListCard } from "../ItemStats/ItemListCard"
 import { ItemStatsGraph } from "../ItemStats/ItemStatsGraph"
 import { ItemStatsUsers } from "../ItemStats/ItemStatsUsers"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
@@ -132,16 +118,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
         const {classes} = this.props
         const {itemData} = this.state
         const breadCrumbs = itemData ? (
-            <Paper elevation={0}>
-                <Breadcrumbs aria-label="breadcrumb" style={{padding: "5px"}}>
-                    <Link color="inherit" to={ITEMS_LINK} style={{textDecoration: "none"}}>
-                        <Typography variant="subtitle1" color="textPrimary">
-                            Items
-                        </Typography>
-                    </Link>
-                    <Typography variant="subtitle1" color="textPrimary">{itemData.name}</Typography>
-                </Breadcrumbs>
-            </Paper>
+            <ItemBreadcrumbs itemData={itemData}/>
         ) : null
         const itemSearch = (
             <TextField value={this.state.search} onChange={this.handleSearchChange} placeholder={"Filter"}/>
@@ -181,7 +158,6 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                     value={this.state.category}
                     onChange={this.handleSelectTab}
                 >
-
                     {CATEGORIES.map((category: any) => {
                         return <Tab key={category.id} label={category.name} value={category.id}/>
                     })}
@@ -190,34 +166,9 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                     {this.state.itemList && <Grid container spacing={16}>
                         {filteredList.map((item: Item) => {
                             return (
-                                <Grid item xs={6} sm={2} lg={1} key={item.ingameid}>
-                                    <Card className={classes.itemListCard} style={{position: "relative"}}>
-                                        <CardActionArea onClick={() => {
-                                            this.selectItem(item)
-                                        }}>
-                                            <CardMedia
-                                                className={classes.media}
-                                                image={item.image}
-                                                title={item.name}
-                                            />
-                                        </CardActionArea>
-
-                                        <div style={{
-                                            position: "absolute",
-                                            top: 3,
-                                            right: 3,
-                                            zIndex: 1000,
-                                            background: "#0089d2",
-                                            padding: "2px 5px 0px",
-                                            borderRadius: "15px"
-                                        }}>
-                                            <Typography style={{color: "white"}}>
-                                                {item.count && roundNumberToMaxDP(item.count * 100, 1)}%
-                                            </Typography>
-                                        </div>
-                                    </Card>
-
-                                </Grid>
+                                <ItemListCard key={item.ingameid} classes={classes} onClick={() => {
+                                    this.selectItem(item)
+                                }} item={item}/>
                             )
                         })}
                     </Grid>}
