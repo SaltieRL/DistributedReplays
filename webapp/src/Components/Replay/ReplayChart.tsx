@@ -113,7 +113,7 @@ export class ReplayChart extends React.PureComponent<Props> {
             tooltips: {
                 callbacks: {
                     label: (tooltipItem, data) => data.datasets![tooltipItem.datasetIndex!].label + ": " +
-                        Math.abs(parseInt(tooltipItem.xLabel!, 10))
+                        Math.abs(parseInt(tooltipItem.xLabel!.toString(), 10))
                 }
             },
             maintainAspectRatio: false
