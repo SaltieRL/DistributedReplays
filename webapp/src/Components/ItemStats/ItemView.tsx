@@ -35,7 +35,6 @@ export class ItemView extends React.Component<Props> {
                     <Grid item xs={12} lg={6}>
                         <ItemStatsGraph item={this.props.itemData}
                                         itemUsage={this.props.itemUsage}/>
-
                     </Grid>
                 </>}
             </Grid>
