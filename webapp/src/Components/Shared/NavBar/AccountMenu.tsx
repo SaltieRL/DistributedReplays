@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 import { Link } from "react-router-dom"
-import { LOCAL_LINK, LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK } from "../../../Globals"
+import { LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK } from "../../../Globals"
 import { LoggedInUserState } from "../../../Redux/loggedInUser/reducer"
 import { LinkButton } from "../LinkButton"
 
@@ -91,7 +91,7 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
                                             </Link>
                                         </Grid>
                                         <Grid item>
-                                            <Button variant="outlined" href={LOCAL_LINK + LOGOUT_LINK}>
+                                            <Button variant="outlined" href={LOGOUT_LINK}>
                                                 Log out
                                             </Button>
                                         </Grid>
@@ -101,7 +101,7 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
                         </Popover>
                     </>
                     :
-                    <LinkButton to={LOCAL_LINK + STEAM_LOGIN_LINK} isExternalLink
+                    <LinkButton to={STEAM_LOGIN_LINK} isExternalLink
                                 iconType="fontawesome" icon={faSteam}>
                         Log in
                     </LinkButton>

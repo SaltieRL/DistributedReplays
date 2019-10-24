@@ -2,7 +2,6 @@ import logging
 import random
 from typing import List
 
-from flask import g
 from sqlalchemy import func, cast, String, desc, or_
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -11,7 +10,8 @@ from backend.blueprints.spa_api.errors.errors import ReplayNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting, GameVisibility
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
-from backend.utils.global_functions import get_current_user_id
+from backend.utils.safe_flask_globals import get_current_user_id, UserManager
+from backend.utils.checks import is_admin
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ def create_default_player(session=None):
     if player is None:
         player = Player()
 
-    player.platformid = "LOCAL_PLATFORMID" if player is None else player.platformid
+    player.platformid = "LOCAL_PLATFORMID" if player.platformid is None else player.platformid
     player.platformname = 'test user with a really long name but even longer'
     if bool(random.getrandbits(1)):
         player.avatar = "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
@@ -62,8 +62,8 @@ class PlayerWrapper:
                 PlayerGame.game != None)
 
         if filter_private:
-            if g.user is not None:
-                if not g.admin:
+            if UserManager.get_current_user() is not None:
+                if not is_admin():
                     query = query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
                                              Game.players.any(get_current_user_id())))
             else:

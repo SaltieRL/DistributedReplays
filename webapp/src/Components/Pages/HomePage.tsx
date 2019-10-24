@@ -17,7 +17,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router-dom"
 import { Dispatch } from "redux"
-import { LOCAL_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, UPLOAD_LINK } from "../../Globals"
+import { PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, UPLOAD_LINK } from "../../Globals"
 import { LoggedInUserActions, StoreState } from "../../Redux"
 import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
 import { HomePageAppBar } from "../Home/HomePageAppBar"
@@ -127,7 +127,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                             </Button>
                                         </Link>
                                         :
-                                        <LinkButton to={LOCAL_LINK + STEAM_LOGIN_LINK} isExternalLink
+                                        <LinkButton to={STEAM_LOGIN_LINK} isExternalLink
                                                     iconType="fontawesome" icon={faSteam}>
                                             {isWidthUp("sm", width) ? "Log in with Steam" : "Log in"}
                                         </LinkButton>

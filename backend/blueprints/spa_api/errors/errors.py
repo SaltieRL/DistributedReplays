@@ -45,10 +45,10 @@ class Redirect(CalculatedError):
 
 
 class ErrorOpeningGame(CalculatedError):
-    status_code = 500
+    status_code = 510  # 510 means that the server failed to parse a replay/proto/pandas
 
-    def __init__(self, error: str):
-        message = f'Error opening game: {error}'
+    def __init__(self, error: str, game_data=None):
+        message = f'Error opening game: {error} {str(game_data) if game_data is not None else ""}'
         super().__init__(self.status_code, message)
 
 
@@ -91,6 +91,13 @@ class TagError(CalculatedError):
     message = "Exception with tags"
 
 
+class TagKeyError(TagError):
+    status_code = 400
+
+    def __init__(self, tag_key, exception):
+        self.message = f'Unable to decode tag_key; [{tag_key}] ' + str(exception)
+
+
 class TagNotFound(TagError):
     status_code = 404
     message = "Tag not found"
@@ -103,7 +110,7 @@ class UnsupportedPlaylist(CalculatedError):
 
 class AuthorizationException(CalculatedError):
     status_code = 401
-    message = "User not allowed for this request"
+    message = "User not authorized to make this request"
 
 
 class NotYetImplemented(CalculatedError):

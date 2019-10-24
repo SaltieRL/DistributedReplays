@@ -1,5 +1,8 @@
 import os
 
+LOCAL_URL = 'http://localhost:8000'
+
+
 default_test_data_folder_location = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'test_data')
 
 

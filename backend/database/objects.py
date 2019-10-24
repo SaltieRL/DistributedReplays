@@ -2,8 +2,8 @@
 import datetime
 import enum
 
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, Table, UniqueConstraint, \
-    and_, ForeignKeyConstraint
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, UniqueConstraint, \
+    ForeignKeyConstraint, JSON
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
@@ -25,7 +25,14 @@ class MatchType(enum.Enum):
     public = 3
 
 
+class ReplayResult(enum.Enum):
+    SUCCESS = 1
+    ERROR = 2
+    UNKNOWN = 3
+
+
 class Playlist(enum.Enum):
+    UNKNOWN_CUSTOM = 0
     UNRANKED_DUELS = 1
     UNRANKED_DOUBLES = 2
     UNRANKED_STANDARD = 3
@@ -381,3 +388,31 @@ class GameVisibility(DBObjectBase):
     player = Column(String(40), ForeignKey('players.platformid'))
     visibility = Column(Enum(GameVisibilitySetting))
     release_date = Column(DateTime, default=datetime.datetime.max)
+
+
+class TrainingPack(DBObjectBase):
+    __tablename__ = "training_packs"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    guid = Column(String(40))
+    task_id = Column(String(37))
+    name = Column(String(100))
+    player = Column(String(40), ForeignKey('players.platformid'), index=True)
+    pack_player = Column(String(40), ForeignKey('players.platformid'), index=True)
+    shots = Column(JSON)
+    creation_date = Column(DateTime, default=datetime.datetime.utcnow)
+    # ALTER TABLE training_packs
+    #     ADD COLUMN name        VARCHAR(100),
+    #     ADD COLUMN pack_player VARCHAR(40),
+    #     ADD COLUMN task_id VARCHAR(37);
+
+
+class ReplayLog(DBObjectBase):
+    __tablename__ = "replay_logs"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    uuid = Column(String(36))
+    result = Column(Enum(ReplayResult))
+    error_type = Column(String(40))
+    log = Column(String)
+    params = Column(String, default=None)
+    game = Column(String(40), default=None)
+    date = Column(DateTime, default=datetime.datetime.utcnow)

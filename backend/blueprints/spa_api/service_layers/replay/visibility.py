@@ -1,16 +1,14 @@
 import time
 from datetime import datetime
 
-from flask import g
-
 from backend.blueprints.spa_api.errors.errors import PlayerNotFound, ReplayNotFound, AuthorizationException, \
     CalculatedError
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.database.objects import Player, GameVisibility, Game
+from backend.database.objects import Player, GameVisibility, Game, Playlist
 from backend.blueprints.spa_api.utils.decorators import require_user
 from backend.database.objects import GameVisibilitySetting
 from backend.database.wrapper.player_wrapper import PlayerWrapper
-from backend.utils.logging import ErrorLogger
+from backend.utils.logger import ErrorLogger
 
 
 class ReplayVisibility:
@@ -37,7 +35,15 @@ class ReplayVisibility:
         return ReplayVisibility(game_hash, visibility)
 
 
-def apply_game_visibility(query_params=None, game_id=None, game_exists=True) -> Exception:
+def apply_game_visibility(query_params=None, game_id=None, game_exists=True,
+                          proto_game=None) -> Exception:
+
+    # if it is a custom lobby we should try and fake it being a private game so scrims are not published.
+    if (not game_exists and proto_game is not None and proto_game.game_metadata.playlist == Playlist.CUSTOM_LOBBY.value
+            and query_params is not None and 'player_id' in query_params):
+        query_params = {'player_id': query_params['player_id'],
+                        'visibility': GameVisibilitySetting.PRIVATE}
+
     if query_params is None:
         return None
     if 'visibility' not in query_params:

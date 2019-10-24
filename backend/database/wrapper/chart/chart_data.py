@@ -3,7 +3,6 @@ from enum import Enum, auto
 from typing import List, Optional
 
 import pandas as pd
-from flask import send_file
 
 
 class ChartDataPoint:
@@ -39,6 +38,8 @@ class ChartStatsMetadata:
 
 
 def convert_to_csv(chart_data, filename='test.csv'):
+    from flask import send_file
+
     mem = io.StringIO()
     df = pd.DataFrame(columns=["Player"] + [c.title for c in chart_data])
     df["Player"] = pd.Series([c["name"] for c in chart_data[0].chartDataPoints])

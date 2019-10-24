@@ -1,14 +1,15 @@
 import json
 
-from flask import Blueprint, current_app, redirect, g, request, url_for, jsonify
+from flask import Blueprint, redirect, g, request, url_for, jsonify
 
 from backend.blueprints.shared_renders import render_with_session
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
 from backend.database.wrapper.stats import global_stats_wrapper
-from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists
+from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists, cache_item_stats
 from backend.utils.checks import is_local_dev
+from backend.utils.safe_flask_globals import get_redis
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -28,15 +29,6 @@ def redirect_url(default='home'):
 def check_admin():
     if g.user is None or not g.admin:
         return redirect('/')
-
-
-@bp.route('/')
-@with_session
-def home(session=None):
-    players = session.query(Player).all()
-    groups = session.query(Group).all()
-    id_to_groups = {g.id: g.name for g in groups}
-    return render_with_session('admin.html', session, players=players, groups=groups, id_to_groups=id_to_groups)
 
 
 @bp.route('/addrole/<id>/<role>')
@@ -101,7 +93,7 @@ def view_users(session=None):
 @bp.route('/globalstats')
 @with_session
 def ping(session=None):
-    r = current_app.config['r']
+    r = get_redis()
     result = r.get('global_stats')
     if result is not None:
         return jsonify({'result': json.loads(result)})
@@ -120,4 +112,10 @@ def calc_dists():
 @bp.route('/calcstats')
 def calc_stats():
     calc_global_stats.delay()
+    return jsonify({'result': 'Success'})
+
+
+@bp.route('/cacheitemstats')
+def calc_item_stats():
+    cache_item_stats.delay()
     return jsonify({'result': 'Success'})

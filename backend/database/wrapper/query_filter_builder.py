@@ -1,13 +1,12 @@
 import datetime
 from typing import List
 
-from flask import g
-from sqlalchemy import cast, String, or_
+from sqlalchemy import cast, String, or_, and_
 from sqlalchemy.dialects import postgresql
 
-from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
-from backend.utils.checks import is_admin, is_local_dev
-from backend.utils.global_functions import get_current_user_id
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, Tag, GameTag
+from backend.utils.checks import is_admin
+from backend.utils.safe_flask_globals import get_current_user_id
 
 
 class QueryFilterBuilder:
@@ -20,7 +19,7 @@ class QueryFilterBuilder:
         self.end_time: datetime.datetime = None
         self.players: List[str] = None
         self.contains_all_players: List[str] = None
-        self.tags = None  # TODO: Add tags
+        self.tag_ids = None
         self.stats_query = None
         self.rank: int = None
         self.initial_query = None  # This is a query that is created with initial values
@@ -37,7 +36,7 @@ class QueryFilterBuilder:
         self.end_time = None
         self.players = None
         self.contains_all_players = None
-        self.tags = None
+        self.tag_ids = None
         self.stats_query = None
         self.rank = None
         self.initial_query = None  # This is a query that is created with initial values
@@ -88,7 +87,7 @@ class QueryFilterBuilder:
         return self
 
     def with_tags(self, tags) -> 'QueryFilterBuilder':
-        self.tags = tags
+        self.tag_ids = tags
         return self
 
     def with_stat_query(self, stats_query) -> 'QueryFilterBuilder':
@@ -145,6 +144,9 @@ class QueryFilterBuilder:
                 filtered_query = filtered_query.join(Game)
             has_joined_game = True
 
+        if self.tag_ids is not None:
+            filtered_query = filtered_query.join(GameTag, Game.hash == GameTag.game_id)
+
         if self.is_game or has_joined_game:
             # Do visibility check
             if not is_admin():
@@ -187,7 +189,11 @@ class QueryFilterBuilder:
                 filtered_query = filtered_query.filter(Game.hash == self.replay_ids)
             else:
                 filtered_query = filtered_query.filter(PlayerGame.game == self.replay_ids)
-        # Todo: implement tags remember to handle table joins correctly
+        if self.tag_ids is not None:
+            if len(self.tag_ids) == 1:
+                filtered_query = filtered_query.filter(GameTag.tag_id == self.tag_ids[0])
+            else:
+                filtered_query = filtered_query.filter(self.handle_list(GameTag.tag_id, self.tag_ids))
 
         return filtered_query
 

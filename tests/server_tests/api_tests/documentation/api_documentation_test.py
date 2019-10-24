@@ -1,7 +1,7 @@
 
 from requests import Request
 
-LOCAL_URL = 'http://localhost:8000'
+from tests.utils.location_utils import LOCAL_URL
 
 
 class Test_api_documentation:

@@ -1,5 +1,6 @@
 echo OFF
 title win_run
+set FLASK_DEBUG=1
 start redis/redis-server.exe
 start cmd /k python RLBotServer.py
 start cmd /k celery -A backend.tasks.celery_worker.celery worker --pool=solo -l info

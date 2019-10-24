@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def get_car(index: int) -> str:
     try:
-        return RLGarageAPI().get_item_info(index)['name']
+        return RLGarageAPI().get_item(index)['name']
     except KeyError:
         logger.warning(f"Could not find car: {index}.")
         return "Unknown"

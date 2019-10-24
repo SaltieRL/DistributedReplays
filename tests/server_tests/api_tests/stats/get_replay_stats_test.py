@@ -3,8 +3,7 @@ from requests import Request
 from backend.database.objects import Game
 from backend.database.startup import get_current_session
 from tests.utils.database_utils import initialize_db_with_replays
-
-LOCAL_URL = 'http://localhost:8000'
+from tests.utils.location_utils import LOCAL_URL
 
 
 class Test_edit_private_replay:
@@ -15,7 +14,8 @@ class Test_edit_private_replay:
         self.replay_proto = protos[0]
         self.replay_id = ids[0]
 
-    def test_replay_get_basic_stats(self, test_client, fake_user, mock_get_proto):
+    def test_replay_get_basic_stats(self, test_client, mock_user, mock_get_proto):
+        mock_user.logout()
         game = get_current_session().query(Game).first()
         assert game is not None
         mock_get_proto(self.replay_proto)
@@ -30,7 +30,8 @@ class Test_edit_private_replay:
         # in the future assert each new stat that is being added.
         assert len(data) == 67
 
-    def test_replay_get_team_stats(self, test_client, fake_user, mock_get_proto):
+    def test_replay_get_team_stats(self, test_client, mock_user, mock_get_proto):
+        mock_user.logout()
         game = get_current_session().query(Game).first()
         assert game is not None
         mock_get_proto(self.replay_proto)

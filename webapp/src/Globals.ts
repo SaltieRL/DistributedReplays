@@ -7,11 +7,14 @@ export const DISCORD_LINK = "https://discord.gg/c8cArY9"
 export const TWITTER_LINK = "https://twitter.com/calculated_gg"
 export const REDDIT_LINK = "https://reddit.com/r/calculated"
 export const PATREON_LINK = "https://patreon.com/calculated"
-export const LOCAL_LINK = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://calculated.gg"
 
 export const STATUS_PAGE_LINK = "/status"
 
-export const LEADERBOARDS_LINK  = `/leaderboards`
+export const LEADERBOARDS_LINK = `/leaderboards`
+export const TRAINING_LINK = `/training`
+export const ADMIN_LINK = `/admin`
+export const ITEMS_LINK = `/items`
+export const TRAINING_IMPORT_LINK = (guid: string) => `/api/training/import?guid=${guid}`
 
 export const PLAYER_PAGE_LINK = (id: string) => `/players/${id}`
 export const PLAYER_MATCH_HISTORY_PAGE_LINK = (id: string) => `/players/${id}/match_history`
@@ -27,6 +30,8 @@ export const REPLAYS_SEARCH_PAGE_LINK = (queryParams?: Partial<ReplaysSearchQuer
     }
     return pageLink
 }
+
+export const TAGS_PAGE_LINK = "/tags"
 
 export const GLOBAL_STATS_LINK = "/global/stats"
 export const STEAM_LOGIN_LINK = "/auth/steam"

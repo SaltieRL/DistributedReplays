@@ -1,18 +1,18 @@
-import enum
 from typing import List, Dict, Any, Callable, Optional, Type
-from urllib.parse import urlencode
 
 from flask import Request
 
 from backend.blueprints.spa_api.errors.errors import MissingQueryParams, InvalidQueryParamFormat, MismatchedQueryParams, \
-    CalculatedError
+    CalculatedError, NotLoggedIn
+from backend.utils.safe_flask_globals import UserManager
 
 
 class QueryParam:
     def __init__(self, name: str, is_list: bool = False, optional: bool = False,
                  type_: Callable = None, required_siblings: List[str] = None,
                  tip: str = None, secondary_type=None,
-                 documentation_type: Type[any] = None):
+                 documentation_type: Type[any] = None,
+                 require_user: bool = False):
         """
         :param name: The name of the query param.  This is the key for what ends up in the url
         :param is_list:  If true then there is more than one key allowed.
@@ -22,6 +22,7 @@ class QueryParam:
         :param tip:  For documentation and errors.
         :param secondary_type:  For parsing after being passed through to tasks.
         :param documentation_type:  Used as a human readable type.
+        :param require_user: If true a user must exist for the query param to be valid.
         """
         self.name = name
         self.is_list = is_list
@@ -31,6 +32,7 @@ class QueryParam:
         self.tip = tip
         self.secondary_type = secondary_type
         self.documentation_type = documentation_type
+        self.require_user = require_user
 
     def __str__(self):
         return (f"QueryParam: {self.name}, is_list: {self.is_list},"
@@ -120,6 +122,7 @@ def create_validation_for_query_params(query_params: List[QueryParam], provided_
         provided_params = []
     check_dict: Dict[str, List[str]] = dict()
     list_check: Dict[str, List[QueryParam]] = dict()
+    require_user = []
     for query in query_params:
         if query.required_siblings is not None and query.name not in provided_params:
             check_dict[query.name] = query.required_siblings
@@ -137,6 +140,8 @@ def create_validation_for_query_params(query_params: List[QueryParam], provided_
                             list_check[query.name].append(sibling_query)
                         else:
                             list_check[query.name] = [sibling_query]
+        if query.require_user:
+            require_user.append(query.name)
 
     def validate(created_query_params) -> Optional[CalculatedError]:
         for query, siblings in check_dict.items():
@@ -151,8 +156,8 @@ def create_validation_for_query_params(query_params: List[QueryParam], provided_
                         return MismatchedQueryParams(query, sibling_query.name,
                                                      len(created_query_params[query]),
                                                      len(created_query_params[sibling_query.name]))
+        has_user = UserManager.get_current_user() is not None
+        for query in require_user:
+            if query in created_query_params and not has_user:
+                return NotLoggedIn()
     return validate
-
-
-def create_query_string(query_params):
-    return urlencode(query_params)

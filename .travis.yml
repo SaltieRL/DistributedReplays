@@ -83,7 +83,7 @@ jobs:
         - cd webapp
         - npm start &
         - cd $TRAVIS_BUILD_DIR
-        - celery -A backend.tasks.celery_worker.celery worker --pool=solo -l debug &
+        - celery -A backend.tasks.celery_worker.celery worker --pool=solo -l ERROR --logfile=/dev/null &
           # Wait for all other systems to be setup
         - sleep 30
         - pytest tests/integration_tests --cov=./

@@ -1,36 +1,41 @@
 import base64
-from typing import List, Dict
+import urllib
+from typing import List, Dict, Tuple
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.utils.global_functions import get_current_user_id
-from backend.utils.logging import ErrorLogger
-from backend.blueprints.spa_api.errors.errors import TagNotFound, PlayerNotFound, TagError
-from backend.database.objects import Tag as DBTag, Player
+from backend.blueprints.spa_api.errors.errors import TagNotFound, TagError, TagKeyError, AuthorizationException
+from backend.database.objects import Tag as DBTag
 from backend.database.wrapper.tag_wrapper import TagWrapper, DBTagNotFound
+from backend.utils.safe_flask_globals import get_current_user_id
 
-class Tag:
-    def __init__(self, name: str, owner: str, db_tag: DBTag = None):
+
+class JsonTag:
+    def __init__(self, name: str, owner: str, privateKey: str = None, db_tag: DBTag = None):
         super().__init__()
         self.name = name
-        self.owner_id = owner
+        self.ownerId = owner
+        self.privateKey = privateKey
         self.db_tag = db_tag
 
     def to_JSON(self, with_id=False):
         if with_id:
             return {
                 "name": self.name,
-                "owner_id": self.owner_id,
+                "ownerId": self.ownerId,
+                "privateKey": self.privateKey,
                 "tag_id": self.db_tag.id
             }
 
         return {
             "name": self.name,
-            "owner_id": self.owner_id
+            "ownerId": self.ownerId,
+            "privateKey": self.privateKey,
         }
 
     @staticmethod
     def create_from_dbtag(tag: DBTag):
-        return Tag(tag.name, tag.owner, db_tag=tag)
+        private_key = None if tag.private_id is None else JsonTag.encode_tag(tag.id, tag.private_id)
+        return JsonTag(tag.name, tag.owner, privateKey=private_key, db_tag=tag)
 
     @staticmethod
     @with_session
@@ -42,29 +47,29 @@ class Tag:
 
     @staticmethod
     @with_session
-    def create(name: str, session=None, player_id=None, private_key=None) -> 'Tag':
+    def create(name: str, session=None, player_id=None, private_id=None) -> 'JsonTag':
         """
         Creates a new instance of Tag, add one to the db if it does not exist.
         :param name: Tag name
         :param session: Database session
         :param player_id
-        :param private_key
+        :param private_id
         :return:
         """
         # Check if tag exists
         try:
             dbtag = TagWrapper.get_tag_by_name(session, get_current_user_id(player_id=player_id), name)
-            tag = Tag.create_from_dbtag(dbtag)
+            tag = JsonTag.create_from_dbtag(dbtag)
             return tag
         except DBTagNotFound:
             pass
-        dbtag = TagWrapper.create_tag(session, get_current_user_id(player_id=player_id), name, private_key=private_key)
-        tag = Tag.create_from_dbtag(dbtag)
+        dbtag = TagWrapper.create_tag(session, get_current_user_id(player_id=player_id), name, private_id=private_id)
+        tag = JsonTag.create_from_dbtag(dbtag)
         return tag
 
     @staticmethod
     @with_session
-    def rename(current_name: str, new_name: str, session=None) -> 'Tag':
+    def rename(current_name: str, new_name: str, session=None) -> 'JsonTag':
         # Check if name already exists
         try:
             TagWrapper.get_tag_by_name(session, get_current_user_id(), new_name)
@@ -76,7 +81,7 @@ class Tag:
             dbtag = TagWrapper.rename_tag(session, get_current_user_id(), current_name, new_name)
         except DBTagNotFound:
             raise TagNotFound()
-        tag = Tag.create_from_dbtag(dbtag)
+        tag = JsonTag.create_from_dbtag(dbtag)
         return tag
 
     @staticmethod
@@ -89,16 +94,16 @@ class Tag:
 
     @staticmethod
     @with_session
-    def get_all(session=None) -> List['Tag']:
+    def get_all(session=None) -> List['JsonTag']:
         dbtags = TagWrapper.get_tags(session, get_current_user_id())
-        tags = [Tag.create_from_dbtag(dbtag) for dbtag in dbtags]
+        tags = [JsonTag.create_from_dbtag(dbtag) for dbtag in dbtags]
         return tags
 
     @staticmethod
     @with_session
-    def get_tag(name: str, session=None) -> 'Tag':
+    def get_tag(name: str, session=None) -> 'JsonTag':
         dbtag = TagWrapper.get_tag_by_name(session, get_current_user_id(), name)
-        return Tag.create_from_dbtag(dbtag)
+        return JsonTag.create_from_dbtag(dbtag)
 
     @staticmethod
     @with_session
@@ -119,44 +124,65 @@ class Tag:
     @staticmethod
     @with_session
     def get_encoded_private_key(name: str, session=None) -> str:
-        tag = Tag.get_tag(name, session=session)
+        tag = JsonTag.get_tag(name, session=session)
         if tag.db_tag.private_id is None:
             raise TagNotFound()
-        return Tag.encode_tag(tag.db_tag.id, tag.db_tag.private_id)
+        return JsonTag.encode_tag(tag.db_tag.id, tag.db_tag.private_id)
 
     @staticmethod
     def encode_tag(tag_id: int, private_id: str) -> str:
         merged = str(tag_id + 1000) + ":" + private_id
-        return base64.b85encode(merged.encode(encoding="utf-8")).decode('utf-8')
+        # b85 encodes it to make it smaller / unreadable followed by a url encode to make it friendly for urls.
+        return urllib.parse.quote(base64.b85encode(merged.encode(encoding="utf-8")).decode('utf-8'))
 
     @staticmethod
-    def decode_tag(encoded_key: str):
-        decoded_key_bytes = base64.b85decode(encoded_key)
-        decoded_key = decoded_key_bytes.decode(encoding="utf-8")
+    def decode_tag(encoded_key: str) -> Tuple[int, str]:
+        decoded_key_bytes = base64.b85decode(urllib.parse.unquote(encoded_key).encode('utf-8'))
+
+        try:
+            decoded_key = decoded_key_bytes.decode(encoding="utf-8")
+        except UnicodeDecodeError as e:
+            raise TagKeyError(encoded_key, e)
+
         first_index = decoded_key.find(':')
         tag_id = int(decoded_key[0: first_index]) - 1000
         decoded_private_id = decoded_key[first_index + 1:]
         return tag_id, decoded_private_id
 
+    @staticmethod
+    @with_session
+    def get_tag_by_key(private_key: str, session=None) -> DBTag:
+        tag_id, decoded_private_id = JsonTag.decode_tag(private_key)
+        tag = TagWrapper.get_tag_by_id(session, tag_id)
+        if tag.private_id != decoded_private_id:
+            raise TagKeyError(private_key, AuthorizationException())
+        return tag
+
+    @staticmethod
+    @with_session
+    def get_tags_from_query_params(tag_names: List[str] = (),
+                                   private_tag_keys: List[str] = (),
+                                   session=None, **kwargs) -> List[DBTag]:
+        tags = []
+        user_id = get_current_user_id()
+        for tag_name in tag_names:
+            tags.append(TagWrapper.get_tag_by_name(session, user_id, tag_name))
+
+        for private_key in private_tag_keys:
+            tags.append(JsonTag.get_tag_by_key(private_key, session=session))
+
+        return tags
+
+
 @with_session
-def apply_tags_to_game(query_params: Dict[str, any]=None, game_id=None, session=None):
+def apply_tags_to_game(query_params: Dict[str, any] = None, game_id=None, session=None):
     if query_params is None:
         return None
-    if 'tags' not in query_params and 'private_tag_keys' not in query_params:
-        return None
-    tags = query_params['tags'] if 'tags' in query_params else []
+
     private_ids = query_params['private_tag_keys'] if 'private_tag_keys' in query_params else []
-    if len(tags) > 0:
-        player_id = query_params['player_id']
-        if session.query(Player).filter(Player.platformid == player_id).first() is None:
-            ErrorLogger.log_error(PlayerNotFound())
-        else:
-            for tag in tags:
-                created_tag = Tag.create(tag, session=session, player_id=player_id)
-                TagWrapper.add_tag_to_game(session, game_id, created_tag.db_tag)
 
     for private_id in private_ids:
-        tag_id, private_key = Tag.decode_tag(private_id)
+        tag_id, private_key = JsonTag.decode_tag(private_id)
         tag = TagWrapper.get_tag_by_id(session, tag_id)
         if tag.private_id is not None and tag.private_id == private_key:
             TagWrapper.add_tag_to_game(session, game_id, tag)

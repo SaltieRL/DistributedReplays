@@ -39,7 +39,6 @@ class TestClient:
             return call(prepped.path_url)
 
 
-
 @pytest.fixture()
 def test_client(app) -> TestClient:
     return TestClient(app)
