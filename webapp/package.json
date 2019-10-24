@@ -20,7 +20,7 @@
         "d3": "^5.9.2",
         "heatmap.js": "^2.0.5",
         "lodash": "^4.17.13",
-        "material-ui-pickers": "^2.0.5",
+        "material-ui-pickers": "2.0.4",
         "mathjax": "^2.7.5",
         "moment": "^2.23.0",
         "qrcode.react": "^0.8.0",
