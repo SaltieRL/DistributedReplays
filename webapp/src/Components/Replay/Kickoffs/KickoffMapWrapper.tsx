@@ -43,6 +43,7 @@ export class KickoffMapWrapper extends React.PureComponent<Props, State> {
                                 kickoff={this.props.kickoffData}
                                 players={this.props.players}
                                 replay={this.props.replay}
+                                highlight={0}
                             />
                         }
                     </Grid>
