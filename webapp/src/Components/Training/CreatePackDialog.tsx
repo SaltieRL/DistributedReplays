@@ -63,6 +63,12 @@ class CreatePackDialogComponent extends React.Component<Props, State> {
                             </DialogContentText>
                         </Grid>
                         <Grid item xs={12}>
+                            <TextField value={this.state.name}
+                                       onChange={this.handleNameChange}
+                                       label="Name of pack"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
                             <ClearableDatePicker
                                 placeholder={"Date filter start"}
                                 onChange={this.handleDateChangeStart}
@@ -106,12 +112,6 @@ class CreatePackDialogComponent extends React.Component<Props, State> {
                                 color: "#ff0000",
                                 height: 40
                             }}/>}
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField value={this.state.name}
-                                       onChange={this.handleNameChange}
-                                       label="Name of pack"
-                            />
                         </Grid>
                     </Grid>
                 </DialogContent>
