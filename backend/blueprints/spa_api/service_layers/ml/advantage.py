@@ -2,12 +2,14 @@ import os
 from joblib import dump, load
 import numpy as np
 import pandas as pd
+import pickle
 # Tensorflow
-import tensorflow as tf
-from tensorflow import keras
+#import tensorflow as tf
+#from tensorflow import keras
 from keras.models import load_model
+from keras import backend as K
 # Sklearn
-from sklearn.preprocessing import MinMaxScaler
+#from sklearn.preprocessing import MinMaxScaler
 from typing import List
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -224,7 +226,6 @@ def predict_on_game(df, proto_game: Game = None, num_players=1):
     for mp in os.listdir(CODE_FOLDER + model_path):
         if 'scaler.joblib' in mp:
             continue
-        r_str = f"{ranges[count][0]}-{ranges[count][1]}"
 
         model = load_model(CODE_FOLDER + model_path + mp, compile=False)
         models.append(model)
@@ -239,10 +240,11 @@ def predict_on_game(df, proto_game: Game = None, num_players=1):
     for index in range(len(coverage)):
         blue[index] /= coverage[index]
         orange[index] /= coverage[index]
+    K.clear_session()
     return blue, orange
 
 
-def predict_on_id(id_: str, query_params=None):
+def predict_on_id(id_: str, mmrs_list, query_params=None):
     filter_frames = None
     filter_frame_start = None
     filter_frame_count = None
@@ -259,22 +261,19 @@ def predict_on_id(id_: str, query_params=None):
         data_frame = ReplayPositions.filter_frames_range(filter_frame_start, filter_frame_count, data_frame)
 
     protobuf_game = FileManager.get_proto(id_)
-    # Get MMRs (later)
-    # game = session.query(Game).filter(Game.hash == id_).first()
-    # game.mmrs
-    # mmrs = {'min': 3000, 'max': 0, 'avg': 0}
-    # non_zero = 0
-    # for mmr in game.mmrs:
-    #     if mmr == 0:
-    #         continue
-    #     non_zero += 1
-    #     if mmr < mmrs['min']:
-    #         mmrs['min'] = mmr
-    #     if mmr > mmrs['max']:
-    #         mmrs['max'] = mmr
-    #     mmrs['avg'] += mmr
-    # mmrs['avg'] /= non_zero
-
+    mmrs = {'min': 3000, 'max': 0, 'avg': 0}
+    non_zero = 0
+    for mmr in mmrs_list:
+        if mmr == 0:
+            continue
+        non_zero += 1
+        if mmr < mmrs['min']:
+            mmrs['min'] = mmr
+        if mmr > mmrs['max']:
+            mmrs['max'] = mmr
+        mmrs['avg'] += mmr
+    mmrs['avg'] /= non_zero
+    print(mmrs)
     # Predict with Models
     blue, orange = predict_on_game(data_frame, protobuf_game, 1)  # third arg len of protobuf.players/2?
     return blue.values.tolist(), orange.values.tolist()

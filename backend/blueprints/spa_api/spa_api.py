@@ -300,18 +300,21 @@ def api_get_replay_positions(id_, query_params=None):
 
 
 @bp.route('replay/<id_>/advantage')
+@with_session
 @with_query_params(accepted_query_params=[
     QueryParam(name='frame', type_=int, optional=True, is_list=True),
     QueryParam(name='frame_start', type_=int, optional=True),
     QueryParam(name='frame_count', type_=int, optional=True),
     QueryParam(name='as_proto', type_=bool, optional=True)
 ])
-def api_get_replay_advantage_predictions(id_, query_params=None):
+def api_get_replay_advantage_predictions(id_, query_params=None, session=None):
     try:
         from backend.blueprints.spa_api.service_layers.ml.advantage import predict_on_id
-        return better_jsonify(predict_on_id(id_, query_params))
-    except:
-        return better_jsonify([[[]],[[]]])
+        game = session.query(Game).filter(Game.hash == id_).first()
+        return better_jsonify(predict_on_id(id_, game.mmrs, query_params))
+    except Exception as e:
+        raise e
+        #return better_jsonify([[[]],[[]]])
 
 
 @bp.route('replay/<id_>/heatmaps')
