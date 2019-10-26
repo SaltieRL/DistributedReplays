@@ -1,34 +1,43 @@
 import { Grid } from "@material-ui/core"
+import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 import * as React from "react"
 import { Replay } from "../../../Models"
 import { KickoffField } from "./KickoffField"
 import {KickoffCountsTable} from "./KickoffCountsTable";
+import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 
 interface Props {
     kickoffIndex: number
     kickoffData: any
     players: any
     replay: Replay
+    width: Breakpoint
 }
 
 interface State {
     highlight: number
 }
 
-export class KickoffMapWrapper extends React.PureComponent<Props, State> {
+const IMAGE_WIDTH = 250
+const IMAGE_HEIGHT = 175
+
+class KickoffMapWrapperWidthWidth extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {highlight: -1}
     }
 
     public render() {
-
+        const size = this.getSize()
         const kickoffField = (
             <KickoffField key={this.props.kickoffIndex}
-                          kickoff={this.props.kickoffData}
+                          player_list={this.props.kickoffData.players}
                           players={this.props.players}
                           onMouseover={this.onMouseover}
-                          onMouseout={this.onMouseout}/>
+                          onMouseout={this.onMouseout}
+                          width = {size[0]}
+                          height = {size[1]}
+                          />
         )
         return (
             <>
@@ -59,4 +68,29 @@ export class KickoffMapWrapper extends React.PureComponent<Props, State> {
     private readonly onMouseout = (index: number, data: any) => {
         this.setState({highlight: -1})
     }
+
+    private readonly getSize = () => {
+        const result = [IMAGE_WIDTH, IMAGE_HEIGHT]
+
+        if (isWidthUp('lg', this.props.width, true)) {
+            return this.convert(result, 4)
+        }
+
+        if (isWidthUp('md', this.props.width, true)) {
+            return this.convert(result, 2)
+        }
+
+        if (isWidthUp('sm', this.props.width, true)) {
+            return this.convert(result, 1)
+        }
+        return result
+    }
+
+    private readonly convert = (list: any, multiple: number) => {
+        return list.map(function(element: number) {
+            return element * multiple
+        })
+    }
 }
+
+export const KickoffMapWrapper = withWidth()(KickoffMapWrapperWidthWidth)

@@ -1,11 +1,12 @@
-import { CardContent, Divider } from "@material-ui/core"
+import {CardContent, Divider} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import * as React from "react"
-import { Replay } from "../../../Models"
-import { getKickoffs } from "../../../Requests/Replay"
-import { LoadableWrapper } from "../../Shared/LoadableWrapper"
-import { KickoffContent } from "./KickoffContent"
-import { KickoffTabs } from "./KickoffTabs"
+import {Replay} from "../../../Models"
+import {getKickoffs} from "../../../Requests/Replay"
+import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {KickoffContent} from "./KickoffContent"
+import {KickoffTabs} from "./KickoffTabs"
+import {KickoffField} from "./KickoffField";
 
 interface Props {
     replay: Replay
@@ -29,12 +30,6 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
         }
     }
 
-    // public componentDidMount() {
-    //     const config = {container: ReactDOM.findDOMNode(this) as HTMLElement}
-    //     const kickoff = h337.create(config)
-    //     this.setState({kickoff})
-    // }
-
     public render() {
 
         return (
@@ -47,7 +42,10 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
                         <CardContent>
                             <Grid container spacing={32}>
                                 {
-                                    this.state.selectedTab == 0 ? "Hello" :
+                                    this.state.kickoffData == null? "":
+                                    this.state.selectedTab == 0 ?
+                                        this.getMergedKickoff(this.state.kickoffData)
+                                        :
                                         <KickoffContent key={this.state.selectedTab - 1}
                                                         kickoffIndex={this.state.selectedTab - 1}
                                                         replay={this.props.replay}
@@ -73,5 +71,22 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
 
     private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: number) => {
         this.setState({selectedTab})
+    }
+
+    private readonly getMergedKickoff = (kickoffData: any) => {
+        let merged_players: any[] = []
+
+        kickoffData.kickoffs.map((kickoff: any) => {
+            merged_players=merged_players.concat(kickoff.players)
+        })
+
+        return (
+            <KickoffField key={0}
+                          player_list={merged_players}
+                          players={kickoffData.players}
+                          width={1000}
+                          height={700}
+            />)
+
     }
 }

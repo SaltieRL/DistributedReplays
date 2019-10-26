@@ -2,7 +2,7 @@ from typing import Dict
 
 from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.events_pb2 import Kickoff
-from carball.generated.api.stats.kickoff_pb2 import KickoffType, TouchPosition
+from carball.generated.api.stats.kickoff_pb2 import KickoffType, TouchPosition, UNKNOWN_TOUCH_POS
 
 from backend.blueprints.spa_api.service_layers.utils import create_player_map
 from backend.utils.file_manager import FileManager
@@ -76,11 +76,13 @@ class Kickoffs:
 
         return {
             'player_id': player.player.id,
-            'jumps': [jump for jump in player.jumps],
-            'boost_level': player.boost,
-            'time_to_boost': player.boost_time,
-            'ball_distance': player.ball_dist,
-            'location': TouchPosition.Name(player.touch_position),
+            'jump_times': [jump for jump in player.jumps],
+            'jumps': len(player.jumps),
+            'boost_level': round((player.boost / 255.0) * 100.0, 1),
+            'time_to_boost': round(player.boost_time, 3),
+            'ball_distance': round(player.ball_dist, 2),
+            'location': TouchPosition.Name(
+                player.touch_position) if player.touch_position != UNKNOWN_TOUCH_POS else "UNKOWN",
             'start': {
                 'x': start_x,
                 'y': start_y

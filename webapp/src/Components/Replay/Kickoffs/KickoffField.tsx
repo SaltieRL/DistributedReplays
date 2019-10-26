@@ -4,15 +4,13 @@ import {PlayerStartEnd} from "./PlayerStartEnd";
 import {rgb} from "d3";
 
 interface Props {
-    kickoff: any
+    player_list: any
     players: any
     onMouseover?: (i: number, data: any) => void
     onMouseout?: (i: number, data: any) => void
+    height: number
+    width: number
 }
-
-
-const IMAGE_WIDTH = 500
-const IMAGE_HEIGHT = 350
 
 interface State {
     element: d3.Selection<SVGSVGElement | null, {}, null, undefined> | null
@@ -25,18 +23,18 @@ export class KickoffField extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {kickoff, onMouseover, onMouseout} = this.props
+        const {player_list, onMouseover, onMouseout} = this.props
 
         return (
-            <svg width={IMAGE_WIDTH}
-                 height={IMAGE_HEIGHT}
+            <svg width={this.props.width}
+                 height={this.props.height}
                  ref={this.state.element === null ?
                      (element) => {
                          this.setState({element: d3.select(element)})
                      } : undefined}
                  key={"field"}>
-                <image x="0" y="0" width={IMAGE_WIDTH} height={IMAGE_HEIGHT} href="/fieldblack.png"/>
-                {this.get_kickoff_locations(kickoff).map((player_data: any, i: number) => (
+                <image x="0" y="0" width={this.props.width} height={this.props.height} href="/fieldblack.png"/>
+                {player_list.map((player_data: any, i: number) => (
                     <PlayerStartEnd key={i}
                              color={this.props.players[player_data.player_id].is_orange?
                                  rgb(187,113,45): rgb(68,135,240)}
@@ -44,8 +42,8 @@ export class KickoffField extends React.PureComponent<Props, State> {
                              startY={player_data.start.y}
                              endX={player_data.end.x}
                              endY={player_data.end.y}
-                             imageWidth = {IMAGE_WIDTH}
-                             imageHeight = {IMAGE_HEIGHT}
+                             imageWidth = {this.props.width}
+                             imageHeight = {this.props.height}
                              onMouseover={() => {
                                  if (onMouseover !== undefined) {
                                      onMouseover(i, player_data)
@@ -59,9 +57,5 @@ export class KickoffField extends React.PureComponent<Props, State> {
                 ))}
             </svg>
         )
-    }
-
-    private readonly get_kickoff_locations = (kickoffData: any) => {
-        return kickoffData.players
     }
 }
