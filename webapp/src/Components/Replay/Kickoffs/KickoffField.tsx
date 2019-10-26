@@ -1,10 +1,9 @@
 import * as d3 from "d3"
 import * as React from "react"
-import {PlayerStartEnd} from "./PlayerStartEnd";
-import {rgb} from "d3";
+import { PlayerStartEnd } from "./PlayerStartEnd"
 
 interface Props {
-    player_list: any
+    playerList: any
     players: any
     onMouseover?: (i: number, data: any) => void
     onMouseout?: (i: number, data: any) => void
@@ -18,12 +17,12 @@ interface State {
 
 export class KickoffField extends React.PureComponent<Props, State> {
     constructor(props: Props) {
-        super(props)
+        super(props);
         this.state = {element: null}
     }
 
     public render() {
-        const {player_list, onMouseover, onMouseout} = this.props
+        const {playerList, onMouseover, onMouseout} = this.props;
 
         return (
             <svg width={this.props.width}
@@ -34,26 +33,26 @@ export class KickoffField extends React.PureComponent<Props, State> {
                      } : undefined}
                  key={"field"}>
                 <image x="0" y="0" width={this.props.width} height={this.props.height} href="/fieldblack.png"/>
-                {player_list.map((player_data: any, i: number) => (
+                {playerList.map((player_data: any, i: number) => (
                     <PlayerStartEnd key={i}
-                             color={this.props.players[player_data.player_id].is_orange?
-                                 rgb(187,113,45): rgb(68,135,240)}
-                             startX={player_data.start.x}
-                             startY={player_data.start.y}
-                             endX={player_data.end.x}
-                             endY={player_data.end.y}
-                             imageWidth = {this.props.width}
-                             imageHeight = {this.props.height}
-                             onMouseover={() => {
-                                 if (onMouseover !== undefined) {
-                                     onMouseover(i, player_data)
-                                 }
-                             }}
-                             onMouseout={() => {
-                                 if (onMouseout !== undefined) {
-                                     onMouseout(i, player_data)
-                                 }
-                             }}/>
+                                    color={this.props.players[player_data.player_id].is_orange ?
+                                        d3.rgb(187, 113, 45) : d3.rgb(68, 135, 240)}
+                                    startX={player_data.start.x}
+                                    startY={player_data.start.y}
+                                    endX={player_data.end.x}
+                                    endY={player_data.end.y}
+                                    imageWidth={this.props.width}
+                                    imageHeight={this.props.height}
+                                    onMouseover={() => {
+                                        if (onMouseover !== undefined) {
+                                            onMouseover(i, player_data)
+                                        }
+                                    }}
+                                    onMouseout={() => {
+                                        if (onMouseout !== undefined) {
+                                            onMouseout(i, player_data)
+                                        }
+                                    }}/>
                 ))}
             </svg>
         )

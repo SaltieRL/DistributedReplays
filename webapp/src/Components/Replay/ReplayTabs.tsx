@@ -9,10 +9,10 @@ import { StoreState } from "../../Redux"
 import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
 import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
 import { HeatmapTabsWrapper } from "./Heatmap/HeatmapTabsWrapper"
+import { KickoffTabsWrapper } from "./Kickoffs/KickoffTabsWrapper"
 import { Predictions } from "./Predictions/Predictions"
 import { Viewer } from "./ReplayViewer/Viewer"
 import { VisualizationsContent } from "./Visualizations/VisualizationsContent"
-import { KickoffTabsWrapper } from "./Kickoffs/KickoffTabsWrapper";
 
 interface DisabledTabProps {
     label: string

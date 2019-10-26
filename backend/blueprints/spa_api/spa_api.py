@@ -33,7 +33,7 @@ from backend.utils.logger import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
-from blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
+from backend.blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
 from backend.utils.metrics import MetricsHandler, add_saved_replay
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI

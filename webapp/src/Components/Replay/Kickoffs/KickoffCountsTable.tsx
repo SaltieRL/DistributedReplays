@@ -1,13 +1,4 @@
-import {
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Toolbar,
-    Typography
-} from "@material-ui/core"
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography } from "@material-ui/core"
 import * as React from "react"
 import { Replay } from "../../../Models"
 
@@ -18,8 +9,8 @@ interface Props {
     highlight: 0
 }
 
-const HEADERS = ['location', 'jumps', 'boost_level', 'ball_distance']
-const HEADERS_NAMES = ['Target', 'Jumps', 'Boost Level at First Touch', 'Distance to Ball at First Touch']
+const HEADERS = ["location", "jumps", "boost_level", "ball_distance"];
+const HEADERS_NAMES = ["Target", "Jumps", "Boost Level at First Touch", "Distance to Ball at First Touch"];
 
 export class KickoffCountsTable extends React.PureComponent<Props> {
     public render() {
@@ -34,7 +25,7 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                 <div style={{color: "#ccc"}}>
                 </div>
             </Toolbar>
-        )
+        );
 
         return (
             <Paper>
@@ -50,24 +41,20 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.props.kickoff.players.map((player_info: any, index: number) => (
+                            {this.props.kickoff.players.map((playerInfo: any, index: number) => (
                                 <TableRow
-                                    key={player_info.player_id}
+                                    key={playerInfo.player_id}
                                     selected={this.props.highlight === index}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {this.props.players[player_info.player_id].name}
+                                        {this.props.players[playerInfo.player_id].name}
                                     </TableCell>
                                     {HEADERS.map((headerKey) => {
-                                        console.log(player_info)
-                                        console.log(this.props.kickoff.players[index])
-                                        console.log(player_info[headerKey])
-                                        console.log(this.props.players[player_info.player_id])
-                                        return (<TableCell key={headerKey + player_info.player_id} align="center">
-                                                {
-                                                    player_info[headerKey]
-                                                }
-                                                </TableCell>)
+                                        return (<TableCell key={headerKey + playerInfo.player_id} align="center">
+                                            {
+                                                playerInfo[headerKey]
+                                            }
+                                        </TableCell>)
                                     })}
                                 </TableRow>
                             ))}

@@ -1,5 +1,5 @@
-import { Tab, Tabs, withWidth } from "@material-ui/core"
-import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
+import {Tab, Tabs, withWidth} from "@material-ui/core"
+import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 
 interface OwnProps {
@@ -25,12 +25,13 @@ class KickoffTabsComponent extends React.PureComponent<Props> {
                 {
                     this.createTabList().map((kickoff, index) => {
                         return <Tab label={kickoff} value={index} key={index}/>
-                })}
+                    })}
             </Tabs>
         )
     }
+
     private readonly createTabList = () => {
-        const modifiedKickoffData = ["Overall"];
+        const modifiedKickoffData = ["Overall"]
         this.props.kickoffData.kickoffs.forEach((ignore: any, index: number) => {
             modifiedKickoffData.push("Kickoff " + index)
         });
@@ -38,4 +39,4 @@ class KickoffTabsComponent extends React.PureComponent<Props> {
     }
 }
 
-export const KickoffTabs = withWidth()(KickoffTabsComponent)
+export const KickoffTabs = withWidth()(KickoffTabsComponent);
