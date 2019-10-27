@@ -5,6 +5,10 @@ from bs4 import BeautifulSoup
 
 from backend.database.startup import lazy_get_redis
 
+try:
+    from config import PATREON_PROGRESS_LOOKUP_CLASS
+except ImportError:
+    PATREON_PROGRESS_LOOKUP_CLASS = "sc-gZMcBi fXaIeo"
 
 class PatreonProgress:
     def __init__(self, progress: str, total: str):
@@ -24,7 +28,7 @@ class PatreonProgress:
                 return tuple(json.loads(r.get('patreon_progress')))
         r = requests.get("https://patreon.com/calculated")
         bs = BeautifulSoup(r.text, "html.parser")
-        progress = bs.find_all(class_="sc-htpNat ebhhXb")[0].text
+        progress = bs.find_all(class_=PATREON_PROGRESS_LOOKUP_CLASS)[0].text
         nums = [int(n[1:]) for n in progress.split(' of ')]
         if lazy_get_redis() is not None:
             r = lazy_get_redis()
