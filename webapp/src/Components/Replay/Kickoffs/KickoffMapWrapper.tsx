@@ -1,10 +1,10 @@
 import { Grid } from "@material-ui/core"
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth"
+import { Breakpoint } from "@material-ui/core/styles/createBreakpoints"
 import * as React from "react"
 import { Replay } from "../../../Models"
-import { KickoffField } from "./KickoffField"
 import { KickoffCountsTable } from "./KickoffCountsTable"
-import { Breakpoint } from "@material-ui/core/styles/createBreakpoints"
+import { KickoffField } from "./KickoffField"
 
 interface Props {
     kickoffIndex: number

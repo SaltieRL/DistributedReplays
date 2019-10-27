@@ -5,8 +5,8 @@ import { Replay } from "../../../Models"
 import { getKickoffs } from "../../../Requests/Replay"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
 import { KickoffContent } from "./KickoffContent"
-import { KickoffTabs } from "./KickoffTabs"
 import { KickoffField } from "./KickoffField"
+import { KickoffTabs } from "./KickoffTabs"
 
 interface Props {
     replay: Replay
