@@ -34,9 +34,9 @@ class KickoffTabsComponent extends React.PureComponent<Props> {
         const modifiedKickoffData = ["Overall"]
         this.props.kickoffData.kickoffs.forEach((ignore: any, index: number) => {
             modifiedKickoffData.push("Kickoff " + index)
-        });
+        })
         return modifiedKickoffData
     }
 }
 
-export const KickoffTabs = withWidth()(KickoffTabsComponent);
+export const KickoffTabs = withWidth()(KickoffTabsComponent)

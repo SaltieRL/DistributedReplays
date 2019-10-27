@@ -17,12 +17,12 @@ interface State {
 
 export class KickoffField extends React.PureComponent<Props, State> {
     constructor(props: Props) {
-        super(props);
+        super(props)
         this.state = {element: null}
     }
 
     public render() {
-        const {playerList, onMouseover, onMouseout} = this.props;
+        const {playerList, onMouseover, onMouseout} = this.props
 
         return (
             <svg width={this.props.width}

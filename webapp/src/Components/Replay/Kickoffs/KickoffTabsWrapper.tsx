@@ -6,7 +6,7 @@ import { getKickoffs } from "../../../Requests/Replay"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
 import { KickoffContent } from "./KickoffContent"
 import { KickoffTabs } from "./KickoffTabs"
-import { KickoffField } from "./KickoffField";
+import { KickoffField } from "./KickoffField"
 
 interface Props {
     replay: Replay
@@ -21,7 +21,7 @@ interface State {
 
 export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
     constructor(props: Props) {
-        super(props);
+        super(props)
         this.state = {
             kickoffData: null,
             kickoff: null,
@@ -65,15 +65,15 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
     private readonly getKickoffsData = () => {
         return getKickoffs(this.props.replay.id)
             .then((data) => this.setState({kickoffData: data}))
-    };
+    }
 
     private readonly getPlayerData = () => {
         return this.state.kickoffData.players
-    };
+    }
 
     private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: number) => {
         this.setState({selectedTab})
-    };
+    }
 
     private readonly getMergedKickoff = (kickoffData: any) => {
         let mergedPlayers: any[] = []

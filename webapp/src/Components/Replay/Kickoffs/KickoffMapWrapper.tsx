@@ -1,10 +1,10 @@
 import { Grid } from "@material-ui/core"
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
+import withWidth, { isWidthUp } from "@material-ui/core/withWidth"
 import * as React from "react"
 import { Replay } from "../../../Models"
 import { KickoffField } from "./KickoffField"
-import { KickoffCountsTable } from "./KickoffCountsTable";
-import { Breakpoint } from "@material-ui/core/styles/createBreakpoints";
+import { KickoffCountsTable } from "./KickoffCountsTable"
+import { Breakpoint } from "@material-ui/core/styles/createBreakpoints"
 
 interface Props {
     kickoffIndex: number
@@ -18,17 +18,17 @@ interface State {
     highlight: number
 }
 
-const IMAGE_WIDTH = 250;
-const IMAGE_HEIGHT = 175;
+const IMAGE_WIDTH = 250
+const IMAGE_HEIGHT = 175
 
 class KickoffMapWrapperWidthWidth extends React.PureComponent<Props, State> {
     constructor(props: Props) {
-        super(props);
+        super(props)
         this.state = {highlight: -1}
     }
 
     public render() {
-        const size = this.getSize();
+        const size = this.getSize()
         const kickoffField = (
             <KickoffField key={this.props.kickoffIndex}
                           playerList={this.props.kickoffData.players}
@@ -38,7 +38,7 @@ class KickoffMapWrapperWidthWidth extends React.PureComponent<Props, State> {
                           width={size[0]}
                           height={size[1]}
             />
-        );
+        )
         return (
             <>
                 <Grid item xs={12} lg={8} xl={7}
@@ -63,14 +63,14 @@ class KickoffMapWrapperWidthWidth extends React.PureComponent<Props, State> {
 
     private readonly onMouseover = (index: number, data: any) => {
         this.setState({highlight: index})
-    };
+    }
 
     private readonly onMouseout = (index: number, data: any) => {
         this.setState({highlight: -1})
-    };
+    }
 
     private readonly getSize = () => {
-        const result = [IMAGE_WIDTH, IMAGE_HEIGHT];
+        const result = [IMAGE_WIDTH, IMAGE_HEIGHT]
 
         if (isWidthUp("lg", this.props.width, true)) {
             return this.convert(result, 4)
@@ -84,7 +84,7 @@ class KickoffMapWrapperWidthWidth extends React.PureComponent<Props, State> {
             return this.convert(result, 1)
         }
         return result
-    };
+    }
 
     private readonly convert = (list: any, multiple: number) => {
         return list.map((element: number) => {
@@ -93,4 +93,4 @@ class KickoffMapWrapperWidthWidth extends React.PureComponent<Props, State> {
     }
 }
 
-export const KickoffMapWrapper = withWidth()(KickoffMapWrapperWidthWidth);
+export const KickoffMapWrapper = withWidth()(KickoffMapWrapperWidthWidth)

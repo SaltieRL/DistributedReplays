@@ -9,8 +9,8 @@ interface Props {
     highlight: 0
 }
 
-const HEADERS = ["location", "jumps", "boost_level", "ball_distance"];
-const HEADERS_NAMES = ["Target", "Jumps", "Boost Level at First Touch", "Distance to Ball at First Touch"];
+const HEADERS = ["location", "jumps", "boost_level", "ball_distance"]
+const HEADERS_NAMES = ["Target", "Jumps", "Boost Level at First Touch", "Distance to Ball at First Touch"]
 
 export class KickoffCountsTable extends React.PureComponent<Props> {
     public render() {
@@ -25,7 +25,7 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                 <div style={{color: "#ccc"}}>
                 </div>
             </Toolbar>
-        );
+        )
 
         return (
             <Paper>
