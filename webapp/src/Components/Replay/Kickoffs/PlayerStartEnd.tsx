@@ -95,7 +95,7 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
     }
 
     private readonly applyAttr = (svgElement: any, attributes: any) => {
-        let chainer = svgElement;
+        let chainer = svgElement
         Object.keys(attributes).forEach((key: string, index: number) => {
             chainer = chainer.attr(key, attributes[key])
         })

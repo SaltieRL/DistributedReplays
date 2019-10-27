@@ -22,8 +22,7 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                     </Typography>
                 </div>
                 <div style={{flex: "1 1 100%"}}/>
-                <div style={{color: "#ccc"}}>
-                </div>
+                <div style={{color: "#ccc"}}/>
             </Toolbar>
         )
 
