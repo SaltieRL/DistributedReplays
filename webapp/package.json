@@ -50,6 +50,8 @@
         "tslint-prettier-check": "tslint-config-prettier-check ./tslint.json"
     },
     "devDependencies": {
+        "@testing-library/jest-dom": "^4.2.0",
+        "@testing-library/react": "^9.3.0",
         "@types/chart.js": "^2.7.33",
         "@types/jest": "^24.0.13",
         "@types/lodash": "^4.14.116",
