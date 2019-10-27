@@ -47,7 +47,7 @@
         "build": "react-scripts build",
         "test": "react-scripts src/test --env=jsdom",
         "eject": "react-scripts eject",
-        "tslint-prettier-check": "tslint-config-prettier-check ./tslint.json"
+        "tslint-check": "tslint --project . -c ./tslint.test.json"
     },
     "devDependencies": {
         "@testing-library/jest-dom": "^4.2.0",
