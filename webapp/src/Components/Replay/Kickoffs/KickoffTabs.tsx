@@ -1,5 +1,5 @@
-import {Tab, Tabs, withWidth} from "@material-ui/core"
-import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
+import { Tab, Tabs, withWidth } from "@material-ui/core"
+import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
 import * as React from "react"
 
 interface OwnProps {

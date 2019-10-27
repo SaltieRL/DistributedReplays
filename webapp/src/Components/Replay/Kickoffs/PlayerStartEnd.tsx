@@ -50,7 +50,7 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             const svgContainer = this.state.element.append("svg:g")
             this.createArrowHead(svgContainer, color)
             // .attr("transform", `translate(${x}, ${y})`)
-            this.applyAttr(svgContainer.append('line'), {
+            this.applyAttr(svgContainer.append("line"), {
                 "class": "arrow",
                 "marker-end": "url(#arrow)",
                 "x1": x,
@@ -62,13 +62,13 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             })
 
             // Starting circle
-            this.applyAttr(svgContainer.append('circle'), {
+            this.applyAttr(svgContainer.append("circle"), {
                 cx: x,
                 cy: y,
                 r: 5,
                 fill: color.brighter(2)
             })
-            this.applyAttr(svgContainer.append('circle'), {
+            this.applyAttr(svgContainer.append("circle"), {
                 cx: x2,
                 cy: y2,
                 r: 4,
@@ -87,7 +87,7 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             refY: 0,
             markerWidth: 4,
             markerHeight: 4,
-            orient: "auto",
+            orient: "auto"
         }).append("path")
             .attr("d", "M0,-5L10,0L0,5")
             .attr("class", "arrowHead")

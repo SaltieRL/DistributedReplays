@@ -43,7 +43,7 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
                         <Grid container spacing={32}>
                             {
                                 this.state.kickoffData === null ? "" :
-                                    this.state.selectedTab == 0 ?
+                                    this.state.selectedTab === 0 ?
                                         this.getMergedKickoff(this.state.kickoffData)
                                         :
                                         <KickoffContent key={this.state.selectedTab - 1}
