@@ -30,8 +30,6 @@ export const codeSplit = (importComponent: () => Promise<any>, importKey: string
           component: importedModule[importKey]
         })
       } catch (error) {
-        console.error(error)
-
         this.setState({
           errorOnDynamicLoad: true
         })
