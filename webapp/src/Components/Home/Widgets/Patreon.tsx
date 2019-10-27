@@ -3,6 +3,8 @@ import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import * as React from "react"
+
+import { PATREON_LINK } from "../../../Globals"
 import { PatreonResponse } from "../../../Models/types/Homepage"
 import { getPatreonProgress } from "../../../Requests/Home"
 
@@ -34,8 +36,10 @@ export class Patreon extends React.Component<Props, State> {
                     {this.state.patreonProgress ? (
                         <>
                             <div style={{marginBottom: "15px"}}>
-                                <Typography variant="h5">${this.state.patreonProgress.progress} /
-                                    ${this.state.patreonProgress.total}</Typography>
+                                <Typography variant="h5" className="tex2jax_ignore">
+                                  ${this.state.patreonProgress.progress} /
+                                  ${this.state.patreonProgress.total}
+                                </Typography>
                             </div>
                             <Grid item xs={12}>
                                 <LinearProgress variant="determinate"
@@ -45,14 +49,14 @@ export class Patreon extends React.Component<Props, State> {
 
                             <Grid item xs={12} container justify="flex-end">
                                 <a
-                                    href={"https://patreon.com/calculated"}
+                                    href={PATREON_LINK}
                                     target="_blank"
                                     rel="noreferrer noopener"
                                     style={{textDecoration: "none"}}
                                 >
                                     <Button variant="text" size="small">
                                         <Typography variant="subtitle1">
-                                            Link
+                                            Support us
                                         </Typography>
                                     </Button>
                                 </a>
