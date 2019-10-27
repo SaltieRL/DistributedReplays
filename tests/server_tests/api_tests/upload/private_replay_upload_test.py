@@ -17,7 +17,7 @@ from tests.utils.database_utils import default_player_id
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord, write_proto_pandas_to_file, \
     get_test_file
 
-LOCAL_URL = 'http://localhost:8000'
+from tests.utils.location_utils import LOCAL_URL
 
 
 class Test_upload_file:

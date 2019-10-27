@@ -59,13 +59,14 @@ METRICS_REQUEST_COUNT = Counter(
 METRICS_SAVED_REPLAY_COUNT = Counter(
     "app_saved_replay_count",
     "Saved replay count",
+    ['is_duplicate']
 )
 
 METRICS_INFO = Info("app_version", "Application Version")
 
 
-def add_saved_replay():
-    METRICS_SAVED_REPLAY_COUNT.inc()
+def add_saved_replay(match_exists: bool):
+    METRICS_SAVED_REPLAY_COUNT.labels(match_exists).inc()
 
 
 #

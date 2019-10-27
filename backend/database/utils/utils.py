@@ -36,7 +36,15 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
     :param game: Pickled game to process into Database object
     :return: Game db object, PlayerGame array, Player array
     """
-    teamsize = max(len(game.teams[0].player_ids), len(game.teams[1].player_ids))
+
+    try:
+        teamsize = max(len(game.teams[0].player_ids), len(game.teams[1].player_ids))
+    except IndexError:
+        if len(game.teams) == 0:
+            teamsize = 0
+        else:
+            len(game.teams[0].player_ids)
+
     player_objs = game.players
     ranks = get_rank_batch([p.id.id for p in player_objs], offline_redis=offline_redis)
     rank_list = []

@@ -1,5 +1,9 @@
+import logging
+
 from backend.database.objects import PlayerGame
 from backend.utils.rlgarage_handler import RLGarageAPI
+
+logger = logging.getLogger(__name__)
 
 
 class LoadoutItem:
@@ -16,7 +20,7 @@ class LoadoutItem:
         try:
             item = api.get_item(id_, paint_id)
         except Exception as e:
-            print("Error with loadout", e)
+            logger.debug("Error with loadout: %s", str(e))
             return LoadoutItem("Unknown", "", 0, 0)
         return LoadoutItem(item['name'], item['image'], paint_id, item['rarity'])
 
