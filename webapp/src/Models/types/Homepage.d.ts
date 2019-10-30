@@ -1,4 +1,4 @@
-import { Replay } from "replay-viewer/models/Replay"
+import { CompactReplay } from ".."
 
 interface Stream {
     name: string
@@ -18,5 +18,5 @@ interface PatreonResponse {
 }
 
 interface RecentReplaysResponse {
-    recent: Replay[]
+    recent: CompactReplay[]
 }

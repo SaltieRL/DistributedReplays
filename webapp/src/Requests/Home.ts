@@ -1,4 +1,5 @@
 import { doGet } from "../apiHandler/apiHandler"
+import { parseReplay } from "../Models"
 import { PatreonResponse, RecentReplaysResponse, StreamResponse } from "../Models/types/Homepage"
 import { useMockData } from "./Config"
 
@@ -24,6 +25,7 @@ export const getPatreonProgress = (): Promise<PatreonResponse> => {
 }
 
 export const getRecentReplays = (): Promise<RecentReplaysResponse> => {
-    return doGet("/home/recent")
-
+    return doGet("/home/recent").then((data) => ({
+        recent: data.recent.map(parseReplay)
+    }))
 }

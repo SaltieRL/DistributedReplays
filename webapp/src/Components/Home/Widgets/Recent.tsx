@@ -2,7 +2,7 @@ import { CardHeader, Divider, Grid, Typography } from "@material-ui/core"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import * as React from "react"
-import { Replay } from "replay-viewer/models/Replay"
+import { CompactReplay } from "../../../Models"
 import { RecentReplaysResponse } from "../../../Models/types/Homepage"
 import { getRecentReplays } from "../../../Requests/Home"
 
@@ -30,7 +30,7 @@ export class Recent extends React.Component<Props, State> {
             <Card style={this.props.style}>
                 <CardHeader title={"Recent Submitted Replays"}/>
                 <CardContent>
-                    {this.state.recentReplays ? this.state.recentReplays.recent.map((replay: Replay) => {
+                    {this.state.recentReplays ? this.state.recentReplays.recent.map((replay: CompactReplay) => {
                         return (
                             <a key={replay.id} href={`/replays/${replay.id}`} target={"_blank"}
                                style={{textDecoration: "none"}}>
@@ -50,7 +50,7 @@ export class Recent extends React.Component<Props, State> {
                                     <Grid item xs={12} md={6}>
                                         <Typography noWrap
                                                     style={{fontStyle: "italic"}}>
-                                            {replay.map}
+                                            {replay.date.format("DD/MM/YYYY")}
                                         </Typography>
                                     </Grid>
                                 </Grid>

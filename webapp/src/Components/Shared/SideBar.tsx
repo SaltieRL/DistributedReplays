@@ -5,6 +5,7 @@ import { Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, ListSubhea
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import CompareArrows from "@material-ui/icons/CompareArrows"
 import Help from "@material-ui/icons/Help"
+import Home from "@material-ui/icons/Home"
 import Info from "@material-ui/icons/Info"
 import Search from "@material-ui/icons/Search"
 import ShowChart from "@material-ui/icons/ShowChart"
@@ -36,6 +37,13 @@ export class SideBar extends React.PureComponent<Props> {
             <Drawer open={this.props.open} onClose={this.props.onClose}>
                 <div style={{width: 230}}>
                     <List>
+                        <ListItem button component={this.createLink("/")}>
+                            <ListItemIcon><Home/></ListItemIcon>
+                            <ListItemText>Home</ListItemText>
+                        </ListItem>
+
+                        <Divider component={"li" as any}/>
+
                         <ListSubheader>Replay</ListSubheader>
                         <ListItem button component={this.createLink(REPLAYS_SEARCH_PAGE_LINK())}>
                             <ListItemIcon><Search/></ListItemIcon>
