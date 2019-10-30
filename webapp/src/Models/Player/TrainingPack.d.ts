@@ -1,9 +1,10 @@
 import moment from "moment"
+import { CompactReplay } from ".."
 
 interface TrainingPackResponse {
     packs: TrainingPack[]
     totalCount: number
-    games: any
+    games: Record<string, CompactReplay>
 }
 
 interface TrainingPack {

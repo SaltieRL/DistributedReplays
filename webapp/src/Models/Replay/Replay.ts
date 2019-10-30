@@ -27,6 +27,13 @@ export interface Replay {
     mmrs: number[]
 }
 
+export interface CompactReplay {
+    id: string
+    date: moment.Moment
+    gameMode: GameMode
+    gameScore: GameScore
+}
+
 export const parseReplay = (data: any) => {
     return {
         ...data,
