@@ -18,13 +18,10 @@ class Kickoffs:
         protobuf_game = FileManager.get_proto(self.replay_id)
         kickoffs = protobuf_game.game_stats.kickoff_stats
         player_map = create_player_map(protobuf_game)
-        kickoff_list = []
-        for i in range(len(kickoffs)):
-            kickoff_list.append(self.get_stats_from_kickoff(kickoffs[i], player_map))
+        kickoff_list = [self.get_stats_from_kickoff(kickoff, player_map) for kickoff in kickoffs]
 
-        player_list = {}
-        for player in protobuf_game.players:
-            player_list[player.id.id] = {"name": player.name, "is_orange": player.is_orange}
+        player_list = {player.id.id: {"name": player.name, "is_orange": player.is_orange}
+                       for player in protobuf_game.players}
 
         kickoff_data = {
             "players": player_list,
