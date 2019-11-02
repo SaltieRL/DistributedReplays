@@ -3,6 +3,7 @@ import os
 from enum import Enum
 
 from carball.analysis.utils import proto_manager, pandas_manager
+from carball.generated.api.game_pb2 import Game
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
 from backend.utils.logger import ErrorLogger
@@ -51,7 +52,7 @@ class FileManager:
                                            lambda item_path: open(item_path, 'rb'))
 
     @staticmethod
-    def get_proto(replay_id):
+    def get_proto(replay_id) -> Game:
         return FileManager.get_or_download(FileManager.get_proto_path(replay_id),
                                            lambda: download_proto(replay_id),
                                            lambda item_path: proto_manager.ProtobufManager.read_proto_out_from_file(open(item_path, 'rb')))
