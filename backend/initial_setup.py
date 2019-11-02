@@ -1,12 +1,12 @@
 import logging
 import os
-import shutil
 import subprocess
 from typing import Dict, List, Tuple
 
-from flask import Flask, render_template, g, request, redirect, send_from_directory
+from flask import Flask, g, request, redirect, send_from_directory
 from flask import session as flask_session
 from flask_cors import CORS
+from flask_httpauth import HTTPBasicAuth
 from prometheus_client import make_wsgi_app, multiprocess, CollectorRegistry
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
@@ -19,9 +19,8 @@ from backend.database.wrapper.player_wrapper import create_default_player
 from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER, BASE_FOLDER
 from backend.tasks.celery_tasks import create_celery_config
 from backend.utils.checks import is_local_dev
-from backend.utils.metrics import MetricsHandler
 from backend.utils.logger import ErrorLogger
-from backend.utils.safe_flask_globals import UserManager
+from backend.utils.metrics import MetricsHandler
 
 logger = logging.getLogger(__name__)
 logger.info("Setting up server.")
@@ -39,6 +38,13 @@ try:
     from config import BASE_URL
 except ImportError:
     BASE_URL = 'https://calculated.gg'
+
+try:
+    from config import USERS
+except:
+    USERS = None
+
+authorizer = HTTPBasicAuth()
 
 
 class CalculatedServer:
@@ -157,9 +163,6 @@ class CalculatedServer:
             g.user = None
             if 'openid' in flask_session:
                 openid = flask_session['openid']
-                if len(ALLOWED_STEAM_ACCOUNTS) > 0 and openid not in ALLOWED_STEAM_ACCOUNTS:
-                    return render_template('login.html')
-
                 g.user = session.query(Player).filter(Player.platformid == openid).first()
                 if g.user is None:
                     del flask_session['openid']
@@ -186,6 +189,11 @@ class CalculatedServer:
         def static_from_root():
             return send_from_directory(app.static_folder, request.path[1:])
 
+        @app.before_request
+        @login_decorator
+        def check_auth():
+            pass
+
     def __init__(self):
         self.app, self.ids = CalculatedServer.start_app()
         CalculatedServer.setup_routing_methods(self.app, self.ids)
@@ -198,3 +206,20 @@ class CalculatedServer:
             ]).decode().strip()
         except subprocess.CalledProcessError:
             return 'unknown'
+
+
+@authorizer.verify_password
+def verify_password(username, password):
+    if username in USERS:
+        return USERS[username] == password
+    return False
+
+
+def login_decorator(decorated_function):
+    @authorizer.login_required
+    def func(*args, **kwargs):
+        return decorated_function(*args, **kwargs)
+
+    if USERS is not None:
+        return func
+    return decorated_function
