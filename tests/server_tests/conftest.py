@@ -123,15 +123,24 @@ def initialize_database_small_replays(fake_db, parse_small_replays):
     session = fake_db()
     session = initialize_db_with_parsed_replays(proto_games, session=session)
 
-    class wrapper:
+    class Wrapper:
+
         def get_session(self):
             return session
+
         def get_protos(self):
             return parse_small_replays.get_protos()
+
         def get_ids(self):
             return parse_small_replays.get_guids()
 
-    return wrapper()
+        def get_replay_names(self):
+            return parse_small_replays.get_replay_names()
+
+        def get_index_from_name(self, name):
+            return parse_small_replays.get_index_from_name(name)
+
+    return Wrapper()
 
 
 @pytest.fixture()

@@ -6,7 +6,7 @@ from tests.utils.database_utils import initialize_db_with_replays
 from tests.utils.location_utils import LOCAL_URL
 
 
-class Test_edit_private_replay:
+class TestGetReplayStats:
     replay_status = []
 
     def setup_method(self):
