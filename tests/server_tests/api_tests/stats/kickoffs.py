@@ -47,10 +47,13 @@ class TestGetKickoffs:
         assert len(data['kickoffs']) == 0
         assert len(data['players']) == 1
 
-    def test_replay_get_invalid_replay(self, test_client):
+    def test_replay_get_invalid_replay(self, test_client, no_errors_are_logged):
+        no_errors_are_logged.cancel_check()
 
         r = Request('GET', LOCAL_URL + '/api/replay/INVALID_REPLAY/kickoffs')
 
         response = test_client.send(r)
 
         assert(response.status_code == 404)
+
+        no_errors_are_logged.mock_is_called()
