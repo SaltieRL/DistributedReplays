@@ -50,9 +50,7 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                                     </TableCell>
                                     {HEADERS.map((headerKey) => {
                                         return (<TableCell key={headerKey + playerInfo.player_id} align="center">
-                                            {
-                                                playerInfo[headerKey]
-                                            }
+                                            {playerInfo[headerKey]}
                                         </TableCell>)
                                     })}
                                 </TableRow>

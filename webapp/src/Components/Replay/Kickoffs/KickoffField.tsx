@@ -37,10 +37,7 @@ export class KickoffField extends React.PureComponent<Props, State> {
                     <PlayerStartEnd key={i}
                                     color={this.props.players[playerData.player_id].is_orange ?
                                         d3.rgb(187, 113, 45) : d3.rgb(68, 135, 240)}
-                                    startX={playerData.start.x}
-                                    startY={playerData.start.y}
-                                    endX={playerData.end.x}
-                                    endY={playerData.end.y}
+                                    player={playerData}
                                     imageWidth={this.props.width}
                                     imageHeight={this.props.height}
                                     onMouseover={() => {

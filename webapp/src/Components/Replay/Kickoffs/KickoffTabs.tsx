@@ -23,18 +23,18 @@ class KickoffTabsComponent extends React.PureComponent<Props> {
                   scrollButtons={belowXs ? "on" : undefined}
             >
                 {
-                    this.createTabList().map((kickoff, index) => {
-                        return <Tab label={kickoff} value={index} key={index}/>
-                    })}
+                    this.createTabList().map((kickoff: string, index: number) => (
+                        <Tab label={kickoff} value={index} key={index}/>
+                    ))}
             </Tabs>
         )
     }
 
     private readonly createTabList = () => {
-        const modifiedKickoffData = ["Overall"]
-        this.props.kickoffData.kickoffs.forEach((ignore: any, index: number) => {
-            modifiedKickoffData.push("Kickoff " + index)
+        const modifiedKickoffData = this.props.kickoffData.kickoffs.map((ignore: any, index: number) => {
+            return "Kickoff " + index
         })
+        modifiedKickoffData.unshift("Overall")
         return modifiedKickoffData
     }
 }

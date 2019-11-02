@@ -2,11 +2,8 @@ import * as d3 from "d3"
 import * as React from "react"
 
 interface Props {
+    player: any
     color: any
-    startX: number
-    startY: number
-    endX: number
-    endY: number
     imageWidth: number
     imageHeight: number
     onMouseover?: () => void
@@ -42,7 +39,11 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>): void {
         if (this.state.element !== null && !prevState.loaded && this.state.loaded) {
-            const {color, startX, startY, endX, endY} = this.props
+            const startX = this.props.player.start.x
+            const startY = this.props.player.start.y
+            const endX = this.props.player.end.x
+            const endY = this.props.player.end.y
+            const color = this.props.color
             const y = this.getModifiedX(startX)
             const x = this.getModifiedY(startY)
             const y2 = this.getModifiedX(endX)

@@ -21,7 +21,7 @@ interface State {
 const IMAGE_WIDTH = 250
 const IMAGE_HEIGHT = 175
 
-class KickoffMapWrapperWidthWidth extends React.PureComponent<Props, State> {
+class KickoffMapWrapperComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {highlight: -1}
@@ -93,4 +93,4 @@ class KickoffMapWrapperWidthWidth extends React.PureComponent<Props, State> {
     }
 }
 
-export const KickoffMapWrapper = withWidth()(KickoffMapWrapperWidthWidth)
+export const KickoffMapWrapper = withWidth()(KickoffMapWrapperComponent)
