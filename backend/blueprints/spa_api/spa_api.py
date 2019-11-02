@@ -33,6 +33,7 @@ from backend.utils.logger import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
+from backend.blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
 from backend.utils.metrics import MetricsHandler, add_saved_replay
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI
@@ -111,7 +112,7 @@ def better_jsonify(response: object):
 
     try:
         return jsonify(response)
-    except TypeError:
+    except TypeError as e:
         if isinstance(response, list):
             return jsonify([value.__dict__ for value in response])
         else:
@@ -313,6 +314,12 @@ def api_get_replay_heatmaps(id_, query_params=None):
 def api_get_replay_boostmaps(id_):
     positions = Visualizations.create_from_id(id_)
     return jsonify(positions)
+
+
+@bp.route('replay/<id_>/kickoffs')
+def api_get_replay_kickoffs(id_: str):
+    kickoff_data = Kickoffs(id_).create_from_id()
+    return better_jsonify(kickoff_data)
 
 
 @bp.route('replay/group')

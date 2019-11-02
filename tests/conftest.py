@@ -147,14 +147,26 @@ def parse_small_replays():
     Parses a bunch of replays.
     This only happens once per a session
     """
-    protos, guids, replay_paths = parse_replays(get_small_replays())
+    small_replays = get_small_replays()
+    protos, guids, replay_paths = parse_replays(small_replays)
 
     class Wrapper:
+
         def get_protos(self):
             return protos
+
         def get_guids(self):
             return guids
+
         def get_replay_paths(self):
             return replay_paths
+
+        def get_replay_names(self):
+            return small_replays
+
+        def get_index_from_name(self, name):
+            for replay_index in range(len(small_replays)):
+                if name in small_replays[replay_index]:
+                    return replay_index
 
     return Wrapper()
