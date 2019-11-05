@@ -5,7 +5,7 @@ from typing import List
 from carball.generated.api import game_pb2
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.database.objects import Game, PlayerGame, Player, TeamStat, Loadout
+from backend.database.objects import Game, PlayerGame, Player, TeamStat, Loadout, GameVisibility
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
 from backend.database.wrapper.rank_wrapper import get_rank_obj_by_mapping
 from backend.utils.psyonix_api_handler import get_rank_batch
@@ -177,6 +177,10 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
             Loadout.player == loadout.player).all()
         for match in matches:
             session.delete(match)
+
+    matches = session.query(GameVisibility).filter(GameVisibility.game == game.hash).all()
+    for match in matches:
+        session.delete(match)
     try:
         matches = session.query(Game).filter(Game.hash == game.hash).all()
         if matches is not None and len(matches) > 0:
