@@ -4,10 +4,9 @@ import numpy as np
 import pandas as pd
 import pickle
 # Tensorflow
-#import tensorflow as tf
-#from tensorflow import keras
-from keras.models import load_model
-from keras import backend as K
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from tensorflow.keras import backend as K
 # Sklearn
 #from sklearn.preprocessing import MinMaxScaler
 from typing import List
@@ -89,18 +88,45 @@ def df_to_int(input_df, mul=False):
     return df
 
 
+def rot_to_2d(input_df, mul=False):
+    """
+    Change all rotation values to be 2 dimensional, cos and sin.
+    This helps the neural network learn, since otherwise the values are circular,
+    ex: in degrees, 359 and 1 are as close together as 120 and 122.
+    :param input_df: A prepared dataframe with rotational value columns
+    :type input_df: pd.DataFrame
+    :param mul: Whether the values have previously been multiplied by 1000.
+    :type mul: bool
+    :return: The dataframe with rotational columns replaced with cos and sin columns for each rotational value.
+    :rtype: pd.DataFrame
+    """
+    df = input_df.copy(deep=True)
+    subs = ["rot"]
+    for sub in subs:
+        cols = [col for col in df.columns if sub in col]
+        for col in cols:
+            idx = df.columns.get_loc(col)
+            df.insert(idx, col + '_cos', np.cos(df[col] / (1000 ** mul)))
+            df.insert(idx, col + '_sin', np.sin(df[col] / (1000 ** mul)))
+            df = df.drop([col], axis=1)
+    return df
+
+
 def mirror_inputs(input_df, num_players):
     # Only works for 1v1 right now!
     # Prepare flipping teams
     cols = input_df.columns.tolist()
-    flipped_cols = cols[15:30] + cols[0:15] + cols[30:]
+    pc = sum('z_0' in col for col in cols)
+    flipped_cols = cols[pc:2*pc] + cols[0:pc] + cols[2*pc:]
     df = input_df.copy()[flipped_cols]
     df.columns = cols
     # Get columns for flipping
     players = ['z_0_', 'o_0_', 'z_1_', 'o_1_', 'z_2_', 'o_2_', ]
     entities = (players[:num_players * 2])
     entities.append('ball_')
-    flipping = ['pos_x', 'pos_y', 'vel_x', 'vel_y', 'ang_vel_x', 'ang_vel_y']
+    # If you know why these values are the proper values to mirror the data diagonally, let me know.
+    # I just trained a model to figure it out for me.
+    flipping = ['pos_x', 'pos_y', 'vel_x', 'vel_y', 'ang_vel_x', 'ang_vel_y', 'rot_y_cos', 'rot_y_sin', 'rot_z_sin']
     for e in entities:
         if e is 'ball_':
             for col in flipping[:4]:
@@ -108,18 +134,6 @@ def mirror_inputs(input_df, num_players):
         else:
             for col in flipping:
                 df.loc[:, e + col] *= -1
-            # Also 'encode' by subtracting 10 so the values don't get picked up by the second query
-            col_type = df[e + 'rot_y'].dtype
-            if col_type == np.int16:  # Rotation has been multiplied by 1000
-                my_pi = np.pi * 1000
-            else:
-                assert (col_type == np.float32)
-                my_pi = np.pi
-            df.loc[df[e + 'rot_y'] > 0, e + 'rot_y'] -= (my_pi + 10000)
-            df.loc[(df[e + 'rot_y'] < 0) & (df[e + 'rot_y'] > -my_pi), e + 'rot_y'] += my_pi
-            # 'Decode' the first change
-            df.loc[df[e + 'rot_y'] < -my_pi, e + 'rot_y'] += 10000
-            df[e + 'rot_y'] = df[e + 'rot_y'].astype(col_type)
     return df
 
 
@@ -203,6 +217,8 @@ def get_game_df_prepared(df, proto_game: Game = None):
     gdf['z_0_dodge_active'] = ((gdf['z_0_dodge_active'] % 2) != 0).astype(int)
     gdf['o_0_dodge_active'] = ((gdf['o_0_dodge_active'] % 2) != 0).astype(int)
     gdf = gdf.replace({True: 1, False: 0})
+    gdf = gdf.drop(droplist, axis=1)
+    gdf = rot_to_2d(gdf, mul=False)
     gdf = df_to_int(gdf, mul=True)
 
     return gdf
@@ -210,10 +226,9 @@ def get_game_df_prepared(df, proto_game: Game = None):
 
 def predict_on_game(df, proto_game: Game = None, num_players=1):
     gdf = get_game_df_prepared(df, proto_game)
-    input_df = gdf.copy()
-    orange = pd.DataFrame(0, index=input_df.index, columns=range(0, 16))
-    blue = pd.DataFrame(0, index=input_df.index, columns=range(0, 16))
-    x = input_df.drop(droplist, axis=1)
+    x = gdf.copy()
+    orange = pd.DataFrame(0, index=x.index, columns=range(0, 16))
+    blue = pd.DataFrame(0, index=x.index, columns=range(0, 16))
     mx = mirror_inputs(x.copy(), num_players)
     scaler = load(CODE_FOLDER + model_path + 'scaler.joblib')
     x = scaler.transform(x)

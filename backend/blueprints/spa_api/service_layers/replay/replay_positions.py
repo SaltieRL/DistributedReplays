@@ -2,6 +2,7 @@ from typing import List
 
 from backend.utils.file_manager import FileManager
 from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
+import numpy as np
 
 
 class ReplayPositions:
@@ -45,12 +46,28 @@ class ReplayPositions:
 
         def process_player_df(game) -> List[ReplayPlayer]:
             player_data = []
-            for player in names:
-                data_frame[player].loc[:, rot_cs] = data_frame[player][rot_cs] / 65536.0 * 2 * 3.14159265
-                data_frame[player].loc[:, 'pos_x'] = data_frame[player]['pos_x']
-                data_frame[player].loc[:, 'pos_y'] = data_frame[player]['pos_y']
-                data_frame[player].loc[:, 'pos_z'] = data_frame[player]['pos_z']
-                player_positions = data_frame[player][cs + rot_cs + ['boost_active']].fillna(-100)
+            # flipping = ['pos_x', 'vel_x', 'ang_vel_x', 'rot_z']
+            # rotating = ['rot_x']
+            for i in range(len(names)):
+                player = names[i]
+                player_df = data_frame[player].copy()
+                # if i == 1:
+                #     for col in flipping:
+                #         player_df.loc[:, col] = data_frame[names[0]][col] * -1
+                #     for col in rotating:
+                #         pass
+                #         # player_df.loc[player_df[col] > 0, col] -= (my_pi + 10000)
+                #         # player_df.loc[(player_df[col] < 0) & (player_df[col] > -my_pi), col] += my_pi
+                #         # # 'Decode' the first change
+                #         # player_df.loc[player_df[col] < -my_pi, col] += 10000
+                #         # player_df.loc[player_df[col] > 0, col] -= (my_pi + 10000)
+                #         # player_df.loc[(player_df[col] < 0) & (player_df[col] > -my_pi), col] += my_pi
+                #         # # 'Decode' the first change
+                #         # player_df.loc[player_df[col] < -my_pi, col] += 10000
+                #     player_df['rot_y'] = np.pi - player_df['rot_y']
+                #     # player_df['rot_x'] = 0 - player_df['rot_x']
+                #     # player_df['rot_z'] = 0 - player_df['rot_z']
+                player_positions = player_df[cs + rot_cs + ['boost_active']].fillna(-100)
                 player_data.append(player_positions.values.tolist())
             return player_data
 
