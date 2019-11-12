@@ -7,7 +7,7 @@ NC='\033[0m'
 echo "Running Linters:"
 
 # Run tslint and get the output and return code
-tslint=$(webapp/node_modules/tslint/bin/tslint --project webapp -c webapp/tslint.test.json)
+tslint=$(cd webapp; npm run tslint-check)
 ret_code=$?
 
 # If it didn't pass, announce it failed and print the output

@@ -20,6 +20,7 @@ interface State {
 export class OverviewMatchHistory extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
+
         this.state = {
             reloadSignal: false,
             page: 0,
