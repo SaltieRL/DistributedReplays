@@ -28,10 +28,17 @@ class Visualizations:
         players = list(df.columns.levels[0])
         players.remove("ball")
         players.remove("game")
+
         for player in players:
             player_df = df[player]
-            boost_pickup_frames = player_df[player_df.boost_collect == True].index.values
-            for frame in boost_pickup_frames:
+            boost_pickup_frames = player_df[(~(player_df.boost_collect.isnull())) & player_df.boost_collect != False]
+
+            try:
+                big_boost_pickup_frames = boost_pickup_frames[boost_pickup_frames.boost_collect > 34].index.values
+            except:
+                big_boost_pickup_frames = boost_pickup_frames.index.values
+
+            for frame in big_boost_pickup_frames:
                 try:
                     position = player_df.iloc[frame].loc[['pos_x', 'pos_y']]
                 except:

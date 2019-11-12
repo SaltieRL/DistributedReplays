@@ -127,7 +127,7 @@ def generate_heatmaps(df, proto: Game = None, type_=HeatMapType.POSITIONING, bin
         elif type_ == HeatMapType.BOOST:
             df_adjusted = df[df[player]["boost_active"] == True]
         elif type_ == HeatMapType.BOOST_COLLECT:
-            df_adjusted = df[df[player]["boost_collect"] != False & df[player]["boost_collect"].isnull()]
+            df_adjusted = df[(~(df[player]['boost_collect'].isnull())) & df[player]['boost_collect'] != False]
         elif type_ == HeatMapType.BOOST_SPEED:
             df_adjusted = df[(df[player]["vel_x"] ** 2 + df[player]["vel_y"]) ** 0.5 > 14000]
         elif type_ == HeatMapType.SLOW_SPEED:
