@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
+import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, WithTheme, withTheme } from "@material-ui/core"
 import * as React from "react"
 import { BasicStat, StatsSubcategory } from "../../../Models"
 import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../../Utils/String"
@@ -19,9 +19,12 @@ interface PlayerStat {
     stats: Stat[]
 }
 
-interface Props {
+interface OwnProps {
     basicStats: BasicStat[]
 }
+
+type Props = OwnProps
+    & WithTheme
 
 interface SortOptions {
     statName: string
@@ -32,7 +35,7 @@ interface State {
     currentSort?: SortOptions
 }
 
-export class BasicStatsTable extends React.PureComponent<Props, State> {
+class BasicStatsTableComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {currentSort: {statName: "hits", direction: "desc"}}
@@ -99,7 +102,12 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
                 <TableBody>
                     {playerStats.map((playerStat) => (
                         <TableRow key={playerStat.playerName}>
-                            <TableCell>{playerStat.playerName}</TableCell>
+                            <TableCell>
+                                <div style={{
+                                    position: "fixed",
+                                    backgroundColor: this.props.theme.palette.background.paper
+                                }}>{playerStat.playerName}</div>
+                            </TableCell>
                             {playerStat.stats.map((stat, i) => (
                                 <TableCell key={i} align="right">
                                     {stat.isMax ?
@@ -123,7 +131,7 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
         if (playerStats.length > 0 && playerStats[0].stats.find((stat) => stat.statName === statName) !== undefined) {
             playerStats.sort((playerStatA, playerStatB) => {
                 return playerStatA.stats.find((stat) => stat.statName === statName)!.value
-                    -  playerStatB.stats.find((stat) => stat.statName === statName)!.value
+                    - playerStatB.stats.find((stat) => stat.statName === statName)!.value
             })
             if (direction !== "asc") {
                 playerStats.reverse()
@@ -149,3 +157,5 @@ export class BasicStatsTable extends React.PureComponent<Props, State> {
         }
     }
 }
+
+export const BasicStatsTable = withTheme()(BasicStatsTableComponent)
