@@ -1,7 +1,26 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, WithTheme, withTheme } from "@material-ui/core"
+import {
+    createStyles,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    TableSortLabel, withStyles,
+    WithStyles,
+    WithTheme,
+    withTheme
+} from "@material-ui/core"
 import * as React from "react"
 import { BasicStat, StatsSubcategory } from "../../../Models"
 import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../../Utils/String"
+
+const styles = createStyles({
+    sticky: {
+        position: "relative",
+        height: "100%",
+        width: "100%"
+    }
+})
 
 interface StatMetadata {
     name: string
@@ -21,9 +40,11 @@ interface PlayerStat {
 
 interface OwnProps {
     basicStats: BasicStat[]
+    scrollLeft: number
 }
 
 type Props = OwnProps
+    & WithStyles<typeof styles>
     & WithTheme
 
 interface SortOptions {
@@ -104,9 +125,9 @@ class BasicStatsTableComponent extends React.PureComponent<Props, State> {
                         <TableRow key={playerStat.playerName}>
                             <TableCell>
                                 <div style={{
-                                    position: "fixed",
+                                    left: this.props.scrollLeft,
                                     backgroundColor: this.props.theme.palette.background.paper
-                                }}>{playerStat.playerName}</div>
+                                }} className={this.props.classes.sticky}>{playerStat.playerName}</div>
                             </TableCell>
                             {playerStat.stats.map((stat, i) => (
                                 <TableCell key={i} align="right">
@@ -158,4 +179,4 @@ class BasicStatsTableComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const BasicStatsTable = withTheme()(BasicStatsTableComponent)
+export const BasicStatsTable = withStyles(styles)(withTheme()(BasicStatsTableComponent))
