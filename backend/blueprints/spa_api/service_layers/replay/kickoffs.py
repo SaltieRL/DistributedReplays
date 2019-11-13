@@ -79,7 +79,7 @@ class Kickoffs:
             'time_to_boost': round(player.boost_time, 3),
             'ball_distance': round(player.ball_dist, 2),
             'location': TouchPosition.Name(
-                player.touch_position) if player.touch_position != UNKNOWN_TOUCH_POS else "UNKOWN",
+                player.touch_position) if player.touch_position != UNKNOWN_TOUCH_POS else "UNKNOWN",
             'start': {
                 'x': start_x,
                 'y': start_y
