@@ -8,7 +8,7 @@ interface ReplayPlayer {
     saves: number
     shots: number
     cameraSettings: CameraSettings
-    loadout: Loadout
+    loadout?: Loadout
 }
 
 interface CameraSettings {

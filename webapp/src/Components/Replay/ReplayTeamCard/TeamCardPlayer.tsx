@@ -62,7 +62,7 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
                 </ListItem>
                 <Dialog open={this.state.loadoutOpen} onClose={this.handleCloseLoadout}>
                     <DialogTitle>{this.props.player.name}'s Loadout</DialogTitle>
-                    <LoadoutDisplay loadout={this.props.player.loadout}/>
+                    {this.props.player.loadout && <LoadoutDisplay loadout={this.props.player.loadout}/>}
                 </Dialog>
                 <Dialog open={this.state.cameraOpen} onClose={this.handleCloseCamera}>
                     <DialogTitle>{this.props.player.name}'s Camera Settings</DialogTitle>
