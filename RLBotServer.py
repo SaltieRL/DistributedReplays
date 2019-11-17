@@ -1,3 +1,9 @@
+try:
+    import config
+    GOOGLE_CLOUD = config.GOOGLE_CLOUD
+except ImportError:
+    config = None
+    GOOGLE_CLOUD = False
 app = None
 
 
@@ -16,3 +22,5 @@ def start_server():
 
 if __name__ == '__main__':
     start_server()
+elif GOOGLE_CLOUD:
+    app = start_app().app
