@@ -10,7 +10,3 @@ test("full render", async() => {
 
     expect(app)
 })
-
-describe("should route to page", () => {
-    test()
-})
