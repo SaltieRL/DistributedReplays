@@ -105,7 +105,7 @@ class ReplayPlayer:
         self.saves = saves
         self.shots = shots
         self.cameraSettings = camera_settings.__dict__
-        self.loadout = loadout.__dict__
+        self.loadout = loadout.__dict__ if loadout is not None else None
 
     @staticmethod
     def create_from_player_game(player_game: PlayerGame, loadout: bool = True) -> 'ReplayPlayer':
