@@ -105,11 +105,14 @@ class CalculatedServer:
 
     @staticmethod
     def create_needed_folders(app: Flask):
-        folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
-        for f in folders_to_make:
-            abspath = os.path.join(BASE_FOLDER, f)
-            if not os.path.isdir(abspath):
-                os.makedirs(abspath)
+        try:
+            folders_to_make = [app.config['REPLAY_DIR'], app.config['PARSED_DIR']]
+            for f in folders_to_make:
+                abspath = os.path.join(BASE_FOLDER, f)
+                if not os.path.isdir(abspath):
+                    os.makedirs(abspath)
+        except:
+            logger.warning("Can't create needed folders")
 
     @staticmethod
     def set_up_app_config(app: Flask):

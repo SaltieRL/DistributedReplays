@@ -7,13 +7,17 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from backend.database.objects import DBObjectBase
-
+try:
+    import config
+    GOOGLE_CLOUD = config.GOOGLE_CLOUD
+except:
+    GOOGLE_CLOUD = False
 logger = logging.getLogger(__name__)
 
 
 def login(connection_string, recreate_database=False) -> Tuple[create_engine, sessionmaker]:
     print(connection_string)
-    engine = create_engine(connection_string, echo=False)
+    engine = create_engine(connection_string, echo=False, connect_args={'connect_timeout': 10})
     if recreate_database:
         conn = engine.connect()
         conn.execute("commit")
@@ -25,25 +29,11 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
     return engine, session
 
 
-def startup() -> sessionmaker:
-    try:
-        # Sql Stuff
-        connection_string = 'postgresql:///saltie'
-        engine, session = login(connection_string)
-    except OperationalError as e:
-        print('trying backup info', e)
-        try:
-            engine, session = login('postgresql://postgres:postgres@localhost/saltie')
-        except Exception as e:
-            engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
-    return session
-
-
 def get_current_session():
     return EngineStartup.get_current_session()
 
 
-stored_session: sessionmaker = None
+stored_session: Optional[sessionmaker] = None
 stored_redis = None
 redis_attempted = False
 
@@ -80,10 +70,17 @@ class EngineStartup:
             engine, session = login(connection_string)
         except OperationalError as e:
             print('trying backup info', e)
+            url = "postgresql+psycopg2://postgres:postgres@/?host=/cloudsql/calculatedgg-217303:us-east1:dbinstance"
             try:
-                engine, session = login('postgresql://postgres:postgres@localhost/saltie')
+                if GOOGLE_CLOUD:
+                    engine, session = login(url)
+                else:
+                    engine, session = login('postgresql://postgres:postgres@localhost/saltie')
             except Exception as e:
-                engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+                if GOOGLE_CLOUD:
+                    engine, session = login(url, recreate_database=True)
+                else:
+                    engine, session = login(url, recreate_database=True)
         return engine, session
 
     @staticmethod
