@@ -21,7 +21,7 @@ class MatchHistory:
         games = [player_game.game_object
                  for player_game in player_wrapper.get_player_games_paginated(session, id_, page, limit)]
         total_count = player_wrapper.get_total_games(session, id_, filter_private=True)
-        match_history = MatchHistory(total_count, [Replay.create_from_game(game) for game in games])
+        match_history = MatchHistory(total_count, [Replay.create_from_game(game, loadout=False) for game in games])
         return match_history
 
     @staticmethod
@@ -46,5 +46,5 @@ class MatchHistory:
             query = query.filter(Game.map == kwargs['map'])
         count = query.count()
         games = query.order_by(desc(Game.match_date))[page * limit: (page + 1) * limit]
-        matches = MatchHistory(count, [Replay.create_from_game(game) for game in games])
+        matches = MatchHistory(count, [Replay.create_from_game(game, loadout=False) for game in games])
         return matches
