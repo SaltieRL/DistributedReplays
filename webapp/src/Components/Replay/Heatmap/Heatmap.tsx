@@ -61,4 +61,4 @@ class ReactHeatmapComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const ReactHeatmap = withTheme()(ReactHeatmapComponent)
+export const ReactHeatmap = withTheme(ReactHeatmapComponent)

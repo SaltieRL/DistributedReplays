@@ -35,7 +35,7 @@ export class GlobalStatsPageComponent extends React.PureComponent<Props, State> 
         const removedStats = ["first_frame_in_game", "is_keyboard", "time_in_game", "total_saves"]
         return (
             <BasePage useSplash>
-                <Grid container spacing={16} alignItems="center" justify="center">
+                <Grid container spacing={2} alignItems="center" justify="center">
                     <Grid item xs={12}>
                         <Typography variant="h3" align="center">
                             Distributions
@@ -49,7 +49,7 @@ export class GlobalStatsPageComponent extends React.PureComponent<Props, State> 
                                     <Tab label={tab} value={tab} key={tab}/>
                                 ))}
                             </Tabs>
-                            <Grid container spacing={16} style={{paddingTop: 16}}>
+                            <Grid container spacing={2} style={{paddingTop: 16}}>
                                 {this.state.selectedTab === "Playlist Distribution" && (
                                     <LoadableWrapper load={this.getStats}>
                                         {this.state.globalStats && this.state.globalStats.map((globalStatsGraph) => {

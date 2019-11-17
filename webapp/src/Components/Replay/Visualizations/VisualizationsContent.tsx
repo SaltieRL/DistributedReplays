@@ -25,7 +25,7 @@ export class VisualizationsContent extends React.PureComponent<Props, State> {
         return (
             <>
                 <Divider/>
-                <Grid container spacing={16}>
+                <Grid container spacing={2}>
                     <Grid item xs={12} container justify="center">
                         <LoadableWrapper load={this.getBoostmapsData} reloadSignal={this.state.reloadSignal}>
                             <BoostMapWrapper data={this.state.boostmapData} replay={this.props.replay}/>

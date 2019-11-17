@@ -96,7 +96,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                 <Select
                     multiple={this.props.multiple}
                     value={this.props.multiple ? this.props.selectedPlaylists : this.props.selectedPlaylist}
-                    onChange={handleChange}
+                    onChange={handleChange as React.ChangeEventHandler<{ value: unknown }>}
                     autoWidth
                     input={
                         <Input

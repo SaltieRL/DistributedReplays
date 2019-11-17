@@ -99,7 +99,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
         )
         return (
             <>
-                <Grid item xs={12} md={12} xl={10} style={{textAlign: "center"}} container spacing={16}>
+                <Grid item xs={12} md={12} xl={10} style={{textAlign: "center"}} container spacing={2}>
                     <Grid item xs={12} sm={6} lg={4}>
                         <FieldSelect fields={this.state.fields}
                                      selectedFields={this.state.selectedFields}
@@ -111,7 +111,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
                             <InputLabel>Duration</InputLabel>
                             <Select
                                 value={this.state.timeUnit}
-                                onChange={this.handleTimeUnitChange}
+                                onChange={this.handleTimeUnitChange as React.ChangeEventHandler<{ value: unknown }>}
                                 autoWidth
                             >
                                 {timeUnits.map((timeUnit) => (
@@ -202,7 +202,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
         })
     }
 
-    private readonly handleSelectChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
+    private readonly handleSelectChange: React.ChangeEventHandler<{value: string[]}> = (event) => {
         this.setState({
             selectedFields: event.target.value as any as string[]
         })

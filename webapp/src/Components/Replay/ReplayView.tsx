@@ -91,7 +91,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
         )
 
         return (
-            <Grid item xs={12} container spacing={24} alignItems="center">
+            <Grid item xs={12} container spacing={3} alignItems="center">
                 {isWidthUp("lg", width) ?
                     <>
                         {blueGridItem}

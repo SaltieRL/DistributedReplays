@@ -2,10 +2,9 @@ import * as React from "react"
 
 import { Button, Card, CardContent, createStyles, Grid, Typography, WithStyles, withStyles } from "@material-ui/core"
 import { connect } from "react-redux"
-import { doGet } from "../../../../apiHandler/apiHandler"
 import { StoreState } from "../../../../Redux"
-import { withNotifications, WithNotifications } from "../../../Shared/Notification/NotificationUtils"
-import { GroupIndicator } from "../GroupIndicator"
+import { GroupIndicator } from "./GroupIndicator"
+import { PlayerAdminToggles } from "./PlayerAdminToggles"
 import { PlayerNameDropdown } from "./PlayerNameDropdown"
 import { PlayerProfilePicture } from "./PlayerProfilePicture"
 
@@ -37,7 +36,6 @@ interface OwnProps {
 type Props = OwnProps
     & WithStyles<typeof styles>
     & ReturnType<typeof mapStateToProps>
-    & WithNotifications
 
 class PlayerProfileComponent extends React.PureComponent<Props> {
     public render() {
@@ -70,77 +68,18 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                                 </Button>
                             </a>
                         </Grid>
-                        {this.props.loggedInUser && this.props.loggedInUser.admin &&
-                        <>
-                            <Grid item xs={12} container justify="flex-end">
-                                {[4, 2, 3].map((num) => {
-                                    return <>
-                                        {player.groups.indexOf(num) === -1 ?
-                                            <Button variant="text" size="small" onClick={() => {
-                                                this.addGroupToUser(player.id, num)
-                                            }}
-                                                    style={{textTransform: "none"}}
-                                            >
-                                                <GroupIndicator groups={[num]} faded={true}/>
-                                            </Button> :
-                                            <Button variant="text" size="small" onClick={() => {
-                                                this.removeGroupFromUser(player.id, num)
-                                            }}
-                                                    style={{textTransform: "none"}}
-                                            >
-                                                <GroupIndicator groups={[num]}/>
-                                            </Button>
-                                        }
-                                    </>
-                                })}
-
-                            </Grid>
-                        </>
-                        }
+                        {this.props.loggedInUser && this.props.loggedInUser.admin && (
+                            <>
+                                <Grid item xs={12} container justify="flex-end">
+                                    <PlayerAdminToggles player={player}/>
+                                </Grid>
+                            </>
+                        )}
                     </Grid>
                 </CardContent>
             </Card>
         )
     }
-
-    private readonly addGroupToUser = (id: string, group: number) => {
-        doGet(`/admin/group/add/${id}/${group}`).then(() => {
-            this.props.showNotification({
-                variant: "success",
-                message: "Successfully added group to user",
-                timeout: 3000
-            })
-            setTimeout(() => {
-                window.location.reload()
-            }, 3000)
-        }).catch((err) => {
-            this.props.showNotification({
-                variant: "error",
-                message: "Error",
-                timeout: 10000
-            })
-        })
-    }
-    private readonly removeGroupFromUser = (id: string, group: number) => {
-        doGet(`/admin/group/remove/${id}/${group}`).then(() => {
-            this.props.showNotification({
-                variant: "success",
-                message: "Successfully removed group from user",
-                timeout: 3000
-            })
-            setTimeout(() => {
-                window.location.reload()
-            }, 3000)
-        }).catch((err) => {
-            this.props.showNotification({
-                variant: "error",
-                message: "Error",
-                timeout: 10000
-            })
-        })
-    }
-
 }
 
-export const PlayerProfile = withNotifications()(
-    connect(mapStateToProps)(withStyles(styles)(PlayerProfileComponent)))
+export const PlayerProfile = connect(mapStateToProps)(withStyles(styles)(PlayerProfileComponent))

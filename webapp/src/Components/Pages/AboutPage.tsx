@@ -279,7 +279,7 @@ export class AboutPage extends React.PureComponent {
             <BasePage useSplash>
                 <Grid container justify="center">
                     <Grid item xs={12} lg={10} xl={8}>
-                        <Grid container spacing={16} justify="center">
+                        <Grid container spacing={2} justify="center">
                             <Grid item xs={12}>
                                 {aboutSaltie}
                             </Grid>

@@ -5,7 +5,7 @@ import * as React from "react"
 export const styles = (theme: Theme) => createStyles({
     infoIcon: {
         verticalAlign: "middle",
-        marginLeft: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
         marginTop: -4
     }
 })

@@ -61,14 +61,14 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
         return (
             <div style={{paddingTop: 16}}>
                 {tags !== null && (
-                    <Grid container spacing={8}>
+                    <Grid container spacing={1}>
                         <Grid item xs={11}>
                             <FormControl fullWidth>
                                 <InputLabel>Tags</InputLabel>
                                 <Select
                                     multiple
                                     value={selectedTagNames}
-                                    onChange={this.handleTagsSelectChange}
+                                    onChange={this.handleTagsSelectChange as React.ChangeEventHandler<{ value: unknown }>}
                                     autoWidth
                                     renderValue={(tagNames) => (
                                         <div style={{display: "flex", flexWrap: "wrap"}}>

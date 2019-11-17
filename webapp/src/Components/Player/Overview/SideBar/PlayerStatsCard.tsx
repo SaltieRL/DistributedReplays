@@ -93,7 +93,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                     <LoadableWrapper load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
                         {this.state.playerStats &&
                         <>
-                            <Grid container alignItems="center" justify="space-around" spacing={8}>
+                            <Grid container alignItems="center" justify="space-around" spacing={1}>
                                 <Grid item xs={3}>
                                     <Typography> <DirectionsCar/> </Typography>
                                 </Grid>
@@ -115,7 +115,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid container alignItems="center" justify="space-around" spacing={8}>
+                            <Grid container alignItems="center" justify="space-around" spacing={1}>
                                 <Grid item xs={3}>
                                     <Typography> <CardTravel/> </Typography>
                                 </Grid>
@@ -135,7 +135,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                 </Dialog>
                             </Grid>
 
-                            <Grid container alignItems="center" justify="space-around" spacing={8}>
+                            <Grid container alignItems="center" justify="space-around" spacing={1}>
                                 <Grid item xs={3}>
                                     <Typography> <People/> </Typography>
                                 </Grid>
@@ -146,7 +146,7 @@ class PlayerStatsCardComponent extends React.PureComponent<Props, State> {
                                 </Grid>
                             </Grid>
 
-                            <Grid container alignItems="center" justify="space-around" spacing={8}>
+                            <Grid container alignItems="center" justify="space-around" spacing={1}>
                                 <Grid item xs={12}>
                                     <List component="nav">
                                         {this.state.playerStats.playersInCommon.map((person) =>

@@ -26,7 +26,7 @@ export class ReplaysGroupChartsWrapper extends React.PureComponent<Props, State>
             <>
                 <PlayerStatsTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
                 <CardContent>
-                    <Grid container spacing={32} justify="center">
+                    <Grid container spacing={4} justify="center">
                         <ReplaysGroupCharts replays={this.props.replays} selectedTab={this.state.selectedTab}/>
                     </Grid>
                 </CardContent>

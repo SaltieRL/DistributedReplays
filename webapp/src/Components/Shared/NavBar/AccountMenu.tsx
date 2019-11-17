@@ -79,7 +79,7 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
                                     <Grid container
                                           direction="column"
                                           justify="space-between"
-                                          spacing={8}
+                                          spacing={1}
                                           className={classes.actions}
                                     >
                                         <Grid item>

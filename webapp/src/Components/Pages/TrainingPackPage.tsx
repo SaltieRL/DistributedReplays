@@ -32,7 +32,7 @@ class TrainingPackPageComponent extends React.PureComponent<Props, State> {
     public render() {
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
+                <Grid container spacing={3} justify="center">
                     {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
                         <LoadableWrapper load={this.getTrainingPacks} reloadSignal={this.state.reloadSignal}>
                             {this.state.trainingPacks &&

@@ -10,7 +10,7 @@ const styles = (theme: Theme) => createStyles({
     inlineWarning: {
         color: theme.palette.error.main,
         margin: "auto",
-        marginRight: theme.spacing.unit
+        marginRight: theme.spacing(1)
     },
     warningContainer: {
         border: "1px rgba(0, 0, 0, 0.4) solid",
@@ -58,7 +58,7 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
             "This may not be a good representation of the player as there are too few replays. " +
             "Upload more replays to get more accurate stats."
         return (
-            <Grid container justify="space-around" spacing={32}>
+            <Grid container justify="space-around" spacing={4}>
                 <LoadableWrapper load={this.props.winLossMode ? this.getPlayStylesWinLoss : this.getPlayStyles}
                                  reloadSignal={this.state.reloadSignal}>
                     {this.state.data &&

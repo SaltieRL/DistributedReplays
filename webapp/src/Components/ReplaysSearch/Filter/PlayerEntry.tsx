@@ -41,7 +41,7 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
             <PlayerChip {...player} onDelete={() => this.handleRemovePlayer(player.id)} key={player.id}/>
         ))
         return (
-            <Grid container spacing={32}>
+            <Grid container spacing={4}>
                 <Grid item xs={12} container justify="center">
                     <Grid item xs="auto">
                         <AddPlayerInput onSubmit={this.attemptToAddPlayer}
@@ -49,7 +49,7 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
                                         onChange={this.handleInputChange}/>
                     </Grid>
                 </Grid>
-                <Grid item xs={12} container spacing={8}>
+                <Grid item xs={12} container spacing={1}>
                     {playerChips.map((playerChip) => (
                         <Grid item key={playerChip.key as string} zeroMinWidth>
                             {playerChip}

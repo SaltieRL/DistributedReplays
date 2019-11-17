@@ -27,8 +27,8 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
     public render() {
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
-                    <Grid item xs={12} md={4} container spacing={32} alignContent="flex-start">
+                <Grid container spacing={3} justify="center">
+                    <Grid item xs={12} md={4} container spacing={4} alignContent="flex-start">
                         <Grid item xs={12}>
                             <Typography variant="h6" align="center" gutterBottom>
                                 Filters

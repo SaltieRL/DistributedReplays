@@ -3,7 +3,8 @@ import {
     CircularProgress,
     createStyles,
     DialogActions,
-    DialogContent, LinearProgress,
+    DialogContent,
+    LinearProgress,
     Theme,
     Typography,
     WithStyles,
@@ -12,7 +13,6 @@ import {
 import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
-import { DropFilesEventHandler } from "react-dropzone"
 import { uploadReplays } from "../../../Requests/Global"
 import { WithNotifications, withNotifications } from "../Notification/NotificationUtils"
 import { BakkesModAd } from "./BakkesModAd"
@@ -22,7 +22,7 @@ import { UploadTags } from "./UploadTags"
 
 const styles = (theme: Theme) => createStyles({
     leftIcon: {
-        marginRight: theme.spacing.unit
+        marginRight: theme.spacing(1)
     },
     uploadButton: {
         marginLeft: "auto"
@@ -51,17 +51,17 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         const hasFilesSelected = this.state.files.length !== 0
         return (
             <>
-                {this.state.uploadingStage !== "pressedUpload" ?
+                {this.state.uploadingStage !== "pressedUpload" ? (
                     <>
                         <DialogContent>
                             <BakkesModAd/>
                             <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
-                            {this.state.rejected.length !== 0 &&
-                            <Typography color="error">
-                                {this.state.rejected.length} file(s) were not selected as they do not end in
-                                ".replay".
-                            </Typography>
-                            }
+                            {this.state.rejected.length !== 0 && (
+                                <Typography color="error">
+                                    {this.state.rejected.length} file(s) were not selected as they do not end in
+                                    ".replay".
+                                </Typography>
+                            )}
 
                             <UploadTags
                                 selectedPrivateKeys={this.state.selectedPrivateKeys}
@@ -87,7 +87,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                             </Button>
                         </DialogActions>
                     </>
-                    :
+                ) : (
                     <>
                         <div style={{margin: "auto", textAlign: "center", padding: 20, flexGrow: 1}}>
                             <CircularProgress/>
@@ -96,7 +96,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
                             <Typography>
                                 Uploading
-                                 {this.state.files.length - this.state.filesRemaining} of {this.state.files.length}...
+                                {this.state.files.length - this.state.filesRemaining} of {this.state.files.length}...
                             </Typography>
                             <LinearProgress variant="determinate"
                                             color={"secondary"}
@@ -104,7 +104,7 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                                             style={{width: "100% !important"}}/>
                         </div>
                     </>
-                }
+                )}
             </>
         )
     }
@@ -142,12 +142,13 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         }
     }
 
-    private readonly handleDrop: DropFilesEventHandler = (accepted, rejected) => {
-        this.setState({
-            files: accepted,
-            rejected
-        })
-    }
+    private readonly handleDrop: <T extends File>(acceptedFiles: T[], rejectedFiles: T[]) => void =
+        (accepted, rejected) => {
+            this.setState({
+                files: accepted,
+                rejected
+            })
+        }
 
     private readonly clearFiles = () => {
         this.setState({files: [], rejected: []})

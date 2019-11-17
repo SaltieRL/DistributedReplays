@@ -104,7 +104,7 @@ class PlayStyleActionsComponent extends React.PureComponent<Props, State> {
                             <ListItemText primary="Compare with other players"/>
                         </MenuItem>
                     </Link>
-                    <Divider component={"li" as any}/>
+                    <Divider component="li"/>
                     {!isAboveMd && (
                         <MenuItem style={{justifyContent: "center"}}>
                             {playlistSelect}

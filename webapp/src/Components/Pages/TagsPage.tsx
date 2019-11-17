@@ -28,7 +28,7 @@ class TagsPageComponent extends React.PureComponent<Props> {
         const {tags} = this.props
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
+                <Grid container spacing={3} justify="center">
                     <Grid item xs={12} container justify="center">
                         {tags !== null &&
                         <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>

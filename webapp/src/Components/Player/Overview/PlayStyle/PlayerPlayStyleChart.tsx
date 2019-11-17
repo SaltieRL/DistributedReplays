@@ -97,4 +97,4 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
     }
 }
 
-export const PlayerPlayStyleChart = withTheme()(PlayerPlayStyleChartComponent)
+export const PlayerPlayStyleChart = withTheme(PlayerPlayStyleChartComponent)

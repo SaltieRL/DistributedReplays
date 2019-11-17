@@ -60,7 +60,7 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
                 <CardHeader title="Ranks"/>
                 <Divider/>
                 <CardContent>
-                    <Grid container alignItems="center" justify="space-around" spacing={16}>
+                    <Grid container alignItems="center" justify="space-around" spacing={2}>
                         <LoadableWrapper load={this.getPlayerRanks} reloadSignal={this.state.reloadSignal}>
                             {playlists.map((playlist: string) => {
                                 return (
@@ -90,7 +90,7 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
                 </CardActions>
                 <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
                     <CardContent>
-                        <Grid container alignItems="center" justify="space-around" spacing={16}>
+                        <Grid container alignItems="center" justify="space-around" spacing={2}>
                             {expandedPlaylists.map((playlist: string) => {
                                 return (
                                     <Grid item xs={6} key={playlist}>

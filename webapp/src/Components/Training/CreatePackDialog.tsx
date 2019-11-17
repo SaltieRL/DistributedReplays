@@ -41,7 +41,7 @@ class CreatePackDialogComponent extends React.Component<Props, State> {
                         {style: {width: 600, maxWidth: "90vw"}}}>
                 <DialogTitle id="form-dialog-title">Create pack</DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={8} style={{paddingTop: 8}}>
+                    <Grid container spacing={1} style={{paddingTop: 8}}>
                         <Grid item xs={12}>
                             <DialogContentText>
                                 Leave all fields blank for defaults (use most recent games).

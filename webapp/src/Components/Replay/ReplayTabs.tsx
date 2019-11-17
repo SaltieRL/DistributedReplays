@@ -1,5 +1,5 @@
 import { Card, CardContent, Grid, Tab, Tabs, Tooltip, Typography, withWidth } from "@material-ui/core"
-import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import QRCode from "qrcode.react"
 import * as React from "react"
 import { connect } from "react-redux"
@@ -56,11 +56,11 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const isWidthSm = isWidthDown("sm", this.props.width)
+        const aboveLg = isWidthUp("lg", this.props.width)
         const url = `https://calculated.gg/replays/${this.props.replay.id}`
         const qrcode = (
             <CardContent>
-                <Grid container justify="center" alignContent="center" spacing={32}>
+                <Grid container justify="center" alignContent="center" spacing={4}>
                     <Grid item xs={12} style={{textAlign: "center"}}>
                         <QRCode value={url}/>
                     </Grid>
@@ -85,8 +85,9 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 <Tabs
                     value={this.state.selectedTab}
                     onChange={this.handleSelectTab}
-                    centered={!isWidthSm}
-                    variant={isWidthSm ? "scrollable" : "standard"}
+                    centered={aboveLg}
+                    variant={aboveLg ? "standard" : "scrollable"}
+                    scrollButtons="on"
                 >
                     <Tab key="basicStats" label="Player Stats" value="playerStats"/>
                     <Tab key="predictions" label="Predictions" value="predictions"/>

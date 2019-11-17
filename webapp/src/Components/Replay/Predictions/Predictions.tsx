@@ -25,7 +25,7 @@ export class Predictions extends React.PureComponent<Props, State> {
             <>
                 <Divider/>
                 <CardContent>
-                    <Grid container spacing={32} justify="center">
+                    <Grid container spacing={4} justify="center">
                         <LoadableWrapper load={this.getPredictedRanks}>
                             {this.state.predictedRanks ?
                                 <Grid item xs="auto" style={{overflowX: "auto"}}>

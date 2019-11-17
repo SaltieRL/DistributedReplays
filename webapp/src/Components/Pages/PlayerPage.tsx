@@ -37,7 +37,7 @@ export class PlayerPage extends React.PureComponent<Props, State> {
 
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
+                <Grid container spacing={3} justify="center">
                     <LoadableWrapper load={this.getPlayerForPage} reloadSignal={this.state.reloadSignal}>
                         {this.state.player &&
                         <Switch>

@@ -55,10 +55,10 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
             <>
                 {isWidthUp("md", this.props.width) ?
                     <>
-                        <Grid item xs={5} md={3}>
+                        <Grid item xs={5} lg={4} xl={3}>
                             {playerSideBar}
                         </Grid>
-                        <Grid item xs={7} md={9} container spacing={24}>
+                        <Grid item xs={7} lg={8} xl={9} container spacing={3} alignContent="flex-start">
                             <Grid item xs={12}>
                                 <PlayerPlayStyleCard
                                     player={this.props.player}

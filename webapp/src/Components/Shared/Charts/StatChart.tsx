@@ -47,4 +47,4 @@ class StatChartComponent extends React.PureComponent<Props> {
     }
 }
 
-export const StatChart = withTheme()(StatChartComponent)
+export const StatChart = withTheme(StatChartComponent)

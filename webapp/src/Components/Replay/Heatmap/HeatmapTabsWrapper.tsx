@@ -42,7 +42,7 @@ export class HeatmapTabsWrapper extends React.PureComponent<Props, State> {
                 <Divider/>
                 <HeatmapTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
                 <CardContent>
-                    <Grid container spacing={32}>
+                    <Grid container spacing={4}>
                         <LoadableWrapper load={this.getHeatmapsData} reloadSignal={this.state.reloadSignal}>
                             <HeatmapContent replay={this.props.replay} heatmapData={this.state.heatmapData}/>
                         </LoadableWrapper>

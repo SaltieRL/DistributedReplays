@@ -1,13 +1,4 @@
-import {
-    Card,
-    CardHeader,
-    Divider,
-    Grid,
-    Table,
-    TableBody,
-    TableCell,
-    TableRow
-} from "@material-ui/core"
+import { Card, CardHeader, Divider, Grid, Table, TableBody, TableCell, TableRow } from "@material-ui/core"
 import * as React from "react"
 import { getDocumentation } from "../../Requests/Documentation"
 import { QueryParams } from "../Shared/Documentation/QueryParams"
@@ -27,92 +18,78 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
 
     public render() {
         const {explanations} = this.state
-        const contributors = (
-            <LoadableWrapper load={this.getDocumentation}
-                             reloadSignal={this.state.reloadSignal}>
+        const documentation = (
+            <LoadableWrapper load={this.getDocumentation} reloadSignal={this.state.reloadSignal}>
                 {explanations !== undefined ?
-                    Object.keys(explanations).map((key: any) => {
-                        return <>
-                            <Card raised={true} style={{marginBottom: "20px"}}>
-                                <CardHeader title={explanations[key].path}/>
-                                {explanations[key].logged_in && (
-                                    <div>
-                                        <span style={{ color: "Red", marginLeft: "20px"}}>Requires Login</span>
-                                    </div>
-                                )}
-                                <Divider/>
-                                <Table>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell>Function name</TableCell>
-                                            <TableCell>{key}</TableCell>
-                                        </TableRow>
-                                        {explanations[key].query_params !== null &&
-                                         explanations[key].query_params !== undefined &&
-                                         explanations[key].query_params.length > 0 && (
+                    Object.keys(explanations).map((key: any) => (
+                        <Card raised style={{marginBottom: 20}} key={key}>
+                            <CardHeader title={explanations[key].path}/>
+                            {explanations[key].logged_in && (
+                                <div><span style={{color: "red", marginLeft: 20}}>Requires Login</span></div>
+                            )}
+                            <Divider/>
+                            <Table>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell>Function name</TableCell>
+                                        <TableCell>{key}</TableCell>
+                                    </TableRow>
+                                    {explanations[key].query_params !== null &&
+                                    explanations[key].query_params !== undefined &&
+                                    explanations[key].query_params.length > 0 && (
                                         <TableRow>
                                             <TableCell>Query Params</TableCell>
                                             <TableCell>
                                                 <Table>
                                                     <TableBody>
-                                                    {
-                                                        Object.keys(explanations[key].query_params)
-                                                            .map((index: any) => {
-                                                            return (
+                                                        {Object.keys(explanations[key].query_params)
+                                                            .map((index: any) => (
                                                                 <QueryParams
                                                                     key={index}
                                                                     queryParam={explanations[key].query_params[index]}
                                                                 />
-                                                            )
-                                                        })
-                                                    }
+                                                            ))
+                                                        }
                                                     </TableBody>
                                                 </Table>
                                             </TableCell>
                                         </TableRow>
-                                        )}
-                                        {explanations[key].path_params !== null &&
-                                        explanations[key].path_params !== undefined &&
-                                        explanations[key].path_params.length > 0 && (
+                                    )}
+                                    {explanations[key].path_params !== null &&
+                                    explanations[key].path_params !== undefined &&
+                                    explanations[key].path_params.length > 0 && (
                                         <TableRow>
                                             <TableCell>Path Params</TableCell>
                                             <TableCell>
                                                 <Table>
                                                     <TableBody>
-                                                    {
-                                                        Object.keys(explanations[key].path_params)
-                                                            .map((index: any) => {
-                                                            return (
+                                                        {Object.keys(explanations[key].path_params)
+                                                            .map((index: any) => (
                                                                 <QueryParams
                                                                     key={index}
                                                                     queryParam={explanations[key].path_params[index]}
                                                                 />
-                                                            )
-                                                            })
-                                                    }
+                                                            ))
+                                                        }
                                                     </TableBody>
                                                 </Table>
                                             </TableCell>
                                         </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </Card>
-                        </>
-                    }) : undefined}
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </Card>
+                    )) : null
+                }
             </LoadableWrapper>
         )
 
         return (
             <>
                 <BasePage useSplash>
-                    <Grid container justify="center">
-                        <Grid item xs={12} lg={12} xl={12}>
-                            <Grid container spacing={16} justify="center">
-                                <Grid item xs={12} sm={12} md={12}>
-                                    {contributors}
-                                </Grid>
-                            </Grid>
+                    <Grid container justify="center" spacing={3}>
+                        <Grid item xs={12}>
+                            {documentation}
                         </Grid>
                     </Grid>
                 </BasePage>
@@ -121,10 +98,9 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
     }
 
     private readonly getDocumentation = (): Promise<any> => {
-        const explanations = getDocumentation().then((data) => {
+        return getDocumentation().then((data) => {
                 this.setState({explanations: data})
             }
         )
-        return explanations
     }
 }

@@ -33,7 +33,7 @@ export class PreviousUploads extends React.PureComponent<{}, State> {
             <>
                 <DialogContent>
                     <div style={{padding: 16}}>
-                        <Grid container spacing={16} justify="center">
+                        <Grid container spacing={2} justify="center">
                             {this.state.uploadTasks.length === 0 ?
                                 <Grid item xs="auto">
                                     <Typography align="center">

@@ -24,13 +24,18 @@ export class PlayerStatsContent extends React.PureComponent<Props, State> {
         return (
             <>
                 <Divider/>
-                <PlayerStatsTabs selectedTab={this.state.selectedTab}
-                                 handleChange={this.handleSelectTab}
-                                 exclude={this.state.exclude}/>
+                <PlayerStatsTabs
+                    selectedTab={this.state.selectedTab}
+                    handleChange={this.handleSelectTab}
+                    exclude={this.state.exclude}
+                />
                 <CardContent>
-                    <Grid container spacing={32}>
-                        <PlayerStatsCharts replay={this.props.replay} selectedTab={this.state.selectedTab}
-                                           explanations={this.props.explanations}/>
+                    <Grid container spacing={4}>
+                        <PlayerStatsCharts
+                            replay={this.props.replay}
+                            selectedTab={this.state.selectedTab}
+                            explanations={this.props.explanations}
+                        />
                     </Grid>
                 </CardContent>
             </>

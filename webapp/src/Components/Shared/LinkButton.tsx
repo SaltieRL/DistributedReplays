@@ -8,17 +8,17 @@ import { Link } from "react-router-dom"
 
 export const buttonStyles = (theme: Theme) => createStyles({
     button: {
-        margin: theme.spacing.unit
+        margin: theme.spacing(1)
     },
     icon: {
         height: "24px !important",
         width: "24px !important"
     },
     leftIcon: {
-        marginRight: theme.spacing.unit
+        marginRight: theme.spacing(1)
     },
     rightIcon: {
-        marginLeft: theme.spacing.unit
+        marginLeft: theme.spacing(1)
     },
     tooltip: {
         // left: "6px !important"

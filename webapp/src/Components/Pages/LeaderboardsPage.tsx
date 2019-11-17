@@ -22,7 +22,7 @@ export class LeaderboardsPage extends React.PureComponent<Props, State> {
     public render() {
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
+                <Grid container spacing={3} justify="center">
                     <LoadableWrapper load={this.getLeaderboards}>
                         {this.state.leaderboards &&
                         <PlaylistLeaderboardGrid leaderboards={this.state.leaderboards}/>

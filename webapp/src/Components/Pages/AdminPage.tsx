@@ -34,19 +34,21 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
     public render() {
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
-                    {(this.props.loggedInUser && this.props.loggedInUser.admin) ?
+                <Grid container spacing={3} justify="center">
+                    {(this.props.loggedInUser && this.props.loggedInUser.admin) ? (
                         <>
                             <Grid item xs={12}>
                                 <LoadableWrapper load={this.getAdminLogs} reloadSignal={this.state.reloadSignal}>
-                                    {this.state.adminLogs &&
-                                    <AdminLogResultDisplay adminLogs={this.state.adminLogs} page={this.state.page}
-                                                           limit={this.state.limit}
-                                                           handleChangePage={this.handleChangePage}
-                                                           handleChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                                           handleChangeSearch={this.handleChangeSearch}
-                                    />
-                                    }
+                                    {this.state.adminLogs && (
+                                        <AdminLogResultDisplay
+                                            adminLogs={this.state.adminLogs}
+                                            page={this.state.page}
+                                            limit={this.state.limit}
+                                            handleChangePage={this.handleChangePage}
+                                            handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                            handleChangeSearch={this.handleChangeSearch}
+                                        />
+                                    )}
                                 </LoadableWrapper>
                             </Grid>
                             <Grid item xs={12}>
@@ -54,9 +56,9 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
                                 <Button variant="outlined" onClick={this.updateServer}>Update server</Button>
                             </Grid>
                         </>
-                        :
+                    ) : (
                         <Typography>Admins only.</Typography>
-                    }
+                    )}
                 </Grid>
             </BasePage>
         )

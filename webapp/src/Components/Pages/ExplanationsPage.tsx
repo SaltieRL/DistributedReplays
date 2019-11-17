@@ -28,7 +28,7 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
 
     public render() {
         const {explanations} = this.state
-        const contributors = (
+        const explanationsCard = (
             <Card>
                 <CardHeader title="Stats" subheader="on calculated.gg"/>
                 <Divider/>
@@ -50,17 +50,14 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
                         <LoadableWrapper load={this.getExplanations}
                                          reloadSignal={this.state.reloadSignal}>
                             {explanations !== undefined ?
-                                Object.keys(explanations).map((key: any) => {
-                                    return <>
-                                        <TableRow>
-                                            <TableCell>{key}</TableCell>
-                                            <TableCell>{explanations[key].simple_explanation}</TableCell>
-                                            <TableCell>{explanations[key].math_explanation !== null ?
-                                                `$$${explanations[key].math_explanation}$$` : ""}</TableCell>
-
-                                        </TableRow>
-                                    </>
-                                }) : undefined}
+                                Object.keys(explanations).map((key) => (
+                                    <TableRow key={key}>
+                                        <TableCell>{key}</TableCell>
+                                        <TableCell>{explanations[key].simple_explanation}</TableCell>
+                                        <TableCell>{explanations[key].math_explanation !== null ?
+                                            `$$${explanations[key].math_explanation}$$` : ""}</TableCell>
+                                    </TableRow>
+                                )) : null}
                         </LoadableWrapper>
                     </TableBody>
                 </Table>
@@ -70,13 +67,9 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
         return (
             <>
                 <BasePage useSplash>
-                    <Grid container justify="center">
-                        <Grid item xs={12} lg={12} xl={12}>
-                            <Grid container spacing={16} justify="center">
-                                <Grid item xs={12} sm={12} md={12}>
-                                    {contributors}
-                                </Grid>
-                            </Grid>
+                    <Grid container justify="center" spacing={2}>
+                        <Grid item xs={12} sm={12} md={12}>
+                            {explanationsCard}
                         </Grid>
                     </Grid>
                 </BasePage>
@@ -85,10 +78,9 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
     }
 
     private readonly getExplanations = (): Promise<any> => {
-        const explanations = getExplanations().then((data) => {
+        return getExplanations().then((data) => {
                 this.setState({explanations: data})
             }
         )
-        return explanations
     }
 }

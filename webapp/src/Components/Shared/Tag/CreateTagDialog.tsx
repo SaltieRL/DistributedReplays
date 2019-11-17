@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@material-ui/core"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField } from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import * as React from "react"
 import { createTag } from "../../../Requests/Tag"
@@ -28,14 +28,14 @@ class CreateTagDialogComponent extends React.PureComponent<Props, State> {
     public render() {
         return (
             <>
-                <Button
-                    variant="fab" mini
+                <Fab
+                    size="small"
                     onClick={this.handleOpen}
                     style={{position: "absolute", bottom: 16, right: 16}}
                     color="secondary"
                 >
                     <Add/>
-                </Button>
+                </Fab>
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}

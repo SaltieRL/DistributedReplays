@@ -44,7 +44,7 @@ export class BoostCountsTable extends React.PureComponent<Props> {
             <Paper>
                 {toolbar}
                 <div style={{overflowX: "auto"}}>
-                    <Table padding="checkbox">
+                    <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>Boost</TableCell>

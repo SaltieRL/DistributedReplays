@@ -31,21 +31,21 @@ export class PlayerCompareContent extends React.PureComponent<Props, State> {
                     <Tab label="Progression" value="Progression"/>
                 </Tabs>
                 <Divider/>
-                {this.state.selectedTab === "Current" ?
+                {this.state.selectedTab === "Current" ? (
                     <div style={{padding: 16, paddingBottom: 48}}>
-                        <Grid container spacing={32}>
+                        <Grid container spacing={4}>
                             <PlayerComparePlayStyleCharts players={this.props.players} playlist={this.state.playlist}
                                                           handlePlaylistChange={this.handlePlaylistChange}/>
                         </Grid>
                     </div>
-                    :
+                ) : (
                     <div style={{padding: 16, paddingBottom: 48}}>
-                        <Grid container spacing={32} justify="center">
+                        <Grid container spacing={4} justify="center">
                             <PlayerProgressionCharts players={this.props.players} playlist={this.state.playlist}
                                                      handlePlaylistChange={this.handlePlaylistChange}/>
                         </Grid>
                     </div>
-                }
+                )}
             </Paper>
         )
     }

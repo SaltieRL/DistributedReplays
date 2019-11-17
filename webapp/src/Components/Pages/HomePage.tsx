@@ -96,15 +96,15 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                     <div className={classes.root}>
                         <SideBar open={this.state.sideBarOpen} onClose={this.toggleSideBar}/>
                         <HomePageAppBar toggleSideBar={this.toggleSideBar}/>
-                        <Grid container justify="center" alignItems="flex-start" spacing={40} className={classes.child}
-                              style={{marginTop: "100px"}}>
+                        <Grid container justify="center" alignItems="flex-start" spacing={5} className={classes.child}
+                              style={{marginTop: 100}}>
                             <Grid item xs={12} {...alignCenterProps}>
                                 <Logo imgStyle={{maxWidth: "80vw", maxHeight: 88}}/>
                             </Grid>
                             <Grid item xs={11} {...alignCenterProps} style={{padding: "20px 0 20px 0"}}>
                                 <Search usePaper/>
                             </Grid>
-                            <Grid item xs={12} {...alignCenterProps} style={{padding: "15px"}} direction="column">
+                            <Grid item xs={12} {...alignCenterProps} style={{padding: 15}} direction="column">
                                 <Typography>
                                     <i>
                                         {this.state.replayCount
@@ -114,10 +114,10 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                     </i>
                                 </Typography>
                             </Grid>
-                            <Grid item xs={12} sm={10} md={8} container spacing={16} alignItems="center"
+                            <Grid item xs={12} sm={10} md={8} container spacing={2} alignItems="center"
                                   style={{maxWidth: 550}}>
                                 <Grid item xs={6} style={{textAlign: "center"}}>
-                                    {loggedInUser ?
+                                    {loggedInUser ? (
                                         <Link to={PLAYER_PAGE_LINK(loggedInUser.id)} style={{textDecoration: "none"}}>
                                             <Button variant="outlined">
                                                 <img src={loggedInUser.avatarLink}
@@ -126,12 +126,12 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                                 View Profile
                                             </Button>
                                         </Link>
-                                        :
+                                    ) : (
                                         <LinkButton to={STEAM_LOGIN_LINK} isExternalLink
                                                     iconType="fontawesome" icon={faSteam}>
                                             {isWidthUp("sm", width) ? "Log in with Steam" : "Log in"}
                                         </LinkButton>
-                                    }
+                                    )}
                                 </Grid>
                                 <Grid item xs={6} style={{textAlign: "center"}}>
                                     <LinkButton to={UPLOAD_LINK} iconType="mui" icon={CloudUpload}>
@@ -149,7 +149,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                 <Divider/>
                             </Grid>
 
-                            {isWidthUp("md", this.props.width) ?
+                            {isWidthUp("md", this.props.width) ? (
                                 <>
                                     <Grid item container xs={12} sm={6} lg={4}>
                                         <Twitch style={{width: "100%"}}/>
@@ -166,7 +166,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                         <Patreon style={{width: "100%"}}/>
                                     </Grid>
                                 </>
-                                :
+                            ) : (
                                 <>
                                     <Grid item container xs={12} sm={6} lg={4}>
                                         <Recent style={{width: "100%"}}/>
@@ -182,7 +182,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                         <Patreon style={{width: "100%"}}/>
                                     </Grid>
                                 </>
-                            }
+                            )}
                         </Grid>
                     </div>
                 </UploadDialogWrapper>

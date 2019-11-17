@@ -19,7 +19,8 @@ const styles = createStyles({
         margin: "auto"
     },
     teamName: {
-        textTransform: "uppercase"
+        textTransform: "uppercase",
+        width: 120
     },
     tableData: {
         fontWeight: 400
@@ -78,7 +79,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         }
 
         return (
-            <Grid container justify="center" spacing={16}>
+            <Grid container justify="center" spacing={2}>
                 {[blueBoxScoreTeamData, orangeBoxScoreTeamData].map(this.createTeamBoxScoreGridItem)}
             </Grid>
 
@@ -87,7 +88,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
 
     private readonly createTeamBoxScoreGridItem = (boxScoreData: BoxScoreData) => (
         <Grid item xs={12} key={boxScoreData.name}>
-            <Table key={boxScoreData.name} padding="dense" className={this.props.classes.teamTable}>
+            <Table key={boxScoreData.name} size="small" className={this.props.classes.teamTable}>
                 {this.createTableHead(boxScoreData)}
                 {this.createTableBody(boxScoreData)}
             </Table>
@@ -99,15 +100,15 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         return (
             <TableHead className={boxScoreData.name === "Blue" ? classes.blueTableHead : classes.orangeTableHead}>
                 <TableRow>
-                    <TableCell style={{width: "30%"}} padding="dense">
-                        <Typography variant="h6" className={classes.teamName}>
+                    <TableCell size="small">
+                        <Typography variant="h6" className={classes.teamName} noWrap>
                             {boxScoreData.score} {boxScoreData.name}
                         </Typography>
                     </TableCell>
                     {Array.from(labelToKeys, ([label, key]) => {
                         if (key !== "name") {
                             return (
-                                <TableCell align="right" key={key} padding="dense">
+                                <TableCell align="right" key={key} size="small">
                                     <Typography variant="subtitle1">
                                         {label}
                                     </Typography>
@@ -133,7 +134,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                                 <TableCell key={key}
                                            align={key !== "name" ? "right" : "left"}
                                            className={this.props.classes.tableData}
-                                           padding="dense"
+                                           size="small"
                                 >
                                     {(this.props.player && player.id === this.props.player.id) ?
                                         <b>{player[key]}</b>

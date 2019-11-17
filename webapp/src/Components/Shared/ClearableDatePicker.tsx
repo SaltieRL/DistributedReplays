@@ -1,8 +1,7 @@
-import { DatePicker } from "material-ui-pickers"
-import { DatePickerModalProps } from "material-ui-pickers/DatePicker/DatePickerModal"
+import { DatePicker, DatePickerProps } from "@material-ui/pickers"
 import * as React from "react"
 
-type Props = DatePickerModalProps
+type Props = DatePickerProps
 
 export class ClearableDatePicker extends React.PureComponent<Props> {
     public render() {

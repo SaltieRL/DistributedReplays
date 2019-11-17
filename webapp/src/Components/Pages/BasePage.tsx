@@ -57,4 +57,4 @@ class BasePageComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const BasePage = withTheme()(withStyles(styles)(BasePageComponent))
+export const BasePage = withTheme(withStyles(styles)(BasePageComponent))

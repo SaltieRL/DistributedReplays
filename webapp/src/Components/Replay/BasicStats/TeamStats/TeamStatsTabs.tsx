@@ -19,21 +19,23 @@ class TeamStatsTabsComponent extends React.PureComponent<Props> {
             "Positioning": faBraille,
             "Center of Mass": faHandshake
         }
+        const belowXs = isWidthDown("xs", this.props.width)
 
         return (
             <Tabs value={this.props.selectedTab}
                   onChange={this.props.handleChange}
-                  centered
-                  scrollable={isWidthDown("xs", this.props.width)}
-                  scrollButtons={isWidthDown("xs", this.props.width) ? "on" : undefined}
+                  centered={!belowXs}
+                  variant={belowXs ? "scrollable" : "standard"}
+                  scrollButtons="auto"
             >
-                {Object.keys(TeamStatsSubcategory)
-                    .map((subcategory) => {
-                        const value = TeamStatsSubcategory[subcategory]
-                        return <Tab label={value} value={value} key={value}
-                            icon={<FontAwesomeIcon icon={categoryToIcon[value]}/>}
-                        />
-                    })
+                {Object.values(TeamStatsSubcategory)
+                    .map((subcategoryValue) => (
+                            <Tab
+                                label={subcategoryValue} value={subcategoryValue} key={subcategoryValue}
+                                icon={<FontAwesomeIcon icon={categoryToIcon[subcategoryValue]}/>}
+                            />
+                        )
+                    )
                 }
             </Tabs>
         )

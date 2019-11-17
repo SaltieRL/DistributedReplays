@@ -33,7 +33,7 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
             "/replay_page_background_black.jpg" : "/replay_page_background.jpg"
         return (
             <BasePage backgroundImage={backgroundImage}>
-                <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
+                <Grid container spacing={3} justify="center" style={{minHeight: "100%"}}>
                     <LoadableWrapper load={this.getReplay}>
                         {replay &&
                         <Switch>
@@ -62,6 +62,8 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
             .catch((response) => {
                 if (response.code === 301) {
                     window.location.href = response.message
+                } else {
+                    throw response
                 }
             })
     }
@@ -75,4 +77,4 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const ReplayPage = withTheme()(ReplayPageComponent)
+export const ReplayPage = withTheme(ReplayPageComponent)

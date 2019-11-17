@@ -17,7 +17,7 @@ export class StatusPage extends React.PureComponent<{}, State> {
     public render() {
         return (
             <BasePage useSplash>
-                <Grid container justify="center" spacing={16}>
+                <Grid container justify="center" spacing={2}>
                     <Grid item xs="auto">
                         <Card>
                             <CardHeader title="Queue"/>

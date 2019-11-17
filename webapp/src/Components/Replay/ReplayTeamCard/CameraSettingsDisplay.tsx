@@ -11,7 +11,7 @@ export class CameraSettingsDisplay extends React.PureComponent<Props> {
     public render() {
         return (
             <div style={{padding: 24}}>
-                <Grid container spacing={24}>
+                <Grid container spacing={3}>
                     {_.toPairs(this.props.cameraSettings).map(([key, value]: [string, number]) => {
                         return (
                             <Grid item xs={12} sm={6} md={4} key={key}>

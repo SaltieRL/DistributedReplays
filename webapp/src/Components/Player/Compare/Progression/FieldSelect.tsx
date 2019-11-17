@@ -23,14 +23,14 @@ const styles = (theme: Theme) => createStyles({
         flexWrap: "wrap"
     },
     chip: {
-        margin: theme.spacing.unit / 4
+        margin: theme.spacing(0.25)
     }
 })
 
 interface OwnProps {
     fields: string[]
     selectedFields: string[]
-    handleChange: React.ChangeEventHandler
+    handleChange: React.ChangeEventHandler<{ value: string[] }>
 }
 
 type Props = OwnProps
@@ -45,7 +45,7 @@ class FieldSelectComponent extends React.PureComponent<Props> {
                 <Select
                     multiple
                     value={selectedFields}
-                    onChange={handleChange}
+                    onChange={handleChange as React.ChangeEventHandler<{value: unknown}>}
                     autoWidth
                     renderValue={(selectedFieldsToRender: any) => {
                         return (
@@ -77,7 +77,7 @@ class FieldSelectComponent extends React.PureComponent<Props> {
             target: {
                 value: this.props.selectedFields.filter((selectedField) => selectedField !== field)
             }
-        } as any as React.ChangeEvent)
+        } as any as React.ChangeEvent<{value: string[]}>)
     }
 }
 

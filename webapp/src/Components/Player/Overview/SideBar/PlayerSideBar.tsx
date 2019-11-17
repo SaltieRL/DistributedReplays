@@ -11,7 +11,7 @@ interface Props {
 export class PlayerSideBar extends React.PureComponent<Props> {
     public render() {
         return (
-            <Grid container spacing={16}>
+            <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <PlayerProfile player={this.props.player}/>
                 </Grid>

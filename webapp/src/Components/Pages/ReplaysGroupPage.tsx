@@ -53,7 +53,7 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
         ))
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
+                <Grid container spacing={3} justify="center">
                     <Grid item xs={12} container justify="center">
                         <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
                             <AddReplayInput onSubmit={this.attemptToAddReplay}
@@ -61,7 +61,7 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                             onChange={this.handleInputChange}/>
                         </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={11} md={10} lg={9} xl={8} container spacing={8}>
+                    <Grid item xs={12} sm={11} md={10} lg={9} xl={8} container spacing={1}>
                         {replayChips.map((replayChip) => (
                             <Grid item key={replayChip.key as string}>
                                 {replayChip}

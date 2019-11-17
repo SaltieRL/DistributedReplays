@@ -18,7 +18,7 @@ export class UploadPage extends React.PureComponent<{}, State> {
     public render() {
         return (
             <BasePage>
-                <Grid container spacing={16} alignItems="center" justify="center">
+                <Grid container spacing={2} alignItems="center" justify="center">
                     <Grid item>
                         <Card style={{width: 600, maxWidth: "90vw"}}>
                             <UploadTabs selectedTab={this.state.selectedTab} handleChange={this.handleTabChange}/>

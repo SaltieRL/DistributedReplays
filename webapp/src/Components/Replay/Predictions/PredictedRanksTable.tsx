@@ -11,18 +11,20 @@ interface Props {
 export class PredictedRanksTable extends React.PureComponent<Props> {
     public render() {
         const {replay, predictedRanks} = this.props
-        const blueTeam =
-            replay.players.filter((player) => !player.isOrange)
-        const orangeTeam =
-            replay.players.filter((player) => player.isOrange)
+        const blueTeam = replay.players.filter((player) => !player.isOrange)
+        const orangeTeam = replay.players.filter((player) => player.isOrange)
         const maxLength = Math.max(blueTeam.length, orangeTeam.length)
-        const rows = []
+        const rows: JSX.Element[] = []
         for (let i = 0; i < maxLength; i++) {
             const playerLeft = i < blueTeam.length ? blueTeam[i] : undefined
             const playerRight = i < orangeTeam.length ? orangeTeam[i] : undefined
             rows.push((
-                <PredictedRanksRow predictedRanks={predictedRanks}
-                                   playerLeft={playerLeft} playerRight={playerRight}/>)
+                    <PredictedRanksRow
+                        key={i}
+                        predictedRanks={predictedRanks}
+                        playerLeft={playerLeft}
+                        playerRight={playerRight}/>
+                )
             )
         }
 

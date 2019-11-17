@@ -54,7 +54,7 @@ const HomePageFooterComponent: React.FunctionComponent<WithWidth> = (props: With
     )
 
     return (
-        <Grid container justify="center" spacing={16}>
+        <Grid container justify="center" spacing={2}>
             {isWidthUp("md", props.width) ?
                 [
                     [globalStatsLinkButton, aboutLinkButton, twitterLinkButton, discordLinkButton],

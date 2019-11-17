@@ -19,7 +19,7 @@ import * as React from "react"
 
 const styles = (theme: Theme) => createStyles({
     icon: {
-        marginRight: theme.spacing.unit
+        marginRight: theme.spacing(1)
     },
     success: {
         backgroundColor: green[600]

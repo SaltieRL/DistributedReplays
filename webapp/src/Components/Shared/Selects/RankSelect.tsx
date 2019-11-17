@@ -42,14 +42,15 @@ class RankSelectComponent extends React.PureComponent<Props> {
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
                     value={selectedRank}
-                    onChange={handleChange}
+                    onChange={handleChange as React.ChangeEventHandler<{ value: unknown }>}
                     autoWidth
                     disabled={disabled}
                 >
                     <MenuItem value={-1} key="None">
                         {noneLabel}
                     </MenuItem>
-                    {ranks.map((rank, i) => (
+                    {ranks.map(
+                        (rank, i) => (
                             <MenuItem value={i} key={i}>
                                 {rank}
                             </MenuItem>

@@ -23,4 +23,4 @@ class LogoComponent extends React.PureComponent<Props> {
     }
 }
 
-export const Logo = withTheme()(LogoComponent)
+export const Logo = withTheme(LogoComponent)

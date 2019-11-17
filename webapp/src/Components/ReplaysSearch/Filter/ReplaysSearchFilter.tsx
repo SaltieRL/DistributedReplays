@@ -54,7 +54,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
         )
         return (
             <>
-                <Grid container spacing={32} justify="center">
+                <Grid container spacing={4} justify="center">
                     <Grid item xs={12}>
                         <Card>
                             <CardHeader title="Players" subheader="All selected players will appear in every game."/>
@@ -77,7 +77,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
                     <Grid item xs={12}>
                         <Card>
                             <CardContent>
-                                <Grid container spacing={16}>
+                                <Grid container spacing={2}>
                                     <Grid item xs={12}>
                                         {dateAfterPicker}
                                     </Grid>

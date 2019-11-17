@@ -24,7 +24,7 @@ export class ReplayTagDisplay extends React.PureComponent<Props> {
                 <Select
                     multiple
                     value={replay.tags.map((tag) => tag.name)}
-                    onChange={this.handleChange}
+                    onChange={this.handleChange as React.ChangeEventHandler<{ value: unknown }>}
                     autoWidth
                     renderValue={(tagNames: any) => {
                         return (

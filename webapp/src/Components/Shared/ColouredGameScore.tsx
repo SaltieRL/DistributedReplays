@@ -23,4 +23,4 @@ class ColouredGameScoreComponent extends React.PureComponent<Props> {
     }
 }
 
-export const ColouredGameScore = withTheme()(ColouredGameScoreComponent)
+export const ColouredGameScore = withTheme(ColouredGameScoreComponent)

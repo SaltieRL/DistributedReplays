@@ -33,7 +33,7 @@ class LoadableWrapperComponent extends React.PureComponent<Props, State> {
         this.attemptToLoad()
     }
 
-    public componentWillUpdate(prevProps: Readonly<Props>) {
+    public componentDidUpdate(prevProps: Readonly<Props>) {
         if (prevProps.reloadSignal !== this.props.reloadSignal) {
             this.attemptToLoad()
         }

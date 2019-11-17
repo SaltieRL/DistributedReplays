@@ -53,7 +53,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
         ))
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
+                <Grid container spacing={3} justify="center">
                     <Grid item xs={12} container justify="center">
                         <Grid item xs={12} container justify="center">
                             <AddPlayerInput onSubmit={this.attemptToAddPlayer}
@@ -61,7 +61,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                                             onChange={this.handleInputChange}/>
                         </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={11} md={10} lg={9} xl={8} container spacing={8}>
+                    <Grid item xs={12} sm={11} md={10} lg={9} xl={8} container spacing={1}>
                         {playerChips.map((playerChip) => (
                             <Grid item key={playerChip.key as string} style={{maxWidth: "100%"}}>
                                 {playerChip}
@@ -149,7 +149,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                     })
                 })
                 .catch((e: any) => {
-                    // console.log(e) // TypeError expected here when above .catch catches something.
+                    console.log(e) // TypeError expected here when above .catch catches something.
                     // TODO: Figure out what the right thing to do here is.
                 })
         } else {

@@ -10,7 +10,7 @@ import {
     Tooltip
 } from "@material-ui/core"
 import * as React from "react"
-import { Link } from "react-router-dom"
+import { Link, LinkProps } from "react-router-dom"
 import { PLAYER_PAGE_LINK } from "../../../Globals"
 import { CameraSettingsDisplay } from "./CameraSettingsDisplay"
 import { LoadoutDisplay } from "./LoadoutDisplay"
@@ -25,6 +25,15 @@ interface State {
 }
 
 export class TeamCardPlayer extends React.PureComponent<Props, State> {
+    private readonly createLink = (
+        // TODO: Remove forwardRef with react-router-dom 6; https://github.com/ReactTraining/react-router/issues/6056
+        React.forwardRef<HTMLAnchorElement, Omit<LinkProps, "innerRef" | "to">>(
+            (props, ref) => (
+                <Link to={PLAYER_PAGE_LINK(this.props.player.id)} {...props} innerRef={ref}/>
+            )
+        )
+    )
+
     constructor(props: Props) {
         super(props)
         this.state = {cameraOpen: false, loadoutOpen: false}
@@ -51,8 +60,7 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <ListItem button key={player.id}
-                          component={this.createLink}>
+                <ListItem button key={player.id} component={this.createLink}>
                     <ListItemText primary={player.name} primaryTypographyProps={{noWrap: true}}
                                   style={{padding: "0 64px 0 0"}}/>
                     <ListItemSecondaryAction>
@@ -71,8 +79,6 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
             </>
         )
     }
-
-    private readonly createLink = (props: {}) => <Link to={PLAYER_PAGE_LINK(this.props.player.id)} {...props}/>
 
     private readonly handleShowCamera = () => {
         this.setState({cameraOpen: true})

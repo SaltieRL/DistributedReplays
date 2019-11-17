@@ -1,4 +1,5 @@
 import {
+    Breadcrumbs,
     Card,
     CardActionArea,
     CardMedia,
@@ -12,7 +13,6 @@ import {
     withStyles,
     WithStyles
 } from "@material-ui/core"
-import { Breadcrumbs } from "@material-ui/lab"
 import qs from "qs"
 import * as React from "react"
 import { connect } from "react-redux"
@@ -147,7 +147,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
             <TextField value={this.state.search} onChange={this.handleSearchChange} placeholder={"Filter"}/>
         )
         const itemView = itemData ? (
-            <Grid container spacing={24}>
+            <Grid container spacing={3}>
                 <Grid item xs={12}>
                     {breadCrumbs}
                 </Grid>
@@ -156,17 +156,19 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                         <ItemDisplay item={itemData} paint={0}/>
                     </Grid>
                 </Grid>
-                {this.state.itemData && this.state.itemUsage && <>
-                    <Grid item xs={6} lg={3}>
-                        <ItemStatsUsers item={this.state.itemData}
-                                        itemUsage={this.state.itemUsage}/>
-                    </Grid>
-                    <Grid item xs={12} lg={6}>
-                        <ItemStatsGraph item={this.state.itemData}
-                                        itemUsage={this.state.itemUsage}/>
+                {this.state.itemData && this.state.itemUsage && (
+                    <>
+                        <Grid item xs={6} lg={3}>
+                            <ItemStatsUsers item={this.state.itemData}
+                                            itemUsage={this.state.itemUsage}/>
+                        </Grid>
+                        <Grid item xs={12} lg={6}>
+                            <ItemStatsGraph item={this.state.itemData}
+                                            itemUsage={this.state.itemUsage}/>
 
-                    </Grid>
-                </>}
+                        </Grid>
+                    </>
+                )}
             </Grid>
         ) : null
         const filteredList = this.state.itemList ?
@@ -187,56 +189,56 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                     })}
                 </Tabs>
                 <LoadableWrapper load={this.getItems} reloadSignal={this.state.listReloadSignal}>
-                    {this.state.itemList && <Grid container spacing={16}>
-                        {filteredList.map((item: Item) => {
-                            return (
-                                <Grid item xs={6} sm={2} lg={1} key={item.ingameid}>
-                                    <Card className={classes.itemListCard} style={{position: "relative"}}>
-                                        <CardActionArea onClick={() => {
-                                            this.selectItem(item)
-                                        }}>
-                                            <CardMedia
-                                                className={classes.media}
-                                                image={item.image}
-                                                title={item.name}
-                                            />
-                                        </CardActionArea>
+                    {this.state.itemList && (
+                        <Grid container spacing={2}>
+                            {filteredList.map((item: Item) => {
+                                return (
+                                    <Grid item xs={6} sm={2} lg={1} key={item.ingameid}>
+                                        <Card className={classes.itemListCard} style={{position: "relative"}}>
+                                            <CardActionArea onClick={() => {
+                                                this.selectItem(item)
+                                            }}>
+                                                <CardMedia
+                                                    className={classes.media}
+                                                    image={item.image}
+                                                    title={item.name}
+                                                />
+                                            </CardActionArea>
 
-                                        <div style={{
-                                            position: "absolute",
-                                            top: 3,
-                                            right: 3,
-                                            zIndex: 1000,
-                                            background: "#0089d2",
-                                            padding: "2px 5px 0px",
-                                            borderRadius: "15px"
-                                        }}>
-                                            <Typography style={{color: "white"}}>
-                                                {item.count && roundNumberToMaxDP(item.count * 100, 1)}%
-                                            </Typography>
-                                        </div>
-                                    </Card>
+                                            <div style={{
+                                                position: "absolute",
+                                                top: 3,
+                                                right: 3,
+                                                zIndex: 1000,
+                                                background: "#0089d2",
+                                                padding: "2px 5px 0px",
+                                                borderRadius: "15px"
+                                            }}>
+                                                <Typography style={{color: "white"}}>
+                                                    {item.count && roundNumberToMaxDP(item.count * 100, 1)}%
+                                                </Typography>
+                                            </div>
+                                        </Card>
 
-                                </Grid>
-                            )
-                        })}
-                    </Grid>}
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                    )}
                 </LoadableWrapper>
             </>
         )
 
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
-                    {(this.props.loggedInUser && this.props.loggedInUser.alpha) ?
-                        <>
-                            <Grid item xs={12}>
-                                {this.state.itemID ? itemView : itemsList}
-                            </Grid>
-                        </>
-                        :
+                <Grid container spacing={3} justify="center">
+                    {(this.props.loggedInUser && this.props.loggedInUser.alpha) ? (
+                        <Grid item xs={12}>
+                            {this.state.itemID ? itemView : itemsList}
+                        </Grid>
+                    ) : (
                         <Typography>Patrons only.</Typography>
-                    }
+                    )}
                 </Grid>
             </BasePage>
         )

@@ -9,7 +9,7 @@ export class PrivacyPolicyPage extends React.PureComponent {
             <BasePage useSplash>
                 <Grid container justify="center">
                     <Grid item xs={12} lg={10} xl={8}>
-                        <Grid container spacing={16} justify="center">
+                        <Grid container spacing={2} justify="center">
                             <Card>
                                 <CardHeader title="Privacy Policy"/>
                                 <Divider/>

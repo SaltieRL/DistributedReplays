@@ -11,7 +11,7 @@ export class LoadoutDisplay extends React.PureComponent<Props> {
     public render() {
         return (
             <div style={{padding: 24}}>
-                <Grid container spacing={24} justify="center" alignItems="center">
+                <Grid container spacing={3} justify="center" alignItems="center">
                     {_.toPairs(this.props.loadout).map(([key, value]: [string, LoadoutItem]) => {
                         return (
                             <LoadoutItemDisplay key={key} slot={key} item={value}/>

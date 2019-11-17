@@ -65,7 +65,7 @@ class PlaylistLeaderboardGridComponent extends React.PureComponent<Props, State>
 
         const aboveMd = isWidthUp("md", width)
         return (
-            <Grid item xs={12} container justify="center" spacing={16}>
+            <Grid item xs={12} container justify="center" spacing={2}>
                 <Grid item xs={12}>
                     <Typography variant="h3" align="center">Upload Leaderboards</Typography>
                 </Grid>
@@ -82,7 +82,7 @@ class PlaylistLeaderboardGridComponent extends React.PureComponent<Props, State>
                             ))}
                         </Tabs>
                         <Divider/>
-                        <Grid container spacing={16} style={{paddingTop: 16}}>
+                        <Grid container spacing={2} style={{paddingTop: 16}}>
                             {filteredLeaderboardsWithMetadata.map((leaderboard, i) => (
                                 <Grid item xs={12} sm={6} lg={3} key={leaderboard.playlist}
                                       style={{borderLeft: (i === 0 || !aboveMd) ? undefined : "1px solid lightgrey"}}>

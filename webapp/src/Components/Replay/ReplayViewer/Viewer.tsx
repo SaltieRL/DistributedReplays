@@ -62,7 +62,7 @@ export class Viewer extends Component<Props, State> {
                 container
                 direction="column"
                 justify="center"
-                spacing={24}
+                spacing={3}
                 style={{padding: 32}}
             >
                 <Grid item style={{minHeight: 0, width: "100%"}}>
@@ -73,7 +73,7 @@ export class Viewer extends Component<Props, State> {
                 {!this.props.compact &&
                 <>
                     <Grid item>
-                        <Grid container justify="space-between" alignItems="center" spacing={24}>
+                        <Grid container justify="space-between" alignItems="center" spacing={3}>
                             <Grid item>
                                 <PlayControls/>
                             </Grid>

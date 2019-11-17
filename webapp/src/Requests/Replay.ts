@@ -79,6 +79,6 @@ export const getBoostmap = (id: string): Promise<any> => {
     return doGet(`/replay/${id}/boostmap`)
 }
 
-export const getKickoffs = (id: string): Promise<any> => {
+export const getKickoffs = (id: string): Promise<any> => {  // TODO Type this!
     return doGet(`/replay/${id}/kickoffs`)
 }

@@ -179,4 +179,4 @@ class BasicStatsTableComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const BasicStatsTable = withStyles(styles)(withTheme()(BasicStatsTableComponent))
+export const BasicStatsTable = withStyles(styles)(withTheme(BasicStatsTableComponent))

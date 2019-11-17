@@ -16,6 +16,7 @@ import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
+import { Link, LinkProps } from "react-router-dom"
 import { REPLAY_PAGE_LINK } from "../../../../Globals"
 import { getReplayResult, Replay } from "../../../../Models"
 import { ReplayBoxScore } from "../../../Replay/ReplayBoxScore"
@@ -59,7 +60,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         const typographyVariant = "subtitle1"
 
         const {replay, player} = this.props
-        const dateFormat = isWidthUp("md", width) ? "DD/MM/YYYY" : "DD/MM"
+        const dateFormat = isWidthUp("lg", width) ? "DD/MM/YYYY" : "DD/MM"
         const replayName = replay.name
         const replayDate = (
             <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
@@ -81,7 +82,13 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
             </Tooltip>
         )
         const chartIcon = (
-            <IconButton href={REPLAY_PAGE_LINK(replay.id)} className={classes.iconButton}>
+            <IconButton
+                component={React.forwardRef<HTMLAnchorElement, Omit<LinkProps, "innerRef" | "to">>(
+                    (props, ref) => (
+                        <Link to={REPLAY_PAGE_LINK(replay.id)} {...props} innerRef={ref}/>
+                    )
+                )}
+                className={classes.iconButton}>
                 <InsertChart/>
             </IconButton>
         )
@@ -90,7 +97,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
             <ExpansionPanelSummary
                 expandIcon={<ExpandMore/>}
             >
-                <Grid container>
+                <Grid container spacing={1}>
                     {notOnMobile ? (
                         <>
                             <Grid item xs={3}>
@@ -130,7 +137,7 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
                                 </Typography>
                                 {replayDate}
                             </Grid>
-                            <Grid item xs={3} style={{margin: "auto"}}>
+                            <Grid item xs={3} container alignItems="center">
                                 <Typography variant={typographyVariant} noWrap>
                                     {replayGameMode}
                                 </Typography>

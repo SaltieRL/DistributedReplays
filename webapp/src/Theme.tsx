@@ -35,8 +35,7 @@ const getTheme = (dark: boolean) => createMuiTheme({
         fontWeightRegular: 300,
         caption: {
             fontWeight: 400
-        },
-        useNextVariants: true
+        }
     },
     overrides: dark ? {
         MuiTabs: {

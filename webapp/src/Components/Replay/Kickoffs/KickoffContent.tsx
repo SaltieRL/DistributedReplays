@@ -25,7 +25,7 @@ class KickoffContentComponent extends React.PureComponent<Props> {
         return (
             <>
                 <Divider/>
-                <Grid container spacing={16}>
+                <Grid container spacing={2}>
                     <Grid item xs={12} container justify="center">
                         <KickoffMapWrapper key={this.props.kickoffIndex}
                                            kickoffIndex={this.props.kickoffIndex}
