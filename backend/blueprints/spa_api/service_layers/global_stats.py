@@ -28,17 +28,11 @@ class GlobalStatsGraph:
         self.data = [dataset.__dict__ for dataset in datasets]
 
     @staticmethod
-    def create() -> List['GlobalStatsGraph']:
+    def create_by_playlist() -> List['GlobalStatsGraph']:
         r = get_redis()
-        return json.loads(r.get('global_distributions'))
-
-
-class GlobalStatsChart:
-    def __init__(self, name: str, datasets: List[GlobalStatsGraphDataset]):
-        self.name = name
-        self.data = [dataset.__dict__ for dataset in datasets]
+        return json.loads(r.get('global_stats_by_playlist'))
 
     @staticmethod
-    def create() -> List['GlobalStatsGraph']:
+    def create_by_rank() -> List['GlobalStatsGraph']:
         r = get_redis()
-        return json.loads(r.get('global_stats'))
+        return json.loads(r.get('global_stats_by_rank'))

@@ -45,7 +45,7 @@ def better_json_dumps(response: object):
             return flask.json.dumps(response.__dict__)
 
 
-def calculate_global_distributions(session):
+def calculate_global_stats_by_playlist(session):
     overall_data = []
     numbers = []
     game_modes = range(1, 5)
@@ -88,5 +88,5 @@ def calculate_global_distributions(session):
         ))
     session.close()
     if lazy_get_redis() is not None:
-        lazy_get_redis().set('global_distributions', better_json_dumps(overall_data))
+        lazy_get_redis().set('global_stats_by_playlist', better_json_dumps(overall_data))
     return overall_data
