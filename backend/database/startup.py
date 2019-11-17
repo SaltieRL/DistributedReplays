@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Tuple, Optional
 from flask import current_app
 import redis
@@ -92,12 +93,12 @@ class EngineStartup:
     def get_redis() -> Optional[Redis]:
         try:
             _redis = Redis(
-                host='localhost',
-                port=6379)
+                host=os.environ.get('REDISHOST', 'localhost'),
+                port=int(os.environ.get('REDISPORT', 6379)))
             _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
             return _redis
-        except:  # TODO: Investigate and specify this except.
-            logger.error("Not using redis.")
+        except Exception as e:  # TODO: Investigate and specify this except.
+            logger.error("Not using redis.", e)
             return None
 
     @staticmethod

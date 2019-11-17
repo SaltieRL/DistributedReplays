@@ -1,7 +1,15 @@
 runtime: python37
 entrypoint: gunicorn -b :$PORT RLBotServer:app --timeout 1200 --graceful-timeout 1200 --log-level debug
-instance_class: F1
+instance_class: F2
 handlers:
 - url: /.*
   secure: always
   script: auto
+
+
+env_variables:
+  REDISHOST: '10.105.1.179'
+  REDISPORT: '6379'
+
+vpc_access_connector:
+  name: "projects/calculatedgg-217303/locations/us-east1/connectors/my-connector"
