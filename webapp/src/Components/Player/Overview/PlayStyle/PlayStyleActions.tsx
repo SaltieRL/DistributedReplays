@@ -2,23 +2,25 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Divider, Grid,
+    Divider,
+    Grid,
     IconButton,
     ListItemIcon,
     ListItemText,
     Menu,
     MenuItem,
-    Switch, withWidth
+    Switch,
+    withWidth
 } from "@material-ui/core"
-import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import CompareArrows from "@material-ui/icons/CompareArrows"
 import Info from "@material-ui/icons/Info"
 import MoreVert from "@material-ui/icons/MoreVert"
 import * as React from "react"
-import { Link } from "react-router-dom"
-import { PLAYER_COMPARE_WITH_LINK } from "../../../../Globals"
-import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
-import { PlayStyleExplanationTable } from "./PlayStyleExplanationTable"
+import {Link} from "react-router-dom"
+import {PLAYER_COMPARE_WITH_LINK} from "../../../../Globals"
+import {PlaylistSelect} from "../../../Shared/Selects/PlaylistSelect"
+import {PlayStyleExplanationTable} from "./PlayStyleExplanationTable"
 
 interface OwnProps {
     player: Player
@@ -64,13 +66,10 @@ class PlayStyleActionsComponent extends React.PureComponent<Props, State> {
         )
 
         const explanationsDialog = (
-            <Dialog open={this.state.dialogOpen}
-                    onClose={this.handleExplanationsClose}
-                    scroll="paper"
-            >
+            <Dialog open={this.state.dialogOpen} onClose={this.handleExplanationsClose} scroll="paper">
                 <DialogTitle>Explanation of terms</DialogTitle>
                 <DialogContent>
-                    <PlayStyleExplanationTable/>
+                    <PlayStyleExplanationTable />
                 </DialogContent>
             </Dialog>
         )
@@ -79,42 +78,34 @@ class PlayStyleActionsComponent extends React.PureComponent<Props, State> {
 
         return (
             <Grid container justify="flex-end">
-                {isAboveMd && (
-                    <Grid item>
-                        {playlistSelect}
-                    </Grid>
-                )}
+                {isAboveMd && <Grid item>{playlistSelect}</Grid>}
                 <Grid item style={{margin: isAboveMd ? "auto" : undefined}}>
                     <IconButton onClick={this.handleOpen} style={{marginRight: 8}}>
-                        <MoreVert/>
+                        <MoreVert />
                     </IconButton>
                 </Grid>
-                <Menu
-                    open={this.state.menuOpen}
-                    anchorEl={this.state.anchorElement}
-                    onClose={this.handleClose}
-                >
+                <Menu open={this.state.menuOpen} anchorEl={this.state.anchorElement} onClose={this.handleClose}>
                     <MenuItem onClick={this.handleExplanationsOpen}>
-                        <ListItemIcon><Info/></ListItemIcon>
-                        <ListItemText primary="Stats explanations"/>
+                        <ListItemIcon>
+                            <Info />
+                        </ListItemIcon>
+                        <ListItemText primary="Stats explanations" />
                     </MenuItem>
                     <Link to={PLAYER_COMPARE_WITH_LINK(this.props.player.id)} style={{textDecoration: "none"}}>
                         <MenuItem>
-                            <ListItemIcon><CompareArrows/></ListItemIcon>
-                            <ListItemText primary="Compare with other players"/>
+                            <ListItemIcon>
+                                <CompareArrows />
+                            </ListItemIcon>
+                            <ListItemText primary="Compare with other players" />
                         </MenuItem>
                     </Link>
-                    <Divider component="li"/>
-                    {!isAboveMd && (
-                        <MenuItem style={{justifyContent: "center"}}>
-                            {playlistSelect}
-                        </MenuItem>
-                    )}
+                    <Divider component="li" />
+                    {!isAboveMd && <MenuItem style={{justifyContent: "center"}}>{playlistSelect}</MenuItem>}
                     <MenuItem onClick={this.toggleWinsLossesMode}>
                         <ListItemIcon>
-                            <Switch checked={this.props.winLossMode}/>
+                            <Switch checked={this.props.winLossMode} />
                         </ListItemIcon>
-                        <ListItemText primary="Wins/Losses mode"/>
+                        <ListItemText primary="Wins/Losses mode" />
                     </MenuItem>
                 </Menu>
 
@@ -146,7 +137,7 @@ class PlayStyleActionsComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
-        const selectedPlaylist = event.target.value as any as number
+        const selectedPlaylist = (event.target.value as any) as number
         if (this.props.handlePlaylistChange) {
             this.props.handlePlaylistChange(selectedPlaylist)
         }

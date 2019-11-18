@@ -1,11 +1,11 @@
-import { Grid, Typography } from "@material-ui/core"
+import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
-import { RouteComponentProps } from "react-router"
-import { MatchHistoryResponse, Replay, ReplaysSearchQueryParams } from "../../Models"
-import { searchReplays } from "../../Requests/Replay"
-import { ReplaysSearchWithQueryString } from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
-import { ReplaysSearchResultDisplay } from "../ReplaysSearch/ReplaysSearchResultDisplay"
-import { BasePage } from "./BasePage"
+import {RouteComponentProps} from "react-router"
+import {MatchHistoryResponse, Replay, ReplaysSearchQueryParams} from "../../Models"
+import {searchReplays} from "../../Requests/Replay"
+import {ReplaysSearchWithQueryString} from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
+import {ReplaysSearchResultDisplay} from "../ReplaysSearch/ReplaysSearchResultDisplay"
+import {BasePage} from "./BasePage"
 
 interface State {
     queryParams?: ReplaysSearchQueryParams
@@ -35,7 +35,7 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange}/>
+                            <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange} />
                         </Grid>
                     </Grid>
                     <Grid item xs={12} md={8} container alignContent="flex-start">
@@ -50,7 +50,8 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                                     replaySearchResult={this.state.replaySearchResult}
                                     handleUpdateTags={this.handleUpdateTags}
                                     page={this.state.queryParams.page}
-                                    limit={this.state.queryParams.limit}/>
+                                    limit={this.state.queryParams.limit}
+                                />
                             )}
                         </Grid>
                     </Grid>
@@ -65,10 +66,9 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
 
     private readonly updateReplays = () => {
         if (this.state.queryParams !== undefined) {
-            searchReplays(this.state.queryParams)
-                .then((replaySearchResult) => {
-                    this.setState({replaySearchResult})
-                })
+            searchReplays(this.state.queryParams).then((replaySearchResult) => {
+                this.setState({replaySearchResult})
+            })
             // TODO: handle error
         } else {
             this.setState({
@@ -83,8 +83,8 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                 replaySearchResult: {
                     ...this.state.replaySearchResult,
                     replays: [
-                        ...this.state.replaySearchResult.replays
-                            .map((searchResultReplay): Replay => {
+                        ...this.state.replaySearchResult.replays.map(
+                            (searchResultReplay): Replay => {
                                 if (searchResultReplay.id === replay.id) {
                                     return {
                                         ...searchResultReplay,
@@ -92,7 +92,8 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                                     }
                                 }
                                 return searchResultReplay
-                            })
+                            }
+                        )
                     ]
                 }
             })

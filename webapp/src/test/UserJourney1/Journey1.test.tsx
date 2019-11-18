@@ -1,12 +1,13 @@
 /* tslint:disable:no-console */
 
 import "@testing-library/jest-dom/extend-expect"
-import { render, wait, waitForElement } from "@testing-library/react"
+import {render, wait, waitForElement} from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { createBrowserHistory } from "history"
+import {createBrowserHistory} from "history"
 import * as React from "react"
-import { Router } from "react-router-dom"
-import { StatChart } from "../../Components/Shared/Charts/StatChart"
+import {Router} from "react-router-dom"
+import {StatChart} from "../../Components/Shared/Charts/StatChart"
+import {BasicStat} from "../../Models"
 import * as getMatchHistory from "../../Requests/Player/getMatchHistory"
 import * as getPlayer from "../../Requests/Player/getPlayer"
 import * as getPlayStyle from "../../Requests/Player/getPlayStyle"
@@ -14,7 +15,7 @@ import * as getRanks from "../../Requests/Player/getRanks"
 import * as getStats from "../../Requests/Player/getStats"
 import * as resolvePlayerNameOrId from "../../Requests/Player/resolvePlayerNameOrId"
 import * as ReplayRequests from "../../Requests/Replay"
-import { WrappedApp } from "../../WrappedApp"
+import {WrappedApp} from "../../WrappedApp"
 import {
     mockImplementationGetMatchHistory,
     mockImplementationGetPlayer,
@@ -42,7 +43,7 @@ jest.mock("../../Components/Shared/Charts/StatChart")
 // jest.mock("../../Components/Replay/ReplayViewer/Viewer", () => jest.fn())
 // jest.mock("../../Components/Pages/ReplayPage", () => jest.fn())
 
-test("should render", async() => {
+test("should render", async () => {
     jest.setTimeout(60000)
 
     // Load HomePage
@@ -50,7 +51,7 @@ test("should render", async() => {
     history.push("/")
     const app = render(
         <Router history={history}>
-            <WrappedApp/>
+            <WrappedApp />
         </Router>
     )
 
@@ -62,13 +63,14 @@ test("should render", async() => {
     const searchBar = getSearchBar()
     const searchButton = getSearchButton()
 
-    const mockResolvePlayerNameOrId = jest.spyOn(resolvePlayerNameOrId, "resolvePlayerNameOrId")
+    const mockResolvePlayerNameOrId = jest
+        .spyOn(resolvePlayerNameOrId, "resolvePlayerNameOrId")
         .mockImplementation(mockImplementationResolvePlayerNameOrID)
 
-    const mockGetPlayer = jest.spyOn(getPlayer, "getPlayer")
-        .mockImplementation(mockImplementationGetPlayer)
+    const mockGetPlayer = jest.spyOn(getPlayer, "getPlayer").mockImplementation(mockImplementationGetPlayer)
 
-    const mockGetMatchHistory = jest.spyOn(getMatchHistory, "getMatchHistory")
+    const mockGetMatchHistory = jest
+        .spyOn(getMatchHistory, "getMatchHistory")
         .mockImplementation(mockImplementationGetMatchHistory)
 
     const mockGetStats = jest.spyOn(getStats, "getStats")
@@ -90,7 +92,7 @@ test("should render", async() => {
     expect(mockGetPlayer.mock.calls.length).toBe(1)
     expect(mockGetMatchHistory.mock.calls.length).toBe(1)
     expect(mockGetStats.mock.calls.length).toBe(1)
-    expect(mockGetRanks.mock.calls.length).toBe(0)  // PlayerRanksCard component mocked above, request is not made.
+    expect(mockGetRanks.mock.calls.length).toBe(0) // PlayerRanksCard component mocked above, request is not made.
     expect(mockGetPlayStyle.mock.calls.length).toBe(1)
 
     // Check that replay name and button is displayed
@@ -104,7 +106,9 @@ test("should render", async() => {
 
     // @ts-ignore
     // tslint:disable-next-line:max-line-length
-    const mockGetReplayPlayerStats = jest.spyOn(ReplayRequests, "getReplayPlayerStats").mockImplementation(mockImplementationGetReplayPlayerStats)
+    const mockGetReplayPlayerStats = jest
+        .spyOn(ReplayRequests, "getReplayPlayerStats")
+        .mockImplementation(mockImplementationGetReplayPlayerStats as (id: string) => Promise<BasicStat[]>)
     const mockGetReplay = jest.spyOn(ReplayRequests, "getReplay").mockImplementation(mockImplementationGetReplay)
 
     // Clear StatChart mock in prep for ReplayPage load

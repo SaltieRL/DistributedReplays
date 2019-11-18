@@ -10,8 +10,8 @@ import {
 } from "@material-ui/core"
 import Refresh from "@material-ui/icons/Refresh"
 import * as React from "react"
-import { getUploadStatuses } from "../../../Requests/Global"
-import { getPreviousUploads, UploadTask } from "./StatusUtils"
+import {getUploadStatuses} from "../../../Requests/Global"
+import {getPreviousUploads, UploadTask} from "./StatusUtils"
 
 interface State {
     uploadTasks: UploadTask[]
@@ -43,36 +43,34 @@ export class PreviousUploads extends React.PureComponent<{}, State> {
                                         NB. Upload tasks are associated with session and not user.
                                     </Typography>
                                 </Grid>
+                            ) : this.state.uploadStatuses &&
+                              this.state.uploadStatuses.length === this.state.uploadTasks.length ? (
+                                <List>
+                                    {this.state.uploadTasks
+                                        .sort((a, b) => b.dateCreated.diff(a.dateCreated))
+                                        .map((uploadTask, i) => (
+                                            <ListItem key={uploadTask.id}>
+                                                <ListItemText
+                                                    primary={
+                                                        `Upload on ${uploadTask.dateCreated.format("lll")}:  ` +
+                                                        `${this.state.uploadStatuses![i].toLowerCase()}`
+                                                    }
+                                                    secondary={uploadTask.id}
+                                                />
+                                            </ListItem>
+                                        ))}
+                                </List>
                             ) : (
-                                (this.state.uploadStatuses) &&
-                                (this.state.uploadStatuses.length === this.state.uploadTasks.length) ? (
-                                    <List>
-                                        {this.state.uploadTasks
-                                            .sort((a, b) => b.dateCreated.diff(a.dateCreated))
-                                            .map((uploadTask, i) => (
-                                                <ListItem key={uploadTask.id}>
-                                                    <ListItemText
-                                                        primary={
-                                                            `Upload on ${uploadTask.dateCreated.format("lll")}:  ` +
-                                                            `${this.state.uploadStatuses![i].toLowerCase()}`}
-                                                        secondary={uploadTask.id}
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                    </List>
-                                ) : (
-                                    <Typography>
-                                        <i>Loading</i>
-                                    </Typography>
-
-                                )
+                                <Typography>
+                                    <i>Loading</i>
+                                </Typography>
                             )}
                         </Grid>
                     </div>
                 </DialogContent>
                 <DialogActions>
                     <IconButton onClick={this.getUploadStatuses}>
-                        <Refresh/>
+                        <Refresh />
                     </IconButton>
                 </DialogActions>
             </>
@@ -82,8 +80,9 @@ export class PreviousUploads extends React.PureComponent<{}, State> {
     private readonly getUploadStatuses = () => {
         const uploadTasks = getPreviousUploads()
         if (uploadTasks.length > 0) {
-            getUploadStatuses(uploadTasks.map((uploadTask) => uploadTask.id))
-                .then((uploadStatuses) => this.setState({uploadStatuses, uploadTasks}))
+            getUploadStatuses(uploadTasks.map((uploadTask) => uploadTask.id)).then((uploadStatuses) =>
+                this.setState({uploadStatuses, uploadTasks})
+            )
         }
     }
 }

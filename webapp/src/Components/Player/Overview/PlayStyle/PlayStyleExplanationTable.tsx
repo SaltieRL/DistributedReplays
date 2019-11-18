@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
+import {Table, TableBody, TableCell, TableHead, TableRow} from "@material-ui/core"
 import * as React from "react"
 
 interface Explanation {
@@ -13,7 +13,8 @@ const explanations: Explanation[] = [
     },
     {
         statName: "Useful",
-        message: "Short for \"Useful Hit\", refers to hits that are passes, shots, or dribbles - " +
+        message:
+            'Short for "Useful Hit", refers to hits that are passes, shots, or dribbles - ' +
             "basically anything that's not giving the ball away."
     },
     {

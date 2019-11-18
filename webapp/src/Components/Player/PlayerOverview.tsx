@@ -1,21 +1,20 @@
-import { faCarSide, faHistory, faUserCircle, IconDefinition } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Card, CardContent, Divider, Grid, Tab, Tabs, withWidth } from "@material-ui/core"
-import { isWidthDown, isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import {faCarSide, faHistory, faUserCircle, IconDefinition} from "@fortawesome/free-solid-svg-icons"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {Card, CardContent, Divider, Grid, Tab, Tabs, withWidth} from "@material-ui/core"
+import {isWidthDown, isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
-import { OverviewMatchHistory } from "./Overview/MatchHistory/OverviewMatchHistory"
-import { PlayerMatchHistoryCard } from "./Overview/MatchHistory/PlayerMatchHistoryCard"
-import { PlayerPlayStyle } from "./Overview/PlayStyle/PlayerPlayStyle"
-import { PlayerPlayStyleCard } from "./Overview/PlayStyle/PlayerPlayStyleCard"
-import { PlayStyleActions } from "./Overview/PlayStyle/PlayStyleActions"
-import { PlayerSideBar } from "./Overview/SideBar/PlayerSideBar"
+import {OverviewMatchHistory} from "./Overview/MatchHistory/OverviewMatchHistory"
+import {PlayerMatchHistoryCard} from "./Overview/MatchHistory/PlayerMatchHistoryCard"
+import {PlayerPlayStyle} from "./Overview/PlayStyle/PlayerPlayStyle"
+import {PlayerPlayStyleCard} from "./Overview/PlayStyle/PlayerPlayStyleCard"
+import {PlayStyleActions} from "./Overview/PlayStyle/PlayStyleActions"
+import {PlayerSideBar} from "./Overview/SideBar/PlayerSideBar"
 
 interface OwnProps {
     player: Player
 }
 
-type Props = OwnProps
-    & WithWidth
+type Props = OwnProps & WithWidth
 
 type PlayerViewTab = "Profile" | "Playstyle" | "Match History"
 const playerViewTabs: PlayerViewTab[] = ["Profile", "Playstyle", "Match History"]
@@ -34,21 +33,21 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
     public render() {
         const tabToIcon: Record<PlayerViewTab, IconDefinition> = {
-            "Profile": faUserCircle,
-            "Playstyle": faCarSide,
+            Profile: faUserCircle,
+            Playstyle: faCarSide,
             "Match History": faHistory
         }
 
-        const playerSideBar = <PlayerSideBar player={this.props.player}/>
+        const playerSideBar = <PlayerSideBar player={this.props.player} />
         const playerPlayStyle = (
-            <PlayerPlayStyle player={this.props.player} playlist={this.state.playlist}
-                             winLossMode={this.state.winLossMode}/>
+            <PlayerPlayStyle
+                player={this.props.player}
+                playlist={this.state.playlist}
+                winLossMode={this.state.winLossMode}
+            />
         )
         const playerMatchHistory = (
-            <OverviewMatchHistory
-                player={this.props.player}
-                useBoxScore={isWidthDown("sm", this.props.width)}
-            />
+            <OverviewMatchHistory player={this.props.player} useBoxScore={isWidthDown("sm", this.props.width)} />
         )
 
         return (
@@ -80,16 +79,17 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                 ) : (
                     <Grid item xs={12}>
                         <Card>
-                            <Tabs value={this.state.selectedMobileTab}
-                                  onChange={this.handleSelectMobileTab}
-                                  centered
-                            >
+                            <Tabs value={this.state.selectedMobileTab} onChange={this.handleSelectMobileTab} centered>
                                 {playerViewTabs.map((playerViewTab: PlayerViewTab) => (
-                                    <Tab label={playerViewTab} value={playerViewTab} key={playerViewTab}
-                                         icon={<FontAwesomeIcon icon={tabToIcon[playerViewTab]}/>}/>
+                                    <Tab
+                                        label={playerViewTab}
+                                        value={playerViewTab}
+                                        key={playerViewTab}
+                                        icon={<FontAwesomeIcon icon={tabToIcon[playerViewTab]} />}
+                                    />
                                 ))}
                             </Tabs>
-                            <Divider/>
+                            <Divider />
                             <CardContent>
                                 {this.state.selectedMobileTab === "Profile" && playerSideBar}
                                 {this.state.selectedMobileTab === "Playstyle" && (

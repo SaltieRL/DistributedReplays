@@ -1,13 +1,11 @@
-import React, { Component, ComponentType } from "react"
+import React, {Component, ComponentType} from "react"
 
-import {
-    Typography
-} from "@material-ui/core"
+import {Typography} from "@material-ui/core"
 
 type Props = any
 
 interface State {
-    errorOnDynamicLoad: boolean,
+    errorOnDynamicLoad: boolean
     component: ComponentType | null
 }
 

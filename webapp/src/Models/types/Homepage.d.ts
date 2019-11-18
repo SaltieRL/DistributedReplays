@@ -1,4 +1,4 @@
-import { Replay } from "replay-viewer/models/Replay"
+import {Replay} from "replay-viewer/models/Replay"
 
 interface Stream {
     name: string

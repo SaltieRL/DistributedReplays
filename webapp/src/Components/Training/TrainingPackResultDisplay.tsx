@@ -1,13 +1,13 @@
-import { Card, CardHeader, Divider, List, TablePagination, Typography, withWidth } from "@material-ui/core"
+import {Card, CardHeader, Divider, List, TablePagination, Typography, withWidth} from "@material-ui/core"
 import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
-import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as _ from "lodash"
 import * as React from "react"
-import { TrainingPack, TrainingPackResponse, TrainingPackShot } from "../../Models/Player/TrainingPack"
-import { Viewer } from "../Replay/ReplayViewer/Viewer"
-import { CreatePackDialog } from "./CreatePackDialog"
-import { TrainingPackDisplayRow } from "./TrainingPackDisplayRow"
+import {TrainingPack, TrainingPackResponse, TrainingPackShot} from "../../Models/Player/TrainingPack"
+import {Viewer} from "../Replay/ReplayViewer/Viewer"
+import {CreatePackDialog} from "./CreatePackDialog"
+import {TrainingPackDisplayRow} from "./TrainingPackDisplayRow"
 
 interface OwnProps {
     trainingPacks: TrainingPackResponse
@@ -17,8 +17,7 @@ interface OwnProps {
     handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>
 }
 
-type Props = OwnProps
-    & WithWidth
+type Props = OwnProps & WithWidth
 
 interface State {
     selectable: boolean
@@ -32,7 +31,9 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
     constructor(props: Props) {
         super(props)
         this.state = {
-            selectable: false, selectedReplayIds: [], openDialog: false
+            selectable: false,
+            selectedReplayIds: [],
+            openDialog: false
         }
     }
 
@@ -44,60 +45,55 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                 New pack
             </Button>
         )
-        const viewer = (this.state.game && this.state.frame) ? (
-            <Grid item xs={isWidthUpLg ? 5 : 12} style={{minHeight: "40vh"}}>
-                <Viewer
-                    replayId={this.state.game}
-                    frameMin={this.state.frame}
-                    frameCount={150}
-                    pauseOnStart={true}
-                    compact={true}
-                />
-            </Grid>
-        ) : null
+        const viewer =
+            this.state.game && this.state.frame ? (
+                <Grid item xs={isWidthUpLg ? 5 : 12} style={{minHeight: "40vh"}}>
+                    <Viewer
+                        replayId={this.state.game}
+                        frameMin={this.state.frame}
+                        frameCount={150}
+                        pauseOnStart={true}
+                        compact={true}
+                    />
+                </Grid>
+            ) : null
 
         const createPackDialog = (
-            <CreatePackDialog openDialog={this.state.openDialog} onCloseDialog={this.closeDialog}/>
+            <CreatePackDialog openDialog={this.state.openDialog} onCloseDialog={this.closeDialog} />
         )
 
         const {trainingPacks, page, limit} = this.props
         const {selectable} = this.state
-        const subheader = (
+        const subheader =
             "Packs can be placed in " +
             "Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining " +
             "and accessed in Training > Created"
-        )
 
         return (
             <Grid container>
-                <Grid item xs={(this.state.game && isWidthUpLg) ? 7 : 12}>
+                <Grid item xs={this.state.game && isWidthUpLg ? 7 : 12}>
                     {!isWidthUpLg && viewer}
                     {trainingPacks.packs.length > 0 ? (
                         <Card>
                             <CardHeader
                                 title="Training Packs"
                                 subheader={subheader}
-                                action={(
+                                action={
                                     <div style={{paddingRight: 8}}>
-                                        <div style={{display: "flex"}}>
-                                            {linkButton}
-                                        </div>
+                                        <div style={{display: "flex"}}>{linkButton}</div>
                                     </div>
-                                )}
+                                }
                             />
                             {selectable ? (
                                 <List dense style={isWidthUpLg ? {} : {overflowY: "scroll", height: "50vh"}}>
-                                    <Divider/>
+                                    <Divider />
                                     {this.props.trainingPacks.packs.map((pack: TrainingPack, i) => (
                                         <>
                                             <TrainingPackDisplayRow
                                                 key={pack.guid}
                                                 pack={pack}
                                                 selectProps={{
-                                                    selected: _.includes(
-                                                        this.state.selectedReplayIds,
-                                                        pack.guid
-                                                    ),
+                                                    selected: _.includes(this.state.selectedReplayIds, pack.guid),
                                                     handleSelectChange: this.handleSelectChange(pack.guid)
                                                 }}
                                                 selectShotHandler={(shotNum: number) => {
@@ -105,7 +101,7 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                                 }}
                                                 gameMap={this.props.trainingPacks.games}
                                             />
-                                            {i !== this.props.trainingPacks.packs.length && <Divider/>}
+                                            {i !== this.props.trainingPacks.packs.length && <Divider />}
                                         </>
                                     ))}
                                 </List>
@@ -132,7 +128,6 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                 rowsPerPage={limit}
                                 rowsPerPageOptions={[10, 25, 50]}
                             />
-
                         </Card>
                     ) : (
                         <Typography variant="subtitle1" align="center">

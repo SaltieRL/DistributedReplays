@@ -1,9 +1,9 @@
-import { faLightbulb } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { AppBar, IconButton, Toolbar, Tooltip } from "@material-ui/core"
+import {faLightbulb} from "@fortawesome/free-solid-svg-icons"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {AppBar, IconButton, Toolbar, Tooltip} from "@material-ui/core"
 import Menu from "@material-ui/icons/Menu"
 import * as React from "react"
-import { ThemeContext } from "../../Contexts/ThemeContext"
+import {ThemeContext} from "../../Contexts/ThemeContext"
 
 interface Props {
     toggleSideBar: () => void
@@ -15,17 +15,17 @@ export class HomePageAppBar extends React.PureComponent<Props> {
             <AppBar color="default">
                 <Toolbar>
                     <IconButton onClick={this.props.toggleSideBar} style={{marginLeft: -12}}>
-                        <Menu/>
+                        <Menu />
                     </IconButton>
-                    <span style={{flexGrow: 1}}/>
+                    <span style={{flexGrow: 1}} />
 
                     {this.props.children}
-                    <span style={{flexGrow: 1}}/>
+                    <span style={{flexGrow: 1}} />
                     <ThemeContext.Consumer>
                         {(themeValue) => (
                             <Tooltip title="Toggle theme">
                                 <IconButton onClick={themeValue.toggleTheme}>
-                                    <FontAwesomeIcon icon={faLightbulb} style={{width: 24, height: 24}}/>
+                                    <FontAwesomeIcon icon={faLightbulb} style={{width: 24, height: 24}} />
                                 </IconButton>
                             </Tooltip>
                         )}

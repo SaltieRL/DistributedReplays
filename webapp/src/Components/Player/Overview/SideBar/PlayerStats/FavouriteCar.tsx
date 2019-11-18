@@ -1,7 +1,7 @@
-import { createStyles, Grid, Typography, WithStyles, withStyles } from "@material-ui/core"
+import {createStyles, Grid, Typography, WithStyles, withStyles} from "@material-ui/core"
 import DirectionsCar from "@material-ui/core/SvgIcon/SvgIcon"
 import * as React from "react"
-import { roundNumberToMaxDP } from "../../../../../Utils/String"
+import {roundNumberToMaxDP} from "../../../../../Utils/String"
 
 const styles = createStyles({
     percentage: {
@@ -23,18 +23,16 @@ class FavouriteCarComponent extends React.PureComponent<Props> {
         return (
             <Grid container alignItems="center" justify="space-around" spacing={1}>
                 <Grid item xs={3}>
-                    <Typography> <DirectionsCar/> </Typography>
+                    <Typography>
+                        <DirectionsCar />
+                    </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                    <Typography variant="subtitle1">
-                        favourite car
-                    </Typography>
+                    <Typography variant="subtitle1">favourite car</Typography>
                 </Grid>
                 <Grid item xs={3} container direction="column" alignItems="center">
                     <Grid item>
-                        <Typography align="center">
-                            {this.props.carStat.carName}
-                        </Typography>
+                        <Typography align="center">{this.props.carStat.carName}</Typography>
                     </Grid>
                     <Grid item>
                         <Typography className={this.props.classes.percentage}>

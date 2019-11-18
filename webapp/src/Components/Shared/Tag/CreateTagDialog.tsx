@@ -1,15 +1,14 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField } from "@material-ui/core"
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField} from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import * as React from "react"
-import { createTag } from "../../../Requests/Tag"
-import { withNotifications, WithNotifications } from "../Notification/NotificationUtils"
+import {createTag} from "../../../Requests/Tag"
+import {withNotifications, WithNotifications} from "../Notification/NotificationUtils"
 
 interface OwnProps {
     onCreate: (tag: Tag) => void
 }
 
-type Props = OwnProps
-    & WithNotifications
+type Props = OwnProps & WithNotifications
 
 interface State {
     open: boolean
@@ -34,7 +33,7 @@ class CreateTagDialogComponent extends React.PureComponent<Props, State> {
                     style={{position: "absolute", bottom: 16, right: 16}}
                     color="secondary"
                 >
-                    <Add/>
+                    <Add />
                 </Fab>
                 <Dialog
                     open={this.state.open}
@@ -42,9 +41,7 @@ class CreateTagDialogComponent extends React.PureComponent<Props, State> {
                     scroll="paper"
                     PaperProps={{style: {width: 600, maxWidth: "90vw"}}}
                 >
-                    <DialogTitle>
-                        Create tag
-                    </DialogTitle>
+                    <DialogTitle>Create tag</DialogTitle>
                     <DialogContent>
                         <form onSubmit={this.handleFormSubmit}>
                             <TextField
@@ -88,12 +85,14 @@ class CreateTagDialogComponent extends React.PureComponent<Props, State> {
         if (enteredTagName.length > 0) {
             createTag(enteredTagName)
                 .then(this.props.onCreate)
-                .then(() => this.props.showNotification({
-                    variant: "success",
-                    message: `Created tag: ${enteredTagName}`
-                }))
-                .then(() => this.setState(
-                    {
+                .then(() =>
+                    this.props.showNotification({
+                        variant: "success",
+                        message: `Created tag: ${enteredTagName}`
+                    })
+                )
+                .then(() =>
+                    this.setState({
                         name: "",
                         open: false
                     })

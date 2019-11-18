@@ -13,24 +13,24 @@ import {
 import Clear from "@material-ui/icons/Clear"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
-import { uploadReplays } from "../../../Requests/Global"
-import { WithNotifications, withNotifications } from "../Notification/NotificationUtils"
-import { BakkesModAd } from "./BakkesModAd"
-import { addTaskIds } from "./StatusUtils"
-import { UploadDropzone } from "./UploadDropzone"
-import { UploadTags } from "./UploadTags"
+import {uploadReplays} from "../../../Requests/Global"
+import {WithNotifications, withNotifications} from "../Notification/NotificationUtils"
+import {BakkesModAd} from "./BakkesModAd"
+import {addTaskIds} from "./StatusUtils"
+import {UploadDropzone} from "./UploadDropzone"
+import {UploadTags} from "./UploadTags"
 
-const styles = (theme: Theme) => createStyles({
-    leftIcon: {
-        marginRight: theme.spacing(1)
-    },
-    uploadButton: {
-        marginLeft: "auto"
-    }
-})
+const styles = (theme: Theme) =>
+    createStyles({
+        leftIcon: {
+            marginRight: theme.spacing(1)
+        },
+        uploadButton: {
+            marginLeft: "auto"
+        }
+    })
 
-type Props = WithStyles<typeof styles>
-    & WithNotifications
+type Props = WithStyles<typeof styles> & WithNotifications
 
 interface State {
     files: File[]
@@ -54,8 +54,8 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                 {this.state.uploadingStage !== "pressedUpload" ? (
                     <>
                         <DialogContent>
-                            <BakkesModAd/>
-                            <UploadDropzone onDrop={this.handleDrop} files={this.state.files}/>
+                            <BakkesModAd />
+                            <UploadDropzone onDrop={this.handleDrop} files={this.state.files} />
                             {this.state.rejected.length !== 0 && (
                                 <Typography color="error">
                                     {this.state.rejected.length} file(s) were not selected as they do not end in
@@ -65,24 +65,23 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
                             <UploadTags
                                 selectedPrivateKeys={this.state.selectedPrivateKeys}
-                                handlePrivateKeysChange={this.handlePrivateKeysChange}/>
+                                handlePrivateKeysChange={this.handlePrivateKeysChange}
+                            />
                         </DialogContent>
                         <DialogActions>
-                            <Button variant="outlined"
-                                    onClick={this.clearFiles}
-                                    disabled={!hasFilesSelected}
-                            >
-                                <Clear className={classes.leftIcon}/>
+                            <Button variant="outlined" onClick={this.clearFiles} disabled={!hasFilesSelected}>
+                                <Clear className={classes.leftIcon} />
                                 Clear
                             </Button>
 
-                            <Button variant="contained"
-                                    color="secondary"
-                                    onClick={this.handleUpload}
-                                    disabled={!hasFilesSelected}
-                                    className={classes.uploadButton}
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                onClick={this.handleUpload}
+                                disabled={!hasFilesSelected}
+                                className={classes.uploadButton}
                             >
-                                <CloudUpload className={classes.leftIcon}/>
+                                <CloudUpload className={classes.leftIcon} />
                                 Upload
                             </Button>
                         </DialogActions>
@@ -90,18 +89,19 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
                 ) : (
                     <>
                         <div style={{margin: "auto", textAlign: "center", padding: 20, flexGrow: 1}}>
-                            <CircularProgress/>
+                            <CircularProgress />
                         </div>
                         <div style={{flexGrow: 1, padding: 20}}>
-
                             <Typography>
                                 Uploading
                                 {this.state.files.length - this.state.filesRemaining} of {this.state.files.length}...
                             </Typography>
-                            <LinearProgress variant="determinate"
-                                            color={"secondary"}
-                                            value={(1 - (this.state.filesRemaining / this.state.files.length)) * 100}
-                                            style={{width: "100% !important"}}/>
+                            <LinearProgress
+                                variant="determinate"
+                                color={"secondary"}
+                                value={(1 - this.state.filesRemaining / this.state.files.length) * 100}
+                                style={{width: "100% !important"}}
+                            />
                         </div>
                     </>
                 )}
@@ -111,12 +111,12 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
 
     private readonly handleUpload = () => {
         this.setState({uploadingStage: "pressedUpload", filesRemaining: this.state.files.length})
-        return this.uploadSingleFile(this.state.files.slice(0))
-            .catch(() => this.props.showNotification({
+        return this.uploadSingleFile(this.state.files.slice(0)).catch(() =>
+            this.props.showNotification({
                 variant: "error",
                 message: "Could not upload replays."
-            }))
-
+            })
+        )
     }
 
     private readonly uploadSingleFile = (files: File[], ids: any = []): any => {
@@ -142,13 +142,15 @@ class UploadFormComponent extends React.PureComponent<Props, State> {
         }
     }
 
-    private readonly handleDrop: <T extends File>(acceptedFiles: T[], rejectedFiles: T[]) => void =
-        (accepted, rejected) => {
-            this.setState({
-                files: accepted,
-                rejected
-            })
-        }
+    private readonly handleDrop: <T extends File>(acceptedFiles: T[], rejectedFiles: T[]) => void = (
+        accepted,
+        rejected
+    ) => {
+        this.setState({
+            files: accepted,
+            rejected
+        })
+    }
 
     private readonly clearFiles = () => {
         this.setState({files: [], rejected: []})

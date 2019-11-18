@@ -52,13 +52,13 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             this.createArrowHead(svgContainer, color)
             // .attr("transform", `translate(${x}, ${y})`)
             this.applyAttr(svgContainer.append("line"), {
-                "class": "arrow",
+                class: "arrow",
                 "marker-end": "url(#arrow)",
-                "x1": x,
-                "y1": y,
-                "x2": x2,
-                "y2": y2,
-                "stroke": color.brighter(2),
+                x1: x,
+                y1: y,
+                x2: x2,
+                y2: y2,
+                stroke: color.brighter(2),
                 "stroke-width": 3
             })
 
@@ -89,7 +89,8 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             markerWidth: 4,
             markerHeight: 4,
             orient: "auto"
-        }).append("path")
+        })
+            .append("path")
             .attr("d", "M0,-5L10,0L0,5")
             .attr("class", "arrowHead")
             .style("fill", "WhiteSmoke")
@@ -104,11 +105,14 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
     }
 
     private readonly getModifiedX = (x: number) => {
-        return (FIELD_HALF_WIDTH + x) / FIELD_HALF_WIDTH * this.props.imageHeight / 2
+        return (((FIELD_HALF_WIDTH + x) / FIELD_HALF_WIDTH) * this.props.imageHeight) / 2
     }
 
     private readonly getModifiedY = (y: number) => {
-        return (FIELD_HALF_HEIGHT + y + FIELD_GOAL_DEPTH) /
-            (FIELD_HALF_HEIGHT + FIELD_GOAL_DEPTH) * this.props.imageWidth / 2
+        return (
+            (((FIELD_HALF_HEIGHT + y + FIELD_GOAL_DEPTH) / (FIELD_HALF_HEIGHT + FIELD_GOAL_DEPTH)) *
+                this.props.imageWidth) /
+            2
+        )
     }
 }

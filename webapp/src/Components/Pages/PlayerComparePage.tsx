@@ -1,22 +1,21 @@
-import { Divider, Grid } from "@material-ui/core"
+import {Divider, Grid} from "@material-ui/core"
 import _ from "lodash"
 import qs from "qs"
 import * as React from "react"
-import { RouteComponentProps } from "react-router-dom"
-import { getPlayer } from "../../Requests/Player/getPlayer"
-import { resolvePlayerNameOrId } from "../../Requests/Player/resolvePlayerNameOrId"
-import { AddPlayerInput } from "../Player/Compare/AddPlayerInput"
-import { PlayerChip } from "../Player/Compare/PlayerChip"
-import { PlayerCompareContent } from "../Player/Compare/PlayerCompareContent"
-import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
-import { BasePage } from "./BasePage"
+import {RouteComponentProps} from "react-router-dom"
+import {getPlayer} from "../../Requests/Player/getPlayer"
+import {resolvePlayerNameOrId} from "../../Requests/Player/resolvePlayerNameOrId"
+import {AddPlayerInput} from "../Player/Compare/AddPlayerInput"
+import {PlayerChip} from "../Player/Compare/PlayerChip"
+import {PlayerCompareContent} from "../Player/Compare/PlayerCompareContent"
+import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
+import {BasePage} from "./BasePage"
 
 interface PlayerCompareQueryParams {
     ids: string[]
 }
 
-type Props = RouteComponentProps<{}>
-    & WithNotifications
+type Props = RouteComponentProps<{}> & WithNotifications
 
 interface State {
     ids: string[]
@@ -49,16 +48,18 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
     public render() {
         const {players} = this.state
         const playerChips = players.map((player) => (
-            <PlayerChip {...player} onDelete={() => this.handleRemovePlayer(player.id)} key={player.id}/>
+            <PlayerChip {...player} onDelete={() => this.handleRemovePlayer(player.id)} key={player.id} />
         ))
         return (
             <BasePage>
                 <Grid container spacing={3} justify="center">
                     <Grid item xs={12} container justify="center">
                         <Grid item xs={12} container justify="center">
-                            <AddPlayerInput onSubmit={this.attemptToAddPlayer}
-                                            value={this.state.inputId}
-                                            onChange={this.handleInputChange}/>
+                            <AddPlayerInput
+                                onSubmit={this.attemptToAddPlayer}
+                                value={this.state.inputId}
+                                onChange={this.handleInputChange}
+                            />
                         </Grid>
                     </Grid>
                     <Grid item xs={12} sm={11} md={10} lg={9} xl={8} container spacing={1}>
@@ -68,9 +69,11 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         ))}
                     </Grid>
-                    <Grid item xs={12}> <Divider/> </Grid>
                     <Grid item xs={12}>
-                        <PlayerCompareContent players={players}/>
+                        <Divider />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <PlayerCompareContent players={players} />
                     </Grid>
                 </Grid>
             </BasePage>
@@ -80,10 +83,9 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
     private readonly readQueryParams = () => {
         const queryString = this.props.location.search
         if (queryString !== "") {
-            const queryParams: PlayerCompareQueryParams = qs.parse(
-                this.props.location.search,
-                {ignoreQueryPrefix: true}
-            )
+            const queryParams: PlayerCompareQueryParams = qs.parse(this.props.location.search, {
+                ignoreQueryPrefix: true
+            })
             if (queryParams.ids) {
                 const ids = Array.isArray(queryParams.ids) ? queryParams.ids : [queryParams.ids]
                 this.setState({ids: _.uniq(ids)})
@@ -93,16 +95,12 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
 
     // TODO: Compartmentalise query params, data retrieval
     private readonly setQueryParams = () => {
-        const queryString = qs.stringify(
-            {ids: this.state.ids},
-            {addQueryPrefix: true, indices: false}
-        )
+        const queryString = qs.stringify({ids: this.state.ids}, {addQueryPrefix: true, indices: false})
         this.props.history.replace({search: queryString})
     }
 
     private readonly getPlayers = (): Promise<void> => {
-        return Promise.all(this.state.ids.map((id) => getPlayer(id)))
-            .then((players) => this.setState({players}))
+        return Promise.all(this.state.ids.map((id) => getPlayer(id))).then((players) => this.setState({players}))
     }
 
     private readonly handleRemovePlayer = (id: string) => {

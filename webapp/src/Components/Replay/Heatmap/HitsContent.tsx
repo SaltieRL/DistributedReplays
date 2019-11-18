@@ -1,8 +1,8 @@
-import { Grid, Typography } from "@material-ui/core"
+import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
-import { Scatter } from "react-chartjs-2"
-import { Replay } from "../../../Models"
-import { ReactHeatmap } from "./Heatmap"
+import {Scatter} from "react-chartjs-2"
+import {Replay} from "../../../Models"
+import {ReactHeatmap} from "./Heatmap"
 
 interface Props {
     replay: Replay
@@ -34,18 +34,14 @@ export class HitsContent extends React.PureComponent<Props> {
             <Grid container justify="center">
                 <Grid item xs={6} style={{textAlign: "center"}}>
                     <Typography variant="h3">Blue</Typography>
-                    <Grid container>
-                        {this.props.heatmapData !== null && blueTeam.map(this.createHeatmap)}
-                    </Grid>
+                    <Grid container>{this.props.heatmapData !== null && blueTeam.map(this.createHeatmap)}</Grid>
                 </Grid>
                 <Grid item xs={6} style={{textAlign: "center"}}>
                     <Typography variant="h3">Orange</Typography>
-                    <Grid container>
-                        {this.props.heatmapData !== null && orangeTeam.map(this.createHeatmap)}
-                    </Grid>
+                    <Grid container>{this.props.heatmapData !== null && orangeTeam.map(this.createHeatmap)}</Grid>
                 </Grid>
                 <Grid item xs={12} style={{textAlign: "center"}}>
-                    {(this.props.heatmapData !== null && "ball" in this.props.heatmapData.data) && (
+                    {this.props.heatmapData !== null && "ball" in this.props.heatmapData.data && (
                         <Grid item xs={12} style={{height: 500}}>
                             <Typography variant="h3">Ball</Typography>
                             <ReactHeatmap
@@ -56,7 +52,8 @@ export class HitsContent extends React.PureComponent<Props> {
                                 style={{width: WIDTH, height: HEIGHT}}
                                 config={{
                                     radius: 18
-                                }}/>
+                                }}
+                            />
                         </Grid>
                     )}
                 </Grid>
@@ -68,45 +65,54 @@ export class HitsContent extends React.PureComponent<Props> {
         const data = this.props.heatmapData.data[player.name]
         return (
             <Grid
-                item key={player.name}
-                xs={12} md={6} lg={6}
+                item
+                key={player.name}
+                xs={12}
+                md={6}
+                lg={6}
                 style={{
                     width: 400,
                     height: 500
                 }}
             >
                 <Typography>{player.name}</Typography>
-                <Scatter data={{
-                    datasets: [
-                        {
-                            label: player.name,
-                            data: data.map((point: any) => {
-                                return {
-                                    x: point.x,
-                                    y: point.y
+                <Scatter
+                    data={{
+                        datasets: [
+                            {
+                                label: player.name,
+                                data: data.map((point: any) => {
+                                    return {
+                                        x: point.x,
+                                        y: point.y
+                                    }
+                                })
+                            }
+                        ]
+                    }}
+                    options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            xAxes: [
+                                {
+                                    ticks: {
+                                        min: 0,
+                                        max: 500
+                                    }
                                 }
-                            })
+                            ],
+                            yAxes: [
+                                {
+                                    ticks: {
+                                        min: 0,
+                                        max: 500
+                                    }
+                                }
+                            ]
                         }
-                    ]
-                }}
-                         options={{
-                             responsive: true,
-                             maintainAspectRatio: false,
-                             scales: {
-                                 xAxes: [{
-                                     ticks: {
-                                         min: 0,
-                                         max: 500
-                                     }
-                                 }],
-                                 yAxes: [{
-                                     ticks: {
-                                         min: 0,
-                                         max: 500
-                                     }
-                                 }]
-                             }
-                         }}/>
+                    }}
+                />
             </Grid>
         )
     }

@@ -1,19 +1,18 @@
-import { faCalculator, faSearch } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { IconButton, Paper, TextField } from "@material-ui/core"
+import {faCalculator, faSearch} from "@fortawesome/free-solid-svg-icons"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {IconButton, Paper, TextField} from "@material-ui/core"
 import * as React from "react"
-import { Redirect } from "react-router-dom"
-import { PLAYER_PAGE_LINK } from "../../Globals"
-import { resolvePlayerNameOrId } from "../../Requests/Player/resolvePlayerNameOrId"
-import { WithNotifications, withNotifications } from "./Notification/NotificationUtils"
+import {Redirect} from "react-router-dom"
+import {PLAYER_PAGE_LINK} from "../../Globals"
+import {resolvePlayerNameOrId} from "../../Requests/Player/resolvePlayerNameOrId"
+import {WithNotifications, withNotifications} from "./Notification/NotificationUtils"
 
 interface OwnProps {
     usePaper: boolean
     useCalculatorIcon?: boolean
 }
 
-type Props = OwnProps
-    & WithNotifications
+type Props = OwnProps & WithNotifications
 
 interface State {
     enteredText: string
@@ -31,7 +30,7 @@ class SearchComponent extends React.PureComponent<Props, State> {
     public render() {
         const searchButton = (
             <IconButton aria-label="Search" onClick={this.onSubmit}>
-                <FontAwesomeIcon icon={this.props.useCalculatorIcon ? faCalculator : faSearch}/>
+                <FontAwesomeIcon icon={this.props.useCalculatorIcon ? faCalculator : faSearch} />
             </IconButton>
         )
 
@@ -60,17 +59,11 @@ class SearchComponent extends React.PureComponent<Props, State> {
         return (
             <>
                 {this.props.usePaper ? (
-                    <Paper style={containerStyle}>
-                        {inputField}
-                    </Paper>
+                    <Paper style={containerStyle}>{inputField}</Paper>
                 ) : (
-                    <div style={containerStyle}>
-                        {inputField}
-                    </div>
+                    <div style={containerStyle}>{inputField}</div>
                 )}
-                {this.state.resolvedId &&
-                <Redirect push to={PLAYER_PAGE_LINK(this.state.resolvedId)}/>
-                }
+                {this.state.resolvedId && <Redirect push to={PLAYER_PAGE_LINK(this.state.resolvedId)} />}
             </>
         )
     }
@@ -86,10 +79,12 @@ class SearchComponent extends React.PureComponent<Props, State> {
         }
         resolvePlayerNameOrId(this.state.enteredText)
             .then((resolvedId) => this.setState({resolvedId}))
-            .catch((appError: AppError) => this.props.showNotification({
-                variant: "appError",
-                appError
-            }))
+            .catch((appError: AppError) =>
+                this.props.showNotification({
+                    variant: "appError",
+                    appError
+                })
+            )
     }
 }
 

@@ -1,4 +1,4 @@
-import { WithTheme, withTheme } from "@material-ui/core"
+import {WithTheme, withTheme} from "@material-ui/core"
 import h337 from "heatmap.js"
 import _ from "lodash"
 import React from "react"
@@ -56,7 +56,7 @@ class ReactHeatmapComponent extends React.PureComponent<Props, State> {
     public render() {
         return (
             // tslint:disable-next-line
-            <div ref="react-heatmap"/>
+            <div ref="react-heatmap" />
         )
     }
 }

@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, Typography } from "@material-ui/core"
+import {Card, CardContent, CardHeader, Typography} from "@material-ui/core"
 import * as React from "react"
-import { IconTooltip } from "../../../Shared/IconTooltip"
-import { PlayStyleActions } from "./PlayStyleActions"
+import {IconTooltip} from "../../../Shared/IconTooltip"
+import {PlayStyleActions} from "./PlayStyleActions"
 
 interface Props {
     player: Player
@@ -14,19 +14,19 @@ interface Props {
 export class PlayerPlayStyleCard extends React.PureComponent<Props> {
     public render() {
         /* tslint:disable */
-        const playStyleTitle =
+        const playStyleTitle = (
             <Typography variant="h5">
                 Playstyle
-                <IconTooltip
-                    tooltip="Data is presented as standard deviations from the mean, and only includes games from the past 6 months"/>
+                <IconTooltip tooltip="Data is presented as standard deviations from the mean, and only includes games from the past 6 months" />
             </Typography>
+        )
         /* tslint:enable */
 
         return (
             <Card>
                 <CardHeader
                     title={playStyleTitle}
-                    action={(
+                    action={
                         <PlayStyleActions
                             player={this.props.player}
                             playlist={this.props.playlist}
@@ -34,10 +34,9 @@ export class PlayerPlayStyleCard extends React.PureComponent<Props> {
                             handlePlaylistChange={this.props.handlePlaylistChange}
                             handleWinsLossesChange={this.props.handleWinsLossesChange}
                         />
-                    )}/>
-                <CardContent>
-                    {this.props.children}
-                </CardContent>
+                    }
+                />
+                <CardContent>{this.props.children}</CardContent>
             </Card>
         )
     }

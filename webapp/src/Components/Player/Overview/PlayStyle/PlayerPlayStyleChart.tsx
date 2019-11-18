@@ -1,26 +1,23 @@
-import { withTheme, WithTheme } from "@material-ui/core"
-import { ChartData, ChartDataSets, LinearTickOptions, RadialChartOptions } from "chart.js"
+import {withTheme, WithTheme} from "@material-ui/core"
+import {ChartData, ChartDataSets, LinearTickOptions, RadialChartOptions} from "chart.js"
 import * as React from "react"
-import { Radar } from "react-chartjs-2"
-import { ChartDataPoint, ChartDataResponse } from "../../../../Models"
-import { roundLabelToMaxDPCallback } from "../../../../Utils/Chart"
-import { colorsForPlaylists, convertHexToRgba } from "../../../../Utils/Color"
+import {Radar} from "react-chartjs-2"
+import {ChartDataPoint, ChartDataResponse} from "../../../../Models"
+import {roundLabelToMaxDPCallback} from "../../../../Utils/Chart"
+import {colorsForPlaylists, convertHexToRgba} from "../../../../Utils/Color"
 
 interface OwnProps {
     names: string[]
     data: ChartDataResponse[]
 }
 
-type Props = OwnProps
-    & WithTheme
+type Props = OwnProps & WithTheme
 
 type ChartDataSetColors = Pick<ChartDataSets, "backgroundColor" | "pointBackgroundColor" | "borderColor">[]
 
 class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
     public render() {
-        return (
-            <Radar data={this.getChartData()} options={this.getChartOptions()} redraw/>
-        )
+        return <Radar data={this.getChartData()} options={this.getChartOptions()} redraw />
     }
 
     private readonly getChartData = (): ChartData => {
@@ -28,21 +25,21 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
 
         const labels = data[0].chartDataPoints.map((chartDataPoint: ChartDataPoint) => chartDataPoint.name)
         const averageData = data[0].chartDataPoints.map((chartDataPoint: ChartDataPoint) =>
-            chartDataPoint.average === undefined ? 0 : chartDataPoint.average)
+            chartDataPoint.average === undefined ? 0 : chartDataPoint.average
+        )
         const chartDataSetColors = this.getChartDataSetColors()
 
-        const playerChartDataSets: ChartDataSets[] = data
-            .map((chartDataResponse: ChartDataResponse, i: number) => {
-                return {
-                    label: names[i],
-                    data: chartDataResponse.chartDataPoints.map((chartDataPoint) => chartDataPoint.value),
-                    ...chartDataSetColors[i],
-                    radius: 5,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    pointHitRadius: 5
-                }
-            })
+        const playerChartDataSets: ChartDataSets[] = data.map((chartDataResponse: ChartDataResponse, i: number) => {
+            return {
+                label: names[i],
+                data: chartDataResponse.chartDataPoints.map((chartDataPoint) => chartDataPoint.value),
+                ...chartDataSetColors[i],
+                radius: 5,
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                pointHitRadius: 5
+            }
+        })
 
         return {
             labels,
@@ -60,11 +57,13 @@ class PlayerPlayStyleChartComponent extends React.PureComponent<Props> {
         const {names} = this.props
         if (names.length === 1) {
             const themeColors = this.props.theme.palette.secondary
-            return [{
-                backgroundColor: convertHexToRgba(themeColors.light, 0.4),
-                pointBackgroundColor: convertHexToRgba(themeColors.dark),
-                borderColor: convertHexToRgba(themeColors.main, 0.5)
-            }]
+            return [
+                {
+                    backgroundColor: convertHexToRgba(themeColors.light, 0.4),
+                    pointBackgroundColor: convertHexToRgba(themeColors.dark),
+                    borderColor: convertHexToRgba(themeColors.main, 0.5)
+                }
+            ]
         }
 
         return names.map((_, i) => {

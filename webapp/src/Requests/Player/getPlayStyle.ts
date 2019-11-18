@@ -1,11 +1,15 @@
 import qs from "qs"
-import { doGet } from "../../apiHandler/apiHandler"
-import { PlayStyleRawResponse, PlayStyleResponse } from "../../Models"
-import { useMockData } from "../Config"
-import { MOCK_PLAY_STYLE, MOCK_PLAY_STYLE_RAW } from "../Mock"
+import {doGet} from "../../apiHandler/apiHandler"
+import {PlayStyleRawResponse, PlayStyleResponse} from "../../Models"
+import {useMockData} from "../Config"
+import {MOCK_PLAY_STYLE, MOCK_PLAY_STYLE_RAW} from "../Mock"
 
-export const getPlayStyle = (id: string, rank?: number, playlist?: number,
-                             result?: boolean): Promise<PlayStyleResponse> => {
+export const getPlayStyle = (
+    id: string,
+    rank?: number,
+    playlist?: number,
+    result?: boolean
+): Promise<PlayStyleResponse> => {
     if (useMockData) {
         return Promise.resolve(MOCK_PLAY_STYLE)
     }

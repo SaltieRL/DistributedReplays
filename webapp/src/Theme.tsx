@@ -1,48 +1,51 @@
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"
+import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles"
 import Chart from "chart.js"
 import * as React from "react"
-import { ThemeContext } from "./Contexts/ThemeContext"
+import {ThemeContext} from "./Contexts/ThemeContext"
 
-const getTheme = (dark: boolean) => createMuiTheme({
-    palette: {
-        primary: {
-            contrastText: "#000",
-            dark: "#808e95",
-            light: "#eff5fc",
-            main: "#b0bec5"
+const getTheme = (dark: boolean) =>
+    createMuiTheme({
+        palette: {
+            primary: {
+                contrastText: "#000",
+                dark: "#808e95",
+                light: "#eff5fc",
+                main: "#b0bec5"
+            },
+            secondary: {
+                contrastText: "#000",
+                dark: "#35a6cb",
+                light: "#a9ffff",
+                main: "#72d8fe"
+            },
+            error: {
+                contrastText: "#fff",
+                dark: "#c20",
+                light: "#c20",
+                main: "#c20"
+            },
+            type: dark ? "dark" : "light"
         },
-        secondary: {
-            contrastText: "#000",
-            dark: "#35a6cb",
-            light: "#a9ffff",
-            main: "#72d8fe"
+        // Make top bar appear above side bar
+        zIndex: {
+            appBar: 1200,
+            drawer: 1100
         },
-        error: {
-            contrastText: "#fff",
-            dark: "#c20",
-            light: "#c20",
-            main: "#c20"
+        typography: {
+            fontFamily: "Lato",
+            fontWeightRegular: 300,
+            caption: {
+                fontWeight: 400
+            }
         },
-        type: dark ? "dark" : "light"
-    },
-    // Make top bar appear above side bar
-    zIndex: {
-        appBar: 1200,
-        drawer: 1100
-    },
-    typography: {
-        fontFamily: "Lato",
-        fontWeightRegular: 300,
-        caption: {
-            fontWeight: 400
-        }
-    },
-    overrides: dark ? {
-        MuiTabs: {
-            root: {color: "white"}
-        }
-    } : {}
-})
+        overrides: dark
+            ? {
+                  MuiTabs: {
+                      root: {color: "white"}
+                  }
+              }
+            : {}
+    })
 
 interface State {
     dark: boolean
@@ -69,9 +72,7 @@ export class Theme extends React.PureComponent<{}, State> {
 
         return (
             <ThemeContext.Provider value={{dark, toggleTheme: this.toggleTheme}}>
-                <MuiThemeProvider theme={theme}>
-                    {this.props.children}
-                </MuiThemeProvider>
+                <MuiThemeProvider theme={theme}>{this.props.children}</MuiThemeProvider>
             </ThemeContext.Provider>
         )
     }

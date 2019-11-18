@@ -1,6 +1,6 @@
-import { doGet } from "../../apiHandler/apiHandler"
-import { PlayerRanks } from "../../Components/Player/Overview/SideBar/PlayerRanksCard"
-import { useMockData } from "../Config"
+import {doGet} from "../../apiHandler/apiHandler"
+import {PlayerRanks} from "../../Components/Player/Overview/SideBar/PlayerRanksCard"
+import {useMockData} from "../Config"
 
 export const getRanks = (id: string): Promise<PlayerRanks> => {
     if (useMockData) {

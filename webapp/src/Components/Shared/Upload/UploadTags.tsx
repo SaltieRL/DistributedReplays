@@ -6,18 +6,19 @@ import {
     IconButton,
     InputLabel,
     MenuItem,
-    Select, Tooltip,
+    Select,
+    Tooltip,
     Typography
 } from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import * as React from "react"
-import { connect } from "react-redux"
-import { Link } from "react-router-dom"
-import { Dispatch } from "redux"
-import { TAGS_PAGE_LINK } from "../../../Globals"
-import { StoreState, TagsAction } from "../../../Redux"
-import { getAllTags } from "../../../Requests/Tag"
-import { AddTagPrivateKeyDialog } from "./AddTagPrivateKeyDialog."
+import {connect} from "react-redux"
+import {Link} from "react-router-dom"
+import {Dispatch} from "redux"
+import {TAGS_PAGE_LINK} from "../../../Globals"
+import {StoreState, TagsAction} from "../../../Redux"
+import {getAllTags} from "../../../Requests/Tag"
+import {AddTagPrivateKeyDialog} from "./AddTagPrivateKeyDialog."
 
 const mapStateToProps = (state: StoreState) => ({
     tags: state.tags
@@ -31,9 +32,7 @@ interface OwnProps {
     handlePrivateKeysChange: (selectedPrivateKeys: string[]) => void
 }
 
-type Props = OwnProps
-    & ReturnType<typeof mapStateToProps>
-    & ReturnType<typeof mapDispatchToProps>
+type Props = OwnProps & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
 
 interface State {
     externalPrivateKeys: string[]
@@ -47,15 +46,15 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        getAllTags()
-            .then((tags) => this.props.setTags(tags))
+        getAllTags().then((tags) => this.props.setTags(tags))
     }
 
     public render() {
         const tags = this.props.tags
         const selectedTagNames = this.props.selectedPrivateKeys.map(this.findTagNameFromPrivateKey)
-        let tagsWithPrivateKeys = (tags !== null ? tags.filter((tag) => tag.privateKey !== null) : [])
-            .map((tag) => tag.name)
+        let tagsWithPrivateKeys = (tags !== null ? tags.filter((tag) => tag.privateKey !== null) : []).map(
+            (tag) => tag.name
+        )
         tagsWithPrivateKeys = [...tagsWithPrivateKeys, ...this.state.externalPrivateKeys]
 
         return (
@@ -69,14 +68,22 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
                                     multiple
                                     value={selectedTagNames}
                                     onChange={
-                                        this.handleTagsSelectChange as React.ChangeEventHandler<{ value: unknown }>
+                                        this.handleTagsSelectChange as React.ChangeEventHandler<{
+                                            value: unknown
+                                        }>
                                     }
                                     autoWidth
                                     renderValue={(tagNames) => (
-                                        <div style={{display: "flex", flexWrap: "wrap"}}>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                flexWrap: "wrap"
+                                            }}
+                                        >
                                             {(tagNames as string[]).map((tagName: string) => (
                                                 <Chip
-                                                    key={tagName} label={tagName}
+                                                    key={tagName}
+                                                    label={tagName}
                                                     onDelete={this.handleChipDelete(tagName)}
                                                     style={{margin: 4}}
                                                 />
@@ -90,16 +97,14 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
                                         </MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText>
-                                    Select tags to apply to uploaded replay
-                                </FormHelperText>
+                                <FormHelperText>Select tags to apply to uploaded replay</FormHelperText>
                             </FormControl>
                         </Grid>
                         <Grid item xs={1} container alignItems="center">
                             <Grid item xs={12}>
                                 <Tooltip title="Add tag using private key">
                                     <IconButton onClick={this.toggleExternalKeyDialog}>
-                                        <Add/>
+                                        <Add />
                                     </IconButton>
                                 </Tooltip>
                             </Grid>
@@ -107,11 +112,8 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
                         <Grid item xs={12}>
                             <Typography paragraph>
                                 {"N.B. Only tags with generated private IDs will appear here. " +
-                                "Private IDs can be generated for tags at the "}
-                                <Link to={TAGS_PAGE_LINK}>
-                                    tags page
-                                </Link>
-                                .
+                                    "Private IDs can be generated for tags at the "}
+                                <Link to={TAGS_PAGE_LINK}>tags page</Link>.
                             </Typography>
                         </Grid>
                     </Grid>
@@ -128,14 +130,12 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
 
     private readonly handleChipDelete = (tagName: string) => () => {
         const deletedTagPrivateKey = this.findTagPrivateKeyFromName(tagName)
-        const updatedKeys = this.props.selectedPrivateKeys
-            .filter((privateKey) => deletedTagPrivateKey !== privateKey)
+        const updatedKeys = this.props.selectedPrivateKeys.filter((privateKey) => deletedTagPrivateKey !== privateKey)
         this.props.handlePrivateKeysChange(updatedKeys)
     }
 
     private readonly handleTagsSelectChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
-        const updatedKeys = (event.target.value as unknown as string[])
-            .map(this.findTagPrivateKeyFromName)
+        const updatedKeys = ((event.target.value as unknown) as string[]).map(this.findTagPrivateKeyFromName)
         this.props.handlePrivateKeysChange(updatedKeys)
     }
 
@@ -155,7 +155,9 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly toggleExternalKeyDialog = () => {
-        this.setState({addExternalKeyDialogOpen: !this.state.addExternalKeyDialogOpen})
+        this.setState({
+            addExternalKeyDialogOpen: !this.state.addExternalKeyDialogOpen
+        })
     }
 
     private readonly addExternalPrivateKey = (privateKey: string) => {
@@ -164,7 +166,6 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
             addExternalKeyDialogOpen: false
         })
     }
-
 }
 
 export const UploadTags = connect(mapStateToProps, mapDispatchToProps)(UploadTagsComponent)

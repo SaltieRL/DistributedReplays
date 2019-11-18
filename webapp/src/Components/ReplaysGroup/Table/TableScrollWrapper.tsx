@@ -1,6 +1,6 @@
 import * as React from "react"
-import { BasicStat } from "../../../Models"
-import { BasicStatsTable } from "./BasicStatsTable"
+import {BasicStat} from "../../../Models"
+import {BasicStatsTable} from "./BasicStatsTable"
 
 interface Props {
     style: React.CSSProperties
@@ -30,14 +30,13 @@ export class TableScrollWrapper extends React.PureComponent<Props, State> {
                 }}
                 onScroll={this.listenToScroll}
             >
-                <BasicStatsTable basicStats={this.props.basicStats} scrollLeft={this.state.scrollPosition}/>
+                <BasicStatsTable basicStats={this.props.basicStats} scrollLeft={this.state.scrollPosition} />
             </div>
         )
     }
 
     private readonly listenToScroll = () => {
-        const winScroll =
-            this.state.scrollDiv.scrollLeft
+        const winScroll = this.state.scrollDiv.scrollLeft
         this.setState({
             scrollPosition: winScroll
         })

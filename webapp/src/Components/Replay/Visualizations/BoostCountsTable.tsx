@@ -1,6 +1,7 @@
 import {
     FormControlLabel,
-    Paper, Switch,
+    Paper,
+    Switch,
     Table,
     TableBody,
     TableCell,
@@ -10,7 +11,7 @@ import {
     Typography
 } from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models"
+import {Replay} from "../../../Models"
 
 interface Props {
     replay: Replay
@@ -30,10 +31,10 @@ export class BoostCountsTable extends React.PureComponent<Props> {
                         Boost Counts
                     </Typography>
                 </div>
-                <div style={{flex: "1 1 100%"}}/>
+                <div style={{flex: "1 1 100%"}} />
                 <div style={{color: "#ccc"}}>
                     <FormControlLabel
-                        control={<Switch checked={this.props.rotateCharts} onClick={this.props.toggleRotate}/>}
+                        control={<Switch checked={this.props.rotateCharts} onClick={this.props.toggleRotate} />}
                         label="Graph rotation"
                     />
                 </div>
@@ -49,24 +50,23 @@ export class BoostCountsTable extends React.PureComponent<Props> {
                             <TableRow>
                                 <TableCell>Boost</TableCell>
                                 {this.props.replay.players.map((player) => (
-                                    <TableCell align="right" key={player.name}>{player.name}</TableCell>
+                                    <TableCell align="right" key={player.name}>
+                                        {player.name}
+                                    </TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {this.props.boostNames.map((name, i) => (
-                                <TableRow
-                                    key={name}
-                                    selected={this.props.highlight === i}
-                                >
+                                <TableRow key={name} selected={this.props.highlight === i}>
                                     <TableCell component="th" scope="row">
                                         {name}
                                     </TableCell>
                                     {this.props.replay.players.map((player) => (
                                         <TableCell key={player.name + name} align="right">
-                                            {this.props.data[i].map((point: any) =>
-                                                point.playerName === player.name ? 1 : 0
-                                            ).reduce((acc: number, a: number) => acc + a, 0)}
+                                            {this.props.data[i]
+                                                .map((point: any) => (point.playerName === player.name ? 1 : 0))
+                                                .reduce((acc: number, a: number) => acc + a, 0)}
                                         </TableCell>
                                     ))}
                                 </TableRow>

@@ -1,7 +1,4 @@
-import {
-    TableCell,
-    TableRow
-} from "@material-ui/core"
+import {TableCell, TableRow} from "@material-ui/core"
 import * as React from "react"
 
 interface Props {
@@ -17,9 +14,7 @@ export class QueryParams extends React.PureComponent<Props> {
                     {this.props.queryParam.required && (
                         <span style={{fontWeight: "bold", color: "Red"}}>Required </span>
                     )}
-                    {this.props.queryParam.is_list && (
-                        <span style={{fontWeight: "bold", color: "Blue"}}>List </span>
-                    )}
+                    {this.props.queryParam.is_list && <span style={{fontWeight: "bold", color: "Blue"}}>List </span>}
                     <span style={{fontWeight: "bold"}}>"{this.props.queryParam.name}"</span>
                 </TableCell>
 
@@ -31,22 +26,20 @@ export class QueryParams extends React.PureComponent<Props> {
 
                 {/* SIBLINGS */}
                 {this.props.queryParam.required_siblings !== null &&
-                this.props.queryParam.required_siblings !== undefined &&
-                this.props.queryParam.required_siblings.length > 0 && (
-                    <TableCell>
-                        <span style={{fontWeight: "bold"}}>Required Sibling Parameters: </span>
-                        <div>
-                            {Object.keys(this.props.queryParam.required_siblings).map((index: any) => (
-                                <span key={index}>
+                    this.props.queryParam.required_siblings !== undefined &&
+                    this.props.queryParam.required_siblings.length > 0 && (
+                        <TableCell>
+                            <span style={{fontWeight: "bold"}}>Required Sibling Parameters: </span>
+                            <div>
+                                {Object.keys(this.props.queryParam.required_siblings).map((index: any) => (
+                                    <span key={index}>
                                         {this.props.queryParam.required_siblings[index]}
-                                    {this.props.queryParam.required_siblings.length - 1 > index && (
-                                        <span>, </span>
-                                    )}
+                                        {this.props.queryParam.required_siblings.length - 1 > index && <span>, </span>}
                                     </span>
-                            ))}
-                        </div>
-                    </TableCell>
-                )}
+                                ))}
+                            </div>
+                        </TableCell>
+                    )}
 
                 {/* TIP */}
                 {this.props.queryParam.tip && (

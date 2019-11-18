@@ -1,11 +1,11 @@
-import { FormControlLabel, Grid, Switch, Typography } from "@material-ui/core"
+import {FormControlLabel, Grid, Switch, Typography} from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleRawResponse, PlayStyleResponse } from "../../../../Models"
-import { getPlayStyle, getPlayStyleRaw } from "../../../../Requests/Player/getPlayStyle"
-import { PlaylistSelect } from "../../../Shared/Selects/PlaylistSelect"
-import { RankSelect } from "../../../Shared/Selects/RankSelect"
-import { PlayerPlayStyleChart } from "../../Overview/PlayStyle/PlayerPlayStyleChart"
-import { PlayerCompareTable } from "./PlayerCompareTable"
+import {PlayStyleRawResponse, PlayStyleResponse} from "../../../../Models"
+import {getPlayStyle, getPlayStyleRaw} from "../../../../Requests/Player/getPlayStyle"
+import {PlaylistSelect} from "../../../Shared/Selects/PlaylistSelect"
+import {RankSelect} from "../../../Shared/Selects/RankSelect"
+import {PlayerPlayStyleChart} from "../../Overview/PlayStyle/PlayerPlayStyleChart"
+import {PlayerCompareTable} from "./PlayerCompareTable"
 
 interface Props {
     players: Player[]
@@ -42,12 +42,11 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
         }
         if (this.props.players.length < prevProps.players.length) {
             const indicesToRemove: number[] = []
-            prevProps.players
-                .forEach((player, i) => {
-                    if (this.props.players.indexOf(player) === -1) {
-                        indicesToRemove.push(i)
-                    }
-                })
+            prevProps.players.forEach((player, i) => {
+                if (this.props.players.indexOf(player) === -1) {
+                    indicesToRemove.push(i)
+                }
+            })
             this.handleRemovePlayers(indicesToRemove)
         }
 
@@ -64,10 +63,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
         const {playerPlayStyles, playerPlayStylesRaw} = this.state
 
         const checkbox = (
-            <FormControlLabel
-                control={<Switch onChange={this.handleHeatmapChange}/>}
-                label="Heatmap mode"
-            />
+            <FormControlLabel control={<Switch onChange={this.handleHeatmapChange} />} label="Heatmap mode" />
         )
 
         const dropDown = (
@@ -78,34 +74,36 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                 helperText="Select playlist to use"
                 dropdownOnly
                 currentPlaylistsOnly
-                multiple={false}/>
+                multiple={false}
+            />
         )
 
         const rankSelect = (
-            <RankSelect selectedRank={this.state.rank || -1}
-                        handleChange={this.handleRankChange}
-                        inputLabel="Rank to compare"
-                        helperText="Select the rank to plot as average"
-                        noneLabel="Default"/>
+            <RankSelect
+                selectedRank={this.state.rank || -1}
+                handleChange={this.handleRankChange}
+                inputLabel="Rank to compare"
+                helperText="Select the rank to plot as average"
+                noneLabel="Default"
+            />
         )
 
         if (playerPlayStyles.length === 0) {
             return (
-              <>
-                <Grid item xs={12} style={{textAlign: "center"}}>
-                    {rankSelect}
-                </Grid>
-                <Grid item xs={12} style={{textAlign: "center"}}>
-                    {dropDown}
-                </Grid>
-              </>
+                <>
+                    <Grid item xs={12} style={{textAlign: "center"}}>
+                        {rankSelect}
+                    </Grid>
+                    <Grid item xs={12} style={{textAlign: "center"}}>
+                        {dropDown}
+                    </Grid>
+                </>
             )
         }
 
-        const compareChartDatas = playerPlayStyles[0].chartDatas
-            .map((_, i) => playerPlayStyles
-                .map((playStyleResponse) => playStyleResponse.chartDatas[i])
-            )
+        const compareChartDatas = playerPlayStyles[0].chartDatas.map((_, i) =>
+            playerPlayStyles.map((playStyleResponse) => playStyleResponse.chartDatas[i])
+        )
 
         const chartTitles = playerPlayStyles[0].chartDatas.map((chartData) => chartData.title)
 
@@ -119,13 +117,14 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                 </Grid>
                 {chartTitles.map((chartTitle, i) => {
                     return (
-                        <Grid item xs={12} md={5} lg={3} key={chartTitle}
-                              style={{height: 400}}>
+                        <Grid item xs={12} md={5} lg={3} key={chartTitle} style={{height: 400}}>
                             <Typography variant="subtitle1" align="center">
                                 {chartTitle}
                             </Typography>
-                            <PlayerPlayStyleChart names={players.map((player) => player.name)}
-                                                  data={compareChartDatas[i]}/>
+                            <PlayerPlayStyleChart
+                                names={players.map((player) => player.name)}
+                                data={compareChartDatas[i]}
+                            />
                         </Grid>
                     )
                 })}
@@ -134,9 +133,11 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                         {checkbox}
                     </Grid>
                     <Grid item xs="auto">
-                        <PlayerCompareTable names={players.map((player) => player.name)}
-                                            rawPlayers={playerPlayStylesRaw}
-                                            heatmap={this.state.heatmapMode}/>
+                        <PlayerCompareTable
+                            names={players.map((player) => player.name)}
+                            rawPlayers={playerPlayStylesRaw}
+                            heatmap={this.state.heatmapMode}
+                        />
                     </Grid>
                 </Grid>
             </>
@@ -145,8 +146,8 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     private readonly handleAddPlayers = (players: Player[], reload: boolean = false) => {
         const rank = this.state.rank === -1 ? undefined : this.state.rank
-        Promise.all(players.map((player) => getPlayStyle(player.id, rank, this.props.playlist)))
-            .then((playerPlayStyles) => {
+        Promise.all(players.map((player) => getPlayStyle(player.id, rank, this.props.playlist))).then(
+            (playerPlayStyles) => {
                 if (reload) {
                     this.setState({playerPlayStyles})
                 } else {
@@ -154,9 +155,10 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                         playerPlayStyles: [...this.state.playerPlayStyles, ...playerPlayStyles]
                     })
                 }
-            })
-        Promise.all(players.map((player) => getPlayStyleRaw(player.id, this.props.playlist)))
-            .then((playerPlayStylesRaw) => {
+            }
+        )
+        Promise.all(players.map((player) => getPlayStyleRaw(player.id, this.props.playlist))).then(
+            (playerPlayStylesRaw) => {
                 if (reload) {
                     this.setState({playerPlayStylesRaw})
                 } else {
@@ -164,15 +166,14 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                         playerPlayStylesRaw: [...this.state.playerPlayStylesRaw, ...playerPlayStylesRaw]
                     })
                 }
-            })
+            }
+        )
     }
 
     private readonly handleRemovePlayers = (indicesToRemove: number[]) => {
         this.setState({
-            playerPlayStyles: this.state.playerPlayStyles
-                .filter((_, i) => indicesToRemove.indexOf(i) === -1),
-            playerPlayStylesRaw: this.state.playerPlayStylesRaw
-                .filter((_, i) => indicesToRemove.indexOf(i) === -1)
+            playerPlayStyles: this.state.playerPlayStyles.filter((_, i) => indicesToRemove.indexOf(i) === -1),
+            playerPlayStylesRaw: this.state.playerPlayStylesRaw.filter((_, i) => indicesToRemove.indexOf(i) === -1)
         })
     }
 
@@ -180,13 +181,12 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
         this.setState({rank: Number(event.target.value)})
     }
 
-    private readonly handleHeatmapChange = (event: React.ChangeEvent<HTMLInputElement>,
-                                            heatmapMode: boolean) => {
+    private readonly handleHeatmapChange = (event: React.ChangeEvent<HTMLInputElement>, heatmapMode: boolean) => {
         this.setState({heatmapMode})
     }
 
     private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
-        const selectedPlaylist = event.target.value as any as number
+        const selectedPlaylist = (event.target.value as any) as number
         if (this.props.handlePlaylistChange) {
             this.props.handlePlaylistChange(selectedPlaylist)
         }

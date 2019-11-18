@@ -1,12 +1,12 @@
 import * as React from "react"
 
-import { Button, Card, CardContent, createStyles, Grid, Typography, WithStyles, withStyles } from "@material-ui/core"
-import { connect } from "react-redux"
-import { StoreState } from "../../../../Redux"
-import { GroupIndicator } from "./GroupIndicator"
-import { PlayerAdminToggles } from "./PlayerAdminToggles"
-import { PlayerNameDropdown } from "./PlayerNameDropdown"
-import { PlayerProfilePicture } from "./PlayerProfilePicture"
+import {Button, Card, CardContent, createStyles, Grid, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {connect} from "react-redux"
+import {StoreState} from "../../../../Redux"
+import {GroupIndicator} from "./GroupIndicator"
+import {PlayerAdminToggles} from "./PlayerAdminToggles"
+import {PlayerNameDropdown} from "./PlayerNameDropdown"
+import {PlayerProfilePicture} from "./PlayerProfilePicture"
 
 const styles = createStyles({
     card: {
@@ -33,16 +33,14 @@ interface OwnProps {
     player: Player
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
-    & ReturnType<typeof mapStateToProps>
+type Props = OwnProps & WithStyles<typeof styles> & ReturnType<typeof mapStateToProps>
 
 class PlayerProfileComponent extends React.PureComponent<Props> {
     public render() {
         const {player, classes} = this.props
         return (
             <Card className={classes.card}>
-                <PlayerProfilePicture image={player.avatarLink}/>
+                <PlayerProfilePicture image={player.avatarLink} />
                 <CardContent className={classes.content}>
                     <Grid container alignContent="space-around" style={{height: "100%"}}>
                         <Grid item xs={12}>
@@ -50,8 +48,8 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                                 <Typography variant="h5" noWrap>
                                     {player.name}
                                 </Typography>
-                                {player.pastNames.length > 0 && <PlayerNameDropdown pastNames={player.pastNames}/>}
-                                <GroupIndicator groups={player.groups} variant={"subtitle1"}/>
+                                {player.pastNames.length > 0 && <PlayerNameDropdown pastNames={player.pastNames} />}
+                                <GroupIndicator groups={player.groups} variant={"subtitle1"} />
                             </div>
                         </Grid>
                         <Grid item xs={12} container justify="flex-end">
@@ -62,16 +60,14 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                                 style={{textDecoration: "none"}}
                             >
                                 <Button variant="text" size="small">
-                                    <Typography variant="subtitle1">
-                                        {player.platform}
-                                    </Typography>
+                                    <Typography variant="subtitle1">{player.platform}</Typography>
                                 </Button>
                             </a>
                         </Grid>
                         {this.props.loggedInUser && this.props.loggedInUser.admin && (
                             <>
                                 <Grid item xs={12} container justify="flex-end">
-                                    <PlayerAdminToggles player={player}/>
+                                    <PlayerAdminToggles player={player} />
                                 </Grid>
                             </>
                         )}

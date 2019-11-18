@@ -1,6 +1,6 @@
 import * as d3 from "d3"
 import * as React from "react"
-import { PlayerStartEnd } from "./PlayerStartEnd"
+import {PlayerStartEnd} from "./PlayerStartEnd"
 
 interface Props {
     playerList: any
@@ -25,19 +25,27 @@ export class KickoffField extends React.PureComponent<Props, State> {
         const {playerList, onMouseover, onMouseout} = this.props
 
         return (
-            <svg width={this.props.width}
-                 height={this.props.height}
-                 ref={this.state.element === null ?
-                     (element) => {
-                         this.setState({element: d3.select(element)})
-                     } : undefined}
-                 key={"field"}>
-                <image x="0" y="0" width={this.props.width} height={this.props.height} href="/fieldblack.png"/>
+            <svg
+                width={this.props.width}
+                height={this.props.height}
+                ref={
+                    this.state.element === null
+                        ? (element) => {
+                              this.setState({element: d3.select(element)})
+                          }
+                        : undefined
+                }
+                key={"field"}
+            >
+                <image x="0" y="0" width={this.props.width} height={this.props.height} href="/fieldblack.png" />
                 {playerList.map((playerData: any, i: number) => (
                     <PlayerStartEnd
                         key={i}
-                        color={this.props.players[playerData.player_id].is_orange ?
-                            d3.rgb(187, 113, 45) : d3.rgb(68, 135, 240)}
+                        color={
+                            this.props.players[playerData.player_id].is_orange
+                                ? d3.rgb(187, 113, 45)
+                                : d3.rgb(68, 135, 240)
+                        }
                         player={playerData}
                         imageWidth={this.props.width}
                         imageHeight={this.props.height}
@@ -50,7 +58,8 @@ export class KickoffField extends React.PureComponent<Props, State> {
                             if (onMouseout !== undefined) {
                                 onMouseout(i, playerData)
                             }
-                        }}/>
+                        }}
+                    />
                 ))}
             </svg>
         )

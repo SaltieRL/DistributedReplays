@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, Divider } from "@material-ui/core"
+import {Card, CardContent, CardHeader, Divider} from "@material-ui/core"
 import * as React from "react"
-import { getStats } from "../../../../../Requests/Player/getStats"
-import { LoadableWrapper } from "../../../../Shared/LoadableWrapper"
-import { FavouriteCar } from "./FavouriteCar"
-import { LoadoutDialogWrapper } from "./LoadoutDialogWrapper"
-import { PlaysWith } from "./PlaysWith"
+import {getStats} from "../../../../../Requests/Player/getStats"
+import {LoadableWrapper} from "../../../../Shared/LoadableWrapper"
+import {FavouriteCar} from "./FavouriteCar"
+import {LoadoutDialogWrapper} from "./LoadoutDialogWrapper"
+import {PlaysWith} from "./PlaysWith"
 
 interface Props {
     player: Player
@@ -31,13 +31,13 @@ export class PlayerStatsCard extends React.PureComponent<Props, State> {
     public render() {
         return (
             <Card>
-                <CardHeader title="Stats"/>
-                <Divider/>
+                <CardHeader title="Stats" />
+                <Divider />
                 <CardContent>
                     <LoadableWrapper load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
                         {this.state.playerStats && (
                             <>
-                                <FavouriteCar carStat={this.state.playerStats.car}/>
+                                <FavouriteCar carStat={this.state.playerStats.car} />
                                 <LoadoutDialogWrapper
                                     playerStats={this.state.playerStats}
                                     handleShowLoadout={this.handleShowLoadout}
@@ -47,7 +47,8 @@ export class PlayerStatsCard extends React.PureComponent<Props, State> {
 
                                 <PlaysWith
                                     playersInCommon={this.state.playerStats.playersInCommon}
-                                    player={this.props.player}/>
+                                    player={this.props.player}
+                                />
                             </>
                         )}
                     </LoadableWrapper>
@@ -57,8 +58,7 @@ export class PlayerStatsCard extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerProfileStats = (): Promise<void> => {
-        return getStats(this.props.player.id)
-            .then((playerStats) => this.setState({playerStats}))
+        return getStats(this.props.player.id).then((playerStats) => this.setState({playerStats}))
     }
 
     private readonly triggerReload = () => {

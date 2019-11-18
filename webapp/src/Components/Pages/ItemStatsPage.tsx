@@ -15,18 +15,18 @@ import {
 } from "@material-ui/core"
 import qs from "qs"
 import * as React from "react"
-import { connect } from "react-redux"
-import { Link, RouteComponentProps } from "react-router-dom"
-import { ITEMS_LINK } from "../../Globals"
-import { Item, ItemFull, ItemListResponse, ItemUsage } from "../../Models/ItemStats"
-import { StoreState } from "../../Redux"
-import { getItemGraph, getItemInfo, getItems } from "../../Requests/Global"
-import { roundNumberToMaxDP } from "../../Utils/String"
-import { ItemDisplay } from "../ItemStats/ItemDisplay"
-import { ItemStatsGraph } from "../ItemStats/ItemStatsGraph"
-import { ItemStatsUsers } from "../ItemStats/ItemStatsUsers"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
-import { BasePage } from "./BasePage"
+import {connect} from "react-redux"
+import {Link, RouteComponentProps} from "react-router-dom"
+import {ITEMS_LINK} from "../../Globals"
+import {Item, ItemFull, ItemListResponse, ItemUsage} from "../../Models/ItemStats"
+import {StoreState} from "../../Redux"
+import {getItemGraph, getItemInfo, getItems} from "../../Requests/Global"
+import {roundNumberToMaxDP} from "../../Utils/String"
+import {ItemDisplay} from "../ItemStats/ItemDisplay"
+import {ItemStatsGraph} from "../ItemStats/ItemStatsGraph"
+import {ItemStatsUsers} from "../ItemStats/ItemStatsUsers"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {BasePage} from "./BasePage"
 
 const CATEGORIES = [
     {
@@ -108,9 +108,7 @@ interface State {
     category: number
 }
 
-type Props = ReturnType<typeof mapStateToProps>
-    & WithStyles<typeof styles>
-    & RouteComponentProps<{}>
+type Props = ReturnType<typeof mapStateToProps> & WithStyles<typeof styles> & RouteComponentProps<{}>
 
 class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
@@ -139,12 +137,14 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                             Items
                         </Typography>
                     </Link>
-                    <Typography variant="subtitle1" color="textPrimary">{itemData.name}</Typography>
+                    <Typography variant="subtitle1" color="textPrimary">
+                        {itemData.name}
+                    </Typography>
                 </Breadcrumbs>
             </Paper>
         ) : null
         const itemSearch = (
-            <TextField value={this.state.search} onChange={this.handleSearchChange} placeholder={"Filter"}/>
+            <TextField value={this.state.search} onChange={this.handleSearchChange} placeholder={"Filter"} />
         )
         const itemView = itemData ? (
             <Grid container spacing={3}>
@@ -153,39 +153,32 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                 </Grid>
                 <Grid item xs={6} lg={3}>
                     <Grid item xs={12}>
-                        <ItemDisplay item={itemData} paint={0}/>
+                        <ItemDisplay item={itemData} paint={0} />
                     </Grid>
                 </Grid>
                 {this.state.itemData && this.state.itemUsage && (
                     <>
                         <Grid item xs={6} lg={3}>
-                            <ItemStatsUsers item={this.state.itemData}
-                                            itemUsage={this.state.itemUsage}/>
+                            <ItemStatsUsers item={this.state.itemData} itemUsage={this.state.itemUsage} />
                         </Grid>
                         <Grid item xs={12} lg={6}>
-                            <ItemStatsGraph item={this.state.itemData}
-                                            itemUsage={this.state.itemUsage}/>
-
+                            <ItemStatsGraph item={this.state.itemData} itemUsage={this.state.itemUsage} />
                         </Grid>
                     </>
                 )}
             </Grid>
         ) : null
-        const filteredList = this.state.itemList ?
-            this.state.itemList.items.filter(
-                (item) => item.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1)
-            :
-            []
+        const filteredList = this.state.itemList
+            ? this.state.itemList.items.filter(
+                  (item) => item.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
+              )
+            : []
         const itemsList = (
             <>
                 {itemSearch}
-                <Tabs
-                    value={this.state.category}
-                    onChange={this.handleSelectTab}
-                >
-
+                <Tabs value={this.state.category} onChange={this.handleSelectTab}>
                     {CATEGORIES.map((category: any) => {
-                        return <Tab key={category.id} label={category.name} value={category.id}/>
+                        return <Tab key={category.id} label={category.name} value={category.id} />
                     })}
                 </Tabs>
                 <LoadableWrapper load={this.getItems} reloadSignal={this.state.listReloadSignal}>
@@ -195,9 +188,11 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                                 return (
                                     <Grid item xs={6} sm={2} lg={1} key={item.ingameid}>
                                         <Card className={classes.itemListCard} style={{position: "relative"}}>
-                                            <CardActionArea onClick={() => {
-                                                this.selectItem(item)
-                                            }}>
+                                            <CardActionArea
+                                                onClick={() => {
+                                                    this.selectItem(item)
+                                                }}
+                                            >
                                                 <CardMedia
                                                     className={classes.media}
                                                     image={item.image}
@@ -205,21 +200,22 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
                                                 />
                                             </CardActionArea>
 
-                                            <div style={{
-                                                position: "absolute",
-                                                top: 3,
-                                                right: 3,
-                                                zIndex: 1000,
-                                                background: "#0089d2",
-                                                padding: "2px 5px 0px",
-                                                borderRadius: "15px"
-                                            }}>
+                                            <div
+                                                style={{
+                                                    position: "absolute",
+                                                    top: 3,
+                                                    right: 3,
+                                                    zIndex: 1000,
+                                                    background: "#0089d2",
+                                                    padding: "2px 5px 0px",
+                                                    borderRadius: "15px"
+                                                }}
+                                            >
                                                 <Typography style={{color: "white"}}>
                                                     {item.count && roundNumberToMaxDP(item.count * 100, 1)}%
                                                 </Typography>
                                             </div>
                                         </Card>
-
                                     </Grid>
                                 )
                             })}
@@ -232,7 +228,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
         return (
             <BasePage>
                 <Grid container spacing={3} justify="center">
-                    {(this.props.loggedInUser && this.props.loggedInUser.alpha) ? (
+                    {this.props.loggedInUser && this.props.loggedInUser.alpha ? (
                         <Grid item xs={12}>
                             {this.state.itemID ? itemView : itemsList}
                         </Grid>
@@ -245,21 +241,24 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getItems = (): Promise<void> => {
-        return getItems(this.state.page, this.state.limit, this.state.category)
-            .then((result) => this.setState({itemList: result}))
+        return getItems(this.state.page, this.state.limit, this.state.category).then((result) =>
+            this.setState({itemList: result})
+        )
     }
 
     private readonly getItem = (): Promise<void> => {
         if (this.state.itemID) {
-            return Promise.all([getItemInfo(this.state.itemID), getItemGraph(this.state.itemID)])
-                .then((data) => this.setState({itemData: data[0], itemUsage: data[1]}))
+            return Promise.all([getItemInfo(this.state.itemID), getItemGraph(this.state.itemID)]).then((data) =>
+                this.setState({itemData: data[0], itemUsage: data[1]})
+            )
         }
         return getItemInfo(0).then(() => {
             this.setState({itemData: undefined})
         })
     }
     private readonly selectItem = (item: Item) => {
-        this.setState({
+        this.setState(
+            {
                 itemData: undefined,
                 itemUsage: undefined,
                 itemID: item.ingameid,
@@ -268,18 +267,15 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
             () => {
                 this.setQueryParams()
                 this.getItem()
-            })
+            }
+        )
     }
     private readonly readQueryParams = () => {
         const queryString = this.props.location.search
         if (queryString !== "") {
-            const queryParams: ItemQueryParams = qs.parse(
-                this.props.location.search,
-                {ignoreQueryPrefix: true}
-            )
+            const queryParams: ItemQueryParams = qs.parse(this.props.location.search, {ignoreQueryPrefix: true})
             if (queryParams.item) {
                 this.setState({itemID: queryParams.item}, () => {
-
                     this.getItem()
                 })
             }
@@ -288,10 +284,7 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
         }
     }
     private readonly setQueryParams = () => {
-        const queryString = qs.stringify(
-            {item: this.state.itemID},
-            {addQueryPrefix: true, indices: false}
-        )
+        const queryString = qs.stringify({item: this.state.itemID}, {addQueryPrefix: true, indices: false})
         if (this.props.location.search !== queryString) {
             this.props.history.push({search: queryString})
         }

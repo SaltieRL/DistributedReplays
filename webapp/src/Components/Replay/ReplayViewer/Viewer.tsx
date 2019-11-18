@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core"
+import {Grid} from "@material-ui/core"
 import React from "react"
 import {
     CompactPlayControls,
@@ -13,9 +13,9 @@ import {
     Slider
 } from "replay-viewer"
 
-import { Replay } from "../../../Models"
-import { getReplayMetadata, getReplayViewerData, getReplayViewerDataRange } from "../../../Requests/Replay"
-import { LoadableWrapper } from "../../Shared/LoadableWrapper"
+import {Replay} from "../../../Models"
+import {getReplayMetadata, getReplayViewerData, getReplayViewerDataRange} from "../../../Requests/Replay"
+import {LoadableWrapper} from "../../Shared/LoadableWrapper"
 
 interface Props {
     replayId: Replay["id"]
@@ -48,8 +48,7 @@ export class Viewer extends React.Component<Props, State> {
 
         if (!gameManager) {
             const issue = "There was an issue loading the replay viewer"
-            const tryAgain =
-                "Try again and if this keeps happening, contact us over one of the channels below"
+            const tryAgain = "Try again and if this keeps happening, contact us over one of the channels below"
             return [issue, tryAgain].join(". ")
         }
         if (this.props.pauseOnStart) {
@@ -58,16 +57,10 @@ export class Viewer extends React.Component<Props, State> {
             }, 200)
         }
         return (
-            <Grid
-                container
-                direction="column"
-                justify="center"
-                spacing={3}
-                style={{padding: 32}}
-            >
+            <Grid container direction="column" justify="center" spacing={3} style={{padding: 32}}>
                 <Grid item style={{minHeight: 0, width: "100%"}}>
                     <ReplayViewer gameManager={gameManager}>
-                        <CompactPlayControls/>
+                        <CompactPlayControls />
                     </ReplayViewer>
                 </Grid>
                 {!this.props.compact && (
@@ -75,18 +68,18 @@ export class Viewer extends React.Component<Props, State> {
                         <Grid item>
                             <Grid container justify="space-between" alignItems="center" spacing={3}>
                                 <Grid item>
-                                    <PlayControls/>
+                                    <PlayControls />
                                 </Grid>
                                 <Grid item>
-                                    <FieldCameraControls/>
+                                    <FieldCameraControls />
                                 </Grid>
                             </Grid>
                         </Grid>
                         <Grid item>
-                            <PlayerCameraControls/>
+                            <PlayerCameraControls />
                         </Grid>
                         <Grid item>
-                            <Slider/>
+                            <Slider />
                         </Grid>
                     </>
                 )}
@@ -115,16 +108,14 @@ export class Viewer extends React.Component<Props, State> {
         } else {
             dataPromise = getReplayViewerData(replayId)
         }
-        return Promise.all([dataPromise, getReplayMetadata(replayId)]).then(
-            ([replayData, replayMetadata]) => {
-                this.setState({
-                    options: {
-                        clock: FPSClock.convertReplayToClock(replayData),
-                        replayData,
-                        replayMetadata
-                    }
-                })
-            }
-        )
+        return Promise.all([dataPromise, getReplayMetadata(replayId)]).then(([replayData, replayMetadata]) => {
+            this.setState({
+                options: {
+                    clock: FPSClock.convertReplayToClock(replayData),
+                    replayData,
+                    replayMetadata
+                }
+            })
+        })
     }
 }

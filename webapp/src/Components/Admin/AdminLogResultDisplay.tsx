@@ -1,9 +1,9 @@
-import { Card, CardHeader, Divider, TablePagination, TextField, withWidth } from "@material-ui/core"
+import {Card, CardHeader, Divider, TablePagination, TextField, withWidth} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
-import { WithWidth } from "@material-ui/core/withWidth"
+import {WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
-import { withNotifications, WithNotifications } from "../Shared/Notification/NotificationUtils"
-import { AdminLogDisplayRow } from "./AdminLogDisplayRow"
+import {withNotifications, WithNotifications} from "../Shared/Notification/NotificationUtils"
+import {AdminLogDisplayRow} from "./AdminLogDisplayRow"
 
 interface OwnProps {
     adminLogs: AdminLogsResponse
@@ -14,13 +14,9 @@ interface OwnProps {
     handleChangeSearch: any
 }
 
-type Props = OwnProps
-    & WithNotifications
-    & WithWidth
+type Props = OwnProps & WithNotifications & WithWidth
 
-interface State {
-
-}
+interface State {}
 
 class AdminLogResultDisplayComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
@@ -34,15 +30,12 @@ class AdminLogResultDisplayComponent extends React.PureComponent<Props, State> {
             <Grid container>
                 <Grid item xs={12}>
                     <Card>
-                        <CardHeader title="Admin Logs" action={
-                            <TextField onChange={this.handleSearchChange}/>}/>
+                        <CardHeader title="Admin Logs" action={<TextField onChange={this.handleSearchChange} />} />
                         <div>
                             {this.props.adminLogs.logs.map((log: AdminLog, i) => (
                                 <>
-                                    <AdminLogDisplayRow
-                                        key={log.id}
-                                        log={log}/>
-                                    {i !== this.props.adminLogs.logs.length && <Divider/>}
+                                    <AdminLogDisplayRow key={log.id} log={log} />
+                                    {i !== this.props.adminLogs.logs.length && <Divider />}
                                 </>
                             ))}
                         </div>

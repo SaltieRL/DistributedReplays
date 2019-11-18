@@ -1,11 +1,11 @@
-import { Card, CardContent, CardHeader, Divider, Grid } from "@material-ui/core"
+import {Card, CardContent, CardHeader, Divider, Grid} from "@material-ui/core"
 import * as moment from "moment"
 import * as React from "react"
-import { ReplaysSearchQueryParams } from "../../../Models"
-import { ClearableDatePicker } from "../../Shared/ClearableDatePicker"
-import { PlaylistSelect } from "../../Shared/Selects/PlaylistSelect"
-import { RankSelect } from "../../Shared/Selects/RankSelect"
-import { PlayerEntry } from "./PlayerEntry"
+import {ReplaysSearchQueryParams} from "../../../Models"
+import {ClearableDatePicker} from "../../Shared/ClearableDatePicker"
+import {PlaylistSelect} from "../../Shared/Selects/PlaylistSelect"
+import {RankSelect} from "../../Shared/Selects/RankSelect"
+import {PlayerEntry} from "./PlayerEntry"
 
 interface Props {
     queryParams: ReplaysSearchQueryParams
@@ -17,9 +17,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
         const {queryParams} = this.props
 
         const playerEntry = (
-            <PlayerEntry
-                playerIds={queryParams.playerIds || []}
-                handleChange={this.handlePlayersChange}/>
+            <PlayerEntry playerIds={queryParams.playerIds || []} handleChange={this.handlePlayersChange} />
         )
         const rankSelect = (
             <RankSelect
@@ -28,7 +26,8 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
                 inputLabel="Replay rank"
                 helperText="Select rank to filter by"
                 noneLabel="None"
-                disabled/>
+                disabled
+            />
         )
         const playlistSelect = (
             <PlaylistSelect
@@ -36,39 +35,38 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
                 handleChange={this.handlePlaylistsChange}
                 inputLabel="Playlist"
                 helperText="Select playlist to filter by"
-                multiple/>
+                multiple
+            />
         )
         const dateAfterPicker = (
             <ClearableDatePicker
                 value={queryParams.dateAfter ? queryParams.dateAfter : null}
                 onChange={this.handleDateAfterChange}
                 label="Start date"
-                helperText="Date after which game must have happened"/>
+                helperText="Date after which game must have happened"
+            />
         )
         const dateBeforePicker = (
             <ClearableDatePicker
                 value={queryParams.dateBefore ? queryParams.dateBefore : null}
                 onChange={this.handleDateBeforeChange}
                 label="End date"
-                helperText="Date before which game must have happened"/>
+                helperText="Date before which game must have happened"
+            />
         )
         return (
             <>
                 <Grid container spacing={4} justify="center">
                     <Grid item xs={12}>
                         <Card>
-                            <CardHeader title="Players" subheader="All selected players will appear in every game."/>
-                            <Divider/>
-                            <CardContent>
-                                {playerEntry}
-                            </CardContent>
+                            <CardHeader title="Players" subheader="All selected players will appear in every game." />
+                            <Divider />
+                            <CardContent>{playerEntry}</CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={12}>
                         <Card>
-                            <CardContent>
-                                {rankSelect}
-                            </CardContent>
+                            <CardContent>{rankSelect}</CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={12}>
@@ -116,7 +114,7 @@ export class ReplaysSearchFilter extends React.PureComponent<Props> {
     }
 
     private readonly handlePlaylistsChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
-        const selectedPlaylists = event.target.value as any as number[]
+        const selectedPlaylists = (event.target.value as any) as number[]
         if (selectedPlaylists.length === 0) {
             const {playlists, ...remainingQueryParams} = this.props.queryParams
             this.props.handleChange({

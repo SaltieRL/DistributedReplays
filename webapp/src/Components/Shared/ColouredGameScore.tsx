@@ -1,6 +1,6 @@
-import { WithTheme, withTheme } from "@material-ui/core"
+import {WithTheme, withTheme} from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../Models"
+import {Replay} from "../../Models"
 
 interface OwnProps {
     replay: Replay

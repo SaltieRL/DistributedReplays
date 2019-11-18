@@ -1,8 +1,8 @@
-import { Divider, Grid, Paper, Tab, Tabs, Typography, withWidth } from "@material-ui/core"
-import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import {Divider, Grid, Paper, Tab, Tabs, Typography, withWidth} from "@material-ui/core"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
-import { PlaylistMetadata, playlists } from "../../Utils/Playlists"
-import { LeaderboardList } from "./LeaderboardList"
+import {PlaylistMetadata, playlists} from "../../Utils/Playlists"
+import {LeaderboardList} from "./LeaderboardList"
 
 export interface LeaderboardWithMetadata extends PlaylistLeaderboard {
     playlistMetadata: PlaylistMetadata
@@ -67,7 +67,9 @@ class PlaylistLeaderboardGridComponent extends React.PureComponent<Props, State>
         return (
             <Grid item xs={12} container justify="center" spacing={2}>
                 <Grid item xs={12}>
-                    <Typography variant="h3" align="center">Upload Leaderboards</Typography>
+                    <Typography variant="h3" align="center">
+                        Upload Leaderboards
+                    </Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <Paper>
@@ -78,15 +80,21 @@ class PlaylistLeaderboardGridComponent extends React.PureComponent<Props, State>
                             variant={aboveMd ? "standard" : "scrollable"}
                         >
                             {playlistTabs.map((playlist) => (
-                                <Tab label={playlist} value={playlist} key={playlist}/>
+                                <Tab label={playlist} value={playlist} key={playlist} />
                             ))}
                         </Tabs>
-                        <Divider/>
+                        <Divider />
                         <Grid container spacing={2} style={{paddingTop: 16}}>
                             {filteredLeaderboardsWithMetadata.map((leaderboard, i) => (
-                                <Grid item xs={12} sm={6} lg={3} key={leaderboard.playlist}
-                                      style={{borderLeft: (i === 0 || !aboveMd) ? undefined : "1px solid lightgrey"}}>
-                                    <LeaderboardList leaderboard={leaderboard}/>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={6}
+                                    lg={3}
+                                    key={leaderboard.playlist}
+                                    style={{borderLeft: i === 0 || !aboveMd ? undefined : "1px solid lightgrey"}}
+                                >
+                                    <LeaderboardList leaderboard={leaderboard} />
                                 </Grid>
                             ))}
                         </Grid>

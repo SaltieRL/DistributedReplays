@@ -21,7 +21,7 @@ export interface Replay {
     gameMode: GameMode
     gameScore: GameScore
     players: ReplayPlayer[]
-    tags: Tag[],
+    tags: Tag[]
     visibility: GameVisibility
     ranks: number[]
     mmrs: number[]
@@ -37,7 +37,8 @@ export const parseReplay = (data: any) => {
 type GameResult = "Win" | "Loss"
 
 export const getReplayResult = (replay: Replay, player: Player): GameResult => {
-    const playerIsOrange = (replay.players.find((replayPlayer) => replayPlayer.id === player.id) || {} as any)!.isOrange
+    const playerIsOrange = (replay.players.find((replayPlayer) => replayPlayer.id === player.id) || ({} as any))!
+        .isOrange
     const winnerIsOrange = replay.gameScore.team1Score > replay.gameScore.team0Score
     return winnerIsOrange === playerIsOrange ? "Win" : "Loss"
 }

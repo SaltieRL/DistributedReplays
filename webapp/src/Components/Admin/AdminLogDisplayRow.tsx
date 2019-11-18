@@ -11,36 +11,37 @@ import {
     withStyles,
     withWidth
 } from "@material-ui/core"
-import { WithWidth } from "@material-ui/core/withWidth"
+import {WithWidth} from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import OpenInNew from "@material-ui/icons/OpenInNew"
 import * as React from "react"
-import { connect } from "react-redux"
-import { REPLAY_PAGE_LINK } from "../../Globals"
-import { StoreState } from "../../Redux"
+import {connect} from "react-redux"
+import {REPLAY_PAGE_LINK} from "../../Globals"
+import {StoreState} from "../../Redux"
 
-const styles = (theme: Theme) => createStyles({
-    iconButton: {
-        "height": "20px",
-        "width": "20px",
-        "color": theme.palette.secondary.main,
-        "&:hover": {
-            transitionProperty: "transform",
-            transitionDuration: "100ms",
-            transform: "scale(1.2)",
-            color: theme.palette.secondary.dark
+const styles = (theme: Theme) =>
+    createStyles({
+        iconButton: {
+            height: "20px",
+            width: "20px",
+            color: theme.palette.secondary.main,
+            "&:hover": {
+                transitionProperty: "transform",
+                transitionDuration: "100ms",
+                transform: "scale(1.2)",
+                color: theme.palette.secondary.dark
+            }
+        },
+        panelDetails: {
+            overflowX: "auto",
+            maxWidth: "95vw",
+            margin: "auto"
+        },
+        listGridItem: {
+            margin: "auto"
         }
-    },
-    panelDetails: {
-        overflowX: "auto",
-        maxWidth: "95vw",
-        margin: "auto"
-    },
-    listGridItem: {
-        margin: "auto"
-    }
-})
+    })
 
 interface OwnProps {
     log: AdminLog
@@ -50,10 +51,7 @@ const mapStateToProps = (state: StoreState) => ({
     loggedInUser: state.loggedInUser
 })
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
-    & WithWidth
-    & ReturnType<typeof mapStateToProps>
+type Props = OwnProps & WithStyles<typeof styles> & WithWidth & ReturnType<typeof mapStateToProps>
 
 class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
     public render() {
@@ -61,24 +59,16 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
         const contents = (
             <Grid container>
                 <Grid item xs={1} className={classes.listGridItem}>
-                    <Typography>
-                        {log.id}
-                    </Typography>
+                    <Typography>{log.id}</Typography>
                 </Grid>
                 <Grid item xs={3} className={classes.listGridItem}>
-                    <Typography>
-                        {log.uuid}
-                    </Typography>
+                    <Typography>{log.uuid}</Typography>
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
-                    <Typography>
-                        {log.result === 1 ? "SUCCESS" : "ERROR"}
-                    </Typography>
+                    <Typography>{log.result === 1 ? "SUCCESS" : "ERROR"}</Typography>
                 </Grid>
                 <Grid item xs={2} className={classes.listGridItem}>
-                    <Typography>
-                        {log.errorType}
-                    </Typography>
+                    <Typography>{log.errorType}</Typography>
                 </Grid>
                 <Grid item xs={3} className={classes.listGridItem}>
                     <Typography>
@@ -91,9 +81,7 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                     </Typography>
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
-                    <Typography>
-                        {log.params}
-                    </Typography>
+                    <Typography>{log.params}</Typography>
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
                     <Typography>
@@ -103,7 +91,7 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                                 className={classes.iconButton}
                                 onClick={(event) => event.stopPropagation()}
                             >
-                                <InsertChart/>
+                                <InsertChart />
                             </IconButton>
                         )}
                         {log.result === 2 && (
@@ -112,7 +100,7 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                                 className={classes.iconButton}
                                 onClick={(event) => event.stopPropagation()}
                             >
-                                <OpenInNew/>
+                                <OpenInNew />
                             </IconButton>
                         )}
                     </Typography>
@@ -122,14 +110,10 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
 
         return (
             <ExpansionPanel>
-                <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
-                    {contents}
-                </ExpansionPanelSummary>
+                <ExpansionPanelSummary expandIcon={<ExpandMore />}>{contents}</ExpansionPanelSummary>
                 <ExpansionPanelDetails className={classes.panelDetails}>
                     <div style={{width: "100%"}}>
-                        <pre>
-                            {log.log}
-                        </pre>
+                        <pre>{log.log}</pre>
                     </div>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -137,5 +121,4 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
     }
 }
 
-export const AdminLogDisplayRow = withWidth()(withStyles(styles)(
-    connect(mapStateToProps)(AdminLogDisplayRowComponent)))
+export const AdminLogDisplayRow = withWidth()(withStyles(styles)(connect(mapStateToProps)(AdminLogDisplayRowComponent)))

@@ -1,9 +1,9 @@
-import { Card, CardHeader, Divider, Grid, Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
+import {Card, CardHeader, Divider, Grid, Table, TableBody, TableCell, TableHead, TableRow} from "@material-ui/core"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
-import { getExplanations } from "../../Requests/Replay"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
-import { BasePage } from "./BasePage"
+import {getExplanations} from "../../Requests/Replay"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {BasePage} from "./BasePage"
 
 declare var MathJax: any
 
@@ -30,34 +30,31 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
         const {explanations} = this.state
         const explanationsCard = (
             <Card>
-                <CardHeader title="Stats" subheader="on calculated.gg"/>
-                <Divider/>
+                <CardHeader title="Stats" subheader="on calculated.gg" />
+                <Divider />
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>
-                                Name
-                            </TableCell>
-                            <TableCell>
-                                Simple Explanation
-                            </TableCell>
-                            <TableCell>
-                                Math Explanation
-                            </TableCell>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Simple Explanation</TableCell>
+                            <TableCell>Math Explanation</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <LoadableWrapper load={this.getExplanations}
-                                         reloadSignal={this.state.reloadSignal}>
-                            {explanations !== undefined ?
-                                Object.keys(explanations).map((key) => (
-                                    <TableRow key={key}>
-                                        <TableCell>{key}</TableCell>
-                                        <TableCell>{explanations[key].simple_explanation}</TableCell>
-                                        <TableCell>{explanations[key].math_explanation !== null ?
-                                            `$$${explanations[key].math_explanation}$$` : ""}</TableCell>
-                                    </TableRow>
-                                )) : null}
+                        <LoadableWrapper load={this.getExplanations} reloadSignal={this.state.reloadSignal}>
+                            {explanations !== undefined
+                                ? Object.keys(explanations).map((key) => (
+                                      <TableRow key={key}>
+                                          <TableCell>{key}</TableCell>
+                                          <TableCell>{explanations[key].simple_explanation}</TableCell>
+                                          <TableCell>
+                                              {explanations[key].math_explanation !== null
+                                                  ? `$$${explanations[key].math_explanation}$$`
+                                                  : ""}
+                                          </TableCell>
+                                      </TableRow>
+                                  ))
+                                : null}
                         </LoadableWrapper>
                     </TableBody>
                 </Table>
@@ -79,8 +76,7 @@ export class ExplanationsPage extends React.PureComponent<{}, State> {
 
     private readonly getExplanations = (): Promise<any> => {
         return getExplanations().then((data) => {
-                this.setState({explanations: data})
-            }
-        )
+            this.setState({explanations: data})
+        })
     }
 }

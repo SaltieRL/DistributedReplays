@@ -1,10 +1,10 @@
-import { faPatreon } from "@fortawesome/free-brands-svg-icons/faPatreon"
-import { faAtom } from "@fortawesome/free-solid-svg-icons/faAtom"
-import { faCode } from "@fortawesome/free-solid-svg-icons/faCode"
-import { faGavel } from "@fortawesome/free-solid-svg-icons/faGavel"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { createStyles, Tooltip, Typography, WithStyles, withStyles } from "@material-ui/core"
-import { ThemeStyle } from "@material-ui/core/styles/createTypography"
+import {faPatreon} from "@fortawesome/free-brands-svg-icons/faPatreon"
+import {faAtom} from "@fortawesome/free-solid-svg-icons/faAtom"
+import {faCode} from "@fortawesome/free-solid-svg-icons/faCode"
+import {faGavel} from "@fortawesome/free-solid-svg-icons/faGavel"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {createStyles, Tooltip, Typography, WithStyles, withStyles} from "@material-ui/core"
+import {ThemeStyle} from "@material-ui/core/styles/createTypography"
 import * as React from "react"
 
 interface OwnProps {
@@ -28,8 +28,7 @@ const styles = createStyles({
         fontSize: "30px"
     }
 })
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 class GroupIndicatorComponent extends React.PureComponent<Props> {
     public render() {
@@ -64,9 +63,11 @@ class GroupIndicatorComponent extends React.PureComponent<Props> {
             <>
                 {userRole !== 0 && (
                     <Tooltip title={names[userRole]}>
-                        <Typography variant={this.props.variant ? this.props.variant : "inherit"}
-                                    style={{color: this.props.faded ? "#ccc" : colors[userRole]}}>
-                            <FontAwesomeIcon icon={letters[userRole]}/>
+                        <Typography
+                            variant={this.props.variant ? this.props.variant : "inherit"}
+                            style={{color: this.props.faded ? "#ccc" : colors[userRole]}}
+                        >
+                            <FontAwesomeIcon icon={letters[userRole]} />
                         </Typography>
                     </Tooltip>
                 )}
@@ -75,4 +76,4 @@ class GroupIndicatorComponent extends React.PureComponent<Props> {
     }
 }
 
-export const GroupIndicator = (withStyles(styles)(GroupIndicatorComponent))
+export const GroupIndicator = withStyles(styles)(GroupIndicatorComponent)

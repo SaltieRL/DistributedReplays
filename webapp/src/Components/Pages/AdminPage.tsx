@@ -1,13 +1,13 @@
-import { Button, Grid, TextField } from "@material-ui/core"
+import {Button, Grid, TextField} from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
 import * as React from "react"
-import { connect } from "react-redux"
-import { doGet } from "../../apiHandler/apiHandler"
-import { StoreState } from "../../Redux"
-import { getAdminLogs } from "../../Requests/Global"
-import { AdminLogResultDisplay } from "../Admin/AdminLogResultDisplay"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
-import { BasePage } from "./BasePage"
+import {connect} from "react-redux"
+import {doGet} from "../../apiHandler/apiHandler"
+import {StoreState} from "../../Redux"
+import {getAdminLogs} from "../../Requests/Global"
+import {AdminLogResultDisplay} from "../Admin/AdminLogResultDisplay"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {BasePage} from "./BasePage"
 
 const mapStateToProps = (state: StoreState) => ({
     loggedInUser: state.loggedInUser
@@ -35,7 +35,7 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
         return (
             <BasePage>
                 <Grid container spacing={3} justify="center">
-                    {(this.props.loggedInUser && this.props.loggedInUser.admin) ? (
+                    {this.props.loggedInUser && this.props.loggedInUser.admin ? (
                         <>
                             <Grid item xs={12}>
                                 <LoadableWrapper load={this.getAdminLogs} reloadSignal={this.state.reloadSignal}>
@@ -52,8 +52,10 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
                                 </LoadableWrapper>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField onChange={this.handleKeyChange}/>
-                                <Button variant="outlined" onClick={this.updateServer}>Update server</Button>
+                                <TextField onChange={this.handleKeyChange} />
+                                <Button variant="outlined" onClick={this.updateServer}>
+                                    Update server
+                                </Button>
                             </Grid>
                         </>
                     ) : (
@@ -65,8 +67,9 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getAdminLogs = (): Promise<void> => {
-        return getAdminLogs(this.state.page, this.state.limit, this.state.search)
-            .then((packs: AdminLogsResponse) => this.setState({adminLogs: packs}))
+        return getAdminLogs(this.state.page, this.state.limit, this.state.search).then((packs: AdminLogsResponse) =>
+            this.setState({adminLogs: packs})
+        )
     }
 
     private readonly handleChangePage = (event: unknown, page: number) => {
@@ -75,12 +78,13 @@ class AdminPageComponent extends React.PureComponent<Props, State> {
         })
     }
 
-    private readonly handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> =
-        (event) => {
-            this.setState({limit: Number(event.target.value)}, () => {
-                this.getAdminLogs()
-            })
-        }
+    private readonly handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = (
+        event
+    ) => {
+        this.setState({limit: Number(event.target.value)}, () => {
+            this.getAdminLogs()
+        })
+    }
     private readonly handleChangeSearch = (search: string) => {
         this.setState({search}, () => {
             this.getAdminLogs()

@@ -1,15 +1,15 @@
-import { CardHeader, Typography } from "@material-ui/core"
+import {CardHeader, Typography} from "@material-ui/core"
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import * as React from "react"
-import { Link } from "react-router-dom"
-import { LEADERBOARDS_LINK } from "../../../Globals"
-import { getLeaderboards } from "../../../Requests/Global"
-import { playlists } from "../../../Utils/Playlists"
-import { LeaderboardList } from "../../Leaderboards/LeaderboardList"
-import { LeaderboardWithMetadata } from "../../Leaderboards/PlaylistLeaderboardGrid"
+import {Link} from "react-router-dom"
+import {LEADERBOARDS_LINK} from "../../../Globals"
+import {getLeaderboards} from "../../../Requests/Global"
+import {playlists} from "../../../Utils/Playlists"
+import {LeaderboardList} from "../../Leaderboards/LeaderboardList"
+import {LeaderboardWithMetadata} from "../../Leaderboards/PlaylistLeaderboardGrid"
 
 interface Props {
     cardStyle: React.CSSProperties
@@ -26,8 +26,7 @@ export class Leaderboards extends React.Component<Props, State> {
     }
 
     public componentDidMount() {
-        getLeaderboards()
-            .then((leaderboards) => this.setState({leaderboards}))
+        getLeaderboards().then((leaderboards) => this.setState({leaderboards}))
     }
 
     public render() {
@@ -50,29 +49,24 @@ export class Leaderboards extends React.Component<Props, State> {
             )
             return (
                 <Card style={this.props.cardStyle}>
-                    <CardHeader title={"Upload Leaderboard"}
-                                subheader={"Most uploads in the last month"}/>
+                    <CardHeader title={"Upload Leaderboard"} subheader={"Most uploads in the last month"} />
                     <CardContent>
                         {this.state.leaderboards && (
                             <LeaderboardList
-                                leaderboard={filteredLeaderboardsWithMetadata[Math.floor(Math.random() * 4)]}/>
+                                leaderboard={filteredLeaderboardsWithMetadata[Math.floor(Math.random() * 4)]}
+                            />
                         )}
                     </CardContent>
                     <CardActions>
-                        <Link to={LEADERBOARDS_LINK}
-                              style={{textDecoration: "none"}}>
+                        <Link to={LEADERBOARDS_LINK} style={{textDecoration: "none"}}>
                             <Button variant="text">
-                                <Typography variant="subtitle1">
-                                    View Full
-                                </Typography>
+                                <Typography variant="subtitle1">View Full</Typography>
                             </Button>
                         </Link>
                     </CardActions>
-
                 </Card>
             )
         }
         return null
-
     }
 }

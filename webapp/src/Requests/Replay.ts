@@ -1,5 +1,5 @@
 import qs from "qs"
-import { doGet, doRequest } from "../apiHandler/apiHandler"
+import {doGet, doRequest} from "../apiHandler/apiHandler"
 import {
     BasicStat,
     GameVisibility,
@@ -9,16 +9,15 @@ import {
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../Models"
-import { VisibilityResponse } from "../Models/types/VisibilityResponse"
-import { useMockData } from "./Config"
-import { MOCK_REPLAY_1 } from "./Mock"
+import {VisibilityResponse} from "../Models/types/VisibilityResponse"
+import {useMockData} from "./Config"
+import {MOCK_REPLAY_1} from "./Mock"
 
 export const getReplay = (id: string): Promise<Replay> => {
     if (useMockData) {
         return Promise.resolve(MOCK_REPLAY_1)
     }
-    return doGet(`/replay/${id}`)
-        .then(parseReplay)
+    return doGet(`/replay/${id}`).then(parseReplay)
 }
 
 export const getReplayPlayerStats = (id: string): Promise<BasicStat[]> => {
@@ -44,19 +43,14 @@ export const getReplayMetadata = (id: string): Promise<any> => {
 }
 
 export const getReplayGroupStats = (ids: string[]): Promise<BasicStat[]> => {
-    return doGet(`/replay/group` +
-        qs.stringify({ids},
-            {arrayFormat: "repeat", addQueryPrefix: true}
-        )
-    )
+    return doGet(`/replay/group` + qs.stringify({ids}, {arrayFormat: "repeat", addQueryPrefix: true}))
 }
 
 export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<MatchHistoryResponse> => {
-    return doGet(`/replay` + stringifyReplaySearchQueryParam(queryParams))
-        .then((data) => ({
-            ...data,
-            replays: data.replays.map(parseReplay)
-        }))
+    return doGet(`/replay` + stringifyReplaySearchQueryParam(queryParams)).then((data) => ({
+        ...data,
+        replays: data.replays.map(parseReplay)
+    }))
 }
 
 export const getExplanations = (): Promise<any> => {
@@ -79,6 +73,7 @@ export const getBoostmap = (id: string): Promise<any> => {
     return doGet(`/replay/${id}/boostmap`)
 }
 
-export const getKickoffs = (id: string): Promise<any> => {  // TODO Type this!
+export const getKickoffs = (id: string): Promise<any> => {
+    // TODO Type this!
     return doGet(`/replay/${id}/kickoffs`)
 }

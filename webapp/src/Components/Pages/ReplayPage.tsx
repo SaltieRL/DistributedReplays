@@ -1,11 +1,11 @@
-import { Grid, withTheme, WithTheme } from "@material-ui/core"
+import {Grid, withTheme, WithTheme} from "@material-ui/core"
 import * as React from "react"
-import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
-import { Replay } from "../../Models"
-import { getExplanations, getReplay } from "../../Requests/Replay"
-import { ReplayView } from "../Replay/ReplayView"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
-import { BasePage } from "./BasePage"
+import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
+import {Replay} from "../../Models"
+import {getExplanations, getReplay} from "../../Requests/Replay"
+import {ReplayView} from "../Replay/ReplayView"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {BasePage} from "./BasePage"
 
 interface RouteParams {
     id: string
@@ -29,8 +29,10 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
         const matchUrl = this.props.match.url
         const {replay, explanations} = this.state
 
-        const backgroundImage = this.props.theme.palette.type === "dark" ?
-            "/replay_page_background_black.jpg" : "/replay_page_background.jpg"
+        const backgroundImage =
+            this.props.theme.palette.type === "dark"
+                ? "/replay_page_background_black.jpg"
+                : "/replay_page_background.jpg"
         return (
             <BasePage backgroundImage={backgroundImage}>
                 <Grid container spacing={3} justify="center" style={{minHeight: "100%"}}>
@@ -38,7 +40,8 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
                         {replay && (
                             <Switch>
                                 <Route
-                                    exact path={matchUrl}
+                                    exact
+                                    path={matchUrl}
                                     render={() => (
                                         <ReplayView
                                             replay={replay}
@@ -47,7 +50,7 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
                                         />
                                     )}
                                 />
-                                <Redirect from="*" to={matchUrl}/>
+                                <Redirect from="*" to={matchUrl} />
                             </Switch>
                         )}
                     </LoadableWrapper>

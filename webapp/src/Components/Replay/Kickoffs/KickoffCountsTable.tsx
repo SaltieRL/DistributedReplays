@@ -1,6 +1,6 @@
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography } from "@material-ui/core"
+import {Paper, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography} from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models"
+import {Replay} from "../../../Models"
 
 interface Props {
     kickoff: any
@@ -21,8 +21,8 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                         Kickoff Counts
                     </Typography>
                 </div>
-                <div style={{flex: "1 1 100%"}}/>
-                <div style={{color: "#ccc"}}/>
+                <div style={{flex: "1 1 100%"}} />
+                <div style={{color: "#ccc"}} />
             </Toolbar>
         )
 
@@ -35,16 +35,15 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                             <TableRow>
                                 <TableCell>Player Name</TableCell>
                                 {HEADERS.map((headerKey: string, index: number) => (
-                                    <TableCell align="center" key={headerKey}>{HEADERS_NAMES[index]}</TableCell>
+                                    <TableCell align="center" key={headerKey}>
+                                        {HEADERS_NAMES[index]}
+                                    </TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {this.props.kickoff.players.map((playerInfo: any, index: number) => (
-                                <TableRow
-                                    key={playerInfo.player_id}
-                                    selected={this.props.highlight === index}
-                                >
+                                <TableRow key={playerInfo.player_id} selected={this.props.highlight === index}>
                                     <TableCell component="th" scope="row">
                                         {this.props.players[playerInfo.player_id].name}
                                     </TableCell>

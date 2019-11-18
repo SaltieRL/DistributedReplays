@@ -1,11 +1,11 @@
-import { Grid } from "@material-ui/core"
+import {Grid} from "@material-ui/core"
 import * as React from "react"
-import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
-import { REPLAYS_SEARCH_PAGE_LINK } from "../../Globals"
-import { getPlayer } from "../../Requests/Player/getPlayer"
-import { PlayerOverview } from "../Player/PlayerOverview"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
-import { BasePage } from "./BasePage"
+import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
+import {REPLAYS_SEARCH_PAGE_LINK} from "../../Globals"
+import {getPlayer} from "../../Requests/Player/getPlayer"
+import {PlayerOverview} from "../Player/PlayerOverview"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {BasePage} from "./BasePage"
 
 interface RouteParams {
     id: string
@@ -41,13 +41,17 @@ export class PlayerPage extends React.PureComponent<Props, State> {
                     <LoadableWrapper load={this.getPlayerForPage} reloadSignal={this.state.reloadSignal}>
                         {this.state.player && (
                             <Switch>
-                                <Route path={overviewPath}
-                                       render={() => <PlayerOverview player={this.state.player as Player}/>}/>
-                                <Redirect from={matchHistoryPath}
-                                          to={REPLAYS_SEARCH_PAGE_LINK({
-                                              playerIds: [this.state.player.id]
-                                          })}/>
-                                <Redirect from="*" to={overviewPath}/>
+                                <Route
+                                    path={overviewPath}
+                                    render={() => <PlayerOverview player={this.state.player as Player} />}
+                                />
+                                <Redirect
+                                    from={matchHistoryPath}
+                                    to={REPLAYS_SEARCH_PAGE_LINK({
+                                        playerIds: [this.state.player.id]
+                                    })}
+                                />
+                                <Redirect from="*" to={overviewPath} />
                             </Switch>
                         )}
                     </LoadableWrapper>
@@ -57,8 +61,7 @@ export class PlayerPage extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerForPage = (): Promise<void> => {
-        return getPlayer(this.props.match.params.id)
-            .then((player) => this.setState({player}))
+        return getPlayer(this.props.match.params.id).then((player) => this.setState({player}))
     }
 
     private readonly triggerReload = () => {

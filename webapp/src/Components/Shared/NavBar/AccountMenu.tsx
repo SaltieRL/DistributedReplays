@@ -1,4 +1,4 @@
-import { faSteam } from "@fortawesome/free-brands-svg-icons"
+import {faSteam} from "@fortawesome/free-brands-svg-icons"
 import {
     Avatar,
     Button,
@@ -13,10 +13,10 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import { Link } from "react-router-dom"
-import { LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK } from "../../../Globals"
-import { LoggedInUserState } from "../../../Redux/loggedInUser/reducer"
-import { LinkButton } from "../LinkButton"
+import {Link} from "react-router-dom"
+import {LOGOUT_LINK, PLAYER_PAGE_LINK, STEAM_LOGIN_LINK} from "../../../Globals"
+import {LoggedInUserState} from "../../../Redux/loggedInUser/reducer"
+import {LinkButton} from "../LinkButton"
 
 const styles = createStyles({
     iconButtonWrapper: {
@@ -37,8 +37,7 @@ interface OwnProps {
     loggedInUser: LoggedInUserState
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 interface State {
     open: boolean
@@ -59,7 +58,7 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
                 {loggedInUser ? (
                     <>
                         <IconButton onClick={this.handleOpen} className={classes.iconButtonWrapper}>
-                            <Avatar src={loggedInUser.avatarLink}/>
+                            <Avatar src={loggedInUser.avatarLink} />
                         </IconButton>
                         <Popover
                             open={this.state.open}
@@ -75,20 +74,21 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
                             }}
                         >
                             <Card>
-                                <CardMedia className={classes.avatar} image={loggedInUser.avatarLink}/>
+                                <CardMedia className={classes.avatar} image={loggedInUser.avatarLink} />
                                 <CardActions>
-                                    <Grid container
-                                          direction="column"
-                                          justify="space-between"
-                                          spacing={1}
-                                          className={classes.actions}
+                                    <Grid
+                                        container
+                                        direction="column"
+                                        justify="space-between"
+                                        spacing={1}
+                                        className={classes.actions}
                                     >
                                         <Grid item>
-                                            <Link to={PLAYER_PAGE_LINK(loggedInUser.id)}
-                                                  style={{textDecoration: "none"}}>
-                                                <Button variant="outlined">
-                                                    My Profile
-                                                </Button>
+                                            <Link
+                                                to={PLAYER_PAGE_LINK(loggedInUser.id)}
+                                                style={{textDecoration: "none"}}
+                                            >
+                                                <Button variant="outlined">My Profile</Button>
                                             </Link>
                                         </Grid>
                                         <Grid item>
@@ -102,12 +102,7 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
                         </Popover>
                     </>
                 ) : (
-                    <LinkButton
-                        to={STEAM_LOGIN_LINK}
-                        isExternalLink
-                        iconType="fontawesome"
-                        icon={faSteam}
-                    >
+                    <LinkButton to={STEAM_LOGIN_LINK} isExternalLink iconType="fontawesome" icon={faSteam}>
                         Log in
                     </LinkButton>
                 )}

@@ -1,10 +1,10 @@
-import { Grid } from "@material-ui/core"
-import { Breakpoint } from "@material-ui/core/styles/createBreakpoints"
-import withWidth, { isWidthUp } from "@material-ui/core/withWidth"
+import {Grid} from "@material-ui/core"
+import {Breakpoint} from "@material-ui/core/styles/createBreakpoints"
+import withWidth, {isWidthUp} from "@material-ui/core/withWidth"
 import * as React from "react"
-import { Replay } from "../../../Models"
-import { KickoffCountsTable } from "./KickoffCountsTable"
-import { KickoffField } from "./KickoffField"
+import {Replay} from "../../../Models"
+import {KickoffCountsTable} from "./KickoffCountsTable"
+import {KickoffField} from "./KickoffField"
 
 interface Props {
     kickoffIndex: number
@@ -42,8 +42,13 @@ class KickoffMapWrapperComponent extends React.PureComponent<Props, State> {
         )
         return (
             <>
-                <Grid item xs={12} lg={8} xl={7}
-                      style={{padding: "20px 40px 20px 40px", textAlign: "center", margin: "auto", overflowX: "auto"}}>
+                <Grid
+                    item
+                    xs={12}
+                    lg={8}
+                    xl={7}
+                    style={{padding: "20px 40px 20px 40px", textAlign: "center", margin: "auto", overflowX: "auto"}}
+                >
                     {kickoffField}
                 </Grid>
                 <Grid item xs={12} lg={6} xl={7} style={{padding: "20px 40px 20px 40px"}} container>

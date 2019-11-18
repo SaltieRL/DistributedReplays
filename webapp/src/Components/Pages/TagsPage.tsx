@@ -1,11 +1,11 @@
-import { Grid, List, Paper } from "@material-ui/core"
+import {Grid, List, Paper} from "@material-ui/core"
 import * as React from "react"
-import { connect } from "react-redux"
-import { Dispatch } from "redux"
-import { StoreState, TagsAction } from "../../Redux"
-import { getAllTags } from "../../Requests/Tag"
-import { TagPageListItem } from "../Shared/Tag/TagPageListItem"
-import { BasePage } from "./BasePage"
+import {connect} from "react-redux"
+import {Dispatch} from "redux"
+import {StoreState, TagsAction} from "../../Redux"
+import {getAllTags} from "../../Requests/Tag"
+import {TagPageListItem} from "../Shared/Tag/TagPageListItem"
+import {BasePage} from "./BasePage"
 
 const mapStateToProps = (state: StoreState) => ({
     tags: state.tags
@@ -15,13 +15,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     setTags: (tags: Tag[]) => dispatch(TagsAction.setTagsAction(tags))
 })
 
-type Props = ReturnType<typeof mapStateToProps>
-    & ReturnType<typeof mapDispatchToProps>
+type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
 
 class TagsPageComponent extends React.PureComponent<Props> {
     public componentDidMount() {
-        getAllTags()
-            .then((tags) => this.props.setTags(tags))
+        getAllTags().then((tags) => this.props.setTags(tags))
     }
 
     public render() {
@@ -34,7 +32,9 @@ class TagsPageComponent extends React.PureComponent<Props> {
                             <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
                                 <Paper>
                                     <List>
-                                        {tags.map((tag) => <TagPageListItem key={tag.name} tag={tag}/>)}
+                                        {tags.map((tag) => (
+                                            <TagPageListItem key={tag.name} tag={tag} />
+                                        ))}
                                     </List>
                                 </Paper>
                             </Grid>

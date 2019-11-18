@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core"
 import Grid from "@material-ui/core/Grid/Grid"
 import * as React from "react"
-import { Replay } from "../../Models"
+import {Replay} from "../../Models"
 
 const styles = createStyles({
     teamTable: {
@@ -34,8 +34,8 @@ const styles = createStyles({
 })
 
 interface BoxScoreData {
-    name: "Blue" | "Orange",
-    score: number,
+    name: "Blue" | "Orange"
+    score: number
     players: ReplayPlayer[]
 }
 
@@ -52,8 +52,7 @@ interface OwnProps {
     player?: Player
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
     public render() {
@@ -82,7 +81,6 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
             <Grid container justify="center" spacing={2}>
                 {[blueBoxScoreTeamData, orangeBoxScoreTeamData].map(this.createTeamBoxScoreGridItem)}
             </Grid>
-
         )
     }
 
@@ -109,9 +107,7 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
                         if (key !== "name") {
                             return (
                                 <TableCell align="right" key={key} size="small">
-                                    <Typography variant="subtitle1">
-                                        {label}
-                                    </Typography>
+                                    <Typography variant="subtitle1">{label}</Typography>
                                 </TableCell>
                             )
                         }
@@ -126,21 +122,21 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         return (
             <TableBody>
                 {boxScoreData.players
-                    .sort((playerA: ReplayPlayer, playerB: ReplayPlayer) =>
-                        playerB.score - playerA.score)
+                    .sort((playerA: ReplayPlayer, playerB: ReplayPlayer) => playerB.score - playerA.score)
                     .map((player: ReplayPlayer) => (
                         <TableRow key={player.id}>
                             {Array.from(labelToKeys, ([label, key]) => (
-                                <TableCell key={key}
-                                           align={key !== "name" ? "right" : "left"}
-                                           className={this.props.classes.tableData}
-                                           size="small"
+                                <TableCell
+                                    key={key}
+                                    align={key !== "name" ? "right" : "left"}
+                                    className={this.props.classes.tableData}
+                                    size="small"
                                 >
-                                    {(this.props.player && player.id === this.props.player.id) ?
+                                    {this.props.player && player.id === this.props.player.id ? (
                                         <b>{player[key]}</b>
-                                        :
+                                    ) : (
                                         player[key]
-                                    }
+                                    )}
                                 </TableCell>
                             ))}
                         </TableRow>

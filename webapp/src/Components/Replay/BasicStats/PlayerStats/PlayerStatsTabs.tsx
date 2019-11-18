@@ -11,11 +11,11 @@ import {
     faShoppingCart,
     IconDefinition
 } from "@fortawesome/free-solid-svg-icons"
-import { faRocket } from "@fortawesome/free-solid-svg-icons/faRocket"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Tab, Tabs } from "@material-ui/core"
+import {faRocket} from "@fortawesome/free-solid-svg-icons/faRocket"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
-import { PlayerStatsSubcategory } from "../../../../Models"
+import {PlayerStatsSubcategory} from "../../../../Models"
 
 interface Props {
     selectedTab: PlayerStatsSubcategory
@@ -27,39 +27,36 @@ export class PlayerStatsTabs extends React.PureComponent<Props> {
     public render() {
         const categoryToIcon: Record<PlayerStatsSubcategory, IconDefinition> = {
             "Main Stats": faChartBar,
-            "Hits": faBullseye,
-            "Ball": faFutbol,
-            "Playstyles": faCarSide,
-            "Possession": faCircle,
-            "Positioning": faBraille,
-            "Boosts": faRocket,
-            "Efficiency": faPercent,
+            Hits: faBullseye,
+            Ball: faFutbol,
+            Playstyles: faCarSide,
+            Possession: faCircle,
+            Positioning: faBraille,
+            Boosts: faRocket,
+            Efficiency: faPercent,
             "Team Positioning": faHandshake,
             "Ball Carries": faShoppingCart,
-            "Kickoffs": faArrowsAlt
+            Kickoffs: faArrowsAlt
         }
         const {selectedTab, handleChange} = this.props
 
         return (
-            <Tabs
-                value={selectedTab}
-                onChange={handleChange}
-                variant="scrollable"
-                scrollButtons="on"
-            >
-                {Object.keys(PlayerStatsSubcategory).filter((subcategory) => {
-                    return this.props.exclude !== undefined
-                        ? this.props.exclude.indexOf(subcategory) === -1
-                        : true
-                }).map((subcategory) => {
-                    const value = PlayerStatsSubcategory[subcategory]
-                    return (
-                        <Tab
-                            label={value} value={value} key={value}
-                            icon={<FontAwesomeIcon icon={categoryToIcon[value]}/>}
-                        />
-                    )
-                })}
+            <Tabs value={selectedTab} onChange={handleChange} variant="scrollable" scrollButtons="on">
+                {Object.keys(PlayerStatsSubcategory)
+                    .filter((subcategory) => {
+                        return this.props.exclude !== undefined ? this.props.exclude.indexOf(subcategory) === -1 : true
+                    })
+                    .map((subcategory) => {
+                        const value = PlayerStatsSubcategory[subcategory]
+                        return (
+                            <Tab
+                                label={value}
+                                value={value}
+                                key={value}
+                                icon={<FontAwesomeIcon icon={categoryToIcon[value]} />}
+                            />
+                        )
+                    })}
             </Tabs>
         )
     }

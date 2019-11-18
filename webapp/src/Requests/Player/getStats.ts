@@ -1,5 +1,5 @@
-import { doGet } from "../../apiHandler/apiHandler"
-import { useMockData } from "../Config"
+import {doGet} from "../../apiHandler/apiHandler"
+import {useMockData} from "../Config"
 
 const loadout = {
     antenna: {
@@ -91,7 +91,6 @@ export const getStats = (id: string): Promise<PlayerStats> => {
                 }
             ],
             loadout
-
         })
     }
     return doGet(`/player/${id}/profile_stats`)

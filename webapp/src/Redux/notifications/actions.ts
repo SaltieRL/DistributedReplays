@@ -1,5 +1,5 @@
-import { createAction } from "redux-actions"
-import { NotificationProps } from "../../Components/Shared/Notification/NotificationSnackbar"
+import {createAction} from "redux-actions"
+import {NotificationProps} from "../../Components/Shared/Notification/NotificationSnackbar"
 
 enum Type {
     SHOW_NOTIFICATION = "SHOW_NOTIFICATION",
