@@ -41,7 +41,7 @@
         "analyze": "source-map-explorer build/static/js/main.*",
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts src/test --env=jsdom",
+        "test": "react-scripts test --env=jsdom",
         "eject": "react-scripts eject",
         "tslint-check": "tslint --project . -c ./tslint.test.json",
         "tslint-check-prettier": "tslint-config-prettier-check ./tslint.json",

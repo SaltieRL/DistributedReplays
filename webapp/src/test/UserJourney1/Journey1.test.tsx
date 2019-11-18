@@ -43,7 +43,7 @@ jest.mock("../../Components/Shared/Charts/StatChart")
 // jest.mock("../../Components/Replay/ReplayViewer/Viewer", () => jest.fn())
 // jest.mock("../../Components/Pages/ReplayPage", () => jest.fn())
 
-test("should render", async () => {
+xtest("should render", async () => {
     jest.setTimeout(60000)
 
     // Load HomePage
