@@ -132,7 +132,7 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
             return
         }
 
-        if (ids.indexOf(inputId) === -1) {
+        if (!ids.includes(inputId)) {
             getReplay(inputId)
                 .then(this.handleAddReplay)
                 .then(() => this.setState({inputId: ""}))

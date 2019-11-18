@@ -16,7 +16,7 @@ class PlayerAdminTogglesComponent extends React.PureComponent<Props> {
         return (
             <>
                 {[4, 2, 3].map((groupNum) => {
-                    const playerInGroup = player.groups.indexOf(groupNum) !== -1
+                    const playerInGroup = player.groups.includes(groupNum)
                     return (
                         <Button
                             key={groupNum}

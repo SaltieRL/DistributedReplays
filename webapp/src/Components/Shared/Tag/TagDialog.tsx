@@ -96,7 +96,7 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
 
     private readonly handleCreateUserTag = (tag: Tag) => {
         if (this.state.userTags) {
-            const tagNameAlreadyExists = this.state.userTags.map((testTag) => testTag.name).indexOf(tag.name) !== -1
+            const tagNameAlreadyExists = this.state.userTags.map((testTag) => testTag.name).includes(tag.name)
             if (tagNameAlreadyExists) {
                 return
             }

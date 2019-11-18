@@ -43,9 +43,9 @@ export class PlayerStatsTabs extends React.PureComponent<Props> {
         return (
             <Tabs value={selectedTab} onChange={handleChange} variant="scrollable" scrollButtons="on">
                 {Object.keys(PlayerStatsSubcategory)
-                    .filter((subcategory) => {
-                        return this.props.exclude !== undefined ? this.props.exclude.indexOf(subcategory) === -1 : true
-                    })
+                    .filter((subcategory) =>
+                        this.props.exclude !== undefined ? !this.props.exclude.includes(subcategory) : true
+                    )
                     .map((subcategory) => {
                         const value = PlayerStatsSubcategory[subcategory]
                         return (

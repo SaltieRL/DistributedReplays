@@ -169,8 +169,8 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
             </Grid>
         ) : null
         const filteredList = this.state.itemList
-            ? this.state.itemList.items.filter(
-                  (item) => item.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
+            ? this.state.itemList.items.filter((item) =>
+                  item.name.toLowerCase().includes(this.state.search.toLowerCase())
               )
             : []
         const itemsList = (

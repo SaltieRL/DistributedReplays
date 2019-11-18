@@ -93,15 +93,15 @@ export class ReplayTagDisplay extends React.PureComponent<Props> {
             const selectedTagNames = (event.target.value as any) as string[]
             const originalTagNames = replay.tags.map((tag) => tag.name)
 
-            const removedTagNames = originalTagNames.filter((tagName) => selectedTagNames.indexOf(tagName) === -1)
+            const removedTagNames = originalTagNames.filter((tagName) => !selectedTagNames.includes(tagName))
 
-            const addedTagNames = selectedTagNames.filter((tagName) => originalTagNames.indexOf(tagName) === -1)
+            const addedTagNames = selectedTagNames.filter((tagName) => !originalTagNames.includes(tagName))
 
             Promise.all([
                 ...removedTagNames.map((tagName) => removeTagFromGame(tagName, replay.id)),
                 ...addedTagNames.map((tagName) => addTagToGame(tagName, replay.id))
             ]).then(() => {
-                const selectedTags = userTagProps.userTags.filter((tag) => selectedTagNames.indexOf(tag.name) !== -1)
+                const selectedTags = userTagProps.userTags.filter((tag) => selectedTagNames.includes(tag.name))
                 userTagProps.handleUpdateTags(selectedTags)
             })
         }

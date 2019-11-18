@@ -37,13 +37,13 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
         if (this.props.players.length > prevProps.players.length) {
-            const newPlayers = this.props.players.filter((player) => prevProps.players.indexOf(player) === -1)
+            const newPlayers = this.props.players.filter((player) => !prevProps.players.includes(player))
             this.handleAddPlayers(newPlayers)
         }
         if (this.props.players.length < prevProps.players.length) {
             const indicesToRemove: number[] = []
             prevProps.players.forEach((player, i) => {
-                if (this.props.players.indexOf(player) === -1) {
+                if (!this.props.players.includes(player)) {
                     indicesToRemove.push(i)
                 }
             })
@@ -172,8 +172,8 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     private readonly handleRemovePlayers = (indicesToRemove: number[]) => {
         this.setState({
-            playerPlayStyles: this.state.playerPlayStyles.filter((_, i) => indicesToRemove.indexOf(i) === -1),
-            playerPlayStylesRaw: this.state.playerPlayStylesRaw.filter((_, i) => indicesToRemove.indexOf(i) === -1)
+            playerPlayStyles: this.state.playerPlayStyles.filter((_, i) => !indicesToRemove.includes(i)),
+            playerPlayStylesRaw: this.state.playerPlayStylesRaw.filter((_, i) => !indicesToRemove.includes(i))
         })
     }
 

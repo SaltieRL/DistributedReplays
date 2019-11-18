@@ -88,7 +88,7 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
             return
         }
 
-        if (this.props.playerIds.indexOf(inputId) === -1) {
+        if (!this.props.playerIds.includes(inputId)) {
             resolvePlayerNameOrId(inputId)
                 .then(getPlayer)
                 .then(this.handleAddPlayer)

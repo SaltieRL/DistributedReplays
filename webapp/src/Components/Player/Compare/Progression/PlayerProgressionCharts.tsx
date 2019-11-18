@@ -50,13 +50,13 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
         if (this.props.players.length > prevProps.players.length) {
-            const newPlayers = this.props.players.filter((player) => prevProps.players.indexOf(player) === -1)
+            const newPlayers = this.props.players.filter((player) => !prevProps.players.includes(player))
             this.handleAddPlayers(newPlayers)
         }
         if (this.props.players.length < prevProps.players.length) {
             const indicesToRemove: number[] = []
             prevProps.players.forEach((player, i) => {
-                if (this.props.players.indexOf(player) === -1) {
+                if (!this.props.players.includes(player)) {
                     indicesToRemove.push(i)
                 }
             })
@@ -196,7 +196,7 @@ export class PlayerProgressionCharts extends React.PureComponent<Props, State> {
 
     private readonly handleRemovePlayers = (indicesToRemove: number[]) => {
         this.setState({
-            playStyleProgressions: this.state.playStyleProgressions.filter((__, i) => indicesToRemove.indexOf(i) !== -1)
+            playStyleProgressions: this.state.playStyleProgressions.filter((__, i) => indicesToRemove.includes(i))
         })
     }
 

@@ -71,7 +71,7 @@ export class GlobalStatsPageComponent extends React.PureComponent<Props, State> 
                                             Object.keys(this.state.globalRankGraphs["13"]).map((key: any) => {
                                                 // TODO(Sciguymjm) Type this thing.
                                                 const globalStatsGraph = this.state.globalRankGraphs["13"][key]
-                                                if (removedStats.indexOf(key) !== -1) {
+                                                if (removedStats.includes(key)) {
                                                     return null
                                                 }
                                                 return (
