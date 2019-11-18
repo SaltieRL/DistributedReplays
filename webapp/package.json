@@ -43,7 +43,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test --env=jsdom",
         "eject": "react-scripts eject",
-        "tslint-check": "tslint --project . -c ./tslint.test.json",
+        "tslint": "tslint --project . -c ./tslint.test.json",
         "tslint-check-prettier": "tslint-config-prettier-check ./tslint.json",
         "prettier": "prettier --write **/*.{ts,tsx,js,css,html}"
     },
