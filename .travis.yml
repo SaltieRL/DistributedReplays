@@ -90,19 +90,18 @@ jobs:
         - bash <(curl -s https://codecov.io/bash) -c -F integration
       after_success:
         - codecov
-   # - stage: test
-   #   name: "react unit tests"
-   #   install:
-   #     - cd webapp
-   #     - npm install
-   #     - npm install codecov -g
-   #     - cd $TRAVIS_BUILD_DIR
-   #   script:
-   #     - cd webapp
-   #     - npm start
-   #     - npm test
-   #   after_success:
-   #     - codecov
+    - stage: test
+      name: "react unit tests"
+      install:
+        - cd webapp
+        - npm install
+        - npm install codecov -g
+        - cd $TRAVIS_BUILD_DIR
+      script:
+        - cd webapp
+        - CI=true npm test
+      after_success:
+        - codecov
     - stage: deploy
       name: "Deploy to Production"
       install: skip
