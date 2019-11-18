@@ -23,14 +23,22 @@ export class PredictedRanksRow extends React.PureComponent<Props> {
                     {playerLeft && <Typography>{playerLeft.name}</Typography>}
                 </TableCell>
                 <TableCell align="center">
-                    {playerLeft && <img alt={`Rank ${predictedRanks[playerLeft.id]}`}
-                                        src={`${window.location.origin}/ranks/${playerLeftRank}.png`}
-                                        style={{width: 48, height: 48, margin: "auto"}}/>}
+                    {playerLeft && (
+                        <img
+                            alt={`Rank ${predictedRanks[playerLeft.id]}`}
+                            src={`${window.location.origin}/ranks/${playerLeftRank}.png`}
+                            style={{width: 48, height: 48, margin: "auto"}}
+                        />
+                    )}
                 </TableCell>
                 <TableCell align="center">
-                    {playerRight && <img alt={`Rank ${predictedRanks[playerRight.id]}`}
-                                         src={`${window.location.origin}/ranks/${playerRightRank}.png`}
-                                         style={{width: 48, height: 48, margin: "auto"}}/>}
+                    {playerRight && (
+                        <img
+                            alt={`Rank ${predictedRanks[playerRight.id]}`}
+                            src={`${window.location.origin}/ranks/${playerRightRank}.png`}
+                            style={{width: 48, height: 48, margin: "auto"}}
+                        />
+                    )}
                 </TableCell>
                 <TableCell align="right">
                     {playerRight && <Typography>{playerRight.name}</Typography>}

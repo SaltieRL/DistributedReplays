@@ -51,23 +51,27 @@ class ReplayViewComponent extends React.PureComponent<Props> {
         const replayChartCard = (
             <Card>
                 <CardHeader
-                    title={
-                        <Tooltip title={"Map: " + replay.map + ", Date: " + replay.date.format("LLLL")} enterDelay={100}
-                                 placement="bottom">
+                    title={(
+                        <Tooltip
+                            title={"Map: " + replay.map + ", Date: " + replay.date.format("LLLL")}
+                            enterDelay={100}
+                            placement="bottom"
+                        >
                             <Typography variant="h5"> {replay.name} </Typography>
-                        </Tooltip>}
+                        </Tooltip>
+                    )}
                     subheader={<ColouredGameScore replay={replay}/>}
                     titleTypographyProps={{align: "center"}}
                     subheaderTypographyProps={{align: "center", variant: "subtitle1"}}
-                    action={
+                    action={(
                         <div style={{position: "relative", width: 0, right: 16, top: 16}}>
                             <div style={{display: "flex", float: "right"}}>
                                 <TagDialogWrapper replay={replay} handleUpdateTags={this.props.handleUpdateTags}/>
                                 {isWidthUp("sm", width) && dataExportButton}
-                                {isWidthUp("sm", width) && downloadButton
-                                }
+                                {isWidthUp("sm", width) && downloadButton}
                             </div>
-                        </div>}
+                        </div>
+                    )}
                 />
                 <CardContent style={{overflowX: "auto"}}>
                     <ReplayChart replay={replay}/>
@@ -92,19 +96,19 @@ class ReplayViewComponent extends React.PureComponent<Props> {
 
         return (
             <Grid item xs={12} container spacing={3} alignItems="center">
-                {isWidthUp("lg", width) ?
+                {isWidthUp("lg", width) ? (
                     <>
                         {blueGridItem}
                         {replayChartGridItem}
                         {orangeGridItem}
                     </>
-                    :
+                ) : (
                     <>
                         {blueGridItem}
                         {orangeGridItem}
                         {replayChartGridItem}
                     </>
-                }
+                )}
                 <Grid item xs={12}>
                     <ReplayTabs replay={replay} explanations={explanations}/>
                 </Grid>

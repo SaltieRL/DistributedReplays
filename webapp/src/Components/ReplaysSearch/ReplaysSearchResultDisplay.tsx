@@ -32,17 +32,22 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
 
         return (
             <>
-                {replaySearchResult.replays.length > 0 ?
+                {replaySearchResult.replays.length > 0 ? (
                     <Card>
-                        <CardHeader title="Results" action={
-                            <ResultsActions disabled={this.state.selectedReplayIds.length === 0}
-                                            to={this.getGroupLink()}
-                                            handleSelectableChange={this.handleSelectableChange}
-                                            selectable={this.state.selectable}/>}/>
-                        {selectable ?
+                        <CardHeader
+                            title="Results"
+                            action={(
+                                <ResultsActions
+                                    disabled={this.state.selectedReplayIds.length === 0}
+                                    to={this.getGroupLink()}
+                                    handleSelectableChange={this.handleSelectableChange}
+                                    selectable={this.state.selectable}/>
+                            )}
+                        />
+                        {selectable ? (
                             <List dense>
                                 <Divider/>
-                                {this.props.replaySearchResult.replays.map((replay: Replay, i) =>
+                                {this.props.replaySearchResult.replays.map((replay: Replay, i) => (
                                     <>
                                         <ReplayDisplayRow
                                             key={replay.id}
@@ -56,30 +61,30 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                                                 ),
                                                 handleSelectChange: this.handleSelectChange(replay.id)
                                             }}/>
-                                        {!(i === this.props.replaySearchResult.replays.length) && <Divider/>}
+                                        {i !== this.props.replaySearchResult.replays.length && <Divider/>}
                                     </>
-                                )}
+                                ))}
                             </List>
-                            :
-                            this.props.replaySearchResult.replays.map((replay: Replay) =>
+                        ) : (
+                            this.props.replaySearchResult.replays.map((replay: Replay) => (
                                 <ReplayDisplayRow
                                     key={replay.id}
                                     replay={replay}
                                     handleUpdateTags={this.props.handleUpdateTags(replay)}
                                     useBoxScore
                                 />
-                            )
-                        }
+                            ))
+                        )}
                         <ReplaysSearchTablePagination
                             totalCount={replaySearchResult.totalCount}
                             page={page}
                             limit={limit}/>
                     </Card>
-                    :
+                ) : (
                     <Typography variant="subtitle1" align="center">
                         <i>No replays match the selected filters.</i>
                     </Typography>
-                }
+                )}
             </>
         )
     }

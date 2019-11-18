@@ -86,53 +86,54 @@ class NavBarComponent extends React.PureComponent<Props> {
                                 <Menu/>
                             </IconButton>
                         </Grid>
-                        {isWidthUp("md", width) &&
-                        <>
-                            <Grid item xs="auto">
-                                <Logo imgStyle={{maxHeight: 40}}/>
-                            </Grid>
-                            <Grid item xs="auto" className={classes.motto}>
-                                <Typography align="center" style={{fontSize: 10, width: 100}}>
-                                    a Rocket League statistics platform
-                                </Typography>
-                            </Grid>
-                        </>
-                        }
+                        {isWidthUp("md", width) && (
+                            <>
+                                <Grid item xs="auto">
+                                    <Logo imgStyle={{maxHeight: 40}}/>
+                                </Grid>
+                                <Grid item xs="auto" className={classes.motto}>
+                                    <Typography align="center" style={{fontSize: 10, width: 100}}>
+                                        a Rocket League statistics platform
+                                    </Typography>
+                                </Grid>
+                            </>
+                        )}
 
                         <Grid item xs="auto" className={classes.search}>
                             <Search usePaper={false}/>
                         </Grid>
 
-                        {isWidthUp("sm", width) &&
-                        <>
-                            <Grid item className={classes.grow}/>
-                            <Grid item>
-                                <ThemeContext.Consumer>
-                                    {(themeValue) => (
-                                        <Tooltip title="Toggle theme">
-                                            <IconButton onClick={themeValue.toggleTheme}>
-                                                <FontAwesomeIcon icon={faLightbulb} style={{width: 24, height: 24}}/>
-                                            </IconButton>
+                        {isWidthUp("sm", width) && (
+                            <>
+                                <Grid item className={classes.grow}/>
+                                <Grid item>
+                                    <ThemeContext.Consumer>
+                                        {(themeValue) => (
+                                            <Tooltip title="Toggle theme">
+                                                <IconButton onClick={themeValue.toggleTheme}>
+                                                    <FontAwesomeIcon icon={faLightbulb}
+                                                                     style={{width: 24, height: 24}}/>
+                                                </IconButton>
+                                            </Tooltip>
+                                        )}
+                                    </ThemeContext.Consumer>
+                                </Grid>
+                                <Grid item>
+                                    <Link to={GLOBAL_STATS_LINK}>
+                                        <Tooltip title="Global stats">
+                                            <IconButton><FontAwesomeIcon icon={faGlobeAmericas}/></IconButton>
                                         </Tooltip>
-                                    )}
-                                </ThemeContext.Consumer>
-                            </Grid>
-                            <Grid item>
-                                <Link to={GLOBAL_STATS_LINK}>
-                                    <Tooltip title="Global stats">
-                                        <IconButton><FontAwesomeIcon icon={faGlobeAmericas}/></IconButton>
-                                    </Tooltip>
-                                </Link>
-                            </Grid>
-                            <Grid item>
-                                <UploadDialogWrapper buttonStyle="icon"/>
-                            </Grid>
-                            <Grid item xs="auto" className={classes.accountMenuGridItem}>
-                                {/*TODO: Show AccountMenu even on mobile, but as a 3 dots icon.*/}
-                                <AccountMenu loggedInUser={this.props.loggedInUser}/>
-                            </Grid>
-                        </>
-                        }
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <UploadDialogWrapper buttonStyle="icon"/>
+                                </Grid>
+                                <Grid item xs="auto" className={classes.accountMenuGridItem}>
+                                    {/*TODO: Show AccountMenu even on mobile, but as a 3 dots icon.*/}
+                                    <AccountMenu loggedInUser={this.props.loggedInUser}/>
+                                </Grid>
+                            </>
+                        )}
                     </Grid>
                 </Toolbar>
             </AppBar>

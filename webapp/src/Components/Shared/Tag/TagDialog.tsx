@@ -67,7 +67,7 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
                     {this.props.loggedInUser !== null ? (
                         <LoadableWrapper load={this.loadUserTags}>
                             {this.state.userTags && (
-                                this.state.selectedTab === "Replay" ?
+                                this.state.selectedTab === "Replay" ? (
                                     <ReplayTagDisplay
                                         replay={this.props.replay}
                                         userTagProps={{
@@ -75,12 +75,13 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
                                             handleUpdateTags: this.props.handleUpdateTags
                                         }}
                                     />
-                                    :
+                                ) : (
                                     <UserTagDisplay
                                         tags={this.state.userTags}
                                         handleCreate={this.handleCreateUserTag}
                                         deleteTag={this.deleteTag}
                                     />
+                                )
                             )}
                         </LoadableWrapper>
                     ) : (

@@ -1,3 +1,5 @@
+/* tslint:disable:no-console */
+
 import "@testing-library/jest-dom/extend-expect"
 import { render, wait, waitForElement } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
@@ -129,5 +131,4 @@ test("should render", async() => {
     await wait(() => expect(mockGetReplayPlayerStats.mock.calls.length).toBe(1))
 
     expect(StatChart).toHaveBeenCalled()
-    console.log("hi")
 })

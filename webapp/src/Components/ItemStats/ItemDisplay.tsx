@@ -151,9 +151,11 @@ export class ItemDisplayComponent extends React.PureComponent<Props> {
                 <CardContent className={classes.content}>
                     <Typography variant="h4">
                         {item.name}
-                        {item.parentitem && (<span style={{textTransform: "capitalize"}}>
+                        {item.parentitem && (
+                            <span style={{textTransform: "capitalize"}}>
                                 {` (${item.parentitem})`}
-                        </span>)}
+                            </span>
+                        )}
                     </Typography>
                     <Typography style={{color: rarities[item.rarity].rlgend}} variant="subtitle1">
                         {RARITY_NAMES[item.rarity - 1]} {CATEGORIES[item.category - 1]}

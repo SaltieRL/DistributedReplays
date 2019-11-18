@@ -56,22 +56,23 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
 
         return (
             <>
-                {loggedInUser ?
+                {loggedInUser ? (
                     <>
                         <IconButton onClick={this.handleOpen} className={classes.iconButtonWrapper}>
                             <Avatar src={loggedInUser.avatarLink}/>
                         </IconButton>
-                        <Popover open={this.state.open}
-                                 onClose={this.handleClose}
-                                 anchorEl={this.state.anchorElement}
-                                 anchorOrigin={{
-                                     vertical: "bottom",
-                                     horizontal: "center"
-                                 }}
-                                 transformOrigin={{
-                                     vertical: "top",
-                                     horizontal: "center"
-                                 }}
+                        <Popover
+                            open={this.state.open}
+                            onClose={this.handleClose}
+                            anchorEl={this.state.anchorElement}
+                            anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "center"
+                            }}
+                            transformOrigin={{
+                                vertical: "top",
+                                horizontal: "center"
+                            }}
                         >
                             <Card>
                                 <CardMedia className={classes.avatar} image={loggedInUser.avatarLink}/>
@@ -100,12 +101,16 @@ export class AccountMenuComponent extends React.PureComponent<Props, State> {
                             </Card>
                         </Popover>
                     </>
-                    :
-                    <LinkButton to={STEAM_LOGIN_LINK} isExternalLink
-                                iconType="fontawesome" icon={faSteam}>
+                ) : (
+                    <LinkButton
+                        to={STEAM_LOGIN_LINK}
+                        isExternalLink
+                        iconType="fontawesome"
+                        icon={faSteam}
+                    >
                         Log in
                     </LinkButton>
-                }
+                )}
             </>
         )
     }

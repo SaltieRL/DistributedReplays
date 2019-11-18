@@ -33,23 +33,23 @@ class TrainingPackPageComponent extends React.PureComponent<Props, State> {
         return (
             <BasePage>
                 <Grid container spacing={3} justify="center">
-                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
+                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ? (
                         <LoadableWrapper load={this.getTrainingPacks} reloadSignal={this.state.reloadSignal}>
-                            {this.state.trainingPacks &&
-                            <Grid item xs={12} md={8}>
-                                <TrainingPackResultDisplay trainingPacks={this.state.trainingPacks}
-                                                           page={this.state.page}
-                                                           limit={this.state.limit}
-                                                           handleChangePage={this.handleChangePage}
-                                                           handleChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                />
-                            </Grid>
-                            }
-
+                            {this.state.trainingPacks && (
+                                <Grid item xs={12} md={8}>
+                                    <TrainingPackResultDisplay
+                                        trainingPacks={this.state.trainingPacks}
+                                        page={this.state.page}
+                                        limit={this.state.limit}
+                                        handleChangePage={this.handleChangePage}
+                                        handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                    />
+                                </Grid>
+                            )}
                         </LoadableWrapper>
-                        :
+                    ) : (
                         <Typography>In beta, Patrons only.</Typography>
-                    }
+                    )}
                 </Grid>
             </BasePage>
         )

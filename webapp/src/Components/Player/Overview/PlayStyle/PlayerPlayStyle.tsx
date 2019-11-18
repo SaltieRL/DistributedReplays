@@ -61,41 +61,40 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
             <Grid container justify="space-around" spacing={4}>
                 <LoadableWrapper load={this.props.winLossMode ? this.getPlayStylesWinLoss : this.getPlayStyles}
                                  reloadSignal={this.state.reloadSignal}>
-                    {this.state.data &&
-                    <>
-                        {this.state.data.showWarning &&
-                        <Grid item xs={12} container justify="center">
-                            <Grid item xs={11} sm={10} md={9} lg={7} xl={5}
-                                  style={{textAlign: "center", display: "flex"}}
-                                  className={classes.warningContainer}
-                            >
-                                <Warning className={classes.inlineWarning}/>
-                                <Typography>
-                                    {notEnoughDataWarning}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        }
-                        {(this.props.winLossMode && this.state.winLossData) ?
-                            this.state.winLossData[0].chartDatas.map((chartDataResponse, i) => {
-                                return (
-                                    <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
-                                          style={{height: 400}}>
-                                        <Typography variant="subtitle1" align="center">
-                                            {chartDataResponse.title}
+                    {this.state.data && (
+                        <>
+                            {this.state.data.showWarning && (
+                                <Grid item xs={12} container justify="center">
+                                    <Grid item xs={11} sm={10} md={9} lg={7} xl={5}
+                                          style={{textAlign: "center", display: "flex"}}
+                                          className={classes.warningContainer}
+                                    >
+                                        <Warning className={classes.inlineWarning}/>
+                                        <Typography>
+                                            {notEnoughDataWarning}
                                         </Typography>
-                                        {this.state.winLossData &&
-                                        <PlayerPlayStyleChart
-                                            names={["Win", "Loss"]}
-                                            data={this.state.winLossData.map((data) => data.chartDatas[i])}
-                                        />
-                                        }
                                     </Grid>
-                                )
-                            })
-                            :
-                            this.state.data.chartDatas.map((chartDataResponse) => {
-                                return (
+                                </Grid>
+                            )}
+                            {(this.props.winLossMode && this.state.winLossData) ?
+                                this.state.winLossData[0].chartDatas.map((chartDataResponse, i) => {
+                                    return (
+                                        <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
+                                              style={{height: 400}}>
+                                            <Typography variant="subtitle1" align="center">
+                                                {chartDataResponse.title}
+                                            </Typography>
+                                            {this.state.winLossData && (
+                                                <PlayerPlayStyleChart
+                                                    names={["Win", "Loss"]}
+                                                    data={this.state.winLossData.map((data) => data.chartDatas[i])}
+                                                />
+                                            )}
+                                        </Grid>
+                                    )
+                                })
+                                :
+                                this.state.data.chartDatas.map((chartDataResponse) => (
                                     <Grid item xs={12} md={5} lg={3} key={chartDataResponse.title}
                                           style={{height: 400}}>
                                         <Typography variant="subtitle1" align="center">
@@ -103,11 +102,10 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
                                         </Typography>
                                         <PlayerPlayStyleChart names={["Player"]} data={[chartDataResponse]}/>
                                     </Grid>
-                                )
-                            })
-                        }
-                    </>
-                    }
+                                ))
+                            }
+                        </>
+                    )}
                 </LoadableWrapper>
             </Grid>
         )

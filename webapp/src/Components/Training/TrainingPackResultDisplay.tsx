@@ -46,11 +46,12 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
         )
         const viewer = (this.state.game && this.state.frame) ? (
             <Grid item xs={isWidthUpLg ? 5 : 12} style={{minHeight: "40vh"}}>
-                <Viewer replayId={this.state.game}
-                        frameMin={this.state.frame}
-                        frameCount={150}
-                        pauseOnStart={true}
-                        compact={true}
+                <Viewer
+                    replayId={this.state.game}
+                    frameMin={this.state.frame}
+                    frameCount={150}
+                    pauseOnStart={true}
+                    compact={true}
                 />
             </Grid>
         ) : null
@@ -61,26 +62,33 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
 
         const {trainingPacks, page, limit} = this.props
         const {selectable} = this.state
+        const subheader = (
+            "Packs can be placed in " +
+            "Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining " +
+            "and accessed in Training > Created"
+        )
+
         return (
             <Grid container>
                 <Grid item xs={(this.state.game && isWidthUpLg) ? 7 : 12}>
-                    {!isWidthUpLg && viewer
-                    }
-                    {trainingPacks.packs.length > 0 ?
+                    {!isWidthUpLg && viewer}
+                    {trainingPacks.packs.length > 0 ? (
                         <Card>
-                            <CardHeader title="Training Packs"
-                                        subheader={"Packs can be placed in " +
-                                        "Documents\\My Games\\Rocket League\\TAGame\\Training\\[id]\\MyTraining " +
-                                        "and accessed in Training > Created"} action={
-                                <div style={{paddingRight: 8}}>
-                                    <div style={{display: "flex"}}>
-                                        {linkButton}
+                            <CardHeader
+                                title="Training Packs"
+                                subheader={subheader}
+                                action={(
+                                    <div style={{paddingRight: 8}}>
+                                        <div style={{display: "flex"}}>
+                                            {linkButton}
+                                        </div>
                                     </div>
-                                </div>}/>
-                            {selectable ?
+                                )}
+                            />
+                            {selectable ? (
                                 <List dense style={isWidthUpLg ? {} : {overflowY: "scroll", height: "50vh"}}>
                                     <Divider/>
-                                    {this.props.trainingPacks.packs.map((pack: TrainingPack, i) =>
+                                    {this.props.trainingPacks.packs.map((pack: TrainingPack, i) => (
                                         <>
                                             <TrainingPackDisplayRow
                                                 key={pack.guid}
@@ -97,13 +105,13 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                                 }}
                                                 gameMap={this.props.trainingPacks.games}
                                             />
-                                            {!(i === this.props.trainingPacks.packs.length) && <Divider/>}
+                                            {i !== this.props.trainingPacks.packs.length && <Divider/>}
                                         </>
-                                    )}
+                                    ))}
                                 </List>
-                                :
+                            ) : (
                                 <div style={isWidthUpLg ? {} : {overflowY: "scroll", height: "30vh"}}>
-                                    {this.props.trainingPacks.packs.map((pack: TrainingPack, i) =>
+                                    {this.props.trainingPacks.packs.map((pack: TrainingPack, i) => (
                                         <TrainingPackDisplayRow
                                             key={pack.guid}
                                             pack={pack}
@@ -112,10 +120,9 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                                             }}
                                             gameMap={this.props.trainingPacks.games}
                                         />
-                                    )
-                                    }
+                                    ))}
                                 </div>
-                            }
+                            )}
                             <TablePagination
                                 component="div"
                                 count={trainingPacks.totalCount}
@@ -127,12 +134,12 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                             />
 
                         </Card>
-                        :
+                    ) : (
                         <Typography variant="subtitle1" align="center">
                             <i>No training packs exist.</i>
                             {linkButton}
                         </Typography>
-                    }
+                    )}
                 </Grid>
                 {isWidthUpLg && viewer}
                 {createPackDialog}

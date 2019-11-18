@@ -23,18 +23,17 @@ export class StatusPage extends React.PureComponent<{}, State> {
                             <CardHeader title="Queue"/>
                             <CardContent>
                                 <LoadableWrapper load={this.getQueueStatuses}>
-                                    {this.state.queueStatuses &&
-                                    <List>
-                                        {this.state.queueStatuses.map((queueStatus) => {
-                                            return (
+                                    {this.state.queueStatuses && (
+                                        <List>
+                                            {this.state.queueStatuses.map((queueStatus) => (
                                                 <ListItem key={queueStatus.priority}>
-                                                    <ListItemText primary={queueStatus.name}
-                                                                  secondary={queueStatus.count}/>
+                                                    <ListItemText
+                                                        primary={queueStatus.name}
+                                                        secondary={queueStatus.count}/>
                                                 </ListItem>
-                                            )
-                                        })}
-                                    </List>
-                                    }
+                                            ))}
+                                        </List>
+                                    )}
                                 </LoadableWrapper>
                             </CardContent>
                         </Card>

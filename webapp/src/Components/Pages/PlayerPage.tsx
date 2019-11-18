@@ -39,17 +39,17 @@ export class PlayerPage extends React.PureComponent<Props, State> {
             <BasePage>
                 <Grid container spacing={3} justify="center">
                     <LoadableWrapper load={this.getPlayerForPage} reloadSignal={this.state.reloadSignal}>
-                        {this.state.player &&
-                        <Switch>
-                            <Route path={overviewPath}
-                                   render={() => <PlayerOverview player={this.state.player as Player}/>}/>
-                            <Redirect from={matchHistoryPath}
-                                      to={REPLAYS_SEARCH_PAGE_LINK({
-                                          playerIds: [this.state.player.id]
-                                      })}/>
-                            <Redirect from="*" to={overviewPath}/>
-                        </Switch>
-                        }
+                        {this.state.player && (
+                            <Switch>
+                                <Route path={overviewPath}
+                                       render={() => <PlayerOverview player={this.state.player as Player}/>}/>
+                                <Redirect from={matchHistoryPath}
+                                          to={REPLAYS_SEARCH_PAGE_LINK({
+                                              playerIds: [this.state.player.id]
+                                          })}/>
+                                <Redirect from="*" to={overviewPath}/>
+                            </Switch>
+                        )}
                     </LoadableWrapper>
                 </Grid>
             </BasePage>

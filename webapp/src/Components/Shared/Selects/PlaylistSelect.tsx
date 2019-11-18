@@ -98,18 +98,19 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
                     value={this.props.multiple ? this.props.selectedPlaylists : this.props.selectedPlaylist}
                     onChange={handleChange as React.ChangeEventHandler<{ value: unknown }>}
                     autoWidth
-                    input={
+                    input={(
                         <Input
                             endAdornment={
-                                this.props.multiple && this.props.selectedPlaylists.length > 0 &&
-                                <IconButton onClick={this.clearSelection}>
-                                    <Tooltip title="Clear selection">
-                                        <Clear/>
-                                    </Tooltip>
-                                </IconButton>
+                                this.props.multiple && this.props.selectedPlaylists.length > 0 && (
+                                    <IconButton onClick={this.clearSelection}>
+                                        <Tooltip title="Clear selection">
+                                            <Clear/>
+                                        </Tooltip>
+                                    </IconButton>
+                                )
                             }
                         />
-                    }
+                    )}
                 >
                     {this.getFilteredPlaylists()
                         .map((playlist) => (
@@ -126,60 +127,60 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
 
         const filterCurrentCheckbox = (
             <FormControlLabel
-                control={
+                control={(
                     <Checkbox
                         checked={this.state.filterCurrent}
                         onChange={this.handleCheckboxChange("filterCurrent")}
                     />
-                }
+                )}
                 label="Show only current playlists"
             />
         )
         const filterStandardCheckbox = (
             <FormControlLabel
-                control={
+                control={(
                     <Checkbox
                         checked={this.state.filterStandardMode}
                         onChange={this.handleCheckboxChange("filterStandardMode")}
                     />
-                }
+                )}
                 label="Show only standard modes"
             />
         )
         const filterRankedCheckbox = (
             <FormControlLabel
-                control={
+                control={(
                     <Checkbox
                         checked={this.state.filterRanked}
                         onChange={this.handleCheckboxChange("filterRanked")}
                     />
-                }
+                )}
                 label="Show only ranked playlists"
             />
         )
 
         return (
             <>
-                {!this.props.dropdownOnly &&
-                <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
-                    <ExpansionPanelSummary
-                        classes={{root: classes.root, content: classes.content}}
-                        expandIcon={
-                            <Tooltip title="Playlist options">
-                                <ExpandMore/>
-                            </Tooltip>
-                        }
-                        IconButtonProps={{onClick: this.handleExpandedChange}}
-                    >
-                        {playlistsMultiSelect}
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.panelDetails}>
-                        {filterCurrentCheckbox}
-                        {filterStandardCheckbox}
-                        {filterRankedCheckbox}
-                    </ExpansionPanelDetails>
-                </ExpansionPanel>
-                }
+                {!this.props.dropdownOnly && (
+                    <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
+                        <ExpansionPanelSummary
+                            classes={{root: classes.root, content: classes.content}}
+                            expandIcon={(
+                                <Tooltip title="Playlist options">
+                                    <ExpandMore/>
+                                </Tooltip>
+                            )}
+                            IconButtonProps={{onClick: this.handleExpandedChange}}
+                        >
+                            {playlistsMultiSelect}
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails className={classes.panelDetails}>
+                            {filterCurrentCheckbox}
+                            {filterStandardCheckbox}
+                            {filterRankedCheckbox}
+                        </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                )}
                 {this.props.dropdownOnly && playlistsMultiSelect}
             </>
         )

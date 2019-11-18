@@ -37,25 +37,28 @@ class UploadDialogWrapperComponent extends React.PureComponent<Props, State> {
         const Icon = CloudUpload
         return (
             <>
-                {isWidthUp("md", this.props.width) &&
-                <>
-                    {this.props.buttonStyle === "floating" &&
-                    <UploadFloatingButton handleOpen={this.handleOpen} Icon={Icon}/>}
-                    {this.props.buttonStyle === "contained" &&
-                    <UploadContainedButton handleOpen={this.handleOpen} Icon={Icon}/>}
-                    {this.props.buttonStyle === "icon" &&
-                    <Tooltip title="Upload replays">
-                        <IconButton onClick={this.handleOpen}>
-                            {this.state.currentUploadsCount === 0 ?
-                                <Icon/>
-                                :
-                                <Badge badgeContent={this.state.currentUploadsCount} color="secondary">
-                                    <Icon/>
-                                </Badge>
-                            }
-                        </IconButton>
-                    </Tooltip>}
-                </>}
+                {isWidthUp("md", this.props.width) && (
+                    <>
+                        {this.props.buttonStyle === "floating" &&
+                        <UploadFloatingButton handleOpen={this.handleOpen} Icon={Icon}/>}
+                        {this.props.buttonStyle === "contained" &&
+                        <UploadContainedButton handleOpen={this.handleOpen} Icon={Icon}/>}
+                        {this.props.buttonStyle === "icon" && (
+                            <Tooltip title="Upload replays">
+                                <IconButton onClick={this.handleOpen}>
+                                    {this.state.currentUploadsCount === 0 ?
+                                        <Icon/>
+                                        : (
+                                            <Badge badgeContent={this.state.currentUploadsCount} color="secondary">
+                                                <Icon/>
+                                            </Badge>
+                                        )
+                                    }
+                                </IconButton>
+                            </Tooltip>
+                        )}
+                    </>
+                )}
                 <UploadDialog open={this.state.open} handleClickOutside={this.handleClose}/>
                 {this.props.children}
             </>

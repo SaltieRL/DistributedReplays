@@ -30,17 +30,15 @@ class TagsPageComponent extends React.PureComponent<Props> {
             <BasePage>
                 <Grid container spacing={3} justify="center">
                     <Grid item xs={12} container justify="center">
-                        {tags !== null &&
-                        <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
-                            <Paper>
-                                <List>
-                                    {tags.map((tag) => (
-                                        <TagPageListItem key={tag.name} tag={tag}/>
-                                    ))}
-                                </List>
-                            </Paper>
-                        </Grid>
-                        }
+                        {tags !== null && (
+                            <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
+                                <Paper>
+                                    <List>
+                                        {tags.map((tag) => <TagPageListItem key={tag.name} tag={tag}/>)}
+                                    </List>
+                                </Paper>
+                            </Grid>
+                        )}
                     </Grid>
                 </Grid>
             </BasePage>

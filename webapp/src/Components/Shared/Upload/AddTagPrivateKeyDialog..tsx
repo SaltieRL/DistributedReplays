@@ -39,9 +39,9 @@ export class AddTagPrivateKeyDialog extends React.PureComponent<Props, State> {
                     <DialogContentText>
                         Add private keys to upload replays to a tag belonging to another user.
                         {" Private keys can be found at the "}
-                        {<Link to={TAGS_PAGE_LINK}>
+                        <Link to={TAGS_PAGE_LINK}>
                             tags page
-                        </Link>}
+                        </Link>
                         .
                     </DialogContentText>
                     <TextField

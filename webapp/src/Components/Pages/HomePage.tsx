@@ -152,34 +152,34 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             {isWidthUp("md", this.props.width) ? (
                                 <>
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Twitch style={{width: "100%"}}/>
+                                        <Twitch cardStyle={{width: "100%"}}/>
                                     </Grid>
 
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Recent style={{width: "100%"}}/>
+                                        <Recent cardStyle={{width: "100%"}}/>
                                     </Grid>
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Leaderboards style={{width: "100%"}}/>
+                                        <Leaderboards cardStyle={{width: "100%"}}/>
                                     </Grid>
 
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Patreon style={{width: "100%"}}/>
+                                        <Patreon cardStyle={{width: "100%"}}/>
                                     </Grid>
                                 </>
                             ) : (
                                 <>
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Recent style={{width: "100%"}}/>
+                                        <Recent cardStyle={{width: "100%"}}/>
                                     </Grid>
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Leaderboards style={{width: "100%"}}/>
+                                        <Leaderboards cardStyle={{width: "100%"}}/>
                                     </Grid>
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Twitch style={{width: "100%"}}/>
+                                        <Twitch cardStyle={{width: "100%"}}/>
                                     </Grid>
 
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Patreon style={{width: "100%"}}/>
+                                        <Patreon cardStyle={{width: "100%"}}/>
                                     </Grid>
                                 </>
                             )}

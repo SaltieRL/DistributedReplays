@@ -29,25 +29,25 @@ export class ReplaysGroupTable extends React.PureComponent<Props, State> {
     public render() {
         return (
             <>
-                {this.props.replays.length !== 0 ?
+                {this.props.replays.length !== 0 ? (
                     // TODO: Make LoadableWrapper be shared with ReplayDetailsCharts.
                     // It currently reloads on tab-change.
                     <LoadableWrapper load={this.getStatsForReplays} reloadSignal={this.state.reloadSignal}>
-                        {this.state.basicStats.length > 0 ?
+                        {this.state.basicStats.length > 0 ? (
                             <TableScrollWrapper style={{overflowX: "scroll"}} basicStats={this.state.basicStats}/>
-                            :
+                        ) : (
                             <Grid item xs={12}>
                                 <Typography align="center" style={{width: "100%"}}>
                                     These stats have not yet been calculated for this replay
                                 </Typography>
                             </Grid>
-                        }
+                        )}
                     </LoadableWrapper>
-                    :
+                ) : (
                     <Typography align="center" gutterBottom>
                         No replay selected
                     </Typography>
-                }
+                )}
             </>
         )
     }

@@ -59,15 +59,15 @@ class SearchComponent extends React.PureComponent<Props, State> {
 
         return (
             <>
-                {this.props.usePaper ?
+                {this.props.usePaper ? (
                     <Paper style={containerStyle}>
                         {inputField}
                     </Paper>
-                    :
+                ) : (
                     <div style={containerStyle}>
                         {inputField}
                     </div>
-                }
+                )}
                 {this.state.resolvedId &&
                 <Redirect push to={PLAYER_PAGE_LINK(this.state.resolvedId)}/>
                 }

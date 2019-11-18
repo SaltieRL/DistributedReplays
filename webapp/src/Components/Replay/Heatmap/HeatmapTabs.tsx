@@ -32,11 +32,10 @@ class HeatmapTabsComponent extends React.PureComponent<Props> {
                   variant={belowXs ? "scrollable" : "standard"}
                   scrollButtons={belowXs ? "on" : undefined}
             >
-                {Object.keys(HeatmapSubcategory).map((subcategory) => {
-                    const value = HeatmapSubcategory[subcategory]
-                    return <Tab label={value} value={value} key={value}
-                                icon={<FontAwesomeIcon icon={categoryToIcon[value]}/>}/>
-                })}
+                {Object.values(HeatmapSubcategory).map((subcategoryValue) => (
+                    <Tab label={subcategoryValue} value={subcategoryValue} key={subcategoryValue}
+                         icon={<FontAwesomeIcon icon={categoryToIcon[subcategoryValue]}/>}/>
+                ))}
             </Tabs>
         )
     }

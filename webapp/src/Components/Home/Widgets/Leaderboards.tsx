@@ -12,7 +12,7 @@ import { LeaderboardList } from "../../Leaderboards/LeaderboardList"
 import { LeaderboardWithMetadata } from "../../Leaderboards/PlaylistLeaderboardGrid"
 
 interface Props {
-    style: any
+    cardStyle: React.CSSProperties
 }
 
 interface State {
@@ -49,19 +49,18 @@ export class Leaderboards extends React.Component<Props, State> {
                 (leaderboard) => leaderboard.playlistMetadata.ranked && leaderboard.playlistMetadata.standardMode
             )
             return (
-                <Card style={this.props.style}>
+                <Card style={this.props.cardStyle}>
                     <CardHeader title={"Upload Leaderboard"}
                                 subheader={"Most uploads in the last month"}/>
                     <CardContent>
-                        {this.state.leaderboards ? (
-                            <>
-                                <LeaderboardList
-                                    leaderboard={filteredLeaderboardsWithMetadata[Math.floor(Math.random() * 4)]}/>
-                            </>) : null}
+                        {this.state.leaderboards && (
+                            <LeaderboardList
+                                leaderboard={filteredLeaderboardsWithMetadata[Math.floor(Math.random() * 4)]}/>
+                        )}
                     </CardContent>
                     <CardActions>
                         <Link to={LEADERBOARDS_LINK}
-                                style={{textDecoration: "none"}}>
+                              style={{textDecoration: "none"}}>
                             <Button variant="text">
                                 <Typography variant="subtitle1">
                                     View Full

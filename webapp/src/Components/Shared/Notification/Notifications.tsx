@@ -38,10 +38,11 @@ class NotificationsComponent extends React.PureComponent<Props, State> {
     public render() {
         const notificationsCount = this.props.notifications.length
         return (
-            <NotificationSnackbar open={this.state.open}
-                                  handleClose={this.handleClose}
-                                  {...this.state.currentNotification}
-                                  count={notificationsCount > 1 ? notificationsCount : undefined}
+            <NotificationSnackbar
+                open={this.state.open}
+                handleClose={this.handleClose}
+                {...this.state.currentNotification}
+                count={notificationsCount > 1 ? notificationsCount : undefined}
             />
         )
     }

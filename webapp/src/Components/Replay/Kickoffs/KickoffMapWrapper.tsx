@@ -30,13 +30,14 @@ class KickoffMapWrapperComponent extends React.PureComponent<Props, State> {
     public render() {
         const size = this.getSize()
         const kickoffField = (
-            <KickoffField key={this.props.kickoffIndex}
-                          playerList={this.props.kickoffData.players}
-                          players={this.props.players}
-                          onMouseover={this.onMouseover}
-                          onMouseout={this.onMouseout}
-                          width={size[0]}
-                          height={size[1]}
+            <KickoffField
+                key={this.props.kickoffIndex}
+                playerList={this.props.kickoffData.players}
+                players={this.props.players}
+                onMouseover={this.onMouseover}
+                onMouseout={this.onMouseout}
+                width={size[0]}
+                height={size[1]}
             />
         )
         return (
@@ -47,14 +48,12 @@ class KickoffMapWrapperComponent extends React.PureComponent<Props, State> {
                 </Grid>
                 <Grid item xs={12} lg={6} xl={7} style={{padding: "20px 40px 20px 40px"}} container>
                     <Grid item xs={12}>
-                        {
-                            <KickoffCountsTable
-                                kickoff={this.props.kickoffData}
-                                players={this.props.players}
-                                replay={this.props.replay}
-                                highlight={0}
-                            />
-                        }
+                        <KickoffCountsTable
+                            kickoff={this.props.kickoffData}
+                            players={this.props.players}
+                            replay={this.props.replay}
+                            highlight={0}
+                        />
                     </Grid>
                 </Grid>
             </>

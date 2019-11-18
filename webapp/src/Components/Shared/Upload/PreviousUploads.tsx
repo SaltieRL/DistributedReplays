@@ -34,7 +34,7 @@ export class PreviousUploads extends React.PureComponent<{}, State> {
                 <DialogContent>
                     <div style={{padding: 16}}>
                         <Grid container spacing={2} justify="center">
-                            {this.state.uploadTasks.length === 0 ?
+                            {this.state.uploadTasks.length === 0 ? (
                                 <Grid item xs="auto">
                                     <Typography align="center">
                                         <i>No previous uploads found.</i>
@@ -43,9 +43,9 @@ export class PreviousUploads extends React.PureComponent<{}, State> {
                                         NB. Upload tasks are associated with session and not user.
                                     </Typography>
                                 </Grid>
-                                :
+                            ) : (
                                 (this.state.uploadStatuses) &&
-                                (this.state.uploadStatuses.length === this.state.uploadTasks.length) ?
+                                (this.state.uploadStatuses.length === this.state.uploadTasks.length) ? (
                                     <List>
                                         {this.state.uploadTasks
                                             .sort((a, b) => b.dateCreated.diff(a.dateCreated))
@@ -60,12 +60,13 @@ export class PreviousUploads extends React.PureComponent<{}, State> {
                                                 </ListItem>
                                             ))}
                                     </List>
-                                    :
+                                ) : (
                                     <Typography>
                                         <i>Loading</i>
                                     </Typography>
 
-                            }
+                                )
+                            )}
                         </Grid>
                     </div>
                 </DialogContent>

@@ -117,22 +117,22 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                     <Typography variant={typographyVariant} noWrap>
                         {replay.name}
                     </Typography>
-                    {selectProps &&
-                    <Typography variant="caption" noWrap>
-                        {replay.players
-                            .map((player) => player.name)
-                            .join(", ")
-                        }
-                    </Typography>
-                    }
+                    {selectProps && (
+                        <Typography variant="caption" noWrap>
+                            {replay.players
+                                .map((player) => player.name)
+                                .join(", ")
+                            }
+                        </Typography>
+                    )}
                 </Grid>
                 {this.props.loggedInUser &&
                 (this.props.loggedInUser.admin ||  // User is admin, or user is player in game
-                    this.props.replay.players.map((player) => player.id).indexOf(this.props.loggedInUser.id) !== -1) &&
-                <Grid item xs="auto" className={classes.listGridItem}>
-                    <VisibilityToggle replay={this.props.replay}/>
-                </Grid>
-                }
+                    this.props.replay.players.map((player) => player.id).includes(this.props.loggedInUser.id)) && (
+                    <Grid item xs="auto" className={classes.listGridItem}>
+                        <VisibilityToggle replay={this.props.replay}/>
+                    </Grid>
+                )}
                 <Grid item xs="auto" className={classes.listGridItem}>
                     <TagDialogWrapper
                         replay={this.props.replay}
@@ -177,12 +177,14 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
 
         return (
             <>
-                {selectProps ?
-                    <ListItem selected={selectProps.selected}
-                              onClick={() => selectProps!.handleSelectChange(!selectProps.selected)}>
+                {selectProps ? (
+                    <ListItem
+                        selected={selectProps.selected}
+                        onClick={() => selectProps!.handleSelectChange(!selectProps.selected)}
+                    >
                         {contents}
                     </ListItem>
-                    :
+                ) : (
                     <ExpansionPanel>
                         <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
                             {contents}
@@ -195,7 +197,7 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
                             }
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
-                }
+                )}
             </>
         )
     }

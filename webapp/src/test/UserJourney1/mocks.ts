@@ -1,3 +1,5 @@
+/* tslint:disable:max-line-length */
+
 import { parseReplay } from "../../Models"
 
 export const testPlayerName = "SquishyMuffinz"

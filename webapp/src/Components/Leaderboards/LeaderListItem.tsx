@@ -11,6 +11,7 @@ export class LeaderListItem extends React.PureComponent<Props> {
     public render() {
         const {leader} = this.props
         return (
+            // @ts-ignore
             <ListItem key={leader.id_} button component={this.createLink}>
                 <ListItemAvatar>
                     <Avatar alt={`Avatar ${leader.name}`} src={leader.avatar}/>

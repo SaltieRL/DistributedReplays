@@ -152,12 +152,12 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
 
         return (
             <>
-                {selectProps ?
+                {selectProps ? (
                     <ListItem selected={selectProps.selected}
                               onClick={() => selectProps!.handleSelectChange(!selectProps.selected)}>
                         {contents}
                     </ListItem>
-                    :
+                ) : (
                     <ExpansionPanel>
                         <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
                             {contents}
@@ -206,7 +206,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                                     </Grid>
                                 </ListItem>
                                 <Divider/>
-                                {pack.shots.map((shot: TrainingPackShot, i) => {
+                                {pack.shots.map((shot: TrainingPackShot, i) => {  // TODO Refactorise into component
                                     const minutes = Math.floor(shot.timeRemaining / 60)
                                     let seconds = (shot.timeRemaining % 60).toString()
                                     if (seconds.length === 1) {
@@ -282,7 +282,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                             </List>
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
-                }
+                )}
             </>
         )
     }

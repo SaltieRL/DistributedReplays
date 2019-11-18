@@ -45,13 +45,13 @@ export class OverviewMatchHistory extends React.PureComponent<Props, State> {
                 <Grid item xs={12}>
                     <LoadableWrapper load={this.getPlayerMatchHistory} reloadSignal={this.state.reloadSignal}>
                         {this.state.matchHistory &&
-                        this.state.matchHistory.replays.map((replay: Replay) =>
+                        this.state.matchHistory.replays.map((replay: Replay) => (
                             <OverviewMatchHistoryRow
                                 key={replay.id}
                                 replay={replay}
                                 player={this.props.player}
-                                useBoxScore={this.props.useBoxScore}/>)
-                        }
+                                useBoxScore={this.props.useBoxScore}/>
+                        ))}
                     </LoadableWrapper>
                 </Grid>
                 <Grid item xs={12}>

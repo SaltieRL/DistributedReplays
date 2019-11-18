@@ -28,11 +28,11 @@ export class PlayerNameDropdown extends React.PureComponent<Props, State> {
                       onClose={this.handleClose}
                       anchorEl={this.state.anchorElement}
                 >
-                    {this.props.pastNames.map((name) =>
+                    {this.props.pastNames.map((name) => (
                         <MenuItem key={name} onClick={this.handleClose}>
                             {name}
                         </MenuItem>
-                    )}
+                    ))}
                 </Menu>
             </>
         )

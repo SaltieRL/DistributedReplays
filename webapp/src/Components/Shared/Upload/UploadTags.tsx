@@ -68,7 +68,9 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
                                 <Select
                                     multiple
                                     value={selectedTagNames}
-                                    onChange={this.handleTagsSelectChange as React.ChangeEventHandler<{ value: unknown }>}
+                                    onChange={
+                                        this.handleTagsSelectChange as React.ChangeEventHandler<{ value: unknown }>
+                                    }
                                     autoWidth
                                     renderValue={(tagNames) => (
                                         <div style={{display: "flex", flexWrap: "wrap"}}>
@@ -106,9 +108,9 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
                             <Typography paragraph>
                                 {"N.B. Only tags with generated private IDs will appear here. " +
                                 "Private IDs can be generated for tags at the "}
-                                {<Link to={TAGS_PAGE_LINK}>
+                                <Link to={TAGS_PAGE_LINK}>
                                     tags page
-                                </Link>}
+                                </Link>
                                 .
                             </Typography>
                         </Grid>

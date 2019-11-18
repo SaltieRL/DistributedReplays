@@ -44,16 +44,15 @@ class LoadableWrapperComponent extends React.PureComponent<Props, State> {
         const {loadingState} = this.state
         return (
             <>
-                {loadingState === "loading" &&
-                <div className={classes.loadableWrapper}>
-                    <CircularProgress/>
-                </div>
-                }
+                {loadingState === "loading" && (
+                    <div className={classes.loadableWrapper}>
+                        <CircularProgress/>
+                    </div>
+                )}
 
                 {loadingState === "loaded" && this.props.children}
 
-                {loadingState === "failed" &&
-                <>
+                {loadingState === "failed" && (
                     <div className={classes.loadableWrapper}>
                         <Typography variant="subtitle1">
                             Failed to load the required data.
@@ -62,9 +61,7 @@ class LoadableWrapperComponent extends React.PureComponent<Props, State> {
                             Reload
                         </Button>
                     </div>
-
-                </>
-                }
+                )}
             </>
         )
     }

@@ -35,18 +35,16 @@ class AdminLogResultDisplayComponent extends React.PureComponent<Props, State> {
                 <Grid item xs={12}>
                     <Card>
                         <CardHeader title="Admin Logs" action={
-                            <TextField onChange={this.handleSearchChange}/>} />
+                            <TextField onChange={this.handleSearchChange}/>}/>
                         <div>
-                            {this.props.adminLogs.logs.map((log: AdminLog, i) =>
+                            {this.props.adminLogs.logs.map((log: AdminLog, i) => (
                                 <>
                                     <AdminLogDisplayRow
                                         key={log.id}
                                         log={log}/>
-
-                                    {!(i === this.props.adminLogs.logs.length) && <Divider/>}
+                                    {i !== this.props.adminLogs.logs.length && <Divider/>}
                                 </>
-                            )
-                            }
+                            ))}
                         </div>
                         <TablePagination
                             component="div"

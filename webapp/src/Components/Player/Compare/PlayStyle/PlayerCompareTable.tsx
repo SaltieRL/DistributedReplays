@@ -44,16 +44,20 @@ export class PlayerCompareTable extends React.PureComponent<Props> {
                         {header}
                     </TableHead>
                     <TableBody>
-                        {stats.map((stat) => (<TableRow key={stat.name}>
+                        {stats.map((stat) => (
+                                <TableRow key={stat.name}>
                                     <TableCell>
                                         {stat.name}
                                     </TableCell>
-                                    {stat.values.map((value, i) =>
-                                        <TableCell key={i}
-                                                   style={this.getTableCellStyles(value, stat,
-                                                       (heatmap && rawPlayers.length > 1))}>
+                                    {stat.values.map((value, i) => (
+                                        <TableCell
+                                            key={i}
+                                            style={this.getTableCellStyles(
+                                                value, stat, (heatmap && rawPlayers.length > 1)
+                                            )}>
                                             {roundNumberToMaxDP(value)}
-                                        </TableCell>)}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
                             )
                         )}

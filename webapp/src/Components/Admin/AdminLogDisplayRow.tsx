@@ -82,10 +82,12 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                 </Grid>
                 <Grid item xs={3} className={classes.listGridItem}>
                     <Typography>
-                        {log.log && <>
-                            {log.log.substr(0, 30)}
-                            {log.log.length > 30 && "..."}
-                        </>}
+                        {log.log && (
+                            <>
+                                {log.log.substr(0, 30)}
+                                {log.log.length > 30 && "..."}
+                            </>
+                        )}
                     </Typography>
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
@@ -95,21 +97,24 @@ class AdminLogDisplayRowComponent extends React.PureComponent<Props> {
                 </Grid>
                 <Grid item xs={1} className={classes.listGridItem}>
                     <Typography>
-                        {log.game &&
-                        <IconButton
-                            href={REPLAY_PAGE_LINK(log.game)}
-                            className={classes.iconButton}
-                            onClick={(event) => event.stopPropagation()}
-                        >
-                            <InsertChart/>
-                        </IconButton>}
-                        {log.result === 2 &&
-                        <IconButton
-                            href={"/api/admin/failed/download?id=" + log.uuid}
-                            className={classes.iconButton}
-                            onClick={(event) => event.stopPropagation()}
-                        > <OpenInNew/>
-                        </IconButton>}
+                        {log.game && (
+                            <IconButton
+                                href={REPLAY_PAGE_LINK(log.game)}
+                                className={classes.iconButton}
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <InsertChart/>
+                            </IconButton>
+                        )}
+                        {log.result === 2 && (
+                            <IconButton
+                                href={"/api/admin/failed/download?id=" + log.uuid}
+                                className={classes.iconButton}
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <OpenInNew/>
+                            </IconButton>
+                        )}
                     </Typography>
                 </Grid>
             </Grid>

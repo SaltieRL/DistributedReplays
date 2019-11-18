@@ -9,7 +9,7 @@ import { PatreonResponse } from "../../../Models/types/Homepage"
 import { getPatreonProgress } from "../../../Requests/Home"
 
 interface Props {
-    style: any
+    cardStyle: React.CSSProperties
 }
 
 interface State {
@@ -29,7 +29,7 @@ export class Patreon extends React.Component<Props, State> {
 
     public render() {
         return (
-            <Card style={this.props.style}>
+            <Card style={this.props.cardStyle}>
                 <CardHeader
                     title={"Patreon Goal Progress"}
                     subheader={"100% of contributions go to server costs"}

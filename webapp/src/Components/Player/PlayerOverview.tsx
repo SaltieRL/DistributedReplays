@@ -53,7 +53,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
 
         return (
             <>
-                {isWidthUp("md", this.props.width) ?
+                {isWidthUp("md", this.props.width) ? (
                     <>
                         <Grid item xs={5} lg={4} xl={3}>
                             {playerSideBar}
@@ -77,44 +77,40 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                             </Grid>
                         </Grid>
                     </>
-                    :
+                ) : (
                     <Grid item xs={12}>
                         <Card>
                             <Tabs value={this.state.selectedMobileTab}
                                   onChange={this.handleSelectMobileTab}
                                   centered
                             >
-                                {playerViewTabs.map((playerViewTab: PlayerViewTab) =>
+                                {playerViewTabs.map((playerViewTab: PlayerViewTab) => (
                                     <Tab label={playerViewTab} value={playerViewTab} key={playerViewTab}
                                          icon={<FontAwesomeIcon icon={tabToIcon[playerViewTab]}/>}/>
-                                )}
+                                ))}
                             </Tabs>
                             <Divider/>
                             <CardContent>
-                                {this.state.selectedMobileTab === "Profile" &&
-                                playerSideBar
-                                }
-                                {this.state.selectedMobileTab === "Playstyle" &&
-                                <>
-                                    <div style={{width: "100%", textAlign: "right"}}>
-                                        <PlayStyleActions
-                                            player={this.props.player}
-                                            playlist={this.state.playlist}
-                                            winLossMode={this.state.winLossMode}
-                                            handlePlaylistChange={this.handlePlaylistChange}
-                                            handleWinsLossesChange={this.handleWinsLossesChange}
-                                        />
-                                    </div>
-                                    {playerPlayStyle}
-                                </>
-                                }
-                                {this.state.selectedMobileTab === "Match History" &&
-                                playerMatchHistory
-                                }
+                                {this.state.selectedMobileTab === "Profile" && playerSideBar}
+                                {this.state.selectedMobileTab === "Playstyle" && (
+                                    <>
+                                        <div style={{width: "100%", textAlign: "right"}}>
+                                            <PlayStyleActions
+                                                player={this.props.player}
+                                                playlist={this.state.playlist}
+                                                winLossMode={this.state.winLossMode}
+                                                handlePlaylistChange={this.handlePlaylistChange}
+                                                handleWinsLossesChange={this.handleWinsLossesChange}
+                                            />
+                                        </div>
+                                        {playerPlayStyle}
+                                    </>
+                                )}
+                                {this.state.selectedMobileTab === "Match History" && playerMatchHistory}
                             </CardContent>
                         </Card>
                     </Grid>
-                }
+                )}
             </>
         )
     }

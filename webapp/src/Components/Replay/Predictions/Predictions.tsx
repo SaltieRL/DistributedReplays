@@ -27,16 +27,16 @@ export class Predictions extends React.PureComponent<Props, State> {
                 <CardContent>
                     <Grid container spacing={4} justify="center">
                         <LoadableWrapper load={this.getPredictedRanks}>
-                            {this.state.predictedRanks ?
+                            {this.state.predictedRanks ? (
                                 <Grid item xs="auto" style={{overflowX: "auto"}}>
                                     <PredictedRanksTable predictedRanks={this.state.predictedRanks}
                                                          replay={this.props.replay}/>
                                 </Grid>
-                                :
+                            ) : (
                                 <Grid item xs={12}>
                                     <Typography>No predictions for this playlist are available.</Typography>}
                                 </Grid>
-                            }
+                            )}
                         </LoadableWrapper>
                     </Grid>
                 </CardContent>

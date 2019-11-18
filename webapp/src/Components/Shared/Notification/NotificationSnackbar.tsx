@@ -102,18 +102,17 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
             >
                 <SnackbarContent
                     className={classes[variant]}
-                    message={
+                    message={(
                         <Typography align="center" className={classes.message}>
                             <Icon className={classes.icon}/>
                             {message}
-                        </Typography>}
-                    action={count ?
+                        </Typography>
+                    )}
+                    action={count ? (
                         <Badge badgeContent={count} color="primary">
                             {closeButton}
                         </Badge>
-                        :
-                        closeButton
-                    }
+                    ) : closeButton}
                 />
             </Snackbar>
         )

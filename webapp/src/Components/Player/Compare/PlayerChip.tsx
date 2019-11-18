@@ -25,11 +25,11 @@ class PlayerChipComponent extends React.PureComponent<Props> {
         return (
             <Chip
                 avatar={<Avatar src={this.props.avatarLink}/>}
-                label={
+                label={(
                     <Typography noWrap variant="inherit">
                         {this.props.name}
                     </Typography>
-                }
+                )}
                 onDelete={this.props.onDelete}
                 onClick={this.onClick}
                 classes={{label: this.props.classes.label}}

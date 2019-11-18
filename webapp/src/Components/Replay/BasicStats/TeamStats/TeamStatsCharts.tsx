@@ -45,12 +45,13 @@ export class TeamStatsCharts extends React.PureComponent<Props, State> {
                                 </Grid>
                             )
                         })
-                    :
-                    <Grid item xs={12}>
-                        <Typography align="center" style={{width: "100%"}}>
-                            These stats have not yet been calculated for this replay
-                        </Typography>
-                    </Grid>
+                    : (
+                        <Grid item xs={12}>
+                            <Typography align="center" style={{width: "100%"}}>
+                                These stats have not yet been calculated for this replay
+                            </Typography>
+                        </Grid>
+                    )
                 }
             </LoadableWrapper>
         )

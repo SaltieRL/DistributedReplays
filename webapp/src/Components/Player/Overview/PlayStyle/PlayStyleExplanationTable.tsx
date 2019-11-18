@@ -50,7 +50,7 @@ export class PlayStyleExplanationTable extends React.PureComponent {
                 </TableHead>
                 <TableBody>
                     {explanations.map((explanation) => (
-                        <TableRow>
+                        <TableRow key={explanation.statName}>
                             <TableCell size="small">{explanation.statName}</TableCell>
                             <TableCell>{explanation.message}</TableCell>
                         </TableRow>

@@ -48,11 +48,11 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                                     <TableCell component="th" scope="row">
                                         {this.props.players[playerInfo.player_id].name}
                                     </TableCell>
-                                    {HEADERS.map((headerKey) => {
-                                        return (<TableCell key={headerKey + playerInfo.player_id} align="center">
+                                    {HEADERS.map((headerKey) => (
+                                        <TableCell key={headerKey + playerInfo.player_id} align="center">
                                             {playerInfo[headerKey]}
-                                        </TableCell>)
-                                    })}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
                             ))}
                         </TableBody>

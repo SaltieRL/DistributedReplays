@@ -1,5 +1,4 @@
 import { doGet } from "../../apiHandler/apiHandler"
-import { PlayerStats } from "../../Components/Player/Overview/SideBar/PlayerStatsCard"
 import { useMockData } from "../Config"
 
 const loadout = {

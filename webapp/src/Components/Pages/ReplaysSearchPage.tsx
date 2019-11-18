@@ -45,13 +45,13 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            {this.state.replaySearchResult && this.state.queryParams &&
-                            <ReplaysSearchResultDisplay
-                                replaySearchResult={this.state.replaySearchResult}
-                                handleUpdateTags={this.handleUpdateTags}
-                                page={this.state.queryParams.page}
-                                limit={this.state.queryParams.limit}/>
-                            }
+                            {this.state.replaySearchResult && this.state.queryParams && (
+                                <ReplaysSearchResultDisplay
+                                    replaySearchResult={this.state.replaySearchResult}
+                                    handleUpdateTags={this.handleUpdateTags}
+                                    page={this.state.queryParams.page}
+                                    limit={this.state.queryParams.limit}/>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>

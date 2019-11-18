@@ -24,10 +24,8 @@ const HEIGHT = 350
 class HeatmapContentComponent extends React.PureComponent<Props> {
     public render() {
         const {replay, classes} = this.props
-        const blueTeam =
-            replay.players.filter((player) => !player.isOrange)
-        const orangeTeam =
-            replay.players.filter((player) => player.isOrange)
+        const blueTeam = replay.players.filter((player) => !player.isOrange)
+        const orangeTeam = replay.players.filter((player) => player.isOrange)
         blueTeam.sort(this.nameCompareFn)
         orangeTeam.sort(this.nameCompareFn)
         return (
@@ -36,20 +34,22 @@ class HeatmapContentComponent extends React.PureComponent<Props> {
                     <Typography variant="h5" style={{borderBottom: "blue solid 1px"}}
                                 className={classes.heatmapTitle}>Blue</Typography>
                     <Grid container justify="space-evenly">
-                        {this.props.heatmapData !== null ?
-                            blueTeam.map(this.createHeatmap) : undefined}
+                        {this.props.heatmapData !== null && blueTeam.map(this.createHeatmap)}
                     </Grid>
                 </Grid>
                 <Grid item xs={6} style={{textAlign: "center"}}>
-                    <Typography variant="h5" style={{borderBottom: "orange solid 1px"}}
-                                className={classes.heatmapTitle}>Orange</Typography>
+                    <Typography
+                        variant="h5"
+                        style={{borderBottom: "orange solid 1px"}}
+                        className={classes.heatmapTitle}>
+                        Orange
+                    </Typography>
                     <Grid container justify="space-evenly">
-                        {this.props.heatmapData !== null ?
-                            orangeTeam.map(this.createHeatmap) : undefined}
+                        {this.props.heatmapData !== null && orangeTeam.map(this.createHeatmap)}
                     </Grid>
                 </Grid>
                 <Grid item xs={12} style={{textAlign: "center"}}>
-                    {(this.props.heatmapData !== null && "ball" in this.props.heatmapData.data) ?
+                    {(this.props.heatmapData !== null && "ball" in this.props.heatmapData.data) && (
                         <Grid item xs={12} style={{height: "500px"}}>
                             <Typography variant="h3">Ball</Typography>
                             <div style={{
@@ -70,7 +70,7 @@ class HeatmapContentComponent extends React.PureComponent<Props> {
                                     }}/>
                             </div>
                         </Grid>
-                        : undefined}
+                    )}
                 </Grid>
             </Grid>
         )

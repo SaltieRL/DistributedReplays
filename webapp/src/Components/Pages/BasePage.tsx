@@ -38,9 +38,10 @@ class BasePageComponent extends React.PureComponent<Props, State> {
         ) : this.props.backgroundImage
 
         return (
-            <Grid container direction="column"
-                  className={backgroundImage ? classes.withBackgroundImage : undefined}
-                  style={backgroundImage ? {backgroundImage: `url("${backgroundImage}")`} : undefined}
+            <Grid
+                container direction="column"
+                className={backgroundImage ? classes.withBackgroundImage : undefined}
+                style={backgroundImage ? {backgroundImage: `url("${backgroundImage}")`} : undefined}
             >
                 <NavBar toggleSideBar={this.toggleSideBar}/>
                 <SideBar open={this.state.sideBarOpen} onClose={this.toggleSideBar}/>

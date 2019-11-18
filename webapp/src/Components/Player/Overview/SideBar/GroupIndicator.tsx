@@ -62,15 +62,14 @@ class GroupIndicatorComponent extends React.PureComponent<Props> {
         }
         return (
             <>
-                {userRole !== 0 ?
+                {userRole !== 0 && (
                     <Tooltip title={names[userRole]}>
                         <Typography variant={this.props.variant ? this.props.variant : "inherit"}
                                     style={{color: this.props.faded ? "#ccc" : colors[userRole]}}>
                             <FontAwesomeIcon icon={letters[userRole]}/>
                         </Typography>
                     </Tooltip>
-                    :
-                    null}
+                )}
             </>
         )
     }

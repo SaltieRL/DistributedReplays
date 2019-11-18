@@ -7,7 +7,7 @@ import { RecentReplaysResponse } from "../../../Models/types/Homepage"
 import { getRecentReplays } from "../../../Requests/Home"
 
 interface Props {
-    style: any
+    cardStyle: React.CSSProperties
 }
 
 interface State {
@@ -27,39 +27,37 @@ export class Recent extends React.Component<Props, State> {
 
     public render() {
         return (
-            <Card style={this.props.style}>
+            <Card style={this.props.cardStyle}>
                 <CardHeader title={"Recent Submitted Replays"}/>
                 <CardContent>
-                    {this.state.recentReplays ? this.state.recentReplays.recent.map((replay: Replay) => {
-                        return (
-                            <a key={replay.id} href={`/replays/${replay.id}`} target={"_blank"}
-                               style={{textDecoration: "none"}}>
-                                <Grid item container xs={12} style={{padding: "25px"}}>
-                                    <Grid item xs={12} md={3}>
-                                        <Typography>
-                                            <span style={{color: "blue"}}>{replay.gameScore.team0Score}</span> - <span
-                                            style={{color: "orange"}}>{replay.gameScore.team1Score}</span>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} md={3}>
-                                        <Typography noWrap
-                                                    style={{fontStyle: "bold"}}>
-                                            {replay.gameMode}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} md={6}>
-                                        <Typography noWrap
-                                                    style={{fontStyle: "italic"}}>
-                                            {replay.map}
-                                        </Typography>
-                                    </Grid>
+                    {this.state.recentReplays && this.state.recentReplays.recent.map((replay: Replay) => (
+                        <a key={replay.id} href={`/replays/${replay.id}`} target={"_blank"}
+                           style={{textDecoration: "none"}}>
+                            <Grid item container xs={12} style={{padding: 25}}>
+                                <Grid item xs={12} md={3}>
+                                    <Typography>
+                                        <span style={{color: "blue"}}>{replay.gameScore.team0Score}</span> - <span
+                                        style={{color: "orange"}}>{replay.gameScore.team1Score}</span>
+                                    </Typography>
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <Divider/>
+                                <Grid item xs={12} md={3}>
+                                    <Typography noWrap
+                                                style={{fontStyle: "bold"}}>
+                                        {replay.gameMode}
+                                    </Typography>
                                 </Grid>
-                            </a>
-                        )
-                    }) : null}
+                                <Grid item xs={12} md={6}>
+                                    <Typography noWrap
+                                                style={{fontStyle: "italic"}}>
+                                        {replay.map}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Divider/>
+                            </Grid>
+                        </a>
+                    ))}
                 </CardContent>
 
             </Card>

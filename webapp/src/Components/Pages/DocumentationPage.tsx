@@ -6,22 +6,21 @@ import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { BasePage } from "./BasePage"
 
 interface State {
-    reloadSignal: boolean
     explanations?: Record<string, any>
 }
 
 export class DocumentationPage extends React.PureComponent<{}, State> {
-    constructor(props: any) {
+    constructor(props: {}) {
         super(props)
-        this.state = {reloadSignal: false}
+        this.state = {}
     }
 
     public render() {
         const {explanations} = this.state
         const documentation = (
-            <LoadableWrapper load={this.getDocumentation} reloadSignal={this.state.reloadSignal}>
-                {explanations !== undefined ?
-                    Object.keys(explanations).map((key: any) => (
+            <LoadableWrapper load={this.getDocumentation}>
+                {explanations && ( // TODO: Refactorise into components.
+                    Object.keys(explanations).map((key) => (
                         <Card raised style={{marginBottom: 20}} key={key}>
                             <CardHeader title={explanations[key].path}/>
                             {explanations[key].logged_in && (
@@ -43,7 +42,7 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                                                 <Table>
                                                     <TableBody>
                                                         {Object.keys(explanations[key].query_params)
-                                                            .map((index: any) => (
+                                                            .map((index) => (
                                                                 <QueryParams
                                                                     key={index}
                                                                     queryParam={explanations[key].query_params[index]}
@@ -64,7 +63,7 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                                                 <Table>
                                                     <TableBody>
                                                         {Object.keys(explanations[key].path_params)
-                                                            .map((index: any) => (
+                                                            .map((index) => (
                                                                 <QueryParams
                                                                     key={index}
                                                                     queryParam={explanations[key].path_params[index]}
@@ -79,25 +78,23 @@ export class DocumentationPage extends React.PureComponent<{}, State> {
                                 </TableBody>
                             </Table>
                         </Card>
-                    )) : null
-                }
+                    ))
+                )}
             </LoadableWrapper>
         )
 
         return (
-            <>
-                <BasePage useSplash>
-                    <Grid container justify="center" spacing={3}>
-                        <Grid item xs={12}>
-                            {documentation}
-                        </Grid>
+            <BasePage useSplash>
+                <Grid container justify="center" spacing={3}>
+                    <Grid item xs={12}>
+                        {documentation}
                     </Grid>
-                </BasePage>
-            </>
+                </Grid>
+            </BasePage>
         )
     }
 
-    private readonly getDocumentation = (): Promise<any> => {
+    private readonly getDocumentation = (): Promise<void> => {
         return getDocumentation().then((data) => {
                 this.setState({explanations: data})
             }

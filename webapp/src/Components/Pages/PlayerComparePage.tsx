@@ -136,7 +136,7 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
             return
         }
 
-        if (ids.indexOf(inputId) === -1) {
+        if (!ids.includes(inputId)) {
             resolvePlayerNameOrId(inputId)
                 .then(getPlayer)
                 .then(this.handleAddPlayer)
@@ -148,8 +148,8 @@ class PlayerComparePageComponent extends React.PureComponent<Props, State> {
                         timeout: 3000
                     })
                 })
-                .catch((e: any) => {
-                    console.log(e) // TypeError expected here when above .catch catches something.
+                .catch(() => {
+                    // console.log(e) // TypeError expected here when above .catch catches something.
                     // TODO: Figure out what the right thing to do here is.
                 })
         } else {

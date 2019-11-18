@@ -24,16 +24,17 @@ export class PlayerPlayStyleCard extends React.PureComponent<Props> {
 
         return (
             <Card>
-                <CardHeader title={playStyleTitle}
-                            action={
-                                <PlayStyleActions
-                                    player={this.props.player}
-                                    playlist={this.props.playlist}
-                                    winLossMode={this.props.winLossMode}
-                                    handlePlaylistChange={this.props.handlePlaylistChange}
-                                    handleWinsLossesChange={this.props.handleWinsLossesChange}
-                                />
-                            }/>
+                <CardHeader
+                    title={playStyleTitle}
+                    action={(
+                        <PlayStyleActions
+                            player={this.props.player}
+                            playlist={this.props.playlist}
+                            winLossMode={this.props.winLossMode}
+                            handlePlaylistChange={this.props.handlePlaylistChange}
+                            handleWinsLossesChange={this.props.handleWinsLossesChange}
+                        />
+                    )}/>
                 <CardContent>
                     {this.props.children}
                 </CardContent>

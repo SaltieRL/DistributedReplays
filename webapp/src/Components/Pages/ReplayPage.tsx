@@ -35,21 +35,21 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
             <BasePage backgroundImage={backgroundImage}>
                 <Grid container spacing={3} justify="center" style={{minHeight: "100%"}}>
                     <LoadableWrapper load={this.getReplay}>
-                        {replay &&
-                        <Switch>
-                            <Route
-                                exact path={matchUrl}
-                                render={() => (
-                                    <ReplayView
-                                        replay={replay}
-                                        explanations={explanations}
-                                        handleUpdateTags={this.handleUpdateTags}
-                                    />
-                                )}
-                            />
-                            <Redirect from="*" to={matchUrl}/>
-                        </Switch>
-                        }
+                        {replay && (
+                            <Switch>
+                                <Route
+                                    exact path={matchUrl}
+                                    render={() => (
+                                        <ReplayView
+                                            replay={replay}
+                                            explanations={explanations}
+                                            handleUpdateTags={this.handleUpdateTags}
+                                        />
+                                    )}
+                                />
+                                <Redirect from="*" to={matchUrl}/>
+                            </Switch>
+                        )}
                     </LoadableWrapper>
                 </Grid>
             </BasePage>

@@ -31,7 +31,6 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
     }
 
     public render() {
-
         return (
             <LoadableWrapper load={this.getKickoffsData} reloadSignal={this.state.reloadSignal}>
                 <>
@@ -43,17 +42,17 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
                         <Grid container spacing={4}>
                             {
                                 this.state.kickoffData === null ? "" :
-                                    this.state.selectedTab === 0 ?
+                                    this.state.selectedTab === 0 ? (
                                         this.getMergedKickoff(this.state.kickoffData)
-                                        : (
-                                            <KickoffContent key={this.state.selectedTab - 1}
-                                                            kickoffIndex={this.state.selectedTab - 1}
-                                                            replay={this.props.replay}
-                                                            kickoffData={
-                                                                this.state.kickoffData.kickoffs[this.state.selectedTab - 1]
-                                                            }
-                                                            players={this.state.kickoffData.players}/>
-                                        )
+                                    ) : (
+                                        <KickoffContent
+                                            kickoffIndex={this.state.selectedTab - 1}
+                                            replay={this.props.replay}
+                                            kickoffData={
+                                                this.state.kickoffData.kickoffs[this.state.selectedTab - 1]
+                                            }
+                                            players={this.state.kickoffData.players}/>
+                                    )
                             }
                         </Grid>
                     </CardContent>

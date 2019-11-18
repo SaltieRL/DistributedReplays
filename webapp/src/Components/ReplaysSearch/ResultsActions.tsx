@@ -30,8 +30,12 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
     public render() {
         const checkbox = (
             <FormControlLabel
-                control={<Checkbox checked={this.props.selectable}
-                                   onChange={this.props.handleSelectableChange}/>}
+                control={(
+                    <Checkbox
+                        checked={this.props.selectable}
+                        onChange={this.props.handleSelectableChange}
+                    />
+                )}
                 label="Select mode"
             />
         )
@@ -46,12 +50,12 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
 
         return (
             <div style={{paddingRight: 8}}>
-                {isWidthUp("sm", this.props.width) ?
+                {isWidthUp("sm", this.props.width) ? (
                     <div style={{display: "flex"}}>
                         {checkbox}
                         {linkButton}
                     </div>
-                    :
+                ) : (
                     <>
                         <IconButton onClick={this.handleOpen}>
                             <MoreVert/>
@@ -69,7 +73,7 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
                             </MenuItem>
                         </Menu>
                     </>
-                }
+                )}
             </div>
         )
     }

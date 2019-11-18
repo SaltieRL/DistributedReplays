@@ -18,14 +18,13 @@ class StatChartComponent extends React.PureComponent<Props> {
         const title = this.props.basicStat.title
         return (
             <>
-                {this.props.explanations && (this.props.explanations.hasOwnProperty(title) ?
+                {this.props.explanations && (this.props.explanations.hasOwnProperty(title) ? (
                     <Tooltip title={this.props.explanations[this.props.basicStat.title].simple_explanation}>
                         <div>
                             <ChartType basicStat={this.props.basicStat}/>
                         </div>
                     </Tooltip>
-                    :
-                    <ChartType basicStat={this.props.basicStat}/>)}
+                ) : <ChartType basicStat={this.props.basicStat}/>)}
             </>
         )
     }
