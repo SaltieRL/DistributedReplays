@@ -56,8 +56,8 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
                 "marker-end": "url(#arrow)",
                 x1: x,
                 y1: y,
-                x2: x2,
-                y2: y2,
+                x2,
+                y2,
                 stroke: color.brighter(2),
                 "stroke-width": 3
             })
