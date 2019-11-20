@@ -56,7 +56,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const aboveLg = isWidthUp("lg", this.props.width)
+        const aboveXl = isWidthUp("xl", this.props.width)
         const url = `https://calculated.gg/replays/${this.props.replay.id}`
         const qrcode = (
             <CardContent>
@@ -86,8 +86,8 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 <Tabs
                     value={this.state.selectedTab}
                     onChange={this.handleSelectTab}
-                    centered={aboveLg}
-                    variant={aboveLg ? "standard" : "scrollable"}
+                    centered={aboveXl}
+                    variant={aboveXl ? "standard" : "scrollable"}
                     scrollButtons="on"
                 >
                     <Tab key="basicStats" label="Player Stats" value="playerStats" />
