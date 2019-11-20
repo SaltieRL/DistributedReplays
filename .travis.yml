@@ -99,7 +99,7 @@ jobs:
         - cd $TRAVIS_BUILD_DIR
       script:
         - cd webapp
-        - CI=true npm test
+        - npm test
       after_success:
         - bash <(curl -s https://codecov.io/bash) -c -F frontend
     - stage: deploy
