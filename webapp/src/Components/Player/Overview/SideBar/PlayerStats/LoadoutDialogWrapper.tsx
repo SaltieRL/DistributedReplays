@@ -16,10 +16,8 @@ export class LoadoutDialogWrapper extends React.PureComponent<Props> {
     public render() {
         return (
             <Grid container alignItems="center" justify="space-around" spacing={1}>
-                <Grid item xs={3}>
-                    <Typography>
-                        <CardTravel />
-                    </Typography>
+                <Grid item xs={3} container>
+                    <CardTravel />
                 </Grid>
                 <Grid item xs={6}>
                     <Typography variant="subtitle1">loadout</Typography>

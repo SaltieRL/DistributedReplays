@@ -27,10 +27,8 @@ export class PlaysWith extends React.PureComponent<Props> {
         return (
             <>
                 <Grid container alignItems="center" justify="space-around" spacing={1}>
-                    <Grid item xs={3}>
-                        <Typography>
-                            <People />
-                        </Typography>
+                    <Grid item xs={3} container>
+                        <People />
                     </Grid>
                     <Grid item xs={9}>
                         <Typography variant="subtitle1">plays with</Typography>
