@@ -21,7 +21,13 @@ class PageContentComponent extends React.PureComponent<Props> {
         return (
             <div className={classes.content}>
                 <Toolbar />
-                <div style={{padding: aboveSm ? 20 : 3, minHeight: "100%", overflowX: aboveSm ? undefined : "hidden"}}>
+                <div
+                    style={{
+                        padding: aboveSm ? 20 : 3,
+                        overflowX: aboveSm ? undefined : "hidden",
+                        paddingBottom: 40
+                    }}
+                >
                     {this.props.children}
                 </div>
             </div>
