@@ -1,16 +1,18 @@
-import {CardContent, Divider} from "@material-ui/core"
-import Grid from "@material-ui/core/Grid"
+import {Divider, withWidth} from "@material-ui/core"
+import {isWidthDown, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 import {Replay} from "../../../Models"
 import {getKickoffs} from "../../../Requests/Replay"
 import {LoadableWrapper} from "../../Shared/LoadableWrapper"
-import {KickoffContent} from "./KickoffContent"
 import {KickoffField} from "./KickoffField"
+import {KickoffMapWrapper} from "./KickoffMapWrapper"
 import {KickoffTabs} from "./KickoffTabs"
 
-interface Props {
+interface OwnProps {
     replay: Replay
 }
+
+type Props = OwnProps & WithWidth
 
 interface State {
     kickoffData: any
@@ -19,7 +21,7 @@ interface State {
     reloadSignal: boolean
 }
 
-export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
+class KickoffTabsWrapperComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
@@ -31,33 +33,31 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
     }
 
     public render() {
+        const belowXs = isWidthDown("xs", this.props.width)
+
         return (
             <LoadableWrapper load={this.getKickoffsData} reloadSignal={this.state.reloadSignal}>
-                <>
-                    <Divider />
-
+                <Divider />
+                <div style={{display: "flex", flexDirection: belowXs ? "column" : "row"}}>
                     <KickoffTabs
                         selectedTab={this.state.selectedTab}
                         handleChange={this.handleSelectTab}
                         kickoffData={this.state.kickoffData}
+                        orientation={belowXs ? "horizontal" : "vertical"}
                     />
-                    <CardContent>
-                        <Grid container spacing={4}>
-                            {this.state.kickoffData === null ? (
-                                ""
-                            ) : this.state.selectedTab === 0 ? (
-                                this.getMergedKickoff(this.state.kickoffData)
-                            ) : (
-                                <KickoffContent
-                                    kickoffIndex={this.state.selectedTab - 1}
-                                    replay={this.props.replay}
-                                    kickoffData={this.state.kickoffData.kickoffs[this.state.selectedTab - 1]}
-                                    players={this.state.kickoffData.players}
-                                />
-                            )}
-                        </Grid>
-                    </CardContent>
-                </>
+                    {this.state.kickoffData === null ? (
+                        ""
+                    ) : this.state.selectedTab === 0 ? (
+                        this.getMergedKickoff(this.state.kickoffData)
+                    ) : (
+                        <KickoffMapWrapper
+                            kickoffIndex={this.state.selectedTab - 1}
+                            replay={this.props.replay}
+                            kickoffData={this.state.kickoffData.kickoffs[this.state.selectedTab - 1]}
+                            players={this.state.kickoffData.players}
+                        />
+                    )}
+                </div>
             </LoadableWrapper>
         )
     }
@@ -72,7 +72,16 @@ export class KickoffTabsWrapper extends React.PureComponent<Props, State> {
 
     private readonly getMergedKickoff = (kickoffData: any) => {
         const mergedPlayers: any[] = kickoffData.kickoffs.reduce((p: any, q: any) => p.concat(q.players), [])
-
-        return <KickoffField playerList={mergedPlayers} players={kickoffData.players} width={1000} height={700} />
+        const belowXs = isWidthDown("xs", this.props.width)
+        return (
+            <KickoffField
+                playerList={mergedPlayers}
+                players={kickoffData.players}
+                width={belowXs ? 500 : 1000}
+                height={belowXs ? 350 : 700}
+            />
+        )
     }
 }
+
+export const KickoffTabsWrapper = withWidth()(KickoffTabsWrapperComponent)

@@ -6,8 +6,8 @@ interface Props {
     color: any
     imageWidth: number
     imageHeight: number
-    onMouseover?: () => void
-    onMouseout?: () => void
+    onMouseover: () => void
+    onMouseout: () => void
 }
 
 const FIELD_HALF_WIDTH = 4096
@@ -51,30 +51,46 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             const svgContainer = this.state.element.append("svg:g")
             this.createArrowHead(svgContainer, color)
             // .attr("transform", `translate(${x}, ${y})`)
-            this.applyAttr(svgContainer.append("line"), {
-                class: "arrow",
-                "marker-end": "url(#arrow)",
-                x1: x,
-                y1: y,
-                x2,
-                y2,
-                stroke: color.brighter(2),
-                "stroke-width": 3
-            })
+            this.applyAttr(
+                svgContainer
+                    .append("line"),
+                {
+                    class: "arrow",
+                    "marker-end": "url(#arrow)",
+                    x1: x,
+                    y1: y,
+                    x2,
+                    y2,
+                    stroke: color.brighter(2),
+                    "stroke-width": 3
+                }
+            )
 
             // Starting circle
-            this.applyAttr(svgContainer.append("circle"), {
-                cx: x,
-                cy: y,
-                r: 5,
-                fill: color.brighter(2)
-            })
-            this.applyAttr(svgContainer.append("circle"), {
-                cx: x2,
-                cy: y2,
-                r: 4,
-                fill: color.brighter()
-            })
+            this.applyAttr(
+                svgContainer
+                    .append("circle")
+                    .on("mouseover", this.props.onMouseover)
+                    .on("mouseout", this.props.onMouseout),
+                {
+                    cx: x,
+                    cy: y,
+                    r: 5,
+                    fill: color.brighter(2)
+                }
+            )
+            this.applyAttr(
+                svgContainer
+                    .append("circle")
+                    .on("mouseover", this.props.onMouseover)
+                    .on("mouseout", this.props.onMouseout),
+                {
+                    cx: x2,
+                    cy: y2,
+                    r: 4,
+                    fill: color.brighter()
+                }
+            )
         }
     }
 
@@ -98,7 +114,7 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
 
     private readonly applyAttr = (svgElement: any, attributes: any) => {
         let chainer = svgElement
-        Object.keys(attributes).forEach((key: string, index: number) => {
+        Object.keys(attributes).forEach((key: string) => {
             chainer = chainer.attr(key, attributes[key])
         })
         return chainer
