@@ -42,7 +42,7 @@ def parse_replay(self, replay_to_parse_path, preserve_upload_date: bool = False,
         return
 
     analysis_manager = parse_replay_wrapper(replay_to_parse_path, parsed_data_path, failed_dir,
-                                            force_reparse, logger)
+                                            force_reparse, logger, query_params)
 
     if analysis_manager is None:
         return

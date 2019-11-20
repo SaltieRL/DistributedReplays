@@ -24,7 +24,7 @@ def parse_replay_wrapper(replay_to_parse_path: str,
                          parsed_data_path: str,
                          failed_dir: str,
                          force_reparse: bool,
-                         logger) -> Optional[AnalysisManager]:
+                         logger, query_params=None) -> Optional[AnalysisManager]:
     """
     Parses a replay with the given parameters.
     :param replay_to_parse_path:  The path where the replay that is being parsed is stored
@@ -47,6 +47,13 @@ def parse_replay_wrapper(replay_to_parse_path: str,
         with open(os.path.join(failed_dir, os.path.basename(replay_to_parse_path) + '.txt'), 'a') as f:
             f.write(str(e))
             f.write(traceback.format_exc())
+        payload = {
+            'replay_uuid': os.path.basename(replay_to_parse_path),
+            'error_type': type(e).__name__,
+            'stack': traceback.format_exc(),
+            'game_hash': None
+        }
+        ErrorLogger.log_replay_error(payload, query_params)
         raise e
     try:
         write_replay_to_disk(analysis_manager, parsed_data_path)
