@@ -44,7 +44,13 @@ const getTheme = (dark: boolean) =>
                       root: {color: "white"}
                   }
               }
-            : {}
+            : {},
+        props: {
+            MuiWithWidth: {
+                noSSR: true,
+                initialWidth: "lg" // WithWidth breakpoint set for tests
+            }
+        }
     })
 
 interface State {

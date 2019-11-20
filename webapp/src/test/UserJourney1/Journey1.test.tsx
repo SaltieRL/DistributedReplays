@@ -1,5 +1,3 @@
-/* tslint:disable:no-console */
-
 import "@testing-library/jest-dom/extend-expect"
 import {render, wait, waitForElement} from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
@@ -28,22 +26,17 @@ import {
     testReplayName
 } from "./mocks"
 
-jest.mock("../../apiHandler/apiHandler", () => {
-    return {
-        doGet: jest.fn(() => Promise.resolve())
-    }
-})
-
-// jest.spyOn(apiHandler, "doPost").mockImplementation(jest.fn())
+jest.mock("../../apiHandler/apiHandler", () => ({
+    doGet: jest.fn(() => Promise.resolve())
+}))
 
 jest.mock("../../Components/Replay/ReplayChart")
 jest.mock("../../Components/Player/Overview/SideBar/PlayerRanksCard")
-jest.mock("../../Components/Shared/Charts/StatChart")
-// jest.mock("../../Components/Replay/BasicStats/PlayerStats/PlayerStatsContent")
-// jest.mock("../../Components/Replay/ReplayViewer/Viewer", () => jest.fn())
-// jest.mock("../../Components/Pages/ReplayPage", () => jest.fn())
+jest.mock("../../Components/Shared/Charts/StatChart", () => ({
+    StatChart: jest.fn(() => null)
+}))
 
-xtest("should render", async () => {
+test("should render", async () => {
     jest.setTimeout(60000)
 
     // Load HomePage
@@ -54,6 +47,7 @@ xtest("should render", async () => {
             <WrappedApp />
         </Router>
     )
+    // app.debug()
 
     // Check search bar and button exists
     const getSearchBar = () => app.getByPlaceholderText("Enter a steamId or username")
@@ -78,7 +72,7 @@ xtest("should render", async () => {
     const mockGetPlayStyle = jest.spyOn(getPlayStyle, "getPlayStyle")
 
     // Type into search bar and click search button
-    userEvent.type(searchBar, testPlayerName)
+    await userEvent.type(searchBar, testPlayerName)
     userEvent.click(searchButton)
     console.log("Clicked search button")
 
@@ -97,15 +91,12 @@ xtest("should render", async () => {
 
     // Check that replay name and button is displayed
     const getReplayNameHeader = () => app.getByText(testReplayName)
-    // const getReplayButton = () => app.container.querySelector(`a[href$="${testReplayId}"]`)
     const getReplayButton = () => app.container.querySelector(`a[href="/replays/${testReplayId}"]`)
     expect(getReplayNameHeader).not.toThrow()
     expect(getReplayButton).not.toBeNull()
 
     const replayButton = getReplayButton()!
 
-    // @ts-ignore
-    // tslint:disable-next-line:max-line-length
     const mockGetReplayPlayerStats = jest
         .spyOn(ReplayRequests, "getReplayPlayerStats")
         .mockImplementation(mockImplementationGetReplayPlayerStats as (id: string) => Promise<BasicStat[]>)
@@ -135,4 +126,6 @@ xtest("should render", async () => {
     await wait(() => expect(mockGetReplayPlayerStats.mock.calls.length).toBe(1))
 
     expect(StatChart).toHaveBeenCalled()
+    // @ts-ignore
+    console.log(`StatChart called ${StatChart.mock.calls.length} times`)
 })
