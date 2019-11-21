@@ -35,12 +35,26 @@ const styles = (theme: Theme) =>
                 transitionDuration: "100ms",
                 transform: "scale(1.2)",
                 color: theme.palette.secondary.dark
-            }
+            },
+            marginLeft: 12
+        },
+        rankIcon: {
+            width: 28,
+            height: 28,
+            margin: "auto",
+            marginLeft: 12
         },
         panelDetails: {
             overflowX: "auto",
             maxWidth: "95vw",
             margin: "auto"
+        },
+        panelSummaryContent: {
+            width: "100%",
+            alignItems: "center"
+        },
+        panelSummaryItemWrapper: {
+            width: "calc(100% - 76px)"
         }
     })
 
@@ -53,6 +67,9 @@ interface OwnProps {
 type Props = OwnProps & WithStyles<typeof styles> & WithWidth
 
 class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
+    private readonly createReplayLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, "innerRef" | "to">>(
+        (props, ref) => <Link to={REPLAY_PAGE_LINK(this.props.replay.id)} {...props} innerRef={ref} />
+    )
     public render() {
         const {classes, width} = this.props
         const notOnMobile = isWidthUp("sm", width)
@@ -76,82 +93,72 @@ class OverviewMatchHistoryRowComponent extends React.PureComponent<Props> {
         const replayRank = (
             <Tooltip title={averageMMR > 0 ? averageMMR.toString() : "Unranked"}>
                 <img
-                    alt=""
-                    style={{width: 28, height: 28, margin: "auto"}}
+                    alt={`rank ${averageRank}`}
+                    className={classes.rankIcon}
                     src={`${window.location.origin}/ranks/${averageRank}.png`}
                 />
             </Tooltip>
         )
         const chartIcon = (
-            <IconButton
-                component={React.forwardRef<HTMLAnchorElement, Omit<LinkProps, "innerRef" | "to">>((props, ref) => (
-                    <Link to={REPLAY_PAGE_LINK(replay.id)} {...props} innerRef={ref} />
-                ))}
-                className={classes.iconButton}
-            >
+            <IconButton component={this.createReplayLink} className={classes.iconButton}>
                 <InsertChart />
             </IconButton>
         )
 
         const expansionPanelSummary = (
-            <ExpansionPanelSummary expandIcon={<ExpandMore />}>
-                <Grid container spacing={1}>
-                    {notOnMobile ? (
-                        <>
-                            <Grid item xs={3}>
-                                <Typography variant={typographyVariant} noWrap>
-                                    {replayName}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                {replayDate}
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant={typographyVariant} noWrap>
-                                    {replayGameMode}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant={typographyVariant}>{replayScore}</Typography>
-                            </Grid>
-                            <Grid item xs={1}>
-                                <Typography variant={typographyVariant}>{replayResult}</Typography>
-                            </Grid>
-                            <Grid item xs={1}>
-                                <Typography variant={typographyVariant}>{replayRank}</Typography>
-                            </Grid>
-                        </>
-                    ) : (
-                        <>
-                            <Grid item xs={4}>
-                                <Typography variant={typographyVariant} noWrap>
-                                    {replayName}
-                                </Typography>
-                                {replayDate}
-                            </Grid>
-                            <Grid item xs={3} container alignItems="center">
-                                <Typography variant={typographyVariant} noWrap>
-                                    {replayGameMode}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Typography variant={typographyVariant}>{replayScore}</Typography>
-                                <Typography variant={notOnMobile ? typographyVariant : "caption"}>
-                                    {replayResult}
-                                </Typography>
-                            </Grid>
-                        </>
-                    )}
-
-                    <Grid item xs={1} style={{margin: "auto"}}>
-                        {chartIcon}
+            <ExpansionPanelSummary expandIcon={<ExpandMore />} classes={{content: classes.panelSummaryContent}}>
+                <div className={classes.panelSummaryItemWrapper}>
+                    <Grid container spacing={1} justify="space-between">
+                        {notOnMobile ? (
+                            <>
+                                <Grid item xs={5}>
+                                    <Typography variant={typographyVariant} noWrap>
+                                        {replayName}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={2} lg={3}>
+                                    {replayDate}
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Typography variant={typographyVariant} noWrap>
+                                        {replayGameMode}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={2} lg={1}>
+                                    <Typography variant={typographyVariant}>{replayScore}</Typography>
+                                </Grid>
+                                <Grid item xs={1}>
+                                    <Typography variant={typographyVariant}>{replayResult}</Typography>
+                                </Grid>
+                            </>
+                        ) : (
+                            <>
+                                <Grid item xs={5} container alignItems="center">
+                                    <Typography variant={typographyVariant} noWrap>
+                                        {replayName}
+                                    </Typography>
+                                    {replayDate}
+                                </Grid>
+                                <Grid item xs={4} container alignItems="center">
+                                    <Typography variant={typographyVariant} noWrap>
+                                        {replayGameMode}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={3} style={{textAlign: "center"}}>
+                                    <Typography variant={typographyVariant}>{replayScore}</Typography>
+                                    <Typography variant="caption">{replayResult}</Typography>
+                                </Grid>
+                            </>
+                        )}
                     </Grid>
-                </Grid>
+                </div>
+                {replayRank}
+                {chartIcon}
             </ExpansionPanelSummary>
         )
 
         return (
-            <ExpansionPanel>
+            <ExpansionPanel TransitionProps={{unmountOnExit: true}}>
                 {expansionPanelSummary}
                 <ExpansionPanelDetails className={classes.panelDetails}>
                     {!this.props.useBoxScore ? (
