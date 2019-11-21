@@ -12,8 +12,8 @@ const styles = createStyles({
 })
 
 interface OwnProps {
-    playerList: any
-    players: any
+    playerList: KickoffPlayerElement[]
+    players: KickoffPlayers
     onMouseover?: (i: number) => void
     onMouseout?: (i: number) => void
     height: number
@@ -49,7 +49,7 @@ class KickoffFieldComponent extends React.PureComponent<Props, State> {
                     }
                 >
                     <image x="0" y="0" width={this.props.width} height={this.props.height} href="/fieldblack.png" />
-                    {playerList.map((playerData: any, i: number) => (
+                    {playerList.map((playerData, i: number) => (
                         <PlayerStartEnd
                             key={JSON.stringify(playerData)}
                             color={

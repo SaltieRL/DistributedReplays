@@ -8,8 +8,8 @@ import {KickoffField} from "./KickoffField"
 
 interface Props {
     kickoffIndex: number
-    kickoffData: any
-    players: any
+    kickoffData: Kickoff
+    players: KickoffPlayers
     replay: Replay
     width: Breakpoint
 }
@@ -81,10 +81,8 @@ class KickoffMapWrapperComponent extends React.PureComponent<Props, State> {
         return result
     }
 
-    private readonly convert = (list: any, multiple: number) => {
-        return list.map((element: number) => {
-            return element * multiple
-        })
+    private readonly convert = (list: number[], multiple: number) => {
+        return list.map((element) => element * multiple)
     }
 }
 

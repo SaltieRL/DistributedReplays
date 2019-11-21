@@ -2,8 +2,8 @@ import * as d3 from "d3"
 import * as React from "react"
 
 interface Props {
-    player: any
-    color: any
+    player: KickoffPlayerElement
+    color: d3.RGBColor
     imageWidth: number
     imageHeight: number
     onMouseover: () => void
@@ -48,15 +48,17 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             const x = this.getModifiedY(startY)
             const y2 = this.getModifiedX(endX)
             const x2 = this.getModifiedY(endY)
-            const svgContainer = this.state.element.append("svg:g")
+            const svgContainer: d3.Selection<SVGGElement, {}, null, undefined> = this.state.element.append("svg:g")
             this.createArrowHead(svgContainer, color)
             // .attr("transform", `translate(${x}, ${y})`)
             this.applyAttr(
                 svgContainer
-                    .append("line"),
+                    .append("line")
+                    .on("mouseover", this.props.onMouseover)
+                    .on("mouseout", this.props.onMouseout),
                 {
                     class: "arrow",
-                    "marker-end": "url(#arrow)",
+                    "marker-end": `url(#${this.getArrowHeadId()})`,
                     x1: x,
                     y1: y,
                     x2,
@@ -94,11 +96,14 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
         }
     }
 
-    private readonly createArrowHead = (svgContains: any, color: any) => {
+    private readonly createArrowHead = (
+        svgContains: d3.Selection<SVGGElement, {}, null, undefined>,
+        color: d3.RGBColor
+    ) => {
         const defs = svgContains.append("defs")
 
         this.applyAttr(defs.append("marker"), {
-            id: "arrow",
+            id: this.getArrowHeadId(),
             viewBox: "0 -5 10 10",
             refX: 10,
             refY: 0,
@@ -109,8 +114,10 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             .append("path")
             .attr("d", "M0,-5L10,0L0,5")
             .attr("class", "arrowHead")
-            .style("fill", "WhiteSmoke")
+            .style("fill", color.brighter(2))
     }
+
+    private readonly getArrowHeadId = () => `arrow${this.props.player.player_id}`
 
     private readonly applyAttr = (svgElement: any, attributes: any) => {
         let chainer = svgElement

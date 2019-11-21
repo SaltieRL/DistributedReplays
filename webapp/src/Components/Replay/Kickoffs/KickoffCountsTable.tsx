@@ -3,8 +3,8 @@ import * as React from "react"
 import {Replay} from "../../../Models"
 
 interface Props {
-    kickoff: any
-    players: any
+    kickoff: Kickoff
+    players: KickoffPlayers
     replay: Replay
     highlight?: number
 }
@@ -28,7 +28,7 @@ export class KickoffCountsTable extends React.PureComponent<Props> {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {this.props.kickoff.players.map((playerInfo: any, index: number) => (
+                        {this.props.kickoff.players.map((playerInfo, index: number) => (
                             <TableRow key={playerInfo.player_id} selected={this.props.highlight === index}>
                                 <TableCell component="th" scope="row">
                                     {this.props.players[playerInfo.player_id].name}

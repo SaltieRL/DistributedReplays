@@ -1,23 +1,35 @@
-import {Tab, Tabs} from "@material-ui/core"
+import {createStyles, Tab, Tabs, Theme, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
 
-interface Props {
+const styles = (theme: Theme) =>
+    createStyles({
+        verticalTabs: {
+            minWidth: 150,
+            borderRight: `1px solid ${theme.palette.divider}`
+        }
+    })
+
+interface OwnProps {
     selectedTab: number
-    handleChange: (event: any, selectedTab: number) => void
-    kickoffData: any
+    handleChange: (event: React.ChangeEvent<{}>, selectedTab: number) => void
+    kickoffData: KickoffData
     orientation: "horizontal" | "vertical"
 }
 
-export class KickoffTabs extends React.PureComponent<Props> {
+type Props = OwnProps & WithStyles<typeof styles>
+
+class KickoffTabsComponent extends React.PureComponent<Props> {
     public render() {
+        const {classes, orientation, handleChange, selectedTab} = this.props
+
         return (
             <Tabs
-                value={this.props.selectedTab}
-                onChange={this.props.handleChange}
-                orientation={this.props.orientation}
+                value={selectedTab}
+                onChange={handleChange}
+                orientation={orientation}
                 variant="scrollable"
                 scrollButtons="on"
-                style={{minWidth: 150}}
+                className={orientation === "vertical" ? classes.verticalTabs : undefined}
             >
                 {this.createTabList().map((kickoff: string, index: number) => (
                     <Tab label={kickoff} value={index} key={index} />
@@ -27,8 +39,10 @@ export class KickoffTabs extends React.PureComponent<Props> {
     }
 
     private readonly createTabList = () => {
-        const modifiedKickoffData = this.props.kickoffData.kickoffs.map((_: any, index: number) => "Kickoff " + index)
+        const modifiedKickoffData = this.props.kickoffData.kickoffs.map((_, index: number) => "Kickoff " + index)
         modifiedKickoffData.unshift("Overall") // Add to beginning of array
         return modifiedKickoffData
     }
 }
+
+export const KickoffTabs = withStyles(styles)(KickoffTabsComponent)
