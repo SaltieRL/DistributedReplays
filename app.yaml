@@ -1,5 +1,5 @@
 runtime: python37
-entrypoint: gunicorn -b :$PORT RLBotServer:app --timeout 1200 --graceful-timeout 1200 --log-level debug
+entrypoint: gunicorn -b :$PORT RLBotServer:app --timeout 1200 --graceful-timeout 1200 --log-level debug --threads=4
 instance_class: F1
 handlers:
 - url: /.*
