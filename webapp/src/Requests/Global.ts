@@ -3,43 +3,12 @@ import qs from "qs"
 import {doGet, doPost} from "../apiHandler/apiHandler"
 import {ItemFull, ItemListResponse, ItemUsage} from "../Models/ItemStats"
 import {TrainingPackResponse} from "../Models/Player/TrainingPack"
-import {playlists} from "../Utils/Playlists"
-import {useMockData} from "./Config"
 
-export const getReplayCount = (): Promise<number> => {
-    if (useMockData) {
-        return Promise.resolve(1337)
-    }
-    return doGet("/global/replay_count")
-}
+export const getReplayCount = (): Promise<number> => doGet("/global/replay_count")
 
-export const getQueueStatuses = (): Promise<QueueStatus[]> => {
-    return doGet("/global/queue/count")
-}
+export const getQueueStatuses = (): Promise<QueueStatus[]> => doGet("/global/queue/count")
 
-export const getLeaderboards = (): Promise<PlaylistLeaderboard[]> => {
-    if (useMockData) {
-        const leaders: Leader[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => ({
-            name: `Leader${i}`,
-            id_: "76561198064630547",
-            count: 500 - i,
-            avatar:
-                "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-" +
-                "black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-" +
-                "4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
-        }))
-        return Promise.resolve(
-            playlists.map((playlist) => ({
-                leaders: {
-                    month: leaders,
-                    week: leaders
-                },
-                playlist: playlist.value
-            }))
-        )
-    }
-    return doGet("/global/leaderboards")
-}
+export const getLeaderboards = (): Promise<PlaylistLeaderboard[]> => doGet("/global/leaderboards")
 
 export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
 export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
@@ -69,12 +38,10 @@ export const getTrainingPacks = (page: number, limit: number): Promise<TrainingP
     })
 }
 
-export const parseTrainingPack = (data: any) => {
-    return {
-        ...data,
-        date: moment(data.date)
-    }
-}
+export const parseTrainingPack = (data: any) => ({
+    ...data,
+    date: moment(data.date)
+})
 export const getAdminLogs = (page: number, limit: number, search: string): Promise<AdminLogsResponse> => {
     return doGet(`/admin/logs?page=${page}&limit=${limit}&search=${search}`)
 }
@@ -86,10 +53,6 @@ export const getItems = (page: number, limit: number, category: number): Promise
     return doGet(queryString)
 }
 
-export const getItemInfo = (id: number): Promise<ItemFull> => {
-    return doGet(`/items/info?id=${id}`)
-}
+export const getItemInfo = (id: number): Promise<ItemFull> => doGet(`/items/info?id=${id}`)
 
-export const getItemGraph = (id: number): Promise<ItemUsage> => {
-    return doGet(`/items/usage?id=${id}`)
-}
+export const getItemGraph = (id: number): Promise<ItemUsage> => doGet(`/items/usage?id=${id}`)

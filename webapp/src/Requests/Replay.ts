@@ -10,13 +10,8 @@ import {
     stringifyReplaySearchQueryParam
 } from "../Models"
 import {VisibilityResponse} from "../Models/types/VisibilityResponse"
-import {useMockData} from "./Config"
-import {MOCK_REPLAY_1} from "./Mock"
 
 export const getReplay = (id: string): Promise<Replay> => {
-    if (useMockData) {
-        return Promise.resolve(MOCK_REPLAY_1)
-    }
     return doGet(`/replay/${id}`).then(parseReplay)
 }
 
