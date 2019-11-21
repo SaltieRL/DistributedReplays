@@ -53,16 +53,14 @@ export class GlobalStatsPageComponent extends React.PureComponent<Props, State> 
                                 {this.state.selectedTab === "Playlist Distribution" && (
                                     <LoadableWrapper load={this.getStats}>
                                         {this.state.globalStats &&
-                                            this.state.globalStats.map((globalStatsGraph) => {
-                                                return (
-                                                    <Grid item xs={12} sm={6} md={4} key={globalStatsGraph.name}>
-                                                        <Typography variant="h6" align="center">
-                                                            {globalStatsGraph.name}
-                                                        </Typography>
-                                                        <GlobalStatsChart graph={globalStatsGraph} />
-                                                    </Grid>
-                                                )
-                                            })}
+                                            this.state.globalStats.map((globalStatsGraph) => (
+                                                <Grid item xs={12} sm={6} md={4} key={globalStatsGraph.name}>
+                                                    <Typography variant="h6" align="center">
+                                                        {globalStatsGraph.name}
+                                                    </Typography>
+                                                    <GlobalStatsChart graph={globalStatsGraph} />
+                                                </Grid>
+                                            ))}
                                     </LoadableWrapper>
                                 )}
                                 {this.state.selectedTab === "Rank Distribution" && (
