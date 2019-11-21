@@ -90,7 +90,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                 ))}
                             </Tabs>
                             <Divider />
-                            <CardContent>
+                            <CardContent style={{padding: isWidthDown("xs", this.props.width) ? 4 : undefined}}>
                                 {this.state.selectedMobileTab === "Profile" && playerSideBar}
                                 {this.state.selectedMobileTab === "Playstyle" && (
                                     <>
