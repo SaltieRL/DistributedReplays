@@ -16,6 +16,16 @@ export class GlobalStatsChart extends React.PureComponent<Props> {
 
     private readonly getChartData = (): ChartData => {
         const datasets = this.props.graph.data
+
+        // Threshold so long tails due to outliers are not shown.
+        // TODO: Remove, move to backend.
+        const maxValues = datasets.map((dataset) => Math.max(...dataset.values))
+        const maxValueThreshokd = 0.01
+        datasets.forEach((dataset, i) => {
+            const datasetMax = maxValues[i]
+            dataset.keys = dataset.keys.filter((__, j) => dataset.values[j] > datasetMax * maxValueThreshokd)
+            dataset.values = dataset.values.filter((__, j) => dataset.values[j] > datasetMax * maxValueThreshokd)
+        })
         const labels = _.union(...datasets.map((dataset) => dataset.keys)).sort((a, b) => a - b)
 
         return {
