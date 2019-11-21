@@ -1,4 +1,4 @@
-import {CardHeader, Typography} from "@material-ui/core"
+import {CardHeader} from "@material-ui/core"
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
@@ -59,9 +59,7 @@ export class Leaderboards extends React.Component<Props, State> {
                     </CardContent>
                     <CardActions>
                         <Link to={LEADERBOARDS_LINK} style={{textDecoration: "none"}}>
-                            <Button variant="text">
-                                <Typography variant="subtitle1">View Full</Typography>
-                            </Button>
+                            <Button variant="text">View Full</Button>
                         </Link>
                     </CardActions>
                 </Card>

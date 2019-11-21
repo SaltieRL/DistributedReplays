@@ -1,4 +1,4 @@
-import {Button, CardHeader, Grid, Typography} from "@material-ui/core"
+import {Button, CardActions, CardHeader, Grid, Typography} from "@material-ui/core"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import LinearProgress from "@material-ui/core/LinearProgress"
@@ -48,20 +48,12 @@ export class Patreon extends React.Component<Props, State> {
                             </Grid>
                         </>
                     ) : null}
-
-                    <Grid item xs={12} container justify="flex-end">
-                        <a
-                            href={PATREON_LINK}
-                            target="_blank"
-                            rel="noreferrer noopener"
-                            style={{textDecoration: "none"}}
-                        >
-                            <Button variant="text" size="small">
-                                <Typography variant="subtitle1">Support us</Typography>
-                            </Button>
-                        </a>
-                    </Grid>
                 </CardContent>
+                <CardActions>
+                    <Button variant="text" size="small" href={PATREON_LINK} target="_blank" rel="noreferrer noopener">
+                        Support us
+                    </Button>
+                </CardActions>
             </Card>
         )
     }
