@@ -71,13 +71,17 @@ export class Theme extends React.PureComponent<{}, State> {
 
         const theme = getTheme(dark)
 
+        // To be used for text color, contrasts with background.
+        const blueColor = dark ? "skyblue" : "royalblue"
+        const orangeColor = dark ? "orange" : "darkorange"
+
         Chart.defaults.global.defaultFontColor = dark ? "white" : "grey"
         Chart.defaults.radar.scale.ticks = {
             backdropColor: theme.palette.background.paper
         }
 
         return (
-            <ThemeContext.Provider value={{dark, toggleTheme: this.toggleTheme}}>
+            <ThemeContext.Provider value={{dark, toggleTheme: this.toggleTheme, blueColor, orangeColor}}>
                 <MuiThemeProvider theme={theme}>{this.props.children}</MuiThemeProvider>
             </ThemeContext.Provider>
         )

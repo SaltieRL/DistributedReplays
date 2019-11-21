@@ -1,5 +1,6 @@
 import {createStyles, Grid, Typography, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
+import {ThemeContext} from "../../../Contexts/ThemeContext"
 import {Replay} from "../../../Models"
 import {ReactHeatmap} from "./Heatmap"
 
@@ -28,55 +29,63 @@ class HeatmapContentComponent extends React.PureComponent<Props> {
         blueTeam.sort(this.nameCompareFn)
         orangeTeam.sort(this.nameCompareFn)
         return (
-            <Grid container justify={"center"}>
-                <Grid item xs={6} style={{textAlign: "center", borderRight: "#ccc solid 2px"}}>
-                    <Typography variant="h5" style={{borderBottom: "blue solid 1px"}} className={classes.heatmapTitle}>
-                        Blue
-                    </Typography>
-                    <Grid container justify="space-evenly">
-                        {this.props.heatmapData !== null && blueTeam.map(this.createHeatmap)}
-                    </Grid>
-                </Grid>
-                <Grid item xs={6} style={{textAlign: "center"}}>
-                    <Typography
-                        variant="h5"
-                        style={{borderBottom: "orange solid 1px"}}
-                        className={classes.heatmapTitle}
-                    >
-                        Orange
-                    </Typography>
-                    <Grid container justify="space-evenly">
-                        {this.props.heatmapData !== null && orangeTeam.map(this.createHeatmap)}
-                    </Grid>
-                </Grid>
-                <Grid item xs={12} style={{textAlign: "center"}}>
-                    {this.props.heatmapData !== null && "ball" in this.props.heatmapData.data && (
-                        <Grid item xs={12} style={{height: "500px"}}>
-                            <Typography variant="h3">Ball</Typography>
-                            <div
-                                style={{
-                                    background: `url(/fieldrblack.png) no-repeat center`,
-                                    backgroundSize: "250px 350px",
-                                    width: WIDTH,
-                                    height: HEIGHT,
-                                    margin: "auto"
-                                }}
+            <ThemeContext.Consumer>
+                {(themeValue) => (
+                    <Grid container justify={"center"}>
+                        <Grid item xs={6} style={{textAlign: "center", borderRight: "#ccc solid 2px"}}>
+                            <Typography
+                                variant="h5"
+                                style={{borderBottom: `${themeValue.blueColor} solid 1px`}}
+                                className={classes.heatmapTitle}
                             >
-                                <ReactHeatmap
-                                    data={{
-                                        max: this.props.heatmapData.maxs.ball,
-                                        data: this.props.heatmapData.data.ball
-                                    }}
-                                    style={{width: WIDTH, height: HEIGHT}}
-                                    config={{
-                                        radius: 18
-                                    }}
-                                />
-                            </div>
+                                Blue
+                            </Typography>
+                            <Grid container justify="space-evenly">
+                                {this.props.heatmapData !== null && blueTeam.map(this.createHeatmap)}
+                            </Grid>
                         </Grid>
-                    )}
-                </Grid>
-            </Grid>
+                        <Grid item xs={6} style={{textAlign: "center"}}>
+                            <Typography
+                                variant="h5"
+                                style={{borderBottom: `${themeValue.orangeColor} solid 1px`}}
+                                className={classes.heatmapTitle}
+                            >
+                                Orange
+                            </Typography>
+                            <Grid container justify="space-evenly">
+                                {this.props.heatmapData !== null && orangeTeam.map(this.createHeatmap)}
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12} style={{textAlign: "center"}}>
+                            {this.props.heatmapData !== null && "ball" in this.props.heatmapData.data && (
+                                <Grid item xs={12} style={{height: 500}}>
+                                    <Typography variant="h3">Ball</Typography>
+                                    <div
+                                        style={{
+                                            background: `url(/fieldrblack.png) no-repeat center`,
+                                            backgroundSize: "250px 350px",
+                                            width: WIDTH,
+                                            height: HEIGHT,
+                                            margin: "auto"
+                                        }}
+                                    >
+                                        <ReactHeatmap
+                                            data={{
+                                                max: this.props.heatmapData.maxs.ball,
+                                                data: this.props.heatmapData.data.ball
+                                            }}
+                                            style={{width: WIDTH, height: HEIGHT}}
+                                            config={{
+                                                radius: 18
+                                            }}
+                                        />
+                                    </div>
+                                </Grid>
+                            )}
+                        </Grid>
+                    </Grid>
+                )}
+            </ThemeContext.Consumer>
         )
     }
 
