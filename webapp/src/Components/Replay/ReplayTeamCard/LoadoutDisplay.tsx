@@ -24,7 +24,7 @@ export class LoadoutDisplay extends React.PureComponent<Props> {
                                 href="https://rocket-league.com/"
                                 target="_blank"
                                 rel="noreferrer noopener"
-                                style={{textDecoration: "none", display: "inline-flex"}}
+                                style={{textDecoration: "none", display: "inline-flex", alignItems: "center"}}
                             >
                                 <Typography>ROCKET LEAGUE GARAGE</Typography>
                                 <img
