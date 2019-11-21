@@ -79,7 +79,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
         if total_games > 0:
             stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
-                                                 replay_ids=replay_ids, playlist=playlist, win=win)
+                                   replay_ids=replay_ids, playlist=playlist, win=win)
         else:
             stats = [0.0] * len(stats_query)
         return self.get_wrapped_stats(stats, self.player_stats)
@@ -164,7 +164,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # ['luck1', 'luck2', 'luck3', 'luck4']]  # luck
 
         return [{'title': title, 'group': group} for title, group in zip(titles, groups)]
-    
+
     def _create_group_stats_from_query(self, session, query, player_filter=None, replay_ids=None):
         stats = QueryFilterBuilder().with_stat_query(query)
         if player_filter is not None:
@@ -172,25 +172,29 @@ class PlayerStatWrapper(GlobalStatWrapper):
         if replay_ids is not None:
             stats.with_replay_ids(replay_ids)
         stats = stats.build_query(session).filter(PlayerGame.time_in_game > 0).first()
-        stats = {n.get_query_key(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, stats) if s is not None}
+        stats = {n.get_query_key(): round(float(s), 2) for n, s in zip(self.player_stats.stat_list, stats) if
+                 s is not None}
         return stats
 
     def _create_group_stats(self, session, player_filter=None, replay_ids=None):
-        average    = self._create_group_stats_from_query(session, self.get_player_stat_query()      , player_filter, replay_ids)
-        individual = self._create_group_stats_from_query(session, self.player_stats.individual_query, player_filter, replay_ids)
+        average = self._create_group_stats_from_query(session, self.get_player_stat_query(), player_filter, replay_ids)
+        individual = self._create_group_stats_from_query(session, self.player_stats.individual_query, player_filter,
+                                                         replay_ids)
 
-        total         = {}
-        per_game      = {}
+        total = {}
+        per_game = {}
         per_norm_game = {}
-        per_minute    = {}
+        per_minute = {}
 
-        factor_per_game      = len(replay_ids)                   if replay_ids        is not None else None
-        factor_per_minute    = individual['time_in_game'] / 60.0 if 'time_in_game' in individual  else None
-        factor_per_norm_game = factor_per_minute / 5             if factor_per_minute is not None else None
+        factor_per_game = len(replay_ids) if replay_ids is not None else None
+        factor_per_minute = individual['time_in_game'] / 60.0 if 'time_in_game' in individual else None
+        factor_per_norm_game = factor_per_minute / 5 if factor_per_minute is not None else None
 
         for stat in self.get_player_stat_list():
             inserted = False
             stat_query_key = stat.get_query_key()
+            if stat_query_key not in individual or stat_query_key not in average:
+                continue
             if stat_query_key in self.replay_group_stats.grouped_stat_total:
                 if stat.is_percent or stat.is_averaged:
                     total[stat_query_key] = average[stat_query_key]
@@ -209,10 +213,10 @@ class PlayerStatWrapper(GlobalStatWrapper):
 
         return {
             'stats': {
-                '(Total)'        : total,
-                '(per Game)'     : per_game,
+                '(Total)': total,
+                '(per Game)': per_game,
                 '(per Norm Game)': per_norm_game,
-                '(per Minute)'   : per_minute
+                '(per Minute)': per_minute
             }
         }
 
@@ -257,8 +261,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
                     raise ReplayNotFound()
 
                 playergames: List = session.query(
-                    func.max(PlayerGame.player)        ,
-                    func.bool_and(PlayerGame.is_orange)  ).filter(
+                    func.max(PlayerGame.player),
+                    func.bool_and(PlayerGame.is_orange)).filter(
                     PlayerGame.game == replay_id).group_by(PlayerGame.player).all()
 
                 for playergame in playergames:
@@ -266,13 +270,13 @@ class PlayerStatWrapper(GlobalStatWrapper):
                     player, is_orange_game = playergame
                     assert player in is_orange
                     is_orange[player].append(is_orange_game)
-            
+
             # if the player is always in the same team
             if all([len(set(player_is_orange)) == 1 for player_is_orange in is_orange.values()]):
                 for i in range(len(return_obj['playerStats'])):
                     player = return_obj['playerStats'][i]['player']
                     return_obj['playerStats'][i]['is_orange'] = is_orange[player][0]
-                
+
                 return_obj['playerStats'] = sorted(
                     sorted(
                         return_obj['playerStats'], key=lambda x: x['name'].lower()
