@@ -8,12 +8,12 @@ const styles = createStyles({
         height: 128,
         width: 128,
         borderWidth: 3,
-        borderRadius: 5,
+        borderRadius: 10,
         borderStyle: "solid",
         backgroundColor: "black",
         display: "inline-block",
 
-        fontSize: 10,
+        fontSize: 12,
         wordWrap: "break-word",
         flex: "0 0 auto",
         margin: 4,
@@ -21,10 +21,14 @@ const styles = createStyles({
         position: "relative",
         color: "white"
     },
+    loadoutItemImageWrapper: {
+        width: "100%"
+    },
     loadoutItemImage: {
-        height: 120,
-        width: 120,
-        marginTop: 4
+        height: 115,
+        width: 115,
+        marginTop: 4,
+        borderRadius: 5
     },
     loadoutItemMiddleText: {
         display: "flex",
@@ -35,7 +39,7 @@ const styles = createStyles({
     },
     loadoutItemBottomText: {
         position: "relative",
-        bottom: 15,
+        bottom: 25,
         textShadow:
             "0 0 5px black, 0 0 5px black, 0 0 5px black, 0 0 5px black, 0 0 5px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black"
     }
@@ -59,7 +63,13 @@ class LoadoutItemDisplayComponent extends React.PureComponent<Props> {
             <div className={classes.loadoutItem} style={{borderColor: rarityColor}}>
                 {this.props.imageUrl !== "" ? (
                     <>
-                        <img alt={this.props.itemName} src={this.props.imageUrl} className={classes.loadoutItemImage} />
+                        <div className={classes.loadoutItemImageWrapper}>
+                            <img
+                                alt={this.props.itemName}
+                                src={this.props.imageUrl}
+                                className={classes.loadoutItemImage}
+                            />
+                        </div>
                         <span className={classes.loadoutItemBottomText}>{this.props.itemName}</span>
                     </>
                 ) : (
