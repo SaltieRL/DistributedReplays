@@ -85,6 +85,7 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                 inputLabel="Rank to compare"
                 helperText="Select the rank to plot as average"
                 noneLabel="Default"
+                disabled
             />
         )
 
