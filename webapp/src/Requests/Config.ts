@@ -1,2 +1,2 @@
 export const baseUrl = "/api"
-export const useLiveQueries = true
+export const useLiveQueries = false
