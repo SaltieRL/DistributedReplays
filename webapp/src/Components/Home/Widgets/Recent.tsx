@@ -1,23 +1,20 @@
-import {CardHeader, Divider, Grid, Typography, WithTheme, withTheme} from "@material-ui/core"
+import {CardHeader, Divider, Grid, Typography} from "@material-ui/core"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import * as React from "react"
-import {Replay} from "replay-viewer/models/Replay"
-import {ThemeContext} from "../../../Contexts/ThemeContext"
 import {RecentReplaysResponse} from "../../../Models/types/Homepage"
 import {getRecentReplays} from "../../../Requests/Home"
+import {ColouredGameScore} from "../../Shared/ColouredGameScore"
 
-interface OwnProps {
+interface Props {
     cardStyle: React.CSSProperties
 }
-
-type Props = OwnProps & WithTheme
 
 interface State {
     recentReplays?: RecentReplaysResponse
 }
 
-class RecentComponent extends React.PureComponent<Props, State> {
+export class Recent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {}
@@ -29,54 +26,42 @@ class RecentComponent extends React.PureComponent<Props, State> {
 
     public render() {
         return (
-            <ThemeContext.Consumer>
-                {(themeValue) => (
-                    <Card style={this.props.cardStyle}>
-                        <CardHeader title={"Recent Submitted Replays"} />
-                        <CardContent>
-                            {this.state.recentReplays &&
-                                this.state.recentReplays.recent.map((replay: Replay) => (
-                                    <a
-                                        key={replay.id}
-                                        href={`/replays/${replay.id}`}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                        style={{textDecoration: "none"}}
-                                    >
-                                        <Grid item container xs={12} style={{padding: 25}}>
-                                            <Grid item xs={12} md={3}>
-                                                <Typography>
-                                                    <span style={{color: themeValue.blueColor}}>
-                                                        {replay.gameScore.team0Score}
-                                                    </span>
-                                                    {" - "}
-                                                    <span style={{color: themeValue.orangeColor}}>
-                                                        {replay.gameScore.team1Score}
-                                                    </span>
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={12} md={3}>
-                                                <Typography noWrap style={{fontStyle: "bold"}}>
-                                                    {replay.gameMode}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={12} md={6}>
-                                                <Typography noWrap style={{fontStyle: "italic"}}>
-                                                    {replay.map}
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Divider />
-                                        </Grid>
-                                    </a>
-                                ))}
-                        </CardContent>
-                    </Card>
-                )}
-            </ThemeContext.Consumer>
+            <Card style={this.props.cardStyle}>
+                <CardHeader title={"Recent Submitted Replays"} />
+                <CardContent>
+                    {this.state.recentReplays &&
+                        this.state.recentReplays.recent.map((replay) => (
+                            <a
+                                key={replay.id}
+                                href={`/replays/${replay.id}`}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                                style={{textDecoration: "none"}}
+                            >
+                                <Grid item container xs={12} style={{padding: 25}}>
+                                    <Grid item xs={12} md={3}>
+                                        <Typography>
+                                            <ColouredGameScore replay={replay} />
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} md={3}>
+                                        <Typography noWrap style={{fontStyle: "bold"}}>
+                                            {replay.gameMode}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                        <Typography noWrap style={{fontStyle: "italic"}}>
+                                            {replay.map}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Divider />
+                                </Grid>
+                            </a>
+                        ))}
+                </CardContent>
+            </Card>
         )
     }
 }
-
-export const Recent = withTheme(RecentComponent)
