@@ -1,12 +1,11 @@
 import {
     Checkbox,
     createStyles,
-    ExpansionPanel,
-    ExpansionPanelDetails,
-    ExpansionPanelSummary,
+    Divider,
     FormControl,
     FormControlLabel,
     FormHelperText,
+    Grid,
     IconButton,
     Input,
     InputLabel,
@@ -17,7 +16,6 @@ import {
     withStyles
 } from "@material-ui/core"
 import Clear from "@material-ui/icons/Clear"
-import ExpandMore from "@material-ui/icons/ExpandMore"
 import * as _ from "lodash"
 import * as React from "react"
 import {PlaylistMetadata, playlists} from "../../../Utils/Playlists"
@@ -45,7 +43,7 @@ const styles = createStyles({
     formControl: {
         maxWidth: 400,
         minWidth: 200,
-        width: "90%"
+        width: "100%"
     },
     panelDetails: {
         flexWrap: "wrap"
@@ -65,7 +63,6 @@ interface State {
     filterRanked: boolean
     filterStandardMode: boolean
     filterPublic: boolean // Just playlists that exist on play online menu, in which we can get consistent data
-    optionsExpanded: boolean
 }
 
 class PlaylistSelectComponent extends React.PureComponent<Props, State> {
@@ -75,8 +72,7 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
             filterCurrent: true,
             filterRanked: false,
             filterStandardMode: false,
-            filterPublic: Boolean(props.currentPlaylistsOnly),
-            optionsExpanded: false
+            filterPublic: Boolean(props.currentPlaylistsOnly)
         }
     }
 
@@ -164,27 +160,27 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
 
         return (
             <>
-                {!this.props.dropdownOnly && (
-                    <ExpansionPanel square={false} expanded={this.state.optionsExpanded}>
-                        <ExpansionPanelSummary
-                            classes={{root: classes.root, content: classes.content}}
-                            expandIcon={
-                                <Tooltip title="Playlist options">
-                                    <ExpandMore />
-                                </Tooltip>
-                            }
-                            IconButtonProps={{onClick: this.handleExpandedChange}}
-                        >
+                {this.props.dropdownOnly ? (
+                    playlistsMultiSelect
+                ) : (
+                    <Grid container spacing={1}>
+                        <Grid item xs={12}>
                             {playlistsMultiSelect}
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails className={classes.panelDetails}>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
+                        <Grid item xs={12}>
                             {filterCurrentCheckbox}
+                        </Grid>
+                        <Grid item xs={12}>
                             {filterStandardCheckbox}
+                        </Grid>
+                        <Grid item xs={12}>
                             {filterRankedCheckbox}
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
+                        </Grid>
+                    </Grid>
                 )}
-                {this.props.dropdownOnly && playlistsMultiSelect}
             </>
         )
     }
@@ -211,10 +207,6 @@ class PlaylistSelectComponent extends React.PureComponent<Props, State> {
 
     private readonly setSelectedPlaylists = (playlistsToSet: number[]) => {
         this.props.handleChange(({target: {value: playlistsToSet}} as any) as React.ChangeEvent<HTMLSelectElement>)
-    }
-
-    private readonly handleExpandedChange = () => {
-        this.setState({optionsExpanded: !this.state.optionsExpanded})
     }
 }
 
