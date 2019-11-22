@@ -21,24 +21,15 @@ import {VisibilityToggle} from "./VisibilityToggle."
 
 const styles = (theme: Theme) =>
     createStyles({
-        iconButton: {
-            height: 20,
-            width: 20,
-            color: theme.palette.secondary.main,
-            "&:hover": {
-                transitionProperty: "transform",
-                transitionDuration: "100ms",
-                transform: "scale(1.2)",
-                color: theme.palette.secondary.dark
-            }
-        },
         panelDetails: {
             overflowX: "auto",
             maxWidth: "95vw",
             margin: "auto"
         },
-        listGridItem: {
-            margin: "auto"
+        checkboxPadding: {
+            padding: 0,
+            paddingLeft: 8,
+            paddingRight: 8
         }
     })
 
@@ -82,15 +73,16 @@ class ReplayDisplayRowComponent extends React.PureComponent<Props> {
         return (
             <ExpansionPanel>
                 <ReplayExpansionPanelSummary replay={replay}>
-                    <TagDialogWrapper replay={this.props.replay} handleUpdateTags={this.props.handleUpdateTags} small />
                     {selectProps && (
                         <Checkbox
                             checked={selectProps.selected}
                             onChange={this.toggleSelect}
                             color="secondary"
                             onClick={this.stopClickPropagation}
+                            className={classes.checkboxPadding}
                         />
                     )}
+                    <TagDialogWrapper replay={this.props.replay} handleUpdateTags={this.props.handleUpdateTags} small />
                     {this.props.loggedInUser &&
                         (this.props.loggedInUser.admin || // User is admin, or user is player in game
                             this.props.replay.players

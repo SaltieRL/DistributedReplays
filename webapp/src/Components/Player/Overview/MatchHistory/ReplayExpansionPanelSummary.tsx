@@ -32,13 +32,13 @@ const styles = (theme: Theme) =>
                 transform: "scale(1.2)",
                 color: theme.palette.secondary.dark
             },
-            marginLeft: 12
+            marginLeft: 8
         },
         rankIcon: {
             width: 28,
             height: 28,
             margin: "auto",
-            marginLeft: 12
+            marginLeft: 8
         },
         panelSummaryContent: {
             width: "100%",
@@ -102,12 +102,12 @@ class ReplayExpansionPanelSummaryComponent extends React.PureComponent<Props> {
                     <Grid container spacing={1} justify="space-between">
                         {notOnMobile ? (
                             <>
-                                <Grid item xs={5}>
+                                <Grid item xs={5} xl={6}>
                                     <Typography variant={typographyVariant} noWrap>
                                         {replayName}
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={2} lg={3}>
+                                <Grid item xs={2} lg={3} xl={2}>
                                     {replayDate}
                                 </Grid>
                                 <Grid item xs={2}>
