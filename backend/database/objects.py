@@ -1,12 +1,15 @@
 # ORM objects
 import datetime
 import enum
+import uuid
 
 from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, DateTime, Enum, UniqueConstraint, \
-    ForeignKeyConstraint, JSON
+    ForeignKeyConstraint, JSON, Index, func, Sequence
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
+from sqlalchemy.orm import remote, foreign
+from sqlalchemy_utils import LtreeType, Ltree
 
 DBObjectBase = declarative_base()
 
@@ -55,6 +58,11 @@ class GameVisibilitySetting(enum.Enum):
     DEFAULT = 0  # i.e. Unset
     PUBLIC = 1
     PRIVATE = 2
+
+
+class GroupEntryType(enum.Enum):
+    group = 0
+    game = 1
 
 
 class User(DBObjectBase):
@@ -416,3 +424,45 @@ class ReplayLog(DBObjectBase):
     params = Column(String, default=None)
     game = Column(String(40), default=None)
     date = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+id_seq = Sequence('nodes_id_seq')
+
+
+class GroupEntry(DBObjectBase):
+    __tablename__ = "replay_groups"
+    id = Column(Integer, id_seq, primary_key=True)
+    uuid = Column(String(36))
+    owner = Column(String(40), ForeignKey('players.platformid'))
+    name = Column(String(250))
+    game = Column(String(40))
+    path = Column(LtreeType, nullable=False)
+    type = Column(Enum(GroupEntryType))
+    parent = relationship(
+        'GroupEntry',
+        primaryjoin=remote(path) == foreign(func.subpath(path, 0, -1)),
+        backref='children',
+        viewonly=True,
+    )
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+
+    __table_args__ = (
+        Index('ix_nodes_path', path, postgresql_using="gist"),
+    )
+
+    def __init__(self, *args, **kwargs):
+        engine = kwargs['engine']
+        del kwargs['engine']
+        super().__init__(*args, **kwargs)
+        _id = engine.execute(id_seq)
+        self.id = _id
+        self.uuid = uuid.uuid4()
+        parent = kwargs['parent'] if 'parent' in kwargs else None
+        ltree_id = Ltree(str(self.id))
+        self.path = ltree_id if parent is None else parent.path + ltree_id
+
+    def __str__(self):
+        return self.uuid
+
+    def __repr__(self):
+        return 'Node({})'.format(self.uuid)

@@ -19,9 +19,13 @@ from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonPr
 from backend.blueprints.spa_api.service_layers.homepage.recent import RecentReplays
 from backend.blueprints.spa_api.service_layers.homepage.twitch import TwitchStreams
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
+from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
+from backend.blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.blueprints.spa_api.service_layers.replay.savedgroups.groups import SavedGroup
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
+from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
     player_id, heatmap_query_params
@@ -29,13 +33,10 @@ from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
-from backend.utils.logger import ErrorLogger
-from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
-from backend.blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
+from backend.utils.logger import ErrorLogger
 from backend.utils.metrics import MetricsHandler, add_saved_replay
-from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.utils.safe_flask_globals import get_current_user_id
 
@@ -751,3 +752,22 @@ def api_admin_get_logs(query_params=None):
 @with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
 def api_admin_get_replay(query_params=None):
     return redirect(f"https://storage.googleapis.com/{FAILED_BUCKET}/{query_params['id']}.replay")
+
+
+# GROUPS
+
+@bp.route('/groups/add', methods=['POST'])
+def create_group():
+    payload = request.get_json()
+    if payload is None:
+        return jsonify({"Error": "Malformed request"}), 403
+    name = payload['name'] if 'name' in payload else None
+    if 'parent' in payload:
+        parent = payload['parent']
+        if 'game' in payload:
+            entry = SavedGroup.add_game(parent, payload['game'], name)
+        else:
+            entry = SavedGroup.add_subgroup(parent, name)
+    else:
+        entry = SavedGroup.create(name)
+    return jsonify({"uuid": entry})

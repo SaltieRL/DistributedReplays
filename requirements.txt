@@ -43,3 +43,4 @@ alembic==1.0.10
 prometheus_client
 pycryptodome
 flask-httpauth
+sqlalchemy-utils
