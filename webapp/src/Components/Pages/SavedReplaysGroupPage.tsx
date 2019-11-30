@@ -8,6 +8,7 @@ import { PLAYER_PAGE_LINK } from "../../Globals"
 import { Entry, GroupPlayerStatsResponse, GroupResponse } from "../../Models/Replay/Groups"
 import { getGroupInfo, getGroupStats } from "../../Requests/Replay"
 import { ReplayDisplayRow } from "../ReplaysSearch/ReplayDisplayRow"
+import { GroupDialog } from "../SavedReplaysGroup/GroupDialog"
 import { GroupPlayerStatsTable } from "../SavedReplaysGroup/GroupPlayerStatsTable"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
@@ -27,12 +28,13 @@ interface State {
     stats?: GroupPlayerStatsResponse
     reloadSignal: boolean
     selectedTab: GroupTab
+    dialogOpen: boolean
 }
 
 class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false, selectedTab: "Replays"}
+        this.state = {reloadSignal: false, selectedTab: "Replays", dialogOpen: false}
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
@@ -81,7 +83,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                 <Grid item xs={12}>
                                     <Card>
                                         <CardHeader action={<IconButton
-                                            onClick={(event) => event.stopPropagation()}
+                                            onClick={this.toggleDialog}
                                         >
                                             <Add/>
                                         </IconButton>}/>
@@ -129,6 +131,8 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                         </LoadableWrapper>
                     </Grid>
                 </Grid>
+                <GroupDialog group={this.props.match.params.id} openDialog={this.state.dialogOpen}
+                             onCloseDialog={this.toggleDialog}/>
             </BasePage>
         )
     }
@@ -146,6 +150,9 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
 
     private readonly handleTabChange = (_: React.ChangeEvent<{}>, selectedTab: GroupTab) => {
         this.setState({selectedTab})
+    }
+    private readonly toggleDialog = () => {
+        this.setState({dialogOpen: !this.state.dialogOpen})
     }
 }
 

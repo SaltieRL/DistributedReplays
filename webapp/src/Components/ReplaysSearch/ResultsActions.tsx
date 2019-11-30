@@ -10,6 +10,8 @@ interface OwnProps {
     disabled: boolean
     selectable: boolean
     handleSelectableChange: (event: React.ChangeEvent<HTMLInputElement>, selectable: boolean) => void
+    selectedAction?: any
+    buttonText?: string
     to: H.LocationDescriptor
 }
 
@@ -35,13 +37,19 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
                 label="Select mode"
             />
         )
-        const linkButton = (
+        const linkButton = this.props.selectedAction ? (
+            <LinkButton icon={Send} iconType="mui"
+                        onClick={this.props.selectedAction}
+                        disabled={this.props.disabled}>
+                {this.props.buttonText}
+            </LinkButton>) : (
             <LinkButton icon={Send} iconType="mui"
                         to={this.props.to}
                         disabled={this.props.disabled}
                         tooltip="Select at least one replay to view as group">
                 View as group
             </LinkButton>
+
         )
 
         return (

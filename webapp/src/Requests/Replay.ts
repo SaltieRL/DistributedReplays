@@ -1,5 +1,5 @@
 import qs from "qs"
-import { doGet, doRequest } from "../apiHandler/apiHandler"
+import { doGet, doPost, doRequest } from "../apiHandler/apiHandler"
 import {
     BasicStat,
     GameVisibility,
@@ -111,4 +111,11 @@ export const getGroupStats = (id: string): Promise<GroupPlayerStatsResponse> => 
         })
         return result
     })
+}
+
+export const addGames = (id: string, games: string[]): Promise<VisibilityResponse> => {
+    return doPost(`/groups/add`, JSON.stringify({
+        games,
+        parent: id
+    }))
 }

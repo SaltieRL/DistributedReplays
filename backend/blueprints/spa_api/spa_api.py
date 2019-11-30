@@ -758,7 +758,7 @@ def api_admin_get_replay(query_params=None):
 
 @bp.route('/groups/add', methods=['POST'])
 def create_group():
-    payload = request.get_json()
+    payload = request.get_json(force=True)
     if payload is None:
         return jsonify({"Error": "Malformed request"}), 403
     name = payload['name'] if 'name' in payload else None
@@ -766,6 +766,8 @@ def create_group():
         parent = payload['parent']
         if 'game' in payload:
             entry = SavedGroup.add_game(parent, payload['game'], name)
+        elif 'games' in payload:
+            entry = [SavedGroup.add_game(parent, game, name) for game in payload['games']]
         else:
             entry = SavedGroup.add_subgroup(parent, name)
     else:
