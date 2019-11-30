@@ -18,7 +18,7 @@ class RecentReplays:
     @with_session
     def get_recent_replays(session=None):
         replays = session.query(Game).order_by(desc(Game.match_date))[:5]
-        return [Replay.create_from_game(r).__dict__ for r in replays]
+        return [Replay.create_from_game(r, loadout=False).__dict__ for r in replays]
 
 
 if __name__ == '__main__':

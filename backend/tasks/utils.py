@@ -1,3 +1,5 @@
+import redis
+
 from backend.database.startup import get_strict_redis
 
 PRIORITY_SEP = '\x06\x16'
@@ -41,4 +43,7 @@ def get_queue_length(queue_name='celery'):
     priority_names = [make_queue_name_for_pri(queue_name, pri) for pri in
                       DEFAULT_PRIORITY_STEPS]
     r = get_strict_redis()
-    return [r.llen(x) for x in priority_names]
+    try:
+        return [r.llen(x) for x in priority_names]
+    except redis.exceptions.ConnectionError:
+        return [0 for x in priority_names]

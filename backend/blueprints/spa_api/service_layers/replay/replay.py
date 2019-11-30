@@ -49,7 +49,7 @@ class Replay:
         return replay
 
     @staticmethod
-    def create_from_game(game: Game) -> 'Replay':
+    def create_from_game(game: Game, loadout=True) -> 'Replay':
         return Replay(
             id_=game.hash,
             name=game.name,
@@ -58,7 +58,7 @@ class Replay:
             game_mode=get_playlist(game.playlist, game.teamsize),
             game_score=GameScore.create_from_game(game),
             players=[
-                ReplayPlayer.create_from_player_game(player_game)
+                ReplayPlayer.create_from_player_game(player_game, loadout)
                 for player_game in sort_player_games_by_team_then_id(
                     cast(List[PlayerGame], game.playergames))
             ],

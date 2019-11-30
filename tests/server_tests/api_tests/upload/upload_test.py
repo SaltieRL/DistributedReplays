@@ -3,7 +3,7 @@ import io
 from requests import Request
 
 from backend.database.objects import Game, Player
-from backend.database.startup import get_current_session, EngineStartup, startup
+from backend.database.startup import get_current_session
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
 from tests.utils.location_utils import LOCAL_URL
