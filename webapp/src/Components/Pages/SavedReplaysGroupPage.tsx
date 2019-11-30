@@ -1,4 +1,5 @@
-import { Card, CardHeader, Divider, Grid, List, ListItem, Tab, Tabs, Typography } from "@material-ui/core"
+import { Card, CardHeader, Divider, Grid, IconButton, List, ListItem, Tab, Tabs, Typography } from "@material-ui/core"
+import Add from "@material-ui/icons/Add"
 // import Link from "@material-ui/core/Link"
 import { Breadcrumbs } from "@material-ui/lab"
 import * as React from "react"
@@ -77,9 +78,13 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                < Grid item xs={12}>
+                                <Grid item xs={12}>
                                     <Card>
-                                        <CardHeader/>
+                                        <CardHeader action={<IconButton
+                                            onClick={(event) => event.stopPropagation()}
+                                        >
+                                            <Add/>
+                                        </IconButton>}/>
                                         <Tabs value={this.state.selectedTab}
                                               onChange={this.handleTabChange}
                                         >

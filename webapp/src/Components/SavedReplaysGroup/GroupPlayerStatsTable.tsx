@@ -1,12 +1,11 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
 import * as React from "react"
-import { CSSProperties } from "react"
 import { GroupPlayerStatsResponse, PlayerStat } from "../../Models/Replay/Groups"
 import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../Utils/String"
 
 interface Props {
     stats: GroupPlayerStatsResponse
-    style: CSSProperties | undefined
+    style: React.CSSProperties | undefined
 }
 
 interface SortOptions {
