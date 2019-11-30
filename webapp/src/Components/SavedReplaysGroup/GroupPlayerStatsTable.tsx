@@ -82,7 +82,7 @@ export class GroupPlayerStatsTable extends React.Component<Props, State> {
     private readonly sortPlayerStats = (playerStats: PlayerStat[]): void => {
         const {statName, direction} = this.state.currentSort!
 
-        if (playerStats.length > 0 && Object.keys(playerStats[0].stats).find((stat: string) => stat === statName) !== undefined) {
+        if (playerStats.length > 0 && statName in playerStats[0].stats) {
             playerStats.sort((playerStatA, playerStatB) => {
                 return playerStatA.stats[statName]
                     - playerStatB.stats[statName]
