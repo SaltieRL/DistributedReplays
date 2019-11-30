@@ -2,6 +2,7 @@ import logging
 
 from sqlalchemy import func
 
+from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import GroupEntry, GroupEntryType
 from backend.database.wrapper import player_wrapper
@@ -21,11 +22,12 @@ class Group:
 
 
 class GroupEntryJSON:
-    def __init__(self, uuid, owner, name, game, type, parent):
+    def __init__(self, uuid, owner, name, game, game_object, type, parent):
         self.uuid = uuid
         self.owner = owner
         self.name = name
         self.game = game
+        self.gameObject = game_object
         self.type = type
         self.parent = parent
 
@@ -36,6 +38,7 @@ class GroupEntryJSON:
             owner=obj.owner,
             name=obj.name,
             game=obj.game,
+            game_object=Replay.create_from_id(obj.game).__dict__ if obj.game is not None else None,
             type=obj.type.value,
             parent=obj.parent.uuid if obj.parent is not None else None
         )
