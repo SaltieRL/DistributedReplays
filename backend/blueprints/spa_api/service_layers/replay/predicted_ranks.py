@@ -6,9 +6,8 @@ from backend.database.objects import PlayerGame, Game
 from backend.utils.checks import is_local_dev
 
 try:
-    from backend.blueprints.spa_api.service_layers.ml.ml import model_holder
+    from backend.blueprints.spa_api.service_layers.ml.rank_prediction import lazy_get_prediction_model
 except ModuleNotFoundError:
-    model_holder = None
     print("Not using ML because required packages are not installed. Run `pip install -r requirements-ml.txt` to use ML.")
 
 
@@ -25,6 +24,7 @@ class PredictedRank:
         :param session:
         :return: List of PredictedRanksTable
         """
+        model_holder = lazy_get_prediction_model()
         if model_holder is None:
             print("Not using ML, model holder is None.")
             # raise Exception('ML not loaded for predicted ranks.')

@@ -8,6 +8,8 @@ import pandas as pd
 from backend.database.objects import PlayerGame
 from sqlalchemy import inspect
 
+from utils.logging import ErrorLogger
+
 
 def object_as_dict(obj):
     return {c.key: getattr(obj, c.key)
@@ -95,13 +97,26 @@ class RankPredictor:
         return int(result[0])
 
 
-model_holder = RankPredictor()
+model_holder = None
+retry = True
+
+
+def lazy_get_prediction_model():
+    global model_holder
+    global retry
+    if model_holder == None and retry:
+        try:
+            model_holder = RankPredictor()
+        except Exception as e:
+            retry = False
+            ErrorLogger.log_error(e, "Unable to load predictions")
+    return model_holder
 
 
 if __name__ == '__main__':
     from backend.database.startup import lazy_startup
 
-    pr = RankPredictor()
+    pr = lazy_get_prediction_model()
     session_factory = lazy_startup()
 
     s = session_factory()

@@ -299,6 +299,21 @@ def api_get_replay_positions(id_, query_params=None):
     raise NotYetImplemented()
 
 
+@bp.route('replay/<id_>/advantage')
+@with_query_params(accepted_query_params=[
+    QueryParam(name='frame', type_=int, optional=True, is_list=True),
+    QueryParam(name='frame_start', type_=int, optional=True),
+    QueryParam(name='frame_count', type_=int, optional=True),
+    QueryParam(name='as_proto', type_=bool, optional=True)
+])
+def api_get_replay_advantage_predictions(id_, query_params=None):
+    try:
+        from backend.blueprints.spa_api.service_layers.ml.advantage import predict_on_id
+        return better_jsonify(predict_on_id(id_, query_params))
+    except:
+        return better_jsonify([[[]],[[]]])
+
+
 @bp.route('replay/<id_>/heatmaps')
 @with_query_params(accepted_query_params=heatmap_query_params)
 def api_get_replay_heatmaps(id_, query_params=None):
