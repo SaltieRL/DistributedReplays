@@ -771,3 +771,11 @@ def create_group():
     else:
         entry = SavedGroup.create(name)
     return jsonify({"uuid": entry})
+
+
+@bp.route('/groups')
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=True),
+                                          QueryParam(name='limit', type_=int, optional=True),
+                                          QueryParam(name='id', type_=str, optional=False)])
+def get_group(query_params):
+    return better_jsonify(SavedGroup.get_info(query_params['id']))

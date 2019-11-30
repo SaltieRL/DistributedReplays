@@ -1,5 +1,7 @@
 import logging
 
+from sqlalchemy import func
+
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import GroupEntry, GroupEntryType
 from backend.database.wrapper import player_wrapper
@@ -9,6 +11,34 @@ from backend.utils.safe_flask_globals import UserManager
 logger = logging.getLogger(__name__)
 
 wrapper = player_stat_wrapper.PlayerStatWrapper(player_wrapper.PlayerWrapper(limit=10))
+
+
+class Group:
+    def __init__(self, entry, ancestors, children):
+        self.entry = entry.__dict__
+        self.ancestors = ancestors
+        self.children = children
+
+
+class GroupEntryJSON:
+    def __init__(self, uuid, owner, name, game, type, parent):
+        self.uuid = uuid
+        self.owner = owner
+        self.name = name
+        self.game = game
+        self.type = type
+        self.parent = parent
+
+    @classmethod
+    def create(cls, obj):
+        return cls(
+            uuid=obj.uuid,
+            owner=obj.owner,
+            name=obj.name,
+            game=obj.game,
+            type=obj.type.value,
+            parent=obj.parent.uuid if obj.parent is not None else None
+        )
 
 
 class SavedGroup:
@@ -41,6 +71,17 @@ class SavedGroup:
         session.add(entry)
         session.commit()
         return entry.uuid
+
+    @staticmethod
+    @with_session
+    def get_info(uuid, session=None):
+        entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
+        children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).filter(
+            func.nlevel(GroupEntry.path) == len(entry.path) + 1).all()
+        ancestors = session.query(GroupEntry).filter(GroupEntry.path.ancestor_of(entry.path)).filter(
+            func.nlevel(GroupEntry.path) < len(entry.path)).all()
+        return Group(GroupEntryJSON.create(entry), [GroupEntryJSON.create(ancestor).__dict__ for ancestor in ancestors],
+                     [GroupEntryJSON.create(child).__dict__ for child in children])
 
     @staticmethod
     @with_session
