@@ -3,6 +3,7 @@ import { Card, CardHeader, Divider, Grid, List, ListItem, Tab, Tabs, Typography 
 import { Breadcrumbs } from "@material-ui/lab"
 import * as React from "react"
 import { Link as DOMLink, RouteComponentProps } from "react-router-dom"
+import { PLAYER_PAGE_LINK } from "../../Globals"
 import { Entry, GroupPlayerStatsResponse, GroupResponse } from "../../Models/Replay/Groups"
 import { getGroupInfo, getGroupStats } from "../../Requests/Replay"
 import { ReplayDisplayRow } from "../ReplaysSearch/ReplayDisplayRow"
@@ -58,10 +59,25 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                         <Typography color="textPrimary">{group.entry.name}</Typography>
                                     </Breadcrumbs>
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <Typography variant={"h3"}>{group.entry.name}</Typography>
+                                <Grid container item xs={12}>
+                                    <Grid item xs={8}>
+                                        <Typography variant={"h3"}>{group.entry.name}</Typography>
+                                    </Grid>
+                                    <Grid container item xs={4}>
+                                        <Grid item xs={10}>
+                                            <Typography variant={"subtitle1"} noWrap>Created
+                                                by <DOMLink style={{textDecoration: "none"}}
+                                                            to={PLAYER_PAGE_LINK(group.entry.owner.id)}>
+                                                    {group.entry.owner.name}
+                                                </DOMLink>
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <img src={group.entry.owner.avatarLink} height={"25px"}/>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={12}>
+                                < Grid item xs={12}>
                                     <Card>
                                         <CardHeader/>
                                         <Tabs value={this.state.selectedTab}

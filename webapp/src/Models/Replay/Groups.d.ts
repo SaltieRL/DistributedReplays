@@ -10,7 +10,7 @@ export interface Entry {
     game: null | string
     gameObject: null | Replay
     name: string
-    owner: string
+    owner: Player
     parent: null | string
     type: number
     uuid: string
