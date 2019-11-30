@@ -779,3 +779,9 @@ def create_group():
                                           QueryParam(name='id', type_=str, optional=False)])
 def get_group(query_params):
     return better_jsonify(SavedGroup.get_info(query_params['id']))
+
+
+@bp.route('/groups/stats')
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def get_group_stats(query_params):
+    return better_jsonify(SavedGroup.get_stats(query_params['id']))

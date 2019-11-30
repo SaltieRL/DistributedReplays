@@ -89,5 +89,6 @@ class SavedGroup:
         path = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first().path
         games = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(path)).filter(
             GroupEntry.type == GroupEntryType.game).all()
-        stats = wrapper.get_group_stats([game.hash for game in games])
+        games = [game.game for game in games]
+        stats = wrapper.get_group_stats(games)
         return stats
