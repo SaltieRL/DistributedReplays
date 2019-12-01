@@ -9,13 +9,7 @@ import {
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../Models"
-import {
-    Entry,
-    GroupPlayerStatsResponse,
-    GroupResponse,
-    GroupTeamStatsResponse,
-    PlayerStat
-} from "../Models/Replay/Groups"
+import { Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse } from "../Models/Replay/Groups"
 import { VisibilityResponse } from "../Models/types/VisibilityResponse"
 import { useMockData } from "./Config"
 import { MOCK_REPLAY_1 } from "./Mock"
@@ -103,20 +97,7 @@ export const getGroupInfo = (id: string): Promise<GroupResponse> => {
 }
 
 export const getGroupPlayerStats = (id: string): Promise<GroupPlayerStatsResponse> => {
-    return doGet(`/groups/stats/players?id=${id}`).then((result) => {
-        result.playerStats = result.playerStats.map((player: PlayerStat) => {
-
-            const stats = {}
-            Object.keys(player.stats).forEach((category: string) => {
-                Object.keys(player.stats[category]).forEach((stat: string) => {
-                    stats[`${stat} ${category}`] = player.stats[category][stat]
-                })
-            })
-            player.stats = stats
-            return player
-        })
-        return result
-    })
+    return doGet(`/groups/stats/players?id=${id}`)
 }
 export const getGroupTeamStats = (id: string): Promise<GroupTeamStatsResponse> => {
     return doGet(`/groups/stats/teams?id=${id}`)

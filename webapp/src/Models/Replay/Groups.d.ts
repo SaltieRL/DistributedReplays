@@ -17,12 +17,7 @@ export interface Entry {
 }
 
 export interface GroupPlayerStatsResponse {
-    ensembleStats: EnsembleStats
     playerStats: PlayerStat[]
-}
-
-export interface EnsembleStats {
-    stats: any
 }
 
 export interface PlayerStat {

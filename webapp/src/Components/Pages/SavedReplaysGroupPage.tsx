@@ -10,7 +10,7 @@ import { Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse 
 import { getGroupInfo, getGroupPlayerStats, getGroupTeamStats } from "../../Requests/Replay"
 import { ReplayDisplayRow } from "../ReplaysSearch/ReplayDisplayRow"
 import { GroupDialog } from "../SavedReplaysGroup/GroupDialog"
-import { GroupPlayerStatsTable } from "../SavedReplaysGroup/GroupPlayerStatsTable"
+import { GroupPlayerStatsTableWrapper } from "../SavedReplaysGroup/GroupPlayerStatsTableWrapper"
 import { GroupTeamStatsTableWrapper } from "../SavedReplaysGroup/GroupTeamStatsTableWrapper"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
@@ -135,8 +135,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                         </List>}
                                         {this.state.selectedTab === "Players" &&
                                         <LoadableWrapper load={this.getStatsPlayers}>
-                                            {this.state.playerStats && <GroupPlayerStatsTable
-                                                style={{overflowX: "scroll"}}
+                                            {this.state.playerStats && <GroupPlayerStatsTableWrapper
                                                 stats={this.state.playerStats}/>}
                                         </LoadableWrapper>}
                                         {this.state.selectedTab === "Teams" &&

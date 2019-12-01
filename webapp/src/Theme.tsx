@@ -38,11 +38,22 @@ const getTheme = (dark: boolean) => createMuiTheme({
         },
         useNextVariants: true
     },
-    overrides: dark ? {
-        MuiTabs: {
-            root: {color: "white"}
-        }
-    } : {}
+    overrides: {
+        MuiTableCell: {
+            body: {
+                fontWeight: 400
+            },
+            head: {
+                fontWeight: 700,
+                backgroundColor: dark ? "#4c4c4c" : "#f7f7f7"
+            }
+        },
+        ...dark ? {
+            MuiTabs: {
+                root: {color: "white"}
+            }
+        } : {}
+    }
 })
 
 interface State {
