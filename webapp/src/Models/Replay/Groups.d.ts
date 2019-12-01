@@ -30,3 +30,16 @@ export interface PlayerStat {
     player: string
     stats: any
 }
+
+// TEAMS
+
+export interface GroupTeamStatsResponse {
+    teamStats: TeamStat[]
+}
+
+export interface TeamStat {
+    games: string[]
+    names: string[]
+    stats: any
+    team: string[]
+}

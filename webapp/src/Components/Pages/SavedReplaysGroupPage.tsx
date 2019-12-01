@@ -6,11 +6,12 @@ import { Breadcrumbs } from "@material-ui/lab"
 import * as React from "react"
 import { Link as DOMLink, RouteComponentProps } from "react-router-dom"
 import { PLAYER_PAGE_LINK } from "../../Globals"
-import { Entry, GroupPlayerStatsResponse, GroupResponse } from "../../Models/Replay/Groups"
-import { getGroupInfo, getGroupPlayerStats } from "../../Requests/Replay"
+import { Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse } from "../../Models/Replay/Groups"
+import { getGroupInfo, getGroupPlayerStats, getGroupTeamStats } from "../../Requests/Replay"
 import { ReplayDisplayRow } from "../ReplaysSearch/ReplayDisplayRow"
 import { GroupDialog } from "../SavedReplaysGroup/GroupDialog"
 import { GroupPlayerStatsTable } from "../SavedReplaysGroup/GroupPlayerStatsTable"
+import { GroupTeamStatsTableWrapper } from "../SavedReplaysGroup/GroupTeamStatsTableWrapper"
 import { LoadableWrapper } from "../Shared/LoadableWrapper"
 import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
 import { BasePage } from "./BasePage"
@@ -20,13 +21,14 @@ interface RouteParams {
 }
 
 type GroupTab = "Replays" | "Teams" | "Players"
-const groupTabs = ["Replays", "Players"]
+const groupTabs = ["Replays", "Teams", "Players"]
 type Props = RouteComponentProps<RouteParams>
     & WithNotifications
 
 interface State {
     group?: GroupResponse
-    stats?: GroupPlayerStatsResponse
+    playerStats?: GroupPlayerStatsResponse
+    teamStats?: GroupTeamStatsResponse
     reloadSignal: boolean
     selectedTab: GroupTab
     dialogOpen: boolean
@@ -45,7 +47,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {group} = this.state
+        const {group, teamStats} = this.state
 
         const addButton = (
             <IconButton
@@ -132,10 +134,15 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                             ))}
                                         </List>}
                                         {this.state.selectedTab === "Players" &&
-                                        <LoadableWrapper load={this.getStats}>
-                                            {this.state.stats && <GroupPlayerStatsTable
+                                        <LoadableWrapper load={this.getStatsPlayers}>
+                                            {this.state.playerStats && <GroupPlayerStatsTable
                                                 style={{overflowX: "scroll"}}
-                                                stats={this.state.stats}/>}
+                                                stats={this.state.playerStats}/>}
+                                        </LoadableWrapper>}
+                                        {this.state.selectedTab === "Teams" &&
+                                        <LoadableWrapper load={this.getStatsTeams}>
+                                            {teamStats && teamStats.teamStats &&
+                                            <GroupTeamStatsTableWrapper stats={teamStats}/>}
                                         </LoadableWrapper>}
                                     </Card>
                                 </Grid>
@@ -155,9 +162,14 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
             this.setState({group: response})
         })
     }
-    private readonly getStats = (): Promise<void> => {
+    private readonly getStatsPlayers = (): Promise<void> => {
         return getGroupPlayerStats(this.props.match.params.id).then((response) => {
-            this.setState({stats: response})
+            this.setState({playerStats: response})
+        })
+    }
+    private readonly getStatsTeams = (): Promise<void> => {
+        return getGroupTeamStats(this.props.match.params.id).then((response) => {
+            this.setState({teamStats: response})
         })
     }
 

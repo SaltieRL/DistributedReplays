@@ -9,7 +9,13 @@ import {
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../Models"
-import { Entry, GroupPlayerStatsResponse, GroupResponse, PlayerStat } from "../Models/Replay/Groups"
+import {
+    Entry,
+    GroupPlayerStatsResponse,
+    GroupResponse,
+    GroupTeamStatsResponse,
+    PlayerStat
+} from "../Models/Replay/Groups"
 import { VisibilityResponse } from "../Models/types/VisibilityResponse"
 import { useMockData } from "./Config"
 import { MOCK_REPLAY_1 } from "./Mock"
@@ -111,6 +117,9 @@ export const getGroupPlayerStats = (id: string): Promise<GroupPlayerStatsRespons
         })
         return result
     })
+}
+export const getGroupTeamStats = (id: string): Promise<GroupTeamStatsResponse> => {
+    return doGet(`/groups/stats/teams?id=${id}`)
 }
 
 export const addGames = (id: string, games: string[]): Promise<VisibilityResponse> => {

@@ -191,25 +191,24 @@ class PlayerStatWrapper(GlobalStatWrapper):
         factor_per_norm_game = factor_per_minute / 5 if factor_per_minute is not None else None
 
         for stat in self.get_player_stat_list():
-            inserted = False
             stat_query_key = stat.get_query_key()
             if stat_query_key not in individual or stat_query_key not in average:
                 continue
             if stat_query_key in self.replay_group_stats.grouped_stat_total:
                 if stat.is_percent or stat.is_averaged:
                     total[stat_query_key] = average[stat_query_key]
-                    inserted = True
                 else:
                     total[stat_query_key] = individual[stat_query_key]
-                    inserted = True
             if stat_query_key in self.replay_group_stats.grouped_stat_per_game and factor_per_game is not None:
                 per_game[stat_query_key] = individual[stat_query_key] / factor_per_game
-                inserted = True
             if stat_query_key in self.replay_group_stats.grouped_stat_per_minute and factor_per_minute is not None:
                 per_minute[stat_query_key] = individual[stat_query_key] / factor_per_minute
-                inserted = True
-            if not inserted and factor_per_norm_game is not None:
-                per_norm_game[stat_query_key] = individual[stat_query_key] / factor_per_norm_game
+            if factor_per_norm_game is not None:
+                if stat_query_key in self.replay_group_stats.grouped_stat_total and (
+                        stat.is_percent or stat.is_averaged):
+                    per_norm_game[stat_query_key + " (Total)"] = average[stat_query_key]
+                else:
+                    per_norm_game[stat_query_key] = individual[stat_query_key] / factor_per_norm_game
 
         return {
             'stats': {
@@ -229,17 +228,19 @@ class PlayerStatWrapper(GlobalStatWrapper):
                 PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.game).group_by(
                 PlayerGame.is_orange).subquery()
             teams = session.query(query.c.team, func.array_agg(query.c.game)).group_by(query.c.team).all()
-            return [
-                {
-                    "team": team[0],
-                    "games": team[1],
-                    "names": [name for (name,) in session.query(func.min(PlayerGame.name)).filter(
-                        PlayerGame.game.in_(team[1])).filter(
-                        PlayerGame.player.in_(team[0])).order_by(
-                        PlayerGame.player).group_by(PlayerGame.player).all()],
-                    **self._create_group_stats(session, player_filter=team[0], replay_ids=team[1])
-                }
-                for team in teams]
+            return {
+                "teamStats": [
+                    {
+                        "team": team[0],
+                        "games": team[1],
+                        "names": [name for (name,) in session.query(func.min(PlayerGame.name)).filter(
+                            PlayerGame.game.in_(team[1])).filter(
+                            PlayerGame.player.in_(team[0])).order_by(
+                            PlayerGame.player).group_by(PlayerGame.player).all()],
+                        **self._create_group_stats(session, player_filter=team[0], replay_ids=team[1])
+                    }
+                    for team in teams]
+            }
 
         else:
 
