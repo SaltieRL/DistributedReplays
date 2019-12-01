@@ -89,10 +89,10 @@ class SavedGroup:
 
     @staticmethod
     @with_session
-    def get_stats(uuid, session=None):
+    def get_stats(uuid, team=False, session=None):
         path = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first().path
         games = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(path)).filter(
             GroupEntry.type == GroupEntryType.game).all()
         games = [game.game for game in games]
-        stats = wrapper.get_group_stats(games)
+        stats = wrapper.get_group_stats(games, team=team)
         return stats

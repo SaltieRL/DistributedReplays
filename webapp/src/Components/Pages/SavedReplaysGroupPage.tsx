@@ -7,7 +7,7 @@ import * as React from "react"
 import { Link as DOMLink, RouteComponentProps } from "react-router-dom"
 import { PLAYER_PAGE_LINK } from "../../Globals"
 import { Entry, GroupPlayerStatsResponse, GroupResponse } from "../../Models/Replay/Groups"
-import { getGroupInfo, getGroupStats } from "../../Requests/Replay"
+import { getGroupInfo, getGroupPlayerStats } from "../../Requests/Replay"
 import { ReplayDisplayRow } from "../ReplaysSearch/ReplayDisplayRow"
 import { GroupDialog } from "../SavedReplaysGroup/GroupDialog"
 import { GroupPlayerStatsTable } from "../SavedReplaysGroup/GroupPlayerStatsTable"
@@ -156,7 +156,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
         })
     }
     private readonly getStats = (): Promise<void> => {
-        return getGroupStats(this.props.match.params.id).then((response) => {
+        return getGroupPlayerStats(this.props.match.params.id).then((response) => {
             this.setState({stats: response})
         })
     }

@@ -783,7 +783,13 @@ def get_group(query_params):
     return better_jsonify(SavedGroup.get_info(query_params['id']))
 
 
-@bp.route('/groups/stats')
+@bp.route('/groups/stats/players')
 @with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
-def get_group_stats(query_params):
+def get_group_stats_player(query_params):
     return better_jsonify(SavedGroup.get_stats(query_params['id']))
+
+
+@bp.route('/groups/stats/teams')
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def get_group_stats_team(query_params):
+    return better_jsonify(SavedGroup.get_stats(query_params['id'], team=True))

@@ -96,8 +96,8 @@ export const getGroupInfo = (id: string): Promise<GroupResponse> => {
     })
 }
 
-export const getGroupStats = (id: string): Promise<GroupPlayerStatsResponse> => {
-    return doGet(`/groups/stats?id=${id}`).then((result) => {
+export const getGroupPlayerStats = (id: string): Promise<GroupPlayerStatsResponse> => {
+    return doGet(`/groups/stats/players?id=${id}`).then((result) => {
         result.playerStats = result.playerStats.map((player: PlayerStat) => {
 
             const stats = {}
