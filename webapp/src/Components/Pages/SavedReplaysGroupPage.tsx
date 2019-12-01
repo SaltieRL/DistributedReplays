@@ -1,5 +1,6 @@
 import { Card, CardHeader, Divider, Grid, IconButton, List, ListItem, Tab, Tabs, Typography } from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
+import Edit from "@material-ui/icons/Edit"
 // import Link from "@material-ui/core/Link"
 import { Breadcrumbs } from "@material-ui/lab"
 import * as React from "react"
@@ -19,7 +20,7 @@ interface RouteParams {
 }
 
 type GroupTab = "Replays" | "Teams" | "Players"
-const groupTabs = ["Replays", "Teams", "Players"]
+const groupTabs = ["Replays", "Players"]
 type Props = RouteComponentProps<RouteParams>
     & WithNotifications
 
@@ -45,6 +46,22 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
 
     public render() {
         const {group} = this.state
+
+        const addButton = (
+            <IconButton
+                onClick={this.toggleDialog}
+            >
+                <Add/>
+            </IconButton>
+        )
+        const editButton = (
+            <IconButton
+                onClick={this.toggleDialog}
+            >
+                <Edit/>
+            </IconButton>
+        )
+
         return (
             <BasePage>
                 <Grid container spacing={24} justify="center">
@@ -52,19 +69,16 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                         <LoadableWrapper load={this.getGroup} reloadSignal={this.state.reloadSignal}>
                             {group &&
                             <>
-                                <Grid item xs={12}>
-                                    <Breadcrumbs aria-label="breadcrumb">
-                                        {group.ancestors.map((entry: Entry) => (
-                                            <DOMLink to={`/groups/${entry.uuid}`} style={{textDecoration: "none"}}>
-                                                <Typography color="textPrimary">{entry.name}</Typography>
-                                            </DOMLink>
-                                        ))}
-                                        <Typography color="textPrimary">{group.entry.name}</Typography>
-                                    </Breadcrumbs>
-                                </Grid>
                                 <Grid container item xs={12}>
                                     <Grid item xs={8}>
-                                        <Typography variant={"h3"}>{group.entry.name}</Typography>
+                                        <Breadcrumbs aria-label="breadcrumb">
+                                            {group.ancestors.map((entry: Entry) => (
+                                                <DOMLink to={`/groups/${entry.uuid}`} style={{textDecoration: "none"}}>
+                                                    <Typography color="textPrimary">{entry.name}</Typography>
+                                                </DOMLink>
+                                            ))}
+                                            <Typography color="textPrimary">{group.entry.name}</Typography>
+                                        </Breadcrumbs>
                                     </Grid>
                                     <Grid container item xs={4}>
                                         <Grid item xs={10}>
@@ -82,11 +96,10 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Card>
-                                        <CardHeader action={<IconButton
-                                            onClick={this.toggleDialog}
-                                        >
-                                            <Add/>
-                                        </IconButton>}/>
+                                        <CardHeader title={group.entry.name} action={<>
+                                            {editButton}
+                                            {addButton}
+                                        </>}/>
                                         <Tabs value={this.state.selectedTab}
                                               onChange={this.handleTabChange}
                                         >
