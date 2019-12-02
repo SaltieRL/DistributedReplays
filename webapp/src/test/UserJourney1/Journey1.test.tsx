@@ -1,3 +1,4 @@
+/* tslint:disable:no-console*/
 import "@testing-library/jest-dom/extend-expect"
 import {render, wait, waitForElement} from "@testing-library/react"
 import userEvent from "@testing-library/user-event"

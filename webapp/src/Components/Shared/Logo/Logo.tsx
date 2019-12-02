@@ -1,6 +1,6 @@
 import {Tooltip, WithTheme, withTheme} from "@material-ui/core"
 import * as React from "react"
-import { Link } from "react-router-dom"
+import {Link} from "react-router-dom"
 import LightLogoImage from "./calculated-logo-light.png"
 import LogoImage from "./calculated-logo.png"
 
