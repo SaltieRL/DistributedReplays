@@ -5,7 +5,10 @@ import * as React from "react"
 import {Router} from "react-router-dom"
 import {doGet} from "../apiHandler/apiHandler"
 import {PLAYER_PAGE_LINK, REPLAY_PAGE_LINK} from "../Globals"
+import * as getPlayer from "../Requests/Player/getPlayer"
+import * as getRanks from "../Requests/Player/getRanks"
 import {WrappedApp} from "../WrappedApp"
+import {mockImplementationGetPlayer, mockImplementationGetRank, TEST_PLAYER_ID} from "./mocks"
 
 jest.mock("../apiHandler/apiHandler", () => ({
     doGet: jest.fn(() => Promise.resolve())
@@ -38,9 +41,11 @@ describe("should route", () => {
         expect(doGet).toHaveBeenCalledWith("/me")
     })
 
-    test("should render player page at /player/TESTPLAYERID; gets player profile", () => {
+    test("should render player page at /player/TESTPLAYERID; gets player profile", async () => {
+        const mockGetPlayer = jest.spyOn(getPlayer, "getPlayer").mockImplementation(mockImplementationGetPlayer)
+        const mockGetRanks = jest.spyOn(getRanks, "getRanks").mockImplementation(mockImplementationGetRank)
+
         const history = createBrowserHistory()
-        const TEST_PLAYER_ID = "TESTPLAYERID"
         history.push(PLAYER_PAGE_LINK(TEST_PLAYER_ID))
         const app = render(
             <Router history={history}>
@@ -48,17 +53,16 @@ describe("should route", () => {
             </Router>
         )
 
-        expect(doGet).toHaveBeenCalledWith(`/player/${TEST_PLAYER_ID}/profile`)
+        await wait(() => expect(mockGetPlayer).toHaveBeenCalledWith(TEST_PLAYER_ID))
+        await wait(() => expect(mockGetRanks).toHaveBeenCalledWith(TEST_PLAYER_ID))
 
-        // The following calls are not made unless the above call returns a player.
-        // `/player/${TEST_PLAYER_ID}/match_history?page=0&limit=10`,
-        // expect(doGet).toHaveBeenCalledWith(`/player/${TEST_PLAYER_ID}/profile_stats`)
-        // `/player/${TEST_PLAYER_ID}/play_style?playlist=13`
+        expect(doGet).toHaveBeenCalledWith(`/player/${TEST_PLAYER_ID}/match_history?page=0&limit=10`)
+        expect(doGet).toHaveBeenCalledWith(`/player/${TEST_PLAYER_ID}/play_style?playlist=13`)
 
-        expect(app.getByText("Stats")).not.toThrow()
-        expect(app.getByText("Rank")).not.toThrow()
-        expect(app.getByText("Playstyle")).not.toThrow()
-        expect(app.getByText("Match History")).not.toThrow()
+        expect(() => app.getByText("Stats")).not.toThrow()
+        expect(() => app.getByText("Ranks")).not.toThrow()
+        expect(() => app.getByText("Playstyle")).not.toThrow()
+        expect(() => app.getByText("Match History")).not.toThrow()
     })
 
     test("should render replay page at /replay/TESTREPLAYID; gets replay", async () => {
