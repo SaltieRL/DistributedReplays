@@ -41,13 +41,14 @@ stages:
 jobs:
   include:
     - stage: lint
-      name: "style checks javascript"
+      name: "style checks typescript"
       install:
         - cd webapp
         - npm install
         - cd $TRAVIS_BUILD_DIR
       script:
-        - chmod 777 .travis/tslint.sh && .travis/tslint.sh
+        - cd webapp
+        - npm run tslint
     - stage: lint
       name: "style checks python"
       script:
