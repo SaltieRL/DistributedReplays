@@ -1,6 +1,6 @@
-import { GameVisibility } from ".."
+import {GameVisibility} from ".."
 
 interface VisibilityResponse {
-    id: string,
+    id: string
     visibility: GameVisibility
 }

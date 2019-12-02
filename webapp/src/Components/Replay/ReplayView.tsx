@@ -1,14 +1,14 @@
-import { Card, CardContent, CardHeader, Grid, IconButton, Tooltip, Typography, withWidth } from "@material-ui/core"
-import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import {Card, CardContent, CardHeader, Grid, IconButton, Tooltip, Typography, withWidth} from "@material-ui/core"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import CloudDownload from "@material-ui/icons/CloudDownload"
 import * as React from "react"
-import { Replay } from "../../Models"
-import { ColouredGameScore } from "../Shared/ColouredGameScore"
-import { TagDialogWrapper } from "../Shared/Tag/TagDialogWrapper"
-import { ReplayChart } from "./ReplayChart"
-import { ReplayTabs } from "./ReplayTabs"
-import { ReplayTeamCard } from "./ReplayTeamCard/ReplayTeamCard"
+import {Replay} from "../../Models"
+import {ColouredGameScore} from "../Shared/ColouredGameScore"
+import {TagDialogWrapper} from "../Shared/Tag/TagDialogWrapper"
+import {ReplayChart} from "./ReplayChart"
+import {ReplayTabs} from "./ReplayTabs"
+import {ReplayTeamCard} from "./ReplayTeamCard/ReplayTeamCard"
 
 interface OwnProps {
     replay: Replay
@@ -16,61 +16,57 @@ interface OwnProps {
     handleUpdateTags: (tags: Tag[]) => void
 }
 
-type Props = OwnProps
-    & WithWidth
+type Props = OwnProps & WithWidth
 
 class ReplayViewComponent extends React.PureComponent<Props> {
     public render() {
         const {width, replay, explanations} = this.props
-        const blueCard = <ReplayTeamCard replay={replay} isOrange={false}/>
-        const orangeCard = <ReplayTeamCard replay={replay} isOrange={true}/>
+        const blueCard = <ReplayTeamCard replay={replay} isOrange={false} />
+        const orangeCard = <ReplayTeamCard replay={replay} isOrange={true} />
 
         const downloadButton = (
             <Tooltip title="Download replay">
-                <IconButton
-                    href={`/api/replay/${replay.id}/download`}
-                    download
-                >
-                    <CloudDownload/>
+                <IconButton href={`/api/replay/${replay.id}/download`} download>
+                    <CloudDownload />
                 </IconButton>
             </Tooltip>
         )
 
         const dataExportButton = (
             <Tooltip title="Download data .csv">
-                <IconButton
-                    href={`/api/replay/${replay.id}/basic_player_stats/download`}
-                    download
-                >
-                    <ArrowDownward/>
+                <IconButton href={`/api/replay/${replay.id}/basic_player_stats/download`} download>
+                    <ArrowDownward />
                 </IconButton>
             </Tooltip>
-
         )
 
         const replayChartCard = (
             <Card>
                 <CardHeader
                     title={
-                        <Tooltip title={"Map: " + replay.map + ", Date: " + replay.date.format("LLLL")} enterDelay={100}
-                                 placement="bottom">
+                        <Tooltip
+                            title={"Map: " + replay.map + ", Date: " + replay.date.format("LLLL")}
+                            enterDelay={100}
+                            placement="bottom"
+                        >
                             <Typography variant="h5"> {replay.name} </Typography>
-                        </Tooltip>}
-                    subheader={<ColouredGameScore replay={replay}/>}
+                        </Tooltip>
+                    }
+                    subheader={<ColouredGameScore replay={replay} />}
                     titleTypographyProps={{align: "center"}}
                     subheaderTypographyProps={{align: "center", variant: "subtitle1"}}
                     action={
                         <div style={{position: "relative", width: 0, right: 16, top: 16}}>
                             <div style={{display: "flex", float: "right"}}>
-                                <TagDialogWrapper replay={replay} handleUpdateTags={this.props.handleUpdateTags}/>
+                                <TagDialogWrapper replay={replay} handleUpdateTags={this.props.handleUpdateTags} />
                                 {isWidthUp("sm", width) && dataExportButton}
-                                {isWidthUp("sm", width) && downloadButton
-                                }
+                                {isWidthUp("sm", width) && downloadButton}
                             </div>
-                        </div>}
+                        </div>
+                    }
                 />
                 <CardContent style={{overflowX: "auto"}}>
-                    <ReplayChart replay={replay}/>
+                    <ReplayChart replay={replay} />
                 </CardContent>
             </Card>
         )
@@ -91,22 +87,22 @@ class ReplayViewComponent extends React.PureComponent<Props> {
         )
 
         return (
-            <Grid item xs={12} container spacing={24} alignItems="center">
-                {isWidthUp("lg", width) ?
+            <Grid item xs={12} container spacing={3} alignItems="center">
+                {isWidthUp("lg", width) ? (
                     <>
                         {blueGridItem}
                         {replayChartGridItem}
                         {orangeGridItem}
                     </>
-                    :
+                ) : (
                     <>
                         {blueGridItem}
                         {orangeGridItem}
                         {replayChartGridItem}
                     </>
-                }
+                )}
                 <Grid item xs={12}>
-                    <ReplayTabs replay={replay} explanations={explanations}/>
+                    <ReplayTabs replay={replay} explanations={explanations} />
                 </Grid>
             </Grid>
         )

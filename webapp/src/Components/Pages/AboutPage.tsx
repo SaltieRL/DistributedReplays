@@ -15,7 +15,7 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import { BasePage } from "./BasePage"
+import {BasePage} from "./BasePage"
 
 interface ListItemInfo {
     name: string
@@ -71,7 +71,8 @@ const friends: ListItemInfo[] = [
     {
         name: "RLBot",
         link: "https://www.rlbot.org/",
-        message: "A framework for building and creating AIs for Rocket League. They are a wonderful community and " +
+        message:
+            "A framework for building and creating AIs for Rocket League. They are a wonderful community and " +
             "there is support for many languages - from Python to .NET, to Scratch, to Microsoft Excel!"
     },
     {
@@ -172,20 +173,15 @@ export class AboutPage extends React.PureComponent {
     public render() {
         const aboutSaltie = (
             <Card>
-                <CardHeader title="About us" subheader="Saltie"/>
-                <Divider/>
+                <CardHeader title="About us" subheader="Saltie" />
+                <Divider />
                 <CardContent>
                     <Typography>
-                        The Saltie group was founded in 2017 as a deep reinforcement research group
-                        for
-                        Rocket League. It was created by
-                        {" "}
-                        <ExternalLink name={"Sciguymjm"}
-                                      link={"https://steamcommunity.com/id/Sciguymjm"}/>
+                        The Saltie group was founded in 2017 as a deep reinforcement research group for Rocket League.
+                        It was created by{" "}
+                        <ExternalLink name={"Sciguymjm"} link={"https://steamcommunity.com/id/Sciguymjm"} />
                         {" and "}
-                        <ExternalLink name={"dtracers"}
-                                      link={"https://steamcommunity.com/id/dtracers"}/>
-                        .
+                        <ExternalLink name={"dtracers"} link={"https://steamcommunity.com/id/dtracers"} />.
                     </Typography>
                 </CardContent>
             </Card>
@@ -193,26 +189,26 @@ export class AboutPage extends React.PureComponent {
 
         const aboutCalculated = (
             <Card>
-                <CardHeader title="About" subheader="calculated.gg"/>
-                <Divider/>
+                <CardHeader title="About" subheader="calculated.gg" />
+                <Divider />
                 <List>
                     <ListSubheader>Core Developers</ListSubheader>
                     {coreDevelopers.map((listItemInfo) => (
-                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name} />
                     ))}
 
-                    <Divider/>
+                    <Divider />
 
                     <ListSubheader>Special thanks to</ListSubheader>
                     {specialThanks.map((listItemInfo) => (
-                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name} />
                     ))}
 
-                    <Divider/>
+                    <Divider />
 
                     <ListSubheader>Source code</ListSubheader>
                     {sourceCode.map((listItemInfo) => (
-                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name} />
                     ))}
                 </List>
             </Card>
@@ -220,12 +216,12 @@ export class AboutPage extends React.PureComponent {
 
         const friendsCard = (
             <Card>
-                <CardHeader title="Friends" subheader="of calculated.gg"/>
-                <Divider/>
+                <CardHeader title="Friends" subheader="of calculated.gg" />
+                <Divider />
                 <CardContent>
                     <List>
                         {friends.map((listItemInfo) => (
-                            <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                            <PersonListItem {...listItemInfo} key={listItemInfo.name} />
                         ))}
                     </List>
                 </CardContent>
@@ -234,19 +230,19 @@ export class AboutPage extends React.PureComponent {
 
         const contributors = (
             <Card>
-                <CardHeader title="Contributors" subheader="to calculated.gg"/>
-                <Divider/>
+                <CardHeader title="Contributors" subheader="to calculated.gg" />
+                <Divider />
                 <List>
                     <ListSubheader>Replay Parsing</ListSubheader>
 
                     {replayParsing.map((listItemInfo) => (
-                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name} />
                     ))}
-                    <Divider/>
+                    <Divider />
                     <ListSubheader>Uploading</ListSubheader>
 
                     {uploading.map((listItemInfo) => (
-                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name} />
                     ))}
 
                     {/*
@@ -259,17 +255,17 @@ export class AboutPage extends React.PureComponent {
                     </List>
                 </CardContent>
             */}
-                    <Divider/>
+                    <Divider />
                     <ListSubheader>Designers</ListSubheader>
 
                     {designer.map((listItemInfo) => (
-                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name} />
                     ))}
-                    <Divider/>
+                    <Divider />
                     <ListSubheader>Support Staff</ListSubheader>
 
                     {supportStaff.map((listItemInfo) => (
-                        <PersonListItem {...listItemInfo} key={listItemInfo.name}/>
+                        <PersonListItem {...listItemInfo} key={listItemInfo.name} />
                     ))}
                 </List>
             </Card>
@@ -279,7 +275,7 @@ export class AboutPage extends React.PureComponent {
             <BasePage useSplash>
                 <Grid container justify="center">
                     <Grid item xs={12} lg={10} xl={8}>
-                        <Grid container spacing={16} justify="center">
+                        <Grid container spacing={2} justify="center">
                             <Grid item xs={12}>
                                 {aboutSaltie}
                             </Grid>
@@ -311,8 +307,7 @@ type PersonListItemComponentProps = ListItemInfo & WithStyles<typeof personListI
 const PersonListItemComponent: React.FunctionComponent<PersonListItemComponentProps> = (props) => (
     <ListItem>
         <ListItemText
-            primary={
-                <ExternalLink name={props.name} link={props.link}/>}
+            primary={<ExternalLink name={props.name} link={props.link} />}
             secondary={props.message}
             classes={props.classes}
         />
@@ -331,9 +326,7 @@ const ExternalLink: React.FunctionComponent<ExternalLinkProps> = (props) => (
         style={{textDecoration: "none", display: "inline-flex"}}
     >
         <ButtonBase>
-            <Typography>
-                {props.name}
-            </Typography>
+            <Typography>{props.name}</Typography>
         </ButtonBase>
     </a>
 )

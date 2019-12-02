@@ -1,19 +1,18 @@
 import * as qs from "qs"
 import * as React from "react"
-import { RouteComponentProps, withRouter } from "react-router-dom"
+import {RouteComponentProps, withRouter} from "react-router-dom"
 import {
     parseReplaySearchFromQueryString,
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../../../Models"
-import { ReplaysSearchFilter } from "./ReplaysSearchFilter"
+import {ReplaysSearchFilter} from "./ReplaysSearchFilter"
 
 interface OwnProps {
     handleChange: (queryParams: ReplaysSearchQueryParams) => void
 }
 
-type Props = RouteComponentProps<{}>
-    & OwnProps
+type Props = RouteComponentProps<{}> & OwnProps
 
 interface State {
     queryParams: ReplaysSearchQueryParams
@@ -26,7 +25,7 @@ class ReplaysSearchWithQueryStringComponent extends React.PureComponent<Props, S
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
-        if (this.state.queryParams && (prevState.queryParams !== this.state.queryParams)) {
+        if (this.state.queryParams && prevState.queryParams !== this.state.queryParams) {
             this.setQueryString(this.state.queryParams)
             this.props.handleChange(this.state.queryParams)
         }
@@ -40,21 +39,14 @@ class ReplaysSearchWithQueryStringComponent extends React.PureComponent<Props, S
     }
 
     public render() {
-        return (
-            <ReplaysSearchFilter queryParams={this.state.queryParams} handleChange={this.setQueryParams}/>
-        )
+        return <ReplaysSearchFilter queryParams={this.state.queryParams} handleChange={this.setQueryParams} />
     }
 
     private readonly readQueryString = (): Partial<ReplaysSearchQueryParams> => {
         const queryString = this.props.location.search
         if (queryString !== "") {
             return {
-                ...parseReplaySearchFromQueryString(
-                    qs.parse(
-                        this.props.location.search,
-                        {ignoreQueryPrefix: true}
-                    )
-                )
+                ...parseReplaySearchFromQueryString(qs.parse(this.props.location.search, {ignoreQueryPrefix: true}))
             }
         }
         return {}

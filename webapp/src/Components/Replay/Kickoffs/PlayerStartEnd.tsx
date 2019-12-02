@@ -2,12 +2,12 @@ import * as d3 from "d3"
 import * as React from "react"
 
 interface Props {
-    player: any
-    color: any
+    player: KickoffPlayerElement
+    color: d3.RGBColor
     imageWidth: number
     imageHeight: number
-    onMouseover?: () => void
-    onMouseout?: () => void
+    onMouseover: () => void
+    onMouseout: () => void
 }
 
 const FIELD_HALF_WIDTH = 4096
@@ -48,67 +48,94 @@ export class PlayerStartEnd extends React.PureComponent<Props, State> {
             const x = this.getModifiedY(startY)
             const y2 = this.getModifiedX(endX)
             const x2 = this.getModifiedY(endY)
-            const svgContainer = this.state.element.append("svg:g")
+            const svgContainer: d3.Selection<SVGGElement, {}, null, undefined> = this.state.element.append("svg:g")
             this.createArrowHead(svgContainer, color)
             // .attr("transform", `translate(${x}, ${y})`)
-            this.applyAttr(svgContainer.append("line"), {
-                "class": "arrow",
-                "marker-end": "url(#arrow)",
-                "x1": x,
-                "y1": y,
-                "x2": x2,
-                "y2": y2,
-                "stroke": color.brighter(2),
-                "stroke-width": 3
-            })
+            this.applyAttr(
+                svgContainer
+                    .append("line")
+                    .on("mouseover", this.props.onMouseover)
+                    .on("mouseout", this.props.onMouseout),
+                {
+                    class: "arrow",
+                    "marker-end": `url(#${this.getArrowHeadId()})`,
+                    x1: x,
+                    y1: y,
+                    x2,
+                    y2,
+                    stroke: color.brighter(2),
+                    "stroke-width": 3
+                }
+            )
 
             // Starting circle
-            this.applyAttr(svgContainer.append("circle"), {
-                cx: x,
-                cy: y,
-                r: 5,
-                fill: color.brighter(2)
-            })
-            this.applyAttr(svgContainer.append("circle"), {
-                cx: x2,
-                cy: y2,
-                r: 4,
-                fill: color.brighter()
-            })
+            this.applyAttr(
+                svgContainer
+                    .append("circle")
+                    .on("mouseover", this.props.onMouseover)
+                    .on("mouseout", this.props.onMouseout),
+                {
+                    cx: x,
+                    cy: y,
+                    r: 5,
+                    fill: color.brighter(2)
+                }
+            )
+            this.applyAttr(
+                svgContainer
+                    .append("circle")
+                    .on("mouseover", this.props.onMouseover)
+                    .on("mouseout", this.props.onMouseout),
+                {
+                    cx: x2,
+                    cy: y2,
+                    r: 4,
+                    fill: color.brighter()
+                }
+            )
         }
     }
 
-    private readonly createArrowHead = (svgContains: any, color: any) => {
+    private readonly createArrowHead = (
+        svgContains: d3.Selection<SVGGElement, {}, null, undefined>,
+        color: d3.RGBColor
+    ) => {
         const defs = svgContains.append("defs")
 
         this.applyAttr(defs.append("marker"), {
-            id: "arrow",
+            id: this.getArrowHeadId(),
             viewBox: "0 -5 10 10",
             refX: 10,
             refY: 0,
             markerWidth: 4,
             markerHeight: 4,
             orient: "auto"
-        }).append("path")
+        })
+            .append("path")
             .attr("d", "M0,-5L10,0L0,5")
             .attr("class", "arrowHead")
-            .style("fill", "WhiteSmoke")
+            .style("fill", color.brighter(2))
     }
+
+    private readonly getArrowHeadId = () => `arrow${this.props.player.player_id}`
 
     private readonly applyAttr = (svgElement: any, attributes: any) => {
         let chainer = svgElement
-        Object.keys(attributes).forEach((key: string, index: number) => {
+        Object.keys(attributes).forEach((key: string) => {
             chainer = chainer.attr(key, attributes[key])
         })
         return chainer
     }
 
     private readonly getModifiedX = (x: number) => {
-        return (FIELD_HALF_WIDTH + x) / FIELD_HALF_WIDTH * this.props.imageHeight / 2
+        return (((FIELD_HALF_WIDTH + x) / FIELD_HALF_WIDTH) * this.props.imageHeight) / 2
     }
 
     private readonly getModifiedY = (y: number) => {
-        return (FIELD_HALF_HEIGHT + y + FIELD_GOAL_DEPTH) /
-            (FIELD_HALF_HEIGHT + FIELD_GOAL_DEPTH) * this.props.imageWidth / 2
+        return (
+            (((FIELD_HALF_HEIGHT + y + FIELD_GOAL_DEPTH) / (FIELD_HALF_HEIGHT + FIELD_GOAL_DEPTH)) *
+                this.props.imageWidth) /
+            2
+        )
     }
 }

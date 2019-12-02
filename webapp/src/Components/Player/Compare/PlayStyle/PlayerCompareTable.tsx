@@ -1,7 +1,7 @@
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core"
+import {Table, TableBody, TableCell, TableHead, TableRow} from "@material-ui/core"
 import * as React from "react"
-import { PlayStyleRawResponse } from "../../../../Models"
-import { roundNumberToMaxDP } from "../../../../Utils/String"
+import {PlayStyleRawResponse} from "../../../../Models"
+import {roundNumberToMaxDP} from "../../../../Utils/String"
 
 interface StatRow {
     max: number
@@ -17,13 +17,14 @@ interface Props {
 }
 
 export class PlayerCompareTable extends React.PureComponent<Props> {
-
     public render() {
         const {names, rawPlayers, heatmap} = this.props
         const header = (
             <TableRow>
                 <TableCell>Stat</TableCell>
-                {names.map((player) => <TableCell key={player}>{player}</TableCell>)}
+                {names.map((player) => (
+                    <TableCell key={player}>{player}</TableCell>
+                ))}
             </TableRow>
         )
 
@@ -40,23 +41,21 @@ export class PlayerCompareTable extends React.PureComponent<Props> {
             })
             return (
                 <Table>
-                    <TableHead>
-                        {header}
-                    </TableHead>
+                    <TableHead>{header}</TableHead>
                     <TableBody>
-                        {stats.map((stat) => (<TableRow key={stat.name}>
-                                    <TableCell>
-                                        {stat.name}
+                        {stats.map((stat) => (
+                            <TableRow key={stat.name}>
+                                <TableCell>{stat.name}</TableCell>
+                                {stat.values.map((value, i) => (
+                                    <TableCell
+                                        key={i}
+                                        style={this.getTableCellStyles(value, stat, heatmap && rawPlayers.length > 1)}
+                                    >
+                                        {roundNumberToMaxDP(value)}
                                     </TableCell>
-                                    {stat.values.map((value, i) =>
-                                        <TableCell key={i}
-                                                   style={this.getTableCellStyles(value, stat,
-                                                       (heatmap && rawPlayers.length > 1))}>
-                                            {roundNumberToMaxDP(value)}
-                                        </TableCell>)}
-                                </TableRow>
-                            )
-                        )}
+                                ))}
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             )
@@ -66,12 +65,11 @@ export class PlayerCompareTable extends React.PureComponent<Props> {
 
     private readonly getTableCellStyles = (value: number, stat: StatRow, isHeatmapMode?: boolean) => {
         return {
-            backgroundColor: (isHeatmapMode ?
-                `rgba(${200 * (value - stat.min) / (stat.max - stat.min)}, 0,
-                                                            ${200 * (stat.max - value) / (stat.max - stat.min)}, 1)`
-                :
-                "#fff"),
-            color: (isHeatmapMode ? "white" : "black")
+            backgroundColor: isHeatmapMode
+                ? `rgba(${(200 * (value - stat.min)) / (stat.max - stat.min)}, 0,
+                                                            ${(200 * (stat.max - value)) / (stat.max - stat.min)}, 1)`
+                : "#fff",
+            color: isHeatmapMode ? "white" : "black"
         }
     }
 }

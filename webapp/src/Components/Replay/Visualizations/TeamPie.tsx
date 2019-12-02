@@ -39,7 +39,8 @@ export class TeamPie extends React.PureComponent<Props, State> {
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>): void {
         if (this.state.element !== null && !prevState.loaded && this.state.loaded) {
             const {onClick, onMouseover, onMouseout, blue, orange, size, x, y, rotate} = this.props
-            const smallArc = d3.arc()
+            const smallArc = d3
+                .arc()
                 .outerRadius(size - 10)
                 .innerRadius(0)
 
@@ -61,14 +62,19 @@ export class TeamPie extends React.PureComponent<Props, State> {
             const colorArray = ["#ff8c00", "#0078c4"]
             // const color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c",
             // "#ff8c00"])
-            const vis = this.state.element.append("svg:g")
-                .attr("transform", `translate(${x}, ${y}) rotate(${-rotate * 90 + .5 * rotate * 360.0 *
-                (rotate === -1 ? orange : blue)})`)
+            const vis = this.state.element
+                .append("svg:g")
+                .attr(
+                    "transform",
+                    `translate(${x}, ${y}) rotate(${-rotate * 90 +
+                        0.5 * rotate * 360.0 * (rotate === -1 ? orange : blue)})`
+                )
                 .on("click", event)
                 .on("mouseover", mouseover)
                 .on("mouseout", mouseout)
 
-            const pie = d3.pie()           // this will create arc data for us given a list of values
+            const pie = d3
+                .pie() // this will create arc data for us given a list of values
                 .sort(null)
                 .value((d: any) => {
                     return d
@@ -79,9 +85,11 @@ export class TeamPie extends React.PureComponent<Props, State> {
             //     .outerRadius(size - 40)
             //     .innerRadius(size - 40)
 
-            const arc = vis.selectAll(".arc")
+            const arc = vis
+                .selectAll(".arc")
                 .data(pie([orange, blue]))
-                .enter().append("g")
+                .enter()
+                .append("g")
                 .attr("class", "arc")
 
             arc.append("path")

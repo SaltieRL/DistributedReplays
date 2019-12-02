@@ -1,42 +1,48 @@
-import { Tab, Tabs, withWidth } from "@material-ui/core"
-import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
+import {createStyles, Tab, Tabs, Theme, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
+
+const styles = (theme: Theme) =>
+    createStyles({
+        verticalTabs: {
+            minWidth: 150,
+            borderRight: `1px solid ${theme.palette.divider}`
+        }
+    })
 
 interface OwnProps {
     selectedTab: number
-    handleChange: (event: any, selectedTab: number) => void
-    kickoffData: any
+    handleChange: (event: React.ChangeEvent<{}>, selectedTab: number) => void
+    kickoffData: KickoffData
+    orientation: "horizontal" | "vertical"
 }
 
-type Props = OwnProps
-    & WithWidth
+type Props = OwnProps & WithStyles<typeof styles>
 
 class KickoffTabsComponent extends React.PureComponent<Props> {
     public render() {
+        const {classes, orientation, handleChange, selectedTab} = this.props
 
-        const belowXs = isWidthDown("xs", this.props.width)
         return (
-            <Tabs value={this.props.selectedTab}
-                  onChange={this.props.handleChange}
-                  centered={!belowXs}
-                  variant={belowXs ? "scrollable" : "standard"}
-                  scrollButtons={belowXs ? "on" : undefined}
+            <Tabs
+                value={selectedTab}
+                onChange={handleChange}
+                orientation={orientation}
+                variant="scrollable"
+                scrollButtons="on"
+                className={orientation === "vertical" ? classes.verticalTabs : undefined}
             >
-                {
-                    this.createTabList().map((kickoff: string, index: number) => (
-                        <Tab label={kickoff} value={index} key={index}/>
-                    ))}
+                {this.createTabList().map((kickoff: string, index: number) => (
+                    <Tab label={kickoff} value={index} key={index} />
+                ))}
             </Tabs>
         )
     }
 
     private readonly createTabList = () => {
-        const modifiedKickoffData = this.props.kickoffData.kickoffs.map((ignore: any, index: number) => {
-            return "Kickoff " + index
-        })
-        modifiedKickoffData.unshift("Overall")
+        const modifiedKickoffData = this.props.kickoffData.kickoffs.map((_, index: number) => "Kickoff " + index)
+        modifiedKickoffData.unshift("Overall") // Add to beginning of array
         return modifiedKickoffData
     }
 }
 
-export const KickoffTabs = withWidth()(KickoffTabsComponent)
+export const KickoffTabs = withStyles(styles)(KickoffTabsComponent)

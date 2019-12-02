@@ -1,24 +1,30 @@
-import { createStyles, WithStyles, withStyles } from "@material-ui/core"
+import {createStyles, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom"
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
 
-import { AppListener } from "./AppListener"
-import { codeSplit } from "./CodeSplitComponent"
-import { HomePage } from "./Components/Pages/HomePage"
-import { PlayerPage } from "./Components/Pages/PlayerPage"
-import { Notifications } from "./Components/Shared/Notification/Notifications"
+import {AppListener} from "./AppListener"
+import {codeSplit} from "./CodeSplitComponent"
+import {HomePage} from "./Components/Pages/HomePage"
+import {PlayerPage} from "./Components/Pages/PlayerPage"
+import {Notifications} from "./Components/Shared/Notification/Notifications"
 
 import {
-    ABOUT_LINK, ADMIN_LINK, DOCUMENTATION_LINK,
+    ABOUT_LINK,
+    ADMIN_LINK,
+    DOCUMENTATION_LINK,
     EXPLANATIONS_LINK,
-    GLOBAL_STATS_LINK, ITEMS_LINK, LEADERBOARDS_LINK,
+    GLOBAL_STATS_LINK,
+    ITEMS_LINK,
+    LEADERBOARDS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_PAGE_LINK,
-    PLUGINS_LINK, PRIVACY_POLICY_LINK,
+    PLUGINS_LINK,
+    PRIVACY_POLICY_LINK,
     REPLAY_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
-    STATUS_PAGE_LINK, TAGS_PAGE_LINK,
+    STATUS_PAGE_LINK,
+    TAGS_PAGE_LINK,
     TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
@@ -60,33 +66,33 @@ class AppComponent extends React.Component<Props> {
                     <AppListener>
                         <Switch>
                             {/*Migrate old paths*/}
-                            <Redirect exact from={"/players/overview/:id"} to={PLAYER_PAGE_LINK(":id")}/>
-                            <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")}/>
-                            <Route exact path="/" component={HomePage}/>
-                            <Route path={ADMIN_LINK} component={CodeSplitAdminPage}/>
-                            <Route path={ITEMS_LINK} component={CodeSplitItemsStatsPage}/>
-                            <Route path={TRAINING_LINK} component={CodeSplitTrainingPackPage}/>
-                            <Route path={LEADERBOARDS_LINK} component={CodeSplitLeaderboardsPage}/>
-                            <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
-                            <Route path={PLAYER_COMPARE_PAGE_LINK} component={CodeSplitPlayerComparePage}/>
-                            <Route path={REPLAY_PAGE_LINK(":id")} component={CodeSplitReplayPage}/>
-                            <Route path={REPLAYS_GROUP_PAGE_LINK} component={CodeSplitReplaysGroupPage}/>
-                            <Route path={REPLAYS_SEARCH_PAGE_LINK()} component={CodeSplitReplaysSearchPage}/>
-                            <Route exact path={ABOUT_LINK} component={CodeSplitAboutPage}/>
-                            <Route exact path={UPLOAD_LINK} component={CodeSplitUploadPage}/>
-                            <Route exact path={GLOBAL_STATS_LINK} component={CodeSplitGlobalStatsPage}/>
-                            <Route exact path={PLUGINS_LINK} component={CodeSplitPluginsPage}/>
-                            <Route exact path={STATUS_PAGE_LINK} component={CodeSplitStatusPage}/>
-                            <Route exact path={EXPLANATIONS_LINK} component={CodeSplitExplanationsPage}/>
-                            <Route exact path={DOCUMENTATION_LINK} component={CodeSplitDocumentationPage}/>
-                            <Route exact path={PRIVACY_POLICY_LINK} component={CodeSplitPrivacyPolicyPage}/>
-                            <Route exact path={TAGS_PAGE_LINK} component={CodeSplitTagsPage}/>
+                            <Redirect exact from={"/players/overview/:id"} to={PLAYER_PAGE_LINK(":id")} />
+                            <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")} />
+                            <Route exact path="/" component={HomePage} />
+                            <Route path={ADMIN_LINK} component={CodeSplitAdminPage} />
+                            <Route path={ITEMS_LINK} component={CodeSplitItemsStatsPage} />
+                            <Route path={TRAINING_LINK} component={CodeSplitTrainingPackPage} />
+                            <Route path={LEADERBOARDS_LINK} component={CodeSplitLeaderboardsPage} />
+                            <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage} />
+                            <Route path={PLAYER_COMPARE_PAGE_LINK} component={CodeSplitPlayerComparePage} />
+                            <Route path={REPLAY_PAGE_LINK(":id")} component={CodeSplitReplayPage} />
+                            <Route path={REPLAYS_GROUP_PAGE_LINK} component={CodeSplitReplaysGroupPage} />
+                            <Route path={REPLAYS_SEARCH_PAGE_LINK()} component={CodeSplitReplaysSearchPage} />
+                            <Route exact path={ABOUT_LINK} component={CodeSplitAboutPage} />
+                            <Route exact path={UPLOAD_LINK} component={CodeSplitUploadPage} />
+                            <Route exact path={GLOBAL_STATS_LINK} component={CodeSplitGlobalStatsPage} />
+                            <Route exact path={PLUGINS_LINK} component={CodeSplitPluginsPage} />
+                            <Route exact path={STATUS_PAGE_LINK} component={CodeSplitStatusPage} />
+                            <Route exact path={EXPLANATIONS_LINK} component={CodeSplitExplanationsPage} />
+                            <Route exact path={DOCUMENTATION_LINK} component={CodeSplitDocumentationPage} />
+                            <Route exact path={PRIVACY_POLICY_LINK} component={CodeSplitPrivacyPolicyPage} />
+                            <Route exact path={TAGS_PAGE_LINK} component={CodeSplitTagsPage} />
                             {/*Redirect unknowns to root*/}
-                            <Redirect from="*" to="/"/>
+                            <Redirect from="*" to="/" />
                         </Switch>
                     </AppListener>
                 </BrowserRouter>
-                <Notifications/>
+                <Notifications />
             </div>
         )
     }

@@ -41,13 +41,14 @@ stages:
 jobs:
   include:
     - stage: lint
-      name: "style checks javascript"
+      name: "style checks typescript"
       install:
         - cd webapp
         - npm install
         - cd $TRAVIS_BUILD_DIR
       script:
-        - chmod 777 .travis/tslint.sh && .travis/tslint.sh
+        - cd webapp
+        - npm run tslint
     - stage: lint
       name: "style checks python"
       script:
@@ -90,19 +91,18 @@ jobs:
         - bash <(curl -s https://codecov.io/bash) -c -F integration
       after_success:
         - codecov
-   # - stage: test
-   #   name: "react unit tests"
-   #   install:
-   #     - cd webapp
-   #     - npm install
-   #     - npm install codecov -g
-   #     - cd $TRAVIS_BUILD_DIR
-   #   script:
-   #     - cd webapp
-   #     - npm start
-   #     - npm test
-   #   after_success:
-   #     - codecov
+    - stage: test
+      name: "react unit tests"
+      install:
+        - cd webapp
+        - npm install
+        - npm install codecov -g
+        - cd $TRAVIS_BUILD_DIR
+      script:
+        - cd webapp
+        - npm test
+      after_success:
+        - bash <(curl -s https://codecov.io/bash) -c -F frontend
     - stage: deploy
       name: "Deploy to Production"
       install: skip

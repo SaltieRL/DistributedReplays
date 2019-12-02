@@ -1,14 +1,14 @@
-import { faTags } from "@fortawesome/free-solid-svg-icons/faTags"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { IconButton, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Tooltip } from "@material-ui/core"
+import {faTags} from "@fortawesome/free-solid-svg-icons/faTags"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {IconButton, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Tooltip} from "@material-ui/core"
 import Edit from "@material-ui/icons/Edit"
 import FileCopy from "@material-ui/icons/FileCopy"
 import Refresh from "@material-ui/icons/Refresh"
 import * as React from "react"
-import { connect } from "react-redux"
-import { Dispatch } from "redux"
-import { TagsAction } from "../../../Redux"
-import { generateTagPrivateIdAndGetKey } from "../../../Requests/Tag"
+import {connect} from "react-redux"
+import {Dispatch} from "redux"
+import {TagsAction} from "../../../Redux"
+import {generateTagPrivateIdAndGetKey} from "../../../Requests/Tag"
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     addPrivateKeyToTagAction: (tag: Tag) => dispatch(TagsAction.addPrivateKeyToTagAction(tag))
@@ -18,8 +18,7 @@ interface OwnProps {
     tag: Tag
 }
 
-type Props = OwnProps
-    & ReturnType<typeof mapDispatchToProps>
+type Props = OwnProps & ReturnType<typeof mapDispatchToProps>
 
 class TagPageListItemComponent extends React.PureComponent<Props> {
     public render() {
@@ -28,29 +27,31 @@ class TagPageListItemComponent extends React.PureComponent<Props> {
         return (
             <ListItem>
                 <ListItemIcon>
-                    <FontAwesomeIcon icon={faTags}/>
+                    <FontAwesomeIcon icon={faTags} />
                 </ListItemIcon>
-                <ListItemText primary={tag.name}
-                              secondary={tag.privateKey}/>
+                <ListItemText primary={tag.name} secondary={tag.privateKey} />
                 <ListItemSecondaryAction>
                     {hasPrivateKey && (
                         <Tooltip
-                            title={"Copy private key to clipboard. " +
-                            "The private key allows others to upload replays to this tag."}
+                            title={
+                                "Copy private key to clipboard. " +
+                                "The private key allows others to upload replays to this tag."
+                            }
                         >
                             <IconButton onClick={this.copyPrivateKeyToClipboard}>
-                                <FileCopy/>
+                                <FileCopy />
                             </IconButton>
                         </Tooltip>
                     )}
-                    <Tooltip
-                        title={hasPrivateKey ? "Generate new private ID." : "Generate private ID."}>
+                    <Tooltip title={hasPrivateKey ? "Generate new private ID." : "Generate private ID."}>
                         <IconButton onClick={this.generatePrivateID} style={hasPrivateKey ? {opacity: 0.7} : undefined}>
-                            <Refresh/>
+                            <Refresh />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Rename">
-                        <IconButton disabled><Edit/></IconButton>
+                        <IconButton disabled>
+                            <Edit />
+                        </IconButton>
                     </Tooltip>
                     {/*TODO: Enable tag rename functionality*/}
                 </ListItemSecondaryAction>
@@ -69,7 +70,7 @@ class TagPageListItemComponent extends React.PureComponent<Props> {
         const tag = this.props.tag
 
         if (tag.privateKey !== null) {
-            (navigator as any).clipboard.writeText(tag.privateKey)
+            ;(navigator as any).clipboard.writeText(tag.privateKey)
         }
     }
 }

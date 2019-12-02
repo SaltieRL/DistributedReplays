@@ -1,13 +1,12 @@
 import * as React from "react"
 
-import { CardMedia, createStyles, WithStyles, withStyles } from "@material-ui/core"
+import {CardMedia, createStyles, WithStyles, withStyles} from "@material-ui/core"
 
 interface OwnProps {
     image: string
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 class PlayerProfilePictureComponent extends React.PureComponent<Props> {
     public render() {
@@ -37,4 +36,4 @@ const styles = createStyles({
     }
 })
 
-export const PlayerProfilePicture = (withStyles(styles)(PlayerProfilePictureComponent))
+export const PlayerProfilePicture = withStyles(styles)(PlayerProfilePictureComponent)

@@ -1,2 +1,2 @@
-export const useMockData = false
 export const baseUrl = "/api"
+export const useLiveQueries = false

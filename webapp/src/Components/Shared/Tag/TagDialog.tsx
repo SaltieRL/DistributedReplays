@@ -1,12 +1,12 @@
-import { Dialog, DialogContent, DialogTitle, Divider, Tab, Tabs, Tooltip } from "@material-ui/core"
+import {Dialog, DialogContent, DialogTitle, Divider, Tab, Tabs, Tooltip} from "@material-ui/core"
 import * as React from "react"
-import { connect } from "react-redux"
-import { Replay } from "../../../Models"
-import { StoreState } from "../../../Redux"
-import { deleteTag, getAllTags } from "../../../Requests/Tag"
-import { LoadableWrapper } from "../LoadableWrapper"
-import { ReplayTagDisplay } from "./ReplayTagDisplay"
-import { UserTagDisplay } from "./UserTagDisplay"
+import {connect} from "react-redux"
+import {Replay} from "../../../Models"
+import {StoreState} from "../../../Redux"
+import {deleteTag, getAllTags} from "../../../Requests/Tag"
+import {LoadableWrapper} from "../LoadableWrapper"
+import {ReplayTagDisplay} from "./ReplayTagDisplay"
+import {UserTagDisplay} from "./UserTagDisplay"
 
 const mapStateToProps = (state: StoreState) => ({
     loggedInUser: state.loggedInUser
@@ -15,14 +15,13 @@ const mapStateToProps = (state: StoreState) => ({
 type TagTab = "Replay" | "My tags"
 
 interface OwnProps {
-    open: boolean,
+    open: boolean
     onClose: React.ReactEventHandler<{}>
     replay: Replay
     handleUpdateTags: (tags: Tag[]) => void
 }
 
-type Props = OwnProps
-    & ReturnType<typeof mapStateToProps>
+type Props = OwnProps & ReturnType<typeof mapStateToProps>
 
 interface State {
     selectedTab: TagTab
@@ -45,29 +44,25 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
                 onClick={this.stopPropagation}
             >
                 <DialogTitle style={{padding: 0}}>
-                    <Tabs
-                        value={this.state.selectedTab}
-                        onChange={this.handleTabChange}
-                        centered
-                    >
-                        <Tab label={"Replay"} value={"Replay"}/>
+                    <Tabs value={this.state.selectedTab} onChange={this.handleTabChange} centered>
+                        <Tab label={"Replay"} value={"Replay"} />
                         {this.props.loggedInUser !== null ? (
-                            <Tab label={"My tags"} value={"My tags"}/>
+                            <Tab label={"My tags"} value={"My tags"} />
                         ) : (
                             <Tooltip title="Log in to view your tabs">
                                 <div>
-                                    <Tab label={"My tags"} value={"My tags"} disabled/>
+                                    <Tab label={"My tags"} value={"My tags"} disabled />
                                 </div>
                             </Tooltip>
                         )}
                     </Tabs>
-                    <Divider/>
+                    <Divider />
                 </DialogTitle>
                 <DialogContent>
                     {this.props.loggedInUser !== null ? (
                         <LoadableWrapper load={this.loadUserTags}>
-                            {this.state.userTags && (
-                                this.state.selectedTab === "Replay" ?
+                            {this.state.userTags &&
+                                (this.state.selectedTab === "Replay" ? (
                                     <ReplayTagDisplay
                                         replay={this.props.replay}
                                         userTagProps={{
@@ -75,16 +70,16 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
                                             handleUpdateTags: this.props.handleUpdateTags
                                         }}
                                     />
-                                    :
+                                ) : (
                                     <UserTagDisplay
                                         tags={this.state.userTags}
                                         handleCreate={this.handleCreateUserTag}
                                         deleteTag={this.deleteTag}
                                     />
-                            )}
+                                ))}
                         </LoadableWrapper>
                     ) : (
-                        <ReplayTagDisplay replay={this.props.replay}/>
+                        <ReplayTagDisplay replay={this.props.replay} />
                     )}
                 </DialogContent>
             </Dialog>
@@ -96,32 +91,29 @@ class TagDialogComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly loadUserTags = (): Promise<void> => {
-        return getAllTags()
-            .then((userTags) => this.setState({userTags}))
+        return getAllTags().then((userTags) => this.setState({userTags}))
     }
 
     private readonly handleCreateUserTag = (tag: Tag) => {
         if (this.state.userTags) {
-            const tagNameAlreadyExists = this.state.userTags.map((testTag) => testTag.name)
-                .indexOf(tag.name) !== -1
+            const tagNameAlreadyExists = this.state.userTags.map((testTag) => testTag.name).includes(tag.name)
             if (tagNameAlreadyExists) {
                 return
             }
         }
 
         this.setState({
-            userTags: [...this.state.userTags || [], tag]
+            userTags: [...(this.state.userTags || []), tag]
         })
     }
 
     private readonly deleteTag = (tag: Tag) => () => {
         if (this.state.userTags !== undefined) {
-            deleteTag(tag.name)
-                .then(() => {
-                    this.setState({
-                        userTags: this.state.userTags!.filter((testTag) => !(testTag.name === tag.name))
-                    })
+            deleteTag(tag.name).then(() => {
+                this.setState({
+                    userTags: this.state.userTags!.filter((testTag) => !(testTag.name === tag.name))
                 })
+            })
         }
     }
 

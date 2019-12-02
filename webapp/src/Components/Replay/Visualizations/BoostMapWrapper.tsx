@@ -1,8 +1,8 @@
-import { Grid } from "@material-ui/core"
+import {Grid} from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models"
-import { BoostCountsTable } from "./BoostCountsTable"
-import { BoostField } from "./BoostField"
+import {Replay} from "../../../Models"
+import {BoostCountsTable} from "./BoostCountsTable"
+import {BoostField} from "./BoostField"
 
 interface Props {
     data: any
@@ -28,28 +28,26 @@ export class BoostMapWrapper extends React.PureComponent<Props, State> {
             const orangeCount = totalCount - blueCount
             return [blueCount / totalCount, orangeCount / totalCount]
         })
-        const boostNames = [
-            "Blue Top",
-            "Mid Top",
-            "Orange Top",
-            "Blue Bottom",
-            "Mid Bottom",
-            "Orange Bottom"
-        ]
+        const boostNames = ["Blue Top", "Mid Top", "Orange Top", "Blue Bottom", "Mid Bottom", "Orange Bottom"]
 
         const boostField = (
-            <BoostField key={this.state.rotateCharts ? 1 : 0}
-                        data={
-                            ratios
-                        }
-                        rotationEnabled={this.state.rotateCharts}
-                        onMouseover={this.onMouseover}
-                        onMouseout={this.onMouseout}/>
+            <BoostField
+                key={this.state.rotateCharts ? 1 : 0}
+                data={ratios}
+                rotationEnabled={this.state.rotateCharts}
+                onMouseover={this.onMouseover}
+                onMouseout={this.onMouseout}
+            />
         )
         return (
             <>
-                <Grid item xs={12} lg={6} xl={5}
-                      style={{padding: "20px 40px 20px 40px", textAlign: "center", margin: "auto", overflowX: "auto"}}>
+                <Grid
+                    item
+                    xs={12}
+                    lg={6}
+                    xl={5}
+                    style={{padding: "20px 40px 20px 40px", textAlign: "center", margin: "auto", overflowX: "auto"}}
+                >
                     {boostField}
                 </Grid>
                 <Grid item xs={12} lg={6} xl={7} style={{padding: "20px 40px 20px 40px"}} container>

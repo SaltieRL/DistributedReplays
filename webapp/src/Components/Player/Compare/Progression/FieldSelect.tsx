@@ -11,30 +11,30 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import { convertSnakeAndCamelCaseToReadable } from "../../../../Utils/String"
+import {convertSnakeAndCamelCaseToReadable} from "../../../../Utils/String"
 
-const styles = (theme: Theme) => createStyles({
-    formControl: {
-        minWidth: 250,
-        width: "90%"
-    },
-    chipWrapper: {
-        display: "flex",
-        flexWrap: "wrap"
-    },
-    chip: {
-        margin: theme.spacing.unit / 4
-    }
-})
+const styles = (theme: Theme) =>
+    createStyles({
+        formControl: {
+            minWidth: 250,
+            width: "90%"
+        },
+        chipWrapper: {
+            display: "flex",
+            flexWrap: "wrap"
+        },
+        chip: {
+            margin: theme.spacing(0.25)
+        }
+    })
 
 interface OwnProps {
     fields: string[]
     selectedFields: string[]
-    handleChange: React.ChangeEventHandler
+    handleChange: React.ChangeEventHandler<{value: string[]}>
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 class FieldSelectComponent extends React.PureComponent<Props> {
     public render() {
@@ -45,15 +45,17 @@ class FieldSelectComponent extends React.PureComponent<Props> {
                 <Select
                     multiple
                     value={selectedFields}
-                    onChange={handleChange}
+                    onChange={handleChange as React.ChangeEventHandler<{value: unknown}>}
                     autoWidth
                     renderValue={(selectedFieldsToRender: any) => {
                         return (
                             <div className={classes.chipWrapper}>
                                 {selectedFieldsToRender.map((field: string) => (
-                                    <Chip key={field} label={convertSnakeAndCamelCaseToReadable(field)}
-                                          onDelete={this.handleChipDelete(field)}
-                                          className={classes.chip}
+                                    <Chip
+                                        key={field}
+                                        label={convertSnakeAndCamelCaseToReadable(field)}
+                                        onDelete={this.handleChipDelete(field)}
+                                        className={classes.chip}
                                     />
                                 ))}
                             </div>
@@ -61,11 +63,10 @@ class FieldSelectComponent extends React.PureComponent<Props> {
                     }}
                 >
                     {fields.map((field) => (
-                            <MenuItem value={field} key={field}>
-                                {convertSnakeAndCamelCaseToReadable(field)}
-                            </MenuItem>
-                        )
-                    )}
+                        <MenuItem value={field} key={field}>
+                            {convertSnakeAndCamelCaseToReadable(field)}
+                        </MenuItem>
+                    ))}
                 </Select>
                 <FormHelperText>Select fields to plot</FormHelperText>
             </FormControl>
@@ -73,11 +74,11 @@ class FieldSelectComponent extends React.PureComponent<Props> {
     }
 
     private readonly handleChipDelete = (field: string) => () => {
-        this.props.handleChange({
+        this.props.handleChange(({
             target: {
                 value: this.props.selectedFields.filter((selectedField) => selectedField !== field)
             }
-        } as any as React.ChangeEvent)
+        } as any) as React.ChangeEvent<{value: string[]}>)
     }
 }
 

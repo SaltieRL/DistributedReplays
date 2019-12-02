@@ -1,4 +1,4 @@
-import { IconButton, Menu, MenuItem } from "@material-ui/core"
+import {IconButton, Menu, MenuItem} from "@material-ui/core"
 import ArrowDropDown from "@material-ui/icons/ArrowDropDown"
 import * as React from "react"
 
@@ -20,19 +20,15 @@ export class PlayerNameDropdown extends React.PureComponent<Props, State> {
     public render() {
         return (
             <>
-                <IconButton style={{width: 32, height: 32, padding: 0, marginRight: "auto"}}
-                            onClick={this.handleOpen}>
-                    <ArrowDropDown/>
+                <IconButton style={{width: 32, height: 32, padding: 0, marginRight: "auto"}} onClick={this.handleOpen}>
+                    <ArrowDropDown />
                 </IconButton>
-                <Menu open={this.state.open}
-                      onClose={this.handleClose}
-                      anchorEl={this.state.anchorElement}
-                >
-                    {this.props.pastNames.map((name) =>
+                <Menu open={this.state.open} onClose={this.handleClose} anchorEl={this.state.anchorElement}>
+                    {this.props.pastNames.map((name) => (
                         <MenuItem key={name} onClick={this.handleClose}>
                             {name}
                         </MenuItem>
-                    )}
+                    ))}
                 </Menu>
             </>
         )

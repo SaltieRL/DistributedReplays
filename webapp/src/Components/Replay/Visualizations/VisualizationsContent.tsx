@@ -1,9 +1,9 @@
-import { Divider, Grid } from "@material-ui/core"
+import {Divider, Grid} from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models"
-import { getBoostmap } from "../../../Requests/Replay"
-import { LoadableWrapper } from "../../Shared/LoadableWrapper"
-import { BoostMapWrapper } from "./BoostMapWrapper"
+import {Replay} from "../../../Models"
+import {getBoostmap} from "../../../Requests/Replay"
+import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {BoostMapWrapper} from "./BoostMapWrapper"
 
 interface Props {
     replay: Replay
@@ -24,11 +24,11 @@ export class VisualizationsContent extends React.PureComponent<Props, State> {
     public render() {
         return (
             <>
-                <Divider/>
-                <Grid container spacing={16}>
+                <Divider />
+                <Grid container spacing={2}>
                     <Grid item xs={12} container justify="center">
                         <LoadableWrapper load={this.getBoostmapsData} reloadSignal={this.state.reloadSignal}>
-                            <BoostMapWrapper data={this.state.boostmapData} replay={this.props.replay}/>
+                            <BoostMapWrapper data={this.state.boostmapData} replay={this.props.replay} />
                         </LoadableWrapper>
                     </Grid>
                 </Grid>
@@ -37,8 +37,6 @@ export class VisualizationsContent extends React.PureComponent<Props, State> {
     }
 
     private readonly getBoostmapsData = () => {
-        return getBoostmap(this.props.replay.id)
-            .then((data) => this.setState({boostmapData: data}))
+        return getBoostmap(this.props.replay.id).then((data) => this.setState({boostmapData: data}))
     }
-
 }
