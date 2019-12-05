@@ -10,8 +10,8 @@ export const getQueueStatuses = (): Promise<QueueStatus[]> => doGet("/global/que
 
 export const getLeaderboards = (): Promise<PlaylistLeaderboard[]> => doGet("/global/leaderboards")
 
-export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats")
-export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/graphs")
+export const getGlobalStats = (): Promise<GlobalStatsGraph[]> => doGet("/global/stats_by_playlist")
+export const getGlobalRankGraphs = (): Promise<any> => doGet("/global/stats_by_rank")
 // TODO(Sciguymjm) Type this thing.
 
 // @return taskIds of uploaded replays
