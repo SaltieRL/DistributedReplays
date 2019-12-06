@@ -23,7 +23,7 @@ class Group:
 
 
 class GroupEntryJSON:
-    def __init__(self, uuid, owner, name, game, game_object, type, parent):
+    def __init__(self, uuid, owner, name, game, game_object, type, parent, descendant_count):
         self.uuid = uuid
         self.owner = owner
         self.name = name
@@ -31,9 +31,10 @@ class GroupEntryJSON:
         self.gameObject = game_object
         self.type = type
         self.parent = parent
+        self.descendantCount = descendant_count
 
     @classmethod
-    def create(cls, obj):
+    def create(cls, obj, descendant_count=0):
         return cls(
             uuid=obj.uuid,
             owner=Player.create_from_id(obj.owner).__dict__,
@@ -41,7 +42,8 @@ class GroupEntryJSON:
             game=obj.game,
             game_object=Replay.create_from_id(obj.game).__dict__ if obj.game is not None else None,
             type=obj.type.value,
-            parent=obj.parent.uuid if obj.parent is not None else None
+            parent=obj.parent.uuid if obj.parent is not None else None,
+            descendant_count=descendant_count
         )
 
 
@@ -58,8 +60,8 @@ class SavedGroup:
 
     @staticmethod
     @with_session
-    def add_game(uuid, game, name=None, session=None):
-        parent = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
+    def add_game(parent_uuid, game, name=None, session=None):
+        parent = session.query(GroupEntry).filter(GroupEntry.uuid == parent_uuid).first()
         entry = GroupEntry(engine=session.get_bind(), name=name, game=game, owner=parent.owner,
                            type=GroupEntryType.game, parent=parent)
         session.add(entry)
@@ -68,8 +70,19 @@ class SavedGroup:
 
     @staticmethod
     @with_session
-    def add_subgroup(uuid, name=None, session=None):
-        parent = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
+    def delete_entry(uuid, session=None):
+        entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
+        descendants = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).all()
+        for desc in descendants:
+            session.delete(desc)
+        session.delete(entry)
+        session.commit()
+        return entry.uuid
+
+    @staticmethod
+    @with_session
+    def add_subgroup(parent_uuid, name=None, session=None):
+        parent = session.query(GroupEntry).filter(GroupEntry.uuid == parent_uuid).first()
         entry = GroupEntry(engine=session.get_bind(), name=name, owner=parent.owner, type=GroupEntryType.group,
                            parent=parent)
         session.add(entry)
@@ -82,10 +95,16 @@ class SavedGroup:
         entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
         children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).filter(
             func.nlevel(GroupEntry.path) == len(entry.path) + 1).all()
+        children_counts = [
+            session.query(func.count(GroupEntry.id)).filter(GroupEntry.path.descendant_of(child.path)).filter(
+                func.nlevel(GroupEntry.path) > len(child.path)).filter(GroupEntry.type == GroupEntryType.game).first()
+            for child in children
+        ]
         ancestors = session.query(GroupEntry).filter(GroupEntry.path.ancestor_of(entry.path)).filter(
             func.nlevel(GroupEntry.path) < len(entry.path)).all()
         return Group(GroupEntryJSON.create(entry), [GroupEntryJSON.create(ancestor).__dict__ for ancestor in ancestors],
-                     [GroupEntryJSON.create(child).__dict__ for child in children])
+                     [GroupEntryJSON.create(child, descendants).__dict__ for child, (descendants,) in
+                      zip(children, children_counts)])
 
     @staticmethod
     @with_session

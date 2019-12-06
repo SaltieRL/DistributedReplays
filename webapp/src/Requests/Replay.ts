@@ -92,12 +92,21 @@ export const getGroupTeamStats = (id: string): Promise<GroupTeamStatsResponse> =
     return doGet(`/groups/stats/teams?id=${id}`)
 }
 
-export const addGames = (id: string, games: string[]): Promise<VisibilityResponse> => {
+export const addGames = (id: string, games: string[]): Promise<any> => {
     return doPost(
         `/groups/add`,
         JSON.stringify({
             games,
             parent: id
+        })
+    )
+}
+
+export const deleteGames = (ids: string[]): Promise<any> => {
+    return doPost(
+        `/groups/delete`,
+        JSON.stringify({
+            ids: ids
         })
     )
 }

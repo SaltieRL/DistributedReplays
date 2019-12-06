@@ -1,4 +1,4 @@
-import { Replay } from "./Replay"
+import {Replay} from "./Replay"
 
 export interface GroupResponse {
     ancestors: Entry[]
@@ -14,6 +14,7 @@ export interface Entry {
     parent: null | string
     type: number
     uuid: string
+    descendantCount: number
 }
 
 export interface GroupPlayerStatsResponse {

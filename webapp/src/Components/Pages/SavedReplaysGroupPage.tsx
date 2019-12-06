@@ -1,18 +1,9 @@
-import {
-    Breadcrumbs,
-    Card,
-    CardHeader,
-    Divider,
-    Grid,
-    IconButton,
-    List,
-    ListItem,
-    Tab,
-    Tabs,
-    Typography
-} from "@material-ui/core"
+import {Breadcrumbs, Card, CardHeader, Divider, Grid, IconButton, List, Tab, Tabs, Typography} from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
+import Check from "@material-ui/icons/Check"
+import Delete from "@material-ui/icons/Delete"
 import Edit from "@material-ui/icons/Edit"
+import * as _ from "lodash"
 // import Link from "@material-ui/core/Link"
 import * as React from "react"
 import {connect} from "react-redux"
@@ -20,10 +11,11 @@ import {Link as DOMLink, RouteComponentProps} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../Globals"
 import {Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse} from "../../Models/Replay/Groups"
 import {StoreState} from "../../Redux"
-import {getGroupInfo, getGroupPlayerStats, getGroupTeamStats} from "../../Requests/Replay"
-import {GroupDialog} from "../ReplaysSavedGroup/GroupDialog"
+import {deleteGames, getGroupInfo, getGroupPlayerStats, getGroupTeamStats} from "../../Requests/Replay"
+import {GroupAddDialog} from "../ReplaysSavedGroup/GroupAddDialog"
 import {GroupPlayerStatsTableWrapper} from "../ReplaysSavedGroup/GroupPlayerStatsTableWrapper"
 import {GroupTeamStatsTableWrapper} from "../ReplaysSavedGroup/GroupTeamStatsTableWrapper"
+import {SubgroupEntry} from "../ReplaysSavedGroup/SubgroupEntry"
 import {ReplayDisplayRow} from "../ReplaysSearch/ReplayDisplayRow"
 import {LoadableWrapper} from "../Shared/LoadableWrapper"
 import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
@@ -43,7 +35,9 @@ interface State {
     teamStats?: GroupTeamStatsResponse
     reloadSignal: boolean
     selectedTab: GroupTab
-    dialogOpen: boolean
+    addDialogOpen: boolean
+    editActive: boolean
+    selectedEntries: string[]
 }
 
 const mapStateToProps = (state: StoreState) => ({
@@ -53,7 +47,13 @@ const mapStateToProps = (state: StoreState) => ({
 class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {reloadSignal: false, selectedTab: "Replays", dialogOpen: false}
+        this.state = {
+            reloadSignal: false,
+            selectedTab: "Replays",
+            addDialogOpen: false,
+            editActive: false,
+            selectedEntries: []
+        }
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
@@ -66,15 +66,18 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
         const {group, teamStats} = this.state
 
         const addButton = (
-            <IconButton onClick={this.toggleDialog}>
+            <IconButton onClick={this.toggleAddDialog}>
                 <Add />
             </IconButton>
         )
         const editButton = (
-            <IconButton onClick={this.toggleDialog}>
-                <Edit />
-            </IconButton>
+            <IconButton onClick={this.toggleEdit}>{this.state.editActive ? <Check /> : <Edit />}</IconButton>
         )
+        const deleteButton = this.state.editActive ? (
+            <IconButton onClick={this.deleteEntries}>
+                <Delete />
+            </IconButton>
+        ) : null
 
         return (
             <BasePage>
@@ -118,6 +121,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                                     this.props.loggedInUser &&
                                                     group.entry.owner.id === this.props.loggedInUser.id ? (
                                                         <>
+                                                            {deleteButton}
                                                             {editButton}
                                                             {addButton}
                                                         </>
@@ -137,25 +141,25 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                                             {child.type ? (
                                                                 child.gameObject && (
                                                                     <ReplayDisplayRow
+                                                                        selectProps={
+                                                                            this.state.editActive
+                                                                                ? {
+                                                                                      selected: _.includes(
+                                                                                          this.state.selectedEntries,
+                                                                                          child.uuid
+                                                                                      ),
+                                                                                      handleSelectChange: this.handleSelectChange(
+                                                                                          child.uuid
+                                                                                      )
+                                                                                  }
+                                                                                : undefined
+                                                                        }
                                                                         replay={child.gameObject}
                                                                         handleUpdateTags={(tag: Tag[]) => {}}
                                                                     />
                                                                 )
                                                             ) : (
-                                                                <ListItem>
-                                                                    <DOMLink
-                                                                        color="inherit"
-                                                                        to={`/groups/${child.uuid}`}
-                                                                        style={{textDecoration: "none"}}
-                                                                    >
-                                                                        <Typography
-                                                                            variant="subtitle1"
-                                                                            color="textPrimary"
-                                                                        >
-                                                                            {child.name}
-                                                                        </Typography>
-                                                                    </DOMLink>
-                                                                </ListItem>
+                                                                <SubgroupEntry entry={child} />
                                                             )}
                                                             {i !== group.children.length - 1 && <Divider />}
                                                         </>
@@ -183,10 +187,10 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                         </LoadableWrapper>
                     </Grid>
                 </Grid>
-                <GroupDialog
+                <GroupAddDialog
                     group={this.props.match.params.id}
-                    openDialog={this.state.dialogOpen}
-                    onCloseDialog={this.toggleDialog}
+                    openDialog={this.state.addDialogOpen}
+                    onCloseDialog={this.closeDialog}
                 />
             </BasePage>
         )
@@ -211,8 +215,36 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     private readonly handleTabChange = (_: React.ChangeEvent<{}>, selectedTab: GroupTab) => {
         this.setState({selectedTab})
     }
-    private readonly toggleDialog = () => {
-        this.setState({dialogOpen: !this.state.dialogOpen})
+    private readonly toggleAddDialog = () => {
+        this.setState({addDialogOpen: !this.state.addDialogOpen})
+    }
+    private readonly closeDialog = () => {
+        this.setState({addDialogOpen: !this.state.addDialogOpen, reloadSignal: !this.state.reloadSignal})
+    }
+    private readonly toggleEdit = () => {
+        this.setState({editActive: !this.state.editActive})
+    }
+
+    private readonly deleteEntries = () => {
+        deleteGames(this.state.selectedEntries).then(() => {
+            this.setState({
+                editActive: !this.state.editActive,
+                selectedEntries: [],
+                reloadSignal: !this.state.reloadSignal
+            })
+        })
+    }
+
+    private readonly handleSelectChange = (id: string) => (checked: boolean) => {
+        if (!checked) {
+            this.setState({
+                selectedEntries: this.state.selectedEntries.filter((replayId) => replayId !== id)
+            })
+        } else {
+            this.setState({
+                selectedEntries: [...this.state.selectedEntries, id]
+            })
+        }
     }
 }
 

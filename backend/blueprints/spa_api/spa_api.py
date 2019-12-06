@@ -775,6 +775,20 @@ def create_group():
     return jsonify({"uuid": entry})
 
 
+@bp.route('/groups/delete', methods=['POST'])
+def delete_group():
+    payload = request.get_json(force=True)
+    if payload is None:
+        return jsonify({"Error": "Malformed request"}), 403
+    if 'id' in payload:
+        entry = SavedGroup.delete_entry(payload['id'])
+    elif 'ids' in payload:
+        entry = [SavedGroup.delete_entry(id_) for id_ in payload['ids']]
+    else:
+        return jsonify({"Error": "Malformed request"}), 403
+    return jsonify({"uuid": entry})
+
+
 @bp.route('/groups')
 @with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=True),
                                           QueryParam(name='limit', type_=int, optional=True),

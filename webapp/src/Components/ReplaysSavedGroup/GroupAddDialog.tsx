@@ -43,10 +43,10 @@ class GroupDialogComponent extends React.Component<Props, State> {
                 scroll="paper"
                 PaperProps={{style: {width: 600, maxWidth: "90vw"}}}
             >
-                <DialogTitle id="form-dialog-title">Create pack</DialogTitle>
+                <DialogTitle id="form-dialog-title">Add replays to group</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={1} justify="center">
-                        <Grid item xs={12} md={4} container spacing={2} alignContent="flex-start">
+                        <Grid item xs={12} container spacing={1} alignContent="flex-start">
                             <Grid item xs={12}>
                                 <Typography variant="h6" align="center" gutterBottom>
                                     Filters
@@ -56,7 +56,7 @@ class GroupDialogComponent extends React.Component<Props, State> {
                                 <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange} />
                             </Grid>
                         </Grid>
-                        <Grid item xs={12} md={8} container alignContent="flex-start">
+                        <Grid item xs={12} container alignContent="flex-start">
                             <Grid item xs={12}>
                                 <Typography variant="h6" align="center" gutterBottom>
                                     Replays
@@ -104,8 +104,9 @@ class GroupDialogComponent extends React.Component<Props, State> {
     }
 
     private readonly selectReplays = (ids: string[]) => {
-        return addGames(this.props.group, ids)
+        addGames(this.props.group, ids)
+        this.props.onCloseDialog()
     }
 }
 
-export const GroupDialog = withNotifications()(GroupDialogComponent)
+export const GroupAddDialog = withNotifications()(GroupDialogComponent)
