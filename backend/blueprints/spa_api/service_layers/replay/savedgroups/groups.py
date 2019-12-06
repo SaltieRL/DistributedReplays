@@ -17,7 +17,7 @@ wrapper = player_stat_wrapper.PlayerStatWrapper(player_wrapper.PlayerWrapper(lim
 
 class Group:
     def __init__(self, entry, ancestors, children):
-        self.entry = entry.__dict__
+        self.entry = entry
         self.ancestors = ancestors
         self.children = children
 
@@ -92,17 +92,22 @@ class SavedGroup:
     @staticmethod
     @with_session
     def get_info(uuid, session=None):
+        if uuid is None:
+            peak_nodes = session.query(GroupEntry).filter(
+                GroupEntry.owner == UserManager.get_current_user().platformid).filter(
+                func.nlevel(GroupEntry.path) == 1).all()
+            children_counts = SavedGroup._children_counts(peak_nodes, session)
+            return Group(None, [], [GroupEntryJSON.create(child, descendants).__dict__ for child, (descendants,) in
+                                    zip(peak_nodes, children_counts)])
+
         entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
         children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).filter(
             func.nlevel(GroupEntry.path) == len(entry.path) + 1).all()
-        children_counts = [
-            session.query(func.count(GroupEntry.id)).filter(GroupEntry.path.descendant_of(child.path)).filter(
-                func.nlevel(GroupEntry.path) > len(child.path)).filter(GroupEntry.type == GroupEntryType.game).first()
-            for child in children
-        ]
+        children_counts = SavedGroup._children_counts(children, session)
         ancestors = session.query(GroupEntry).filter(GroupEntry.path.ancestor_of(entry.path)).filter(
             func.nlevel(GroupEntry.path) < len(entry.path)).all()
-        return Group(GroupEntryJSON.create(entry), [GroupEntryJSON.create(ancestor).__dict__ for ancestor in ancestors],
+        return Group(GroupEntryJSON.create(entry).__dict__,
+                     [GroupEntryJSON.create(ancestor).__dict__ for ancestor in ancestors],
                      [GroupEntryJSON.create(child, descendants).__dict__ for child, (descendants,) in
                       zip(children, children_counts)])
 
@@ -115,3 +120,12 @@ class SavedGroup:
         games = [game.game for game in games]
         stats = wrapper.get_group_stats(games, team=team)
         return stats
+
+    @staticmethod
+    def _children_counts(children, session):
+        return [
+            (session.query(func.count(GroupEntry.id)).filter(GroupEntry.path.descendant_of(child.path)).filter(
+                func.nlevel(GroupEntry.path) > len(child.path)).filter(
+                GroupEntry.type == GroupEntryType.game).first() if child.type == GroupEntryType.group else (0,))
+            for child in children
+        ]

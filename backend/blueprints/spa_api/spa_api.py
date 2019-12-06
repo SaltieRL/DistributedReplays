@@ -792,9 +792,9 @@ def delete_group():
 @bp.route('/groups')
 @with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=True),
                                           QueryParam(name='limit', type_=int, optional=True),
-                                          QueryParam(name='id', type_=str, optional=False)])
+                                          QueryParam(name='id', type_=str, optional=True)])
 def get_group(query_params):
-    return better_jsonify(SavedGroup.get_info(query_params['id']))
+    return better_jsonify(SavedGroup.get_info(query_params['id'] if 'id' in query_params else None))
 
 
 @bp.route('/groups/stats/players')

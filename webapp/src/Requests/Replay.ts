@@ -84,6 +84,9 @@ export const getGroupInfo = (id: string): Promise<GroupResponse> => {
         return result
     })
 }
+export const getMyGroups = (): Promise<GroupResponse> => {
+    return doGet(`/groups`)
+}
 
 export const getGroupPlayerStats = (id: string): Promise<GroupPlayerStatsResponse> => {
     return doGet(`/groups/stats/players?id=${id}`)
