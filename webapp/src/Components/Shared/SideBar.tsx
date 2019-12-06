@@ -4,7 +4,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, ListSubheader} from "@material-ui/core"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import CompareArrows from "@material-ui/icons/CompareArrows"
+import GroupWork from "@material-ui/icons/GroupWork"
 import Help from "@material-ui/icons/Help"
+import Home from "@material-ui/icons/Home"
 import Info from "@material-ui/icons/Info"
 import Search from "@material-ui/icons/Search"
 import ShowChart from "@material-ui/icons/ShowChart"
@@ -22,6 +24,7 @@ import {
     PLAYER_COMPARE_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
+    SAVED_REPLAYS_MY_GROUPS_PAGE_LINK,
     UPLOAD_LINK
 } from "../../Globals"
 
@@ -40,6 +43,13 @@ export class SideBar extends React.PureComponent<Props> {
             <Drawer open={this.props.open} onClose={this.props.onClose}>
                 <div style={{width: 230}}>
                     <List>
+                        <ListItem button component={this.createLink} to={"/"}>
+                            <ListItemIcon>
+                                <Home />
+                            </ListItemIcon>
+                            <ListItemText>Home</ListItemText>
+                        </ListItem>
+                        <Divider component="li" />
                         <ListSubheader>Replay</ListSubheader>
                         <ListItem button component={this.createLink} to={REPLAYS_SEARCH_PAGE_LINK()}>
                             <ListItemIcon>
@@ -75,6 +85,15 @@ export class SideBar extends React.PureComponent<Props> {
                                 <ShowChart />
                             </ListItemIcon>
                             <ListItemText>Progression</ListItemText>
+                        </ListItem>
+                        <Divider component="li" />
+
+                        <ListSubheader>User</ListSubheader>
+                        <ListItem button component={this.createLink} to={SAVED_REPLAYS_MY_GROUPS_PAGE_LINK}>
+                            <ListItemIcon>
+                                <GroupWork />
+                            </ListItemIcon>
+                            <ListItemText>My Groups</ListItemText>
                         </ListItem>
 
                         <Divider component="li" />

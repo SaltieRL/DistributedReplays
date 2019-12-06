@@ -24,6 +24,7 @@ import {
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
     SAVED_REPLAYS_GROUP_PAGE_LINK,
+    SAVED_REPLAYS_MY_GROUPS_PAGE_LINK,
     STATUS_PAGE_LINK,
     TAGS_PAGE_LINK,
     TRAINING_LINK,
@@ -45,6 +46,10 @@ const CodeSplitReplaysGroupPage = codeSplit(() => import("./Components/Pages/Rep
 const CodeSplitSavedReplaysGroupPage = codeSplit(
     () => import("./Components/Pages/SavedReplaysGroupPage"),
     "SavedReplaysGroupPage"
+)
+const CodeSplitSavedReplaysMyGroupsPage = codeSplit(
+    () => import("./Components/Pages/SavedReplaysMyGroupsPage"),
+    "SavedReplaysMyGroupsPage"
 )
 const CodeSplitReplaysSearchPage = codeSplit(() => import("./Components/Pages/ReplaysSearchPage"), "ReplaysSearchPage")
 const CodeSplitStatusPage = codeSplit(() => import("./Components/Pages/StatusPage"), "StatusPage")
@@ -85,6 +90,10 @@ class AppComponent extends React.Component<Props> {
                             <Route
                                 path={SAVED_REPLAYS_GROUP_PAGE_LINK(":id")}
                                 component={CodeSplitSavedReplaysGroupPage}
+                            />
+                            <Route
+                                path={SAVED_REPLAYS_MY_GROUPS_PAGE_LINK}
+                                component={CodeSplitSavedReplaysMyGroupsPage}
                             />
                             <Route path={REPLAYS_SEARCH_PAGE_LINK()} component={CodeSplitReplaysSearchPage} />
                             <Route exact path={ABOUT_LINK} component={CodeSplitAboutPage} />
