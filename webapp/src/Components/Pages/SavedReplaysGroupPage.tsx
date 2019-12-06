@@ -1,4 +1,21 @@
-import {Breadcrumbs, Card, CardHeader, Divider, Grid, IconButton, List, Tab, Tabs, Typography} from "@material-ui/core"
+import {
+    Breadcrumbs,
+    Card,
+    CardHeader,
+    ClickAwayListener,
+    Divider,
+    Grid,
+    Grow,
+    IconButton,
+    List,
+    MenuItem,
+    MenuList,
+    Paper,
+    Popper,
+    Tab,
+    Tabs,
+    Typography
+} from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import Check from "@material-ui/icons/Check"
 import Delete from "@material-ui/icons/Delete"
@@ -14,6 +31,7 @@ import {StoreState} from "../../Redux"
 import {deleteGames, getGroupInfo, getGroupPlayerStats, getGroupTeamStats} from "../../Requests/Replay"
 import {GroupAddDialog} from "../ReplaysSavedGroup/GroupAddDialog"
 import {GroupPlayerStatsTableWrapper} from "../ReplaysSavedGroup/GroupPlayerStatsTableWrapper"
+import {GroupSubGroupAddDialog} from "../ReplaysSavedGroup/GroupSubGroupAddDialog"
 import {GroupTeamStatsTableWrapper} from "../ReplaysSavedGroup/GroupTeamStatsTableWrapper"
 import {SubgroupEntry} from "../ReplaysSavedGroup/SubgroupEntry"
 import {ReplayDisplayRow} from "../ReplaysSearch/ReplayDisplayRow"
@@ -36,6 +54,9 @@ interface State {
     reloadSignal: boolean
     selectedTab: GroupTab
     addDialogOpen: boolean
+    addSubDialogOpen: boolean
+    popperOpen: boolean
+    popperRef: HTMLButtonElement | null
     editActive: boolean
     selectedEntries: string[]
 }
@@ -51,6 +72,9 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
             reloadSignal: false,
             selectedTab: "Replays",
             addDialogOpen: false,
+            addSubDialogOpen: false,
+            popperOpen: false,
+            popperRef: null,
             editActive: false,
             selectedEntries: []
         }
@@ -63,12 +87,52 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {group, teamStats} = this.state
+        const {group, teamStats, popperRef} = this.state
 
         const addButton = (
-            <IconButton onClick={this.toggleAddDialog}>
+            <IconButton
+                ref={(val) => {
+                    this.setState({popperRef: val})
+                }}
+                onClick={() => {
+                    this.setState({popperOpen: !this.state.popperOpen})
+                }}
+            >
                 <Add />
             </IconButton>
+        )
+        const options = ["Replay", "Subgroup"]
+        const listeners = [this.toggleAddDialog, this.toggleAddSubDialog]
+        const dropdownButton = popperRef && (
+            <Popper open={this.state.popperOpen} anchorEl={popperRef} role={undefined} transition disablePortal>
+                {({TransitionProps, placement}) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{
+                            transformOrigin: placement === "bottom" ? "center top" : "center bottom"
+                        }}
+                    >
+                        <Paper>
+                            <ClickAwayListener onClickAway={this.togglePopper}>
+                                <MenuList id="split-button-menu">
+                                    {options.map((option, index) => (
+                                        <MenuItem
+                                            key={option}
+                                            disabled={index === 2}
+                                            onClick={() => {
+                                                this.togglePopper()
+                                                listeners[index]()
+                                            }}
+                                        >
+                                            {option}
+                                        </MenuItem>
+                                    ))}
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
         )
         const editButton = (
             <IconButton onClick={this.toggleEdit}>{this.state.editActive ? <Check /> : <Edit />}</IconButton>
@@ -207,6 +271,12 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                     openDialog={this.state.addDialogOpen}
                     onCloseDialog={this.closeDialog}
                 />
+                <GroupSubGroupAddDialog
+                    group={this.props.match.params.id}
+                    openDialog={this.state.addSubDialogOpen}
+                    onCloseDialog={this.closeSubDialog}
+                />
+                {dropdownButton}
             </BasePage>
         )
     }
@@ -233,8 +303,17 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     private readonly toggleAddDialog = () => {
         this.setState({addDialogOpen: !this.state.addDialogOpen})
     }
+    private readonly toggleAddSubDialog = () => {
+        this.setState({addSubDialogOpen: !this.state.addSubDialogOpen})
+    }
+    private readonly togglePopper = () => {
+        this.setState({popperOpen: !this.state.popperOpen})
+    }
     private readonly closeDialog = () => {
         this.setState({addDialogOpen: !this.state.addDialogOpen, reloadSignal: !this.state.reloadSignal})
+    }
+    private readonly closeSubDialog = () => {
+        this.setState({addSubDialogOpen: !this.state.addSubDialogOpen, reloadSignal: !this.state.reloadSignal})
     }
     private readonly toggleEdit = () => {
         this.setState({editActive: !this.state.editActive})

@@ -104,6 +104,15 @@ export const addGames = (id: string, games: string[]): Promise<any> => {
         })
     )
 }
+export const addSubgroup = (id: string | undefined, name: string): Promise<any> => {
+    return doPost(
+        `/groups/add`,
+        JSON.stringify({
+            name,
+            parent: id
+        })
+    )
+}
 
 export const deleteGames = (ids: string[]): Promise<any> => {
     return doPost(

@@ -10,6 +10,7 @@ import {connect} from "react-redux"
 import {GroupResponse} from "../../Models/Replay/Groups"
 import {StoreState} from "../../Redux"
 import {deleteGames, getMyGroups} from "../../Requests/Replay"
+import {GroupSubGroupAddDialog} from "../ReplaysSavedGroup/GroupSubGroupAddDialog"
 import {SubgroupEntry} from "../ReplaysSavedGroup/SubgroupEntry"
 import {ReplayDisplayRow} from "../ReplaysSearch/ReplayDisplayRow"
 import {LoadableWrapper} from "../Shared/LoadableWrapper"
@@ -128,11 +129,7 @@ class SavedReplaysMyGroupsPageComponent extends React.PureComponent<{}, State> {
                         </LoadableWrapper>
                     </Grid>
                 </Grid>
-                {/*<GroupAddDialog*/}
-                {/*    group={this.props.match.params.id}*/}
-                {/*    openDialog={this.state.addDialogOpen}*/}
-                {/*    onCloseDialog={this.closeDialog}*/}
-                {/*/>*/}
+                <GroupSubGroupAddDialog openDialog={this.state.addDialogOpen} onCloseDialog={this.closeDialog} />
             </BasePage>
         )
     }
@@ -145,9 +142,9 @@ class SavedReplaysMyGroupsPageComponent extends React.PureComponent<{}, State> {
     private readonly toggleAddDialog = () => {
         this.setState({addDialogOpen: !this.state.addDialogOpen})
     }
-    // private readonly closeDialog = () => {
-    //     this.setState({addDialogOpen: !this.state.addDialogOpen, reloadSignal: !this.state.reloadSignal})
-    // }
+    private readonly closeDialog = () => {
+        this.setState({addDialogOpen: !this.state.addDialogOpen, reloadSignal: !this.state.reloadSignal})
+    }
     private readonly toggleEdit = () => {
         this.setState({editActive: !this.state.editActive})
     }
