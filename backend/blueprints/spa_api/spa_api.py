@@ -757,6 +757,7 @@ def api_admin_get_replay(query_params=None):
 # GROUPS
 
 @bp.route('/groups/add', methods=['POST'])
+@require_user
 def create_group():
     payload = request.get_json(force=True)
     if payload is None:
@@ -776,6 +777,7 @@ def create_group():
 
 
 @bp.route('/groups/delete', methods=['POST'])
+@require_user
 def delete_group():
     payload = request.get_json(force=True)
     if payload is None:

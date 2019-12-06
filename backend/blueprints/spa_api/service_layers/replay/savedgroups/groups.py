@@ -2,6 +2,7 @@ import logging
 
 from sqlalchemy import func
 
+from backend.blueprints.spa_api.errors.errors import AuthorizationException
 from backend.blueprints.spa_api.service_layers.player.player import Player
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -61,7 +62,10 @@ class SavedGroup:
     @staticmethod
     @with_session
     def add_game(parent_uuid, game, name=None, session=None):
+        current_user = UserManager.get_current_user().platformid
         parent = session.query(GroupEntry).filter(GroupEntry.uuid == parent_uuid).first()
+        if parent.owner != current_user:
+            raise AuthorizationException()
         entry = GroupEntry(engine=session.get_bind(), name=name, game=game, owner=parent.owner,
                            type=GroupEntryType.game, parent=parent)
         session.add(entry)
@@ -71,7 +75,10 @@ class SavedGroup:
     @staticmethod
     @with_session
     def delete_entry(uuid, session=None):
+        current_user = UserManager.get_current_user().platformid
         entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
+        if entry.owner != current_user:
+            raise AuthorizationException()
         descendants = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).all()
         for desc in descendants:
             session.delete(desc)
@@ -82,7 +89,10 @@ class SavedGroup:
     @staticmethod
     @with_session
     def add_subgroup(parent_uuid, name=None, session=None):
+        current_user = UserManager.get_current_user().platformid
         parent = session.query(GroupEntry).filter(GroupEntry.uuid == parent_uuid).first()
+        if parent.owner != current_user:
+            raise AuthorizationException()
         entry = GroupEntry(engine=session.get_bind(), name=name, owner=parent.owner, type=GroupEntryType.group,
                            parent=parent)
         session.add(entry)
