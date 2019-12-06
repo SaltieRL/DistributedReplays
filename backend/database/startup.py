@@ -24,6 +24,7 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
         engine = create_engine(connection_string + '/saltie', echo=False)
     conn = engine.connect()
     conn.execute("create extension if not exists ltree WITH schema public;")
+    conn.execute("create extension if not exists ltree;")
     conn.close()
     DBObjectBase.metadata.create_all(engine)
     session = sessionmaker(bind=engine)
