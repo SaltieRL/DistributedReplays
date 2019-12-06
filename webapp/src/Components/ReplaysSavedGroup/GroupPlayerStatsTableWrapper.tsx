@@ -1,7 +1,7 @@
-import {Tab, Tabs} from "@material-ui/core"
+import { Tab, Tabs } from "@material-ui/core"
 import * as React from "react"
-import {GroupPlayerStatsResponse} from "../../Models/Replay/Groups"
-import {GroupPlayerStatsTable} from "./GroupPlayerStatsTable"
+import { GroupPlayerStatsResponse } from "../../Models/Replay/Groups"
+import { GroupPlayerStatsTable } from "./GroupPlayerStatsTable"
 
 interface State {
     selectedTab: string
@@ -19,7 +19,6 @@ export class GroupPlayerStatsTableWrapper extends React.Component<Props, State> 
 
     public render() {
         const playerStats = this.props.stats.playerStats
-        console.log(playerStats)
 
         return (
             <>
