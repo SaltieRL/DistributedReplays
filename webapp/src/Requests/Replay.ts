@@ -106,7 +106,7 @@ export const deleteGames = (ids: string[]): Promise<any> => {
     return doPost(
         `/groups/delete`,
         JSON.stringify({
-            ids: ids
+            ids
         })
     )
 }

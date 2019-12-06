@@ -1,17 +1,16 @@
-import { Grid, ListItem, Typography } from "@material-ui/core"
+import {Grid, ListItem, Typography} from "@material-ui/core"
 import * as React from "react"
-import { Link as DOMLink } from "react-router-dom"
-import { Entry } from "../../Models/Replay/Groups"
+import {Link as DOMLink} from "react-router-dom"
+import {Entry} from "../../Models/Replay/Groups"
 
 interface Props {
     entry: Entry
 }
 
-interface State {
-}
+interface State {}
 
 export class SubgroupEntry extends React.Component<Props, State> {
-    render() {
+    public render() {
         return (
             <DOMLink color="inherit" to={`/groups/${this.props.entry.uuid}`} style={{textDecoration: "none"}}>
                 <ListItem style={{padding: "12px 24px"}}>
