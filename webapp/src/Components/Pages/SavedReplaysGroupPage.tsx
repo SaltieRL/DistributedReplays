@@ -1,20 +1,20 @@
-import { Card, CardHeader, Divider, Grid, IconButton, List, ListItem, Tab, Tabs, Typography } from "@material-ui/core"
+import {Card, CardHeader, Divider, Grid, IconButton, List, ListItem, Tab, Tabs, Typography} from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import Edit from "@material-ui/icons/Edit"
 // import Link from "@material-ui/core/Link"
-import { Breadcrumbs } from "@material-ui/lab"
+import {Breadcrumbs} from "@material-ui/lab"
 import * as React from "react"
-import { Link as DOMLink, RouteComponentProps } from "react-router-dom"
-import { PLAYER_PAGE_LINK } from "../../Globals"
-import { Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse } from "../../Models/Replay/Groups"
-import { getGroupInfo, getGroupPlayerStats, getGroupTeamStats } from "../../Requests/Replay"
-import { ReplayDisplayRow } from "../ReplaysSearch/ReplayDisplayRow"
-import { GroupDialog } from "../SavedReplaysGroup/GroupDialog"
-import { GroupPlayerStatsTableWrapper } from "../SavedReplaysGroup/GroupPlayerStatsTableWrapper"
-import { GroupTeamStatsTableWrapper } from "../SavedReplaysGroup/GroupTeamStatsTableWrapper"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
-import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
-import { BasePage } from "./BasePage"
+import {Link as DOMLink, RouteComponentProps} from "react-router-dom"
+import {PLAYER_PAGE_LINK} from "../../Globals"
+import {Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse} from "../../Models/Replay/Groups"
+import {getGroupInfo, getGroupPlayerStats, getGroupTeamStats} from "../../Requests/Replay"
+import {GroupDialog} from "../ReplaysSavedGroup/GroupDialog"
+import {GroupPlayerStatsTableWrapper} from "../ReplaysSavedGroup/GroupPlayerStatsTableWrapper"
+import {GroupTeamStatsTableWrapper} from "../ReplaysSavedGroup/GroupTeamStatsTableWrapper"
+import {ReplayDisplayRow} from "../ReplaysSearch/ReplayDisplayRow"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
+import {BasePage} from "./BasePage"
 
 interface RouteParams {
     id: string
@@ -22,8 +22,7 @@ interface RouteParams {
 
 type GroupTab = "Replays" | "Teams" | "Players"
 const groupTabs = ["Replays", "Teams", "Players"]
-type Props = RouteComponentProps<RouteParams>
-    & WithNotifications
+type Props = RouteComponentProps<RouteParams> & WithNotifications
 
 interface State {
     group?: GroupResponse
@@ -50,108 +49,129 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
         const {group, teamStats} = this.state
 
         const addButton = (
-            <IconButton
-                onClick={this.toggleDialog}
-            >
-                <Add/>
+            <IconButton onClick={this.toggleDialog}>
+                <Add />
             </IconButton>
         )
         const editButton = (
-            <IconButton
-                onClick={this.toggleDialog}
-            >
-                <Edit/>
+            <IconButton onClick={this.toggleDialog}>
+                <Edit />
             </IconButton>
         )
 
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
+                <Grid container spacing={1} justify="center">
                     <Grid container item xs={12} lg={8}>
                         <LoadableWrapper load={this.getGroup} reloadSignal={this.state.reloadSignal}>
-                            {group &&
-                            <>
-                                <Grid container item xs={12}>
-                                    <Grid item xs={8}>
-                                        <Breadcrumbs aria-label="breadcrumb">
-                                            {group.ancestors.map((entry: Entry) => (
-                                                <DOMLink to={`/groups/${entry.uuid}`} style={{textDecoration: "none"}}>
-                                                    <Typography color="textPrimary">{entry.name}</Typography>
-                                                </DOMLink>
-                                            ))}
-                                            <Typography color="textPrimary">{group.entry.name}</Typography>
-                                        </Breadcrumbs>
-                                    </Grid>
-                                    <Grid container item xs={4}>
-                                        <Grid item xs={10}>
-                                            <Typography variant={"subtitle1"} noWrap>Created
-                                                by <DOMLink style={{textDecoration: "none"}}
-                                                            to={PLAYER_PAGE_LINK(group.entry.owner.id)}>
-                                                    {group.entry.owner.name}
-                                                </DOMLink>
-                                            </Typography>
+                            {group && (
+                                <>
+                                    <Grid container item xs={12}>
+                                        <Grid item xs={8}>
+                                            <Breadcrumbs aria-label="breadcrumb">
+                                                {group.ancestors.map((entry: Entry) => (
+                                                    <DOMLink
+                                                        to={`/groups/${entry.uuid}`}
+                                                        style={{textDecoration: "none"}}
+                                                    >
+                                                        <Typography color="textPrimary">{entry.name}</Typography>
+                                                    </DOMLink>
+                                                ))}
+                                                <Typography color="textPrimary">{group.entry.name}</Typography>
+                                            </Breadcrumbs>
                                         </Grid>
-                                        <Grid item xs={2}>
-                                            <img src={group.entry.owner.avatarLink} height={"25px"}/>
+                                        <Grid container item xs={4}>
+                                            <Grid item xs={10}>
+                                                <Typography variant={"subtitle1"} noWrap>
+                                                    Created by{" "}
+                                                    <DOMLink
+                                                        style={{textDecoration: "none"}}
+                                                        to={PLAYER_PAGE_LINK(group.entry.owner.id)}
+                                                    >
+                                                        {group.entry.owner.name}
+                                                    </DOMLink>
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={2}>
+                                                <img src={group.entry.owner.avatarLink} height={"25px"} />
+                                            </Grid>
                                         </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Card>
-                                        <CardHeader title={group.entry.name} action={<>
-                                            {editButton}
-                                            {addButton}
-                                        </>}/>
-                                        <Tabs value={this.state.selectedTab}
-                                              onChange={this.handleTabChange}
-                                        >
-                                            {groupTabs.map((tab) => <Tab label={tab} value={tab}
-                                                                         key={tab}/>)}
-                                        </Tabs>
-                                        <Divider/>
-                                        {this.state.selectedTab === "Replays" &&
-                                        <List dense>
-                                            {group.children.map((child, i) => (
-                                                <>
-                                                    {child.type ? (
-                                                        child.gameObject &&
-                                                        <ReplayDisplayRow replay={child.gameObject}
-                                                                          handleUpdateTags={(tag: Tag[]) => {
-                                                                          }}/>
-                                                    ) : (
-                                                        <ListItem>
-                                                            <DOMLink color="inherit" to={`/groups/${child.uuid}`}
-                                                                     style={{textDecoration: "none"}}>
-                                                                <Typography variant="subtitle1"
-                                                                            color="textPrimary">
-                                                                    {child.name}
-                                                                </Typography>
-                                                            </DOMLink>
-                                                        </ListItem>
+                                    <Grid item xs={12}>
+                                        <Card>
+                                            <CardHeader
+                                                title={group.entry.name}
+                                                action={
+                                                    <>
+                                                        {editButton}
+                                                        {addButton}
+                                                    </>
+                                                }
+                                            />
+                                            <Tabs value={this.state.selectedTab} onChange={this.handleTabChange}>
+                                                {groupTabs.map((tab) => (
+                                                    <Tab label={tab} value={tab} key={tab} />
+                                                ))}
+                                            </Tabs>
+                                            <Divider />
+                                            {this.state.selectedTab === "Replays" && (
+                                                <List dense>
+                                                    {group.children.map((child, i) => (
+                                                        <>
+                                                            {child.type ? (
+                                                                child.gameObject && (
+                                                                    <ReplayDisplayRow
+                                                                        replay={child.gameObject}
+                                                                        handleUpdateTags={(tag: Tag[]) => {}}
+                                                                    />
+                                                                )
+                                                            ) : (
+                                                                <ListItem>
+                                                                    <DOMLink
+                                                                        color="inherit"
+                                                                        to={`/groups/${child.uuid}`}
+                                                                        style={{textDecoration: "none"}}
+                                                                    >
+                                                                        <Typography
+                                                                            variant="subtitle1"
+                                                                            color="textPrimary"
+                                                                        >
+                                                                            {child.name}
+                                                                        </Typography>
+                                                                    </DOMLink>
+                                                                </ListItem>
+                                                            )}
+                                                            {i !== group.children.length - 1 && <Divider />}
+                                                        </>
+                                                    ))}
+                                                </List>
+                                            )}
+                                            {this.state.selectedTab === "Players" && (
+                                                <LoadableWrapper load={this.getStatsPlayers}>
+                                                    {this.state.playerStats && (
+                                                        <GroupPlayerStatsTableWrapper stats={this.state.playerStats} />
                                                     )}
-                                                    {i !== group.children.length - 1 && <Divider/>}
-                                                </>
-                                            ))}
-                                        </List>}
-                                        {this.state.selectedTab === "Players" &&
-                                        <LoadableWrapper load={this.getStatsPlayers}>
-                                            {this.state.playerStats && <GroupPlayerStatsTableWrapper
-                                                stats={this.state.playerStats}/>}
-                                        </LoadableWrapper>}
-                                        {this.state.selectedTab === "Teams" &&
-                                        <LoadableWrapper load={this.getStatsTeams}>
-                                            {teamStats && teamStats.teamStats &&
-                                            <GroupTeamStatsTableWrapper stats={teamStats}/>}
-                                        </LoadableWrapper>}
-                                    </Card>
-                                </Grid>
-                            </>
-                            }
+                                                </LoadableWrapper>
+                                            )}
+                                            {this.state.selectedTab === "Teams" && (
+                                                <LoadableWrapper load={this.getStatsTeams}>
+                                                    {teamStats && teamStats.teamStats && (
+                                                        <GroupTeamStatsTableWrapper stats={teamStats} />
+                                                    )}
+                                                </LoadableWrapper>
+                                            )}
+                                        </Card>
+                                    </Grid>
+                                </>
+                            )}
                         </LoadableWrapper>
                     </Grid>
                 </Grid>
-                <GroupDialog group={this.props.match.params.id} openDialog={this.state.dialogOpen}
-                             onCloseDialog={this.toggleDialog}/>
+                <GroupDialog
+                    group={this.props.match.params.id}
+                    openDialog={this.state.dialogOpen}
+                    onCloseDialog={this.toggleDialog}
+                />
             </BasePage>
         )
     }

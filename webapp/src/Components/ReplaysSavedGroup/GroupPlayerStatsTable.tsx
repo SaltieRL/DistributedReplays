@@ -1,7 +1,7 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
+import {Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
 import * as React from "react"
-import { GroupPlayerStatsResponse, PlayerStat } from "../../Models/Replay/Groups"
-import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../Utils/String"
+import {GroupPlayerStatsResponse, PlayerStat} from "../../Models/Replay/Groups"
+import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../Utils/String"
 
 interface Props {
     stats: GroupPlayerStatsResponse
@@ -36,33 +36,35 @@ export class GroupPlayerStatsTable extends React.Component<Props, State> {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>
-                                Name
-                            </TableCell>
+                            <TableCell>Name</TableCell>
                             {stats.map((stat) => (
-                                    <TableCell key={stat} align="right">
-                                        <TableSortLabel
-                                            active={this.state.currentSort && stat === this.state.currentSort.statName}
-                                            direction={this.state.currentSort && this.state.currentSort.direction}
-                                            onClick={this.handleSortChange(stat)}
-                                        >
-                                            {convertSnakeAndCamelCaseToReadable(stat)}
-                                        </TableSortLabel>
-                                    </TableCell>
-                                )
-                            )}
+                                <TableCell key={stat} align="right">
+                                    <TableSortLabel
+                                        active={this.state.currentSort && stat === this.state.currentSort.statName}
+                                        direction={this.state.currentSort && this.state.currentSort.direction}
+                                        onClick={this.handleSortChange(stat)}
+                                    >
+                                        {convertSnakeAndCamelCaseToReadable(stat)}
+                                    </TableSortLabel>
+                                </TableCell>
+                            ))}
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {playerStats.map((playerStat) => (
                             <TableRow key={playerStat.name}>
                                 <TableCell>
-                                    <div style={{
-                                        // left: this.props.scrollLeft,
-                                        // backgroundColor: this.props.theme.palette.background.paper
-                                    }}
+                                    <div
+                                        style={
+                                            {
+                                                // left: this.props.scrollLeft,
+                                                // backgroundColor: this.props.theme.palette.background.paper
+                                            }
+                                        }
                                         // className={this.props.classes.sticky}
-                                    >{playerStat.name}</div>
+                                    >
+                                        {playerStat.name}
+                                    </div>
                                 </TableCell>
                                 {stats.map((stat, i) => (
                                     <TableCell key={i} align="right">
@@ -83,8 +85,7 @@ export class GroupPlayerStatsTable extends React.Component<Props, State> {
 
         if (playerStats.length > 0 && statName in playerStats[0].stats) {
             playerStats.sort((playerStatA, playerStatB) => {
-                return playerStatA.stats[statName]
-                    - playerStatB.stats[statName]
+                return playerStatA.stats[statName] - playerStatB.stats[statName]
             })
             if (direction !== "asc") {
                 playerStats.reverse()
