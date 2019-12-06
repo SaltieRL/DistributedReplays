@@ -20,7 +20,7 @@ export class GroupTeamStatsTableWrapper extends React.Component<Props, State> {
     public render() {
         const teamStats = this.props.stats.teamStats
 
-        return (
+        return teamStats.length > 0 ? (
             <>
                 <Tabs value={this.state.selectedTab} onChange={this.handleTabChange}>
                     {Object.keys(teamStats[0].stats)
@@ -43,7 +43,7 @@ export class GroupTeamStatsTableWrapper extends React.Component<Props, State> {
                     style={{overflowX: "auto"}}
                 />
             </>
-        )
+        ) : null
     }
 
     private readonly handleTabChange = (_: React.ChangeEvent<{}>, selectedTab: string) => {

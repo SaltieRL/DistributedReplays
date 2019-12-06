@@ -107,17 +107,17 @@ class SavedGroup:
         if uuid is None:
             peak_nodes = session.query(GroupEntry).filter(
                 GroupEntry.owner == UserManager.get_current_user().platformid).filter(
-                func.nlevel(GroupEntry.path) == 1).all()
+                func.nlevel(GroupEntry.path) == 1).order_by(GroupEntry.id).all()
             children_counts = SavedGroup._children_counts(peak_nodes, session)
             return Group(None, [], [GroupEntryJSON.create(child, descendants).__dict__ for child, (descendants,) in
                                     zip(peak_nodes, children_counts)])
 
         entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
-        children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).filter(
+        children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).order_by(GroupEntry.id).filter(
             func.nlevel(GroupEntry.path) == len(entry.path) + 1).all()
         children_counts = SavedGroup._children_counts(children, session)
         ancestors = session.query(GroupEntry).filter(GroupEntry.path.ancestor_of(entry.path)).filter(
-            func.nlevel(GroupEntry.path) < len(entry.path)).all()
+            func.nlevel(GroupEntry.path) < len(entry.path)).order_by(func.nlevel(GroupEntry.path)).all()
         return Group(GroupEntryJSON.create(entry).__dict__,
                      [GroupEntryJSON.create(ancestor).__dict__ for ancestor in ancestors],
                      [GroupEntryJSON.create(child, descendants).__dict__ for child, (descendants,) in
