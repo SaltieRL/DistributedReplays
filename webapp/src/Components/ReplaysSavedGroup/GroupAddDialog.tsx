@@ -41,7 +41,7 @@ class GroupDialogComponent extends React.Component<Props, State> {
                 open={this.props.openDialog}
                 onClose={this.props.onCloseDialog}
                 scroll="paper"
-                PaperProps={{style: {width: 600, maxWidth: "90vw"}}}
+                PaperProps={{style: {minWidth: 600, maxWidth: "90vw"}}}
             >
                 <DialogTitle id="form-dialog-title">Add replays to group</DialogTitle>
                 <DialogContent>
