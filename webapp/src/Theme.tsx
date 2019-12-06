@@ -1,7 +1,7 @@
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"
+import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles"
 import Chart from "chart.js"
 import * as React from "react"
-import { ThemeContext } from "./Contexts/ThemeContext"
+import {ThemeContext} from "./Contexts/ThemeContext"
 
 const getTheme = (dark: boolean) =>
     createMuiTheme({
@@ -57,10 +57,10 @@ const getTheme = (dark: boolean) =>
             },
             ...(dark
                 ? {
-                    MuiTabs: {
-                        root: {color: "white"}
-                    }
-                }
+                      MuiTabs: {
+                          root: {color: "white"}
+                      }
+                  }
                 : {})
         }
     })
