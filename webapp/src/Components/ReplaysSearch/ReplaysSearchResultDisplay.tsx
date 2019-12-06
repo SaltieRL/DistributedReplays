@@ -42,14 +42,15 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                                 <ResultsActions
                                     disabled={this.state.selectedReplayIds.length === 0}
                                     selectedAction={() => {
-                                                if (this.props.selectedAction) {
-                                                    this.props.selectedAction(this.state.selectedReplayIds)
-                                                }
-                                            }}
-                                            buttonText={this.props.buttonText}
-                                            to={this.getGroupLink()}
-                                            handleSelectableChange={this.handleSelectableChange}
-                                            selectable={this.state.selectable}/>
+                                        if (this.props.selectedAction) {
+                                            this.props.selectedAction(this.state.selectedReplayIds)
+                                        }
+                                    }}
+                                    buttonText={this.props.buttonText}
+                                    to={this.getGroupLink()}
+                                    handleSelectableChange={this.handleSelectableChange}
+                                    selectable={this.state.selectable}
+                                />
                             }
                         />
                         {selectable ? (
