@@ -1,22 +1,39 @@
-import {Checkbox, Grid, ListItem, Typography} from "@material-ui/core"
+import {Checkbox, createStyles, Grid, ListItem, Theme, Typography, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
 import {Link as DOMLink} from "react-router-dom"
 import {Entry} from "../../Models/Replay/Groups"
 
-interface Props {
+const styles = (theme: Theme) =>
+    createStyles({
+        panelDetails: {
+            overflowX: "auto",
+            maxWidth: "95vw",
+            margin: "auto"
+        },
+        checkboxPadding: {
+            padding: 0,
+            paddingLeft: 8,
+            paddingRight: 8
+        }
+    })
+
+interface OwnProps {
     entry: Entry
     selectProps?: SelectProps
 }
+
+type Props = OwnProps & WithStyles<typeof styles>
 
 interface SelectProps {
     selected: boolean
     handleSelectChange: (selected: boolean) => void
 }
+
 interface State {}
 
-export class SubgroupEntry extends React.Component<Props, State> {
+class SubgroupEntryComponent extends React.Component<Props, State> {
     public render() {
-        const {selectProps} = this.props
+        const {selectProps, classes} = this.props
         return (
             <DOMLink color="inherit" to={`/groups/${this.props.entry.uuid}`} style={{textDecoration: "none"}}>
                 <ListItem style={{padding: "12px 24px"}}>
@@ -38,6 +55,7 @@ export class SubgroupEntry extends React.Component<Props, State> {
                                     onChange={this.toggleSelect}
                                     color="secondary"
                                     onClick={this.stopClickPropagation}
+                                    className={classes.checkboxPadding}
                                 />
                             )}
                         </Grid>
@@ -55,3 +73,5 @@ export class SubgroupEntry extends React.Component<Props, State> {
         event.stopPropagation()
     }
 }
+
+export const SubgroupEntry = withStyles(styles)(SubgroupEntryComponent)
