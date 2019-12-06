@@ -1,12 +1,25 @@
-import {Card, CardHeader, Divider, Grid, IconButton, List, ListItem, Tab, Tabs, Typography} from "@material-ui/core"
+import {
+    Breadcrumbs,
+    Card,
+    CardHeader,
+    Divider,
+    Grid,
+    IconButton,
+    List,
+    ListItem,
+    Tab,
+    Tabs,
+    Typography
+} from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import Edit from "@material-ui/icons/Edit"
 // import Link from "@material-ui/core/Link"
-import {Breadcrumbs} from "@material-ui/lab"
 import * as React from "react"
+import {connect} from "react-redux"
 import {Link as DOMLink, RouteComponentProps} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../Globals"
 import {Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse} from "../../Models/Replay/Groups"
+import {StoreState} from "../../Redux"
 import {getGroupInfo, getGroupPlayerStats, getGroupTeamStats} from "../../Requests/Replay"
 import {GroupDialog} from "../ReplaysSavedGroup/GroupDialog"
 import {GroupPlayerStatsTableWrapper} from "../ReplaysSavedGroup/GroupPlayerStatsTableWrapper"
@@ -22,7 +35,7 @@ interface RouteParams {
 
 type GroupTab = "Replays" | "Teams" | "Players"
 const groupTabs = ["Replays", "Teams", "Players"]
-type Props = RouteComponentProps<RouteParams> & WithNotifications
+type Props = RouteComponentProps<RouteParams> & WithNotifications & ReturnType<typeof mapStateToProps>
 
 interface State {
     group?: GroupResponse
@@ -32,6 +45,10 @@ interface State {
     selectedTab: GroupTab
     dialogOpen: boolean
 }
+
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
 
 class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
@@ -67,7 +84,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                             {group && (
                                 <>
                                     <Grid container item xs={12}>
-                                        <Grid item xs={8}>
+                                        <Grid item xs={9}>
                                             <Breadcrumbs aria-label="breadcrumb">
                                                 {group.ancestors.map((entry: Entry) => (
                                                     <DOMLink
@@ -80,21 +97,17 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                                 <Typography color="textPrimary">{group.entry.name}</Typography>
                                             </Breadcrumbs>
                                         </Grid>
-                                        <Grid container item xs={4}>
-                                            <Grid item xs={10}>
-                                                <Typography variant={"subtitle1"} noWrap>
+                                        <Grid container item xs={3}>
+                                            <Typography variant={"subtitle1"} noWrap>
+                                                <DOMLink
+                                                    style={{textDecoration: "none"}}
+                                                    to={PLAYER_PAGE_LINK(group.entry.owner.id)}
+                                                >
                                                     Created by{" "}
-                                                    <DOMLink
-                                                        style={{textDecoration: "none"}}
-                                                        to={PLAYER_PAGE_LINK(group.entry.owner.id)}
-                                                    >
-                                                        {group.entry.owner.name}
-                                                    </DOMLink>
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={2}>
-                                                <img src={group.entry.owner.avatarLink} height={"25px"} />
-                                            </Grid>
+                                                    <img src={group.entry.owner.avatarLink} height={"15px"} />{" "}
+                                                    {group.entry.owner.name}
+                                                </DOMLink>
+                                            </Typography>
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12}>
@@ -102,10 +115,13 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                             <CardHeader
                                                 title={group.entry.name}
                                                 action={
-                                                    <>
-                                                        {editButton}
-                                                        {addButton}
-                                                    </>
+                                                    this.props.loggedInUser &&
+                                                    group.entry.owner.id === this.props.loggedInUser.id ? (
+                                                        <>
+                                                            {editButton}
+                                                            {addButton}
+                                                        </>
+                                                    ) : null
                                                 }
                                             />
                                             <Tabs value={this.state.selectedTab} onChange={this.handleTabChange}>
@@ -200,4 +216,4 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const SavedReplaysGroupPage = withNotifications()(SavedReplaysGroupPageComponent)
+export const SavedReplaysGroupPage = withNotifications()(connect(mapStateToProps)(SavedReplaysGroupPageComponent))
