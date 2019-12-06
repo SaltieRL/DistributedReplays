@@ -36,11 +36,10 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
             />
         )
         const linkButton = this.props.selectedAction ? (
-            <LinkButton icon={Send} iconType="mui"
-                        onClick={this.props.selectedAction}
-                        disabled={this.props.disabled}>
+            <LinkButton icon={Send} iconType="mui" onClick={this.props.selectedAction} disabled={this.props.disabled}>
                 {this.props.buttonText}
-            </LinkButton>) : (
+            </LinkButton>
+        ) : (
             <LinkButton
                 icon={Send}
                 iconType="mui"
@@ -50,7 +49,6 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
             >
                 View as group
             </LinkButton>
-
         )
 
         return (
