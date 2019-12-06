@@ -1,7 +1,7 @@
-import { Tab, Tabs } from "@material-ui/core"
+import {Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
-import { GroupPlayerStatsResponse } from "../../Models/Replay/Groups"
-import { GroupPlayerStatsTable } from "./GroupPlayerStatsTable"
+import {GroupPlayerStatsResponse} from "../../Models/Replay/Groups"
+import {GroupPlayerStatsTable} from "./GroupPlayerStatsTable"
 
 interface State {
     selectedTab: string
