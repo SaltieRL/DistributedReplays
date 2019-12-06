@@ -21,7 +21,7 @@ from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
 from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
-from backend.tasks.periodic_stats import calculate_global_distributions
+from backend.tasks.periodic_stats import calculate_global_stats_by_playlist
 from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.tasks.utils import get_queue_length
 from backend.utils.cloud_handler import GCPManager
@@ -51,7 +51,7 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 60 * 24 * 3, calc_global_stats.s(), name='calculate global stats every 3 days')
+    sender.add_periodic_task(60 * 60 * 24 * 3, calculate_global_stats_by_rank.s(), name='calculate global stats every 3 days')
     sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
     sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
     sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
@@ -108,12 +108,12 @@ def parse_replay_gcp(self, fn, gcp_url):
 
 
 @periodic_task(run_every=30.0, base=DBTask, bind=True, priority=0)
-def calc_global_stats(self):
+def calculate_global_stats_by_rank(self):
     sess = self.session()
     result = player_stat_wrapper.get_global_stats(sess)
     sess.close()
     if lazy_get_redis() is not None:
-        lazy_get_redis().set('global_stats', json.dumps(result))
+        lazy_get_redis().set('global_stats_by_rank', json.dumps(result))
         lazy_get_redis().set('global_stats_expire', json.dumps(True))
     print('Done')
     return result
@@ -129,7 +129,7 @@ def calc_leaderboards(self):
 @periodic_task(run_every=60 * 10, base=DBTask, bind=True, priority=0)
 def calc_global_dists(self):
     sess = self.session()
-    calculate_global_distributions()
+    calculate_global_stats_by_playlist()
     sess.close()
 
 

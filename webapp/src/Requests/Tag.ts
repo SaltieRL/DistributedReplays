@@ -1,5 +1,5 @@
 import moment from "moment"
-import { doGet, doRequest } from "../apiHandler/apiHandler"
+import {doGet, doRequest} from "../apiHandler/apiHandler"
 
 export const createTag = (name: string): Promise<Tag> => {
     return doRequest(`/tag/${name}`, {method: "PUT"})
@@ -34,6 +34,5 @@ export const getPrivateTagKey = (tag: Tag): Promise<string> => {
 }
 
 export const generateTagPrivateIdAndGetKey = (tag: Tag): Promise<string> => {
-    return generateTagPrivateID(tag)
-        .then(() => getPrivateTagKey(tag))
+    return generateTagPrivateID(tag).then(() => getPrivateTagKey(tag))
 }

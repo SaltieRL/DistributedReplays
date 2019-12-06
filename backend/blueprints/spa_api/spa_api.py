@@ -70,7 +70,7 @@ from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
     ReplayUploadError
-from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
+from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph
 from backend.blueprints.spa_api.service_layers.logged_in_user import LoggedInUser
 from backend.blueprints.spa_api.service_layers.player.play_style import PlayStyleResponse
 from backend.blueprints.spa_api.service_layers.player.play_style_progression import PlayStyleProgression
@@ -138,16 +138,16 @@ def api_get_queue_length():
     return better_jsonify(QueueStatus.create_for_queues())
 
 
-@bp.route('/global/stats')
-def api_get_global_stats():
-    global_stats_graphs = GlobalStatsGraph.create()
+@bp.route('/global/stats_by_playlist')
+def api_get_global_stats_by_playlist():
+    global_stats_graphs = GlobalStatsGraph.create_by_playlist()
     return better_jsonify(global_stats_graphs)
 
 
-@bp.route('/global/graphs')
-def api_get_global_graphs():
-    global_stats_charts = GlobalStatsChart.create()
-    return better_jsonify(global_stats_charts)
+@bp.route('/global/stats_by_rank')
+def api_get_global_stats_by_rank():
+    global_stats_graphs = GlobalStatsGraph.create_by_rank()
+    return better_jsonify(global_stats_graphs)
 
 
 @bp.route('/global/leaderboards')

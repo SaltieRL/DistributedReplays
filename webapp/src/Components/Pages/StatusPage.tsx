@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, Grid, List, ListItem, ListItemText } from "@material-ui/core"
+import {Card, CardContent, CardHeader, Grid, List, ListItem, ListItemText} from "@material-ui/core"
 import * as React from "react"
-import { getQueueStatuses } from "../../Requests/Global"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
-import { BasePage } from "./BasePage"
+import {getQueueStatuses} from "../../Requests/Global"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {BasePage} from "./BasePage"
 
 interface State {
     queueStatuses?: QueueStatus[]
@@ -17,24 +17,24 @@ export class StatusPage extends React.PureComponent<{}, State> {
     public render() {
         return (
             <BasePage useSplash>
-                <Grid container justify="center" spacing={16}>
+                <Grid container justify="center" spacing={2}>
                     <Grid item xs="auto">
                         <Card>
-                            <CardHeader title="Queue"/>
+                            <CardHeader title="Queue" />
                             <CardContent>
                                 <LoadableWrapper load={this.getQueueStatuses}>
-                                    {this.state.queueStatuses &&
-                                    <List>
-                                        {this.state.queueStatuses.map((queueStatus) => {
-                                            return (
+                                    {this.state.queueStatuses && (
+                                        <List>
+                                            {this.state.queueStatuses.map((queueStatus) => (
                                                 <ListItem key={queueStatus.priority}>
-                                                    <ListItemText primary={queueStatus.name}
-                                                                  secondary={queueStatus.count}/>
+                                                    <ListItemText
+                                                        primary={queueStatus.name}
+                                                        secondary={queueStatus.count}
+                                                    />
                                                 </ListItem>
-                                            )
-                                        })}
-                                    </List>
-                                    }
+                                            ))}
+                                        </List>
+                                    )}
                                 </LoadableWrapper>
                             </CardContent>
                         </Card>
@@ -45,7 +45,6 @@ export class StatusPage extends React.PureComponent<{}, State> {
     }
 
     private readonly getQueueStatuses = (): Promise<void> => {
-        return getQueueStatuses()
-            .then((queueStatuses) => this.setState({queueStatuses}))
+        return getQueueStatuses().then((queueStatuses) => this.setState({queueStatuses}))
     }
 }

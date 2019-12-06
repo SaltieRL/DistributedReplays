@@ -1,12 +1,12 @@
-import { Card, CardHeader, Divider, List, Typography } from "@material-ui/core"
+import {Card, CardHeader, Divider, List, Typography} from "@material-ui/core"
 import * as _ from "lodash"
 import * as qs from "qs"
 import * as React from "react"
-import { REPLAYS_GROUP_PAGE_LINK } from "../../Globals"
-import { MatchHistoryResponse, Replay } from "../../Models"
-import { ReplayDisplayRow } from "./ReplayDisplayRow"
-import { ReplaysSearchTablePagination } from "./ReplaysSearchTablePagination"
-import { ResultsActions } from "./ResultsActions"
+import {REPLAYS_GROUP_PAGE_LINK} from "../../Globals"
+import {MatchHistoryResponse, Replay} from "../../Models"
+import {ReplayDisplayRow} from "./ReplayDisplayRow"
+import {ReplaysSearchTablePagination} from "./ReplaysSearchTablePagination"
+import {ResultsActions} from "./ResultsActions"
 
 interface Props {
     selectedAction?: (ids: string[]) => void
@@ -34,11 +34,14 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
 
         return (
             <>
-                {replaySearchResult.replays.length > 0 ?
+                {replaySearchResult.replays.length > 0 ? (
                     <Card>
-                        <CardHeader title="Results" action={
-                            <ResultsActions disabled={this.state.selectedReplayIds.length === 0}
-                                            selectedAction={() => {
+                        <CardHeader
+                            title="Results"
+                            action={
+                                <ResultsActions
+                                    disabled={this.state.selectedReplayIds.length === 0}
+                                    selectedAction={() => {
                                                 if (this.props.selectedAction) {
                                                     this.props.selectedAction(this.state.selectedReplayIds)
                                                 }
@@ -46,11 +49,13 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                                             buttonText={this.props.buttonText}
                                             to={this.getGroupLink()}
                                             handleSelectableChange={this.handleSelectableChange}
-                                            selectable={this.state.selectable}/>}/>
-                        {selectable ?
+                                            selectable={this.state.selectable}/>
+                            }
+                        />
+                        {selectable ? (
                             <List dense>
-                                <Divider/>
-                                {this.props.replaySearchResult.replays.map((replay: Replay, i) =>
+                                <Divider />
+                                {this.props.replaySearchResult.replays.map((replay: Replay, i) => (
                                     <>
                                         <ReplayDisplayRow
                                             key={replay.id}
@@ -58,42 +63,40 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                                             handleUpdateTags={this.props.handleUpdateTags(replay)}
                                             useBoxScore
                                             selectProps={{
-                                                selected: _.includes(
-                                                    this.state.selectedReplayIds,
-                                                    replay.id
-                                                ),
+                                                selected: _.includes(this.state.selectedReplayIds, replay.id),
                                                 handleSelectChange: this.handleSelectChange(replay.id)
-                                            }}/>
-                                        {!(i === this.props.replaySearchResult.replays.length) && <Divider/>}
+                                            }}
+                                        />
+                                        {i !== this.props.replaySearchResult.replays.length && <Divider />}
                                     </>
-                                )}
+                                ))}
                             </List>
-                            :
-                            this.props.replaySearchResult.replays.map((replay: Replay) =>
+                        ) : (
+                            this.props.replaySearchResult.replays.map((replay: Replay) => (
                                 <ReplayDisplayRow
                                     key={replay.id}
                                     replay={replay}
                                     handleUpdateTags={this.props.handleUpdateTags(replay)}
                                     useBoxScore
                                 />
-                            )
-                        }
+                            ))
+                        )}
                         <ReplaysSearchTablePagination
                             totalCount={replaySearchResult.totalCount}
                             page={page}
-                            limit={limit}/>
+                            limit={limit}
+                        />
                     </Card>
-                    :
+                ) : (
                     <Typography variant="subtitle1" align="center">
                         <i>No replays match the selected filters.</i>
                     </Typography>
-                }
+                )}
             </>
         )
     }
 
-    private readonly handleSelectableChange = (event: React.ChangeEvent<HTMLInputElement>,
-                                               selectable: boolean) => {
+    private readonly handleSelectableChange = (event: React.ChangeEvent<HTMLInputElement>, selectable: boolean) => {
         this.setState({selectable})
         if (!selectable) {
             this.setState({
@@ -115,8 +118,7 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
     }
 
     private readonly getGroupLink = () => {
-        const url = qs.stringify({ids: this.state.selectedReplayIds},
-            {arrayFormat: "repeat", addQueryPrefix: true})
+        const url = qs.stringify({ids: this.state.selectedReplayIds}, {arrayFormat: "repeat", addQueryPrefix: true})
         return REPLAYS_GROUP_PAGE_LINK + url
     }
 }

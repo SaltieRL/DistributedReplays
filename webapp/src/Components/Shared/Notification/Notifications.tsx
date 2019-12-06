@@ -1,8 +1,8 @@
 import * as React from "react"
-import { connect } from "react-redux"
-import { Dispatch } from "redux"
-import { NotificationActions, StoreState } from "../../../Redux"
-import { NotificationProps, NotificationSnackbar } from "./NotificationSnackbar"
+import {connect} from "react-redux"
+import {Dispatch} from "redux"
+import {NotificationActions, StoreState} from "../../../Redux"
+import {NotificationProps, NotificationSnackbar} from "./NotificationSnackbar"
 
 const mapStateToProps = (state: StoreState) => ({
     notifications: state.notifications
@@ -12,8 +12,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     dismissNotification: () => dispatch(NotificationActions.dismissNotificationAction())
 })
 
-type Props = ReturnType<typeof mapStateToProps>
-    & ReturnType<typeof mapDispatchToProps>
+type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
 
 interface State {
     currentNotification: NotificationProps
@@ -38,10 +37,11 @@ class NotificationsComponent extends React.PureComponent<Props, State> {
     public render() {
         const notificationsCount = this.props.notifications.length
         return (
-            <NotificationSnackbar open={this.state.open}
-                                  handleClose={this.handleClose}
-                                  {...this.state.currentNotification}
-                                  count={notificationsCount > 1 ? notificationsCount : undefined}
+            <NotificationSnackbar
+                open={this.state.open}
+                handleClose={this.handleClose}
+                {...this.state.currentNotification}
+                count={notificationsCount > 1 ? notificationsCount : undefined}
             />
         )
     }

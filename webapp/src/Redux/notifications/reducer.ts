@@ -1,6 +1,6 @@
-import { Action, handleActions } from "redux-actions"
-import { NotificationProps } from "../../Components/Shared/Notification/NotificationSnackbar"
-import { NotificationActions } from "./actions"
+import {Action, handleActions} from "redux-actions"
+import {NotificationProps} from "../../Components/Shared/Notification/NotificationSnackbar"
+import {NotificationActions} from "./actions"
 
 export type NotificationsState = NotificationProps[]
 
@@ -17,10 +17,7 @@ export const notificationsReducer = handleActions<NotificationsState, any>(
             }
             return state
         },
-        [NotificationActions.Type.DISMISS_NOTIFICATION]: (
-            state: NotificationsState,
-            _
-        ): NotificationsState => {
+        [NotificationActions.Type.DISMISS_NOTIFICATION]: (state: NotificationsState, _): NotificationsState => {
             return state.slice(1)
         }
     },

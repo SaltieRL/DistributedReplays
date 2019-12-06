@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader } from "@material-ui/core"
-import { ChartData, ChartOptions, ChartPoint, ChartTooltipItem } from "chart.js"
+import {Card, CardContent, CardHeader} from "@material-ui/core"
+import {ChartData, ChartOptions, ChartPoint, ChartTooltipItem} from "chart.js"
 import * as React from "react"
-import { Line } from "react-chartjs-2"
-import { ItemFull, ItemUsage } from "../../Models/ItemStats"
-import { roundLabelToMaxDPCallback } from "../../Utils/Chart"
-import { primaryColours } from "../../Utils/Color"
+import {Line} from "react-chartjs-2"
+import {ItemFull, ItemUsage} from "../../Models/ItemStats"
+import {roundLabelToMaxDPCallback} from "../../Utils/Chart"
+import {primaryColours} from "../../Utils/Color"
 
 interface Props {
     item: ItemFull
@@ -12,14 +12,12 @@ interface Props {
 }
 
 export class ItemStatsGraph extends React.PureComponent<Props> {
-
     public render() {
         return (
-
             <Card>
-                <CardHeader title={"Item usage over time"}/>
+                <CardHeader title={"Item usage over time"} />
                 <CardContent style={{minHeight: "30vh"}}>
-                    <Line data={this.getChartData()} options={this.getChartOptions()}/>
+                    <Line data={this.getChartData()} options={this.getChartOptions()} />
                 </CardContent>
             </Card>
         )
@@ -31,13 +29,12 @@ export class ItemStatsGraph extends React.PureComponent<Props> {
             datasets: [
                 {
                     label: item.name,
-                    data: itemUsage.data.map(
-                        (dataPoint) => {
-                            return {
-                                x: dataPoint.date as any,
-                                y: dataPoint.count / dataPoint.total * 100
-                            } as ChartPoint
-                        }),
+                    data: itemUsage.data.map((dataPoint) => {
+                        return {
+                            x: dataPoint.date as any,
+                            y: (dataPoint.count / dataPoint.total) * 100
+                        } as ChartPoint
+                    }),
                     fill: true,
                     backgroundColor: primaryColours[0] + "44",
                     pointBackgroundColor: primaryColours[0] + "bb",
@@ -53,19 +50,21 @@ export class ItemStatsGraph extends React.PureComponent<Props> {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                xAxes: [{
-                    type: "time",
-                    time: {
-                        displayFormats: {
-                            month: "MMM 'YY",
-                            quarter: "MMM 'YY",
-                            year: "YYYY"
+                xAxes: [
+                    {
+                        type: "time",
+                        time: {
+                            displayFormats: {
+                                month: "MMM 'YY",
+                                quarter: "MMM 'YY",
+                                year: "YYYY"
+                            }
+                        },
+                        ticks: {
+                            autoSkip: true
                         }
-                    },
-                    ticks: {
-                        autoSkip: true
                     }
-                }]
+                ]
             },
             tooltips: {
                 callbacks: {

@@ -1,18 +1,17 @@
-import { Grid } from "@material-ui/core"
+import {Grid} from "@material-ui/core"
 import * as React from "react"
-import { getPlayer } from "../../../Requests/Player/getPlayer"
-import { resolvePlayerNameOrId } from "../../../Requests/Player/resolvePlayerNameOrId"
-import { AddPlayerInput } from "../../Player/Compare/AddPlayerInput"
-import { PlayerChip } from "../../Player/Compare/PlayerChip"
-import { WithNotifications, withNotifications } from "../../Shared/Notification/NotificationUtils"
+import {getPlayer} from "../../../Requests/Player/getPlayer"
+import {resolvePlayerNameOrId} from "../../../Requests/Player/resolvePlayerNameOrId"
+import {AddPlayerInput} from "../../Player/Compare/AddPlayerInput"
+import {PlayerChip} from "../../Player/Compare/PlayerChip"
+import {WithNotifications, withNotifications} from "../../Shared/Notification/NotificationUtils"
 
 interface OwnProps {
     handleChange: (players: Player[]) => void
     playerIds: string[]
 }
 
-type Props = OwnProps
-    & WithNotifications
+type Props = OwnProps & WithNotifications
 
 interface State {
     players: Player[]
@@ -26,8 +25,9 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        Promise.all(this.props.playerIds.map((playerId) => getPlayer(playerId)))
-            .then((players) => this.setState({players}))
+        Promise.all(this.props.playerIds.map((playerId) => getPlayer(playerId))).then((players) =>
+            this.setState({players})
+        )
     }
 
     public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
@@ -38,18 +38,20 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
 
     public render() {
         const playerChips = this.state.players.map((player) => (
-            <PlayerChip {...player} onDelete={() => this.handleRemovePlayer(player.id)} key={player.id}/>
+            <PlayerChip {...player} onDelete={() => this.handleRemovePlayer(player.id)} key={player.id} />
         ))
         return (
-            <Grid container spacing={32}>
+            <Grid container spacing={4}>
                 <Grid item xs={12} container justify="center">
                     <Grid item xs="auto">
-                        <AddPlayerInput onSubmit={this.attemptToAddPlayer}
-                                        value={this.state.inputId}
-                                        onChange={this.handleInputChange}/>
+                        <AddPlayerInput
+                            onSubmit={this.attemptToAddPlayer}
+                            value={this.state.inputId}
+                            onChange={this.handleInputChange}
+                        />
                     </Grid>
                 </Grid>
-                <Grid item xs={12} container spacing={8}>
+                <Grid item xs={12} container spacing={1}>
                     {playerChips.map((playerChip) => (
                         <Grid item key={playerChip.key as string} zeroMinWidth>
                             {playerChip}
@@ -86,7 +88,7 @@ class PlayerEntryComponent extends React.PureComponent<Props, State> {
             return
         }
 
-        if (this.props.playerIds.indexOf(inputId) === -1) {
+        if (!this.props.playerIds.includes(inputId)) {
             resolvePlayerNameOrId(inputId)
                 .then(getPlayer)
                 .then(this.handleAddPlayer)

@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core"
 import Grid from "@material-ui/core/Grid/Grid"
 import * as React from "react"
-import { Replay } from "../../Models"
+import {Replay} from "../../Models"
 
 const styles = createStyles({
     teamTable: {
@@ -19,7 +19,8 @@ const styles = createStyles({
         margin: "auto"
     },
     teamName: {
-        textTransform: "uppercase"
+        textTransform: "uppercase",
+        width: 120
     },
     tableData: {
         fontWeight: 400
@@ -33,8 +34,8 @@ const styles = createStyles({
 })
 
 interface BoxScoreData {
-    name: "Blue" | "Orange",
-    score: number,
+    name: "Blue" | "Orange"
+    score: number
     players: ReplayPlayer[]
 }
 
@@ -51,8 +52,7 @@ interface OwnProps {
     player?: Player
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
     public render() {
@@ -78,16 +78,15 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         }
 
         return (
-            <Grid container justify="center" spacing={16}>
+            <Grid container justify="center" spacing={2}>
                 {[blueBoxScoreTeamData, orangeBoxScoreTeamData].map(this.createTeamBoxScoreGridItem)}
             </Grid>
-
         )
     }
 
     private readonly createTeamBoxScoreGridItem = (boxScoreData: BoxScoreData) => (
         <Grid item xs={12} key={boxScoreData.name}>
-            <Table key={boxScoreData.name} padding="dense" className={this.props.classes.teamTable}>
+            <Table key={boxScoreData.name} size="small" className={this.props.classes.teamTable}>
                 {this.createTableHead(boxScoreData)}
                 {this.createTableBody(boxScoreData)}
             </Table>
@@ -99,18 +98,16 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         return (
             <TableHead className={boxScoreData.name === "Blue" ? classes.blueTableHead : classes.orangeTableHead}>
                 <TableRow>
-                    <TableCell style={{width: "30%"}} padding="dense">
-                        <Typography variant="h6" className={classes.teamName}>
+                    <TableCell size="small">
+                        <Typography variant="h6" className={classes.teamName} noWrap>
                             {boxScoreData.score} {boxScoreData.name}
                         </Typography>
                     </TableCell>
                     {Array.from(labelToKeys, ([label, key]) => {
                         if (key !== "name") {
                             return (
-                                <TableCell align="right" key={key} padding="dense">
-                                    <Typography variant="subtitle1">
-                                        {label}
-                                    </Typography>
+                                <TableCell align="right" key={key} size="small">
+                                    <Typography variant="subtitle1">{label}</Typography>
                                 </TableCell>
                             )
                         }
@@ -125,21 +122,21 @@ export class ReplayBoxScoreComponent extends React.PureComponent<Props> {
         return (
             <TableBody>
                 {boxScoreData.players
-                    .sort((playerA: ReplayPlayer, playerB: ReplayPlayer) =>
-                        playerB.score - playerA.score)
+                    .sort((playerA: ReplayPlayer, playerB: ReplayPlayer) => playerB.score - playerA.score)
                     .map((player: ReplayPlayer) => (
                         <TableRow key={player.id}>
                             {Array.from(labelToKeys, ([label, key]) => (
-                                <TableCell key={key}
-                                           align={key !== "name" ? "right" : "left"}
-                                           className={this.props.classes.tableData}
-                                           padding="dense"
+                                <TableCell
+                                    key={key}
+                                    align={key !== "name" ? "right" : "left"}
+                                    className={this.props.classes.tableData}
+                                    size="small"
                                 >
-                                    {(this.props.player && player.id === this.props.player.id) ?
+                                    {this.props.player && player.id === this.props.player.id ? (
                                         <b>{player[key]}</b>
-                                        :
+                                    ) : (
                                         player[key]
-                                    }
+                                    )}
                                 </TableCell>
                             ))}
                         </TableRow>

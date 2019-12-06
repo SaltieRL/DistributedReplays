@@ -1,18 +1,18 @@
-import { Card, CardContent, Grid, Tab, Tabs, Tooltip, Typography, withWidth } from "@material-ui/core"
-import { isWidthDown, WithWidth } from "@material-ui/core/withWidth"
+import {Card, CardContent, Grid, Tab, Tabs, Tooltip, Typography, withWidth} from "@material-ui/core"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import QRCode from "qrcode.react"
 import * as React from "react"
-import { connect } from "react-redux"
+import {connect} from "react-redux"
 
-import { Replay } from "../../Models"
-import { StoreState } from "../../Redux"
-import { PlayerStatsContent } from "./BasicStats/PlayerStats/PlayerStatsContent"
-import { TeamStatsContent } from "./BasicStats/TeamStats/TeamStatsContent"
-import { HeatmapTabsWrapper } from "./Heatmap/HeatmapTabsWrapper"
-import { KickoffTabsWrapper } from "./Kickoffs/KickoffTabsWrapper"
-import { Predictions } from "./Predictions/Predictions"
-import { Viewer } from "./ReplayViewer/Viewer"
-import { VisualizationsContent } from "./Visualizations/VisualizationsContent"
+import {Replay} from "../../Models"
+import {StoreState} from "../../Redux"
+import {PlayerStatsContent} from "./BasicStats/PlayerStats/PlayerStatsContent"
+import {TeamStatsContent} from "./BasicStats/TeamStats/TeamStatsContent"
+import {HeatmapTabsWrapper} from "./Heatmap/HeatmapTabsWrapper"
+import {KickoffTabsWrapper} from "./Kickoffs/KickoffTabsWrapper"
+import {Predictions} from "./Predictions/Predictions"
+import {Viewer} from "./ReplayViewer/Viewer"
+import {VisualizationsContent} from "./Visualizations/VisualizationsContent"
 
 interface DisabledTabProps {
     label: string
@@ -20,7 +20,7 @@ interface DisabledTabProps {
 
 const TabDisabled = (props: DisabledTabProps) => (
     <Tooltip title="In beta; Patrons only">
-        <Tab label={props.label} style={{color: "#ccc", cursor: "not-allowed"}}/>
+        <Tab label={props.label} style={{color: "#ccc", cursor: "not-allowed"}} />
     </Tooltip>
 )
 
@@ -56,13 +56,13 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const isWidthSm = isWidthDown("sm", this.props.width)
+        const aboveXl = isWidthUp("xl", this.props.width)
         const url = `https://calculated.gg/replays/${this.props.replay.id}`
         const qrcode = (
             <CardContent>
-                <Grid container justify="center" alignContent="center" spacing={32}>
+                <Grid container justify="center" alignContent="center" spacing={4}>
                     <Grid item xs={12} style={{textAlign: "center"}}>
-                        <QRCode value={url}/>
+                        <QRCode value={url} />
                     </Grid>
 
                     <Grid item xs={12} style={{textAlign: "center"}}>
@@ -71,10 +71,11 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
 
                     <Grid item xs={12} style={{textAlign: "center"}}>
                         <Typography>
-                            Use this with the <a
-                            href="https://play.google.com/store/apps/details?id=gg.calculated.arviewer">AR Replay Viewer
-                            mobile app</a> to view this replay in Augmented
-                            Reality!
+                            Use this with the{" "}
+                            <a href="https://play.google.com/store/apps/details?id=gg.calculated.arviewer">
+                                AR Replay Viewer mobile app
+                            </a>{" "}
+                            to view this replay in Augmented Reality!
                         </Typography>
                     </Grid>
                 </Grid>
@@ -85,55 +86,43 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 <Tabs
                     value={this.state.selectedTab}
                     onChange={this.handleSelectTab}
-                    centered={!isWidthSm}
-                    variant={isWidthSm ? "scrollable" : "standard"}
+                    centered={aboveXl}
+                    variant={aboveXl ? "standard" : "scrollable"}
+                    scrollButtons="on"
                 >
-                    <Tab key="basicStats" label="Player Stats" value="playerStats"/>
-                    <Tab key="predictions" label="Predictions" value="predictions"/>
-                    <Tab key="heatmaps" label="Heatmaps" value="heatmaps"/>
-                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
-                        <Tab key="kickoffs" label="Kickoffs" value="kickoffs"/> :
-                        <TabDisabled label="Kickoffs"/>
-                    }
-                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
-                        <Tab key="visualizations" label="Visualizations" value="visualizations"/> :
-                        <TabDisabled label="Visualizations"/>
-                    }
-                    {(this.props.loggedInUser && this.props.loggedInUser.beta) ?
-                        <Tab key="teamStats" label="Team Stats" value="teamStats"/> :
-                        <TabDisabled label="Team Stats"/>
-                    }
-                    <Tab key="replayViewer" label="Replay Viewer (Beta)" value="replayViewer"/>
-                    <Tab key="qrCode" label="QR Code" value="qrCode"/>
+                    <Tab key="basicStats" label="Player Stats" value="playerStats" />
+                    <Tab key="predictions" label="Predictions" value="predictions" />
+                    <Tab key="heatmaps" label="Heatmaps" value="heatmaps" />
+                    {this.props.loggedInUser && this.props.loggedInUser.beta ? (
+                        <Tab key="kickoffs" label="Kickoffs" value="kickoffs" />
+                    ) : (
+                        <TabDisabled label="Kickoffs" />
+                    )}
+                    {this.props.loggedInUser && this.props.loggedInUser.beta ? (
+                        <Tab key="visualizations" label="Visualizations" value="visualizations" />
+                    ) : (
+                        <TabDisabled label="Visualizations" />
+                    )}
+                    {this.props.loggedInUser && this.props.loggedInUser.beta ? (
+                        <Tab key="teamStats" label="Team Stats" value="teamStats" />
+                    ) : (
+                        <TabDisabled label="Team Stats" />
+                    )}
+                    <Tab key="replayViewer" label="Replay Viewer (Beta)" value="replayViewer" />
+                    <Tab key="qrCode" label="QR Code" value="qrCode" />
                 </Tabs>
                 {this.state.selectedTab === "playerStats" && (
-                    <PlayerStatsContent
-                        replay={this.props.replay}
-                        explanations={this.props.explanations}
-                    />
+                    <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations} />
                 )}
-                {this.state.selectedTab === "heatmaps" && (
-                    <HeatmapTabsWrapper replay={this.props.replay}/>
-                )}
-                {this.state.selectedTab === "kickoffs" && (
-                    <KickoffTabsWrapper replay={this.props.replay}/>
-                )}
-                {this.state.selectedTab === "predictions" && (
-                    <Predictions replay={this.props.replay}/>
-                )}
+                {this.state.selectedTab === "heatmaps" && <HeatmapTabsWrapper replay={this.props.replay} />}
+                {this.state.selectedTab === "kickoffs" && <KickoffTabsWrapper replay={this.props.replay} />}
+                {this.state.selectedTab === "predictions" && <Predictions replay={this.props.replay} />}
                 {this.state.selectedTab === "teamStats" && (
-                    <TeamStatsContent
-                        replay={this.props.replay}
-                        explanations={this.props.explanations}
-                    />
+                    <TeamStatsContent replay={this.props.replay} explanations={this.props.explanations} />
                 )}
-                {this.state.selectedTab === "replayViewer" && (
-                    <Viewer replayId={this.props.replay.id}/>
-                )}
+                {this.state.selectedTab === "replayViewer" && <Viewer replayId={this.props.replay.id} />}
                 {this.state.selectedTab === "qrCode" && qrcode}
-                {this.state.selectedTab === "visualizations" && (
-                    <VisualizationsContent replay={this.props.replay}/>
-                )}
+                {this.state.selectedTab === "visualizations" && <VisualizationsContent replay={this.props.replay} />}
             </Card>
         )
     }

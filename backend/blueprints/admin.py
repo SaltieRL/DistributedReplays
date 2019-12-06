@@ -7,7 +7,7 @@ from backend.blueprints.shared_renders import render_with_session
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
 from backend.database.wrapper.stats import global_stats_wrapper
-from backend.tasks.celery_tasks import calc_global_stats, calc_global_dists, cache_item_stats
+from backend.tasks.celery_tasks import calculate_global_stats_by_rank, calc_global_dists, cache_item_stats
 from backend.utils.checks import is_local_dev
 from backend.utils.safe_flask_globals import get_redis
 
@@ -94,7 +94,7 @@ def view_users(session=None):
 @with_session
 def ping(session=None):
     r = get_redis()
-    result = r.get('global_stats')
+    result = r.get('global_stats_by_rank')
     if result is not None:
         return jsonify({'result': json.loads(result)})
     elif is_local_dev():
@@ -111,7 +111,7 @@ def calc_dists():
 
 @bp.route('/calcstats')
 def calc_stats():
-    calc_global_stats.delay()
+    calculate_global_stats_by_rank.delay()
     return jsonify({'result': 'Success'})
 
 

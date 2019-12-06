@@ -1,4 +1,4 @@
-import { createAction } from "redux-actions"
+import {createAction} from "redux-actions"
 
 enum Type {
     SET_TAGS = "SET_TAGS",

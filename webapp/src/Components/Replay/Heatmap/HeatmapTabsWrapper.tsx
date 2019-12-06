@@ -1,11 +1,11 @@
-import { CardContent, Divider } from "@material-ui/core"
+import {CardContent, Divider} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import * as React from "react"
-import { HeatmapSubcategory, Replay } from "../../../Models"
-import { getHeatmaps } from "../../../Requests/Replay"
-import { LoadableWrapper } from "../../Shared/LoadableWrapper"
-import { HeatmapContent } from "./HeatmapContent"
-import { HeatmapTabs } from "./HeatmapTabs"
+import {HeatmapSubcategory, Replay} from "../../../Models"
+import {getHeatmaps} from "../../../Requests/Replay"
+import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {HeatmapContent} from "./HeatmapContent"
+import {HeatmapTabs} from "./HeatmapTabs"
 
 interface Props {
     replay: Replay
@@ -36,26 +36,25 @@ export class HeatmapTabsWrapper extends React.PureComponent<Props, State> {
     // }
 
     public render() {
-
         return (
             <>
-                <Divider/>
-                <HeatmapTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab}/>
+                <Divider />
+                <HeatmapTabs selectedTab={this.state.selectedTab} handleChange={this.handleSelectTab} />
                 <CardContent>
-                    <Grid container spacing={32}>
+                    <Grid container spacing={4}>
                         <LoadableWrapper load={this.getHeatmapsData} reloadSignal={this.state.reloadSignal}>
-                            <HeatmapContent replay={this.props.replay} heatmapData={this.state.heatmapData}/>
+                            <HeatmapContent replay={this.props.replay} heatmapData={this.state.heatmapData} />
                         </LoadableWrapper>
                     </Grid>
                 </CardContent>
             </>
         )
-
     }
 
     private readonly getHeatmapsData = () => {
-        return getHeatmaps(this.props.replay.id, this.state.selectedTab.toString())
-            .then((data) => this.setState({heatmapData: data}))
+        return getHeatmaps(this.props.replay.id, this.state.selectedTab.toString()).then((data) =>
+            this.setState({heatmapData: data})
+        )
     }
 
     private readonly handleSelectTab = (event: React.ChangeEvent, selectedTab: HeatmapSubcategory) => {

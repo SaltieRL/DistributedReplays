@@ -1,10 +1,10 @@
-import { Checkbox, FormControlLabel, IconButton, Menu, MenuItem, withWidth } from "@material-ui/core"
-import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import {Checkbox, FormControlLabel, IconButton, Menu, MenuItem, withWidth} from "@material-ui/core"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import MoreVert from "@material-ui/icons/MoreVert"
 import Send from "@material-ui/icons/Send"
 import * as H from "history"
 import * as React from "react"
-import { LinkButton } from "../Shared/LinkButton"
+import {LinkButton} from "../Shared/LinkButton"
 
 interface OwnProps {
     disabled: boolean
@@ -15,8 +15,7 @@ interface OwnProps {
     to: H.LocationDescriptor
 }
 
-type Props = OwnProps
-    & WithWidth
+type Props = OwnProps & WithWidth
 
 interface State {
     open: boolean
@@ -32,8 +31,7 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
     public render() {
         const checkbox = (
             <FormControlLabel
-                control={<Checkbox checked={this.props.selectable}
-                                   onChange={this.props.handleSelectableChange}/>}
+                control={<Checkbox checked={this.props.selectable} onChange={this.props.handleSelectableChange} />}
                 label="Select mode"
             />
         )
@@ -43,10 +41,13 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
                         disabled={this.props.disabled}>
                 {this.props.buttonText}
             </LinkButton>) : (
-            <LinkButton icon={Send} iconType="mui"
-                        to={this.props.to}
-                        disabled={this.props.disabled}
-                        tooltip="Select at least one replay to view as group">
+            <LinkButton
+                icon={Send}
+                iconType="mui"
+                to={this.props.to}
+                disabled={this.props.disabled}
+                tooltip="Select at least one replay to view as group"
+            >
                 View as group
             </LinkButton>
 
@@ -54,30 +55,22 @@ class ResultsActionsComponent extends React.PureComponent<Props, State> {
 
         return (
             <div style={{paddingRight: 8}}>
-                {isWidthUp("sm", this.props.width) ?
+                {isWidthUp("sm", this.props.width) ? (
                     <div style={{display: "flex"}}>
                         {checkbox}
                         {linkButton}
                     </div>
-                    :
+                ) : (
                     <>
                         <IconButton onClick={this.handleOpen}>
-                            <MoreVert/>
+                            <MoreVert />
                         </IconButton>
-                        <Menu
-                            open={this.state.open}
-                            anchorEl={this.state.anchorElement}
-                            onClose={this.handleClose}
-                        >
-                            <MenuItem>
-                                {checkbox}
-                            </MenuItem>
-                            <MenuItem>
-                                {linkButton}
-                            </MenuItem>
+                        <Menu open={this.state.open} anchorEl={this.state.anchorElement} onClose={this.handleClose}>
+                            <MenuItem>{checkbox}</MenuItem>
+                            <MenuItem>{linkButton}</MenuItem>
                         </Menu>
                     </>
-                }
+                )}
             </div>
         )
     }

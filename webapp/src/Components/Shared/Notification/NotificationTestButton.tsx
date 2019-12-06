@@ -1,9 +1,9 @@
-import { Button } from "@material-ui/core"
+import {Button} from "@material-ui/core"
 import * as React from "react"
-import { connect } from "react-redux"
-import { Dispatch } from "redux"
-import { NotificationActions } from "../../../Redux"
-import { NotificationProps } from "./NotificationSnackbar"
+import {connect} from "react-redux"
+import {Dispatch} from "redux"
+import {NotificationActions} from "../../../Redux"
+import {NotificationProps} from "./NotificationSnackbar"
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     showNotification: (notificationProps: NotificationProps) =>

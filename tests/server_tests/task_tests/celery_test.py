@@ -1,4 +1,4 @@
-from backend.tasks.celery_tasks import parse_replay_task, calc_global_stats
+from backend.tasks.celery_tasks import parse_replay_task, calculate_global_stats_by_rank
 from tests.utils.replay_utils import write_files_to_disk, get_test_file, get_complex_replay_list
 
 
@@ -12,5 +12,5 @@ class TestCelerytasks():
                                                  'force_reparse': True}).get()
         assert(result == '70DDECEA4653AC55EA77DBA0DB497995')
 
-    def test_global_stats_dont_crash_null_data(self):
-        calc_global_stats.apply(throw=True).get()
+    def test_global_stats_by_rank_dont_crash_null_data(self):
+        calculate_global_stats_by_rank.apply(throw=True).get()

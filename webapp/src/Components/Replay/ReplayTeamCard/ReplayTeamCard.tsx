@@ -10,25 +10,25 @@ import {
     withStyles
 } from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models"
-import { TeamCardPlayer } from "./TeamCardPlayer"
+import {Replay} from "../../../Models"
+import {TeamCardPlayer} from "./TeamCardPlayer"
 
-const styles = (theme: Theme) => createStyles({
-    orangeCard: {
-        backgroundColor: theme.palette.type === "dark" ? "darkorange" : "bisque"
-    },
-    blueCard: {
-        backgroundColor: theme.palette.type === "dark" ? "royalblue" : "aliceblue"
-    }
-})
+const styles = (theme: Theme) =>
+    createStyles({
+        orangeCard: {
+            backgroundColor: theme.palette.type === "dark" ? "darkorange" : "bisque"
+        },
+        blueCard: {
+            backgroundColor: theme.palette.type === "dark" ? "royalblue" : "aliceblue"
+        }
+    })
 
 interface OwnProps {
     replay: Replay
     isOrange: boolean
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 class ReplayTeamCardComponent extends React.PureComponent<Props> {
     public render() {
@@ -39,17 +39,15 @@ class ReplayTeamCardComponent extends React.PureComponent<Props> {
 
         return (
             <Card square>
-                <CardHeader
-                    title={title}
-                    titleTypographyProps={{align: "center"}}
-                    className={headerClassName}/>
-                <Divider/>
+                <CardHeader title={title} titleTypographyProps={{align: "center"}} className={headerClassName} />
+                <Divider />
                 <CardContent>
                     <List>
                         {replay.players
                             .filter((player) => player.isOrange === isOrange)
-                            .map((player) => <TeamCardPlayer player={player} key={player.id}/>)
-                        }
+                            .map((player) => (
+                                <TeamCardPlayer player={player} key={player.id} />
+                            ))}
                     </List>
                 </CardContent>
             </Card>

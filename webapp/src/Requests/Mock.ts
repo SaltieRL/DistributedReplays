@@ -1,37 +1,39 @@
 import moment from "moment"
-import { GameMode, GameVisibility, PlayStyleRawResponse, PlayStyleResponse, Replay } from "../Models"
+import {GameMode, GameVisibility, PlayStyleRawResponse, PlayStyleResponse, Replay} from "../Models"
 
 export const MOCK_PLAY_STYLE: PlayStyleResponse = {
     showWarning: false,
-    chartDatas: [{
-        title: "Aggressiveness",
-        chartDataPoints: [
-            {
-                name: "Shots",
-                value: 0.277
-            },
-            {
-                name: "Possession",
-                value: -0.117
-            },
-            {
-                name: "Hits",
-                value: -0.544
-            },
-            {
-                name: "Shots/Hit",
-                value: -0.544
-            },
-            {
-                name: "Boost usage",
-                value: 0.357
-            },
-            {
-                name: "Speed",
-                value: 0.4827
-            }
-        ]
-    }]
+    chartDatas: [
+        {
+            title: "Aggressiveness",
+            chartDataPoints: [
+                {
+                    name: "Shots",
+                    value: 0.277
+                },
+                {
+                    name: "Possession",
+                    value: -0.117
+                },
+                {
+                    name: "Hits",
+                    value: -0.544
+                },
+                {
+                    name: "Shots/Hit",
+                    value: -0.544
+                },
+                {
+                    name: "Boost usage",
+                    value: 0.357
+                },
+                {
+                    name: "Speed",
+                    value: 0.4827
+                }
+            ]
+        }
+    ]
 }
 
 export const MOCK_PLAY_STYLE_RAW: PlayStyleRawResponse = {
@@ -561,7 +563,8 @@ export const MOCK_REPLAY_2 = {
                 stiffness: 0.449999988079071,
                 swivelSpeed: 4,
                 transitionSpeed: 1.0
-            }, loadout: {
+            },
+            loadout: {
                 antenna: {
                     imageUrl: "",
                     itemName: "None",
@@ -641,7 +644,8 @@ export const MOCK_REPLAY_2 = {
                 stiffness: 0.449999988079071,
                 swivelSpeed: 5,
                 transitionSpeed: 1.0
-            }, loadout: {
+            },
+            loadout: {
                 antenna: {
                     imageUrl: "",
                     itemName: "None",

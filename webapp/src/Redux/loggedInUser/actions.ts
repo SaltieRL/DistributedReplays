@@ -1,4 +1,4 @@
-import { createAction } from "redux-actions"
+import {createAction} from "redux-actions"
 
 enum Type {
     SET_LOGGED_IN_USER = "SET_LOGGED_IN_USER"
