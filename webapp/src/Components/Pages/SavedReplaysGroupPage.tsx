@@ -23,21 +23,21 @@ import Edit from "@material-ui/icons/Edit"
 import * as _ from "lodash"
 // import Link from "@material-ui/core/Link"
 import * as React from "react"
-import {connect} from "react-redux"
-import {Link as DOMLink, RouteComponentProps} from "react-router-dom"
-import {PLAYER_PAGE_LINK} from "../../Globals"
-import {Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse} from "../../Models/Replay/Groups"
-import {StoreState} from "../../Redux"
-import {deleteGames, getGroupInfo, getGroupPlayerStats, getGroupTeamStats} from "../../Requests/Replay"
-import {GroupAddDialog} from "../ReplaysSavedGroup/GroupAddDialog"
-import {GroupPlayerStatsTableWrapper} from "../ReplaysSavedGroup/GroupPlayerStatsTableWrapper"
-import {GroupSubGroupAddDialog} from "../ReplaysSavedGroup/GroupSubGroupAddDialog"
-import {GroupTeamStatsTableWrapper} from "../ReplaysSavedGroup/GroupTeamStatsTableWrapper"
-import {SubgroupEntry} from "../ReplaysSavedGroup/SubgroupEntry"
-import {ReplayDisplayRow} from "../ReplaysSearch/ReplayDisplayRow"
-import {LoadableWrapper} from "../Shared/LoadableWrapper"
-import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
-import {BasePage} from "./BasePage"
+import { connect } from "react-redux"
+import { Link as DOMLink, RouteComponentProps } from "react-router-dom"
+import { PLAYER_PAGE_LINK } from "../../Globals"
+import { Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse } from "../../Models/Replay/Groups"
+import { StoreState } from "../../Redux"
+import { deleteGames, getGroupInfo, getGroupPlayerStats, getGroupTeamStats } from "../../Requests/Replay"
+import { GroupAddDialog } from "../ReplaysSavedGroup/GroupAddDialog"
+import { GroupPlayerStatsTableWrapper } from "../ReplaysSavedGroup/GroupPlayerStatsTableWrapper"
+import { GroupSubGroupAddDialog } from "../ReplaysSavedGroup/GroupSubGroupAddDialog"
+import { GroupTeamStatsTableWrapper } from "../ReplaysSavedGroup/GroupTeamStatsTableWrapper"
+import { SubgroupEntry } from "../ReplaysSavedGroup/SubgroupEntry"
+import { ReplayDisplayRow } from "../ReplaysSearch/ReplayDisplayRow"
+import { LoadableWrapper } from "../Shared/LoadableWrapper"
+import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
+import { BasePage } from "./BasePage"
 
 interface RouteParams {
     id: string
@@ -155,6 +155,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                             <Breadcrumbs aria-label="breadcrumb">
                                                 {group.ancestors.map((entry: Entry) => (
                                                     <DOMLink
+                                                        key={entry.uuid}
                                                         to={`/groups/${entry.uuid}`}
                                                         style={{textDecoration: "none"}}
                                                     >
@@ -219,7 +220,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                                                                 : undefined
                                                                         }
                                                                         replay={child.gameObject}
-                                                                        handleUpdateTags={(tag: Tag[]) => {}}
+                                                                        handleUpdateTags={(tag: Tag[]) => null}
                                                                     />
                                                                 )
                                                             ) : (
@@ -297,7 +298,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
         })
     }
 
-    private readonly handleTabChange = (_: React.ChangeEvent<{}>, selectedTab: GroupTab) => {
+    private readonly handleTabChange = (__: React.ChangeEvent<{}>, selectedTab: GroupTab) => {
         this.setState({selectedTab})
     }
     private readonly toggleAddDialog = () => {
