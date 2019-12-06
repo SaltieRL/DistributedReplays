@@ -26,19 +26,21 @@ export class SubgroupEntry extends React.Component<Props, State> {
                                 {this.props.entry.name}
                             </Typography>
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid item xs={5}>
                             <Typography variant="subtitle1" color="textPrimary">
                                 {this.props.entry.descendantCount} replays
                             </Typography>
                         </Grid>
-                        {selectProps && (
-                            <Checkbox
-                                checked={selectProps.selected}
-                                onChange={this.toggleSelect}
-                                color="secondary"
-                                onClick={this.stopClickPropagation}
-                            />
-                        )}
+                        <Grid item xs={3}>
+                            {selectProps && (
+                                <Checkbox
+                                    checked={selectProps.selected}
+                                    onChange={this.toggleSelect}
+                                    color="secondary"
+                                    onClick={this.stopClickPropagation}
+                                />
+                            )}
+                        </Grid>
                     </Grid>
                 </ListItem>
             </DOMLink>

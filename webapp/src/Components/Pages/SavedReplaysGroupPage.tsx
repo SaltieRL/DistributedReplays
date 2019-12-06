@@ -159,7 +159,22 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                                                     />
                                                                 )
                                                             ) : (
-                                                                <SubgroupEntry entry={child} />
+                                                                <SubgroupEntry
+                                                                    selectProps={
+                                                                        this.state.editActive
+                                                                            ? {
+                                                                                  selected: _.includes(
+                                                                                      this.state.selectedEntries,
+                                                                                      child.uuid
+                                                                                  ),
+                                                                                  handleSelectChange: this.handleSelectChange(
+                                                                                      child.uuid
+                                                                                  )
+                                                                              }
+                                                                            : undefined
+                                                                    }
+                                                                    entry={child}
+                                                                />
                                                             )}
                                                             {i !== group.children.length - 1 && <Divider />}
                                                         </>
