@@ -1,7 +1,7 @@
-import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles"
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"
 import Chart from "chart.js"
 import * as React from "react"
-import {ThemeContext} from "./Contexts/ThemeContext"
+import { ThemeContext } from "./Contexts/ThemeContext"
 
 const getTheme = (dark: boolean) =>
     createMuiTheme({
@@ -38,29 +38,32 @@ const getTheme = (dark: boolean) =>
                 fontWeight: 400
             }
         },
-        overrides: {
-        MuiTableCell: {
-            body: {
-                fontWeight: 400
-            },
-            head: {
-                fontWeight: 700,
-                backgroundColor: dark ? "#4c4c4c" : "#f7f7f7"
-            }
-        },
-        ...dark ? {
-            MuiTabs: {
-                root: {color: "white"}
-            }
-        }
-    : {},
+
         props: {
             MuiWithWidth: {
                 noSSR: true,
                 initialWidth: "lg" // WithWidth breakpoint set for tests
             }
-        }}
-})
+        },
+        overrides: {
+            MuiTableCell: {
+                body: {
+                    fontWeight: 400
+                },
+                head: {
+                    fontWeight: 700,
+                    backgroundColor: dark ? "#4c4c4c" : "#f7f7f7"
+                }
+            },
+            ...(dark
+                ? {
+                    MuiTabs: {
+                        root: {color: "white"}
+                    }
+                }
+                : {})
+        }
+    })
 
 interface State {
     dark: boolean
