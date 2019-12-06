@@ -31,6 +31,9 @@ export class GroupPlayerStatsTable extends React.Component<Props, State> {
         if (this.state.currentSort) {
             this.sortPlayerStats(playerStats)
         }
+        const maxStats = stats.map((stat) => {
+            return Math.max(...playerStats.map((player) => player.stats[stat]))
+        })
         return (
             <div style={this.props.style}>
                 <Table>
@@ -68,7 +71,11 @@ export class GroupPlayerStatsTable extends React.Component<Props, State> {
                                 </TableCell>
                                 {stats.map((stat, i) => (
                                     <TableCell key={i} align="right">
-                                        {roundNumberToMaxDP(playerStat.stats[stat])}
+                                        {playerStat.stats[stat] === maxStats[i] ? (
+                                            <b>{roundNumberToMaxDP(playerStat.stats[stat])}</b>
+                                        ) : (
+                                            roundNumberToMaxDP(playerStat.stats[stat])
+                                        )}
                                     </TableCell>
                                 ))}
                             </TableRow>
