@@ -10,6 +10,7 @@ from sqlalchemy.dialects.postgresql import aggregate_order_by
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame, Game
+from backend.database.wrapper.chart.player_chart_metadata import player_group_stats_metadata
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.stats.global_stats_wrapper import GlobalStatWrapper
@@ -184,6 +185,22 @@ class PlayerStatWrapper(GlobalStatWrapper):
             stats.with_replay_ids(replay_ids)
         return stats.build_query(session).filter(PlayerGame.time_in_game > 0).count()
 
+    def _split_by_category(self, stats):
+        stats_dict = {}
+        for chart_metadata in player_group_stats_metadata:
+            if chart_metadata.stat_name not in stats:
+                continue
+            stats_dict[chart_metadata.stat_name] = {
+                "value": stats[chart_metadata.stat_name],
+                "subcategory": chart_metadata.subcategory
+            }
+        for stat in set(stats.keys()) - set([stat.stat_name for stat in player_group_stats_metadata]):
+            stats_dict[stat] = {
+                "value": stats[stat],
+                "subcategory": "Misc"
+            }
+        return stats_dict
+
     def _create_group_stats(self, session, player_filter=None, replay_ids=None):
         average = self._create_group_stats_from_query(session, self.get_player_stat_query(), player_filter, replay_ids)
         individual = self._create_group_stats_from_query(session, self.player_stats.individual_query, player_filter,
@@ -215,13 +232,12 @@ class PlayerStatWrapper(GlobalStatWrapper):
                     per_norm_game[stat_query_key + " (Total)"] = average[stat_query_key]
                 else:
                     per_norm_game[stat_query_key] = individual[stat_query_key] / factor_per_norm_game
-
         return {
             'stats': {
-                '(Total)': total,
-                '(per Game)': per_game,
-                '(per Norm Game)': per_norm_game,
-                '(per Minute)': per_minute
+                '(Total)': self._split_by_category(total),
+                '(per Game)': self._split_by_category(per_game),
+                '(per Norm Game)': self._split_by_category(per_norm_game),
+                '(per Minute)': self._split_by_category(per_minute)
             }
         }
 

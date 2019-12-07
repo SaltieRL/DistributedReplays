@@ -2,6 +2,7 @@ import {Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
 import {GroupPlayerStatsResponse} from "../../Models/Replay/Groups"
 import {GroupPlayerStatsTable} from "./GroupPlayerStatsTable"
+import {GroupStatsButtons} from "./Shared/GroupStatsButtons"
 
 interface State {
     selectedTab: string
@@ -29,6 +30,7 @@ export class GroupPlayerStatsTableWrapper extends React.Component<Props, State> 
                             <Tab label={tab} value={tab} key={tab} />
                         ))}
                 </Tabs>
+                <GroupStatsButtons />
                 <GroupPlayerStatsTable
                     stats={{
                         playerStats: playerStats.map((player) => {

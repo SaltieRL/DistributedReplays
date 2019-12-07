@@ -1,5 +1,6 @@
 import {Grid, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
 import * as React from "react"
+import {PlayerStatsSubcategory} from "../../Models"
 import {GroupPlayerStatsResponse, PlayerStat} from "../../Models/Replay/Groups"
 import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../Utils/String"
 
@@ -29,13 +30,20 @@ export class GroupPlayerStatsTable extends React.Component<Props, State> {
     public render() {
         // const players = Object.keys(this.props.stats.playerStats)
         const player0 = this.props.stats.playerStats[0]
+        const categories = Object.keys(PlayerStatsSubcategory)
         const stats = Object.keys(player0.stats)
+        stats.sort((statA, statB) => {
+            return (
+                categories.indexOf(player0.stats[statA].subcategory) -
+                categories.indexOf(player0.stats[statA].subcategory)
+            )
+        })
         const playerStats = this.props.stats.playerStats
         if (this.state.currentSort) {
             this.sortPlayerStats(playerStats)
         }
         const maxStats = stats.map((stat) => {
-            return Math.max(...playerStats.map((player) => player.stats[stat]))
+            return Math.max(...playerStats.map((player) => player.stats[stat].value))
         })
         return (
             <Grid container>
@@ -104,10 +112,10 @@ export class GroupPlayerStatsTable extends React.Component<Props, State> {
                                 <TableRow key={playerStat.name}>
                                     {stats.map((stat, i) => (
                                         <TableCell key={i} align="right">
-                                            {playerStat.stats[stat] === maxStats[i] ? (
-                                                <b>{roundNumberToMaxDP(playerStat.stats[stat])}</b>
+                                            {playerStat.stats[stat].value === maxStats[i] ? (
+                                                <b>{roundNumberToMaxDP(playerStat.stats[stat].value)}</b>
                                             ) : (
-                                                roundNumberToMaxDP(playerStat.stats[stat])
+                                                roundNumberToMaxDP(playerStat.stats[stat].value)
                                             )}
                                         </TableCell>
                                     ))}
@@ -126,7 +134,7 @@ export class GroupPlayerStatsTable extends React.Component<Props, State> {
 
         if (playerStats.length > 0 && statName in playerStats[0].stats) {
             playerStats.sort((playerStatA, playerStatB) => {
-                return playerStatA.stats[statName] - playerStatB.stats[statName]
+                return playerStatA.stats[statName].value - playerStatB.stats[statName].value
             })
             if (direction !== "asc") {
                 playerStats.reverse()
