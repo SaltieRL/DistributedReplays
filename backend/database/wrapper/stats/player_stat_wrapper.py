@@ -176,20 +176,27 @@ class PlayerStatWrapper(GlobalStatWrapper):
                  s is not None}
         return stats
 
+    def _get_counts(self, session, player_filter=None, replay_ids=None):
+        stats = QueryFilterBuilder().with_stat_query((PlayerGame,))
+        if player_filter is not None:
+            stats.with_players(player_filter)
+        if replay_ids is not None:
+            stats.with_replay_ids(replay_ids)
+        return stats.build_query(session).filter(PlayerGame.time_in_game > 0).count()
+
     def _create_group_stats(self, session, player_filter=None, replay_ids=None):
         average = self._create_group_stats_from_query(session, self.get_player_stat_query(), player_filter, replay_ids)
         individual = self._create_group_stats_from_query(session, self.player_stats.individual_query, player_filter,
                                                          replay_ids)
-
         total = {}
         per_game = {}
         per_norm_game = {}
         per_minute = {}
 
-        factor_per_game = len(replay_ids) if replay_ids is not None else None
+        factor_per_game = self._get_counts(session, player_filter, replay_ids)
         factor_per_minute = individual['time_in_game'] / 60.0 if 'time_in_game' in individual else None
         factor_per_norm_game = factor_per_minute / 5 if factor_per_minute is not None else None
-
+        print(player_filter, factor_per_game)
         for stat in self.get_player_stat_list():
             stat_query_key = stat.get_query_key()
             if stat_query_key not in individual or stat_query_key not in average:
