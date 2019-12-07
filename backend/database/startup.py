@@ -25,6 +25,7 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
     conn = engine.connect()
     conn.execute("create extension if not exists ltree WITH schema public;")
     conn.execute("create extension if not exists ltree;")
+    conn.execute("commit")
     conn.close()
     DBObjectBase.metadata.create_all(engine)
     session = sessionmaker(bind=engine)
