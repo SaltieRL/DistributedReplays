@@ -1,7 +1,7 @@
-import {Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
+import { Grid, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
 import * as React from "react"
-import {GroupTeamStatsResponse, TeamStat} from "../../Models/Replay/Groups"
-import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../Utils/String"
+import { GroupTeamStatsResponse, TeamStat } from "../../Models/Replay/Groups"
+import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../Utils/String"
 
 interface Props {
     stats: GroupTeamStatsResponse
@@ -15,12 +15,15 @@ interface SortOptions {
 
 interface State {
     currentSort?: SortOptions
+    headerHeight: number
 }
 
 export class GroupTeamStatsTable extends React.Component<Props, State> {
     public constructor(props: Props) {
         super(props)
-        this.state = {}
+        this.state = {
+            headerHeight: -1
+        }
     }
 
     public render() {
@@ -35,54 +38,75 @@ export class GroupTeamStatsTable extends React.Component<Props, State> {
             return Math.max(...teamStats.map((team) => team.stats[stat]))
         })
         return (
-            <div style={this.props.style}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            {stats.map((stat) => (
-                                <TableCell key={stat} align="right">
-                                    <TableSortLabel
-                                        active={this.state.currentSort && stat === this.state.currentSort.statName}
-                                        direction={this.state.currentSort && this.state.currentSort.direction}
-                                        onClick={this.handleSortChange(stat)}
-                                    >
-                                        {convertSnakeAndCamelCaseToReadable(stat)}
-                                    </TableSortLabel>
+            <Grid container>
+                <Grid item xs={4}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell
+                                    style={{
+                                        height: this.state.headerHeight > 0 ? this.state.headerHeight : undefined
+                                    }}
+                                >
+                                    Name
                                 </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {teamStats.map((teamStat) => (
-                            <TableRow key={teamStat.names.reduce((prev, current, idx) => `${prev}, ${current}`)}>
-                                <TableCell>
-                                    <div
-                                        style={
-                                            {
-                                                // left: this.props.scrollLeft,
-                                                // backgroundColor: this.props.theme.palette.background.paper
-                                            }
-                                        }
-                                        // className={this.props.classes.sticky}
-                                    >
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {teamStats.map((teamStat) => (
+                                <TableRow key={teamStat.names.reduce((prev, current, idx) => `${prev}, ${current}`)}>
+                                    <TableCell>
                                         {teamStat.names.reduce((prev, current, idx) => `${prev}, ${current}`)}
-                                    </div>
-                                </TableCell>
-                                {stats.map((stat, i) => (
-                                    <TableCell key={i} align="right">
-                                        {teamStat.stats[stat] === maxStats[i] ? (
-                                            <b>{roundNumberToMaxDP(teamStat.stats[stat])}</b>
-                                        ) : (
-                                            roundNumberToMaxDP(teamStat.stats[stat])
-                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Grid>
+                <Grid item xs={8} style={this.props.style}>
+                    <Table>
+                        <TableHead
+                            ref={(ref: HTMLDivElement) => {
+                                if (ref) {
+                                    const height = ref.clientHeight
+                                    if (this.state.headerHeight !== height) {
+                                        this.setState({headerHeight: height})
+                                    }
+                                }
+                            }}
+                        >
+                            <TableRow>
+                                {stats.map((stat) => (
+                                    <TableCell key={stat} align="right">
+                                        <TableSortLabel
+                                            active={this.state.currentSort && stat === this.state.currentSort.statName}
+                                            direction={this.state.currentSort && this.state.currentSort.direction}
+                                            onClick={this.handleSortChange(stat)}
+                                        >
+                                            {convertSnakeAndCamelCaseToReadable(stat)}
+                                        </TableSortLabel>
                                     </TableCell>
                                 ))}
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
+                        </TableHead>
+                        <TableBody>
+                            {teamStats.map((teamStat) => (
+                                <TableRow key={teamStat.names.reduce((prev, current, idx) => `${prev}, ${current}`)}>
+                                    {stats.map((stat, i) => (
+                                        <TableCell key={i} align="right">
+                                            {teamStat.stats[stat] === maxStats[i] ? (
+                                                <b>{roundNumberToMaxDP(teamStat.stats[stat])}</b>
+                                            ) : (
+                                                roundNumberToMaxDP(teamStat.stats[stat])
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Grid>
+            </Grid>
         )
     }
 
