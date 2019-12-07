@@ -6,7 +6,7 @@ from backend.blueprints.spa_api.errors.errors import AuthorizationException, Rep
 from backend.blueprints.spa_api.service_layers.player.player import Player
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.utils import with_session
-from backend.database.objects import GroupEntry, GroupEntryType
+from backend.database.objects import GroupEntry, GroupEntryType, Game
 from backend.database.wrapper import player_wrapper
 from backend.database.wrapper.stats import player_stat_wrapper
 from backend.utils.safe_flask_globals import UserManager
@@ -68,6 +68,11 @@ class SavedGroup:
             raise ReplayNotFound()
         if parent.owner != current_user:
             raise AuthorizationException()
+        game_obj = session.query(Game).filter(Game.hash == game).first()
+        if game_obj is None:
+            game_obj: Game = session.query(Game).filter(Game.replay_id == game).first()
+            if game_obj is not None:
+                game = game_obj.hash
         entry = GroupEntry(engine=session.get_bind(), name=name, game=game, owner=parent.owner,
                            type=GroupEntryType.game, parent=parent)
         session.add(entry)
