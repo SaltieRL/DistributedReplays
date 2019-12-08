@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 
 from flask import Flask, g, request, redirect, send_from_directory
 from flask import session as flask_session
+from flask_compress import Compress
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
 from prometheus_client import make_wsgi_app, multiprocess, CollectorRegistry
@@ -59,6 +60,9 @@ class CalculatedServer:
         CalculatedServer.set_up_app_config(app)
         CORS(app)
         CalculatedServer.create_needed_folders(app)
+
+        # Enable GZIP compression
+        Compress(app)
 
         session_factory = lazy_startup()
 
