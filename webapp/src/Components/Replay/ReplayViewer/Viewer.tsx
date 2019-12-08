@@ -16,6 +16,7 @@ import {
 import {Replay} from "../../../Models"
 import {getReplayMetadata, getReplayViewerData, getReplayViewerDataRange} from "../../../Requests/Replay"
 import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {Socket} from "./SocketSync/Socket"
 
 interface Props {
     replayId: Replay["id"]
@@ -81,6 +82,7 @@ export class Viewer extends React.Component<Props, State> {
                         <Grid item>
                             <Slider />
                         </Grid>
+                        <Socket replayId={this.props.replayId} gameManager={gameManager} />
                     </>
                 )}
             </Grid>
