@@ -9,6 +9,7 @@ import {TagDialogWrapper} from "../Shared/Tag/TagDialogWrapper"
 import {ReplayChart} from "./ReplayChart"
 import {ReplayTabs} from "./ReplayTabs"
 import {ReplayTeamCard} from "./ReplayTeamCard/ReplayTeamCard"
+import {Socket} from "./ReplayViewer/SocketSync/Socket"
 
 interface OwnProps {
     replay: Replay
@@ -88,6 +89,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
 
         return (
             <Grid item xs={12} container spacing={3} alignItems="center">
+                <Socket replayId={"null"} />
                 {isWidthUp("lg", width) ? (
                     <>
                         {blueGridItem}
