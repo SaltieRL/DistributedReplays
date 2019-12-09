@@ -234,10 +234,10 @@ class PlayerStatWrapper(GlobalStatWrapper):
                     per_norm_game[stat_query_key] = individual[stat_query_key] / factor_per_norm_game
         return {
             'stats': {
-                '(Total)': self._split_by_category(total),
-                '(per Game)': self._split_by_category(per_game),
-                '(per Norm Game)': self._split_by_category(per_norm_game),
-                '(per Minute)': self._split_by_category(per_minute)
+                '(Total)': total,
+                '(per Game)': per_game,
+                '(per Norm Game)': per_norm_game,
+                '(per Minute)': per_minute
             }
         }
 
