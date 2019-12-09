@@ -12,6 +12,7 @@ import Search from "@material-ui/icons/Search"
 import ShowChart from "@material-ui/icons/ShowChart"
 import TableChart from "@material-ui/icons/TableChart"
 import * as React from "react"
+import {connect} from "react-redux"
 import {Link, LinkProps} from "react-router-dom"
 import {ThemeContext} from "../../Contexts/ThemeContext"
 import {
@@ -27,13 +28,18 @@ import {
     SAVED_REPLAYS_MY_GROUPS_PAGE_LINK,
     UPLOAD_LINK
 } from "../../Globals"
+import {StoreState} from "../../Redux"
 
-interface Props {
+const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser
+})
+interface OwnProps {
     open: boolean
     onClose: () => void
 }
 
-export class SideBar extends React.PureComponent<Props> {
+type Props = OwnProps & ReturnType<typeof mapStateToProps>
+class SideBarComponent extends React.PureComponent<Props> {
     private readonly createLink =
         // TODO: Remove forwardRef with react-router-dom 6; https://github.com/ReactTraining/react-router/issues/6056
         React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => <Link innerRef={ref} {...props} />)
@@ -86,15 +92,18 @@ export class SideBar extends React.PureComponent<Props> {
                             </ListItemIcon>
                             <ListItemText>Progression</ListItemText>
                         </ListItem>
-                        <Divider component="li" />
-
-                        <ListSubheader>User</ListSubheader>
-                        <ListItem button component={this.createLink} to={SAVED_REPLAYS_MY_GROUPS_PAGE_LINK}>
-                            <ListItemIcon>
-                                <GroupWork />
-                            </ListItemIcon>
-                            <ListItemText>My Groups</ListItemText>
-                        </ListItem>
+                        {this.props.loggedInUser && (
+                            <>
+                                <Divider component="li" />
+                                <ListSubheader>User</ListSubheader>
+                                <ListItem button component={this.createLink} to={SAVED_REPLAYS_MY_GROUPS_PAGE_LINK}>
+                                    <ListItemIcon>
+                                        <GroupWork />
+                                    </ListItemIcon>
+                                    <ListItemText>My Groups</ListItemText>
+                                </ListItem>
+                            </>
+                        )}
 
                         <Divider component="li" />
 
@@ -169,3 +178,4 @@ export class SideBar extends React.PureComponent<Props> {
         )
     }
 }
+export const SideBar = connect(mapStateToProps)(SideBarComponent)

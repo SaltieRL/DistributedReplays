@@ -2,7 +2,7 @@ import logging
 
 from sqlalchemy import func
 
-from backend.blueprints.spa_api.errors.errors import AuthorizationException, ReplayNotFound
+from backend.blueprints.spa_api.errors.errors import AuthorizationException, ReplayNotFound, NotLoggedIn
 from backend.blueprints.spa_api.service_layers.player.player import Player
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -110,12 +110,16 @@ class SavedGroup:
     @with_session
     def get_info(uuid, session=None):
         if uuid is None:
-            peak_nodes = session.query(GroupEntry).filter(
-                GroupEntry.owner == UserManager.get_current_user().platformid).filter(
-                func.nlevel(GroupEntry.path) == 1).order_by(GroupEntry.id).all()
-            children_counts = SavedGroup._children_counts(peak_nodes, session)
-            return Group(None, [], [GroupEntryJSON.create(child, descendants).__dict__ for child, (descendants,) in
-                                    zip(peak_nodes, children_counts)])
+            current_user = UserManager.get_current_user()
+            if current_user is not None:
+                peak_nodes = session.query(GroupEntry).filter(
+                    GroupEntry.owner == current_user.platformid).filter(
+                    func.nlevel(GroupEntry.path) == 1).order_by(GroupEntry.id).all()
+                children_counts = SavedGroup._children_counts(peak_nodes, session)
+                return Group(None, [], [GroupEntryJSON.create(child, descendants).__dict__ for child, (descendants,) in
+                                        zip(peak_nodes, children_counts)])
+            else:
+                raise NotLoggedIn()
 
         entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
         children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).order_by(GroupEntry.id).filter(
