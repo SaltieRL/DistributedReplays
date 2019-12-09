@@ -48,7 +48,7 @@ export class GroupStatsButtons extends React.PureComponent<Props> {
                     .map((subcategory) => {
                         const value = PlayerStatsSubcategory[subcategory]
                         return (
-                            <Grid item xs={2}>
+                            <Grid item xs={2} key={subcategory}>
                                 <Button
                                     variant="outlined"
                                     style={{height: "100%"}}
