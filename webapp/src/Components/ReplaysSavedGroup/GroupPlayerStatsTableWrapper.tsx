@@ -30,7 +30,7 @@ export class GroupPlayerStatsTableWrapper extends React.Component<Props, State> 
                             <Tab label={tab} value={tab} key={tab} />
                         ))}
                 </Tabs>
-                <GroupStatsButtons />
+                <GroupStatsButtons style={{display: "none"}} />
                 <GroupPlayerStatsTable
                     stats={{
                         playerStats: playerStats.map((player) => {

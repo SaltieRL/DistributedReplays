@@ -20,6 +20,7 @@ import {PlayerStatsSubcategory} from "../../../Models"
 interface Props {
     onClick?: any
     exclude?: string[]
+    style?: React.CSSProperties
 }
 
 export class GroupStatsButtons extends React.PureComponent<Props> {
@@ -39,7 +40,7 @@ export class GroupStatsButtons extends React.PureComponent<Props> {
         }
 
         return (
-            <Grid container spacing={2} justify={"space-evenly"} alignItems={"center"}>
+            <Grid container spacing={2} justify={"space-evenly"} alignItems={"center"} style={this.props.style}>
                 {Object.keys(PlayerStatsSubcategory)
                     .filter((subcategory) =>
                         this.props.exclude !== undefined ? !this.props.exclude.includes(subcategory) : true
