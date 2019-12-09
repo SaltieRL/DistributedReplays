@@ -53,7 +53,12 @@ class SavedGroup:
     @with_session
     def create(name, owner=None, session=None):
         if owner is None:
-            owner = UserManager.get_current_user().platformid
+            current_user = UserManager.get_current_user()
+            if current_user is not None:
+                owner = current_user.platformid
+            else:
+                raise AuthorizationException()
+
         entry = GroupEntry(engine=session.get_bind(), name=name, owner=owner, type=GroupEntryType.group)
         session.add(entry)
         session.commit()
@@ -108,7 +113,7 @@ class SavedGroup:
 
     @staticmethod
     @with_session
-    def get_info(uuid, session=None):
+    def get_info(uuid, session=None) -> Group:
         if uuid is None:
             current_user = UserManager.get_current_user()
             if current_user is not None:
