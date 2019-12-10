@@ -10,8 +10,8 @@ from backend.blueprints.spa_api.errors.errors import ReplayNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, PlayerGame, Game, GameVisibilitySetting, GameVisibility
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
-from backend.utils.safe_flask_globals import get_current_user_id, UserManager
 from backend.utils.checks import is_admin
+from backend.utils.safe_flask_globals import get_current_user_id, UserManager
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class PlayerWrapper:
         self.limit = limit
 
     def get_player_games(self, session, id_, replay_ids=None, filter_private=True):
-        query = session.query(PlayerGame).join(Game)
+        query = session.query(PlayerGame).join(Game, Game.hash == PlayerGame.game)
         if replay_ids is not None:
             query = query.filter(PlayerGame.game.in_(replay_ids))
 

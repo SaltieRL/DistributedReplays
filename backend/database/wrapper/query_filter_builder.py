@@ -1,10 +1,10 @@
 import datetime
 from typing import List
 
-from sqlalchemy import cast, String, or_, and_
+from sqlalchemy import cast, String, or_
 from sqlalchemy.dialects import postgresql
 
-from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, Tag, GameTag
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, GameTag
 from backend.utils.checks import is_admin
 from backend.utils.safe_flask_globals import get_current_user_id
 
@@ -141,7 +141,7 @@ class QueryFilterBuilder:
                 self.end_time is not None or
                 self.team_size is not None):
             if not self.is_game:
-                filtered_query = filtered_query.join(Game)
+                filtered_query = filtered_query.join(Game, Game.hash == PlayerGame.game)
             has_joined_game = True
 
         if self.tag_ids is not None:
