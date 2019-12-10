@@ -131,7 +131,7 @@ class QueryFilterBuilder:
         has_joined_game = False
         if self.initial_query is None:
             if self.is_game and self.stats_query is None:
-                filtered_query = session.query(Game)
+                filtered_query = session.query(Game).join(PlayerGame, PlayerGame.game == Game.hash)
             else:
                 filtered_query = session.query(*self.stats_query)
         else:
