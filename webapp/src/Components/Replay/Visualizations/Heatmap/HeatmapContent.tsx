@@ -1,7 +1,7 @@
 import {createStyles, Grid, Typography, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
-import {ThemeContext} from "../../../Contexts/ThemeContext"
-import {Replay} from "../../../Models"
+import {ThemeContext} from "../../../../Contexts/ThemeContext"
+import {Replay} from "../../../../Models"
 import {ReactHeatmap} from "./Heatmap"
 
 const styles = createStyles({

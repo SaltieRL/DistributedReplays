@@ -1,6 +1,6 @@
 import {Grid} from "@material-ui/core"
 import * as React from "react"
-import {Replay} from "../../../Models"
+import {Replay} from "../../../../Models"
 import {BoostCountsTable} from "./BoostCountsTable"
 import {BoostField} from "./BoostField"
 

@@ -2,7 +2,7 @@ import {Grid} from "@material-ui/core"
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints"
 import withWidth, {isWidthUp} from "@material-ui/core/withWidth"
 import * as React from "react"
-import {Replay} from "../../../Models"
+import {Replay} from "../../../../Models"
 import {KickoffCountsTable} from "./KickoffCountsTable"
 import {KickoffField} from "./KickoffField"
 

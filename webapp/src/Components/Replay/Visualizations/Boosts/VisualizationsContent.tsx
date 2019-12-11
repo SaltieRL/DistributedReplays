@@ -1,8 +1,8 @@
 import {Divider, Grid} from "@material-ui/core"
 import * as React from "react"
-import {Replay} from "../../../Models"
-import {getBoostmap} from "../../../Requests/Replay"
-import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {Replay} from "../../../../Models"
+import {getBoostmap} from "../../../../Requests/Replay"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {BoostMapWrapper} from "./BoostMapWrapper"
 
 interface Props {
