@@ -120,7 +120,7 @@ export const addSubgroup = (id: string | undefined, name: string): Promise<UUIDR
     )
 }
 
-export const deleteGames = (ids: string[]): Promise<any> => {
+export const deleteGames = (ids: string[]): Promise<UUIDResponse> => {
     return doPost(
         `/groups/delete`,
         JSON.stringify({
