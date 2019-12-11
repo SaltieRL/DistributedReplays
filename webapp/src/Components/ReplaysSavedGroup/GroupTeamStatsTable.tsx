@@ -18,7 +18,7 @@ interface State {
     headerHeight: number
 }
 
-export class GroupTeamStatsTable extends React.Component<Props, State> {
+export class GroupTeamStatsTable extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
         super(props)
         this.state = {

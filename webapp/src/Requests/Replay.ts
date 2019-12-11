@@ -9,7 +9,13 @@ import {
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../Models"
-import {Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse} from "../Models/Replay/Groups"
+import {
+    Entry,
+    GroupPlayerStatsResponse,
+    GroupResponse,
+    GroupTeamStatsResponse,
+    UUIDResponse
+} from "../Models/Replay/Groups"
 import {VisibilityResponse} from "../Models/types/VisibilityResponse"
 
 export const getReplay = (id: string): Promise<Replay> => {
@@ -95,7 +101,7 @@ export const getGroupTeamStats = (id: string): Promise<GroupTeamStatsResponse> =
     return doGet(`/groups/stats/teams?id=${id}`)
 }
 
-export const addGames = (id: string, games: string[]): Promise<any> => {
+export const addGames = (id: string, games: string[]): Promise<UUIDResponse> => {
     return doPost(
         `/groups/add`,
         JSON.stringify({
@@ -104,7 +110,7 @@ export const addGames = (id: string, games: string[]): Promise<any> => {
         })
     )
 }
-export const addSubgroup = (id: string | undefined, name: string): Promise<any> => {
+export const addSubgroup = (id: string | undefined, name: string): Promise<UUIDResponse> => {
     return doPost(
         `/groups/add`,
         JSON.stringify({

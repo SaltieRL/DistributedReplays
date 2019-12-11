@@ -1,6 +1,6 @@
 import {Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
-import {GroupPlayerStatsResponse} from "../../Models/Replay/Groups"
+import {GroupPlayerStat} from "../../Models/Replay/Groups"
 import {GroupPlayerStatsTable} from "./GroupPlayerStatsTable"
 import {GroupStatsButtons} from "./Shared/GroupStatsButtons"
 
@@ -9,10 +9,10 @@ interface State {
 }
 
 interface Props {
-    stats: GroupPlayerStatsResponse
+    stats: GroupPlayerStats
 }
 
-export class GroupPlayerStatsTableWrapper extends React.Component<Props, State> {
+export class GroupPlayerStatsTableWrapper extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedTab: "(per Norm Game)"}
@@ -33,13 +33,11 @@ export class GroupPlayerStatsTableWrapper extends React.Component<Props, State> 
                 <GroupStatsButtons style={{display: "none"}} />
                 <GroupPlayerStatsTable
                     stats={{
-                        playerStats: playerStats.map((player) => {
-                            return {
-                                player: player.player,
-                                name: player.name,
-                                stats: player.stats[this.state.selectedTab]
-                            }
-                        })
+                        playerStats: playerStats.map((player: GroupPlayerStat) => ({
+                            player: player.player,
+                            name: player.name,
+                            stats: player.stats[this.state.selectedTab]
+                        }))
                     }}
                     style={{overflowX: "auto"}}
                 />

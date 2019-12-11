@@ -31,7 +31,7 @@ interface SelectProps {
 
 interface State {}
 
-class SubgroupEntryComponent extends React.Component<Props, State> {
+class SubgroupEntryComponent extends React.PureComponent<Props, State> {
     public render() {
         const {selectProps, classes} = this.props
         return (

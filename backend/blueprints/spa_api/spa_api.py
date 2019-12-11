@@ -781,13 +781,13 @@ def create_group():
 def delete_group():
     payload = request.get_json(force=True)
     if payload is None:
-        return jsonify({"Error": "Malformed request"}), 403
+        raise CalculatedError(403, "Malformed request")
     if 'id' in payload:
         entry = SavedGroup.delete_entry(payload['id'])
     elif 'ids' in payload:
         entry = [SavedGroup.delete_entry(id_) for id_ in payload['ids']]
     else:
-        return jsonify({"Error": "Malformed request"}), 403
+        raise CalculatedError(403, "Malformed request")
     return jsonify({"uuid": entry})
 
 

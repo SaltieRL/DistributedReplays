@@ -144,7 +144,10 @@ class SavedGroup:
         games = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(path)).filter(
             GroupEntry.type == GroupEntryType.game).all()
         games = [game.game for game in games]
-        stats = wrapper.get_group_stats(games, team=team)
+        if team:
+            stats = wrapper.get_group_team_stats(games)
+        else:
+            stats = wrapper.get_group_stats(games)
         return stats
 
     @staticmethod

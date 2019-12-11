@@ -20,11 +20,20 @@ export interface Entry {
 export interface GroupPlayerStatsResponse {
     playerStats: PlayerStat[]
 }
+export interface GroupPlayerStats {
+    playerStats: GroupPlayerStat[]
+}
+
+export interface GroupPlayerStat {
+    name: string
+    player: string
+    stats: Record<string, number>
+}
 
 export interface PlayerStat {
     name: string
     player: string
-    stats: any
+    stats: Record<string, Record<string, number>>
 }
 
 // TEAMS
@@ -36,6 +45,9 @@ export interface GroupTeamStatsResponse {
 export interface TeamStat {
     games: string[]
     names: string[]
-    stats: any
+    stats: Record<string, Record<string, number>>
     team: string[]
+}
+export interface UUIDResponse {
+    uuid: string
 }

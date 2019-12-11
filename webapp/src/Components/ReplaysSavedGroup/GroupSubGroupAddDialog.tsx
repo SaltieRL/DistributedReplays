@@ -17,7 +17,7 @@ interface State {
     name: string
 }
 
-class GroupDialogComponent extends React.Component<Props, State> {
+class GroupDialogComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {name: ""}

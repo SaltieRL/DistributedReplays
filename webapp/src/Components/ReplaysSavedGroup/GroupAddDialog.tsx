@@ -23,13 +23,13 @@ interface State {
     limit: number
 }
 
-class GroupDialogComponent extends React.Component<Props, State> {
+class GroupDialogComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {page: 0, limit: 10}
     }
 
-    public componentDidUpdate(prevProps: unknown, prevState: Readonly<State>) {
+    public componentDidUpdate(prevProps: Props, prevState: Readonly<State>) {
         if (this.state.queryParams !== prevState.queryParams) {
             this.updateReplays()
         }
@@ -67,7 +67,7 @@ class GroupDialogComponent extends React.Component<Props, State> {
                                     <ReplaysSearchResultDisplay
                                         replaySearchResult={this.state.replaySearchResult}
                                         handleUpdateTags={(replay: Replay) => (tags: Tag[]) => null}
-                                        buttonText={"Add replays"}
+                                        buttonText="Add replays"
                                         selectedAction={this.selectReplays}
                                         page={this.state.page}
                                         limit={this.state.limit}
@@ -78,7 +78,7 @@ class GroupDialogComponent extends React.Component<Props, State> {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.props.onCloseDialog} variant={"outlined"}>
+                    <Button onClick={this.props.onCloseDialog} variant="outlined">
                         Close
                     </Button>
                 </DialogActions>

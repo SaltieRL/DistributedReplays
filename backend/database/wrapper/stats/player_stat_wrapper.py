@@ -227,8 +227,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
             if stat_query_key in self.replay_group_stats.grouped_stat_per_minute and factor_per_minute is not None:
                 per_minute[stat_query_key] = individual[stat_query_key] / factor_per_minute
             if factor_per_norm_game is not None:
-                if stat_query_key in self.replay_group_stats.grouped_stat_total and (
-                        stat.is_percent or stat.is_averaged):
+                if stat_query_key in self.replay_group_stats.grouped_stat_total \
+                        and (stat.is_percent or stat.is_averaged):
                     per_norm_game[stat_query_key + " (Total)"] = average[stat_query_key]
                 else:
                     per_norm_game[stat_query_key] = individual[stat_query_key] / factor_per_norm_game
@@ -241,89 +241,92 @@ class PlayerStatWrapper(GlobalStatWrapper):
             }
         }
 
+
     @with_session
-    def get_group_stats(self, replay_ids, team=False, session=None):
+    def get_group_team_stats(self, replay_ids, session=None):
+        query = session.query(PlayerGame.game, func.array_agg(
+            aggregate_order_by(PlayerGame.player, PlayerGame.player)).label("team")).filter(
+            PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.game).group_by(
+            PlayerGame.is_orange).subquery()
+        teams = session.query(query.c.team, func.array_agg(query.c.game)).group_by(query.c.team).all()
+        return {
+            "teamStats": [
+                {
+                    "team": team[0],
+                    "games": team[1],
+                    "names": [name for (name,) in session.query(func.min(PlayerGame.name)).filter(
+                        PlayerGame.game.in_(team[1])).filter(
+                        PlayerGame.player.in_(team[0])).order_by(
+                        PlayerGame.player).group_by(PlayerGame.player).all()],
+                    **self._create_group_stats(session, player_filter=team[0], replay_ids=team[1])
+                }
+                for team in teams]
+        }
+
+
+    @with_session
+    def get_group_stats(self, replay_ids, session=None):
         return_obj = {}
-        if team:
-            query = session.query(PlayerGame.game, func.array_agg(
-                aggregate_order_by(PlayerGame.player, PlayerGame.player)).label("team")).filter(
-                PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.game).group_by(
-                PlayerGame.is_orange).subquery()
-            teams = session.query(query.c.team, func.array_agg(query.c.game)).group_by(query.c.team).all()
-            return {
-                "teamStats": [
-                    {
-                        "team": team[0],
-                        "games": team[1],
-                        "names": [name for (name,) in session.query(func.min(PlayerGame.name)).filter(
-                            PlayerGame.game.in_(team[1])).filter(
-                            PlayerGame.player.in_(team[0])).order_by(
-                            PlayerGame.player).group_by(PlayerGame.player).all()],
-                        **self._create_group_stats(session, player_filter=team[0], replay_ids=team[1])
-                    }
-                    for team in teams]
-            }
 
-        else:
 
-            # Players
-            player_tuples: List[Tuple[str, str, int]] = session.query(PlayerGame.player, func.min(PlayerGame.name),
-                                                                      func.count(PlayerGame.player)).filter(
-                PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.player).all()
-            return_obj['playerStats'] = []
-            # ensemble are the players that do not have enough replays to make an individual analysis for them
-            ensemble = []
-            for player_tuple in player_tuples:
-                player, name, count = player_tuple
-                if count > 1:
-                    player_stats = self._create_group_stats(session, player_filter=player, replay_ids=replay_ids)
-                    player_stats['name'] = name
-                    player_stats['player'] = player
-                    return_obj['playerStats'].append(player_stats)
-                else:
-                    ensemble.append(player)
-            if len(ensemble) > 0:
-                # create stats that only includes the ensemble
-                ensemble_stats = self._create_group_stats(session, player_filter=ensemble, replay_ids=replay_ids)
-                return_obj['ensembleStats'] = ensemble_stats
-            # STATS
-            # Global
-            # create stats that include all the players in the game
-            # global_stats = self._create_group_stats(session, ids=replay_ids)
-            # return_obj['globalStats'] = global_stats
+        # Players
+        player_tuples: List[Tuple[str, str, int]] = session.query(PlayerGame.player, func.min(PlayerGame.name),
+                                                                  func.count(PlayerGame.player)).filter(
+            PlayerGame.game.in_(replay_ids)).group_by(PlayerGame.player).all()
+        return_obj['playerStats'] = []
+        # ensemble are the players that do not have enough replays to make an individual analysis for them
+        ensemble = []
+        for player_tuple in player_tuples:
+            player, name, count = player_tuple
+            if count > 1:
+                player_stats = self._create_group_stats(session, player_filter=player, replay_ids=replay_ids)
+                player_stats['name'] = name
+                player_stats['player'] = player
+                return_obj['playerStats'].append(player_stats)
+            else:
+                ensemble.append(player)
+        if len(ensemble) > 0:
+            # create stats that only includes the ensemble
+            ensemble_stats = self._create_group_stats(session, player_filter=ensemble, replay_ids=replay_ids)
+            return_obj['ensembleStats'] = ensemble_stats
+        # STATS
+        # Global
+        # create stats that include all the players in the game
+        # global_stats = self._create_group_stats(session, ids=replay_ids)
+        # return_obj['globalStats'] = global_stats
 
-            num_replays = len(replay_ids)
-            if num_replays > 1 and all([player_tuple[2] == num_replays for player_tuple in player_tuples]):
-                assert 'ensembleStats' not in return_obj
-                # all players have played every game
-                is_orange = {player_tuple[0]: [] for player_tuple in player_tuples}
+        num_replays = len(replay_ids)
+        if num_replays > 1 and all([player_tuple[2] == num_replays for player_tuple in player_tuples]):
+            assert 'ensembleStats' not in return_obj
+            # all players have played every game
+            is_orange = {player_tuple[0]: [] for player_tuple in player_tuples}
 
-                for replay_id in replay_ids:
-                    game: Game = session.query(Game).filter(Game.hash == replay_id).first()
-                    if game is None:
-                        raise ReplayNotFound()
+            for replay_id in replay_ids:
+                game: Game = session.query(Game).filter(Game.hash == replay_id).first()
+                if game is None:
+                    raise ReplayNotFound()
 
-                    playergames: List = session.query(
-                        func.max(PlayerGame.player),
-                        func.bool_and(PlayerGame.is_orange)).filter(
-                        PlayerGame.game == replay_id).group_by(PlayerGame.player).all()
+                playergames: List = session.query(
+                    func.max(PlayerGame.player),
+                    func.bool_and(PlayerGame.is_orange)).filter(
+                    PlayerGame.game == replay_id).group_by(PlayerGame.player).all()
 
-                    for playergame in playergames:
-                        assert len(playergame) == 2
-                        player, is_orange_game = playergame
-                        assert player in is_orange
-                        is_orange[player].append(is_orange_game)
+                for playergame in playergames:
+                    assert len(playergame) == 2
+                    player, is_orange_game = playergame
+                    assert player in is_orange
+                    is_orange[player].append(is_orange_game)
 
-                # if the player is always in the same team
-                if all([len(set(player_is_orange)) == 1 for player_is_orange in is_orange.values()]):
-                    for i in range(len(return_obj['playerStats'])):
-                        player = return_obj['playerStats'][i]['player']
-                        return_obj['playerStats'][i]['is_orange'] = is_orange[player][0]
+            # if the player is always in the same team
+            if all([len(set(player_is_orange)) == 1 for player_is_orange in is_orange.values()]):
+                for i in range(len(return_obj['playerStats'])):
+                    player = return_obj['playerStats'][i]['player']
+                    return_obj['playerStats'][i]['is_orange'] = is_orange[player][0]
 
-                    return_obj['playerStats'] = sorted(
-                        sorted(
-                            return_obj['playerStats'], key=lambda x: x['name'].lower()
-                        ), key=lambda x: x['is_orange']
-                    )
+                return_obj['playerStats'] = sorted(
+                    sorted(
+                        return_obj['playerStats'], key=lambda x: x['name'].lower()
+                    ), key=lambda x: x['is_orange']
+                )
 
-            return return_obj
+        return return_obj

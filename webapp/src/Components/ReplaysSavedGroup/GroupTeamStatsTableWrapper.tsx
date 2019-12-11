@@ -11,7 +11,7 @@ interface Props {
     stats: GroupTeamStatsResponse
 }
 
-export class GroupTeamStatsTableWrapper extends React.Component<Props, State> {
+export class GroupTeamStatsTableWrapper extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectedTab: "(per Norm Game)"}
