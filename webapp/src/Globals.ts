@@ -23,6 +23,8 @@ export const PLAYER_COMPARE_WITH_LINK = (id: string) => `/compare?ids=${id}` // 
 
 export const REPLAY_PAGE_LINK = (id: string) => `/replays/${id}`
 export const REPLAYS_GROUP_PAGE_LINK = "/replay/group"
+export const SAVED_REPLAYS_GROUP_PAGE_LINK = (id: string) => `/groups/${id}`
+export const SAVED_REPLAYS_MY_GROUPS_PAGE_LINK = `/groups`
 export const REPLAYS_SEARCH_PAGE_LINK = (queryParams?: Partial<ReplaysSearchQueryParams>) => {
     let pageLink = "/search/replays"
     if (queryParams !== undefined) {

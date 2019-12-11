@@ -38,18 +38,30 @@ const getTheme = (dark: boolean) =>
                 fontWeight: 400
             }
         },
-        overrides: dark
-            ? {
-                  MuiTabs: {
-                      root: {color: "white"}
-                  }
-              }
-            : {},
+
         props: {
             MuiWithWidth: {
                 noSSR: true,
                 initialWidth: "lg" // WithWidth breakpoint set for tests
             }
+        },
+        overrides: {
+            MuiTableCell: {
+                body: {
+                    fontWeight: 400
+                },
+                head: {
+                    fontWeight: 700,
+                    backgroundColor: dark ? "#4c4c4c" : "#f7f7f7"
+                }
+            },
+            ...(dark
+                ? {
+                      MuiTabs: {
+                          root: {color: "white"}
+                      }
+                  }
+                : {})
         }
     })
 

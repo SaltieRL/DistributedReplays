@@ -29,12 +29,12 @@ export const buttonStyles = (theme: Theme) =>
 
 interface InternalLinkProps {
     isExternalLink?: false
-    to: H.LocationDescriptor
+    to?: H.LocationDescriptor
 }
 
 interface ExternalLinkProps {
     isExternalLink: true
-    to: string
+    to?: string
 }
 
 interface MuiIconProps {
@@ -53,6 +53,7 @@ interface OwnProps {
     iconPosition?: "left"
     tooltip?: string
     disabled?: boolean
+    onClick?: any
 } // TODO: Make use of iconPosition
 
 type LinkButtonProps = OwnProps & IconProps & (InternalLinkProps | ExternalLinkProps) & WithStyles<typeof buttonStyles>
@@ -62,7 +63,12 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
         const {classes, children, isExternalLink, tooltip, disabled} = this.props
         const className = children ? `${classes.icon} ${classes.leftIcon}` : classes.icon
         let button = (
-            <Button variant="outlined" style={{height: "100%"}} disabled={disabled}>
+            <Button
+                variant="outlined"
+                style={{height: "100%"}}
+                disabled={disabled}
+                onClick={this.props.onClick ? this.props.onClick : () => null}
+            >
                 {this.props.iconType === "fontawesome" && (
                     <FontAwesomeIcon icon={this.props.icon} className={className} />
                 )}
@@ -83,19 +89,23 @@ class LinkButtonComponent extends React.PureComponent<LinkButtonProps> {
             <>
                 {disabled ? (
                     <>{button}</>
-                ) : isExternalLink === true ? (
-                    <a
-                        href={this.props.to as string}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        style={{textDecoration: "none"}}
-                    >
-                        {button}
-                    </a>
+                ) : this.props.to ? (
+                    isExternalLink ? (
+                        <a
+                            href={this.props.to as string}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            style={{textDecoration: "none"}}
+                        >
+                            {button}
+                        </a>
+                    ) : (
+                        <Link to={this.props.to} style={{textDecoration: "none"}}>
+                            {button}
+                        </Link>
+                    )
                 ) : (
-                    <Link to={this.props.to} style={{textDecoration: "none"}}>
-                        {button}
-                    </Link>
+                    button
                 )}
             </>
         )
