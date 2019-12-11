@@ -33,13 +33,7 @@ interface OwnProps {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & WithWidth
 
-type ReplayTab =
-    | "playerStats"
-    | "teamStats"
-    | "visualizations"
-    | "replayViewer"
-    | "predictions"
-    | "qrCode"
+type ReplayTab =| "playerStats" | "teamStats" | "visualizations" | "replayViewer" | "predictions" | "qrCode"
 
 interface State {
     selectedTab: ReplayTab

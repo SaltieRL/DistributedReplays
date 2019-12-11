@@ -4,9 +4,9 @@ import * as React from "react"
 import {connect} from "react-redux"
 import {Replay} from "../../../Models"
 import {StoreState} from "../../../Redux"
+import {BoostsContent} from "./Boosts/BoostsContent"
 import {HeatmapTabsWrapper} from "./Heatmap/HeatmapTabsWrapper"
 import {KickoffTabsWrapper} from "./Kickoffs/KickoffTabsWrapper"
-import {VisualizationsContent} from "./Boosts/VisualizationsContent"
 
 interface DisabledTabProps {
     label: string
@@ -28,10 +28,7 @@ interface OwnProps {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & WithWidth
 
-type ReplayTab =
-    | "heatmaps"
-    | "kickoffs"
-    | "boosts"
+type ReplayTab =| "heatmaps" | "kickoffs" | "boosts"
 
 interface State {
     selectedTab: ReplayTab
@@ -68,7 +65,7 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 </Tabs>
                 {this.state.selectedTab === "heatmaps" && <HeatmapTabsWrapper replay={this.props.replay} />}
                 {this.state.selectedTab === "kickoffs" && <KickoffTabsWrapper replay={this.props.replay} />}
-                {this.state.selectedTab === "boosts" && <VisualizationsContent replay={this.props.replay} />}
+                {this.state.selectedTab === "boosts" && <BoostsContent replay={this.props.replay} />}
             </Card>
         )
     }

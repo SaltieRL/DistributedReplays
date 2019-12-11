@@ -15,7 +15,7 @@ interface State {
     boostmapData: any
 }
 
-export class VisualizationsContent extends React.PureComponent<Props, State> {
+export class BoostsContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {element: null, reloadSignal: false, boostmapData: null}
