@@ -1,7 +1,7 @@
-import { Grid, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from "@material-ui/core"
+import {Grid, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
 import * as React from "react"
-import { GroupPlayerStat, GroupPlayerStats } from "../../Models/Replay/Groups"
-import { convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP } from "../../Utils/String"
+import {GroupPlayerStat, GroupPlayerStats} from "../../Models/Replay/Groups"
+import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../Utils/String"
 
 interface Props {
     stats: GroupPlayerStats

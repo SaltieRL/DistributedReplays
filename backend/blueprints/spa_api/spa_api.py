@@ -761,7 +761,7 @@ def api_admin_get_replay(query_params=None):
 def create_group():
     payload = request.get_json(force=True)
     if payload is None:
-        return jsonify({"Error": "Malformed request"}), 403
+        raise CalculatedError(403, "Malformed request")
     name = payload['name'] if 'name' in payload else None
     if 'parent' in payload:
         parent = payload['parent']
