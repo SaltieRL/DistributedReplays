@@ -23,6 +23,7 @@ from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.blueprints.spa_api.service_layers.replay.savedgroups.groups import SavedGroup
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
@@ -751,3 +752,60 @@ def api_admin_get_logs(query_params=None):
 @with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
 def api_admin_get_replay(query_params=None):
     return redirect(f"https://storage.googleapis.com/{FAILED_BUCKET}/{query_params['id']}.replay")
+
+
+# GROUPS
+
+@bp.route('/groups/add', methods=['POST'])
+@require_user
+def create_group():
+    payload = request.get_json(force=True)
+    if payload is None:
+        raise CalculatedError(403, "Malformed request")
+    name = payload['name'] if 'name' in payload else None
+    if 'parent' in payload:
+        parent = payload['parent']
+        if 'game' in payload:
+            entry = SavedGroup.add_game(parent, payload['game'], name)
+        elif 'games' in payload:
+            entry = [SavedGroup.add_game(parent, game, name) for game in payload['games']]
+        else:
+            entry = SavedGroup.add_subgroup(parent, name)
+    else:
+        entry = SavedGroup.create(name)
+    return jsonify({"uuid": entry})
+
+
+@bp.route('/groups/delete', methods=['POST'])
+@require_user
+def delete_group():
+    payload = request.get_json(force=True)
+    if payload is None:
+        raise CalculatedError(403, "Malformed request")
+    if 'id' in payload:
+        entry = SavedGroup.delete_entry(payload['id'])
+    elif 'ids' in payload:
+        entry = [SavedGroup.delete_entry(id_) for id_ in payload['ids']]
+    else:
+        raise CalculatedError(403, "Malformed request")
+    return jsonify({"uuid": entry})
+
+
+@bp.route('/groups')
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=True),
+                                          QueryParam(name='limit', type_=int, optional=True),
+                                          QueryParam(name='id', type_=str, optional=True)])
+def get_group(query_params):
+    return better_jsonify(SavedGroup.get_info(query_params['id'] if 'id' in query_params else None))
+
+
+@bp.route('/groups/stats/players')
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def get_group_stats_player(query_params):
+    return better_jsonify(SavedGroup.get_stats(query_params['id']))
+
+
+@bp.route('/groups/stats/teams')
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def get_group_stats_team(query_params):
+    return better_jsonify(SavedGroup.get_stats(query_params['id'], team=True))

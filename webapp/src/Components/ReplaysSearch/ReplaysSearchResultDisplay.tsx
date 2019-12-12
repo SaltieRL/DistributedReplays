@@ -9,6 +9,8 @@ import {ReplaysSearchTablePagination} from "./ReplaysSearchTablePagination"
 import {ResultsActions} from "./ResultsActions"
 
 interface Props {
+    selectedAction?: (ids: string[]) => void
+    buttonText?: string
     replaySearchResult: MatchHistoryResponse
     handleUpdateTags: (replay: Replay) => (tags: Tag[]) => void
     page: number
@@ -39,6 +41,12 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                             action={
                                 <ResultsActions
                                     disabled={this.state.selectedReplayIds.length === 0}
+                                    selectedAction={() => {
+                                        if (this.props.selectedAction) {
+                                            this.props.selectedAction(this.state.selectedReplayIds)
+                                        }
+                                    }}
+                                    buttonText={this.props.buttonText}
                                     to={this.getGroupLink()}
                                     handleSelectableChange={this.handleSelectableChange}
                                     selectable={this.state.selectable}

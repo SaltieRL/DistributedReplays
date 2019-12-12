@@ -26,7 +26,7 @@ export enum PlayerStatsSubcategory {
     BALL = "Ball",
     BOOSTS = "Boosts",
     PLAYSTYLES = "Playstyles",
-    POSSESION = "Possession",
+    POSSESSION = "Possession",
     EFFICIENCY = "Efficiency",
     TEAM_POSITIONING = "Team Positioning",
     BALL_CARRIES = "Ball Carries",
