@@ -23,6 +23,8 @@ import {
     REPLAY_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
+    SAVED_REPLAYS_GROUP_PAGE_LINK,
+    SAVED_REPLAYS_MY_GROUPS_PAGE_LINK,
     STATUS_PAGE_LINK,
     TAGS_PAGE_LINK,
     TRAINING_LINK,
@@ -41,6 +43,14 @@ const CodeSplitPluginsPage = codeSplit(() => import("./Components/Pages/PluginsP
 const CodeSplitPrivacyPolicyPage = codeSplit(() => import("./Components/Pages/PrivacyPolicyPage"), "PrivacyPolicyPage")
 const CodeSplitReplayPage = codeSplit(() => import("./Components/Pages/ReplayPage"), "ReplayPage")
 const CodeSplitReplaysGroupPage = codeSplit(() => import("./Components/Pages/ReplaysGroupPage"), "ReplaysGroupPage")
+const CodeSplitSavedReplaysGroupPage = codeSplit(
+    () => import("./Components/Pages/SavedReplaysGroupPage"),
+    "SavedReplaysGroupPage"
+)
+const CodeSplitSavedReplaysMyGroupsPage = codeSplit(
+    () => import("./Components/Pages/SavedReplaysMyGroupsPage"),
+    "SavedReplaysMyGroupsPage"
+)
 const CodeSplitReplaysSearchPage = codeSplit(() => import("./Components/Pages/ReplaysSearchPage"), "ReplaysSearchPage")
 const CodeSplitStatusPage = codeSplit(() => import("./Components/Pages/StatusPage"), "StatusPage")
 const CodeSplitTagsPage = codeSplit(() => import("./Components/Pages/TagsPage"), "TagsPage")
@@ -77,6 +87,14 @@ class AppComponent extends React.Component<Props> {
                             <Route path={PLAYER_COMPARE_PAGE_LINK} component={CodeSplitPlayerComparePage} />
                             <Route path={REPLAY_PAGE_LINK(":id")} component={CodeSplitReplayPage} />
                             <Route path={REPLAYS_GROUP_PAGE_LINK} component={CodeSplitReplaysGroupPage} />
+                            <Route
+                                path={SAVED_REPLAYS_GROUP_PAGE_LINK(":id")}
+                                component={CodeSplitSavedReplaysGroupPage}
+                            />
+                            <Route
+                                path={SAVED_REPLAYS_MY_GROUPS_PAGE_LINK}
+                                component={CodeSplitSavedReplaysMyGroupsPage}
+                            />
                             <Route path={REPLAYS_SEARCH_PAGE_LINK()} component={CodeSplitReplaysSearchPage} />
                             <Route exact path={ABOUT_LINK} component={CodeSplitAboutPage} />
                             <Route exact path={UPLOAD_LINK} component={CodeSplitUploadPage} />
