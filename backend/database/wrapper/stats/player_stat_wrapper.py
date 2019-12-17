@@ -241,7 +241,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
             }
         }
 
-
     @with_session
     def get_group_team_stats(self, replay_ids, session=None):
         query = session.query(PlayerGame.game, func.array_agg(
@@ -263,11 +262,9 @@ class PlayerStatWrapper(GlobalStatWrapper):
                 for team in teams]
         }
 
-
     @with_session
-    def get_group_stats(self, replay_ids, session=None):
+    def get_group_stats(self, replay_ids, ensemble=True, session=None):
         return_obj = {}
-
 
         # Players
         player_tuples: List[Tuple[str, str, int]] = session.query(PlayerGame.player, func.min(PlayerGame.name),
@@ -278,7 +275,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         ensemble = []
         for player_tuple in player_tuples:
             player, name, count = player_tuple
-            if count > 1:
+            if not ensemble or count > 1:
                 player_stats = self._create_group_stats(session, player_filter=player, replay_ids=replay_ids)
                 player_stats['name'] = name
                 player_stats['player'] = player

@@ -147,7 +147,7 @@ class SavedGroup:
         if team:
             stats = wrapper.get_group_team_stats(games)
         else:
-            stats = wrapper.get_group_stats(games)
+            stats = wrapper.get_group_stats(games, ensemble=False)
         return stats
 
     @staticmethod
