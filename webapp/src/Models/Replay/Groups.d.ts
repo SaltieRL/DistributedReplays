@@ -48,6 +48,22 @@ export interface TeamStat {
     stats: Record<string, Record<string, number>>
     team: string[]
 }
+export interface GroupTeamStats {
+    teamStats: GroupTeamStat[]
+}
+
+export interface TeamStat {
+    games: string[]
+    names: string[]
+    stats: Record<string, Record<string, number>>
+    team: string[]
+}
+export interface GroupTeamStat {
+    games: string[]
+    names: string[]
+    stats: Record<string, number>
+    team: string[]
+}
 export interface UUIDResponse {
     uuid: string
 }

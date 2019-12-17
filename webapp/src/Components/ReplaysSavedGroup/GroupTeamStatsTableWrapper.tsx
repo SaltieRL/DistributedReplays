@@ -1,6 +1,6 @@
 import {Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
-import {GroupTeamStatsResponse} from "../../Models/Replay/Groups"
+import {GroupTeamStatsResponse, TeamStat} from "../../Models/Replay/Groups"
 import {GroupTeamStatsTable} from "./GroupTeamStatsTable"
 
 interface State {
@@ -31,7 +31,7 @@ export class GroupTeamStatsTableWrapper extends React.PureComponent<Props, State
                 </Tabs>
                 <GroupTeamStatsTable
                     stats={{
-                        teamStats: teamStats.map((team) => {
+                        teamStats: teamStats.map((team: TeamStat) => {
                             return {
                                 games: team.games,
                                 names: team.names,
