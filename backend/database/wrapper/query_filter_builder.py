@@ -200,7 +200,7 @@ class QueryFilterBuilder:
                 filtered_query = filtered_query.filter(GameTag.tag_id == self.tag_ids[0])
             else:
                 filtered_query = filtered_query.filter(self.handle_list(GameTag.tag_id, self.tag_ids))
-        if needs_pg and (self.is_game or has_joined_game):
+        if needs_pg and self.is_game:
             filtered_query = filtered_query.join(PlayerGame, PlayerGame.game == Game.hash)
         return filtered_query
 
