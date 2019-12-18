@@ -41,7 +41,7 @@ class GroupEntryJSON:
             owner=Player.create_from_id(obj.owner).__dict__,
             name=obj.name,
             game=obj.game,
-            game_object=Replay.create_from_id(obj.game).__dict__ if obj.game is not None else None,
+            game_object=Replay.create_from_id(obj.game, redirect=False).__dict__ if obj.game is not None else None,
             type=obj.type.value,
             parent=obj.parent.uuid if obj.parent is not None else None,
             descendant_count=descendant_count
@@ -147,7 +147,7 @@ class SavedGroup:
         if team:
             stats = wrapper.get_group_team_stats(games)
         else:
-            stats = wrapper.get_group_stats(games)
+            stats = wrapper.get_group_stats(games, ensemble=False)
         return stats
 
     @staticmethod

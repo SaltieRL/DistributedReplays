@@ -1,10 +1,10 @@
 import {Grid, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
 import * as React from "react"
-import {GroupTeamStatsResponse, TeamStat} from "../../Models/Replay/Groups"
+import {GroupTeamStat, GroupTeamStats} from "../../Models/Replay/Groups"
 import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../Utils/String"
 
 interface Props {
-    stats: GroupTeamStatsResponse
+    stats: GroupTeamStats
     style?: React.CSSProperties
 }
 
@@ -111,7 +111,7 @@ export class GroupTeamStatsTable extends React.PureComponent<Props, State> {
     }
 
     // Sorts playerStats inplace
-    private readonly sortStats = (stats: TeamStat[]): void => {
+    private readonly sortStats = (stats: GroupTeamStat[]): void => {
         const {statName, direction} = this.state.currentSort!
         if (stats.length > 0 && statName in stats[0].stats) {
             stats.sort((playerStatA, playerStatB) => {
