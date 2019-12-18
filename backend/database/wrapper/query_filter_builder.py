@@ -184,7 +184,7 @@ class QueryFilterBuilder:
             filtered_query = filtered_query.filter(self.handle_union(Game.players, self.contains_all_players))
 
         if self.replay_ids is not None and len(self.replay_ids) > 0:
-            if not has_joined_game:
+            if not has_joined_game and not self.is_game:
                 filtered_query = filtered_query.join(Game, Game.hash == PlayerGame.game)
             filtered_query = filtered_query.filter(self.handle_list(Game.hash, self.replay_ids)
                                                    | self.handle_list(Game.replay_id, self.replay_ids))
