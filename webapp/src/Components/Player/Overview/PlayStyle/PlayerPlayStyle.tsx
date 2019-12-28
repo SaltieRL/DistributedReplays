@@ -127,11 +127,11 @@ class PlayerPlayStyleComponent extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly getPlayStyles = (): Promise<void> => {
+    private readonly getPlayStyles = async (): Promise<void> => {
         return getPlayStyle(this.props.player.id, undefined, this.props.playlist).then((data) => this.setState({data}))
     }
 
-    private readonly getPlayStylesWinLoss = (): Promise<void> => {
+    private readonly getPlayStylesWinLoss = async (): Promise<void> => {
         const win = getPlayStyle(this.props.player.id, undefined, this.props.playlist, true)
         const loss = getPlayStyle(this.props.player.id, undefined, this.props.playlist, false)
         return Promise.all([win, loss]).then((winLossData) => this.setState({winLossData}))
