@@ -1,10 +1,11 @@
 import {Grid, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
 import * as React from "react"
-import {GroupTeamStatsResponse, TeamStat} from "../../Models/Replay/Groups"
+
+import {TeamStats} from "../../Models/Replay/Groups"
 import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../Utils/String"
 
 interface Props {
-    stats: GroupTeamStatsResponse
+    stats: TeamStats[]
     style?: React.CSSProperties
 }
 
@@ -28,14 +29,14 @@ export class GroupTeamStatsTable extends React.PureComponent<Props, State> {
 
     public render() {
         // const players = Object.keys(this.props.stats.playerStats)
-        const teamStats = this.props.stats.teamStats
+        const teamStats = this.props.stats
         const team0 = teamStats[0]
         const stats = Object.keys(team0.stats)
         if (this.state.currentSort) {
             this.sortStats(teamStats)
         }
         const maxStats = stats.map((stat) => {
-            return Math.max(...teamStats.map((team) => team.stats[stat]))
+            return Math.max(...teamStats.map((team: TeamStats) => team.stats[stat]))
         })
         return (
             <Grid container>
@@ -111,7 +112,7 @@ export class GroupTeamStatsTable extends React.PureComponent<Props, State> {
     }
 
     // Sorts playerStats inplace
-    private readonly sortStats = (stats: TeamStat[]): void => {
+    private readonly sortStats = (stats: TeamStats[]): void => {
         const {statName, direction} = this.state.currentSort!
         if (stats.length > 0 && statName in stats[0].stats) {
             stats.sort((playerStatA, playerStatB) => {

@@ -11,21 +11,19 @@ interface Props {
     handleWinsLossesChange?: (winLossMode: boolean) => void
 }
 
+const PlayStyleTitle = () => (
+    <Typography variant="h5">
+        Playstyle
+        <IconTooltip tooltip="Data is presented as standard deviations from the mean, and only includes games from the past 6 months" />
+    </Typography>
+)
+
 export class PlayerPlayStyleCard extends React.PureComponent<Props> {
     public render() {
-        /* tslint:disable */
-        const playStyleTitle = (
-            <Typography variant="h5">
-                Playstyle
-                <IconTooltip tooltip="Data is presented as standard deviations from the mean, and only includes games from the past 6 months" />
-            </Typography>
-        )
-        /* tslint:enable */
-
         return (
             <Card>
                 <CardHeader
-                    title={playStyleTitle}
+                    title={<PlayStyleTitle />}
                     action={
                         <PlayStyleActions
                             player={this.props.player}

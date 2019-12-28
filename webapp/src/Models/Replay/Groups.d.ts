@@ -17,23 +17,19 @@ export interface Entry {
     descendantCount: number
 }
 
+type Stats = Record<string, number>
+type AllNamedStats = Record<string, Stats> // i.e. (Total), (per Game)
+
 export interface GroupPlayerStatsResponse {
-    playerStats: PlayerStat[]
+    playerStats: AllGroupPlayerStats[]
 }
-export interface GroupPlayerStats {
-    playerStats: GroupPlayerStat[]
-}
-
-export interface GroupPlayerStat {
+export interface AllGroupPlayerStats {
     name: string
     player: string
-    stats: Record<string, number>
+    stats: AllNamedStats
 }
-
-export interface PlayerStat {
-    name: string
-    player: string
-    stats: Record<string, Record<string, number>>
+export interface GroupPlayerStats extends AllGroupPlayerStats {
+    stats: Stats
 }
 
 // TEAMS
@@ -41,12 +37,14 @@ export interface PlayerStat {
 export interface GroupTeamStatsResponse {
     teamStats: TeamStat[]
 }
-
-export interface TeamStat {
+export interface AllTeamStats {
     games: string[]
     names: string[]
-    stats: Record<string, Record<string, number>>
+    stats: AllNamedStats
     team: string[]
+}
+export interface TeamStats extends AllTeamStats {
+    stats: Stats
 }
 export interface UUIDResponse {
     uuid: string
