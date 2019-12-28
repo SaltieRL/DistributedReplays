@@ -23,7 +23,7 @@ export class PlayerPlayStyleCard extends React.PureComponent<Props> {
         return (
             <Card>
                 <CardHeader
-                    title={PlayStyleTitle}
+                    title={<PlayStyleTitle />}
                     action={
                         <PlayStyleActions
                             player={this.props.player}
