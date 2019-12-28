@@ -52,7 +52,7 @@ def calculate_global_stats_by_playlist(session):
 
     for game_mode in game_modes:
         numbers.append(
-            session.query(func.count(PlayerGame.id)).join(Game).filter(Game.teamsize == (game_mode)).scalar())
+            session.query(func.count(PlayerGame.id)).join(Game, Game.hash == PlayerGame.game).filter(Game.teamsize == (game_mode)).scalar())
 
     for global_stats_metadata in global_stats_metadatas:
         stats_field = global_stats_metadata.field
@@ -72,7 +72,7 @@ def calculate_global_stats_by_playlist(session):
             _query = _query.filter(PlayerGame.score % 10 == 0)
         for i, game_mode in enumerate(game_modes):
             # print(g)
-            data_query = _query.join(Game).filter(Game.teamsize == game_mode).all()
+            data_query = _query.join(Game, Game.hash == PlayerGame.game).filter(Game.teamsize == game_mode).all()
             datasets.append({
                 'name': f"{game_mode}'s",
                 'keys': [],

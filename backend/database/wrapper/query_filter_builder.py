@@ -1,10 +1,10 @@
 import datetime
 from typing import List
 
-from sqlalchemy import cast, String, or_, and_
+from sqlalchemy import cast, String, or_
 from sqlalchemy.dialects import postgresql
 
-from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, Tag, GameTag
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, GameTag
 from backend.utils.checks import is_admin
 from backend.utils.safe_flask_globals import get_current_user_id
 
@@ -129,6 +129,7 @@ class QueryFilterBuilder:
         :return: A filtered query.
         """
         has_joined_game = False
+        needs_pg = False
         if self.initial_query is None:
             if self.is_game and self.stats_query is None:
                 filtered_query = session.query(Game)
@@ -141,7 +142,7 @@ class QueryFilterBuilder:
                 self.end_time is not None or
                 self.team_size is not None):
             if not self.is_game:
-                filtered_query = filtered_query.join(Game)
+                filtered_query = filtered_query.join(Game, Game.hash == PlayerGame.game)
             has_joined_game = True
 
         if self.tag_ids is not None:
@@ -162,6 +163,7 @@ class QueryFilterBuilder:
                 Game.match_date <= self.end_time)
 
         if self.rank is not None:
+            needs_pg = True
             filtered_query = filtered_query.filter(PlayerGame.rank == self.rank)
 
         if self.team_size is not None:
@@ -171,9 +173,11 @@ class QueryFilterBuilder:
             filtered_query = filtered_query.filter(Game.playlist.in_(self.playlists))
 
         if self.safe_checking:
+            needs_pg = True
             filtered_query = filtered_query.filter(PlayerGame.total_hits > 0).filter(PlayerGame.time_in_game > 0)
 
         if self.players is not None and len(self.players) > 0:
+            needs_pg = True
             filtered_query = filtered_query.filter(self.handle_list(PlayerGame.player, self.players))
 
         if self.contains_all_players is not None and len(self.contains_all_players) > 0:
@@ -183,18 +187,21 @@ class QueryFilterBuilder:
             if self.is_game or has_joined_game:
                 filtered_query = filtered_query.filter(self.handle_list(Game.hash, self.replay_ids))
             else:
+                needs_pg = True
                 filtered_query = filtered_query.filter(self.handle_list(PlayerGame.game, self.replay_ids))
         elif self.replay_ids is not None and len(self.replay_ids) == 1:
             if self.is_game or has_joined_game:
                 filtered_query = filtered_query.filter(Game.hash == self.replay_ids)
             else:
+                needs_pg = True
                 filtered_query = filtered_query.filter(PlayerGame.game == self.replay_ids)
         if self.tag_ids is not None:
             if len(self.tag_ids) == 1:
                 filtered_query = filtered_query.filter(GameTag.tag_id == self.tag_ids[0])
             else:
                 filtered_query = filtered_query.filter(self.handle_list(GameTag.tag_id, self.tag_ids))
-
+        if needs_pg and self.is_game:
+            filtered_query = filtered_query.join(PlayerGame, PlayerGame.game == Game.hash)
         return filtered_query
 
     def create_stored_query(self, session) -> 'QueryFilterBuilder':
