@@ -1,10 +1,11 @@
 import {Grid, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
 import * as React from "react"
-import {GroupPlayerStat, GroupPlayerStats} from "../../Models/Replay/Groups"
+
+import {GroupPlayerStats} from "../../Models/Replay/Groups"
 import {convertSnakeAndCamelCaseToReadable, roundNumberToMaxDP} from "../../Utils/String"
 
 interface Props {
-    stats: GroupPlayerStats
+    stats: GroupPlayerStats[]
     style: React.CSSProperties | undefined
 }
 
@@ -19,16 +20,27 @@ interface State {
 }
 
 export class GroupPlayerStatsTable extends React.PureComponent<Props, State> {
+    private readonly tableHeadRef: React.RefObject<HTMLDivElement>
+
     public constructor(props: Props) {
         super(props)
         this.state = {
             headerHeight: -1
         }
+        this.tableHeadRef = React.createRef()
+    }
+
+    public componentDidMount() {
+        this.updateHeaderHeight()
+    }
+
+    public componentDidUpdate() {
+        this.updateHeaderHeight()
     }
 
     public render() {
         // const players = Object.keys(this.props.stats.playerStats)
-        const player0 = this.props.stats.playerStats[0]
+        const player0 = this.props.stats[0]
         // const categories = Object.keys(PlayerStatsSubcategory)
         const stats = Object.keys(player0.stats)
         // stats.sort((statA, statB) => {
@@ -37,12 +49,12 @@ export class GroupPlayerStatsTable extends React.PureComponent<Props, State> {
         //         categories.indexOf(player0.stats[statA].subcategory)
         //     )
         // })
-        const playerStats = this.props.stats.playerStats
+        const playerStats = this.props.stats
         if (this.state.currentSort) {
             this.sortPlayerStats(playerStats)
         }
         const maxStats = stats.map((stat) => {
-            return Math.max(...playerStats.map((player: GroupPlayerStat) => player.stats[stat]))
+            return Math.max(...playerStats.map((player: GroupPlayerStats) => player.stats[stat]))
         })
         return (
             <Grid container>
@@ -72,16 +84,7 @@ export class GroupPlayerStatsTable extends React.PureComponent<Props, State> {
                 </Grid>
                 <Grid item xs={10} style={this.props.style}>
                     <Table>
-                        <TableHead
-                            ref={(ref: HTMLDivElement) => {
-                                if (ref) {
-                                    const height = ref.clientHeight
-                                    if (this.state.headerHeight !== height) {
-                                        this.setState({headerHeight: height})
-                                    }
-                                }
-                            }}
-                        >
+                        <TableHead ref={this.tableHeadRef}>
                             <TableRow>
                                 {stats.map((stat) => (
                                     <TableCell key={stat} align="right">
@@ -118,7 +121,7 @@ export class GroupPlayerStatsTable extends React.PureComponent<Props, State> {
     }
 
     // Sorts playerStats inplace
-    private readonly sortPlayerStats = (playerStats: GroupPlayerStat[]): void => {
+    private readonly sortPlayerStats = (playerStats: GroupPlayerStats[]): void => {
         const {statName, direction} = this.state.currentSort!
 
         if (playerStats.length > 0 && statName in playerStats[0].stats) {
@@ -146,6 +149,16 @@ export class GroupPlayerStatsTable extends React.PureComponent<Props, State> {
                     direction: "desc"
                 }
             })
+        }
+    }
+
+    private updateHeaderHeight() {
+        const {current} = this.tableHeadRef
+        if (current) {
+            const height = current.clientHeight
+            if (this.state.headerHeight !== height) {
+                this.setState({headerHeight: height})
+            }
         }
     }
 }
