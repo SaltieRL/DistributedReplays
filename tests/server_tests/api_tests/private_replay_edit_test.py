@@ -8,7 +8,7 @@ from backend.database.startup import get_current_session
 from tests.utils.database_utils import default_player_id
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
-LOCAL_URL = 'http://localhost:8000'
+from tests.utils.location_utils import LOCAL_URL
 
 
 class Test_edit_private_replay:
@@ -20,7 +20,9 @@ class Test_edit_private_replay:
         self.file = f
         self.stream = io.BytesIO(self.file)
 
-    def test_replay_edit_private_replay(self, test_client, fake_user):
+    def test_replay_edit_private_replay(self, test_client, mock_user):
+        mock_user.set_user_id('76561198018756583')
+        mock_user.logout()
         game = get_current_session().query(Game).first()
         assert game is None
 
@@ -34,7 +36,7 @@ class Test_edit_private_replay:
         api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
         r = Request('PUT', LOCAL_URL + api_url)
 
-        fake_user.setUser('76561198018756583')
+        mock_user.login()
 
         response = test_client.send(r)
 
@@ -51,7 +53,8 @@ class Test_edit_private_replay:
         assert(game_visiblity.visibility == GameVisibilitySetting.PRIVATE)
 
 
-    def test_replay_edit_private_replay_no_permission(self, test_client, fake_user):
+    def test_replay_edit_private_replay_no_permission(self, test_client, mock_user):
+        mock_user.logout()
         game = get_current_session().query(Game).first()
         assert game is None
 
@@ -65,7 +68,7 @@ class Test_edit_private_replay:
         api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
         r = Request('PUT', LOCAL_URL + api_url)
 
-        fake_user.setUser(default_player_id())
+        mock_user.login()
 
         response = test_client.send(r)
 
@@ -80,7 +83,8 @@ class Test_edit_private_replay:
         assert(game_visiblity is None)
 
 
-    def test_replay_edit_private_replay_twice(self, test_client, fake_user):
+    def test_replay_edit_private_replay_twice(self, test_client, mock_user):
+        mock_user.logout()
         game = get_current_session().query(Game).first()
         assert game is None
 
@@ -94,7 +98,8 @@ class Test_edit_private_replay:
         api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PRIVATE.name
         r = Request('PUT', LOCAL_URL + api_url)
 
-        fake_user.setUser('76561198018756583')
+        mock_user.set_user_id('76561198018756583')
+        mock_user.login()
 
         response = test_client.send(r)
 
@@ -114,7 +119,7 @@ class Test_edit_private_replay:
         api_url = '/api/replay/70DDECEA4653AC55EA77DBA0DB497995/visibility/' + GameVisibilitySetting.PUBLIC.name
         r = Request('PUT', LOCAL_URL + api_url)
 
-        fake_user.setUser('76561198018756583')
+        mock_user.set_user_id('76561198018756583')
 
         response = test_client.send(r)
 

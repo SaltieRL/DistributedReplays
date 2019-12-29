@@ -22,19 +22,19 @@ from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
-from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
     player_id, heatmap_query_params
 from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
-from backend.tasks.add_replay import create_replay_task, parsed_replay_processing
+from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.utils.logger import ErrorLogger
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
-from backend.utils.metrics import MetricsHandler
+from backend.blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
+from backend.utils.metrics import MetricsHandler, add_saved_replay
 from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.utils.safe_flask_globals import get_current_user_id
@@ -64,7 +64,7 @@ except:
 from backend.blueprints.spa_api.service_layers.stat import get_explanations
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_vanity_to_steam_id_or_random_response, steam_id_to_profile
-from backend.database.objects import Game, GameVisibilitySetting, TrainingPack, ReplayLog, ReplayResult
+from backend.database.objects import Game, GameVisibilitySetting
 from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
@@ -82,7 +82,7 @@ from backend.blueprints.spa_api.service_layers.replay.groups import ReplayGroupC
 from backend.blueprints.spa_api.service_layers.replay.match_history import MatchHistory
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.replay.replay_positions import ReplayPositions
-from backend.blueprints.spa_api.service_layers.replay.tag import Tag
+from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
 from backend.blueprints.spa_api.utils.decorators import require_user, with_query_params
 from backend.blueprints.spa_api.utils.query_params_handler import QueryParam, get_query_params
 
@@ -112,7 +112,7 @@ def better_jsonify(response: object):
 
     try:
         return jsonify(response)
-    except TypeError:
+    except TypeError as e:
         if isinstance(response, list):
             return jsonify([value.__dict__ for value in response])
         else:
@@ -334,6 +334,12 @@ def api_get_replay_boostmaps(id_):
     return jsonify(positions)
 
 
+@bp.route('replay/<id_>/kickoffs')
+def api_get_replay_kickoffs(id_: str):
+    kickoff_data = Kickoffs(id_).create_from_id()
+    return better_jsonify(kickoff_data)
+
+
 @bp.route('replay/group')
 def api_get_replay_group():
     ids = request.args.getlist('ids')
@@ -428,7 +434,7 @@ def api_upload_replays(query_params=None):
         file.seek(0)
         ud = uuid.uuid4()
         filename = os.path.join(current_app.config['REPLAY_DIR'], secure_filename(str(ud) + '.replay'))
-        create_replay_task(file, filename, ud, task_ids, query_params)
+        celery_tasks.create_replay_task(file, filename, ud, task_ids, query_params)
 
     if len(errors) == 1:
         raise errors[0]
@@ -456,7 +462,8 @@ def api_upload_proto(session=None, query_params=None):
 
     # Process
     try:
-        parsed_replay_processing(protobuf_game, query_params=query_params)
+        match_exists = parsed_replay_processing(protobuf_game, query_params=query_params)
+        add_saved_replay(match_exists)
     except Exception as e:
         payload['stack'] = traceback.format_exc()
         payload['error_type'] = type(e).__name__
@@ -486,7 +493,7 @@ def api_create_tag(name: str, query_params=None):
     private_id = None
     if 'private_id' in query_params:
         private_id = query_params['private_id']
-    tag = Tag.create(name, private_id=private_id)
+    tag = JsonTag.create(name, private_id=private_id)
     return better_jsonify(tag), 201
 
 
@@ -496,14 +503,14 @@ def api_rename_tag(current_name: str):
     accepted_query_params = [QueryParam(name='new_name')]
     query_params = get_query_params(accepted_query_params, request)
 
-    tag = Tag.rename(current_name, query_params['new_name'])
+    tag = JsonTag.rename(current_name, query_params['new_name'])
     return better_jsonify(tag), 200
 
 
 @bp.route('/tag/<name>', methods=['DELETE'])
 @require_user
 def api_delete_tag(name: str):
-    Tag.delete(name)
+    JsonTag.delete(name)
     return '', 204
 
 
@@ -513,7 +520,7 @@ def api_delete_tag(name: str):
     QueryParam(name='with_id', type_=bool, optional=True)
 ])
 def api_get_tags(query_params=None):
-    tags = Tag.get_all()
+    tags = JsonTag.get_all()
     with_id = False
     if 'with_id' in query_params:
         with_id = query_params['with_id']
@@ -523,27 +530,27 @@ def api_get_tags(query_params=None):
 @bp.route('/tag/<name>/private_key', methods=["GET"])
 @require_user
 def api_get_tag_key(name: str):
-    return better_jsonify(Tag.get_encoded_private_key(name))
+    return better_jsonify(JsonTag.get_encoded_private_key(name))
 
 
 @bp.route('/tag/<name>/private_key/<private_id>', methods=["PUT"])
 @require_user
 def api_add_tag_key(name: str, private_id: str):
-    Tag.add_private_key(name, private_id)
+    JsonTag.add_private_key(name, private_id)
     return better_jsonify(private_id), 204
 
 
 @bp.route('/tag/<name>/replay/<id_>', methods=["PUT"])
 @require_user
 def api_add_tag_to_game(name: str, id_: str):
-    Tag.add_tag_to_game(name, id_)
+    JsonTag.add_tag_to_game(name, id_)
     return '', 204
 
 
 @bp.route('/tag/<name>/replay/<id_>', methods=["DELETE"])
 @require_user
 def api_remove_tag_from_game(name: str, id_: str):
-    Tag.remove_tag_from_game(name, id_)
+    JsonTag.remove_tag_from_game(name, id_)
     return '', 204
 
 

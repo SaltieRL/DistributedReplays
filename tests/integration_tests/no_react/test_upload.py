@@ -34,7 +34,7 @@ class Test_BasicServerCommands():
     def test_upload_files(self, mock_user, no_errors_are_logged):
         no_errors_are_logged.cancel_check()
 
-        mock_user.set_fake_user(Player(platformid='76561198018756583', platformname='fake'))
+        mock_user.set_user(Player(platformid='76561198018756583', platformname='fake'))
 
         replay_list = get_complex_replay_list()[0:4]
 

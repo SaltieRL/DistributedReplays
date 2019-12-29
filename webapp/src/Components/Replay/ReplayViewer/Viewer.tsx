@@ -80,9 +80,7 @@ export class Viewer extends Component<Props, State> {
             >
                 <Grid item style={{minHeight: 0, width: "100%"}}>
                     <ReplayViewer gameManager={gameManager}>
-                        {this.props.compact &&
                         <CompactPlayControls/>
-                        }
                     </ReplayViewer>
                 </Grid>
                 {!this.props.compact &&

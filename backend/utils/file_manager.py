@@ -3,6 +3,7 @@ import os
 from enum import Enum
 
 from carball.analysis.utils import proto_manager, pandas_manager
+from carball.generated.api.game_pb2 import Game
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, ErrorOpeningGame
 from backend.utils.logger import ErrorLogger
@@ -16,6 +17,9 @@ class BucketType(Enum):
     REPLAY = 3
 
 
+REPLAY_EXTENSION = ".replay"
+PROTO_EXTENSION = ".pts"
+PANDAS_EXTENSION = ".gzip"
 DEFAULT_REPLAY_FOLDER = os.path.join(BASE_FOLDER, 'data', 'rlreplays')
 DEFAULT_PARSED_FOLDER = os.path.join(BASE_FOLDER, 'data', 'parsed')
 
@@ -31,15 +35,15 @@ class FileManager:
 
     @staticmethod
     def get_replay_path(replay_id: str):
-        return os.path.join(FileManager.get_default_replay_folder(), replay_id + '.replay')
+        return os.path.join(FileManager.get_default_replay_folder(), replay_id + REPLAY_EXTENSION)
 
     @staticmethod
     def get_proto_path(replay_id: str):
-        return os.path.join(FileManager.get_default_parse_folder(), replay_id + '.replay.pts')
+        return os.path.join(FileManager.get_default_parse_folder(), replay_id + REPLAY_EXTENSION + PROTO_EXTENSION)
 
     @staticmethod
     def get_pandas_path(replay_id: str):
-        return os.path.join(FileManager.get_default_parse_folder(), replay_id + '.replay.gzip')
+        return os.path.join(FileManager.get_default_parse_folder(), replay_id + REPLAY_EXTENSION + PANDAS_EXTENSION)
 
     @staticmethod
     def get_replay(replay_id):
@@ -48,7 +52,7 @@ class FileManager:
                                            lambda item_path: open(item_path, 'rb'))
 
     @staticmethod
-    def get_proto(replay_id):
+    def get_proto(replay_id) -> Game:
         return FileManager.get_or_download(FileManager.get_proto_path(replay_id),
                                            lambda: download_proto(replay_id),
                                            lambda item_path: proto_manager.ProtobufManager.read_proto_out_from_file(open(item_path, 'rb')))
@@ -57,7 +61,7 @@ class FileManager:
     def get_pandas(replay_id):
         return FileManager.get_or_download(FileManager.get_pandas_path(replay_id),
                                            lambda: download_df(replay_id),
-                                           lambda item_path: pandas_manager.PandasManager.safe_read_pandas_to_memory(gzip.open(item_path, 'rb')))
+                                           lambda item_path: pandas_manager.PandasManager.read_numpy_from_memory(gzip.open(item_path, 'rb')))
 
     @staticmethod
     def get_or_download(item_path, download_lambda, open_lambda):
@@ -74,4 +78,4 @@ class FileManager:
             return open_lambda(item_path)
         except Exception as e:
             ErrorLogger.log_error(e)
-            raise ErrorOpeningGame(str(e))
+            raise ErrorOpeningGame(str(e), game_data=item_path)

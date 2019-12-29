@@ -10,7 +10,7 @@ from testing import postgresql
 
 from backend.database.objects import Player
 from tests.utils.database_utils import create_initial_mock_database, add_initial_player, empty_database, \
-    initialize_db_with_replays
+    initialize_db_with_replays, initialize_db_with_parsed_replays, default_player_id
 from tests.utils.replay_utils import clear_dir
 from tests.utils.test_utils import function_result_creator
 
@@ -88,7 +88,6 @@ def fake_db(monkeypatch, session, fake_redis):
     Allows for a replacement mock if a replacement engine is needed.
     :return: the initial instance of the database
     """
-    from backend.database.startup import EngineStartup
 
     local_alchemy = session
 
@@ -101,8 +100,8 @@ def fake_db(monkeypatch, session, fake_redis):
 
     def fake_session_instance():
         return local_alchemy()
-    monkeypatch.setattr(EngineStartup, 'startup', fake_startup)
-    monkeypatch.setattr(EngineStartup, 'get_current_session', fake_session_instance)
+    monkeypatch.setattr('backend.database.startup.EngineStartup.startup', fake_startup)
+    monkeypatch.setattr('backend.database.startup.EngineStartup.get_current_session', fake_session_instance)
 
     # Add redis
     local_redis = fake_redis
@@ -112,10 +111,76 @@ def fake_db(monkeypatch, session, fake_redis):
             nonlocal local_redis
             local_redis = replacement
         return local_redis
-    monkeypatch.setattr(EngineStartup, 'get_redis', fake_redis)
-    monkeypatch.setattr(EngineStartup, 'get_strict_redis', fake_redis)
+    monkeypatch.setattr('backend.database.startup.EngineStartup.get_redis', fake_redis)
+    monkeypatch.setattr('backend.database.startup.EngineStartup.get_strict_redis', fake_redis)
 
     return local_alchemy
+
+
+@pytest.fixture()
+def initialize_database_small_replays(fake_db, parse_small_replays):
+    proto_games = parse_small_replays.get_protos()
+    session = fake_db()
+    session = initialize_db_with_parsed_replays(proto_games, session=session)
+
+    class Wrapper:
+
+        def get_session(self):
+            return session
+
+        def get_protos(self):
+            return parse_small_replays.get_protos()
+
+        def get_ids(self):
+            return parse_small_replays.get_guids()
+
+        def get_replay_names(self):
+            return parse_small_replays.get_replay_names()
+
+        def get_index_from_name(self, name):
+            return parse_small_replays.get_index_from_name(name)
+
+    return Wrapper()
+
+
+@pytest.fixture()
+def initialize_database_tags(initialize_database_small_replays):
+    from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
+    from backend.database.wrapper.tag_wrapper import TagWrapper
+
+    session = initialize_database_small_replays.get_session()
+    replay_ids = initialize_database_small_replays.get_ids()
+
+    tags = [("tag1", 0, 5, "private_id1"),  # grabs the first 5 replays in the list
+            ("tag2", 2, 2, None),  # starts at the 2nd replay and then gets the next 2
+            ("tag3", -5, 4, "private_id2"),  # grabs the last 4 replays in the list
+            ("tag4", -6, 4, None),  # starts 6 back from the end and grabs 4 replays
+            ]
+
+    tagged_games = {}
+    for tag in tags:
+        tagged_games[tag[0]] = []
+
+        created_tag = JsonTag.create(tag[0], session=session, player_id=default_player_id(), private_id=tag[3])
+        game_ids = replay_ids[tag[1]: tag[1] + tag[2]]
+        for game_id in game_ids:
+            tagged_games[tag[0]].append(game_id)
+            TagWrapper.add_tag_to_game(session, game_id, created_tag.db_tag)
+
+    class wrapper:
+        def get_session(self):
+            return session
+        def get_protos(self):
+            return initialize_database_small_replays.get_protos()
+        def get_ids(self):
+            return replay_ids
+        def get_tags(self):
+            return tags
+        def get_tagged_games(self):
+            return tagged_games
+
+    return wrapper()
+
 
 
 @pytest.fixture()
@@ -230,70 +295,62 @@ def make_celery_testable(monkeypatch):
     monkeypatch.setattr('backend.tasks.celeryconfig.task_always_eager', True, raising=False)
     monkeypatch.setattr('backend.tasks.celeryconfig.task_eager_propagates', True, raising=False)
 
-@pytest.fixture()
-def fake_user(monkeypatch):
-
-    fake_user = None
-
-    def get_fake_user():
-        return fake_user
-
-    class FakeUser:
-        def setUser(self, platformId):
-            nonlocal fake_user
-            fake_user = Player(platformid=platformId)
-
-    monkeypatch.setattr('backend.utils.safe_flask_globals.UserManager.get_current_user', get_fake_user)
-
-    return FakeUser()
-
 
 @pytest.fixture()
-def fake_file_locations(monkeypatch, temp_folder):
+def fake_file_locations(dynamic_monkey_patcher, temp_folder):
 
     def get_replay_func(ext):
         def get_path(replay_id):
             return os.path.join(temp_folder, replay_id + ext)
         return get_path
 
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_replay_path', get_replay_func('.replay'))
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_proto_path', get_replay_func('.replay.pts'))
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_pandas_path', get_replay_func('.replay.gzip'))
+    from backend.utils.file_manager import FileManager, REPLAY_EXTENSION, PROTO_EXTENSION, PANDAS_EXTENSION
 
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_replay_path', get_replay_func(REPLAY_EXTENSION))
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_proto_path', get_replay_func(REPLAY_EXTENSION +
+                                                                                       PROTO_EXTENSION))
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_pandas_path', get_replay_func(REPLAY_EXTENSION +
+                                                                                        PANDAS_EXTENSION))
 
 
 @pytest.fixture()
-def mock_get_proto(monkeypatch):
+def mock_get_proto(dynamic_monkey_patcher):
 
     proto_set, get_proto = function_result_creator()
 
     def wrapped(replay_id):
         return get_proto()
 
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_proto', wrapped)
+    from backend.utils.file_manager import FileManager
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_proto', wrapped)
+
     return proto_set
 
+
 @pytest.fixture()
-def mock_get_replay(monkeypatch):
+def mock_get_replay(dynamic_monkey_patcher):
 
     replay_set, get_replay = function_result_creator()
 
     def wrapped(replay_id):
         return get_replay()
 
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_replay', wrapped)
+    from backend.utils.file_manager import FileManager
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_replay', wrapped)
     return replay_set
 
 
 @pytest.fixture()
-def mock_get_pandas(monkeypatch):
+def mock_get_pandas(dynamic_monkey_patcher):
 
     pandas_set, get_pandas = function_result_creator()
 
     def wrapped(replay_id):
         return get_pandas()
 
-    monkeypatch.setattr('backend.utils.file_manager.FileManager.get_pandas', wrapped)
+    from backend.utils.file_manager import FileManager
+    dynamic_monkey_patcher.patch_object(FileManager, 'get_pandas', wrapped)
+
     return pandas_set
 
 

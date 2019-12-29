@@ -6,7 +6,7 @@ from backend.database.objects import Game, Player
 from backend.database.startup import get_current_session, EngineStartup, startup
 from tests.utils.replay_utils import get_complex_replay_list, download_replay_discord
 
-LOCAL_URL = 'http://localhost:8000'
+from tests.utils.location_utils import LOCAL_URL
 
 
 class Test_upload_file:

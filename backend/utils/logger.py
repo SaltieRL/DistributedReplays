@@ -1,9 +1,9 @@
 import logging
-from typing import Callable, List
+from typing import Callable
 
 from sqlalchemy import desc, or_
 
-from backend.blueprints.spa_api.errors.errors import CalculatedError, AuthorizationException
+from backend.blueprints.spa_api.errors.errors import AuthorizationException
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import ReplayLog, ReplayResult
 from backend.utils.checks import is_admin

@@ -3,7 +3,7 @@ import * as React from "react"
 import { BasicStat, Replay } from "../../../Models"
 import { getReplayGroupStats } from "../../../Requests/Replay"
 import { LoadableWrapper } from "../../Shared/LoadableWrapper"
-import { BasicStatsTable } from "./BasicStatsTable"
+import { TableScrollWrapper } from "./TableScrollWrapper"
 
 interface Props {
     replays: Replay[]
@@ -34,9 +34,7 @@ export class ReplaysGroupTable extends React.PureComponent<Props, State> {
                     // It currently reloads on tab-change.
                     <LoadableWrapper load={this.getStatsForReplays} reloadSignal={this.state.reloadSignal}>
                         {this.state.basicStats.length > 0 ?
-                            <div style={{overflowX: "auto"}}>
-                                <BasicStatsTable basicStats={this.state.basicStats}/>
-                            </div>
+                            <TableScrollWrapper style={{overflowX: "scroll"}} basicStats={this.state.basicStats}/>
                             :
                             <Grid item xs={12}>
                                 <Typography align="center" style={{width: "100%"}}>
