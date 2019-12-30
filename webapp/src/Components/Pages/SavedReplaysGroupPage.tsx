@@ -21,10 +21,10 @@ import Check from "@material-ui/icons/Check"
 import Delete from "@material-ui/icons/Delete"
 import Edit from "@material-ui/icons/Edit"
 import * as _ from "lodash"
-// import Link from "@material-ui/core/Link"
 import * as React from "react"
 import {connect} from "react-redux"
 import {Link as DOMLink, RouteComponentProps} from "react-router-dom"
+
 import {PLAYER_PAGE_LINK} from "../../Globals"
 import {Entry, GroupPlayerStatsResponse, GroupResponse, GroupTeamStatsResponse} from "../../Models/Replay/Groups"
 import {StoreState} from "../../Redux"
@@ -172,7 +172,11 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                                     to={PLAYER_PAGE_LINK(group.entry.owner.id)}
                                                 >
                                                     Created by{" "}
-                                                    <img src={group.entry.owner.avatarLink} height={"15px"} />{" "}
+                                                    <img
+                                                        src={group.entry.owner.avatarLink}
+                                                        height={"15px"}
+                                                        alt="profile avatar"
+                                                    />{" "}
                                                     {group.entry.owner.name}
                                                 </DOMLink>
                                             </Typography>
@@ -202,7 +206,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                             {this.state.selectedTab === "Replays" && (
                                                 <List dense>
                                                     {group.children.map((child, i) => (
-                                                        <>
+                                                        <div key={i}>
                                                             {child.type ? (
                                                                 child.gameObject && (
                                                                     <ReplayDisplayRow
@@ -242,7 +246,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                                                 />
                                                             )}
                                                             {i !== group.children.length - 1 && <Divider />}
-                                                        </>
+                                                        </div>
                                                     ))}
                                                 </List>
                                             )}

@@ -1,6 +1,7 @@
 import {Tab, Tabs} from "@material-ui/core"
 import * as React from "react"
-import {GroupPlayerStat} from "../../Models/Replay/Groups"
+
+import {AllGroupPlayerStats, GroupPlayerStats, GroupPlayerStatsResponse} from "../../Models/Replay/Groups"
 import {GroupPlayerStatsTable} from "./GroupPlayerStatsTable"
 import {GroupStatsButtons} from "./Shared/GroupStatsButtons"
 
@@ -9,7 +10,7 @@ interface State {
 }
 
 interface Props {
-    stats: GroupPlayerStats
+    stats: GroupPlayerStatsResponse
 }
 
 export class GroupPlayerStatsTableWrapper extends React.PureComponent<Props, State> {
@@ -19,12 +20,11 @@ export class GroupPlayerStatsTableWrapper extends React.PureComponent<Props, Sta
     }
 
     public render() {
-        const playerStats = this.props.stats.playerStats
-
+        const {playerStats} = this.props.stats
         return (
             <>
                 <Tabs value={this.state.selectedTab} onChange={this.handleTabChange}>
-                    {Object.keys(playerStats[0].stats)
+                    {this.getTabs()
                         .reverse()
                         .map((tab) => (
                             <Tab label={tab} value={tab} key={tab} />
@@ -32,17 +32,25 @@ export class GroupPlayerStatsTableWrapper extends React.PureComponent<Props, Sta
                 </Tabs>
                 <GroupStatsButtons style={{display: "none"}} />
                 <GroupPlayerStatsTable
-                    stats={{
-                        playerStats: playerStats.map((player: GroupPlayerStat) => ({
+                    stats={playerStats.map(
+                        (player: AllGroupPlayerStats): GroupPlayerStats => ({
                             player: player.player,
                             name: player.name,
                             stats: player.stats[this.state.selectedTab]
-                        }))
-                    }}
+                        })
+                    )}
                     style={{overflowX: "auto"}}
                 />
             </>
         )
+    }
+
+    private getTabs() {
+        const firstPlayer = this.props.stats.playerStats[0]
+        if (!firstPlayer) {
+            return []
+        }
+        return Object.keys(firstPlayer.stats)
     }
 
     private readonly handleTabChange = (_: React.ChangeEvent<{}>, selectedTab: string) => {
