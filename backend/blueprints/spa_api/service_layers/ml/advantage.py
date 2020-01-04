@@ -8,8 +8,10 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras import backend as K
 # Sklearn
-#from sklearn.preprocessing import MinMaxScaler
+# from sklearn.preprocessing import MinMaxScaler
 from typing import List
+# Local
+from .pandas_columns import non_player_cols, player_cols
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.server_constants import *
@@ -38,33 +40,15 @@ def get_ordered_columns(players_per_team: int):
     :return: A list of column names.
     :rtype: List[str]
     """
-    x = players_per_team
-    non_player = ['ball_pos_x', 'ball_pos_y', 'ball_pos_z', 'ball_rot_x', 'ball_rot_y', 'ball_rot_z',
-                  'ball_vel_x', 'ball_vel_y', 'ball_vel_z', 'ball_ang_vel_x', 'ball_ang_vel_y', 'ball_ang_vel_z',
-                  'game_seconds_remaining', 'game_goal_number']
-    z_zero = ['z_0_pos_x', 'z_0_pos_y', 'z_0_pos_z', 'z_0_rot_x', 'z_0_rot_y', 'z_0_rot_z',
-              'z_0_vel_x', 'z_0_vel_y', 'z_0_vel_z', 'z_0_ang_vel_x', 'z_0_ang_vel_y', 'z_0_ang_vel_z',
-              'z_0_boost', 'z_0_boost_active', 'z_0_jump_active', 'z_0_double_jump_active', 'z_0_dodge_active',
-              'z_0_is_demo']
-    z_one = []
-    z_two = []
-    o_zero = []
-    o_one = []
-    o_two = []
-    for col in z_zero:
-        if x > 1:
-            z_one.append(col.replace('0', '1', 1))
-        if x > 2:
-            z_two.append(col.replace('0', '2', 1))
-        o_zero.append(col.replace('z', 'o', 1))
-    if x > 1:
-        for col in o_zero:
-            o_one.append(col.replace('0', '1', 1))
-            if x > 2:
-                o_two.append(col.replace('0', '2', 1))
+    columns_ordered = []
+    # z for zero aka blue team, o for one aka orange team
+    teams = ['z', 'o']
+    for t in teams:
+        for x in range(players_per_team):
+            for c in player_cols:
+                columns_ordered.append(f"{t}_{x}_{c}")
 
-    columns_ordered = z_zero + z_one + z_two + o_zero + o_one + o_two + non_player
-    return columns_ordered
+    return columns_ordered + non_player_cols
 
 
 def df_to_int(input_df, mul=False):
@@ -117,7 +101,7 @@ def mirror_inputs(input_df, num_players):
     # Prepare flipping teams
     cols = input_df.columns.tolist()
     pc = sum('z_0' in col for col in cols)
-    flipped_cols = cols[pc:2*pc] + cols[0:pc] + cols[2*pc:]
+    flipped_cols = cols[pc:2 * pc] + cols[0:pc] + cols[2 * pc:]
     df = input_df.copy()[flipped_cols]
     df.columns = cols
     # Get columns for flipping
