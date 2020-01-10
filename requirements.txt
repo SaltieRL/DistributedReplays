@@ -45,3 +45,4 @@ prometheus_client
 pycryptodome
 flask-httpauth
 python-socketio
+sqlalchemy-utils

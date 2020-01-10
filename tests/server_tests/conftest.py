@@ -8,7 +8,6 @@ from sqlalchemy.dialects.postgresql.base import PGInspector
 from sqlalchemy.orm import sessionmaker
 from testing import postgresql
 
-from backend.database.objects import Player
 from tests.utils.database_utils import create_initial_mock_database, add_initial_player, empty_database, \
     initialize_db_with_replays, initialize_db_with_parsed_replays, default_player_id
 from tests.utils.replay_utils import clear_dir
@@ -40,6 +39,9 @@ def postgres_instance(postgres_factory):
 def engine(postgres_instance):
     engine = create_engine(postgres_instance.url())
     from backend.database.objects import DBObjectBase
+    conn = engine.connect()
+    conn.execute("create extension if not exists ltree;")
+    conn.close()
     DBObjectBase.metadata.create_all(engine)
     return engine
 

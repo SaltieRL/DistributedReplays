@@ -1,11 +1,13 @@
 import logging
 from typing import Tuple, Optional
-from flask import current_app
+
 import redis
+from flask import current_app
 from redis import Redis
+from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
+
 from backend.database.objects import DBObjectBase
 
 logger = logging.getLogger(__name__)
@@ -20,6 +22,11 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
         conn.execute("create database saltie")
         conn.close()
         engine = create_engine(connection_string + '/saltie', echo=False)
+    conn = engine.connect()
+    conn.execute("create extension if not exists ltree WITH schema public;")
+    conn.execute("create extension if not exists ltree;")
+    conn.execute("commit")
+    conn.close()
     DBObjectBase.metadata.create_all(engine)
     session = sessionmaker(bind=engine)
     return engine, session

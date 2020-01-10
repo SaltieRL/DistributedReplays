@@ -1,5 +1,5 @@
 import qs from "qs"
-import {doGet, doRequest} from "../apiHandler/apiHandler"
+import {doGet, doPost, doRequest} from "../apiHandler/apiHandler"
 import {
     BasicStat,
     GameVisibility,
@@ -9,6 +9,13 @@ import {
     ReplaysSearchQueryParams,
     stringifyReplaySearchQueryParam
 } from "../Models"
+import {
+    Entry,
+    GroupPlayerStatsResponse,
+    GroupResponse,
+    GroupTeamStatsResponse,
+    UUIDResponse
+} from "../Models/Replay/Groups"
 import {VisibilityResponse} from "../Models/types/VisibilityResponse"
 
 export const getReplay = (id: string): Promise<Replay> => {
@@ -70,4 +77,54 @@ export const getBoostmap = (id: string): Promise<any> => {
 
 export const getKickoffs = (id: string): Promise<KickoffData> => {
     return doGet(`/replay/${id}/kickoffs`)
+}
+
+export const getGroupInfo = (id: string): Promise<GroupResponse> => {
+    return doGet(`/groups?id=${id}`).then((result) => {
+        result.children = result.children.map((child: Entry) => {
+            if (child.gameObject) {
+                child.gameObject = parseReplay(child.gameObject)
+            }
+            return child
+        })
+        return result
+    })
+}
+export const getMyGroups = (): Promise<GroupResponse> => {
+    return doGet(`/groups`)
+}
+
+export const getGroupPlayerStats = (id: string): Promise<GroupPlayerStatsResponse> => {
+    return doGet(`/groups/stats/players?id=${id}`)
+}
+export const getGroupTeamStats = (id: string): Promise<GroupTeamStatsResponse> => {
+    return doGet(`/groups/stats/teams?id=${id}`)
+}
+
+export const addGames = (id: string, games: string[]): Promise<UUIDResponse> => {
+    return doPost(
+        `/groups/add`,
+        JSON.stringify({
+            games,
+            parent: id
+        })
+    )
+}
+export const addSubgroup = (id: string | undefined, name: string): Promise<UUIDResponse> => {
+    return doPost(
+        `/groups/add`,
+        JSON.stringify({
+            name,
+            parent: id
+        })
+    )
+}
+
+export const deleteGames = (ids: string[]): Promise<UUIDResponse> => {
+    return doPost(
+        `/groups/delete`,
+        JSON.stringify({
+            ids
+        })
+    )
 }

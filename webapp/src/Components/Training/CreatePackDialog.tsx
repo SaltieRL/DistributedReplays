@@ -22,7 +22,7 @@ interface State {
     name: string
 }
 
-class CreatePackDialogComponent extends React.Component<Props, State> {
+class CreatePackDialogComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
