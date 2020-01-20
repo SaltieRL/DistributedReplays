@@ -269,6 +269,7 @@ class Game(DBObjectBase):
     hash = Column(String(40), primary_key=True)  # replayid
     name = Column(String(40))
     players = Column(postgresql.ARRAY(String, dimensions=1))
+    __table_args__ = (Index('ix_players', players, postgresql_using="gin"),)
     map = Column(String(40))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))
     mmrs = Column(postgresql.ARRAY(Integer, dimensions=1))
@@ -279,7 +280,7 @@ class Game(DBObjectBase):
     playergames = relationship("PlayerGame")  # TODO: should this just replace .players?
     teamstats = relationship("TeamStat")
     upload_date = Column(DateTime, default=datetime.datetime.utcnow)
-    match_date = Column(DateTime)
+    match_date = Column(DateTime, index=True)
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
@@ -301,7 +302,7 @@ class Game(DBObjectBase):
     game_server_id = Column(Integer)
     server_name = Column(String(40))
     replay_id = Column(String(40))
-    playlist = Column(Integer)
+    playlist = Column(Integer, index=True)
     invalid_analysis = Column(Boolean)
 
     @validates('name')
