@@ -45,14 +45,14 @@ def better_json_dumps(response: object):
             return flask.json.dumps(response.__dict__)
 
 
-def calculate_global_distributions(session):
+def calculate_global_stats_by_playlist(session):
     overall_data = []
     numbers = []
     game_modes = range(1, 5)
 
     for game_mode in game_modes:
         numbers.append(
-            session.query(func.count(PlayerGame.id)).join(Game).filter(Game.teamsize == (game_mode)).scalar())
+            session.query(func.count(PlayerGame.id)).join(Game, Game.hash == PlayerGame.game).filter(Game.teamsize == (game_mode)).scalar())
 
     for global_stats_metadata in global_stats_metadatas:
         stats_field = global_stats_metadata.field
@@ -72,7 +72,7 @@ def calculate_global_distributions(session):
             _query = _query.filter(PlayerGame.score % 10 == 0)
         for i, game_mode in enumerate(game_modes):
             # print(g)
-            data_query = _query.join(Game).filter(Game.teamsize == game_mode).all()
+            data_query = _query.join(Game, Game.hash == PlayerGame.game).filter(Game.teamsize == game_mode).all()
             datasets.append({
                 'name': f"{game_mode}'s",
                 'keys': [],
@@ -88,5 +88,5 @@ def calculate_global_distributions(session):
         ))
     session.close()
     if lazy_get_redis() is not None:
-        lazy_get_redis().set('global_distributions', better_json_dumps(overall_data))
+        lazy_get_redis().set('global_stats_by_playlist', better_json_dumps(overall_data))
     return overall_data

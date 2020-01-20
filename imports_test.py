@@ -8,7 +8,7 @@ class TestImports:
 
     global_allowed_imports = ['sqlalchemy', 'RLBotServer', 'carball', 'flask', 'redis', 'gzip',
                               'flask_cors', 'werkzeug', 'bs4', 'torch', 'pandas', 'numpy',
-                              'prometheus_client', 'Crypto']
+                              'prometheus_client', 'Crypto', 'flask_httpauth', 'sqlalchemy_utils', 'flask_compress']
     test_imports = ['alchemy_mock', 'fakeredis', 'responses']
 
     black_list = ['utils']

@@ -9,7 +9,7 @@ import {
     WithStyles,
     withStyles
 } from "@material-ui/core"
-import { amber, green } from "@material-ui/core/colors"
+import {amber, green} from "@material-ui/core/colors"
 import CheckCircleIcon from "@material-ui/icons/CheckCircle"
 import Close from "@material-ui/icons/Close"
 import ErrorIcon from "@material-ui/icons/Error"
@@ -17,28 +17,29 @@ import InfoIcon from "@material-ui/icons/Info"
 import WarningIcon from "@material-ui/icons/Warning"
 import * as React from "react"
 
-const styles = (theme: Theme) => createStyles({
-    icon: {
-        marginRight: theme.spacing.unit
-    },
-    success: {
-        backgroundColor: green[600]
-    },
-    error: {
-        backgroundColor: theme.palette.error.dark
-    },
-    info: {
-        backgroundColor: theme.palette.primary.dark
-    },
-    warning: {
-        backgroundColor: amber[700]
-    },
-    message: {
-        color: "#fff",
-        display: "flex",
-        alignItems: "center"
-    }
-})
+const styles = (theme: Theme) =>
+    createStyles({
+        icon: {
+            marginRight: theme.spacing(1)
+        },
+        success: {
+            backgroundColor: green[600]
+        },
+        error: {
+            backgroundColor: theme.palette.error.dark
+        },
+        info: {
+            backgroundColor: theme.palette.primary.dark
+        },
+        warning: {
+            backgroundColor: amber[700]
+        },
+        message: {
+            color: "#fff",
+            display: "flex",
+            alignItems: "center"
+        }
+    })
 
 type NotificationVariant = "success" | "info" | "warning" | "error"
 
@@ -61,32 +62,26 @@ interface NotificationSnackbarProps {
 
 export type NotificationProps = DefaultNotificationProps | AppErrorProps
 
-type Props = NotificationProps
-    & NotificationSnackbarProps
-    & WithStyles<typeof styles>
+type Props = NotificationProps & NotificationSnackbarProps & WithStyles<typeof styles>
 
 class NotificationSnackbarComponent extends React.PureComponent<Props> {
-
     public render() {
-        const {variant, message, timeout} = this.props.variant !== "appError" ? this.props
-            : {
-                ...this.props,
-                variant: "error",
-                message: `${this.props.appError.code} Error: ${this.props.appError.message}`,
-                timeout: undefined
-            }
+        const {variant, message, timeout} =
+            this.props.variant !== "appError"
+                ? this.props
+                : {
+                      ...this.props,
+                      variant: "error",
+                      message: `${this.props.appError.code} Error: ${this.props.appError.message}`,
+                      timeout: undefined
+                  }
 
         const {classes, open, handleClose, count} = this.props
 
         const Icon = variantIcon[variant]
         const closeButton = (
-            <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={handleClose}
-            >
-                <Close/>
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={handleClose}>
+                <Close />
             </IconButton>
         )
 
@@ -104,15 +99,18 @@ class NotificationSnackbarComponent extends React.PureComponent<Props> {
                     className={classes[variant]}
                     message={
                         <Typography align="center" className={classes.message}>
-                            <Icon className={classes.icon}/>
+                            <Icon className={classes.icon} />
                             {message}
-                        </Typography>}
-                    action={count ?
-                        <Badge badgeContent={count} color="primary">
-                            {closeButton}
-                        </Badge>
-                        :
-                        closeButton
+                        </Typography>
+                    }
+                    action={
+                        count ? (
+                            <Badge badgeContent={count} color="primary">
+                                {closeButton}
+                            </Badge>
+                        ) : (
+                            closeButton
+                        )
                     }
                 />
             </Snackbar>

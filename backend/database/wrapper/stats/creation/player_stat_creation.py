@@ -1,7 +1,6 @@
 from typing import List
 
 from carball.generated.api import player_pb2
-from sqlalchemy import func
 
 from backend.database.objects import PlayerGame
 from backend.database.utils.dynamic_field_manager import DynamicFieldResult, ProtoFieldResult, \

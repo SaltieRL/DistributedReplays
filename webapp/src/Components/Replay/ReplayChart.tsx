@@ -1,9 +1,9 @@
 import Grid from "@material-ui/core/Grid/Grid"
-import { ChartDataSets, ChartOptions } from "chart.js"
+import {ChartDataSets, ChartOptions} from "chart.js"
 import * as React from "react"
-import { HorizontalBar } from "react-chartjs-2"
-import { Replay } from "../../Models"
-import { getChartColors } from "../../Utils/Color"
+import {HorizontalBar} from "react-chartjs-2"
+import {Replay} from "../../Models"
+import {getChartColors} from "../../Utils/Color"
 
 interface Props {
     replay: Replay
@@ -27,7 +27,7 @@ export class ReplayChart extends React.PureComponent<Props> {
             .set("Shots", "shots")
         let showLegend = true
 
-        return Array.from(labelToKeys, (([label, key]) => {
+        return Array.from(labelToKeys, ([label, key]) => {
             const data = {
                 labels: [label],
                 datasets: this.getDatasets(this.props.replay, key)
@@ -36,7 +36,7 @@ export class ReplayChart extends React.PureComponent<Props> {
             let negativeValuesSum = 0
             data.datasets.forEach((dataset) => {
                 const playerData = dataset.data as number[]
-                playerData[0] < 0 ? negativeValuesSum += playerData[0] : positiveValuesSum += playerData[0]
+                playerData[0] < 0 ? (negativeValuesSum += playerData[0]) : (positiveValuesSum += playerData[0])
             })
 
             const xLimit = Math.round(Math.max(-negativeValuesSum, positiveValuesSum) * 1.2) + 1
@@ -57,7 +57,7 @@ export class ReplayChart extends React.PureComponent<Props> {
                     {element}
                 </Grid>
             )
-        }))
+        })
     }
 
     private getDatasets(replay: Replay, key: string): ChartDataSets[] {
@@ -79,32 +79,36 @@ export class ReplayChart extends React.PureComponent<Props> {
     private readonly getOptions = (showLegend: boolean, xLimit: number): ChartOptions => {
         return {
             scales: {
-                xAxes: [{
-                    stacked: true,
-                    gridLines: {
-                        zeroLineWidth: 2,
-                        zeroLineColor: "rgba(0, 0, 0, 0.3)",
-                        drawBorder: false
-                    },
-                    ticks: {
-                        min: -xLimit,
-                        max: xLimit,
-                        callback: (value: any) => value < 0 ? -parseInt(value, 10) : parseInt(value, 10)
-                    },
-                    afterFit: (scaleInstance) => {
-                        scaleInstance.width = 100
+                xAxes: [
+                    {
+                        stacked: true,
+                        gridLines: {
+                            zeroLineWidth: 2,
+                            zeroLineColor: "rgba(0, 0, 0, 0.3)",
+                            drawBorder: false
+                        },
+                        ticks: {
+                            min: -xLimit,
+                            max: xLimit,
+                            callback: (value: any) => (value < 0 ? -parseInt(value, 10) : parseInt(value, 10))
+                        },
+                        afterFit: (scaleInstance) => {
+                            scaleInstance.width = 100
+                        }
                     }
-                }],
-                yAxes: [{
-                    stacked: true,
-                    gridLines: {
-                        display: false
-                    },
-                    barThickness: 25,
-                    afterFit: (scaleInstance) => {
-                        scaleInstance.width = 50
+                ],
+                yAxes: [
+                    {
+                        stacked: true,
+                        gridLines: {
+                            display: false
+                        },
+                        barThickness: 25,
+                        afterFit: (scaleInstance) => {
+                            scaleInstance.width = 50
+                        }
                     }
-                }]
+                ]
             },
             legend: {
                 display: showLegend,
@@ -112,7 +116,9 @@ export class ReplayChart extends React.PureComponent<Props> {
             },
             tooltips: {
                 callbacks: {
-                    label: (tooltipItem, data) => data.datasets![tooltipItem.datasetIndex!].label + ": " +
+                    label: (tooltipItem, data) =>
+                        data.datasets![tooltipItem.datasetIndex!].label +
+                        ": " +
                         Math.abs(parseInt(tooltipItem.xLabel!.toString(), 10))
                 }
             },

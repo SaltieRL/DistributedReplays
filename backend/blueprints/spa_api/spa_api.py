@@ -19,9 +19,13 @@ from backend.blueprints.spa_api.service_layers.homepage.patreon import PatreonPr
 from backend.blueprints.spa_api.service_layers.homepage.recent import RecentReplays
 from backend.blueprints.spa_api.service_layers.homepage.twitch import TwitchStreams
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
+from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.blueprints.spa_api.service_layers.replay.heatmaps import ReplayHeatmaps
+from backend.blueprints.spa_api.service_layers.replay.kickoffs import Kickoffs
 from backend.blueprints.spa_api.service_layers.replay.predicted_ranks import PredictedRank
+from backend.blueprints.spa_api.service_layers.replay.savedgroups.groups import SavedGroup
 from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVisibility
+from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
     player_id, heatmap_query_params
@@ -29,12 +33,10 @@ from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
-from backend.utils.logger import ErrorLogger
-from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.tasks.update import update_self
 from backend.utils.file_manager import FileManager
+from backend.utils.logger import ErrorLogger
 from backend.utils.metrics import MetricsHandler, add_saved_replay
-from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.utils.safe_flask_globals import get_current_user_id
 
@@ -68,7 +70,7 @@ from backend.database.wrapper.chart.chart_data import convert_to_csv
 from backend.tasks import celery_tasks
 from backend.blueprints.spa_api.errors.errors import CalculatedError, NotYetImplemented, PlayerNotFound, \
     ReplayUploadError
-from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph, GlobalStatsChart
+from backend.blueprints.spa_api.service_layers.global_stats import GlobalStatsGraph
 from backend.blueprints.spa_api.service_layers.logged_in_user import LoggedInUser
 from backend.blueprints.spa_api.service_layers.player.play_style import PlayStyleResponse
 from backend.blueprints.spa_api.service_layers.player.play_style_progression import PlayStyleProgression
@@ -111,7 +113,7 @@ def better_jsonify(response: object):
 
     try:
         return jsonify(response)
-    except TypeError:
+    except TypeError as e:
         if isinstance(response, list):
             return jsonify([value.__dict__ for value in response])
         else:
@@ -136,16 +138,16 @@ def api_get_queue_length():
     return better_jsonify(QueueStatus.create_for_queues())
 
 
-@bp.route('/global/stats')
-def api_get_global_stats():
-    global_stats_graphs = GlobalStatsGraph.create()
+@bp.route('/global/stats_by_playlist')
+def api_get_global_stats_by_playlist():
+    global_stats_graphs = GlobalStatsGraph.create_by_playlist()
     return better_jsonify(global_stats_graphs)
 
 
-@bp.route('/global/graphs')
-def api_get_global_graphs():
-    global_stats_charts = GlobalStatsChart.create()
-    return better_jsonify(global_stats_charts)
+@bp.route('/global/stats_by_rank')
+def api_get_global_stats_by_rank():
+    global_stats_graphs = GlobalStatsGraph.create_by_rank()
+    return better_jsonify(global_stats_graphs)
 
 
 @bp.route('/global/leaderboards')
@@ -313,6 +315,12 @@ def api_get_replay_heatmaps(id_, query_params=None):
 def api_get_replay_boostmaps(id_):
     positions = Visualizations.create_from_id(id_)
     return jsonify(positions)
+
+
+@bp.route('replay/<id_>/kickoffs')
+def api_get_replay_kickoffs(id_: str):
+    kickoff_data = Kickoffs(id_).create_from_id()
+    return better_jsonify(kickoff_data)
 
 
 @bp.route('replay/group')
@@ -744,3 +752,60 @@ def api_admin_get_logs(query_params=None):
 @with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
 def api_admin_get_replay(query_params=None):
     return redirect(f"https://storage.googleapis.com/{FAILED_BUCKET}/{query_params['id']}.replay")
+
+
+# GROUPS
+
+@bp.route('/groups/add', methods=['POST'])
+@require_user
+def create_group():
+    payload = request.get_json(force=True)
+    if payload is None:
+        raise CalculatedError(403, "Malformed request")
+    name = payload['name'] if 'name' in payload else None
+    if 'parent' in payload:
+        parent = payload['parent']
+        if 'game' in payload:
+            entry = SavedGroup.add_game(parent, payload['game'], name)
+        elif 'games' in payload:
+            entry = [SavedGroup.add_game(parent, game, name) for game in payload['games']]
+        else:
+            entry = SavedGroup.add_subgroup(parent, name)
+    else:
+        entry = SavedGroup.create(name)
+    return jsonify({"uuid": entry})
+
+
+@bp.route('/groups/delete', methods=['POST'])
+@require_user
+def delete_group():
+    payload = request.get_json(force=True)
+    if payload is None:
+        raise CalculatedError(403, "Malformed request")
+    if 'id' in payload:
+        entry = SavedGroup.delete_entry(payload['id'])
+    elif 'ids' in payload:
+        entry = [SavedGroup.delete_entry(id_) for id_ in payload['ids']]
+    else:
+        raise CalculatedError(403, "Malformed request")
+    return jsonify({"uuid": entry})
+
+
+@bp.route('/groups')
+@with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=True),
+                                          QueryParam(name='limit', type_=int, optional=True),
+                                          QueryParam(name='id', type_=str, optional=True)])
+def get_group(query_params):
+    return better_jsonify(SavedGroup.get_info(query_params['id'] if 'id' in query_params else None))
+
+
+@bp.route('/groups/stats/players')
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def get_group_stats_player(query_params):
+    return better_jsonify(SavedGroup.get_stats(query_params['id']))
+
+
+@bp.route('/groups/stats/teams')
+@with_query_params(accepted_query_params=[QueryParam(name='id', type_=str, optional=False)])
+def get_group_stats_team(query_params):
+    return better_jsonify(SavedGroup.get_stats(query_params['id'], team=True))

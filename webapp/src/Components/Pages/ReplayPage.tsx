@@ -1,11 +1,11 @@
-import { Grid, withTheme, WithTheme } from "@material-ui/core"
+import {Grid, withTheme, WithTheme} from "@material-ui/core"
 import * as React from "react"
-import { Redirect, Route, RouteComponentProps, Switch } from "react-router-dom"
-import { Replay } from "../../Models"
-import { getExplanations, getReplay } from "../../Requests/Replay"
-import { ReplayView } from "../Replay/ReplayView"
-import { LoadableWrapper } from "../Shared/LoadableWrapper"
-import { BasePage } from "./BasePage"
+import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom"
+import {Replay} from "../../Models"
+import {getExplanations, getReplay} from "../../Requests/Replay"
+import {ReplayView} from "../Replay/ReplayView"
+import {LoadableWrapper} from "../Shared/LoadableWrapper"
+import {BasePage} from "./BasePage"
 
 interface RouteParams {
     id: string
@@ -29,27 +29,30 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
         const matchUrl = this.props.match.url
         const {replay, explanations} = this.state
 
-        const backgroundImage = this.props.theme.palette.type === "dark" ?
-            "/replay_page_background_black.jpg" : "/replay_page_background.jpg"
+        const backgroundImage =
+            this.props.theme.palette.type === "dark"
+                ? "/replay_page_background_black.jpg"
+                : "/replay_page_background.jpg"
         return (
             <BasePage backgroundImage={backgroundImage}>
-                <Grid container spacing={24} justify="center" style={{minHeight: "100%"}}>
+                <Grid container spacing={3} justify="center" style={{minHeight: "100%"}}>
                     <LoadableWrapper load={this.getReplay}>
-                        {replay &&
-                        <Switch>
-                            <Route
-                                exact path={matchUrl}
-                                render={() => (
-                                    <ReplayView
-                                        replay={replay}
-                                        explanations={explanations}
-                                        handleUpdateTags={this.handleUpdateTags}
-                                    />
-                                )}
-                            />
-                            <Redirect from="*" to={matchUrl}/>
-                        </Switch>
-                        }
+                        {replay && (
+                            <Switch>
+                                <Route
+                                    exact
+                                    path={matchUrl}
+                                    render={() => (
+                                        <ReplayView
+                                            replay={replay}
+                                            explanations={explanations}
+                                            handleUpdateTags={this.handleUpdateTags}
+                                        />
+                                    )}
+                                />
+                                <Redirect from="*" to={matchUrl} />
+                            </Switch>
+                        )}
                     </LoadableWrapper>
                 </Grid>
             </BasePage>
@@ -62,6 +65,8 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
             .catch((response) => {
                 if (response.code === 301) {
                     window.location.href = response.message
+                } else {
+                    throw response
                 }
             })
     }
@@ -75,4 +80,4 @@ class ReplayPageComponent extends React.PureComponent<Props, State> {
     }
 }
 
-export const ReplayPage = withTheme()(ReplayPageComponent)
+export const ReplayPage = withTheme(ReplayPageComponent)

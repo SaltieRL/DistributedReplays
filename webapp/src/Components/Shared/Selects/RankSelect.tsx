@@ -10,9 +10,28 @@ import {
 } from "@material-ui/core"
 import * as React from "react"
 
-const ranks = ["Unranked", "Bronze I", "Bronze II", "Bronze III", "Silver I", "Silver II", "Silver III", "Gold I",
-    "Gold II", "Gold III", "Platinum I", "Platinum II", "Platinum III", "Diamond I", "Diamond II",
-    "Diamond III", "Champion I", "Champion II", "Champion III", "Grand Champion"]
+const ranks = [
+    "Unranked",
+    "Bronze I",
+    "Bronze II",
+    "Bronze III",
+    "Silver I",
+    "Silver II",
+    "Silver III",
+    "Gold I",
+    "Gold II",
+    "Gold III",
+    "Platinum I",
+    "Platinum II",
+    "Platinum III",
+    "Diamond I",
+    "Diamond II",
+    "Diamond III",
+    "Champion I",
+    "Champion II",
+    "Champion III",
+    "Grand Champion"
+]
 
 const styles = createStyles({
     formControl: {
@@ -31,8 +50,7 @@ interface OwnProps {
     disabled?: boolean
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 class RankSelectComponent extends React.PureComponent<Props> {
     public render() {
@@ -42,7 +60,7 @@ class RankSelectComponent extends React.PureComponent<Props> {
                 <InputLabel>{inputLabel}</InputLabel>
                 <Select
                     value={selectedRank}
-                    onChange={handleChange}
+                    onChange={handleChange as React.ChangeEventHandler<{value: unknown}>}
                     autoWidth
                     disabled={disabled}
                 >
@@ -50,11 +68,10 @@ class RankSelectComponent extends React.PureComponent<Props> {
                         {noneLabel}
                     </MenuItem>
                     {ranks.map((rank, i) => (
-                            <MenuItem value={i} key={i}>
-                                {rank}
-                            </MenuItem>
-                        )
-                    )}
+                        <MenuItem value={i} key={i}>
+                            {rank}
+                        </MenuItem>
+                    ))}
                 </Select>
                 <FormHelperText>{helperText}</FormHelperText>
             </FormControl>

@@ -1,9 +1,9 @@
-import { faTags } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { createStyles, IconButton, Tooltip, WithStyles, withStyles } from "@material-ui/core"
+import {faTags} from "@fortawesome/free-solid-svg-icons"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {createStyles, IconButton, Tooltip, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
-import { Replay } from "../../../Models"
-import { TagDialog } from "./TagDialog"
+import {Replay} from "../../../Models"
+import {TagDialog} from "./TagDialog"
 
 const styles = createStyles({
     smallIconButton: {
@@ -20,8 +20,7 @@ interface OwnProps {
     small?: true
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 
 interface State {
     open: boolean
@@ -39,7 +38,7 @@ class TagDialogWrapperComponent extends React.PureComponent<Props, State> {
             <>
                 <Tooltip title="View/Edit Tags">
                     <IconButton onClick={this.handleOpen} className={small ? classes.smallIconButton : undefined}>
-                        <FontAwesomeIcon icon={faTags} className={small ? classes.smallIcon + " fa-xs" : undefined}/>
+                        <FontAwesomeIcon icon={faTags} className={small ? classes.smallIcon + " fa-xs" : undefined} />
                     </IconButton>
                 </Tooltip>
                 <TagDialog
@@ -60,7 +59,6 @@ class TagDialogWrapperComponent extends React.PureComponent<Props, State> {
     private readonly handleClose: React.ReactEventHandler<{}> = (event) => {
         this.setState({open: false})
         event.stopPropagation()
-
     }
 }
 

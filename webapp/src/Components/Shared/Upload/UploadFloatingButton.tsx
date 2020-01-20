@@ -1,5 +1,5 @@
-import { Fab, Tooltip } from "@material-ui/core"
-import { SvgIconProps } from "@material-ui/core/SvgIcon"
+import {Fab, Tooltip} from "@material-ui/core"
+import {SvgIconProps} from "@material-ui/core/SvgIcon"
 import * as React from "react"
 
 interface Props {
@@ -17,9 +17,8 @@ export class UploadFloatingButton extends React.PureComponent<Props> {
         }
         return (
             <Tooltip title="Upload replays">
-                <Fab color="secondary" aria-label="upload" style={buttonStyle}
-                        onClick={handleOpen}>
-                    <Icon/>
+                <Fab color="secondary" aria-label="upload" style={buttonStyle} onClick={handleOpen}>
+                    <Icon />
                 </Fab>
             </Tooltip>
         )

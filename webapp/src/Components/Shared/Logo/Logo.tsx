@@ -1,8 +1,8 @@
-import { Tooltip, WithTheme, withTheme } from "@material-ui/core"
+import {Tooltip, WithTheme, withTheme} from "@material-ui/core"
 import * as React from "react"
-import { Link } from "react-router-dom"
-import LightLogoImage from "./calculated-logo-birthday-light.png"
-import LogoImage from "./calculated-logo-birthday.png"
+import {Link} from "react-router-dom"
+import LightLogoImage from "./calculated-logo-light.png"
+import LogoImage from "./calculated-logo.png"
 
 interface OwnProps {
     imgStyle?: React.CSSProperties
@@ -16,11 +16,11 @@ class LogoComponent extends React.PureComponent<Props> {
         return (
             <Link to="/">
                 <Tooltip title={"calculated.gg is 1 year old!"}>
-                    <img alt="calculated.gg logo" src={logoImage} style={this.props.imgStyle}/>
+                    <img alt="calculated.gg logo" src={logoImage} style={this.props.imgStyle} />
                 </Tooltip>
             </Link>
         )
     }
 }
 
-export const Logo = withTheme()(LogoComponent)
+export const Logo = withTheme(LogoComponent)

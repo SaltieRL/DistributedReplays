@@ -210,7 +210,7 @@ def api_v1_get_playergames_by_rank(session=None):
         days = 3 * 30
     builder = QueryFilterBuilder().with_stat_query([PlayerGame]).with_relative_start_time(days)
     QueryFilterBuilder.apply_arguments_to_query(builder, request.args)
-    games = builder.build_query(session).order_by(func.random())[:1000]
+    games = builder.build_query(session).order_by(func.random())[:100]
     columns = [c.name for c in games[0].__table__.columns]
     data = {
         'data': [[getattr(g, c.name) for c in g.__table__.columns] for g in games],

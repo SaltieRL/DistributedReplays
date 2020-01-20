@@ -1,14 +1,13 @@
-import { Card, CardContent, CardMedia, createStyles, Typography, WithStyles, withStyles } from "@material-ui/core"
+import {Card, CardContent, CardMedia, createStyles, Typography, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
-import { ItemFull } from "../../Models/ItemStats"
+import {ItemFull} from "../../Models/ItemStats"
 
 interface OwnProps {
     item: ItemFull
     paint?: number
 }
 
-type Props = OwnProps
-    & WithStyles<typeof styles>
+type Props = OwnProps & WithStyles<typeof styles>
 const styles = createStyles({
     content: {
         width: "calc(100% - 128px)"
@@ -50,67 +49,78 @@ const styles = createStyles({
 //     12: "Titanium White",
 //     13: "Saffron"
 // }
-const rarities = [{
-    start: "#000000",
-    end: "#000000",
-    quantitybg: "#000000",
-    rlgstart: "rgba(0,0,0,0)",
-    rlgend: "rgba(0,0,0,0)"
-}, {
-    start: "#030102",
-    end: "#325765",
-    quantitybg: "#337387",
-    rlgstart: "rgba(125,217,253,0)",
-    rlgend: "rgba(125,217,253,1)"
-}, {
-    start: "#030102",
-    end: "#2b6146",
-    quantitybg: "#00855c",
-    rlgstart: "rgba(107,241,174,0)",
-    rlgend: "rgba(107,241,174,1)"
-}, {
-    start: "#030102",
-    end: "#623016",
-    quantitybg: "#883d00",
-    rlgstart: "rgba(247,121,57,0)",
-    rlgend: "rgba(247,121,57,1)"
-}, {
-    start: "#030102",
-    end: "#2f3d5e",
-    quantitybg: "#3c4c80",
-    rlgstart: "rgba(116,151,235,0)",
-    rlgend: "rgba(116,151,235,1)"
-}, {
-    start: "#030102",
-    end: "#3f3164",
-    quantitybg: "#552b84",
-    rlgstart: "rgba(149,107,242,0)",
-    rlgend: "rgba(149,107,242,1)"
-}, {
-    start: "#030102",
-    end: "#3f3164",
-    quantitybg: "#5b3889",
-    rlgstart: "rgba(158,124,252,0)",
-    rlgend: "rgba(158,124,252,1)"
-}, {
-    start: "#030102",
-    end: "#5a2420",
-    quantitybg: "#832925",
-    rlgstart: "rgba(227,90,82,0)",
-    rlgend: "rgba(227,90,82,1)"
-}, {
-    start: "#030102",
-    end: "#5e582b",
-    quantitybg: "#7e772d",
-    rlgstart: "rgba(236,219,108,0)",
-    rlgend: "rgba(236,219,108,1)"
-}, {
-    start: "#030102",
-    end: "#660066",
-    quantitybg: "#880088",
-    rlgstart: "rgba(255,0,255,0)",
-    rlgend: "rgba(255,0,255,1)"
-}]
+const rarities = [
+    {
+        start: "#000000",
+        end: "#000000",
+        quantitybg: "#000000",
+        rlgstart: "rgba(0,0,0,0)",
+        rlgend: "rgba(0,0,0,0)"
+    },
+    {
+        start: "#030102",
+        end: "#325765",
+        quantitybg: "#337387",
+        rlgstart: "rgba(125,217,253,0)",
+        rlgend: "rgba(125,217,253,1)"
+    },
+    {
+        start: "#030102",
+        end: "#2b6146",
+        quantitybg: "#00855c",
+        rlgstart: "rgba(107,241,174,0)",
+        rlgend: "rgba(107,241,174,1)"
+    },
+    {
+        start: "#030102",
+        end: "#623016",
+        quantitybg: "#883d00",
+        rlgstart: "rgba(247,121,57,0)",
+        rlgend: "rgba(247,121,57,1)"
+    },
+    {
+        start: "#030102",
+        end: "#2f3d5e",
+        quantitybg: "#3c4c80",
+        rlgstart: "rgba(116,151,235,0)",
+        rlgend: "rgba(116,151,235,1)"
+    },
+    {
+        start: "#030102",
+        end: "#3f3164",
+        quantitybg: "#552b84",
+        rlgstart: "rgba(149,107,242,0)",
+        rlgend: "rgba(149,107,242,1)"
+    },
+    {
+        start: "#030102",
+        end: "#3f3164",
+        quantitybg: "#5b3889",
+        rlgstart: "rgba(158,124,252,0)",
+        rlgend: "rgba(158,124,252,1)"
+    },
+    {
+        start: "#030102",
+        end: "#5a2420",
+        quantitybg: "#832925",
+        rlgstart: "rgba(227,90,82,0)",
+        rlgend: "rgba(227,90,82,1)"
+    },
+    {
+        start: "#030102",
+        end: "#5e582b",
+        quantitybg: "#7e772d",
+        rlgstart: "rgba(236,219,108,0)",
+        rlgend: "rgba(236,219,108,1)"
+    },
+    {
+        start: "#030102",
+        end: "#660066",
+        quantitybg: "#880088",
+        rlgstart: "rgba(255,0,255,0)",
+        rlgend: "rgba(255,0,255,1)"
+    }
+]
 
 const CATEGORIES = [
     "Body",
@@ -146,14 +156,13 @@ export class ItemDisplayComponent extends React.PureComponent<Props> {
         const {item, classes} = this.props
         return (
             <Card className={classes.itemCard}>
-                <CardMedia style={{flex: "0 0 128px"}}
-                           image={item.image}/>
+                <CardMedia style={{flex: "0 0 128px"}} image={item.image} />
                 <CardContent className={classes.content}>
                     <Typography variant="h4">
                         {item.name}
-                        {item.parentitem && (<span style={{textTransform: "capitalize"}}>
-                                {` (${item.parentitem})`}
-                        </span>)}
+                        {item.parentitem && (
+                            <span style={{textTransform: "capitalize"}}>{` (${item.parentitem})`}</span>
+                        )}
                     </Typography>
                     <Typography style={{color: rarities[item.rarity].rlgend}} variant="subtitle1">
                         {RARITY_NAMES[item.rarity - 1]} {CATEGORIES[item.category - 1]}

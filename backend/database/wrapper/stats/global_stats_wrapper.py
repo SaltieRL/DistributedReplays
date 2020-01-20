@@ -113,7 +113,7 @@ class GlobalStatWrapper(SharedStatsWrapper):
 
             # Check to see if we have redis available (it usually is)
             if redis is not None:
-                stat_string = redis.get('global_stats')
+                stat_string = redis.get('global_stats_by_rank')
                 # Check to see if the key exists and if so load it
                 if stat_string is not None:
                     stats_dict = json.loads(stat_string)

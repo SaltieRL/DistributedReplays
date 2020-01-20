@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import { createStyles, Toolbar, WithStyles, withStyles, withWidth } from "@material-ui/core"
-import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import {createStyles, Toolbar, WithStyles, withStyles, withWidth} from "@material-ui/core"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 
 const styles = createStyles({
     content: {
@@ -20,8 +20,14 @@ class PageContentComponent extends React.PureComponent<Props> {
         const aboveSm = isWidthUp("sm", this.props.width)
         return (
             <div className={classes.content}>
-                <Toolbar/>
-                <div style={{padding: aboveSm ? 20 : 3, minHeight: "100%", overflowX: aboveSm ? undefined : "hidden"}}>
+                <Toolbar />
+                <div
+                    style={{
+                        padding: aboveSm ? 20 : 3,
+                        overflowX: aboveSm ? undefined : "hidden",
+                        paddingBottom: 40
+                    }}
+                >
                     {this.props.children}
                 </div>
             </div>

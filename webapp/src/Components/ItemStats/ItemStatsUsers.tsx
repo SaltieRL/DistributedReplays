@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, Typography } from "@material-ui/core"
+import {Card, CardContent, CardHeader, Typography} from "@material-ui/core"
 import TrendingDown from "@material-ui/icons/TrendingDown"
 import TrendingUp from "@material-ui/icons/TrendingUp"
 import * as React from "react"
-import { ItemFull, ItemUsage } from "../../Models/ItemStats"
-import { roundNumberToMaxDP } from "../../Utils/String"
+import {ItemFull, ItemUsage} from "../../Models/ItemStats"
+import {roundNumberToMaxDP} from "../../Utils/String"
 
 interface Props {
     item: ItemFull
@@ -11,7 +11,6 @@ interface Props {
 }
 
 export class ItemStatsUsers extends React.PureComponent<Props> {
-
     public render() {
         const {itemUsage} = this.props
         const dataPoint = itemUsage.data[itemUsage.data.length - 1]
@@ -19,17 +18,15 @@ export class ItemStatsUsers extends React.PureComponent<Props> {
         if (dataPoint === undefined) {
             return (
                 <Card>
-                    <CardHeader title={"Current users"}/>
+                    <CardHeader title={"Current users"} />
                     <CardContent style={{textAlign: "center"}}>
-                        <Typography variant="h1">
-                            0%
-                        </Typography>
+                        <Typography variant="h1">0%</Typography>
                         <Typography variant="subtitle1"> of players</Typography>
                     </CardContent>
                 </Card>
             )
         }
-        const percentage = dataPoint.count / dataPoint.total * 100
+        const percentage = (dataPoint.count / dataPoint.total) * 100
         let percentageString = percentage.toString()
         if (percentage > 1) {
             percentageString = roundNumberToMaxDP(percentage, 1)
@@ -41,29 +38,25 @@ export class ItemStatsUsers extends React.PureComponent<Props> {
         let changeComponent
         let icon
         if (previousDataPoint !== undefined) {
-            const previousPercentage = previousDataPoint.count / previousDataPoint.total * 100
-            icon = (percentage > previousPercentage) ?
-                (
+            const previousPercentage = (previousDataPoint.count / previousDataPoint.total) * 100
+            icon =
+                percentage > previousPercentage ? (
                     <span style={{color: "#00d300"}}>
-                    <TrendingUp fontSize={"large"}/>
-                </span>
-                )
-                :
-                (
+                        <TrendingUp fontSize={"large"} />
+                    </span>
+                ) : (
                     <span style={{color: "#d20000"}}>
-                    <TrendingDown fontSize={"large"}/>
-                </span>
+                        <TrendingDown fontSize={"large"} />
+                    </span>
                 )
 
-            const change = (percentage - previousPercentage)
-            changeComponent = (percentage > previousPercentage) ?
-                (
+            const change = percentage - previousPercentage
+            changeComponent =
+                percentage > previousPercentage ? (
                     <Typography variant="h5" style={{color: "#00d300"}}>
                         +{roundNumberToMaxDP(change, 2)}%
                     </Typography>
-                )
-                :
-                (
+                ) : (
                     <Typography variant="h5" style={{color: "#d20000"}}>
                         {roundNumberToMaxDP(change, 2)}%
                     </Typography>
@@ -71,10 +64,11 @@ export class ItemStatsUsers extends React.PureComponent<Props> {
         }
         return (
             <Card>
-                <CardHeader title={"Current users"}/>
+                <CardHeader title={"Current users"} />
                 <CardContent style={{textAlign: "center"}}>
                     <Typography variant="h1">
-                        {icon}{percentageString}%
+                        {icon}
+                        {percentageString}%
                     </Typography>
                     <Typography variant="subtitle1"> of players</Typography>
                     {changeComponent}

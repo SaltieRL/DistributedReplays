@@ -1,41 +1,61 @@
-import { createStyles, WithStyles, withStyles } from "@material-ui/core"
+import {createStyles, WithStyles, withStyles} from "@material-ui/core"
 import * as React from "react"
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom"
-import { AppListener } from "./AppListener"
-import { AboutPage } from "./Components/Pages/AboutPage"
-import { AdminPage } from "./Components/Pages/AdminPage"
-import { DocumentationPage } from "./Components/Pages/DocumentationPage"
-import { ExplanationsPage } from "./Components/Pages/ExplanationsPage"
-import { GlobalStatsPage } from "./Components/Pages/GlobalStatsPage"
-import { HomePage } from "./Components/Pages/HomePage"
-import { ItemsStatsPage } from "./Components/Pages/ItemStatsPage"
-import { LeaderboardsPage } from "./Components/Pages/LeaderboardsPage"
-import { PlayerComparePage } from "./Components/Pages/PlayerComparePage"
-import { PlayerPage } from "./Components/Pages/PlayerPage"
-import { PluginsPage } from "./Components/Pages/PluginsPage"
-import { PrivacyPolicyPage } from "./Components/Pages/PrivacyPolicyPage"
-import { ReplayPage } from "./Components/Pages/ReplayPage"
-import { ReplaysGroupPage } from "./Components/Pages/ReplaysGroupPage"
-import { ReplaysSearchPage } from "./Components/Pages/ReplaysSearchPage"
-import { StatusPage } from "./Components/Pages/StatusPage"
-import { TagsPage } from "./Components/Pages/TagsPage"
-import { TrainingPackPage } from "./Components/Pages/TrainingPackPage"
-import { UploadPage } from "./Components/Pages/UploadPage"
-import { Notifications } from "./Components/Shared/Notification/Notifications"
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom"
+
+import {AppListener} from "./AppListener"
+import {codeSplit} from "./CodeSplitComponent"
+import {HomePage} from "./Components/Pages/HomePage"
+import {PlayerPage} from "./Components/Pages/PlayerPage"
+import {Notifications} from "./Components/Shared/Notification/Notifications"
+
 import {
-    ABOUT_LINK, ADMIN_LINK, DOCUMENTATION_LINK,
+    ABOUT_LINK,
+    ADMIN_LINK,
+    DOCUMENTATION_LINK,
     EXPLANATIONS_LINK,
-    GLOBAL_STATS_LINK, ITEMS_LINK, LEADERBOARDS_LINK,
+    GLOBAL_STATS_LINK,
+    ITEMS_LINK,
+    LEADERBOARDS_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     PLAYER_PAGE_LINK,
-    PLUGINS_LINK, PRIVACY_POLICY_LINK,
+    PLUGINS_LINK,
+    PRIVACY_POLICY_LINK,
     REPLAY_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
-    STATUS_PAGE_LINK, TAGS_PAGE_LINK,
+    SAVED_REPLAYS_GROUP_PAGE_LINK,
+    SAVED_REPLAYS_MY_GROUPS_PAGE_LINK,
+    STATUS_PAGE_LINK,
+    TAGS_PAGE_LINK,
     TRAINING_LINK,
     UPLOAD_LINK
 } from "./Globals"
+
+const CodeSplitAboutPage = codeSplit(() => import("./Components/Pages/AboutPage"), "AboutPage")
+const CodeSplitAdminPage = codeSplit(() => import("./Components/Pages/AdminPage"), "AdminPage")
+const CodeSplitDocumentationPage = codeSplit(() => import("./Components/Pages/DocumentationPage"), "DocumentationPage")
+const CodeSplitExplanationsPage = codeSplit(() => import("./Components/Pages/ExplanationsPage"), "ExplanationsPage")
+const CodeSplitGlobalStatsPage = codeSplit(() => import("./Components/Pages/GlobalStatsPage"), "GlobalStatsPage")
+const CodeSplitItemsStatsPage = codeSplit(() => import("./Components/Pages/ItemStatsPage"), "ItemStatsPage")
+const CodeSplitLeaderboardsPage = codeSplit(() => import("./Components/Pages/LeaderboardsPage"), "LeaderboardsPage")
+const CodeSplitPlayerComparePage = codeSplit(() => import("./Components/Pages/PlayerComparePage"), "PlayerComparePage")
+const CodeSplitPluginsPage = codeSplit(() => import("./Components/Pages/PluginsPage"), "PluginsPage")
+const CodeSplitPrivacyPolicyPage = codeSplit(() => import("./Components/Pages/PrivacyPolicyPage"), "PrivacyPolicyPage")
+const CodeSplitReplayPage = codeSplit(() => import("./Components/Pages/ReplayPage"), "ReplayPage")
+const CodeSplitReplaysGroupPage = codeSplit(() => import("./Components/Pages/ReplaysGroupPage"), "ReplaysGroupPage")
+const CodeSplitSavedReplaysGroupPage = codeSplit(
+    () => import("./Components/Pages/SavedReplaysGroupPage"),
+    "SavedReplaysGroupPage"
+)
+const CodeSplitSavedReplaysMyGroupsPage = codeSplit(
+    () => import("./Components/Pages/SavedReplaysMyGroupsPage"),
+    "SavedReplaysMyGroupsPage"
+)
+const CodeSplitReplaysSearchPage = codeSplit(() => import("./Components/Pages/ReplaysSearchPage"), "ReplaysSearchPage")
+const CodeSplitStatusPage = codeSplit(() => import("./Components/Pages/StatusPage"), "StatusPage")
+const CodeSplitTagsPage = codeSplit(() => import("./Components/Pages/TagsPage"), "TagsPage")
+const CodeSplitTrainingPackPage = codeSplit(() => import("./Components/Pages/TrainingPackPage"), "TrainingPackPage")
+const CodeSplitUploadPage = codeSplit(() => import("./Components/Pages/UploadPage"), "UploadPage")
 
 const styles = createStyles({
     App: {
@@ -56,33 +76,41 @@ class AppComponent extends React.Component<Props> {
                     <AppListener>
                         <Switch>
                             {/*Migrate old paths*/}
-                            <Redirect exact from={"/players/overview/:id"} to={PLAYER_PAGE_LINK(":id")}/>
-                            <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")}/>
-                            <Route exact path="/" component={HomePage}/>
-                            <Route path={ADMIN_LINK} component={AdminPage}/>
-                            <Route path={ITEMS_LINK} component={ItemsStatsPage}/>
-                            <Route path={TRAINING_LINK} component={TrainingPackPage}/>
-                            <Route path={LEADERBOARDS_LINK} component={LeaderboardsPage}/>
-                            <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage}/>
-                            <Route path={PLAYER_COMPARE_PAGE_LINK} component={PlayerComparePage}/>
-                            <Route path={REPLAY_PAGE_LINK(":id")} component={ReplayPage}/>
-                            <Route path={REPLAYS_GROUP_PAGE_LINK} component={ReplaysGroupPage}/>
-                            <Route path={REPLAYS_SEARCH_PAGE_LINK()} component={ReplaysSearchPage}/>
-                            <Route exact path={ABOUT_LINK} component={AboutPage}/>
-                            <Route exact path={UPLOAD_LINK} component={UploadPage}/>
-                            <Route exact path={GLOBAL_STATS_LINK} component={GlobalStatsPage}/>
-                            <Route exact path={PLUGINS_LINK} component={PluginsPage}/>
-                            <Route exact path={STATUS_PAGE_LINK} component={StatusPage}/>
-                            <Route exact path={EXPLANATIONS_LINK} component={ExplanationsPage}/>
-                            <Route exact path={DOCUMENTATION_LINK} component={DocumentationPage}/>
-                            <Route exact path={PRIVACY_POLICY_LINK} component={PrivacyPolicyPage}/>
-                            <Route exact path={TAGS_PAGE_LINK} component={TagsPage}/>
+                            <Redirect exact from={"/players/overview/:id"} to={PLAYER_PAGE_LINK(":id")} />
+                            <Redirect exact from={"/replays/parsed/view/:id"} to={REPLAY_PAGE_LINK(":id")} />
+                            <Route exact path="/" component={HomePage} />
+                            <Route path={ADMIN_LINK} component={CodeSplitAdminPage} />
+                            <Route path={ITEMS_LINK} component={CodeSplitItemsStatsPage} />
+                            <Route path={TRAINING_LINK} component={CodeSplitTrainingPackPage} />
+                            <Route path={LEADERBOARDS_LINK} component={CodeSplitLeaderboardsPage} />
+                            <Route path={PLAYER_PAGE_LINK(":id")} component={PlayerPage} />
+                            <Route path={PLAYER_COMPARE_PAGE_LINK} component={CodeSplitPlayerComparePage} />
+                            <Route path={REPLAY_PAGE_LINK(":id")} component={CodeSplitReplayPage} />
+                            <Route path={REPLAYS_GROUP_PAGE_LINK} component={CodeSplitReplaysGroupPage} />
+                            <Route
+                                path={SAVED_REPLAYS_GROUP_PAGE_LINK(":id")}
+                                component={CodeSplitSavedReplaysGroupPage}
+                            />
+                            <Route
+                                path={SAVED_REPLAYS_MY_GROUPS_PAGE_LINK}
+                                component={CodeSplitSavedReplaysMyGroupsPage}
+                            />
+                            <Route path={REPLAYS_SEARCH_PAGE_LINK()} component={CodeSplitReplaysSearchPage} />
+                            <Route exact path={ABOUT_LINK} component={CodeSplitAboutPage} />
+                            <Route exact path={UPLOAD_LINK} component={CodeSplitUploadPage} />
+                            <Route exact path={GLOBAL_STATS_LINK} component={CodeSplitGlobalStatsPage} />
+                            <Route exact path={PLUGINS_LINK} component={CodeSplitPluginsPage} />
+                            <Route exact path={STATUS_PAGE_LINK} component={CodeSplitStatusPage} />
+                            <Route exact path={EXPLANATIONS_LINK} component={CodeSplitExplanationsPage} />
+                            <Route exact path={DOCUMENTATION_LINK} component={CodeSplitDocumentationPage} />
+                            <Route exact path={PRIVACY_POLICY_LINK} component={CodeSplitPrivacyPolicyPage} />
+                            <Route exact path={TAGS_PAGE_LINK} component={CodeSplitTagsPage} />
                             {/*Redirect unknowns to root*/}
-                            <Redirect from="*" to="/"/>
+                            <Redirect from="*" to="/" />
                         </Switch>
                     </AppListener>
                 </BrowserRouter>
-                <Notifications/>
+                <Notifications />
             </div>
         )
     }

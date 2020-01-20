@@ -1,5 +1,5 @@
 import moment from "moment"
-import { getUploadStatuses } from "../../../Requests/Global"
+import {getUploadStatuses} from "../../../Requests/Global"
 
 const SESSION_STORAGE_UPLOADS_KEY = "uploadTasks"
 
@@ -18,19 +18,21 @@ interface StoredUploadTask {
 const stringifyUploadTasks = (uploadTasks: (UploadTask | StoredUploadTask)[]) => {
     return JSON.stringify(
         uploadTasks.map((uploadTask) => {
-            return moment.isMoment(uploadTask.dateCreated) ? (
-                {
-                    ...uploadTask,
-                    dateCreated: uploadTask.dateCreated.unix()
-                }
-            ) : uploadTask
+            return moment.isMoment(uploadTask.dateCreated)
+                ? {
+                      ...uploadTask,
+                      dateCreated: uploadTask.dateCreated.unix()
+                  }
+                : uploadTask
         })
     )
 }
 
 export const getPreviousUploads = (): UploadTask[] => {
-    return JSON.parse(sessionStorage.getItem(SESSION_STORAGE_UPLOADS_KEY) || "[]")
-        .map((jsonUploadTask: any) => ({...jsonUploadTask, dateCreated: moment.unix(jsonUploadTask.dateCreated)}))
+    return JSON.parse(sessionStorage.getItem(SESSION_STORAGE_UPLOADS_KEY) || "[]").map((jsonUploadTask: any) => ({
+        ...jsonUploadTask,
+        dateCreated: moment.unix(jsonUploadTask.dateCreated)
+    }))
 }
 
 export const getCurrentUploadStatuses = (): Promise<UploadStatus[]> => {
@@ -41,19 +43,15 @@ export const getCurrentUploadStatuses = (): Promise<UploadStatus[]> => {
     return getUploadStatuses(currentTaskIds)
 }
 
-const createNewUploadTask = (taskId: string): UploadTask => (
-    {
-        id: taskId,
-        dateCreated: moment()
-    }
-)
+const createNewUploadTask = (taskId: string): UploadTask => ({
+    id: taskId,
+    dateCreated: moment()
+})
 
 export const addTaskIds = (taskIds: string[]) => {
     const currentTasks: StoredUploadTask[] = JSON.parse(sessionStorage.getItem(SESSION_STORAGE_UPLOADS_KEY) || "[]")
-    sessionStorage.setItem(SESSION_STORAGE_UPLOADS_KEY, stringifyUploadTasks(
-        [
-            ...currentTasks,
-            ...taskIds.map(createNewUploadTask)
-        ]
-    ))
+    sessionStorage.setItem(
+        SESSION_STORAGE_UPLOADS_KEY,
+        stringifyUploadTasks([...currentTasks, ...taskIds.map(createNewUploadTask)])
+    )
 }

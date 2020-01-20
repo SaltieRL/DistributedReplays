@@ -1,7 +1,7 @@
-import { TablePagination } from "@material-ui/core"
+import {TablePagination} from "@material-ui/core"
 import * as qs from "qs"
 import * as React from "react"
-import { RouteComponentProps, withRouter } from "react-router"
+import {RouteComponentProps, withRouter} from "react-router"
 
 interface OwnProps {
     totalCount: number
@@ -9,8 +9,7 @@ interface OwnProps {
     limit: number
 }
 
-type Props = OwnProps
-    & RouteComponentProps<{}>
+type Props = OwnProps & RouteComponentProps<{}>
 
 class ReplaysSearchTablePaginationComponent extends React.PureComponent<Props> {
     public render() {
@@ -28,10 +27,7 @@ class ReplaysSearchTablePaginationComponent extends React.PureComponent<Props> {
     }
 
     private readonly handleChangePage = (event: unknown, page: number) => {
-        const currentQueryParams = qs.parse(
-            this.props.location.search,
-            {ignoreQueryPrefix: true}
-        )
+        const currentQueryParams = qs.parse(this.props.location.search, {ignoreQueryPrefix: true})
         this.props.history.replace({
             search: qs.stringify({
                 ...currentQueryParams,
@@ -40,20 +36,18 @@ class ReplaysSearchTablePaginationComponent extends React.PureComponent<Props> {
         })
     }
 
-    private readonly handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> =
-        (event) => {
-            const currentQueryParams = qs.parse(
-                this.props.location.search,
-                {ignoreQueryPrefix: true}
-            )
-            this.props.history.replace({
-                search: qs.stringify({
-                    ...currentQueryParams,
-                    page: 0,
-                    limit: Number(event.target.value)
-                })
+    private readonly handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = (
+        event
+    ) => {
+        const currentQueryParams = qs.parse(this.props.location.search, {ignoreQueryPrefix: true})
+        this.props.history.replace({
+            search: qs.stringify({
+                ...currentQueryParams,
+                page: 0,
+                limit: Number(event.target.value)
             })
-        }
+        })
+    }
 }
 
 export const ReplaysSearchTablePagination = withRouter(ReplaysSearchTablePaginationComponent)

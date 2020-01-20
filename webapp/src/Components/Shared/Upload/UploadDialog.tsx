@@ -1,11 +1,11 @@
-import { Dialog, DialogTitle, Divider } from "@material-ui/core"
+import {Dialog, DialogTitle, Divider} from "@material-ui/core"
 import * as React from "react"
-import { PreviousUploads } from "./PreviousUploads"
-import { UploadForm } from "./UploadForm"
-import { UploadTab, UploadTabs } from "./UploadTabs"
+import {PreviousUploads} from "./PreviousUploads"
+import {UploadForm} from "./UploadForm"
+import {UploadTab, UploadTabs} from "./UploadTabs"
 
 interface Props {
-    open: boolean,
+    open: boolean
     handleClickOutside: () => void
 }
 
@@ -21,22 +21,18 @@ export class UploadDialog extends React.PureComponent<Props, State> {
 
     public render() {
         return (
-            <Dialog open={this.props.open}
-                    onClose={this.props.handleClickOutside}
-                    scroll="paper"
-                    PaperProps={
-                        {style: {width: 600, maxWidth: "90vw"}}}>
+            <Dialog
+                open={this.props.open}
+                onClose={this.props.handleClickOutside}
+                scroll="paper"
+                PaperProps={{style: {width: 600, maxWidth: "90vw"}}}
+            >
                 <DialogTitle style={{padding: 0}}>
-                    <UploadTabs selectedTab={this.state.selectedTab} handleChange={this.handleTabChange}/>
-                    <Divider/>
+                    <UploadTabs selectedTab={this.state.selectedTab} handleChange={this.handleTabChange} />
+                    <Divider />
                 </DialogTitle>
-                {this.state.selectedTab === "Upload Replays" ?
-                    <UploadForm/>
-                    :
-                    <PreviousUploads/>
-                }
+                {this.state.selectedTab === "Upload Replays" ? <UploadForm /> : <PreviousUploads />}
             </Dialog>
-
         )
     }
 

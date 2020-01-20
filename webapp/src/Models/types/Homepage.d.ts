@@ -1,4 +1,4 @@
-import { CompactReplay } from ".."
+import {CompactReplay} from ".."
 
 interface Stream {
     name: string

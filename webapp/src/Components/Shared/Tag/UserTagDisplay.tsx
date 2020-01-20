@@ -1,8 +1,8 @@
-import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText } from "@material-ui/core"
+import {IconButton, List, ListItem, ListItemSecondaryAction, ListItemText} from "@material-ui/core"
 import Delete from "@material-ui/icons/Delete"
 import * as React from "react"
-import { withNotifications, WithNotifications } from "../Notification/NotificationUtils"
-import { CreateTagDialog } from "./CreateTagDialog"
+import {withNotifications, WithNotifications} from "../Notification/NotificationUtils"
+import {CreateTagDialog} from "./CreateTagDialog"
 
 interface OwnProps {
     tags: Tag[]
@@ -18,23 +18,17 @@ class UserTagDisplayComponent extends React.PureComponent<Props> {
             <>
                 <List>
                     {this.props.tags.map((tag) => (
-                        <ListItem
-                            key={tag.name}
-                            button
-                        >
-                            <ListItemText
-                                primary={tag.name}
-                                primaryTypographyProps={{noWrap: true}}
-                            />
+                        <ListItem key={tag.name} button>
+                            <ListItemText primary={tag.name} primaryTypographyProps={{noWrap: true}} />
                             <ListItemSecondaryAction>
                                 <IconButton onClick={this.props.deleteTag(tag)}>
-                                    <Delete/>
+                                    <Delete />
                                 </IconButton>
                             </ListItemSecondaryAction>
                         </ListItem>
                     ))}
                 </List>
-                <CreateTagDialog onCreate={this.props.handleCreate}/>
+                <CreateTagDialog onCreate={this.props.handleCreate} />
             </>
         )
     }

@@ -1,9 +1,9 @@
-import { Grid, TablePagination } from "@material-ui/core"
+import {Grid, TablePagination} from "@material-ui/core"
 import * as React from "react"
-import { MatchHistoryResponse, Replay } from "../../../../Models"
-import { getMatchHistory } from "../../../../Requests/Player/getMatchHistory"
-import { LoadableWrapper } from "../../../Shared/LoadableWrapper"
-import { OverviewMatchHistoryRow } from "./OverviewMatchHistoryRow"
+import {MatchHistoryResponse, Replay} from "../../../../Models"
+import {getMatchHistory} from "../../../../Requests/Player/getMatchHistory"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
+import {OverviewMatchHistoryRow} from "./OverviewMatchHistoryRow"
 
 interface Props {
     player: Player
@@ -20,6 +20,7 @@ interface State {
 export class OverviewMatchHistory extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
+
         this.state = {
             reloadSignal: false,
             page: 0,
@@ -32,7 +33,7 @@ export class OverviewMatchHistory extends React.PureComponent<Props, State> {
             this.triggerReload()
             return
         }
-        if ((prevState.page !== this.state.page) || (prevState.limit !== this.state.limit)) {
+        if (prevState.page !== this.state.page || prevState.limit !== this.state.limit) {
             this.triggerReload()
             return
         }
@@ -44,13 +45,14 @@ export class OverviewMatchHistory extends React.PureComponent<Props, State> {
                 <Grid item xs={12}>
                     <LoadableWrapper load={this.getPlayerMatchHistory} reloadSignal={this.state.reloadSignal}>
                         {this.state.matchHistory &&
-                        this.state.matchHistory.replays.map((replay: Replay) =>
-                            <OverviewMatchHistoryRow
-                                key={replay.id}
-                                replay={replay}
-                                player={this.props.player}
-                                useBoxScore={this.props.useBoxScore}/>)
-                        }
+                            this.state.matchHistory.replays.map((replay: Replay) => (
+                                <OverviewMatchHistoryRow
+                                    key={replay.id}
+                                    replay={replay}
+                                    player={this.props.player}
+                                    useBoxScore={this.props.useBoxScore}
+                                />
+                            ))}
                     </LoadableWrapper>
                 </Grid>
                 <Grid item xs={12}>
@@ -69,8 +71,9 @@ export class OverviewMatchHistory extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerMatchHistory = (): Promise<void> => {
-        return getMatchHistory(this.props.player.id, this.state.page, this.state.limit)
-            .then((matchHistory) => this.setState({matchHistory}))
+        return getMatchHistory(this.props.player.id, this.state.page, this.state.limit).then((matchHistory) =>
+            this.setState({matchHistory})
+        )
     }
 
     private readonly triggerReload = () => {
@@ -81,8 +84,9 @@ export class OverviewMatchHistory extends React.PureComponent<Props, State> {
         this.setState({page})
     }
 
-    private readonly handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> =
-        (event) => {
-            this.setState({page: 0, limit: Number(event.target.value)})
-        }
+    private readonly handleChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = (
+        event
+    ) => {
+        this.setState({page: 0, limit: Number(event.target.value)})
+    }
 }

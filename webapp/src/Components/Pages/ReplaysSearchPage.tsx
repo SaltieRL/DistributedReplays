@@ -1,11 +1,11 @@
-import { Grid, Typography } from "@material-ui/core"
+import {CircularProgress, Grid} from "@material-ui/core"
 import * as React from "react"
-import { RouteComponentProps } from "react-router"
-import { MatchHistoryResponse, Replay, ReplaysSearchQueryParams } from "../../Models"
-import { searchReplays } from "../../Requests/Replay"
-import { ReplaysSearchWithQueryString } from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
-import { ReplaysSearchResultDisplay } from "../ReplaysSearch/ReplaysSearchResultDisplay"
-import { BasePage } from "./BasePage"
+import {RouteComponentProps} from "react-router"
+import {MatchHistoryResponse, Replay, ReplaysSearchQueryParams} from "../../Models"
+import {searchReplays} from "../../Requests/Replay"
+import {ReplaysSearchWithQueryString} from "../ReplaysSearch/Filter/ReplaysSearchWithQueryString"
+import {ReplaysSearchResultDisplay} from "../ReplaysSearch/ReplaysSearchResultDisplay"
+import {BasePage} from "./BasePage"
 
 interface State {
     queryParams?: ReplaysSearchQueryParams
@@ -27,32 +27,23 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
     public render() {
         return (
             <BasePage>
-                <Grid container spacing={24} justify="center">
-                    <Grid item xs={12} md={4} container spacing={32} alignContent="flex-start">
-                        <Grid item xs={12}>
-                            <Typography variant="h6" align="center" gutterBottom>
-                                Filters
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange}/>
-                        </Grid>
+                <Grid container spacing={3} justify="center">
+                    <Grid item xs={12} md={5} lg={4}>
+                        <ReplaysSearchWithQueryString handleChange={this.handleQueryParamsChange} />
                     </Grid>
-                    <Grid item xs={12} md={8} container alignContent="flex-start">
-                        <Grid item xs={12}>
-                            <Typography variant="h6" align="center" gutterBottom>
-                                Replays
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            {this.state.replaySearchResult && this.state.queryParams &&
+                    <Grid item xs={12} md={7} lg={8}>
+                        {this.state.queryParams && this.state.replaySearchResult ? (
                             <ReplaysSearchResultDisplay
                                 replaySearchResult={this.state.replaySearchResult}
                                 handleUpdateTags={this.handleUpdateTags}
                                 page={this.state.queryParams.page}
-                                limit={this.state.queryParams.limit}/>
-                            }
-                        </Grid>
+                                limit={this.state.queryParams.limit}
+                            />
+                        ) : (
+                            <div style={{width: "100%", textAlign: "center"}}>
+                                <CircularProgress />
+                            </div>
+                        )}
                     </Grid>
                 </Grid>
             </BasePage>
@@ -65,10 +56,11 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
 
     private readonly updateReplays = () => {
         if (this.state.queryParams !== undefined) {
-            searchReplays(this.state.queryParams)
-                .then((replaySearchResult) => {
-                    this.setState({replaySearchResult})
-                })
+            this.setState({replaySearchResult: undefined})
+
+            searchReplays(this.state.queryParams).then((replaySearchResult) => {
+                this.setState({replaySearchResult})
+            })
             // TODO: handle error
         } else {
             this.setState({
@@ -83,8 +75,8 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                 replaySearchResult: {
                     ...this.state.replaySearchResult,
                     replays: [
-                        ...this.state.replaySearchResult.replays
-                            .map((searchResultReplay): Replay => {
+                        ...this.state.replaySearchResult.replays.map(
+                            (searchResultReplay): Replay => {
                                 if (searchResultReplay.id === replay.id) {
                                     return {
                                         ...searchResultReplay,
@@ -92,7 +84,8 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                                     }
                                 }
                                 return searchResultReplay
-                            })
+                            }
+                        )
                     ]
                 }
             })

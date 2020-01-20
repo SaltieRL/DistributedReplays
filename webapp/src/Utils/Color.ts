@@ -1,4 +1,4 @@
-import { ChartDataSets } from "chart.js"
+import {ChartDataSets} from "chart.js"
 
 export const convertHexToRgba = (hex: string, alpha: number = 1) => {
     const r = parseInt(hex.slice(1, 3), 16)
@@ -25,7 +25,8 @@ const bluePrimaryColors =
     //     "rgba(184, 104, 173, 0.4)",
     //     "rgba(  0, 211, 204, 0.4)"
     // ]
-    [  // dtracers's
+    [
+        // dtracers's
         "rgba(  5,  17, 245, 0.55)",
         "rgba( 16, 142, 245, 0.55)",
         "rgba(  5, 224, 204, 0.55)",
@@ -45,7 +46,8 @@ const orangePrimaryColors =
     //     "rgba(254, 206,  62, 0.4)",
     //     "rgba(251,  50,  60, 0.4)"
     // ]
-    [  // dtracers's
+    [
+        // dtracers's
         "rgba(235,  16,  0, 0.55)",
         "rgba(245,  81,  5, 0.55)",
         "rgba(255, 156, 18, 0.55)",
@@ -78,12 +80,12 @@ export const getChartColors = (isOrange: boolean, colorNumber: number): ChartDat
 type teamColors = "blue" | "orange"
 
 interface ChartColors {
-    blue: ChartDataSets[],
+    blue: ChartDataSets[]
     orange: ChartDataSets[]
 }
 
-const blueBorderColour = bluePrimaryColors[0]  // "rgba(100, 100, 255, 0.8)"
-const orangeBorderColour = orangePrimaryColors[0]  // "rgba(255, 150, 0, 0.8)"
+const blueBorderColour = bluePrimaryColors[0] // "rgba(100, 100, 255, 0.8)"
+const orangeBorderColour = orangePrimaryColors[0] // "rgba(255, 150, 0, 0.8)"
 
 const chartColors: ChartColors = {
     blue: bluePrimaryColors.map((primaryColor) => ({
@@ -100,13 +102,4 @@ const chartColors: ChartColors = {
 
 export const colorsForPlaylists = ["#71EFAF", "#F9A782", "#88C6F9", "#E888F7"]
 
-export const primaryColours = [
-    "#33B8A5",
-    "#F04950",
-    "#3276B5",
-    "#F58D4E",
-    "#B868AD",
-    "#FECE3E",
-    "#A2C334",
-    "#f0447c"
-]
+export const primaryColours = ["#33B8A5", "#F04950", "#3276B5", "#F58D4E", "#B868AD", "#FECE3E", "#A2C334", "#f0447c"]

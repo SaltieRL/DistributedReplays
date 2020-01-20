@@ -14,8 +14,8 @@ import ClearIcon from "@material-ui/icons/Clear"
 import * as moment from "moment"
 import * as qs from "qs"
 import * as React from "react"
-import { doGet } from "../../apiHandler/apiHandler"
-import { getPlayer } from "../../Requests/Player/getPlayer"
+import {doGet} from "../../apiHandler/apiHandler"
+import {getPlayer } from "../../Requests/Player/getPlayer"
 import { resolvePlayerNameOrId } from "../../Requests/Player/resolvePlayerNameOrId"
 import { ClearableDatePicker } from "../Shared/ClearableDatePicker"
 import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
@@ -25,8 +25,7 @@ interface OwnProps {
     onCloseDialog: () => void
 }
 
-type Props = OwnProps
-    & WithNotifications
+type Props = OwnProps & WithNotifications
 
 interface State {
     dateStart: moment.Moment | null
@@ -38,25 +37,28 @@ interface State {
     player?: Player
 }
 
-class CreatePackDialogComponent extends React.Component<Props, State> {
-
+class CreatePackDialogComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
-            dateStart: null, dateEnd: null, playerId: "", name: "", loading: false
+            dateStart: null,
+            dateEnd: null,
+            playerId: "",
+            name: "", loading: false
         }
     }
 
     public render() {
         return (
-            <Dialog open={this.props.openDialog}
-                    onClose={this.props.onCloseDialog}
-                    scroll="paper"
-                    PaperProps={
-                        {style: {width: 600, maxWidth: "90vw"}}}>
+            <Dialog
+                open={this.props.openDialog}
+                onClose={this.props.onCloseDialog}
+                scroll="paper"
+                PaperProps={{style: {width: 600, maxWidth: "90vw"}}}
+            >
                 <DialogTitle id="form-dialog-title">Create pack</DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={8} style={{paddingTop: 8}}>
+                    <Grid container spacing={1} style={{paddingTop: 8}}>
                         <Grid item xs={12}>
                             <DialogContentText>
                                 Leave all fields blank for defaults (use most recent games).
@@ -73,14 +75,16 @@ class CreatePackDialogComponent extends React.Component<Props, State> {
                                 placeholder={"Date filter start"}
                                 onChange={this.handleDateChangeStart}
                                 value={this.state.dateStart}
-                                helperText="Leave blank to default to recent games"/>
+                                helperText="Leave blank to default to recent games"
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <ClearableDatePicker
                                 placeholder={"Date filter end"}
                                 onChange={this.handleDateChangeEnd}
                                 value={this.state.dateEnd}
-                                helperText="Leave blank to default to recent games"/>
+                                helperText="Leave blank to default to recent games"
+                            />
                         </Grid>
                         <Grid container item xs={12}>
                             <Grid item xs={6}>
@@ -116,22 +120,25 @@ class CreatePackDialogComponent extends React.Component<Props, State> {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => {
-                        if (this.state.dateStart !== null || this.state.dateEnd !== null) {
-                            if (this.state.dateStart == null || this.state.dateEnd == null) {
-                                this.props.showNotification({
-                                    variant: "error",
-                                    message: "Date start and end must both have values or be empty!",
-                                    timeout: 5000
-                                })
-                                return
+                    <Button
+                        onClick={() => {
+                            if (this.state.dateStart !== null || this.state.dateEnd !== null) {
+                                if (this.state.dateStart == null || this.state.dateEnd == null) {
+                                    this.props.showNotification({
+                                        variant: "error",
+                                        message: "Date start and end must both have values or be empty!",
+                                        timeout: 5000
+                                    })
+                                    return
+                                }
                             }
-                        }
-                        if ((this.state.player || !this.state.playerId) && !this.state.loading) {
+                            if ((this.state.player || !this.state.playerId) && !this.state.loading) {
                             this.props.onCloseDialog()
                             this.createPack()
                         }
-                    }} variant={"outlined"}>
+                        }}
+                        variant={"outlined"}
+                    >
                         Create pack
                     </Button>
                 </DialogActions>
@@ -146,14 +153,13 @@ class CreatePackDialogComponent extends React.Component<Props, State> {
             player_id: this.state.player ? this.state.player.id.substr(0, 40) : undefined,
             name: this.state.name !== "" ? this.state.name.substr(0, 100) : undefined
         }
-        doGet("/training/create" + qs.stringify(params, {addQueryPrefix: true}))
-            .then(() => {
-                this.props.showNotification({
-                    variant: "success",
-                    message: "Successfully queued! Give up to a minute for generation to complete",
-                    timeout: 5000
-                })
+        doGet("/training/create" + qs.stringify(params, {addQueryPrefix: true})).then(() => {
+            this.props.showNotification({
+                variant: "success",
+                message: "Successfully queued! Give up to a minute for generation to complete",
+                timeout: 5000
             })
+        })
     }
 
     private readonly handleDateChangeStart = (date: moment.Moment | null) => {

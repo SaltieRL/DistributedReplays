@@ -1,11 +1,11 @@
 bind = '0.0.0.0:5000'
-workers = 4
+workers = 9
 worker_connections = 1000
 keepalive = 5
 timeout = 60
-keyfile = 'calculated.key'
-certfile = 'calculated_cert.pem'
-ca_certs = 'chain.pem'
+keyfile = 'calculated2.key'
+certfile = 'calculated_cert2.pem'
+ca_certs = 'chain2.pem'
 
 
 def child_exit(server, worker):
