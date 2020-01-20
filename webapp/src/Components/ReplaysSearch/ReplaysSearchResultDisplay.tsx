@@ -2,13 +2,14 @@ import {Card, CardHeader, Divider, List, Typography} from "@material-ui/core"
 import * as _ from "lodash"
 import * as qs from "qs"
 import * as React from "react"
+import {RouteComponentProps, withRouter} from "react-router"
 import {REPLAYS_GROUP_PAGE_LINK} from "../../Globals"
 import {MatchHistoryResponse, Replay} from "../../Models"
 import {ReplayDisplayRow} from "./ReplayDisplayRow"
 import {ReplaysSearchTablePagination} from "./ReplaysSearchTablePagination"
 import {ResultsActions} from "./ResultsActions"
 
-interface Props {
+interface OwnProps {
     selectedAction?: (ids: string[]) => void
     buttonText?: string
     replaySearchResult: MatchHistoryResponse
@@ -16,13 +17,13 @@ interface Props {
     page: number
     limit: number
 }
-
+type Props = RouteComponentProps<{}> & OwnProps
 interface State {
     selectable: boolean
     selectedReplayIds: string[]
 }
 
-export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State> {
+class ReplaysSearchResultDisplayComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {selectable: false, selectedReplayIds: []}
@@ -44,10 +45,12 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
                                     selectedAction={() => {
                                         if (this.props.selectedAction) {
                                             this.props.selectedAction(this.state.selectedReplayIds)
+                                        } else {
+                                            this.props.history.push(this.getGroupLink())
                                         }
                                     }}
+                                    to={""}
                                     buttonText={this.props.buttonText}
-                                    to={this.getGroupLink()}
                                     handleSelectableChange={this.handleSelectableChange}
                                     selectable={this.state.selectable}
                                 />
@@ -123,3 +126,5 @@ export class ReplaysSearchResultDisplay extends React.PureComponent<Props, State
         return REPLAYS_GROUP_PAGE_LINK + url
     }
 }
+
+export const ReplaysSearchResultDisplay = withRouter(ReplaysSearchResultDisplayComponent)
