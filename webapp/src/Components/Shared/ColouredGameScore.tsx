@@ -1,9 +1,9 @@
 import * as React from "react"
 import {ThemeContext} from "../../Contexts/ThemeContext"
-import {Replay} from "../../Models"
+import {CompactReplay, Replay} from "../../Models"
 
 interface Props {
-    replay: Replay
+    replay: Replay | CompactReplay
 }
 
 export class ColouredGameScore extends React.PureComponent<Props> {

@@ -71,7 +71,7 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
 
         return (
             <Grid container>
-                <Grid item xs={this.state.game && isWidthUpLg ? 7 : 12}>
+                <Grid container item xs={this.state.game && isWidthUpLg ? 7 : 12}>
                     {!isWidthUpLg && viewer}
                     {trainingPacks.packs.length > 0 ? (
                         <Card>
@@ -130,10 +130,12 @@ class TrainingPackResultDisplayComponent extends React.PureComponent<Props, Stat
                             />
                         </Card>
                     ) : (
-                        <Typography variant="subtitle1" align="center">
-                            <i>No training packs exist.</i>
+                        <Grid item xs={12} style={{textAlign: "center"}}>
+                            <Typography variant="subtitle1" align="center">
+                                <i>No training packs exist.</i>
+                            </Typography>
                             {linkButton}
-                        </Typography>
+                        </Grid>
                     )}
                 </Grid>
                 {isWidthUpLg && viewer}

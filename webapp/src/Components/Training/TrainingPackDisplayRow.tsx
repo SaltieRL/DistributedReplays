@@ -18,15 +18,15 @@ import {
 import Divider from "@material-ui/core/Divider"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
+import GetApp from "@material-ui/icons/GetApp"
 import InsertChart from "@material-ui/icons/InsertChart"
-import OpenInNew from "@material-ui/icons/OpenInNew"
 import PlayArrow from "@material-ui/icons/PlayArrow"
 import Share from "@material-ui/icons/Share"
 import moment from "moment"
 import * as React from "react"
 import {connect} from "react-redux"
 import {REPLAY_PAGE_LINK, TRAINING_IMPORT_LINK} from "../../Globals"
-import {Replay} from "../../Models"
+import {CompactReplay} from "../../Models"
 import {TrainingPack, TrainingPackShot} from "../../Models/Player/TrainingPack"
 import {StoreState} from "../../Redux"
 import clipboardCopy from "../../Utils/CopyToClipboard/clipboard"
@@ -68,7 +68,7 @@ interface OwnProps {
     pack: TrainingPack
     selectProps?: SelectProps
     selectShotHandler: any
-    gameMap: Record<string, Replay>
+    gameMap: Record<string, CompactReplay>
 }
 
 const mapStateToProps = (state: StoreState) => ({
@@ -133,7 +133,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                             className={classes.iconButton}
                             onClick={(event) => event.stopPropagation()}
                         >
-                            <OpenInNew />
+                            <GetApp />
                         </IconButton>
                     </Tooltip>
                 </Grid>
