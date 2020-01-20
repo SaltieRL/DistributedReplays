@@ -51,7 +51,7 @@ export class Recent extends React.PureComponent<Props, State> {
                                     </Grid>
                                     <Grid item xs={12} md={6}>
                                         <Typography noWrap style={{fontStyle: "italic"}}>
-                                            {replay.map}
+                                            {replay.date.format("DD/MM/YYYY")}
                                         </Typography>
                                     </Grid>
                                 </Grid>

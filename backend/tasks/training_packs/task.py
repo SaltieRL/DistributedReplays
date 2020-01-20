@@ -5,7 +5,7 @@ import os
 from sqlalchemy import desc
 
 from backend.blueprints.spa_api.errors.errors import UserHasNoReplays, CalculatedError
-from backend.blueprints.spa_api.service_layers.replay.replay import Replay
+from backend.blueprints.spa_api.service_layers.replay.replay import CompactReplay
 from backend.database.objects import Playlist, PlayerGame, Game, TrainingPack
 from backend.database.utils.utils import duplicate_object
 from backend.tasks.training_packs.training_packs import create_pack_from_replays, create_custom_pack_from_replays
@@ -144,7 +144,8 @@ class TrainingPackCreation:
     def list_packs(id_, page: int, limit: int, session):
         packs = session.query(TrainingPack).filter(TrainingPack.player == id_).order_by(
             desc(TrainingPack.creation_date))
-        return TrainingPackCreation.create_pack_response(packs[page * limit: (page + 1) * limit], packs.count(), session)
+        return TrainingPackCreation.create_pack_response(packs[page * limit: (page + 1) * limit], packs.count(),
+                                                         session)
 
     @staticmethod
     def poll_pack(id_, session):
@@ -177,7 +178,7 @@ class TrainingPackCreation:
         # get all of these games only once
         game_list = session.query(Game).filter(Game.hash.in_(games)).all()
         # create a map for the frontend to deal with
-        game_map = {game.hash: Replay.create_from_game(game).__dict__ for game in game_list}
+        game_map = {game.hash: CompactReplay.create_from_game(game).__dict__ for game in game_list}
         return {'games': game_map,
                 'packs': [
                     {
