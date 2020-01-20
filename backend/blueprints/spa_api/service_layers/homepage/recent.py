@@ -1,6 +1,4 @@
-from sqlalchemy import desc
-
-from backend.blueprints.spa_api.service_layers.replay.replay import Replay
+from backend.blueprints.spa_api.service_layers.replay.replay import CompactReplay
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game
 
@@ -17,8 +15,8 @@ class RecentReplays:
     @staticmethod
     @with_session
     def get_recent_replays(session=None):
-        replays = session.query(Game).order_by(desc(Game.match_date))[:5]
-        return [Replay.create_from_game(r).__dict__ for r in replays]
+        replays = session.query(Game).order_by(Game.upload_date)[:5]
+        return [CompactReplay.create_from_game(r).__dict__ for r in replays]
 
 
 if __name__ == '__main__':

@@ -71,3 +71,32 @@ class Replay:
             mmrs=game.mmrs
 
         )
+
+
+class CompactReplay:
+    def __init__(self, id_: str, date: str, game_mode: str, game_score: GameScore):
+        self.id = id_
+        self.date = date
+        self.gameMode = game_mode
+        self.gameScore = game_score.__dict__
+
+    @staticmethod
+    @with_session
+    def create_from_id(id_: str, session=None) -> 'Replay':
+        game = session.query(Game).filter(Game.hash == id_).first()
+        if game is None:
+            game = session.query(Game).filter(Game.replay_id == id_).first()
+            if game is None:
+                raise ReplayNotFound()
+            raise Redirect("/replays/" + game.hash)
+        replay = Replay.create_from_game(game)
+        return replay
+
+    @staticmethod
+    def create_from_game(game: Game) -> 'CompactReplay':
+        return CompactReplay(
+            id_=game.hash,
+            date=game.match_date.isoformat(),
+            game_mode=get_playlist(game.playlist, game.teamsize),
+            game_score=GameScore.create_from_game(game)
+        )

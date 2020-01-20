@@ -1,10 +1,23 @@
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@material-ui/core"
+import {
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    TextField,
+    Typography
+} from "@material-ui/core"
 import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
+import CheckIcon from "@material-ui/icons/Check"
+import ClearIcon from "@material-ui/icons/Clear"
 import * as moment from "moment"
 import * as qs from "qs"
 import * as React from "react"
 import {doGet} from "../../apiHandler/apiHandler"
+import {getPlayer} from "../../Requests/Player/getPlayer"
+import {resolvePlayerNameOrId} from "../../Requests/Player/resolvePlayerNameOrId"
 import {ClearableDatePicker} from "../Shared/ClearableDatePicker"
 import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
 
@@ -20,6 +33,9 @@ interface State {
     dateEnd: moment.Moment | null
     playerId: string
     name: string
+    timer?: NodeJS.Timeout
+    loading: boolean
+    player?: Player
 }
 
 class CreatePackDialogComponent extends React.PureComponent<Props, State> {
@@ -29,7 +45,8 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
             dateStart: null,
             dateEnd: null,
             playerId: "",
-            name: ""
+            name: "",
+            loading: false
         }
     }
 
@@ -50,6 +67,9 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
                             </DialogContentText>
                         </Grid>
                         <Grid item xs={12}>
+                            <TextField value={this.state.name} onChange={this.handleNameChange} label="Name of pack" />
+                        </Grid>
+                        <Grid item xs={12}>
                             <ClearableDatePicker
                                 placeholder={"Date filter start"}
                                 onChange={this.handleDateChangeStart}
@@ -65,15 +85,51 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
                                 helperText="Leave blank to default to recent games"
                             />
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                value={this.state.playerId}
-                                onChange={this.handlePlayerIdChange}
-                                label="Player ID to use"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField value={this.state.name} onChange={this.handleNameChange} label="Name of pack" />
+                        <Grid container item xs={12}>
+                            <Grid item xs={6}>
+                                <TextField
+                                    value={this.state.playerId}
+                                    onChange={this.handlePlayerIdChange}
+                                    label="Player ID or custom URL"
+                                />
+                            </Grid>
+                            <Grid container item xs={6}>
+                                {this.state.loading && (
+                                    <Grid xs={12}>
+                                        <CircularProgress />
+                                    </Grid>
+                                )}
+                                {this.state.player && !this.state.loading && (
+                                    <>
+                                        <Grid item xs={4}>
+                                            <CheckIcon
+                                                style={{
+                                                    color: "#00ff00",
+                                                    height: 40
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <img
+                                                alt={"Player profile"}
+                                                src={this.state.player.avatarLink}
+                                                height={40}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Typography variant="subtitle1">{this.state.player.name}</Typography>
+                                        </Grid>
+                                    </>
+                                )}
+                            </Grid>
+                            {!this.state.player && this.state.playerId && !this.state.loading && (
+                                <ClearIcon
+                                    style={{
+                                        color: "#ff0000",
+                                        height: 40
+                                    }}
+                                />
+                            )}
                         </Grid>
                     </Grid>
                 </DialogContent>
@@ -90,8 +146,10 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
                                     return
                                 }
                             }
-                            this.props.onCloseDialog()
-                            this.createPack()
+                            if ((this.state.player || !this.state.playerId) && !this.state.loading) {
+                                this.props.onCloseDialog()
+                                this.createPack()
+                            }
                         }}
                         variant={"outlined"}
                     >
@@ -106,7 +164,7 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
         const params = {
             date_start: this.state.dateStart ? this.state.dateStart.unix() : undefined,
             date_end: this.state.dateEnd ? this.state.dateEnd.unix() : undefined,
-            player_id: this.state.playerId !== "" ? this.state.playerId.substr(0, 40) : undefined,
+            player_id: this.state.player ? this.state.player.id.substr(0, 40) : undefined,
             name: this.state.name !== "" ? this.state.name.substr(0, 100) : undefined
         }
         doGet("/training/create" + qs.stringify(params, {addQueryPrefix: true})).then(() => {
@@ -126,10 +184,30 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly handlePlayerIdChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-        this.setState({playerId: event.target.value})
+        if (this.state.timer) {
+            clearTimeout(this.state.timer)
+        }
+        this.setState({player: undefined, playerId: event.target.value, loading: true}, () => {
+            this.setState({
+                timer: setTimeout(() => {
+                    this.getPlayerByNameOrId(this.state.playerId)
+                }, 750)
+            })
+        })
     }
     private readonly handleNameChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
         this.setState({name: event.target.value})
+    }
+
+    private readonly getPlayerByNameOrId = (id: string) => {
+        resolvePlayerNameOrId(id)
+            .then(getPlayer)
+            .then((result) => {
+                this.setState({loading: false, player: result})
+            })
+            .catch(() => {
+                this.setState({loading: false})
+            })
     }
 }
 

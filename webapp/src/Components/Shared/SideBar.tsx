@@ -10,6 +10,7 @@ import Home from "@material-ui/icons/Home"
 import Info from "@material-ui/icons/Info"
 import Search from "@material-ui/icons/Search"
 import ShowChart from "@material-ui/icons/ShowChart"
+import SportsSoccer from "@material-ui/icons/SportsSoccer"
 import TableChart from "@material-ui/icons/TableChart"
 import * as React from "react"
 import {connect} from "react-redux"
@@ -26,6 +27,7 @@ import {
     REPLAYS_GROUP_PAGE_LINK,
     REPLAYS_SEARCH_PAGE_LINK,
     SAVED_REPLAYS_MY_GROUPS_PAGE_LINK,
+    TRAINING_LINK,
     UPLOAD_LINK
 } from "../../Globals"
 import {StoreState} from "../../Redux"
@@ -102,11 +104,17 @@ class SideBarComponent extends React.PureComponent<Props> {
                                     </ListItemIcon>
                                     <ListItemText>My Groups</ListItemText>
                                 </ListItem>
+                                <ListItem button component={this.createLink} to={TRAINING_LINK}>
+                                    <ListItemIcon>
+                                        <SportsSoccer />
+                                    </ListItemIcon>
+                                    <ListItemText>Training Packs</ListItemText>
+                                </ListItem>
                             </>
                         )}
 
                         <Divider component="li" />
-
+                        <ListSubheader>Miscellaneous</ListSubheader>
                         <ListItem button component={this.createLink} to={GLOBAL_STATS_LINK}>
                             <ListItemIcon>
                                 <FontAwesomeIcon icon={faGlobeAmericas} size="lg" />
