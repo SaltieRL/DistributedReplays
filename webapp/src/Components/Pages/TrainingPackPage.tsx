@@ -33,7 +33,7 @@ class TrainingPackPageComponent extends React.PureComponent<Props, State> {
         return (
             <BasePage>
                 <Grid container spacing={3} justify="center">
-                    {this.props.loggedInUser && this.props.loggedInUser.beta ? (
+                    {this.props.loggedInUser ? (
                         <LoadableWrapper load={this.getTrainingPacks} reloadSignal={this.state.reloadSignal}>
                             {this.state.trainingPacks && (
                                 <Grid item xs={12} md={8}>
@@ -48,7 +48,7 @@ class TrainingPackPageComponent extends React.PureComponent<Props, State> {
                             )}
                         </LoadableWrapper>
                     ) : (
-                        <Typography>In beta, Patrons only.</Typography>
+                        <Typography>Please log in to continue.</Typography>
                     )}
                 </Grid>
             </BasePage>
