@@ -38,6 +38,7 @@ export class ReplaysSearchPage extends React.PureComponent<RouteComponentProps<{
                                 handleUpdateTags={this.handleUpdateTags}
                                 page={this.state.queryParams.page}
                                 limit={this.state.queryParams.limit}
+                                buttonText={"View as Group"}
                             />
                         ) : (
                             <div style={{width: "100%", textAlign: "center"}}>
