@@ -18,8 +18,8 @@ import {
 import Divider from "@material-ui/core/Divider"
 import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ExpandMore from "@material-ui/icons/ExpandMore"
+import GetApp from "@material-ui/icons/GetApp"
 import InsertChart from "@material-ui/icons/InsertChart"
-import OpenInNew from "@material-ui/icons/OpenInNew"
 import PlayArrow from "@material-ui/icons/PlayArrow"
 import Share from "@material-ui/icons/Share"
 import moment from "moment"
@@ -133,7 +133,7 @@ class TrainingPackDisplayRowComponent extends React.PureComponent<Props> {
                             className={classes.iconButton}
                             onClick={(event) => event.stopPropagation()}
                         >
-                            <OpenInNew />
+                            <GetApp />
                         </IconButton>
                     </Tooltip>
                 </Grid>
