@@ -284,7 +284,7 @@ class Game(DBObjectBase):
     team0possession = Column(Float)
     team1possession = Column(Float)
     frames = Column(Integer)
-    visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.DEFAULT)
+    visibility = Column(Enum(GameVisibilitySetting), default=GameVisibilitySetting.DEFAULT, index=True)
     # to update the DB
     # ALTER TABLE GAMES
     # ADD COLUMN primary_player VARCHAR(40) NULL;
