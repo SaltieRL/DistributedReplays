@@ -1,6 +1,6 @@
 import {doGet} from "../apiHandler/apiHandler"
-import {parseReplay } from "../Models"
-import { PatreonResponse, RecentReplaysResponse, StreamResponse } from "../Models/types/Homepage"
+import {parseReplay} from "../Models"
+import {PatreonResponse, RecentReplaysResponse, StreamResponse} from "../Models/types/Homepage"
 
 export const getTwitchStreams = (): Promise<StreamResponse> => doGet("/home/twitch")
 

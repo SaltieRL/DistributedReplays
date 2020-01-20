@@ -5,7 +5,8 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    TextField, Typography
+    TextField,
+    Typography
 } from "@material-ui/core"
 import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
@@ -15,10 +16,10 @@ import * as moment from "moment"
 import * as qs from "qs"
 import * as React from "react"
 import {doGet} from "../../apiHandler/apiHandler"
-import {getPlayer } from "../../Requests/Player/getPlayer"
-import { resolvePlayerNameOrId } from "../../Requests/Player/resolvePlayerNameOrId"
-import { ClearableDatePicker } from "../Shared/ClearableDatePicker"
-import { WithNotifications, withNotifications } from "../Shared/Notification/NotificationUtils"
+import {getPlayer} from "../../Requests/Player/getPlayer"
+import {resolvePlayerNameOrId} from "../../Requests/Player/resolvePlayerNameOrId"
+import {ClearableDatePicker} from "../Shared/ClearableDatePicker"
+import {WithNotifications, withNotifications} from "../Shared/Notification/NotificationUtils"
 
 interface OwnProps {
     openDialog: boolean
@@ -44,7 +45,8 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
             dateStart: null,
             dateEnd: null,
             playerId: "",
-            name: "", loading: false
+            name: "",
+            loading: false
         }
     }
 
@@ -65,10 +67,7 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
                             </DialogContentText>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField value={this.state.name}
-                                       onChange={this.handleNameChange}
-                                       label="Name of pack"
-                            />
+                            <TextField value={this.state.name} onChange={this.handleNameChange} label="Name of pack" />
                         </Grid>
                         <Grid item xs={12}>
                             <ClearableDatePicker
@@ -88,34 +87,49 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid container item xs={12}>
                             <Grid item xs={6}>
-                                <TextField value={this.state.playerId}
-                                           onChange={this.handlePlayerIdChange}
-                                           label="Player ID or custom URL"
+                                <TextField
+                                    value={this.state.playerId}
+                                    onChange={this.handlePlayerIdChange}
+                                    label="Player ID or custom URL"
                                 />
                             </Grid>
                             <Grid container item xs={6}>
-                                {this.state.loading && <Grid xs={12}>
-                                    <CircularProgress/>
-                                </Grid>}
-                                {this.state.player && !this.state.loading && <>
-                                    <Grid item xs={4}>
-                                        <CheckIcon style={{
-                                            color: "#00ff00",
-                                            height: 40
-                                        }}/>
+                                {this.state.loading && (
+                                    <Grid xs={12}>
+                                        <CircularProgress />
                                     </Grid>
-                                    <Grid item xs={2}>
-                                        <img alt={"Player profile"} src={this.state.player.avatarLink} height={40}/>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography variant="subtitle1">{this.state.player.name}</Typography>
-                                    </Grid>
-                                </>}
+                                )}
+                                {this.state.player && !this.state.loading && (
+                                    <>
+                                        <Grid item xs={4}>
+                                            <CheckIcon
+                                                style={{
+                                                    color: "#00ff00",
+                                                    height: 40
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={2}>
+                                            <img
+                                                alt={"Player profile"}
+                                                src={this.state.player.avatarLink}
+                                                height={40}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Typography variant="subtitle1">{this.state.player.name}</Typography>
+                                        </Grid>
+                                    </>
+                                )}
                             </Grid>
-                            {!this.state.player && this.state.playerId && !this.state.loading && <ClearIcon style={{
-                                color: "#ff0000",
-                                height: 40
-                            }}/>}
+                            {!this.state.player && this.state.playerId && !this.state.loading && (
+                                <ClearIcon
+                                    style={{
+                                        color: "#ff0000",
+                                        height: 40
+                                    }}
+                                />
+                            )}
                         </Grid>
                     </Grid>
                 </DialogContent>
@@ -133,9 +147,9 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
                                 }
                             }
                             if ((this.state.player || !this.state.playerId) && !this.state.loading) {
-                            this.props.onCloseDialog()
-                            this.createPack()
-                        }
+                                this.props.onCloseDialog()
+                                this.createPack()
+                            }
                         }}
                         variant={"outlined"}
                     >
@@ -186,13 +200,15 @@ class CreatePackDialogComponent extends React.PureComponent<Props, State> {
     }
 
     private readonly getPlayerByNameOrId = (id: string) => {
-        resolvePlayerNameOrId(id).then(getPlayer).then((result) => {
-            this.setState({loading: false, player: result})
-        }).catch(() => {
-            this.setState({loading: false})
-        })
+        resolvePlayerNameOrId(id)
+            .then(getPlayer)
+            .then((result) => {
+                this.setState({loading: false, player: result})
+            })
+            .catch(() => {
+                this.setState({loading: false})
+            })
     }
-
 }
 
 export const CreatePackDialog = withNotifications()(CreatePackDialogComponent)

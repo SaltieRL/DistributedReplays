@@ -1,5 +1,5 @@
 import moment from "moment"
-import { CompactReplay } from ".."
+import {CompactReplay} from ".."
 
 interface TrainingPackResponse {
     packs: TrainingPack[]

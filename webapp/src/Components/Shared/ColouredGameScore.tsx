@@ -1,6 +1,6 @@
 import * as React from "react"
 import {ThemeContext} from "../../Contexts/ThemeContext"
-import {CompactReplay, Replay } from "../../Models"
+import {CompactReplay, Replay} from "../../Models"
 
 interface Props {
     replay: Replay | CompactReplay
