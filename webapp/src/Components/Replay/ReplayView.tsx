@@ -1,14 +1,14 @@
-import {Card, CardContent, CardHeader, Grid, IconButton, Tooltip, Typography, withWidth} from "@material-ui/core"
-import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
+import { Card, CardContent, CardHeader, Grid, IconButton, Tooltip, Typography, withWidth } from "@material-ui/core"
+import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import CloudDownload from "@material-ui/icons/CloudDownload"
 import * as React from "react"
-import {Replay} from "../../Models"
-import {ColouredGameScore} from "../Shared/ColouredGameScore"
-import {TagDialogWrapper} from "../Shared/Tag/TagDialogWrapper"
-import {ReplayChart} from "./ReplayChart"
-import {ReplayTabs} from "./ReplayTabs"
-import {ReplayTeamCard} from "./ReplayTeamCard/ReplayTeamCard"
+import { Replay } from "../../Models"
+import { ColouredGameScore } from "../Shared/ColouredGameScore"
+import { TagDialogWrapper } from "../Shared/Tag/TagDialogWrapper"
+import { ReplayChart } from "./ReplayChart"
+import { ReplayTabs } from "./ReplayTabs"
+import { ReplayTeamCard } from "./ReplayTeamCard/ReplayTeamCard"
 
 interface OwnProps {
     replay: Replay
