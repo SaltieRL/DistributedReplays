@@ -89,6 +89,11 @@ const friends: ListItemInfo[] = [
         name: "Octane.gg",
         link: "https://octane.gg/",
         message: "The best source for Rocket League Esports coverage of news, events, teams, players, and more!"
+    },
+    {
+        name: "GamersRdy",
+        link: "https://www.gamersrdy.com/",
+        message: "A coaching and training platform built within a community to help you improve at Rocket League."
     }
 ]
 

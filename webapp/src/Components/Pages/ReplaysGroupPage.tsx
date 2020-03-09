@@ -1,10 +1,10 @@
-import {Divider, Grid} from "@material-ui/core"
+import {Button, Divider, Grid} from "@material-ui/core"
 import _ from "lodash"
 import qs from "qs"
 import * as React from "react"
 import {RouteComponentProps} from "react-router-dom"
 import {Replay} from "../../Models"
-import {getReplay} from "../../Requests/Replay"
+import {addGames, addSubgroup, getReplay} from "../../Requests/Replay"
 import {AddReplayInput} from "../ReplaysGroup/AddReplayInput"
 import {ReplayChip} from "../ReplaysGroup/ReplayChip"
 import {ReplaysGroupContent} from "../ReplaysGroup/ReplaysGroupContent"
@@ -68,6 +68,22 @@ class ReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                 {replayChip}
                             </Grid>
                         ))}
+                    </Grid>
+                    <Grid item xs={12} container justify={"center"}>
+                        {replayChips.length > 0 && (
+                            <Button
+                                variant={"outlined"}
+                                onClick={() => {
+                                    addSubgroup(undefined, new Date().toLocaleString()).then((response) => {
+                                        addGames(response.uuid, this.state.ids).then(() => {
+                                            this.props.history.push(`/groups/${response.uuid}`)
+                                        })
+                                    })
+                                }}
+                            >
+                                Save Group
+                            </Button>
+                        )}
                     </Grid>
                     <Grid item xs={12}>
                         <Divider />
