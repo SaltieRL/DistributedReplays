@@ -3,7 +3,9 @@ import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
 import CloudDownload from "@material-ui/icons/CloudDownload"
 import * as React from "react"
+
 import {Replay} from "../../Models"
+import {sanitizeProfanity} from "../../Utils/String"
 import {ColouredGameScore} from "../Shared/ColouredGameScore"
 import {TagDialogWrapper} from "../Shared/Tag/TagDialogWrapper"
 import {ReplayChart} from "./ReplayChart"
@@ -49,7 +51,7 @@ class ReplayViewComponent extends React.PureComponent<Props> {
                             enterDelay={100}
                             placement="bottom"
                         >
-                            <Typography variant="h5"> {replay.name} </Typography>
+                            <Typography variant="h5"> {sanitizeProfanity(replay.name)} </Typography>
                         </Tooltip>
                     }
                     subheader={<ColouredGameScore replay={replay} />}

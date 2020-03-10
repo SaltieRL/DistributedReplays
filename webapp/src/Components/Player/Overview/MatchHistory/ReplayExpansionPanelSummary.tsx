@@ -15,8 +15,10 @@ import ExpandMore from "@material-ui/icons/ExpandMore"
 import InsertChart from "@material-ui/icons/InsertChart"
 import * as React from "react"
 import {Link, LinkProps} from "react-router-dom"
+
 import {REPLAY_PAGE_LINK} from "../../../../Globals"
 import {getReplayResult, Replay} from "../../../../Models"
+import {sanitizeProfanity} from "../../../../Utils/String"
 import {getSkillAverages} from "../../../ReplaysSearch/ReplayDisplayRow"
 import {ColouredGameScore} from "../../../Shared/ColouredGameScore"
 
@@ -69,7 +71,7 @@ class ReplayExpansionPanelSummaryComponent extends React.PureComponent<Props> {
 
         const {replay, player} = this.props
         const dateFormat = isWidthUp("lg", width) ? "DD/MM/YYYY" : "DD/MM"
-        const replayName = replay.name
+        const replayName = sanitizeProfanity(replay.name)
         const replayDate = (
             <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
                 <Typography variant={notOnMobile ? typographyVariant : "caption"}>
