@@ -312,6 +312,9 @@ class Game(DBObjectBase):
             return value[:max_len]
         return value
 
+    def count_query():
+        return "SELECT n_live_tup FROM pg_stat_all_tables WHERE relname = '%s'" % (Game.__table__.name)
+
 
 class Player(DBObjectBase):
     __tablename__ = 'players'

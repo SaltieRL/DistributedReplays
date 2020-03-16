@@ -129,8 +129,8 @@ def encode_bot_name(w):
 @bp.route('/global/replay_count')
 @with_session
 def api_get_replay_count(session=None):
-    count = session.query(Game.hash).count()
-    return jsonify(count)
+    result = session.execute(Game.count_query())
+    return jsonify(result.scalar())
 
 
 @bp.route('/global/queue/count')
