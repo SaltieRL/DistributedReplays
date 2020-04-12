@@ -21,7 +21,7 @@ itsdangerous==0.24
 Jinja2==2.10.1
 kiwisolver==1.0.1
 kombu==4.4
-MarkupSafe==1.0
+MarkupSafe==1.1
 matplotlib==2.2.3
 numpy==1.17.0
 pandas==0.24.2
