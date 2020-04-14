@@ -7,14 +7,14 @@ services:
       POSTGRES_PASSWORD: postgres
     network_mode: service:flask
     volumes:
-      - "./data/postgres:/var/lib/postgresql/data"
+      - "calculated.gg.postgres:/var/lib/postgresql/data"
 
   redis:
     image: redis:4-alpine
     restart: always
     network_mode: service:flask
     volumes:
-      - "./.data/redis:/data"
+      - "calculated.gg.redis:/data"
 
   flask:
     build: .
@@ -23,7 +23,14 @@ services:
     # when dockerize can connect to postgres and when our backend can
     command: dockerize -timeout 30s -wait tcp://localhost:5432 -wait tcp://localhost:6379 sh -c "sleep 5 && python ./RLBotServer.py"
     volumes:
-      - ./:/app:rw
+      # flask needs root and RLBotServer
+      - calculated.gg.root:/app:rw
+      - "./backend/:/app/backend"
+      - "./helpers/:/app/helpers"
+      - "./celery2.sh:/app/celery2.sh"
+      - "./celerycron.sh:/app/celerycron.sh"
+      - "./gunicorn_conf.py:/app/gunicorn_conf.py"
+      - "./RLBotServer.py:/app/RLBotServer.py" # there is also loader.py, which is identical. The command above uses RLBotServer.py.
     ports:
       # This container handles exporting the ports for every other container
       # Those other containers link to this one
@@ -37,9 +44,17 @@ services:
     command: dockerize -wait tcp://localhost:6379 celery -A backend.tasks.celery_tasks.celery worker --loglevel=INFO
     network_mode: service:flask
     volumes:
-      - ./:/app:rw
+      # uses the same root as flask, only needs to add celery shell scripts
+      - calculated.gg.root:/app:rw
+      - "./backend/:/app/backend"
+      - "./helpers/:/app/helpers"
+      - "./celery2.sh:/app/celery2.sh"
+      - "./celerycron.sh:/app/celerycron.sh"
+      - "./gunicorn_conf.py:/app/gunicorn_conf.py"
+      - "./RLBotServer.py:/app/RLBotServer.py" # there is also loader.py, which is identical. The command above uses RLBotServer.py.
     depends_on:
       - redis
+      - flask
 
   webapp:
     image: node:10-alpine
@@ -55,3 +70,7 @@ services:
 #      - "./.data/rabbitmq:/data"
 #    ports:
 #      - 5672:5672
+volumes:
+  calculated.gg.postgres:
+  calculated.gg.redis:
+  calculated.gg.root:
