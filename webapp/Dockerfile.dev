@@ -1,0 +1,9 @@
+FROM node:10-alpine
+
+WORKDIR "/app"
+COPY . .
+RUN npm install
+
+VOLUME "/app/node_modules"
+
+CMD ["npm","run","start"]
