@@ -57,19 +57,14 @@ services:
       - flask
 
   webapp:
-    image: node:10-alpine
-    command: sh -c "cd /app && npm install && npm run start"
+    build:
+      context: ./webapp/
+      dockerfile: Dockerfile.dev
     network_mode: service:flask
     volumes:
-      - ./webapp/:/app:rw
-#  rabbitmq:
-#    image: rabbitmq:3-alpine
-#    container_name: ccgg-rabbitmq
-#    restart: always
-#    volumes:
-#      - "./.data/rabbitmq:/data"
-#    ports:
-#      - 5672:5672
+      - /app/node_modules
+      - ./webapp/:/app
+
 volumes:
   calculated.gg.postgres:
   calculated.gg.redis:

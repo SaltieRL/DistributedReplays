@@ -13,10 +13,6 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
-    && chmod +x ./wait-for-it.sh \
-    && mv wait-for-it.sh /usr/bin/wait-for-it
-
 # Install Dockerize
 ENV DOCKERIZE_VERSION v0.6.1
 ENV DOCKERIZE_FILE dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
