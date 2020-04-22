@@ -1,7 +1,7 @@
 # Calculated.gg Backend [![Build Status](https://api.travis-ci.org/SaltieRL/DistributedReplays.svg?branch=master)](https://travis-ci.org/SaltieRL/DistributedReplays) [<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fcalculated">](https://www.patreon.com/calculated)  [<img src="https://img.shields.io/discord/482991399017512960.svg?colorB=7581dc&logo=discord&logoColor=white">](https://discord.gg/c8cArY9)
 
 ## Setup
-- Install Python 3.6/pip
+- Install Python 3.6/pip (do not use Anaconda)
 - `pip3 install -r requirements.txt`
 - Install and run Redis with default port + settings (Windows is included, [Ubuntu](https://redis.io/topics/quickstart))
 - Install postgreSQL ([Windows](https://www.enterprisedb.com/thank-you-downloading-postgresql?anid=1255928), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04), [Mac](https://stackoverflow.com/a/35308200/2187510))
