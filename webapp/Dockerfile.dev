@@ -2,8 +2,7 @@ FROM node:10-alpine
 
 WORKDIR "/app"
 COPY . .
+RUN mv package.docker.json package.json
 RUN npm install
-
-VOLUME "/app/node_modules"
 
 CMD ["npm","run","start"]

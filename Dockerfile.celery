@@ -19,6 +19,9 @@ COPY ./RLBotServer.py ./
 COPY ./backend/tasks/celeryconfig.docker.py ./backend/tasks/celeryconfig.py
 COPY ./backend/utils/psyonix_api_handler.docker.py ./backend/utils/psyonix_api_handler.py
 COPY ./backend/utils/safe_flask_globals.docker.py ./backend/utils/safe_flask_globals.py
+COPY ./backend/initial_setup.docker.py ./backend/initial_setup.py 
+COPY ./backend/database/startup.docker.py ./backend/database/startup.py
+COPY ./helpers/convert_existing_replays.docker.py ./helpers/convert_existing_replays.py
 
 EXPOSE 6379
 

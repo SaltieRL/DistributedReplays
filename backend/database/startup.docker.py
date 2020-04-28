@@ -35,7 +35,7 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
 def startup() -> sessionmaker:
     try:
         # Sql Stuff
-        connection_string = 'postgresql:///saltie'
+        connection_string = 'postgresql://postgres/saltie'
         engine, session = login(connection_string)
     except OperationalError as e:
         print('trying backup info', e)
@@ -83,7 +83,7 @@ class EngineStartup:
     def login_db() -> Tuple[any, sessionmaker]:
         try:
             # Sql Stuff
-            connection_string = 'postgresql:///saltie'
+            connection_string = 'postgresql://postgres/saltie'
             engine, session = login(connection_string)
         except OperationalError as e:
             print('trying backup info', e)

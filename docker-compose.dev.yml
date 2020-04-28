@@ -5,67 +5,70 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
-    network_mode: service:flask
+    ports:
+      - 5432:5432
     volumes:
       - "calculated.gg.postgres:/var/lib/postgresql/data"
 
   redis:
     image: redis:4-alpine
     restart: always
-    network_mode: service:flask
     volumes:
       - "calculated.gg.redis:/data"
+  
+  nginx:
+    build: 
+      dockerfile: Dockerfile
+      context: ./nginx
+    restart: always
+    ports:
+      - 5000:80
+    depends_on:
+      - flask
+      - webapp
 
   flask:
-    build: .
-    image: distributed-replays-python
-    # The sleep is less than ideal but there seems to be a delay between
-    # when dockerize can connect to postgres and when our backend can
-    command: dockerize -timeout 30s -wait tcp://localhost:5432 -wait tcp://localhost:6379 sh -c "sleep 5 && python ./RLBotServer.py"
-    volumes:
-      # flask needs root and RLBotServer
-      - calculated.gg.root:/app:rw
-      - "./backend/:/app/backend"
-      - "./helpers/:/app/helpers"
-      - "./celery2.sh:/app/celery2.sh"
-      - "./celerycron.sh:/app/celerycron.sh"
-      - "./gunicorn_conf.py:/app/gunicorn_conf.py"
-      - "./RLBotServer.py:/app/RLBotServer.py" # there is also loader.py, which is identical. The command above uses RLBotServer.py.
+    build: 
+      dockerfile: Dockerfile.flask
+      context: ./
     ports:
-      # This container handles exporting the ports for every other container
-      # Those other containers link to this one
-      - 3000:3000
-      - 5432:5432
-      - 6379:6379
       - 8000:8000
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - calculated.gg.replays:/app/data
+#    environment:
+#      - REDIS_HOST=redis
+#      - REDIS_PORT=6379
+#      - PGUSER=postgres
+#      - PGHOST=postgres
+#      - PGDATABASE=saltie
+#      - PGPASSWORD=####
+#      - PGPORT=5432
 
   celery:
-    image: distributed-replays-python
-    command: dockerize -wait tcp://localhost:6379 celery -A backend.tasks.celery_tasks.celery worker --loglevel=INFO
-    network_mode: service:flask
-    volumes:
-      # uses the same root as flask, only needs to add celery shell scripts
-      - calculated.gg.root:/app:rw
-      - "./backend/:/app/backend"
-      - "./helpers/:/app/helpers"
-      - "./celery2.sh:/app/celery2.sh"
-      - "./celerycron.sh:/app/celerycron.sh"
-      - "./gunicorn_conf.py:/app/gunicorn_conf.py"
-      - "./RLBotServer.py:/app/RLBotServer.py" # there is also loader.py, which is identical. The command above uses RLBotServer.py.
+    build:
+      dockerfile: Dockerfile.celery
+      context: ./
+    command: celery -A backend.tasks.celery_tasks.celery worker --loglevel=INFO
     depends_on:
       - redis
       - flask
+    volumes:
+      - calculated.gg.replays:/app/data
 
   webapp:
     build:
-      context: ./webapp/
+      context: ./webapp
       dockerfile: Dockerfile.dev
-    network_mode: service:flask
-    volumes:
-      - /app/node_modules
-      - ./webapp/:/app
+    ports:
+      - 3000:3000
+    #volumes:
+    #  - /app/node_modules
+    #  - ./webapp/:/app
 
 volumes:
   calculated.gg.postgres:
   calculated.gg.redis:
-  calculated.gg.root:
+  calculated.gg.replays:

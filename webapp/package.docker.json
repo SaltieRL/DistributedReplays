@@ -78,7 +78,6 @@
         "tslint-react": "^4.1.0",
         "typescript": "^3.7.2"
     },
-    "proxy": "http://flask:8000",
     "browserslist": [
         ">0.2%",
         "not dead",
