@@ -46,6 +46,17 @@ The structure of the server is split into different directories:
 
 ## Setup and Running with Docker (Docs WIP)
 
+### Overview
+
+Through the usage of Docker and Docker Compose, all application and infrastructure dependencies and configurations are taken care of automatically.
+The only requirement will be to have docker installed on the machine. Upon initializing Docker Compose the following services will be started:
+- Postgres DB
+- Redis
+- Nginx Load Balancer
+- Flask
+- Celery
+- Node.js development server
+
 ### Basic Dependencies
 
 - [Docker Community Edition (Stable)](https://docs.docker.com/install/)
@@ -64,8 +75,14 @@ docker-compose up
 docker ps
 ```
 
-Now go to `localhost:3000` and the site should be running.
+**Note:** It is possible the first time that Docker Compose executes that Flask will time-out until Postgres DB recreates the basic structure. If that happens run the following commands:
+```
+docker-compose down --remove-orphans
+docker-compose up
+```
 
+Now go to `localhost:8080` and the site should be running.
+Any changes/edits that you perform on the Webapp folder should be reflected immediately on the site.
 
 ### Testing
 
