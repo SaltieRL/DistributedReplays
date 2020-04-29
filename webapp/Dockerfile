@@ -6,7 +6,7 @@ WORKDIR /app
 # Building webapp
 COPY *.json ./
 COPY *.ts ./
-COPY package.docker.json package.json
+RUN sed -i '/localhost/d' ./package.json
 RUN npm install
 COPY ./src src
 COPY ./public public
