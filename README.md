@@ -66,6 +66,9 @@ The only requirement will be to have docker installed on the machine. Upon initi
   - [Mac/Windows: Docker Desktop](https://www.docker.com/products/docker-desktop)
   - [Ubuntu/Debian-ish: Docker CLI](https://docs.docker.com/install/linux/docker-ce/debian/#install-docker-ce)
 
+### Environment variables (Optional)
+Included in the repository there's a env.example file that can be used to customize the environment variables used in Docker Compose. Usage of this file is not mandatory but if you want to leverage on it, you should rename it to ```.env``` and edit accordingly.
+
 ### Run Everything
 ```bash
 # Start containers. Should be in project root directory (where docker-compose.yml is)
