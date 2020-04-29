@@ -1,8 +1,13 @@
+import os
+
+redis_server = os.getenv("REDIS_HOST", "localhost")
+redis_port = os.getenv("REDIS_PORT", 6379)
+
 enable_utc = True
 worker_max_tasks_per_child = 100
 
-broker_url = 'redis://localhost:6379/0'
-result_backend = 'redis://localhost:6379/0'
+broker_url = f'redis://{redis_server}:{redis_port}/0'
+result_backend = f'redis://{redis_server}:{redis_port}/0'
 broker_transport_options = {'fanout_prefix': True}
 task_always_eager = False
 

@@ -1,6 +1,7 @@
 import logging
 from typing import Tuple, Optional
 
+import os
 import redis
 from flask import current_app
 from redis import Redis
@@ -12,6 +13,13 @@ from backend.database.objects import DBObjectBase
 
 logger = logging.getLogger(__name__)
 
+redis_server = os.getenv("REDIS_HOST", "localhost")
+redis_port = os.getenv("REDIS_PORT", 6379)
+postgres_server = os.getenv("POSTGRES_HOST","localhost")
+postgres_port = os.getenv("POSTGRES_PORT","5432")
+postgres_user = os.getenv("POSTGRES_USER","postgres")
+postgres_password = os.getenv("POSTGRES_PASSWORD","postgres")
+postgres_db = os.getenv("POSTGRES_DB","saltie")
 
 def login(connection_string, recreate_database=False) -> Tuple[create_engine, sessionmaker]:
     print(connection_string)
@@ -40,9 +48,9 @@ def startup() -> sessionmaker:
     except OperationalError as e:
         print('trying backup info', e)
         try:
-            engine, session = login('postgresql://postgres:postgres@localhost/saltie')
+            engine, session = login(f'postgresql://{postgres_user}:{postgres_password}@{postgres_server}/{postgres_db}')
         except Exception as e:
-            engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+            engine, session = login(f'postgresql://{postgres_user}:{postgres_password}@{postgres_server}', recreate_database=True)
     return session
 
 
@@ -88,9 +96,9 @@ class EngineStartup:
         except OperationalError as e:
             print('trying backup info', e)
             try:
-                engine, session = login('postgresql://postgres:postgres@localhost/saltie')
+                engine, session = login(f'postgresql://{postgres_user}:{postgres_password}@{postgres_server}/{postgres_db}')
             except Exception as e:
-                engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+                engine, session = login(f'postgresql://{postgres_user}:{postgres_password}@{postgres_server}', recreate_database=True)
         return engine, session
 
     @staticmethod
@@ -102,8 +110,8 @@ class EngineStartup:
     def get_redis() -> Optional[Redis]:
         try:
             _redis = Redis(
-                host='localhost',
-                port=6379)
+                host=redis_server,
+                port=redis_port)
             _redis.get('test')  # Make Redis try to actually use the connection, to generate error if not connected.
             return _redis
         except:  # TODO: Investigate and specify this except.
@@ -112,7 +120,10 @@ class EngineStartup:
 
     @staticmethod
     def get_strict_redis():
-        return redis.StrictRedis()
+        return redis.StrictRedis(
+            host=redis_server,
+            port=redis_port
+        )
 
     @staticmethod
     def get_current_session():

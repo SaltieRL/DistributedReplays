@@ -5,6 +5,7 @@ from typing import Union
 
 import redis
 import requests
+import os
 from backend.database.objects import Player
 from backend.database.startup import lazy_startup
 from backend.utils.braacket_connection import Braacket
@@ -20,6 +21,8 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+redis_server = os.getenv("REDIS_HOST", "localhost")
+redis_port = os.getenv("REDIS_PORT", 6379)
 
 def get_bot_by_steam_id(steam_id):
     if steam_id[0] == 'b' and steam_id[-1] == 'b':
@@ -53,8 +56,8 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
     except RuntimeError:  # we're not in application context, use our own redis
         if offline_redis is None and use_redis:
             offline_redis = redis.Redis(
-                host='localhost',
-                port=6379)
+                host=f'{redis_server}',
+                port=redis_port)
         _redis = offline_redis
     if _redis is not None:
         ids_to_find = []

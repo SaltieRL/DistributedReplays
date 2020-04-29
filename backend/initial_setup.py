@@ -46,7 +46,8 @@ except:
     USERS = None
 
 authorizer = HTTPBasicAuth()
-
+redis_server = os.getenv("REDIS_HOST", "localhost")
+redis_port = os.getenv('REDIS_PORT', "6379")
 
 class CalculatedServer:
 
@@ -125,7 +126,7 @@ class CalculatedServer:
         app.config['PARSED_DIR'] = os.path.join(BASE_FOLDER, 'data', 'parsed')
         app.config['VERSION'] = CalculatedServer.get_version()
         app.config.update(
-            broker_url='redis://localhost:6379/0',
+            broker_url=f"redis://{redis_server}:{redis_port}/0",
             result_backend='redis://',
             worker_max_tasks_per_child=100,
             broker_transport_options={'fanout_prefix': True}

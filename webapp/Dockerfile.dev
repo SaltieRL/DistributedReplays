@@ -2,7 +2,7 @@ FROM node:10-alpine
 
 WORKDIR "/app"
 COPY . .
-RUN mv package.docker.json package.json
+RUN sed -i '/localhost/d' ./package.json
 RUN npm install
 
 CMD ["npm","run","start"]
