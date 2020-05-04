@@ -34,6 +34,7 @@ from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.tasks.update import update_self
+from backend.utils.cloud_handler import get_replay_url
 from backend.utils.file_manager import FileManager
 from backend.utils.logger import ErrorLogger
 from backend.utils.metrics import MetricsHandler, add_saved_replay
@@ -343,9 +344,7 @@ def download_replay(id_):
     path = FileManager.get_replay_path(id_)
     if os.path.isfile(path):
         return send_from_directory(current_app.config['REPLAY_DIR'], filename, as_attachment=True)
-    elif config is not None and hasattr(config, 'GCP_BUCKET_URL'):
-        return redirect(config.GCP_BUCKET_URL + filename)
-    return "Replay not found", 404
+    return redirect(get_replay_url(id_))
 
 
 @bp.route('replay/<id_>/predict')
