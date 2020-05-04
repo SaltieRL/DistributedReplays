@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from backend.database.objects import PlayerGame
 from backend.utils.rlgarage_handler import RLGarageAPI
@@ -95,7 +96,7 @@ class CameraSettings:
 class ReplayPlayer:
     def __init__(self, id_: str, name: str, is_orange: bool,
                  score: int, goals: int, assists: int, saves: int, shots: int,
-                 camera_settings: CameraSettings, loadout: Loadout):
+                 camera_settings: Optional[CameraSettings], loadout: Optional[Loadout]):
         self.id = id_
         self.name = name
         self.isOrange = is_orange
@@ -104,11 +105,13 @@ class ReplayPlayer:
         self.assists = assists
         self.saves = saves
         self.shots = shots
-        self.cameraSettings = camera_settings.__dict__
-        self.loadout = loadout.__dict__
+        if camera_settings is not None:
+            self.cameraSettings = camera_settings.__dict__
+        if loadout is not None:
+            self.loadout = loadout.__dict__
 
     @staticmethod
-    def create_from_player_game(player_game: PlayerGame) -> 'ReplayPlayer':
+    def create_from_player_game(player_game: PlayerGame, full=True) -> 'ReplayPlayer':
         return ReplayPlayer(
             id_=player_game.player,
             name=player_game.name,
@@ -118,6 +121,6 @@ class ReplayPlayer:
             assists=player_game.assists,
             saves=player_game.saves,
             shots=player_game.shots,
-            camera_settings=CameraSettings.create_from_player_game(player_game),
-            loadout=Loadout.create_from_player_game(player_game)
+            camera_settings=CameraSettings.create_from_player_game(player_game) if full else None,
+            loadout=Loadout.create_from_player_game(player_game) if full else None
         )
