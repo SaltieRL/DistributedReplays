@@ -1,12 +1,9 @@
-import datetime
 import random
 import time
 import unittest
-from uuid import uuid4
 
-from backend.database.objects import Game, GameVisibilitySetting, Playlist
-from backend.database.startup import lazy_startup, lazy_startup_engine
-from helpers.migrate_database import clear_database
+from backend.database.objects import Game
+from backend.database.startup import lazy_startup_engine
 
 TAGS = ["salt", "pepper", "peppermint", "allspice", "cinnamon", "coriander", "basil", "holy basil", "fennel",
         "cayenne pepper", "horseradish", "ginger", "curry", "celery", "chili", "chili pepper", "dill", "fingerroot",
