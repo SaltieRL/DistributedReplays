@@ -2,11 +2,11 @@ import datetime
 from enum import Enum
 from typing import TypeVar, Type, Callable
 
+from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 from backend.blueprints.spa_api.utils.query_params_handler import QueryParam
 from backend.database.objects import GameVisibilitySetting
 from backend.database.wrapper.stats.player_stat_wrapper import TimeUnit
 from backend.utils.time_related import hour_rounder, convert_to_datetime
-from backend.blueprints.spa_api.service_layers.replay.enums import HeatMapType
 
 T = TypeVar('T', bound=Enum)
 
@@ -65,6 +65,21 @@ replay_search_query_params = [
     QueryParam(name='tag_names', optional=True, type_=str, is_list=True,
                tip='User mused be logged in to use this parameter',
                require_user=True)
+] + tag_params + pagination_query_params
+
+replay_search_es_query_params = [
+    QueryParam(name='players', optional=True, is_list=True),
+    QueryParam(name='playlist', optional=True, is_list=True, type_=int),
+    QueryParam(name='ranks', optional=True, type_=int),
+    QueryParam(name='teamsize', optional=True, type_=int),
+    # QueryParam(name='date_before', optional=True, type_=convert_to_datetime, documentation_type='datetime'),
+    # QueryParam(name='date_after', optional=True, type_=convert_to_datetime, documentation_type='datetime'),
+    # QueryParam(name='min_length', optional=True, type_=float),
+    # QueryParam(name='max_length', optional=True, type_=float),
+    QueryParam(name='map', optional=True),
+    # QueryParam(name='tag_names', optional=True, type_=str, is_list=True,
+    #            tip='User mused be logged in to use this parameter',
+    #            require_user=True)
 ] + tag_params + pagination_query_params
 
 

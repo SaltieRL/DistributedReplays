@@ -5,6 +5,7 @@ import redis
 from flask import current_app
 from redis import Redis
 from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 
@@ -13,15 +14,15 @@ from backend.database.objects import DBObjectBase
 logger = logging.getLogger(__name__)
 
 
-def login(connection_string, recreate_database=False) -> Tuple[create_engine, sessionmaker]:
+def login(connection_string, db='saltietest', recreate_database=False) -> Tuple[create_engine, sessionmaker]:
     print(connection_string)
     engine = create_engine(connection_string, echo=False)
     if recreate_database:
         conn = engine.connect()
         conn.execute("commit")
-        conn.execute("create database saltie")
+        conn.execute(f"create database {db}")
         conn.close()
-        engine = create_engine(connection_string + '/saltie', echo=False)
+        engine = create_engine(connection_string + '/' + db, echo=False)
     conn = engine.connect()
     conn.execute("create extension if not exists ltree WITH schema public;")
     conn.execute("create extension if not exists ltree;")
@@ -30,20 +31,6 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
     DBObjectBase.metadata.create_all(engine)
     session = sessionmaker(bind=engine)
     return engine, session
-
-
-def startup() -> sessionmaker:
-    try:
-        # Sql Stuff
-        connection_string = 'postgresql:///saltie'
-        engine, session = login(connection_string)
-    except OperationalError as e:
-        print('trying backup info', e)
-        try:
-            engine, session = login('postgresql://postgres:postgres@localhost/saltie')
-        except Exception as e:
-            engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
-    return session
 
 
 def get_current_session():
@@ -55,12 +42,20 @@ stored_redis = None
 redis_attempted = False
 
 
-def lazy_startup():
+def lazy_startup(db='saltie'):
     global stored_session
     if stored_session is not None:
         return stored_session
-    stored_session = EngineStartup.startup()
+    _, stored_session = EngineStartup.startup(db)
     return stored_session
+
+
+def lazy_startup_engine(db='saltie'):
+    global stored_session
+    if stored_session is not None:
+        return stored_session
+    engine, stored_session = EngineStartup.startup(db)
+    return engine, stored_session
 
 
 def lazy_get_redis():
@@ -80,23 +75,23 @@ def get_strict_redis():
 # session getting
 class EngineStartup:
     @staticmethod
-    def login_db() -> Tuple[any, sessionmaker]:
+    def login_db(db) -> Tuple[any, sessionmaker]:
         try:
             # Sql Stuff
-            connection_string = 'postgresql:///saltie'
+            connection_string = f'postgresql:///{db}'
             engine, session = login(connection_string)
         except OperationalError as e:
             print('trying backup info', e)
             try:
-                engine, session = login('postgresql://postgres:postgres@localhost/saltie')
+                engine, session = login(f'postgresql://postgres:postgres@localhost/{db}', db)
             except Exception as e:
-                engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+                engine, session = login(f'postgresql://postgres:postgres@localhost', db, recreate_database=True)
         return engine, session
 
     @staticmethod
-    def startup() -> sessionmaker:
-        _, session = EngineStartup.login_db()
-        return session
+    def startup(db) -> Tuple[Engine, sessionmaker]:
+        engine, session = EngineStartup.login_db(db)
+        return engine, session
 
     @staticmethod
     def get_redis() -> Optional[Redis]:

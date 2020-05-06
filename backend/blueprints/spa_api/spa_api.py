@@ -28,9 +28,10 @@ from backend.blueprints.spa_api.service_layers.replay.visibility import ReplayVi
 from backend.blueprints.spa_api.service_layers.replay.visualizations import Visualizations
 from backend.blueprints.spa_api.utils.query_param_definitions import upload_file_query_params, \
     replay_search_query_params, progression_query_params, playstyle_query_params, visibility_params, convert_to_enum, \
-    player_id, heatmap_query_params
+    player_id, heatmap_query_params, replay_search_es_query_params
 from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
+from backend.search.esearch import create_with_filters
 from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
 from backend.tasks.update import update_self
@@ -358,6 +359,13 @@ def api_predict_ranks(id_):
 @with_query_params(accepted_query_params=replay_search_query_params)
 def api_search_replays(query_params=None):
     match_history = MatchHistory.create_with_filters(**query_params)
+    return better_jsonify(match_history)
+
+
+@bp.route('/replayes')
+@with_query_params(accepted_query_params=replay_search_es_query_params)
+def api_search_replays_es(query_params=None):
+    match_history = create_with_filters(**query_params)
     return better_jsonify(match_history)
 
 
