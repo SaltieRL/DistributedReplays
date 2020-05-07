@@ -2,11 +2,11 @@ from typing import List, Tuple
 
 from sqlalchemy import func, desc
 
+from backend.blueprints.spa_api.errors.errors import PlayerNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.database.objects import Player as DBPlayer
 from backend.database.objects import PlayerGame
-from backend.blueprints.spa_api.errors.errors import PlayerNotFound
 
 
 class Player:
@@ -34,6 +34,10 @@ class Player:
         try:
             steam_profile = get_steam_profile_or_random_response(id_)['response']['players'][0]
         except TypeError:
+            names_and_counts: List[Tuple[str, int]] = session.query(PlayerGame.name,
+                                                                    func.count(PlayerGame.name).label('c')) \
+                                                          .filter(PlayerGame.player == id_) \
+                                                          .group_by(PlayerGame.name).order_by(desc('c'))[:5]
             if len(names_and_counts) > 0:
                 return Player(id_=id_, name=names_and_counts[0][0], past_names=names_and_counts, profile_link="",
                               avatar_link="/psynet.jpg" if not id_.startswith(
