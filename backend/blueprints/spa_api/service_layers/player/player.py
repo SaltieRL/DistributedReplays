@@ -1,12 +1,9 @@
 from typing import List, Tuple
 
-from sqlalchemy import func, desc
-
+from backend.blueprints.spa_api.errors.errors import PlayerNotFound
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.blueprints.steam import get_steam_profile_or_random_response
 from backend.database.objects import Player as DBPlayer
-from backend.database.objects import PlayerGame
-from backend.blueprints.spa_api.errors.errors import PlayerNotFound
 
 
 class Player:
@@ -23,9 +20,11 @@ class Player:
     @staticmethod
     @with_session
     def create_from_id(id_: str, session=None) -> 'Player':
-        names_and_counts: List[Tuple[str, int]] = session.query(PlayerGame.name, func.count(PlayerGame.name).label('c')) \
-                                                      .filter(PlayerGame.player == id_) \
-                                                      .group_by(PlayerGame.name).order_by(desc('c'))[:5]
+        # names_and_counts: List[Tuple[str, int]] = session.query(PlayerGame.name,
+        # func.count(PlayerGame.name).label('c')) \
+        #                                               .filter(PlayerGame.player == id_) \
+        #                                               .group_by(PlayerGame.name).order_by(desc('c'))[:5]
+        names_and_counts = []  # TODO: fix with Elasticsearch or something similar
         query = session.query(DBPlayer.groups).filter(DBPlayer.platformid == id_)
         if query.count() > 0:
             groups = query.first()[0]
