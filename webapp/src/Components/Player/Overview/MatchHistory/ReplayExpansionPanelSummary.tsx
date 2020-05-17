@@ -70,7 +70,7 @@ class ReplayExpansionPanelSummaryComponent extends React.PureComponent<Props> {
         const typographyVariant = "subtitle1"
 
         const {replay, player} = this.props
-        const dateFormat = isWidthUp("lg", width) ? "DD/MM/YYYY" : "DD/MM"
+        const dateFormat = isWidthUp("lg", width) ? "L" : "DD/MM"
         const replayName = sanitizeProfanity(replay.name)
         const replayDate = (
             <Tooltip title={replay.date.format("LLLL")} enterDelay={200} placement="bottom-start">
