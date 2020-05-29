@@ -11,7 +11,7 @@ import {
     Typography
 } from "@material-ui/core"
 import * as React from "react"
-import {Replay} from "../../../Models"
+import {Replay} from "../../../../Models"
 
 interface Props {
     replay: Replay

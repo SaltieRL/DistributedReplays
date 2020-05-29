@@ -1,7 +1,7 @@
 import {Grid, Typography} from "@material-ui/core"
 import * as React from "react"
 import {Scatter} from "react-chartjs-2"
-import {Replay} from "../../../Models"
+import {Replay} from "../../../../Models"
 import {ReactHeatmap} from "./Heatmap"
 
 interface Props {

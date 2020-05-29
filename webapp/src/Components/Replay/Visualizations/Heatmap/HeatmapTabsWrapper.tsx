@@ -1,9 +1,9 @@
 import {CardContent, Divider} from "@material-ui/core"
 import Grid from "@material-ui/core/Grid"
 import * as React from "react"
-import {HeatmapSubcategory, Replay} from "../../../Models"
-import {getHeatmaps} from "../../../Requests/Replay"
-import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {HeatmapSubcategory, Replay} from "../../../../Models"
+import {getHeatmaps} from "../../../../Requests/Replay"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {HeatmapContent} from "./HeatmapContent"
 import {HeatmapTabs} from "./HeatmapTabs"
 

@@ -8,11 +8,9 @@ import {Replay} from "../../Models"
 import {StoreState} from "../../Redux"
 import {PlayerStatsContent} from "./BasicStats/PlayerStats/PlayerStatsContent"
 import {TeamStatsContent} from "./BasicStats/TeamStats/TeamStatsContent"
-import {HeatmapTabsWrapper} from "./Heatmap/HeatmapTabsWrapper"
-import {KickoffTabsWrapper} from "./Kickoffs/KickoffTabsWrapper"
 import {Predictions} from "./Predictions/Predictions"
 import {Viewer} from "./ReplayViewer/Viewer"
-import {VisualizationsContent} from "./Visualizations/VisualizationsContent"
+import {VisualizationTabs} from "./Visualizations/VisualizationTabs"
 
 interface DisabledTabProps {
     label: string
@@ -35,15 +33,7 @@ interface OwnProps {
 
 type Props = OwnProps & ReturnType<typeof mapStateToProps> & WithWidth
 
-type ReplayTab =
-    | "playerStats"
-    | "teamStats"
-    | "heatmaps"
-    | "kickoffs"
-    | "visualizations"
-    | "replayViewer"
-    | "predictions"
-    | "qrCode"
+type ReplayTab =| "playerStats" | "teamStats" | "visualizations" | "replayViewer" | "predictions" | "qrCode"
 
 interface State {
     selectedTab: ReplayTab
@@ -92,12 +82,6 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 >
                     <Tab key="basicStats" label="Player Stats" value="playerStats" />
                     <Tab key="predictions" label="Predictions" value="predictions" />
-                    <Tab key="heatmaps" label="Heatmaps" value="heatmaps" />
-                    {this.props.loggedInUser && this.props.loggedInUser.beta ? (
-                        <Tab key="kickoffs" label="Kickoffs" value="kickoffs" />
-                    ) : (
-                        <TabDisabled label="Kickoffs" />
-                    )}
                     {this.props.loggedInUser && this.props.loggedInUser.beta ? (
                         <Tab key="visualizations" label="Visualizations" value="visualizations" />
                     ) : (
@@ -114,15 +98,13 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                 {this.state.selectedTab === "playerStats" && (
                     <PlayerStatsContent replay={this.props.replay} explanations={this.props.explanations} />
                 )}
-                {this.state.selectedTab === "heatmaps" && <HeatmapTabsWrapper replay={this.props.replay} />}
-                {this.state.selectedTab === "kickoffs" && <KickoffTabsWrapper replay={this.props.replay} />}
                 {this.state.selectedTab === "predictions" && <Predictions replay={this.props.replay} />}
                 {this.state.selectedTab === "teamStats" && (
                     <TeamStatsContent replay={this.props.replay} explanations={this.props.explanations} />
                 )}
                 {this.state.selectedTab === "replayViewer" && <Viewer replayId={this.props.replay.id} />}
                 {this.state.selectedTab === "qrCode" && qrcode}
-                {this.state.selectedTab === "visualizations" && <VisualizationsContent replay={this.props.replay} />}
+                {this.state.selectedTab === "visualizations" && <VisualizationTabs replay={this.props.replay} />}
             </Card>
         )
     }

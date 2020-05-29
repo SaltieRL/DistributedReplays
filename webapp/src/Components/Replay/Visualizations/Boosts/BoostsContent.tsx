@@ -1,8 +1,8 @@
 import {Divider, Grid} from "@material-ui/core"
 import * as React from "react"
-import {Replay} from "../../../Models"
-import {getBoostmap} from "../../../Requests/Replay"
-import {LoadableWrapper} from "../../Shared/LoadableWrapper"
+import {Replay} from "../../../../Models"
+import {getBoostmap} from "../../../../Requests/Replay"
+import {LoadableWrapper} from "../../../Shared/LoadableWrapper"
 import {BoostMapWrapper} from "./BoostMapWrapper"
 
 interface Props {
@@ -15,7 +15,7 @@ interface State {
     boostmapData: any
 }
 
-export class VisualizationsContent extends React.PureComponent<Props, State> {
+export class BoostsContent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {element: null, reloadSignal: false, boostmapData: null}
