@@ -8,6 +8,8 @@ import requests
 from carball.analysis.utils import pandas_manager, proto_manager
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound
+from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.database.objects import ObjectLocation
 
 try:
     from config import PARSED_BUCKET, PROTO_BUCKET, REPLAY_BUCKET, FAILED_BUCKET, TRAINING_PACK_BUCKET
@@ -24,8 +26,6 @@ try:
 except:
     logger.warning("Google Cloud Storage is not installed. Install it with `pip install google-cloud-storage`")
     storage = None
-
-
 
 try:
     import config
@@ -71,7 +71,10 @@ def upload_proto(filepath, blob_name=None):
 def download_df(id_):
     if PARSED_BUCKET is None:
         raise ReplayNotFound()
-    gzip_url = f'https://storage.googleapis.com/{PARSED_BUCKET}/{id_}.replay.gzip'
+    bucket_name = PARSED_BUCKET
+    if is_archived(id_):
+        bucket_name += "-cold"
+    gzip_url = f'https://storage.googleapis.com/{bucket_name}/{id_}.replay.gzip'
     r = requests.get(gzip_url)
     if r.status_code == 404:
         raise ReplayNotFound()
@@ -92,17 +95,26 @@ def upload_df(filepath, blob_name=None):
         blob_name = os.path.basename(filepath)
     return upload_to_bucket(blob_name, filepath, PARSED_BUCKET)
 
+
 def upload_training_pack(filepath, blob_name=None):
     if blob_name is None:
         blob_name = os.path.basename(filepath)
     return upload_to_bucket(blob_name, filepath, TRAINING_PACK_BUCKET)
 
 
-def download_replay(id_):
-    if PROTO_BUCKET is None:
+def get_replay_url(id_):
+    if REPLAY_BUCKET is None:
         raise ReplayNotFound()
-    # PROTO
-    replay_url = f'https://storage.googleapis.com/{REPLAY_BUCKET}/{id_}.replay'
+    # REPLAY
+    bucket_name = REPLAY_BUCKET
+    if is_archived(id_):
+        bucket_name += "-cold"
+    replay_url = f'https://storage.googleapis.com/{bucket_name}/{id_}.replay'
+    return replay_url
+
+
+def download_replay(id_):
+    replay_url = get_replay_url(id_)
     r = requests.get(replay_url)
     if r.status_code == 404:
         raise ReplayNotFound()
@@ -144,3 +156,9 @@ def upload_to_bucket(blob_name, path_to_file, bucket_name):
 
     # returns a public url
     return blob.public_url
+
+
+@with_session
+def is_archived(id_, session=None):
+    obl = session.query(ObjectLocation).filter(ObjectLocation.hash == id_).first()
+    return obl is not None and obl.archive
