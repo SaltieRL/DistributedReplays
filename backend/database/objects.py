@@ -467,3 +467,9 @@ class GroupEntry(DBObjectBase):
 
     def __repr__(self):
         return 'Node({})'.format(self.uuid)
+
+
+class ObjectLocation(DBObjectBase):
+    __tablename__ = "locations"
+    hash = Column(String(40), id_seq, primary_key=True, index=True)
+    archive = Column(Boolean, default=False)
