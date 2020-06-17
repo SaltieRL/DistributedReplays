@@ -13,6 +13,7 @@
         "@material-ui/lab": "^3.0.0-alpha.30",
         "@material-ui/pickers": "^3.2.8",
         "@material-ui/styles": "^4.6.0",
+        "bad-words": "^3.0.3",
         "chart.js": "2.4.0",
         "d3": "^5.9.2",
         "heatmap.js": "^2.0.5",
@@ -34,7 +35,7 @@
         "redux": "^4.0.0",
         "redux-actions": "^2.6.4",
         "redux-devtools-extension": "^2.13.5",
-        "replay-viewer": "0.5.2",
+        "replay-viewer": "0.7.1",
         "three": "^0.108.0"
     },
     "scripts": {

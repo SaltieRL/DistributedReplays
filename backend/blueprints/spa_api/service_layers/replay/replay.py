@@ -1,8 +1,8 @@
 from typing import List, cast
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, Redirect
-from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
 from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
+from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
 from backend.blueprints.spa_api.service_layers.utils import sort_player_games_by_team_then_id, with_session
 from backend.data.constants.playlist import get_playlist
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
@@ -49,7 +49,7 @@ class Replay:
         return replay
 
     @staticmethod
-    def create_from_game(game: Game) -> 'Replay':
+    def create_from_game(game: Game, full=True) -> 'Replay':
         return Replay(
             id_=game.hash,
             name=game.name,
@@ -58,7 +58,7 @@ class Replay:
             game_mode=get_playlist(game.playlist, game.teamsize),
             game_score=GameScore.create_from_game(game),
             players=[
-                ReplayPlayer.create_from_player_game(player_game)
+                ReplayPlayer.create_from_player_game(player_game, full=full)
                 for player_game in sort_player_games_by_team_then_id(
                     cast(List[PlayerGame], game.playergames))
             ],

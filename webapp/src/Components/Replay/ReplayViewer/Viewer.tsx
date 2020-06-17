@@ -113,7 +113,8 @@ export class Viewer extends React.Component<Props, State> {
                 options: {
                     clock: FPSClock.convertReplayToClock(replayData),
                     replayData,
-                    replayMetadata
+                    replayMetadata,
+                    defaultLoadouts: false
                 }
             })
         })
