@@ -3,9 +3,9 @@ workers = 9
 worker_connections = 1000
 keepalive = 5
 timeout = 60
-keyfile = 'calculated2.key'
-certfile = 'calculated_cert2.pem'
-ca_certs = 'chain2.pem'
+keyfile = 'keys/calculated2.key'
+certfile = 'keys/calculated_cert2.pem'
+ca_certs = 'keys/chain2.pem'
 
 
 def child_exit(server, worker):
