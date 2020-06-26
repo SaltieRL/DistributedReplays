@@ -71,8 +71,27 @@ class PlayerWrapper:
 
         return query
 
+    def get_games(self, session, id_, replay_ids=None, filter_private=True):
+        query = session.query(Game)
+        if replay_ids is not None:
+            query = query.filter(Game.players.contains(cast(id_, postgresql.ARRAY(String))))
+
+        if filter_private:
+            if UserManager.get_current_user() is not None:
+                if not is_admin():
+                    query = query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
+                                             Game.players.any(get_current_user_id())))
+            else:
+                query = query.filter(Game.visibility != GameVisibilitySetting.PRIVATE)
+
+        return query
+
     def get_player_games_paginated(self, session, id_, page: int = 0, limit: int = None, filter_private=True):
         query = self.get_player_games(session, id_, filter_private=filter_private)
+        return self.get_paginated_match_history(query, page=page, limit=limit)
+
+    def get_games_paginated(self, session, id_, page: int = 0, limit: int = None, filter_private=True):
+        query = self.get_games(session, id_, filter_private=filter_private)
         return self.get_paginated_match_history(query, page=page, limit=limit)
 
     def get_paginated_match_history(self, existing_query, page: int, limit: int) -> List[PlayerGame]:
