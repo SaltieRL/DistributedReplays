@@ -71,11 +71,8 @@ class PlayerWrapper:
 
         return query
 
-    def get_games(self, session, id_, replay_ids=None, filter_private=True):
-        query = session.query(Game)
-        if replay_ids is not None:
-            query = query.filter(Game.players.contains(cast(id_, postgresql.ARRAY(String))))
-
+    def get_games(self, session, id_, filter_private=True):
+        query = session.query(Game).filter(Game.players.contains(cast([id_], postgresql.ARRAY(String))))
         if filter_private:
             if UserManager.get_current_user() is not None:
                 if not is_admin():
