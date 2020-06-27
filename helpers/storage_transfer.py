@@ -1,7 +1,11 @@
 import datetime
+import os
+import sys
 
 from google.api_core.exceptions import NotFound
 from google.cloud import storage
+
+sys.path.append(os.path.abspath('.'))
 
 from backend.database.objects import Game, ObjectLocation
 from backend.database.startup import lazy_startup
@@ -31,10 +35,11 @@ while last_count == num_per_page:
             continue
 
         for bucket, cold_bucket in zip(buckets, cold_buckets):
-            blob = bucket.blob(game.hash + '.replay' + ('.gzip' if bucket.name.endswith('parsed') else ''))
+            blob_name = game.hash + '.replay' + ('.gzip' if bucket.name.endswith('parsed') else '')
+            blob = bucket.blob(blob_name)
             try:
                 bucket.copy_blob(blob, cold_bucket)
-                bucket.delete_blob(blob)
+                bucket.delete_blob(blob_name)
             except NotFound:
                 print(f"Object {game.hash} not found.")
 

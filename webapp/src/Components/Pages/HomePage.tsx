@@ -23,7 +23,6 @@ import {getLoggedInUser, getReplayCount} from "../../Requests/Global"
 import {HomePageAppBar} from "../Home/HomePageAppBar"
 import {HomePageFooter} from "../Home/HomePageFooter"
 import {Leaderboards} from "../Home/Widgets/Leaderboards"
-import {Patreon} from "../Home/Widgets/Patreon"
 import {Recent} from "../Home/Widgets/Recent"
 import {Twitch} from "../Home/Widgets/Twitch"
 import {LinkButton} from "../Shared/LinkButton"
@@ -180,10 +179,6 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                     <Grid item container xs={12} sm={6} lg={4}>
                                         <Leaderboards cardStyle={{width: "100%"}} />
                                     </Grid>
-
-                                    <Grid item container xs={12} sm={6} lg={4}>
-                                        <Patreon cardStyle={{width: "100%"}} />
-                                    </Grid>
                                 </>
                             ) : (
                                 <>
@@ -195,10 +190,6 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                                     </Grid>
                                     <Grid item container xs={12} sm={6} lg={4}>
                                         <Twitch cardStyle={{width: "100%"}} />
-                                    </Grid>
-
-                                    <Grid item container xs={12} sm={6} lg={4}>
-                                        <Patreon cardStyle={{width: "100%"}} />
                                     </Grid>
                                 </>
                             )}
