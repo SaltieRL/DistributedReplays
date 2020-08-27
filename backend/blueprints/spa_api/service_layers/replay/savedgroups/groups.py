@@ -2,7 +2,8 @@ import logging
 
 from sqlalchemy import func
 
-from backend.blueprints.spa_api.errors.errors import AuthorizationException, ReplayNotFound, NotLoggedIn
+from backend.blueprints.spa_api.errors.errors import AuthorizationException, ReplayNotFound, NotLoggedIn, \
+    CalculatedError
 from backend.blueprints.spa_api.service_layers.player.player import Player
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -143,6 +144,8 @@ class SavedGroup:
         path = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first().path
         games = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(path)).filter(
             GroupEntry.type == GroupEntryType.game).all()
+        if len(games) > 150:
+            return CalculatedError(400, 'Too many replays in group!')
         games = [game.game for game in games]
         if team:
             stats = wrapper.get_group_team_stats(games)
