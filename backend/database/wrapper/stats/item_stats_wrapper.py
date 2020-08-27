@@ -152,6 +152,7 @@ class ItemStatsWrapper:
     @staticmethod
     @with_session
     def create_unpainted_stats(category=None, counts=False, session=None, override=False):
+        print(f"Create Unpainted {category} {counts}")
         key = category if category is not None else "None"
         result = ItemStatsWrapper.get_redis_result_if_exists(f"items_create_unpainted_stats_{counts}_",
                                                              key)
@@ -175,9 +176,10 @@ class ItemStatsWrapper:
         else:
             total_count = 1
         if category is not None:
-            stats = ItemStatsWrapper.get_most_used_by_column(category_map_inv[category], session)
+            stats = ItemStatsWrapper.get_most_used_by_column(category_map_inv[category], session, override=override)
             if counts:
                 stats = [[stat[0], stat[1], stat[2] / total_count] for stat in stats]
+                print(stats)
                 results = [ItemResult(*s).__dict__ for s in stats]
             else:
                 results = [ItemResult(*s).__dict__['item_id'] for s in stats]
@@ -191,7 +193,7 @@ class ItemStatsWrapper:
         result_map = {}
 
         for dynamic_field in dynamic_field_list:
-            stats = ItemStatsWrapper.get_most_used_by_column(dynamic_field.field_name, session)
+            stats = ItemStatsWrapper.get_most_used_by_column(dynamic_field.field_name, session, override=override)
             if counts:
                 stats = [[stat[0], stat[1], stat[2] / total_count] for stat in stats]
                 results = [ItemResult(*s).__dict__ for s in stats]
@@ -202,13 +204,13 @@ class ItemStatsWrapper:
         return result_map
 
     @staticmethod
-    def create_item_list(query_params):
+    def create_item_list(query_params, override=False):
 
         api = RLGarageAPI()
         result = ItemStatsWrapper.get_redis_result_if_exists("api_get_items_list_", query_params['category'])
-        if result is not None:
+        if not override and result is not None:
             return result
-        order = ItemStatsWrapper.create_unpainted_stats(query_params['category'], counts=True)
+        order = ItemStatsWrapper.create_unpainted_stats(query_params['category'], counts=True, override=override)
         result = api.get_item_list_by_category(query_params['category'], query_params['page'], query_params['limit'],
                                                order=[o['item_id'] for o in order])
         result['items'] = [{
