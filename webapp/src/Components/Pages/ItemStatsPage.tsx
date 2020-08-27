@@ -110,7 +110,7 @@ interface State {
 
 type Props = ReturnType<typeof mapStateToProps> & WithStyles<typeof styles> & RouteComponentProps<{}>
 
-class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
+class ItemStatsPageComponent extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {itemReloadSignal: false, listReloadSignal: false, page: 0, limit: 500, search: "", category: 2}
@@ -316,4 +316,4 @@ class ItemsStatsPageComponent extends React.PureComponent<Props, State> {
     // }
 }
 
-export const ItemsStatsPage = withStyles(styles)(connect(mapStateToProps)(ItemsStatsPageComponent))
+export const ItemStatsPage = withStyles(styles)(connect(mapStateToProps)(ItemStatsPageComponent))

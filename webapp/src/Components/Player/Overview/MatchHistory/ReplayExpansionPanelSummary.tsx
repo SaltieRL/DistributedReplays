@@ -84,7 +84,7 @@ class ReplayExpansionPanelSummaryComponent extends React.PureComponent<Props> {
 
         const {averageRank, averageMMR} = getSkillAverages(replay)
         const replayRank = (
-            <Tooltip title={averageMMR > 0 ? averageMMR.toString() : "Unranked"}>
+            <Tooltip title={"Average MMR: " + (averageMMR > 0 ? averageMMR.toString() : "Unranked")}>
                 <img
                     alt={`rank ${averageRank}`}
                     className={classes.rankIcon}
