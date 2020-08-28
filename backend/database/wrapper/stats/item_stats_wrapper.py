@@ -183,7 +183,7 @@ class ItemStatsWrapper:
                 results = [ItemResult(*s).__dict__ for s in stats]
             else:
                 results = [ItemResult(*s).__dict__['item_id'] for s in stats]
-            ItemStatsWrapper.set_redis_result_if_exists("items_create_unpainted_stats_", key, results)
+            ItemStatsWrapper.set_redis_result_if_exists(f"items_create_unpainted_stats_{counts}_", key, results)
             return results
 
         dynamic_field_list = create_and_filter_proto_field(player_loadout_pb2.PlayerLoadout, ['load_out_id', 'version'],

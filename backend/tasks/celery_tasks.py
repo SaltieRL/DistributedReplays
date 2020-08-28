@@ -1,17 +1,16 @@
 # Celery workers
-import json
-import time
 import base64
+import json
 import os
-import requests
+import time
 from enum import Enum, auto
 from typing import Dict
 
-from requests import ReadTimeout
-
+import requests
 from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
+from requests import ReadTimeout
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.database.startup import lazy_get_redis, lazy_startup
@@ -22,9 +21,9 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_stats_by_playlist
-from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.tasks.utils import get_queue_length
 from backend.utils.cloud_handler import GCPManager
+from backend.utils.rlgarage_handler import RLGarageAPI
 
 try:
     from backend.tasks.training_packs.task import TrainingPackCreation
@@ -213,8 +212,8 @@ def cache_item_stats(self, session=None):
         print("Item", item)
         try:
             ItemStatsWrapper.get_item_usage_over_time(id_, session=session, override=True)
-        except:
-            print("Error")
+        except Exception as e:
+            print("Error,", e)
 
 
 class ResultState(Enum):
