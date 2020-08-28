@@ -32,7 +32,8 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
 from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.tasks.add_replay import parsed_replay_processing
-from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
+from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack, cache_item_stats, \
+    calc_item_stats
 from backend.tasks.update import update_self
 from backend.utils.cloud_handler import get_replay_url
 from backend.utils.file_manager import FileManager
@@ -710,6 +711,14 @@ def api_get_item_order(query_params):
     if query_params['category'] is not None:
         stats = stats[str(query_params['category'])]
     return better_jsonify(stats)
+
+
+@bp.route('/items/queue')
+@require_user
+def api_queue_item():
+    cache_item_stats.delay()
+    calc_item_stats.delay()
+    return better_jsonify({'status': 'Success'})
 
 
 # ADMIN
