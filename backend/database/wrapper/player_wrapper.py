@@ -91,7 +91,6 @@ class PlayerWrapper:
 
     def get_games_paginated(self, session, id_, page: int = 0, limit: int = None, filter_private=True):
         query = self.get_games(session, id_, filter_private=filter_private)
-        print(query)
         return self.get_paginated_match_history(query, page=page, limit=limit)
 
     def get_paginated_match_history(self, existing_query, page: int, limit: int) -> List[PlayerGame]:

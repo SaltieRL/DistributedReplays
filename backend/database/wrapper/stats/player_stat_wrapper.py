@@ -34,7 +34,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # this Object needs to be pooled per a session so only one is used at a time
         self.player_stats_filter = QueryFilterBuilder()
         if not ignore_filtering():
-            self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_safe_checking().sticky()
+            self.player_stats_filter.with_relative_start_time(days_ago=30).with_safe_checking().sticky()
 
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None,
                   playlist=13, win: bool = None):
