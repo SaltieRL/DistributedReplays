@@ -12,7 +12,6 @@ from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
 from backend.database.startup import lazy_get_redis
 from backend.database.utils.debug_db import literalquery
-from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.tasks.celery_tasks import calc_item_stats
 from backend.utils.file_manager import FileManager
 from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
@@ -208,12 +207,14 @@ def api_v1_get_playergames_by_rank(session=None):
         days = int(request.args['days'])
     else:
         days = 3 * 30
-
-    builder = QueryFilterBuilder().with_stat_query([Game.hash]).with_relative_start_time(days).as_game()
-    QueryFilterBuilder.apply_arguments_to_query(builder, request.args)
-    inner = builder.build_query(session).order_by(func.random()).limit(100).subquery()
-
+    ago = datetime.datetime.now() - datetime.timedelta(days=days)
+    inner = session.query(Game.hash).filter(Game.match_date > ago)
+    if 'playlist' in request.args:
+        inner = inner.filter(Game.playlist == int(request.args['playlist']))
+    inner = inner.order_by(func.random()).limit(100).subquery()
     outer = session.query(inner).join(PlayerGame, inner.c.hash == PlayerGame.game).with_entities(PlayerGame)
+    if 'rank' in request.args:
+        outer = outer.filter(PlayerGame.rank == int(request.args['rank']))
     print(literalquery(outer))
     games = outer.all()
     columns = [c.name for c in games[0].__table__.columns]
