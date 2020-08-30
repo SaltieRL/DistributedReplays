@@ -1,12 +1,12 @@
 import glob
 import os
 
+import pandas as pd
 import torch
 import torch.nn as nn
-import pandas as pd
+from sqlalchemy import inspect
 
 from backend.database.objects import PlayerGame
-from sqlalchemy import inspect
 
 
 def object_as_dict(obj):
@@ -40,18 +40,25 @@ class RankPredictor:
     # MODEL_DIR = os.path.abspath(os.path.join('..', '..', '..', '..', '..', 'data', 'models'))
     MODEL_DIR = os.path.abspath(os.path.join('data', 'models'))
     models = {}
-    maxs = None
-    mins = None
+    maxs = {}
+    mins = {}
 
     def __init__(self):
-        # Load models
-        for model in sorted(glob.glob(os.path.join(self.MODEL_DIR, '*.mdl'))):
-            state = torch.load(model, map_location='cpu')
-            m = RankPredictorEnsemble()
-            m.load_state_dict(state)
-            self.models[os.path.basename(model).split('.')[0]] = m
-        self.maxs = pd.read_csv(os.path.join(self.MODEL_DIR, 'maxs.csv'), index_col=0, squeeze=True, header=None)
-        self.mins = pd.read_csv(os.path.join(self.MODEL_DIR, 'mins.csv'), index_col=0, squeeze=True, header=None)
+        possible_playlists = [playlist for playlist in os.listdir(self.MODEL_DIR) if
+                              os.path.isdir(os.path.join(self.MODEL_DIR, playlist))]
+        for playlist_dir in possible_playlists:
+            self.models[playlist_dir] = {}
+            playlist_loc = os.path.join(self.MODEL_DIR, playlist_dir)
+            # Load models
+            for model in sorted(glob.glob(os.path.join(playlist_loc, '*.mdl'))):
+                state = torch.load(model, map_location='cpu')
+                m = RankPredictorEnsemble()
+                m.load_state_dict(state)
+                self.models[playlist_dir][os.path.basename(model).split('.')[0]] = m
+            self.maxs[playlist_dir] = pd.read_csv(os.path.join(playlist_loc, 'maxs.csv'), index_col=0, squeeze=True,
+                                                  header=None)
+            self.mins[playlist_dir] = pd.read_csv(os.path.join(playlist_loc, 'mins.csv'), index_col=0, squeeze=True,
+                                                  header=None)
 
     @staticmethod
     def process_input_data(input_, maxs, mins):
@@ -76,17 +83,21 @@ class RankPredictor:
         output = nonzero['rank']
         return input, output, maxs, mins
 
-    def convert_sql_object_to_numpy(self, obj: PlayerGame):
+    def convert_sql_object_to_numpy(self, obj: PlayerGame, playlist: int):
+        playlist = str(playlist)
         obj = object_as_dict(obj)
         a = pd.Series(obj)
-        input, _, __, ___ = self.process_input_data(a, self.maxs, self.mins)
+        input, _, __, ___ = self.process_input_data(a, self.maxs[playlist], self.mins[playlist])
         obj = input.values
         return obj
 
-    def predict_rank(self, x: PlayerGame) -> int:
-        x = self.convert_sql_object_to_numpy(x)
+    def predict_rank(self, x: PlayerGame, playlist: int) -> int:
+        x = self.convert_sql_object_to_numpy(x, playlist)
         result = pd.DataFrame(index=list(range(len(x))))
-        for rank, m in self.models.items():
+        if str(playlist) not in self.models:
+            return None
+        models = self.models[str(playlist)]
+        for rank, m in models.items():
             result = result.merge(
                 pd.Series(100 * m(x.astype(float)).detach().cpu().numpy(),
                           name=str(rank)).to_frame(), left_index=True, right_index=True)
@@ -96,7 +107,6 @@ class RankPredictor:
 
 
 model_holder = RankPredictor()
-
 
 if __name__ == '__main__':
     from backend.database.startup import lazy_startup

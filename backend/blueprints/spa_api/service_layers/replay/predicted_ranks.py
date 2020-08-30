@@ -9,7 +9,8 @@ try:
     from backend.blueprints.spa_api.service_layers.ml.ml import model_holder
 except ModuleNotFoundError:
     model_holder = None
-    print("Not using ML because required packages are not installed. Run `pip install -r requirements-ml.txt` to use ML.")
+    print(
+        "Not using ML because required packages are not installed. Run `pip install -r requirements-ml.txt` to use ML.")
 
 
 class PredictedRank:
@@ -33,13 +34,26 @@ class PredictedRank:
         accepted_playlists = [
             13,  # standard
             3,  # unranked standard
-            6,  # custom
+            6,  # custom,
+            11,  # doubles
+            2,  # unranked doubles
         ]
         if game.playlist not in accepted_playlists:
             raise UnsupportedPlaylist
 
         playergames = session.query(PlayerGame).filter(PlayerGame.game == id_).all()
-
+        adjusted_playlist_map = {
+            2: 11,
+            11: 11,
+            3: 13,
+            6: 13,
+            13: 13
+        }
+        playlist = adjusted_playlist_map[game.playlist]
+        if game.playlist == 6 and len(game.players) == 4:
+            playlist = 11
+        elif game.playlist == 6 and len(game.players) == 2:
+            playlist = 10
         if is_local_dev():
             import random
             ranks = [
@@ -48,7 +62,7 @@ class PredictedRank:
             ]
         else:
             ranks = [
-                PredictedRank(pg.player, model_holder.predict_rank(pg))
+                PredictedRank(pg.player, model_holder.predict_rank(pg, playlist=playlist))
                 for pg in playergames
             ]
         return ranks
