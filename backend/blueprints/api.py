@@ -3,19 +3,19 @@ import json
 import os
 from functools import wraps
 
-from flask import render_template, url_for, redirect, request, jsonify, send_from_directory, Blueprint, current_app, \
-    Response
+from flask import render_template, url_for, redirect, request, jsonify, send_from_directory, Blueprint, Response
 from google.protobuf.json_format import MessageToJson
 from sqlalchemy import func
 from sqlalchemy.sql import operators
 
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame
-from backend.tasks.celery_tasks import calc_item_stats
 from backend.database.startup import lazy_get_redis
+from backend.database.utils.debug_db import literalquery
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
-from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
+from backend.tasks.celery_tasks import calc_item_stats
 from backend.utils.file_manager import FileManager
+from backend.utils.psyonix_api_handler import get_rank, tier_div_to_string
 
 bp = Blueprint('apiv1', __name__, url_prefix='/api/v1')
 
@@ -208,9 +208,14 @@ def api_v1_get_playergames_by_rank(session=None):
         days = int(request.args['days'])
     else:
         days = 3 * 30
-    builder = QueryFilterBuilder().with_stat_query([PlayerGame]).with_relative_start_time(days)
+
+    builder = QueryFilterBuilder().with_stat_query([Game.hash]).with_relative_start_time(days).as_game()
     QueryFilterBuilder.apply_arguments_to_query(builder, request.args)
-    games = builder.build_query(session).order_by(func.random())[:100]
+    inner = builder.build_query(session).order_by(func.random()).limit(100).subquery()
+
+    outer = session.query(inner).join(PlayerGame, inner.c.hash == PlayerGame.game).with_entities(PlayerGame)
+    print(literalquery(outer))
+    games = outer.all()
     columns = [c.name for c in games[0].__table__.columns]
     data = {
         'data': [[getattr(g, c.name) for c in g.__table__.columns] for g in games],
@@ -226,6 +231,7 @@ def api_v1_get_itemstats():
         return jsonify(json.loads(r.get('item_stats')))
     calc_item_stats.delay()
     return jsonify({})
+
 
 def convert_proto_to_json(proto):
     return MessageToJson(proto)
