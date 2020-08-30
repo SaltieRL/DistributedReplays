@@ -1,6 +1,7 @@
 import glob
 import os
 
+import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -80,7 +81,8 @@ class RankPredictor:
         #     mins = input.min()
         #     maxs = input.max()
         input = (input - mins) / (maxs - mins)
-        input = input.fillna(0)
+        input = input.fillna(0.0)
+        input = input.replace([np.inf, -np.inf], 0.0)
         output = nonzero['rank']
         return input, output, maxs, mins
 
@@ -93,6 +95,7 @@ class RankPredictor:
         return obj
 
     def predict_rank(self, x: PlayerGame, playlist: int) -> int:
+        print(playlist)
         x = self.convert_sql_object_to_numpy(x, playlist)
         result = pd.DataFrame(index=list(range(len(x))))
         if str(playlist) not in self.models:
