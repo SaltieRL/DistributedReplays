@@ -80,6 +80,7 @@ class RankPredictor:
         #     mins = input.min()
         #     maxs = input.max()
         input = (input - mins) / (maxs - mins)
+        input = input.fillna(0)
         output = nonzero['rank']
         return input, output, maxs, mins
 
@@ -101,7 +102,7 @@ class RankPredictor:
             result = result.merge(
                 pd.Series(100 * m(x.astype(float)).detach().cpu().numpy(),
                           name=str(rank)).to_frame(), left_index=True, right_index=True)
-        # print(result)
+        print(result)
         result = (result > 50).apply(lambda x: int(x.idxmin()), axis=1).values
         return int(result[0])
 

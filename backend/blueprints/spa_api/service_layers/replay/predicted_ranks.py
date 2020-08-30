@@ -37,6 +37,8 @@ class PredictedRank:
             6,  # custom,
             11,  # doubles
             2,  # unranked doubles
+            10,
+            1
         ]
         if game.playlist not in accepted_playlists:
             raise UnsupportedPlaylist
@@ -47,7 +49,9 @@ class PredictedRank:
             11: 11,
             3: 13,
             6: 13,
-            13: 13
+            13: 13,
+            10: 10,
+            1: 10
         }
         playlist = adjusted_playlist_map[game.playlist]
         if game.playlist == 6 and len(game.players) == 4:
