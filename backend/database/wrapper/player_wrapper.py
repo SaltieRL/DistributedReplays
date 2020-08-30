@@ -71,8 +71,10 @@ class PlayerWrapper:
 
         return query
 
-    def get_games(self, session, id_, filter_private=True):
+    def get_games(self, session, id_, replay_ids=None, filter_private=True):
         query = session.query(Game).filter(Game.players.contains(cast([id_], postgresql.ARRAY(String))))
+        if replay_ids is not None:
+            query = query.filter(Game.hash.in_(replay_ids))
         if filter_private:
             if UserManager.get_current_user() is not None:
                 if not is_admin():
@@ -89,6 +91,7 @@ class PlayerWrapper:
 
     def get_games_paginated(self, session, id_, page: int = 0, limit: int = None, filter_private=True):
         query = self.get_games(session, id_, filter_private=filter_private)
+        print(query)
         return self.get_paginated_match_history(query, page=page, limit=limit)
 
     def get_paginated_match_history(self, existing_query, page: int, limit: int) -> List[PlayerGame]:
@@ -105,7 +108,7 @@ class PlayerWrapper:
         :param filter_private:
         :return: Integer
         """
-        return self.get_player_games(session, id_, replay_ids=replay_ids, filter_private=filter_private).count()
+        return self.get_games(session, id_, replay_ids=replay_ids, filter_private=filter_private).count()
 
     @staticmethod
     @with_session
