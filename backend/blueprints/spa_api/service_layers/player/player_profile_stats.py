@@ -49,7 +49,7 @@ class PlayerProfileStats:
                                func.count(Game.players).label('count')).filter(
             Game.players.contains(cast([id_],
                                        postgresql.ARRAY(String)))).group_by('player').order_by(desc('count'))
-        result = result[:3]
+        result = result[1:4]
         for p in result:
             player = session.query(Player).filter(Player.platformid == p[0]).first()
             if player is None or player.platformname == "":
