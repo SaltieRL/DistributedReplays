@@ -32,20 +32,6 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
     return engine, session
 
 
-def startup() -> sessionmaker:
-    try:
-        # Sql Stuff
-        connection_string = 'postgresql:///saltie'
-        engine, session = login(connection_string)
-    except OperationalError as e:
-        print('trying backup info', e)
-        try:
-            engine, session = login('postgresql://postgres:postgres@localhost/saltie')
-        except Exception as e:
-            engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
-    return session
-
-
 def get_current_session():
     return EngineStartup.get_current_session()
 
@@ -90,6 +76,7 @@ class EngineStartup:
             try:
                 engine, session = login('postgresql://postgres:postgres@localhost/saltie')
             except Exception as e:
+                print(e)
                 engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
         return engine, session
 

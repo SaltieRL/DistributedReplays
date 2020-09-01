@@ -315,7 +315,7 @@ class Game(DBObjectBase):
 
 class Player(DBObjectBase):
     __tablename__ = 'players'
-    platformid = Column(String(40), primary_key=True)
+    platformid = Column(String(40), primary_key=True, unique=True)
     platformname = Column(String(50))
     avatar = Column(String(150))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key
