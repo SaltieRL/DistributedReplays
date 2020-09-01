@@ -84,7 +84,6 @@ class PlayerProfileStats:
     def _get_most_recent_loadout(id_: str, session):
         pg = session.query(PlayerGame) \
             .join(Game, PlayerGame.game == Game.hash) \
-            .distinct(PlayerGame.player) \
             .filter(PlayerGame.player == id_) \
             .order_by(desc(PlayerGame.player), desc(Game.match_date)) \
             .first()
