@@ -39,7 +39,10 @@ class PredictedRank:
             2,  # unranked doubles
             10,  # ranked duels
             1,  # unranked duels
+            27,  # hoops
             28,  # rumble
+            29,  # dropshot
+            30,  # snow day
         ]
         if game.playlist not in accepted_playlists:
             raise UnsupportedPlaylist
