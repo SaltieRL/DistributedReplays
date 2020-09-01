@@ -2,7 +2,6 @@ import {Card, CardContent, CardHeader, Divider} from "@material-ui/core"
 import * as React from "react"
 import {getStats} from "../../../../../Requests/Player/getStats"
 import {LoadableWrapper} from "../../../../Shared/LoadableWrapper"
-import {FavouriteCar} from "./FavouriteCar"
 import {LoadoutDialogWrapper} from "./LoadoutDialogWrapper"
 import {PlaysWith} from "./PlaysWith"
 
@@ -37,7 +36,7 @@ export class PlayerStatsCard extends React.PureComponent<Props, State> {
                     <LoadableWrapper load={this.getPlayerProfileStats} reloadSignal={this.state.reloadSignal}>
                         {this.state.playerStats && (
                             <>
-                                <FavouriteCar carStat={this.state.playerStats.car} />
+                                {/*<FavouriteCar carStat={this.state.playerStats.car} />*/}
                                 <LoadoutDialogWrapper
                                     playerStats={this.state.playerStats}
                                     handleShowLoadout={this.handleShowLoadout}

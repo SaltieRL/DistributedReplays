@@ -35,7 +35,9 @@ class PlayerProfileStats:
     @staticmethod
     @with_session
     def create_from_id(id_: str, session=None) -> 'PlayerProfileStats':
-        favourite_car, car_percentage = PlayerProfileStats._get_favourite_car(id_, session)
+        # favourite_car, car_percentage = PlayerProfileStats._get_favourite_car(id_, session)
+        favourite_car = "Unknown"
+        car_percentage = 0.0
         players_in_common = PlayerProfileStats._get_most_played_with(id_, session)
         loadout = PlayerProfileStats._get_most_recent_loadout(id_, session)
         return PlayerProfileStats(favourite_car=favourite_car, car_percentage=car_percentage,
