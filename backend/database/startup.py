@@ -10,6 +10,16 @@ from sqlalchemy.orm import sessionmaker
 
 from backend.database.objects import DBObjectBase
 
+try:
+    import config
+    DB_IP = config.DB_IP
+    DB_USER = config.DB_USER
+    DB_PASSWORD = config.DB_PASSWORD
+except:
+    DB_IP = None
+    DB_USER = None
+    DB_PASSWORD = None
+
 logger = logging.getLogger(__name__)
 
 
@@ -67,6 +77,10 @@ def get_strict_redis():
 class EngineStartup:
     @staticmethod
     def login_db() -> Tuple[any, sessionmaker]:
+        if DB_IP is not None:
+            connection_string = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_IP}/saltie'
+            engine, session = login(connection_string)
+            return engine, session
         try:
             # Sql Stuff
             connection_string = 'postgresql:///saltie'
