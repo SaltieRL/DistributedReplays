@@ -56,7 +56,10 @@ class PredictedRank:
             13: 13,
             10: 10,
             1: 10,
-            28: 28
+            27: 27,
+            28: 28,
+            29: 29,
+            30: 30
         }
         playlist = adjusted_playlist_map[game.playlist]
         if game.playlist == 6 and len(game.players) == 4:
