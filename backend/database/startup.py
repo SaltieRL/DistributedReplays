@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 def login(connection_string, recreate_database=False) -> Tuple[create_engine, sessionmaker]:
     print(connection_string)
-    engine = create_engine(connection_string, echo=False)
+    engine = create_engine(connection_string, echo=False, pool_recycle=1800)
     if recreate_database:
         conn = engine.connect()
         conn.execute("commit")
