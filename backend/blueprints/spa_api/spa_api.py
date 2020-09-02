@@ -133,10 +133,10 @@ def encode_bot_name(w):
 def api_get_replay_count(session=None):
     r = lazy_get_redis()
     if r is not None and r.get('replay_count') is not None:
-        return jsonify(r.get('replay_count'))
+        return jsonify(int(r.get('replay_count')))
     count = session.query(Game.hash).count()
     if r is not None:
-        r.set('replay_count', ex=60 * 60)
+        r.set('replay_count', str(count), ex=60 * 60)
     return jsonify(count)
 
 
