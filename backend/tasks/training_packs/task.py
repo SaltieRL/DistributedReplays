@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import random
 
 from sqlalchemy import desc
 
@@ -103,7 +104,7 @@ class TrainingPackCreation:
             if query.count() == 0:
                 raise UserHasNoReplays()
             if date_start is not None:
-                last_n_games = last_n_games.all()[:100]  # we don't want to overdo it, but we want to max the pack
+                last_n_games = random.sample(last_n_games.all(), 25)  # we don't want to overdo it
             else:
                 last_n_games = last_n_games[:n]  # use default of last n games
             last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
