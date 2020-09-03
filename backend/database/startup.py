@@ -119,6 +119,7 @@ class EngineStartup:
     def get_current_session():
         try:
             return current_app.config['db']()
-        except:
+        except Exception as e:
+            print("Error getting session", e)
             _session = lazy_startup()
             return _session()
