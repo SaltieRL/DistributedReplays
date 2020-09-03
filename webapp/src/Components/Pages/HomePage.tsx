@@ -22,8 +22,6 @@ import {LoggedInUserActions, StoreState} from "../../Redux"
 import {getLoggedInUser, getReplayCount} from "../../Requests/Global"
 import {HomePageAppBar} from "../Home/HomePageAppBar"
 import {HomePageFooter} from "../Home/HomePageFooter"
-import {Recent} from "../Home/Widgets/Recent"
-import {Twitch} from "../Home/Widgets/Twitch"
 import {LinkButton} from "../Shared/LinkButton"
 import {Logo} from "../Shared/Logo/Logo"
 import {Search} from "../Shared/Search"
@@ -48,8 +46,8 @@ const styles = (theme: Theme) =>
             minHeight: "100vh",
             display: "flex",
             backgroundSize: "cover",
-            backgroundAttachment: "fixed",
-            backgroundImage: theme.palette.type === "dark" ? 'url("/splash_black.png")' : 'url("/splash.png")'
+            backgroundAttachment: "fixed"
+            // backgroundImage: theme.palette.type === "dark" ? 'url("/splash_black.png")' : 'url("/splash.png")'
         }
     })
 
@@ -169,11 +167,11 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             {isWidthUp("md", this.props.width) ? (
                                 <>
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Twitch cardStyle={{width: "100%"}} />
+                                        {/*<Twitch cardStyle={{width: "100%"}} />*/}
                                     </Grid>
 
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Recent cardStyle={{width: "100%"}} />
+                                        {/*<Recent cardStyle={{width: "100%"}} />*/}
                                     </Grid>
                                     <Grid item container xs={12} sm={6} lg={4}>
                                         {/*<Leaderboards cardStyle={{width: "100%"}} />*/}
@@ -182,13 +180,13 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             ) : (
                                 <>
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Recent cardStyle={{width: "100%"}} />
+                                        {/*<Recent cardStyle={{width: "100%"}} />*/}
                                     </Grid>
                                     <Grid item container xs={12} sm={6} lg={4}>
                                         {/*<Leaderboards cardStyle={{width: "100%"}} />*/}
                                     </Grid>
                                     <Grid item container xs={12} sm={6} lg={4}>
-                                        <Twitch cardStyle={{width: "100%"}} />
+                                        {/*<Twitch cardStyle={{width: "100%"}} />*/}
                                     </Grid>
                                 </>
                             )}
