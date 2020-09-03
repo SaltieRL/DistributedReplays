@@ -1,4 +1,4 @@
-import { faSteam } from "@fortawesome/free-brands-svg-icons"
+import {faSteam} from "@fortawesome/free-brands-svg-icons"
 import {
     Button,
     createStyles,
@@ -10,23 +10,23 @@ import {
     withStyles,
     withWidth
 } from "@material-ui/core"
-import { GridProps } from "@material-ui/core/Grid"
-import { isWidthUp, WithWidth } from "@material-ui/core/withWidth"
+import {GridProps} from "@material-ui/core/Grid"
+import {isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import CloudUpload from "@material-ui/icons/CloudUpload"
 import * as React from "react"
-import { connect } from "react-redux"
-import { Link } from "react-router-dom"
-import { Dispatch } from "redux"
-import { PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, UPLOAD_LINK } from "../../Globals"
-import { LoggedInUserActions, StoreState } from "../../Redux"
-import { getLoggedInUser, getReplayCount } from "../../Requests/Global"
-import { HomePageAppBar } from "../Home/HomePageAppBar"
-import { HomePageFooter } from "../Home/HomePageFooter"
-import { LinkButton } from "../Shared/LinkButton"
-import { Logo } from "../Shared/Logo/Logo"
-import { Search } from "../Shared/Search"
-import { SideBar } from "../Shared/SideBar"
-import { UploadDialogWrapper } from "../Shared/Upload/UploadDialogWrapper"
+import {connect} from "react-redux"
+import {Link} from "react-router-dom"
+import {Dispatch} from "redux"
+import {PLAYER_PAGE_LINK, STEAM_LOGIN_LINK, UPLOAD_LINK} from "../../Globals"
+import {LoggedInUserActions, StoreState} from "../../Redux"
+import {getLoggedInUser, getReplayCount} from "../../Requests/Global"
+import {HomePageAppBar} from "../Home/HomePageAppBar"
+import {HomePageFooter} from "../Home/HomePageFooter"
+import {LinkButton} from "../Shared/LinkButton"
+import {Logo} from "../Shared/Logo/Logo"
+import {Search} from "../Shared/Search"
+import {SideBar} from "../Shared/SideBar"
+import {UploadDialogWrapper} from "../Shared/Upload/UploadDialogWrapper"
 
 const styles = (theme: Theme) =>
     createStyles({

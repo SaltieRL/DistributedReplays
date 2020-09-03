@@ -126,9 +126,12 @@ def calc_leaderboards(self):
 
 
 @periodic_task(run_every=60 * 10, base=DBTask, bind=True, priority=0)
-def calc_global_dists(self):
-    sess = self.session()
-    calculate_global_stats_by_playlist()
+def calc_global_dists(self, session=None):
+    if session is None:
+        sess = self.session()
+    else:
+        sess = session
+    calculate_global_stats_by_playlist(session)
     sess.close()
 
 
@@ -139,6 +142,7 @@ def calc_item_stats(self, session=None):
     else:
         sess = session
     results = ItemStatsWrapper.create_stats(sess)
+    sess.close()
     if lazy_get_redis() is not None:
         lazy_get_redis().set('item_stats', json.dumps(results))
 
@@ -160,6 +164,7 @@ def auto_create_training_pack(self, requester_id, pack_player_id, name=None, n=1
     METRICS_TRAINING_PACK_CREATION_TIME.observe(
         start - end
     )
+    sess.close()
     return url
 
 
@@ -178,6 +183,7 @@ def create_manual_training_pack(self, requester_id, players, replays, frames, na
     METRICS_TRAINING_PACK_CREATION_TIME.observe(
         start - end
     )
+    sess.close()
     return url
 
 
@@ -214,6 +220,7 @@ def cache_item_stats(self, session=None):
             ItemStatsWrapper.get_item_usage_over_time(id_, session=session, override=True)
         except Exception as e:
             print("Error", e)
+    session.close()
 
 
 class ResultState(Enum):
