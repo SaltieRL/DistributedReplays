@@ -12,10 +12,12 @@ import {
 import * as React from "react"
 import {Link, LinkProps} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../../Globals"
+import {GroupIndicator} from "../../Player/Overview/SideBar/GroupIndicator"
 import {CameraSettingsDisplay} from "./CameraSettingsDisplay"
 import {LoadoutDisplay} from "./LoadoutDisplay"
 
 interface Props {
+    groupMap: any
     player: ReplayPlayer
 }
 
@@ -37,7 +39,7 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {player} = this.props
+        const {player, groupMap} = this.props
 
         const carButton = (
             <Tooltip title="Loadout">
@@ -64,6 +66,7 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
                         style={{padding: "0 64px 0 0"}}
                     />
                     <ListItemSecondaryAction>
+                        {groupMap && <GroupIndicator groups={groupMap[player.id]} />}
                         {carButton}
                         {cameraButton}
                     </ListItemSecondaryAction>

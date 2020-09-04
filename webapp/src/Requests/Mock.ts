@@ -535,7 +535,8 @@ export const MOCK_REPLAY_1: Replay = {
     tags: [],
     visibility: GameVisibility.PUBLIC,
     ranks: [14, 15, 14, 14],
-    mmrs: [1000, 1100, 1050, 1025]
+    mmrs: [1000, 1100, 1050, 1025],
+    groupMap: {}
 }
 
 export const MOCK_REPLAY_2 = {
@@ -709,5 +710,6 @@ export const MOCK_REPLAY_2 = {
             }
         }
     ],
-    tags: []
+    tags: [],
+    groupMap: {}
 }
