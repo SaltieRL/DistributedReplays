@@ -32,13 +32,13 @@ class PredictedRank:
 
         game: Game = session.query(Game).filter(Game.hash == id_).first()
         accepted_playlists = [
-            13,  # standard
+            1,  # unranked duels
+            2,  # unranked doubles
             3,  # unranked standard
             6,  # custom,
-            11,  # doubles
-            2,  # unranked doubles
             10,  # ranked duels
-            1,  # unranked duels
+            11,  # doubles
+            13,  # standard
             27,  # hoops
             28,  # rumble
             29,  # dropshot
@@ -49,13 +49,13 @@ class PredictedRank:
 
         playergames = session.query(PlayerGame).filter(PlayerGame.game == id_).all()
         adjusted_playlist_map = {
+            1: 10,
+            10: 10,
             2: 11,
             11: 11,
             3: 13,
             6: 13,
             13: 13,
-            10: 10,
-            1: 10,
             27: 27,
             28: 28,
             29: 29,
