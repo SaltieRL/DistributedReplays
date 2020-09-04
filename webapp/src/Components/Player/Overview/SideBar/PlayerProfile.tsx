@@ -1,6 +1,5 @@
-import * as React from "react"
-
 import {Button, Card, CardContent, createStyles, Grid, Typography, WithStyles, withStyles} from "@material-ui/core"
+import * as React from "react"
 import {connect} from "react-redux"
 import {StoreState} from "../../../../Redux"
 import {GroupIndicator} from "./GroupIndicator"
@@ -49,6 +48,7 @@ class PlayerProfileComponent extends React.PureComponent<Props> {
                                     {player.name}
                                 </Typography>
                                 {player.pastNames.length > 0 && <PlayerNameDropdown pastNames={player.pastNames} />}
+                                <Grid item xs={1} />
                                 <GroupIndicator groups={player.groups} variant={"subtitle1"} />
                             </div>
                         </Grid>

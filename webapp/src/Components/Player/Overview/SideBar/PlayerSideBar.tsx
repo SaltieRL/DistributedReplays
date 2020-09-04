@@ -2,7 +2,6 @@ import {Grid} from "@material-ui/core"
 import * as React from "react"
 import {PlayerProfile} from "./PlayerProfile"
 import {PlayerRanksCard} from "./PlayerRanksCard"
-import {PlayerStatsCard} from "./PlayerStats/PlayerStatsCard"
 
 interface Props {
     player: Player
@@ -16,7 +15,7 @@ export class PlayerSideBar extends React.PureComponent<Props> {
                     <PlayerProfile player={this.props.player} />
                 </Grid>
                 <Grid item xs={12}>
-                    <PlayerStatsCard player={this.props.player} />
+                    {/*<PlayerStatsCard player={this.props.player} />*/}
                 </Grid>
                 <Grid item xs={12}>
                     <PlayerRanksCard player={this.props.player} />

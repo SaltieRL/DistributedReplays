@@ -1,4 +1,4 @@
-from sqlalchemy.engine.default import DefaultDialect
+from sqlalchemy.dialects.postgresql import dialect as DefaultDialect, ARRAY
 from sqlalchemy.sql.sqltypes import String, DateTime, NullType
 
 # python2/3 compatible.
@@ -18,7 +18,11 @@ class StringLiteral(String):
                 return text(value)
             if not isinstance(value, str_type):
                 value = text(value)
+
+            if isinstance(value, list):
+                return text("{" + ", ".join(value) + "}")
             result = super_processor(value)
+
             if isinstance(result, bytes):
                 result = result.decode(dialect.encoding)
             return result
@@ -33,6 +37,7 @@ class LiteralDialect(DefaultDialect):
         DateTime: StringLiteral,
         # don't format py2 long integers to NULL
         NullType: StringLiteral,
+        ARRAY: StringLiteral
     }
 
 

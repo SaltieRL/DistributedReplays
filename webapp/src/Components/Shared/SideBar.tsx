@@ -11,7 +11,6 @@ import Info from "@material-ui/icons/Info"
 import Search from "@material-ui/icons/Search"
 import ShowChart from "@material-ui/icons/ShowChart"
 import SportsSoccer from "@material-ui/icons/SportsSoccer"
-import TableChart from "@material-ui/icons/TableChart"
 import * as React from "react"
 import {connect} from "react-redux"
 import {Link, LinkProps} from "react-router-dom"
@@ -21,7 +20,6 @@ import {
     EXPLANATIONS_LINK,
     GITHUB_LINK,
     GLOBAL_STATS_LINK,
-    LEADERBOARDS_LINK,
     PATREON_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
@@ -76,12 +74,12 @@ class SideBarComponent extends React.PureComponent<Props> {
                         <Divider component="li" />
 
                         <ListSubheader>Player</ListSubheader>
-                        <ListItem button component={this.createLink} to={LEADERBOARDS_LINK}>
+                        {/*                        <ListItem button component={this.createLink} to={LEADERBOARDS_LINK}>
                             <ListItemIcon>
                                 <TableChart />
                             </ListItemIcon>
                             <ListItemText>Leaderboards</ListItemText>
-                        </ListItem>
+                        </ListItem>*/}
                         <ListItem button component={this.createLink} to={PLAYER_COMPARE_PAGE_LINK}>
                             <ListItemIcon>
                                 <CompareArrows />

@@ -5,8 +5,6 @@ import {isWidthDown, isWidthUp, WithWidth} from "@material-ui/core/withWidth"
 import * as React from "react"
 import {OverviewMatchHistory} from "./Overview/MatchHistory/OverviewMatchHistory"
 import {PlayerMatchHistoryCard} from "./Overview/MatchHistory/PlayerMatchHistoryCard"
-import {PlayerPlayStyle} from "./Overview/PlayStyle/PlayerPlayStyle"
-import {PlayerPlayStyleCard} from "./Overview/PlayStyle/PlayerPlayStyleCard"
 import {PlayStyleActions} from "./Overview/PlayStyle/PlayStyleActions"
 import {PlayerSideBar} from "./Overview/SideBar/PlayerSideBar"
 
@@ -39,13 +37,13 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
         }
 
         const playerSideBar = <PlayerSideBar player={this.props.player} />
-        const playerPlayStyle = (
-            <PlayerPlayStyle
-                player={this.props.player}
-                playlist={this.state.playlist}
-                winLossMode={this.state.winLossMode}
-            />
-        )
+        // const playerPlayStyle = (
+        //     <PlayerPlayStyle
+        //         player={this.props.player}
+        //         playlist={this.state.playlist}
+        //         winLossMode={this.state.winLossMode}
+        //     />
+        // )
         const playerMatchHistory = (
             <OverviewMatchHistory player={this.props.player} useBoxScore={isWidthDown("sm", this.props.width)} />
         )
@@ -59,15 +57,15 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                         </Grid>
                         <Grid item xs={7} lg={8} xl={9} container spacing={3} alignContent="flex-start">
                             <Grid item xs={12}>
-                                <PlayerPlayStyleCard
-                                    player={this.props.player}
-                                    playlist={this.state.playlist}
-                                    winLossMode={this.state.winLossMode}
-                                    handlePlaylistChange={this.handlePlaylistChange}
-                                    handleWinsLossesChange={this.handleWinsLossesChange}
-                                >
-                                    {playerPlayStyle}
-                                </PlayerPlayStyleCard>
+                                {/*<PlayerPlayStyleCard*/}
+                                {/*    player={this.props.player}*/}
+                                {/*    playlist={this.state.playlist}*/}
+                                {/*    winLossMode={this.state.winLossMode}*/}
+                                {/*    handlePlaylistChange={this.handlePlaylistChange}*/}
+                                {/*    handleWinsLossesChange={this.handleWinsLossesChange}*/}
+                                {/*>*/}
+                                {/*    {playerPlayStyle}*/}
+                                {/*</PlayerPlayStyleCard>*/}
                             </Grid>
                             <Grid item xs={12}>
                                 <PlayerMatchHistoryCard player={this.props.player}>
@@ -103,7 +101,7 @@ class PlayerOverviewComponent extends React.PureComponent<Props, State> {
                                                 handleWinsLossesChange={this.handleWinsLossesChange}
                                             />
                                         </div>
-                                        {playerPlayStyle}
+                                        {/*{playerPlayStyle}*/}
                                     </>
                                 )}
                                 {this.state.selectedMobileTab === "Match History" && playerMatchHistory}

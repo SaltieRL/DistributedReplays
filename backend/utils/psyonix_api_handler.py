@@ -5,8 +5,9 @@ from typing import Union
 
 import redis
 import requests
+
 from backend.database.objects import Player
-from backend.database.startup import lazy_startup
+from backend.database.startup import get_current_session
 from backend.utils.braacket_connection import Braacket
 from backend.utils.safe_flask_globals import get_redis
 
@@ -26,8 +27,9 @@ def get_bot_by_steam_id(steam_id):
         if len(steam_id) < 6:
             return "Allstar"
         else:
-            session = lazy_startup()
-            bot = session().query(Player).filter(Player.platformid == steam_id).first()
+            session = get_current_session()
+            bot = session.query(Player).filter(Player.platformid == steam_id).first()
+            session.close()
             if bot is None:
                 return None
         return bot.platformname

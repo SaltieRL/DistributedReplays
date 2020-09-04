@@ -1,14 +1,14 @@
 from typing import List
 
-from sqlalchemy import func, desc, cast, String, literal_column
+from sqlalchemy import func, desc, cast, String
 from sqlalchemy.dialects import postgresql
 
 from backend.blueprints.spa_api.service_layers.replay.replay_player import Loadout
 from backend.blueprints.spa_api.service_layers.utils import with_session
+from backend.data.constants.car import get_car
 from backend.database.objects import PlayerGame, Game, Player
 from backend.database.wrapper.player_wrapper import PlayerWrapper
 from backend.database.wrapper.stats.player_stat_wrapper import PlayerStatWrapper
-from backend.data.constants.car import get_car
 
 player_wrapper = PlayerWrapper(limit=10)
 player_stat_wrapper = PlayerStatWrapper(player_wrapper)
@@ -48,15 +48,13 @@ class PlayerProfileStats:
         result = session.query(p,
                                func.count(Game.players).label('count')).filter(
             Game.players.contains(cast([id_],
-                                       postgresql.ARRAY(String)))).group_by('player').order_by(desc('count')).subquery(
-            't')
-        result = session.query(result, Player.platformname).join(Player,
-                                                                 Player.platformid == result.c.player).filter(
-            Player.platformid != id_).filter(literal_column('count') > 1)[:3]
+                                       postgresql.ARRAY(String)))).group_by('player').order_by(desc('count'))
+        result = result[1:4]
         for p in result:
             player = session.query(Player).filter(Player.platformid == p[0]).first()
             if player is None or player.platformname == "":
-                players_in_common.append(PlayerInCommonStats(name=p[2], count=p[1], id=p[0], avatar=player.avatar))
+                print("unknown player")
+                players_in_common.append(PlayerInCommonStats(name="Unknown", count=p[1], id=p[0], avatar=player.avatar))
             else:
                 players_in_common.append(
                     PlayerInCommonStats(name=player.platformname, count=p[1], id=p[0], avatar=player.avatar))
@@ -86,7 +84,6 @@ class PlayerProfileStats:
     def _get_most_recent_loadout(id_: str, session):
         pg = session.query(PlayerGame) \
             .join(Game, PlayerGame.game == Game.hash) \
-            .distinct(PlayerGame.player) \
             .filter(PlayerGame.player == id_) \
             .order_by(desc(PlayerGame.player), desc(Game.match_date)) \
             .first()
