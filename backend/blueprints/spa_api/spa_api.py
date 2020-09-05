@@ -258,7 +258,7 @@ def api_get_player_play_style_progress(id_, query_params=None):
                                           QueryParam(name='limit', type_=int, optional=False)])
 def api_get_player_match_history(id_, query_params=None):
     start_time = time.time()
-    match_history = MatchHistory.create_from_es(id_, query_params['page'], query_params['limit'])
+    # match_history = MatchHistory.create_from_es(id_, query_params['page'], query_params['limit'])
     end_time = time.time()
     print("ES time: ", end_time - start_time)
     start_time = time.time()
