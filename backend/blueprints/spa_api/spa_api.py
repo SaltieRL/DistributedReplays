@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import sys
+import time
 import traceback
 import uuid
 import zlib
@@ -256,7 +257,14 @@ def api_get_player_play_style_progress(id_, query_params=None):
 @with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=False),
                                           QueryParam(name='limit', type_=int, optional=False)])
 def api_get_player_match_history(id_, query_params=None):
+    start_time = time.time()
+    match_history = MatchHistory.create_from_es(id_, query_params['page'], query_params['limit'])
+    end_time = time.time()
+    print("ES time: ", end_time - start_time)
+    start_time = time.time()
     match_history = MatchHistory.create_from_id(id_, query_params['page'], query_params['limit'])
+    end_time = time.time()
+    print("DB time: ", end_time - start_time)
     return better_jsonify(match_history)
 
 

@@ -2,6 +2,7 @@ import logging
 from typing import Tuple, Optional
 
 import redis
+from elasticsearch import Elasticsearch
 from flask import current_app
 from redis import Redis
 from sqlalchemy import create_engine
@@ -12,6 +13,7 @@ from backend.database.objects import DBObjectBase
 
 try:
     import config
+
     DB_IP = config.DB_IP
     DB_USER = config.DB_USER
     DB_PASSWORD = config.DB_PASSWORD
@@ -41,6 +43,13 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
     session = sessionmaker(bind=engine)
     return engine, session
 
+def connect_elasticsearch():
+    _es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+    if _es.ping():
+        pass
+    else:
+        print('Not using elasticsearch')
+    return _es
 
 def get_current_session():
     return EngineStartup.get_current_session()
@@ -72,6 +81,9 @@ def lazy_get_redis():
 def get_strict_redis():
     return EngineStartup.get_strict_redis()
 
+def get_es():
+    return current_app.config['es']
+
 
 # session getting
 class EngineStartup:
@@ -97,6 +109,7 @@ class EngineStartup:
     @staticmethod
     def startup() -> sessionmaker:
         _, session = EngineStartup.login_db()
+        connect_elasticsearch()
         return session
 
     @staticmethod

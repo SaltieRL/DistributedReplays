@@ -1,4 +1,4 @@
-from typing import List, cast, Dict
+from typing import List, cast
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, Redirect
 from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
@@ -18,21 +18,33 @@ class GameScore:
     def create_from_game(game: Game):
         return GameScore(game.team0score, game.team1score)
 
+    @staticmethod
+    def create_from_es(game: dict):
+        return GameScore(game['team0score'], game['team1score'])
+
 
 class Replay:
     def __init__(self, id_: str, name: str, date: str, map: str,
                  game_mode: str, game_score: GameScore,
                  players: List[ReplayPlayer], tags: List[JsonTag], visibility: GameVisibilitySetting,
-                 ranks: List[int], mmrs: List[int], group_map: Dict[str, List[int]]):
+                 ranks: List[int], mmrs: List[int], group_map=None, es=False, **kwargs):
+        if group_map is None:
+            group_map = {}
         self.id = id_
         self.name = name
         self.date = date
         self.map = map
         self.gameMode = game_mode
         self.gameScore = game_score.__dict__
-        self.players = [player.__dict__ for player in players]
+        if es:
+            self.players = players
+        else:
+            self.players = [player.__dict__ for player in players]
         self.tags = [tag.to_JSON() for tag in tags]
-        self.visibility = visibility.value
+        if es:
+            self.visibility = visibility
+        else:
+            self.visibility = visibility.value
         self.ranks = ranks
         self.mmrs = mmrs
         self.groupMap = group_map
@@ -75,6 +87,27 @@ class Replay:
             ranks=game.ranks,
             mmrs=game.mmrs,
             group_map=group_map
+        )
+
+
+    @staticmethod
+    def create_from_es(es: dict, groups=False, session=None):
+        game_mode = get_playlist(es['playlist'], es['teamsize'])
+        group_map = None
+        if groups and session is not None:
+            players = session.query(Player).filter(Player.platformid.in_(game.players)).all()
+            group_map = {player.platformid: player.groups for player in players}
+        return Replay(
+            **es,
+            id_=es['hash'],
+            game_mode=game_mode,
+            date=es['match_date'],
+            game_score=GameScore.create_from_es(es),
+            tags=[
+
+            ],
+            group_map=group_map,
+            es=True
         )
 
 

@@ -15,7 +15,7 @@ from backend.blueprints import steam, auth, admin, api
 from backend.blueprints.spa_api import spa_api
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Player, Group
-from backend.database.startup import lazy_startup, lazy_get_redis
+from backend.database.startup import lazy_startup, lazy_get_redis, connect_elasticsearch
 from backend.database.wrapper.player_wrapper import create_default_player
 from backend.server_constants import SERVER_PERMISSION_GROUPS, UPLOAD_FOLDER, BASE_FOLDER
 from backend.tasks.celery_tasks import create_celery_config
@@ -80,7 +80,7 @@ class CalculatedServer:
 
             app.config['db'] = session_factory
             app.config['r'] = lazy_get_redis()
-
+            app.config['es'] = connect_elasticsearch()
             _session = session_factory()
 
             CalculatedServer.add_needed_groups_to_db(_session, SERVER_PERMISSION_GROUPS)
