@@ -33,7 +33,7 @@ from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack, cache_item_stats, \
-    calc_item_stats
+    calc_item_stats, cache_items
 from backend.tasks.update import update_self
 from backend.utils.cloud_handler import get_replay_url
 from backend.utils.file_manager import FileManager
@@ -687,6 +687,11 @@ def api_get_items_list(query_params=None):
         return better_jsonify(ItemStatsWrapper.create_item_list(query_params))
     api = RLGarageAPI()
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
+
+@bp.route('/items/cache')
+def api_cache_items_list(query_params=None):
+    cache_items.delay()
+    return jsonify("Success")
 
 
 @bp.route('/items/info')
