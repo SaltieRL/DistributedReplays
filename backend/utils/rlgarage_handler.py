@@ -111,8 +111,7 @@ class RLGarageAPI:
         r = lazy_get_redis()
         item = r.get(f'rlgarage_{id_}')
         if item is None:
-            self.cache_items()
-            return self.get_item(id_, paint_id=paint_id)
+            return None
         item = json.loads(item)
         if paint_id > 0 and item['hascoloredicons'] == 1:
             pic = item['name'].replace(' ', '').replace('\'', '').lower()
