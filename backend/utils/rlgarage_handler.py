@@ -101,9 +101,9 @@ class RLGarageAPI:
             raise CalculatedError()
         items, category_map = self.get_items()
         for item in items:
-            r.set(f"rlgarage_{item}", json.dumps(items[item]), ex=60 * 60 * 24)
-        r.set("rlgarage_category_map", json.dumps(category_map), ex=60 * 60 * 24)
-        r.set("rlgarage_items", json.dumps(items), ex=60 * 60 * 24)
+            r.set(f"rlgarage_{item}", json.dumps(items[item]))
+        r.set("rlgarage_category_map", json.dumps(category_map))
+        r.set("rlgarage_items", json.dumps(items))
 
     def get_item(self, id_, paint_id=0):
         if self.item_map is not None and id_ in self.item_map:
