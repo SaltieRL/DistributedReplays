@@ -14,12 +14,14 @@ import {
     Popper,
     Tab,
     Tabs,
+    Tooltip,
     Typography
 } from "@material-ui/core"
 import Add from "@material-ui/icons/Add"
 import Check from "@material-ui/icons/Check"
 import Delete from "@material-ui/icons/Delete"
 import Edit from "@material-ui/icons/Edit"
+import FormatItalic from "@material-ui/icons/FormatItalic"
 import * as _ from "lodash"
 import * as React from "react"
 import {connect} from "react-redux"
@@ -31,6 +33,7 @@ import {StoreState} from "../../Redux"
 import {deleteGames, getGroupInfo, getGroupPlayerStats, getGroupTeamStats} from "../../Requests/Replay"
 import {GroupAddDialog} from "../ReplaysSavedGroup/GroupAddDialog"
 import {GroupPlayerStatsTableWrapper} from "../ReplaysSavedGroup/GroupPlayerStatsTableWrapper"
+import {GroupRenameDialog} from "../ReplaysSavedGroup/GroupRenameDialog"
 import {GroupSubGroupAddDialog} from "../ReplaysSavedGroup/GroupSubGroupAddDialog"
 import {GroupTeamStatsTableWrapper} from "../ReplaysSavedGroup/GroupTeamStatsTableWrapper"
 import {SubgroupEntry} from "../ReplaysSavedGroup/SubgroupEntry"
@@ -58,6 +61,7 @@ interface State {
     popperOpen: boolean
     popperRef: HTMLButtonElement | null
     editActive: boolean
+    renameActive: boolean
     selectedEntries: string[]
 }
 
@@ -76,6 +80,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
             popperOpen: false,
             popperRef: null,
             editActive: false,
+            renameActive: false,
             selectedEntries: []
         }
     }
@@ -90,16 +95,18 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
         const {group, teamStats, popperRef} = this.state
 
         const addButton = (
-            <IconButton
-                ref={(val) => {
-                    this.setState({popperRef: val})
-                }}
-                onClick={() => {
-                    this.setState({popperOpen: !this.state.popperOpen})
-                }}
-            >
-                <Add />
-            </IconButton>
+            <Tooltip title={"Add replays/subgroup"}>
+                <IconButton
+                    ref={(val) => {
+                        this.setState({popperRef: val})
+                    }}
+                    onClick={() => {
+                        this.setState({popperOpen: !this.state.popperOpen})
+                    }}
+                >
+                    <Add />
+                </IconButton>
+            </Tooltip>
         )
         const options = ["Replay", "Subgroup"]
         const listeners = [this.toggleAddDialog, this.toggleAddSubDialog]
@@ -135,12 +142,23 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
             </Popper>
         )
         const editButton = (
-            <IconButton onClick={this.toggleEdit}>{this.state.editActive ? <Check /> : <Edit />}</IconButton>
+            <Tooltip title={"Edit contents"}>
+                <IconButton onClick={this.toggleEdit}>{this.state.editActive ? <Check /> : <Edit />}</IconButton>
+            </Tooltip>
+        )
+        const renameButton = (
+            <Tooltip title={"Rename"}>
+                <IconButton onClick={this.toggleRename}>
+                    <FormatItalic />
+                </IconButton>
+            </Tooltip>
         )
         const deleteButton = this.state.editActive ? (
-            <IconButton onClick={this.deleteEntries}>
-                <Delete />
-            </IconButton>
+            <Tooltip title={"Delete selected"}>
+                <IconButton onClick={this.deleteEntries}>
+                    <Delete />
+                </IconButton>
+            </Tooltip>
         ) : null
 
         return (
@@ -190,6 +208,7 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                                                     this.props.loggedInUser &&
                                                     group.entry.owner.id === this.props.loggedInUser.id ? (
                                                         <>
+                                                            {renameButton}
                                                             {deleteButton}
                                                             {editButton}
                                                             {addButton}
@@ -276,6 +295,14 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
                     openDialog={this.state.addDialogOpen}
                     onCloseDialog={this.closeDialog}
                 />
+                {this.state.group && (
+                    <GroupRenameDialog
+                        group={this.props.match.params.id}
+                        name={this.state.group.entry.name}
+                        openDialog={this.state.renameActive}
+                        onCloseDialog={this.toggleRename}
+                    />
+                )}
                 <GroupSubGroupAddDialog
                     group={this.props.match.params.id}
                     openDialog={this.state.addSubDialogOpen}
@@ -322,6 +349,15 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
     }
     private readonly toggleEdit = () => {
         this.setState({editActive: !this.state.editActive})
+    }
+    private readonly toggleRename = () => {
+        if (this.state.renameActive) {
+            this.toggleReload()
+        }
+        this.setState({renameActive: !this.state.renameActive})
+    }
+    private readonly toggleReload = () => {
+        this.setState({reloadSignal: !this.state.reloadSignal})
     }
 
     private readonly deleteEntries = () => {

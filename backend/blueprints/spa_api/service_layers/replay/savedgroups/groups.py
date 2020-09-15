@@ -101,6 +101,18 @@ class SavedGroup:
 
     @staticmethod
     @with_session
+    def rename_entry(uuid, name, session=None):
+        current_user = UserManager.get_current_user().platformid
+        entry: GroupEntry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
+        if entry.owner != current_user:
+            raise AuthorizationException()
+        entry.name = name
+        session.add(entry)
+        session.commit()
+        return entry.uuid
+
+    @staticmethod
+    @with_session
     def add_subgroup(parent_uuid, name=None, session=None):
         current_user = UserManager.get_current_user().platformid
         parent = session.query(GroupEntry).filter(GroupEntry.uuid == parent_uuid).first()
@@ -128,7 +140,8 @@ class SavedGroup:
                 raise NotLoggedIn()
 
         entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
-        children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).order_by(GroupEntry.id).filter(
+        children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).order_by(
+            GroupEntry.id).filter(
             func.nlevel(GroupEntry.path) == len(entry.path) + 1).all()
         children_counts = SavedGroup._children_counts(children, session)
         ancestors = session.query(GroupEntry).filter(GroupEntry.path.ancestor_of(entry.path)).filter(
