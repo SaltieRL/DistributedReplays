@@ -50,11 +50,11 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 60 * 24 * 3, calculate_global_stats_by_rank.s(), name='calculate global stats every 3 days')
-    sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
-    sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
-    sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
-    sender.add_periodic_task(60 * 60 * 12, cache_item_stats.s(), name='cache item stats every 12 hours')
+    # sender.add_periodic_task(60 * 60 * 24 * 3, calculate_global_stats_by_rank.s(), name='calculate global stats every 3 days')
+    # sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
+    # sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
+    # sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
+    # sender.add_periodic_task(60 * 60 * 12, cache_item_stats.s(), name='cache item stats every 12 hours')
     sender.add_periodic_task(60 * 60 * 6, cache_items.s(), name='cache items every 6 hours')
 
 
