@@ -122,5 +122,11 @@ class ReplayPlayer:
             saves=player_game.saves,
             shots=player_game.shots,
             camera_settings=CameraSettings.create_from_player_game(player_game) if full else None,
-            loadout=Loadout.create_from_player_game(player_game) if full else None
+            loadout=None #Loadout.create_from_player_game(player_game) if full else None
+        )
+
+    @staticmethod
+    def create_from_es(es: dict) -> 'ReplayPlayer':
+        return ReplayPlayer(
+            **es
         )

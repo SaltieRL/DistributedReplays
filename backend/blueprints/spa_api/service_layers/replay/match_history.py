@@ -25,13 +25,14 @@ class MatchHistory:
         return match_history
 
     @staticmethod
+    @with_session
     def create_from_es(id_: str, page: int, limit: int, session=None) -> 'MatchHistory':
         _es = get_es()
         result = _es.search(index='games',
                             body={'size': limit, 'from': page * limit, 'sort': {'match_date': 'desc'},
                                   'query': {'terms': {'players': [id_]}}})['hits']['hits']
         total_count = -1
-        match_history = MatchHistory(total_count, [Replay.create_from_es(game['_source']) for game in result])
+        match_history = MatchHistory(total_count, [Replay.create_from_es(game['_source'], session=session) for game in result])
         return match_history
 
     @staticmethod

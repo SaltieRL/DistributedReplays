@@ -54,6 +54,9 @@ class GroupIndicatorComponent extends React.PureComponent<Props> {
         const hierarchy = [1, 4, 2, 3]
         let userRole = 0
         for (const role of hierarchy) {
+            if (groups === undefined) {
+                break
+            }
             if (groups.includes(role)) {
                 userRole = role
                 break

@@ -6,6 +6,7 @@ from backend.blueprints.spa_api.service_layers.replay.replay_player import Repla
 from backend.blueprints.spa_api.service_layers.utils import sort_player_games_by_team_then_id, with_session
 from backend.data.constants.playlist import get_playlist
 from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, Player
+from backend.database.startup import get_es
 from backend.utils.safe_flask_globals import get_current_user_id
 
 
@@ -89,13 +90,15 @@ class Replay:
             group_map=group_map
         )
 
-
     @staticmethod
     def create_from_es(es: dict, groups=False, session=None):
+        es_ = get_es()
         game_mode = get_playlist(es['playlist'], es['teamsize'])
+        players = es['players']
+        del es['players']
         group_map = None
         if groups and session is not None:
-            players = session.query(Player).filter(Player.platformid.in_(game.players)).all()
+            players = session.query(Player).filter(Player.platformid.in_(es['players'])).all()
             group_map = {player.platformid: player.groups for player in players}
         return Replay(
             **es,
@@ -103,13 +106,13 @@ class Replay:
             game_mode=game_mode,
             date=es['match_date'],
             game_score=GameScore.create_from_es(es),
+            players=[ReplayPlayer.create_from_es(es) for pg in es_.search()],
             tags=[
 
             ],
             group_map=group_map,
             es=True
         )
-
 
 class CompactReplay:
     def __init__(self, id_: str, date: str, game_mode: str, game_score: GameScore):
