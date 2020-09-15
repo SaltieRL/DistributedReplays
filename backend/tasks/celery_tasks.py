@@ -189,7 +189,7 @@ def create_manual_training_pack(self, requester_id, players, replays, frames, na
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
-def cache_items():
+def cache_items(self):
     api = RLGarageAPI()
     api.cache_items()
 
