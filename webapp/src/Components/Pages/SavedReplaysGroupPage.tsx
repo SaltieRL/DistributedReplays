@@ -357,7 +357,9 @@ class SavedReplaysGroupPageComponent extends React.PureComponent<Props, State> {
         this.setState({renameActive: !this.state.renameActive})
     }
     private readonly toggleReload = () => {
-        this.setState({reloadSignal: !this.state.reloadSignal})
+        setTimeout(() => {
+            this.setState({reloadSignal: !this.state.reloadSignal})
+        }, 1000)
     }
 
     private readonly deleteEntries = () => {
