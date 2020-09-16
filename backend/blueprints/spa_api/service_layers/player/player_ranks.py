@@ -20,10 +20,6 @@ class PlayerRanks:
             self.doubles = ranks['doubles'].__dict__
         else:
             self.doubles = PlaylistRank("Unranked (div 1)", 0, 0).__dict__
-        if 'solo' in ranks and ranks['solo'] is not None:
-            self.solo = ranks['solo'].__dict__
-        else:
-            self.solo = PlaylistRank("Unranked (div 1)", 0, 0).__dict__
         if 'standard' in ranks and ranks['standard'] is not None:
             self.standard = ranks['standard'].__dict__
         else:
