@@ -71,7 +71,7 @@ def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, a
     if GCPManager.should_go_to_gcp(get_queue_length):
         encoded_file = base64.b64encode(file.read())
         try:
-            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=0.5,
+            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=10,
                               params={**{'uuid': uuid}, **query_params})
         except ReadTimeout as e:
             pass  # we don't care, it's given
