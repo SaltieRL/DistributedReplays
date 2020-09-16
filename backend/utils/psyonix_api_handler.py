@@ -101,7 +101,7 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
     for player in data:
         rank_datas = {}
         unique_id = player['user_id']
-        names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo',
+        names = {'13': 'standard', '11': 'doubles', '10': 'duel',
                  '27': 'hoops', '28': 'rumble', '29': 'dropshot', '30': 'snowday'}
         if 'player_skills' in player:
             found_modes = []
@@ -189,7 +189,7 @@ def get_empty_data(ids):
 
 
 def get_formatted_rank_data(rank, div):
-    modes = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+    modes = {'13': 'standard', '11': 'doubles', '10': 'duel'}
     return {
         id_:
             {'mode': mode,
