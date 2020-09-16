@@ -1,7 +1,7 @@
 import json
 import logging
-import sys
 import os
+import sys
 
 from sqlalchemy import func
 
@@ -10,7 +10,7 @@ print(path)
 sys.path.append(path)
 
 from backend.blueprints.spa_api.errors.errors import CalculatedError, UnsupportedPlaylist
-from backend.database.objects import PlayerGame, Game, Playlist
+from backend.database.objects import PlayerGame, Playlist
 from backend.database.wrapper.query_filter_builder import QueryFilterBuilder
 from backend.database.wrapper.rank_wrapper import get_rank_tier
 from backend.database.wrapper.stats.shared_stats_wrapper import SharedStatsWrapper
@@ -24,7 +24,6 @@ GLOBAL_STATS_PLAYLISTS = [Playlist.UNRANKED_DUELS,
                           Playlist.UNRANKED_CHAOS,
                           Playlist.RANKED_DUELS,
                           Playlist.RANKED_DOUBLES,
-                          Playlist.RANKED_SOLO_STANDARD,
                           Playlist.RANKED_STANDARD,
                           Playlist.RANKED_DROPSHOT,
                           Playlist.RANKED_HOOPS,

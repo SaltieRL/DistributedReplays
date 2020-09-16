@@ -75,7 +75,7 @@ export const playlists: PlaylistMetadata[] = [
     {
         name: "Solo Standard",
         value: 12,
-        current: true,
+        current: false,
         ranked: true,
         standardMode: true,
         publicMode: true
