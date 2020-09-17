@@ -808,6 +808,19 @@ def delete_group():
     return jsonify({"uuid": entry})
 
 
+@bp.route('/groups/rename', methods=['POST'])
+@require_user
+def rename_group():
+    payload = request.get_json(force=True)
+    if payload is None:
+        raise CalculatedError(403, "Malformed request")
+    if 'id' in payload:
+        entry = SavedGroup.rename_entry(payload['id'], payload['name'])
+    else:
+        raise CalculatedError(403, "Malformed request")
+    return jsonify({"uuid": entry})
+
+
 @bp.route('/groups')
 @with_query_params(accepted_query_params=[QueryParam(name='page', type_=int, optional=True),
                                           QueryParam(name='limit', type_=int, optional=True),
