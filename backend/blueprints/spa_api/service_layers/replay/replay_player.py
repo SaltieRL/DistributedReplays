@@ -23,6 +23,8 @@ class LoadoutItem:
         except Exception as e:
             logger.debug("Error with loadout: %s", str(e))
             return LoadoutItem("Unknown", "", 0, 0)
+        if item is None:
+            return LoadoutItem("Unknown", "", 0, 0)
         return LoadoutItem(item['name'], item['image'], paint_id, item['rarity'])
 
 
