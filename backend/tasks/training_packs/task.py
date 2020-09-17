@@ -104,7 +104,9 @@ class TrainingPackCreation:
             if query.count() == 0:
                 raise UserHasNoReplays()
             if date_start is not None:
-                last_n_games = random.sample(last_n_games.all(), 25)  # we don't want to overdo it
+                last_n_games = last_n_games.all()
+                last_n_games = random.sample(last_n_games, 25) if len(
+                    last_n_games) > 25 else last_n_games  # we don't want to overdo it
             else:
                 last_n_games = last_n_games[:n]  # use default of last n games
             last_n_games = [game[0] for game in last_n_games]  # gets rid of tuples
