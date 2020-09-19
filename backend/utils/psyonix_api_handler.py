@@ -189,7 +189,7 @@ def get_empty_data(ids):
 
 
 def get_formatted_rank_data(rank, div):
-    modes = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+    modes = {'13': 'standard', '11': 'doubles', '10': 'duel'}
     return {
         id_:
             {'mode': mode,
@@ -211,14 +211,15 @@ def tier_div_to_string(rank: Union[int, None], div: int = -1):
     """
     ranks = ['Unranked', 'Bronze I', 'Bronze II', 'Bronze III', 'Silver I', 'Silver II', 'Silver III', 'Gold I',
              'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
-             'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
+             'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion I', 'Grand Champion II',
+             'Grand Champion III', 'Supersonic Legend']
     if rank is None:
         logger.debug(rank)
         logger.debug(div)
         return 'Unknown'
-    if rank == 19:
+    if rank == 22:
         return f"{ranks[rank]}"
-    if rank < 19 and div >= 0:
+    if rank < 22 and div >= 0:
         return f"{ranks[rank]} (div {div + 1})"
 
 
