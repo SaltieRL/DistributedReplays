@@ -45,3 +45,4 @@ prometheus_client
 pycryptodome
 flask-httpauth
 sqlalchemy-utils
+elasticsearch
