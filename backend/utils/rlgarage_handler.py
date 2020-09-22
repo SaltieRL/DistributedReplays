@@ -2,6 +2,7 @@ import json
 
 import requests
 
+from backend.blueprints.spa_api.errors.errors import CalculatedError
 from backend.database.startup import lazy_get_redis
 
 try:
@@ -47,10 +48,8 @@ class RLGarageAPI:
         12: "Titanium White",
         13: "Saffron"
     }
-
-    def __init__(self):
-        self.item_map, self.category_map = self.get_cached_items()
-        self.item_list = list(self.item_map.values())
+    item_map = None
+    category_map = None
 
     def _get(self, url):
         headers = {
@@ -96,20 +95,24 @@ class RLGarageAPI:
         """
         return self._get("getFixtures.php")
 
-    def get_cached_items(self):
+    def cache_items(self):
         r = lazy_get_redis()
-        if r is not None:
-            if r.get("rlgarage_items") is not None and r.get("rlgarage_category_map") is not None:
-                return json.loads(r.get("rlgarage_items")), json.loads(r.get("rlgarage_category_map"))
+        if r is None:
+            raise CalculatedError()
         items, category_map = self.get_items()
-
-        if r is not None:
-            r.set("rlgarage_items", json.dumps(items), ex=60 * 60 * 24)
-            r.set("rlgarage_category_map", json.dumps(category_map), ex=60 * 60 * 24)
-        return items, category_map
+        for item in items:
+            r.set(f"rlgarage_{item}", json.dumps(items[item]))
+        r.set("rlgarage_category_map", json.dumps(category_map))
+        r.set("rlgarage_items", json.dumps(items))
 
     def get_item(self, id_, paint_id=0):
-        item = self.item_map[str(id_)]
+        if self.item_map is not None and id_ in self.item_map:
+            return self.item_map[id_]
+        r = lazy_get_redis()
+        item = r.get(f'rlgarage_{id_}')
+        if item is None:
+            return None
+        item = json.loads(item)
         if paint_id > 0 and item['hascoloredicons'] == 1:
             pic = item['name'].replace(' ', '').replace('\'', '').lower()
             paint_name = self.paint_map[paint_id]
@@ -120,11 +123,16 @@ class RLGarageAPI:
         return item
 
     def get_item_list(self, page, limit, override=False):
+        if self.item_map is None:
+            r = lazy_get_redis()
+            self.item_map, self.category_map = json.loads(r.get("rlgarage_items")), \
+                                               json.loads(r.get("rlgarage_category_map"))
         if not override and limit > 500:
             limit = 500
+        item_list = list(self.item_map.values())
         return {
-            'items': self.get_item_response(self.item_list[page * limit: (page + 1) * limit]),
-            'count': len(self.item_list)
+            'items': self.get_item_response(item_list[page * limit: (page + 1) * limit]),
+            'count': len(item_list)
         }
 
     def get_item_list_by_category(self, category, page, limit, order=None):
@@ -152,3 +160,10 @@ class RLGarageAPI:
                 'rarity': item['rarity']
             } for item in items
         ]
+
+
+if __name__ == '__main__':
+    api = RLGarageAPI()
+
+    items, category_map = api.get_items()
+    print(items, category_map)
