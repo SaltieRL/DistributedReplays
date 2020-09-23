@@ -154,15 +154,15 @@ def get_rank(steam_id):
                 unranked.get(steam_id).get('10')['rank_points'] = ranking_points
                 rank = int(ranking_string[0])
                 if rank <= 6:
-                    unranked.get(steam_id).get('10')['tier'] = 21
+                    unranked.get(steam_id).get('10')['tier'] = 31
                 elif rank <= 12:
-                    unranked.get(steam_id).get('10')['tier'] = 22
+                    unranked.get(steam_id).get('10')['tier'] = 32
                 elif rank <= 18:
-                    unranked.get(steam_id).get('10')['tier'] = 23
+                    unranked.get(steam_id).get('10')['tier'] = 33
                 elif rank <= 24:
-                    unranked.get(steam_id).get('10')['tier'] = 24
+                    unranked.get(steam_id).get('10')['tier'] = 34
                 else:
-                    unranked.get(steam_id).get('10')['tier'] = 25
+                    unranked.get(steam_id).get('10')['tier'] = 35
         return unranked[list(unranked.keys())[0]]
     rank = get_rank_batch([steam_id])
     if rank is None or len(rank) <= 0:
