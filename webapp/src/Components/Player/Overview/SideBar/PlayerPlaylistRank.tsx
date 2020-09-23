@@ -22,7 +22,9 @@ export class PlayerPlaylistRank extends React.PureComponent<Props> {
                 <img
                     alt=""
                     style={{width: 64, height: 64, margin: "auto"}}
-                    src={`${window.location.origin}/ranks/${this.props.playlistRank.rank}.png`}
+                    src={`${window.location.origin}/ranks/${
+                        this.props.playlistRank.rank > 19 ? 0 : this.props.playlistRank.rank
+                    }.png`}
                 />
                 <Typography align="center">{this.props.playlistRank.name}</Typography>
                 <Typography align="center">rating: {this.props.playlistRank.rating}</Typography>
