@@ -212,6 +212,11 @@ class PlayerGame(DBObjectBase):
     time_closest_to_team_center = Column(Float)
     time_furthest_from_team_center = Column(Float)
 
+    # demos
+
+    num_demos_inflicted = Column(Integer)
+    num_demos_taken = Column(Integer)
+
     # metadata
     is_bot = Column(Boolean)
     first_frame_in_game = Column(Integer)
