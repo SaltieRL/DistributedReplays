@@ -7,6 +7,7 @@ from carball.generated.api import game_pb2
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import Game, PlayerGame, Player, TeamStat, Loadout, GameVisibility
 from backend.database.utils.dynamic_field_manager import create_and_filter_proto_field, get_proto_values
+from backend.database.utils.elasticsearch_utils import add_game_to_elasticsearch
 from backend.database.wrapper.rank_wrapper import get_rank_obj_by_mapping
 from backend.utils.psyonix_api_handler import get_rank_batch
 
@@ -226,12 +227,12 @@ def add_objs_to_db(game: Game, player_games: List[PlayerGame], players: List[Pla
 
     return match_exists
 
-
 @with_session
 def add_objects(protobuf_game, session=None, preserve_upload_date=True):
     game, player_games, players, teamstats, loadouts = convert_pickle_to_db(protobuf_game)
     match_exists = add_objs_to_db(game, player_games, players, teamstats, loadouts, session, preserve_upload_date)
     session.commit()
+    add_game_to_elasticsearch(game)
     return match_exists
 
 
@@ -247,3 +248,4 @@ def duplicate_object(row, ignored_columns=None):
                 print(e)
                 continue
     return copy
+

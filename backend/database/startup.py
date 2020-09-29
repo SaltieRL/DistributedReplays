@@ -81,7 +81,7 @@ def lazy_get_redis():
 def get_strict_redis():
     return EngineStartup.get_strict_redis()
 
-def get_es():
+def get_es() -> Elasticsearch:
     return current_app.config['es']
 
 
@@ -100,10 +100,10 @@ class EngineStartup:
         except OperationalError as e:
             print('trying backup info', e)
             try:
-                engine, session = login('postgresql://postgres:postgres@localhost/saltie')
+                engine, session = login('postgresql://postgres:postgres@localhost:5433/saltie')
             except Exception as e:
                 print(e)
-                engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
+                engine, session = login('postgresql://postgres:postgres@localhost:5433', recreate_database=True)
         return engine, session
 
     @staticmethod
