@@ -50,11 +50,12 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 60 * 24 * 3, calculate_global_stats_by_rank.s(), name='calculate global stats every 3 days')
-    sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
-    sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
-    sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
-    sender.add_periodic_task(60 * 60 * 12, cache_item_stats.s(), name='cache item stats every 12 hours')
+    # sender.add_periodic_task(60 * 60 * 24 * 3, calculate_global_stats_by_rank.s(), name='calculate global stats every 3 days')
+    # sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
+    # sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
+    # sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
+    # sender.add_periodic_task(60 * 60 * 12, cache_item_stats.s(), name='cache item stats every 12 hours')
+    sender.add_periodic_task(60 * 60 * 6, cache_items.s(), name='cache items every 6 hours')
 
 
 def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, any] = None):
@@ -70,7 +71,7 @@ def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, a
     if GCPManager.should_go_to_gcp(get_queue_length):
         encoded_file = base64.b64encode(file.read())
         try:
-            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=0.5,
+            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=10,
                               params={**{'uuid': uuid}, **query_params})
         except ReadTimeout as e:
             pass  # we don't care, it's given
@@ -188,10 +189,17 @@ def create_manual_training_pack(self, requester_id, players, replays, frames, na
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
+def cache_items(self):
+    api = RLGarageAPI()
+    api.cache_items()
+
+
+@celery.task(base=DBTask, bind=True, priority=9)
 def cache_item_stats(self, session=None):
     if session is None:
         session = self.session()
     api = RLGarageAPI()
+    api.cache_items()
     items = api.get_item_list(0, 10000, override=True)['items']
     category_map = {
         'car': 1,

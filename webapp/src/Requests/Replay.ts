@@ -119,6 +119,15 @@ export const addSubgroup = (id: string | undefined, name: string): Promise<UUIDR
         })
     )
 }
+export const renameGroup = (id: string | undefined, name: string): Promise<UUIDResponse> => {
+    return doPost(
+        `/groups/rename`,
+        JSON.stringify({
+            name,
+            id
+        })
+    )
+}
 
 export const deleteGames = (ids: string[]): Promise<UUIDResponse> => {
     return doPost(

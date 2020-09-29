@@ -101,7 +101,7 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
     for player in data:
         rank_datas = {}
         unique_id = player['user_id']
-        names = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo',
+        names = {'13': 'standard', '11': 'doubles', '10': 'duel',
                  '27': 'hoops', '28': 'rumble', '29': 'dropshot', '30': 'snowday'}
         if 'player_skills' in player:
             found_modes = []
@@ -154,15 +154,15 @@ def get_rank(steam_id):
                 unranked.get(steam_id).get('10')['rank_points'] = ranking_points
                 rank = int(ranking_string[0])
                 if rank <= 6:
-                    unranked.get(steam_id).get('10')['tier'] = 21
+                    unranked.get(steam_id).get('10')['tier'] = 31
                 elif rank <= 12:
-                    unranked.get(steam_id).get('10')['tier'] = 22
+                    unranked.get(steam_id).get('10')['tier'] = 32
                 elif rank <= 18:
-                    unranked.get(steam_id).get('10')['tier'] = 23
+                    unranked.get(steam_id).get('10')['tier'] = 33
                 elif rank <= 24:
-                    unranked.get(steam_id).get('10')['tier'] = 24
+                    unranked.get(steam_id).get('10')['tier'] = 34
                 else:
-                    unranked.get(steam_id).get('10')['tier'] = 25
+                    unranked.get(steam_id).get('10')['tier'] = 35
         return unranked[list(unranked.keys())[0]]
     rank = get_rank_batch([steam_id])
     if rank is None or len(rank) <= 0:
@@ -189,7 +189,7 @@ def get_empty_data(ids):
 
 
 def get_formatted_rank_data(rank, div):
-    modes = {'13': 'standard', '11': 'doubles', '10': 'duel', '12': 'solo'}
+    modes = {'13': 'standard', '11': 'doubles', '10': 'duel'}
     return {
         id_:
             {'mode': mode,
@@ -211,14 +211,15 @@ def tier_div_to_string(rank: Union[int, None], div: int = -1):
     """
     ranks = ['Unranked', 'Bronze I', 'Bronze II', 'Bronze III', 'Silver I', 'Silver II', 'Silver III', 'Gold I',
              'Gold II', 'Gold III', 'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II',
-             'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion']
+             'Diamond III', 'Champion I', 'Champion II', 'Champion III', 'Grand Champion I', 'Grand Champion II',
+             'Grand Champion III', 'Supersonic Legend']
     if rank is None:
         logger.debug(rank)
         logger.debug(div)
         return 'Unknown'
-    if rank == 19:
+    if rank == 22:
         return f"{ranks[rank]}"
-    if rank < 19 and div >= 0:
+    if rank < 22 and div >= 0:
         return f"{ranks[rank]} (div {div + 1})"
 
 

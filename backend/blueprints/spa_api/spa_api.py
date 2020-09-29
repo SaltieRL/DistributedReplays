@@ -34,7 +34,7 @@ from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.tasks.add_replay import parsed_replay_processing
 from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack, cache_item_stats, \
-    calc_item_stats
+    calc_item_stats, cache_items
 from backend.tasks.update import update_self
 from backend.utils.cloud_handler import get_replay_url
 from backend.utils.file_manager import FileManager
@@ -696,6 +696,11 @@ def api_get_items_list(query_params=None):
     api = RLGarageAPI()
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
 
+@bp.route('/items/cache')
+def api_cache_items_list(query_params=None):
+    cache_items.delay()
+    return jsonify("Success")
+
 
 @bp.route('/items/info')
 @with_query_params(accepted_query_params=[
@@ -806,6 +811,19 @@ def delete_group():
         entry = SavedGroup.delete_entry(payload['id'])
     elif 'ids' in payload:
         entry = [SavedGroup.delete_entry(id_) for id_ in payload['ids']]
+    else:
+        raise CalculatedError(403, "Malformed request")
+    return jsonify({"uuid": entry})
+
+
+@bp.route('/groups/rename', methods=['POST'])
+@require_user
+def rename_group():
+    payload = request.get_json(force=True)
+    if payload is None:
+        raise CalculatedError(403, "Malformed request")
+    if 'id' in payload:
+        entry = SavedGroup.rename_entry(payload['id'], payload['name'])
     else:
         raise CalculatedError(403, "Malformed request")
     return jsonify({"uuid": entry})

@@ -33,7 +33,6 @@ export const mockImplementationGetRank = (id: string) => {
                 hoops: {name: "Unranked (div 1)", rank: 0, rating: 1213},
                 rumble: {name: "Unranked (div 1)", rank: 0, rating: 1167},
                 snowday: {name: "Unranked (div 1)", rank: 0, rating: 1166},
-                solo: {name: "Champion III (div 2)", rank: 18, rating: 1234},
                 standard: {name: "Grand Champion", rank: 19, rating: 2040}
             })
         default:
