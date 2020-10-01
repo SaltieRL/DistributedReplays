@@ -102,7 +102,7 @@ def get_rank_batch(ids, offline_redis=None, use_redis=True):
         rank_datas = {}
         unique_id = player['user_id']
         names = {'13': 'standard', '11': 'doubles', '10': 'duel',
-                 '27': 'hoops', '28': 'rumble', '29': 'dropshot', '30': 'snowday'}
+                 '27': 'hoops', '28': 'rumble', '29': 'dropshot', '30': 'snowday', '34': 'tournament'}
         if 'player_skills' in player:
             found_modes = []
             for playlist in player['player_skills']:
@@ -231,4 +231,4 @@ def get_platform_id(i):
 
 
 if __name__ == '__main__':
-    print(get_rank_batch(['76561198374703623'], use_redis=False))
+    print(get_rank_batch(['76561198258541992'], use_redis=False))
