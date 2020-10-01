@@ -40,7 +40,7 @@ class PlayerRanks:
             self.snowday = ranks['snowday'].__dict__
         else:
             self.snowday = PlaylistRank("Unranked (div 1)", 0, 0).__dict__
-        if 'tournament' in ranks and ranks['snowday'] is not None:
+        if 'tournament' in ranks and ranks['tournament'] is not None:
             self.tournament = ranks['tournament'].__dict__
         else:
             self.tournament = PlaylistRank("Unranked (div 1)", 0, 0).__dict__
