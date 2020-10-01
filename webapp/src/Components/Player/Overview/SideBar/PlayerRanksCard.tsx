@@ -12,7 +12,7 @@ export interface PlayerRanks {
     standard: PlaylistRank
 }
 
-const playlists = ["duel", "doubles", "standard"]
+const playlists = ["duel", "doubles", "standard", "tournament"]
 const expandedPlaylists = ["hoops", "rumble", "dropshot", "snowday"]
 
 interface OwnProps {
