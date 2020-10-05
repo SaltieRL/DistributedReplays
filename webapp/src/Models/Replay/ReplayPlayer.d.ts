@@ -9,6 +9,8 @@ interface ReplayPlayer {
     shots: number
     cameraSettings: CameraSettings
     loadout: Loadout
+    mmr: number
+    rank: number
 }
 
 interface CameraSettings {
