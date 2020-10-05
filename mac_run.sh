@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 echo ************************** REDIS *************************
 redis-server &
 sleep 2
