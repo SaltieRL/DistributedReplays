@@ -98,7 +98,8 @@ class CameraSettings:
 class ReplayPlayer:
     def __init__(self, id_: str, name: str, is_orange: bool,
                  score: int, goals: int, assists: int, saves: int, shots: int,
-                 camera_settings: Optional[CameraSettings], loadout: Optional[Loadout]):
+                 camera_settings: Optional[CameraSettings], loadout: Optional[Loadout], rank: Optional[int],
+                 mmr: Optional[int]):
         self.id = id_
         self.name = name
         self.isOrange = is_orange
@@ -111,6 +112,8 @@ class ReplayPlayer:
             self.cameraSettings = camera_settings.__dict__
         if loadout is not None:
             self.loadout = loadout.__dict__
+        self.rank = rank
+        self.mmr = mmr
 
     @staticmethod
     def create_from_player_game(player_game: PlayerGame, full=True) -> 'ReplayPlayer':
@@ -124,5 +127,7 @@ class ReplayPlayer:
             saves=player_game.saves,
             shots=player_game.shots,
             camera_settings=CameraSettings.create_from_player_game(player_game) if full else None,
-            loadout=Loadout.create_from_player_game(player_game) if full else None
+            loadout=Loadout.create_from_player_game(player_game) if full else None,
+            rank=player_game.rank,
+            mmr=player_game.mmr
         )
