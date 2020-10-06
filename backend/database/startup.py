@@ -100,10 +100,10 @@ class EngineStartup:
         except OperationalError as e:
             print('trying backup info', e)
             try:
-                engine, session = login('postgresql://postgres:postgres@localhost:5433/saltie')
+                engine, session = login('postgresql://postgres:postgres@localhost/saltie')
             except Exception as e:
                 print(e)
-                engine, session = login('postgresql://postgres:postgres@localhost:5433', recreate_database=True)
+                engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
         return engine, session
 
     @staticmethod
