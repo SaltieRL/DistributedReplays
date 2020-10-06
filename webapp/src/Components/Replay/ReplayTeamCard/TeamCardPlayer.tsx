@@ -48,16 +48,17 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
                 </IconButton>
             </Tooltip>
         )
+        const cleanedRank = rank !== undefined && rank !== null ? rank : 0
         const replayRank = (
             <Tooltip title={"MMR: " + (mmr > 0 ? mmr.toString() : "Unranked")}>
                 <img
-                    alt={`rank ${rank}`}
+                    alt={`rank ${cleanedRank}`}
                     style={{
                         width: 30,
                         height: 30,
                         transform: "translateY(12px)"
                     }}
-                    src={`${window.location.origin}/ranks/${rank}.png`}
+                    src={`${window.location.origin}/ranks/${cleanedRank}.png`}
                 />
             </Tooltip>
         )
