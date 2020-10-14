@@ -27,13 +27,14 @@ export const mockImplementationGetRank = (id: string) => {
     switch (id) {
         case TEST_PLAYER_ID:
             return Promise.resolve({
-                doubles: {name: "Grand Champion", rank: 19, rating: 2140},
-                dropshot: {name: "Unranked (div 1)", rank: 0, rating: 1194},
-                duel: {name: "Grand Champion", rank: 19, rating: 1426},
-                hoops: {name: "Unranked (div 1)", rank: 0, rating: 1213},
-                rumble: {name: "Unranked (div 1)", rank: 0, rating: 1167},
-                snowday: {name: "Unranked (div 1)", rank: 0, rating: 1166},
-                standard: {name: "Grand Champion", rank: 19, rating: 2040}
+                doubles: {name: "Grand Champion III (div 3)", rank: 21, rating: 1827},
+                dropshot: {name: "Unranked (div 1)", rank: 0, rating: 1068},
+                duel: {name: "Supersonic Legend", rank: 22, rating: 1387},
+                hoops: {name: "Unranked (div 1)", rank: 0, rating: 1104},
+                rumble: {name: "Unranked (div 1)", rank: 0, rating: 1104},
+                snowday: {name: "Unranked (div 1)", rank: 0, rating: 1050},
+                standard: {name: "Grand Champion II (div 3)", rank: 20, rating: 1732},
+                tournament: {name: "Grand Champion III (div 1)", rank: 21, rating: 1807}
             })
         default:
             throw Error(`Unknown id in mock: ${id}`)
