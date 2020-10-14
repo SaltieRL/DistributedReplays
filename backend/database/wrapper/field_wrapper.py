@@ -262,6 +262,10 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Total number of demos inflicted on other players.'),
         FieldExplanation('num_demos_taken',
                          'Total number of times the player was demoed.'),
+        FieldExplanation('time_ballcam',
+                         'Total time player spent in ballcam.'),
+        FieldExplanation('time_handbrake',
+                         'Total time player held handbrake/powerslide.'),
 
     ]
     explanation_map = dict()
