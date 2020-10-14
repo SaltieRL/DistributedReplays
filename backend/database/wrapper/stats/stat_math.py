@@ -76,4 +76,4 @@ def get_game_boost_usage_per_minute():
     return PlayerGame.boost_usage / safe_divide(PlayerGame.time_in_game, default=300) * 60
 
 def get_ballcam_percent():
-    return PlayerGame.time_ballcam / safe_divide(PlayerGame.time_in_game, default=300)
+    return PlayerGame.time_ballcam / safe_divide(PlayerGame.time_in_game, default=300) * 100
