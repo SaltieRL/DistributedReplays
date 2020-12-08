@@ -202,6 +202,8 @@ class PlayerGame(DBObjectBase):
 
     # controller
     is_keyboard = Column(Boolean)
+    time_ballcam = Column(Float)
+    time_handbrake = Column(Float)
 
     # speed
     time_at_boost_speed = Column(Float)
