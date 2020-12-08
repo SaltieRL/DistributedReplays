@@ -4,12 +4,12 @@ from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from backend.blueprints.spa_api.errors.errors import UserHasNoReplays, NoReplaysForPlaylist
+from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_stat_wrapper, player_wrapper
 from backend.blueprints.spa_api.service_layers.stat import DataPoint, PlayerDataPoint
 from backend.blueprints.spa_api.service_layers.utils import with_session
 from backend.database.objects import PlayerGame
 from backend.database.wrapper.chart.chart_data import ChartData, ChartDataPoint
 from backend.utils.psyonix_api_handler import get_rank
-from backend.blueprints.spa_api.service_layers.player.player_profile_stats import player_stat_wrapper, player_wrapper
 from backend.utils.safe_flask_globals import get_redis
 
 explanations = player_stat_wrapper.player_stats.stat_explanation_map
@@ -38,7 +38,7 @@ class PlayStyleResponse:
             averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                     redis=get_redis(), raw=raw,
                                                                     rank=rank, replay_ids=replay_ids,
-                                                                    playlist=playlist, win=win)
+                                                                    playlist=playlist, win=win, total_games=game_count)
         except NoResultFound:
             raise NoReplaysForPlaylist(playlist)
         spider_charts_groups = player_stat_wrapper.get_stat_spider_charts()
@@ -70,7 +70,7 @@ class PlayStyleResponse:
         averaged_stats = player_stat_wrapper.get_averaged_stats(session, id_,
                                                                 redis=get_redis(), raw=True,
                                                                 rank=rank, replay_ids=replay_ids,
-                                                                playlist=playlist, win=win)
+                                                                playlist=playlist, win=win, total_games=game_count)
         if len(id_) == 11 and id_[0] == 'b' and id_[-1] == 'b':
             names_and_counts: List[Tuple[str, int]] = session.query(PlayerGame.name,
                                                                     func.count(PlayerGame.name).label('c')) \

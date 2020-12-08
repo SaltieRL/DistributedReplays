@@ -34,7 +34,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
         # this Object needs to be pooled per a session so only one is used at a time
         self.player_stats_filter = QueryFilterBuilder()
         if not ignore_filtering():
-            self.player_stats_filter.with_relative_start_time(days_ago=30 * 6).with_safe_checking().sticky()
+            self.player_stats_filter.with_relative_start_time(days_ago=30).with_safe_checking().sticky()
 
     def get_stats(self, session, id_, stats_query, std_query, rank=None, redis=None, raw=False, replay_ids=None,
                   playlist=13, win: bool = None):
@@ -61,7 +61,7 @@ class PlayerStatWrapper(GlobalStatWrapper):
             return self.compare_to_global(stats, global_stats, global_stds)
 
     def get_averaged_stats(self, session, id_: str, rank: int = None, redis=None, raw: bool = False,
-                           replay_ids: list = None, playlist: int = 13, win: bool = None):
+                           replay_ids: list = None, playlist: int = 13, win: bool = None, total_games: int = None):
         """
         Gets the averaged stats for the given ID, in either raw or standard deviation form.
 
@@ -77,7 +77,8 @@ class PlayerStatWrapper(GlobalStatWrapper):
         """
         stats_query = self.get_player_stat_query()
         std_query = self.get_player_stat_std_query()
-        total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
+        if total_games is None:
+            total_games = self.player_wrapper.get_total_games(session, id_, replay_ids=replay_ids)
         if total_games > 0:
             stats = self.get_stats(session, id_, stats_query, std_query, rank=rank, redis=redis, raw=raw,
                                    replay_ids=replay_ids, playlist=playlist, win=win)
@@ -241,7 +242,6 @@ class PlayerStatWrapper(GlobalStatWrapper):
             }
         }
 
-
     @with_session
     def get_group_team_stats(self, replay_ids, session=None):
         query = session.query(PlayerGame.game, func.array_agg(
@@ -263,11 +263,9 @@ class PlayerStatWrapper(GlobalStatWrapper):
                 for team in teams]
         }
 
-
     @with_session
     def get_group_stats(self, replay_ids, session=None):
         return_obj = {}
-
 
         # Players
         player_tuples: List[Tuple[str, str, int]] = session.query(PlayerGame.player, func.min(PlayerGame.name),

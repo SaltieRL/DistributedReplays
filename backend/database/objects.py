@@ -202,6 +202,8 @@ class PlayerGame(DBObjectBase):
 
     # controller
     is_keyboard = Column(Boolean)
+    time_ballcam = Column(Float)
+    time_handbrake = Column(Float)
 
     # speed
     time_at_boost_speed = Column(Float)
@@ -211,6 +213,11 @@ class PlayerGame(DBObjectBase):
     # distance
     time_closest_to_team_center = Column(Float)
     time_furthest_from_team_center = Column(Float)
+
+    # demos
+
+    num_demos_inflicted = Column(Integer)
+    num_demos_taken = Column(Integer)
 
     # metadata
     is_bot = Column(Boolean)
@@ -315,7 +322,7 @@ class Game(DBObjectBase):
 
 class Player(DBObjectBase):
     __tablename__ = 'players'
-    platformid = Column(String(40), primary_key=True)
+    platformid = Column(String(40), primary_key=True, unique=True)
     platformname = Column(String(50))
     avatar = Column(String(150))
     ranks = Column(postgresql.ARRAY(Integer, dimensions=1))  # foreign key

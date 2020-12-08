@@ -77,7 +77,10 @@ def download_df(id_):
     gzip_url = f'https://storage.googleapis.com/{bucket_name}/{id_}.replay.gzip'
     r = requests.get(gzip_url)
     if r.status_code == 404:
-        raise ReplayNotFound()
+        gzip_url = f'https://storage.googleapis.com/{bucket_name + "-cold"}/{id_}.replay.gzip'
+        r = requests.get(gzip_url)
+        if r.status_code == 404:
+            raise ReplayNotFound()
     try:
         with gzip.GzipFile(fileobj=io.BytesIO(r.content)) as f:
             data_frame = pandas_manager.PandasManager.read_numpy_from_memory(f)
@@ -110,6 +113,12 @@ def get_replay_url(id_):
     if is_archived(id_):
         bucket_name += "-cold"
     replay_url = f'https://storage.googleapis.com/{bucket_name}/{id_}.replay'
+    r = requests.head(replay_url)
+    if r.status_code == 404:
+        replay_url = f'https://storage.googleapis.com/{bucket_name + "-cold"}/{id_}.replay'
+        r = requests.head(replay_url)
+        if r.status_code == 404:
+            raise ReplayNotFound()
     return replay_url
 
 

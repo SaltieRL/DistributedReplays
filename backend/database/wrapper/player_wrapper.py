@@ -22,8 +22,8 @@ def create_default_player(session=None):
 
     if player is None:
         player = Player()
-
     player.platformid = "LOCAL_PLATFORMID" if player.platformid is None else player.platformid
+    print("player platformid", player.platformid)
     player.platformname = 'test user with a really long name but even longer'
     if bool(random.getrandbits(1)):
         player.avatar = "https://media.istockphoto.com/photos/golden-retriever-puppy-looking-up-isolated-on-black-backround-picture-id466614709?k=6&m=466614709&s=612x612&w=0&h=AVW-4RuYXFPXxLBMHiqoAKnvLrMGT9g62SduH2eNHxA="
@@ -71,8 +71,26 @@ class PlayerWrapper:
 
         return query
 
+    def get_games(self, session, id_, replay_ids=None, filter_private=True):
+        query = session.query(Game).filter(Game.players.contains(cast([id_], postgresql.ARRAY(String))))
+        if replay_ids is not None:
+            query = query.filter(Game.hash.in_(replay_ids))
+        if filter_private:
+            if UserManager.get_current_user() is not None:
+                if not is_admin():
+                    query = query.filter(or_(Game.visibility != GameVisibilitySetting.PRIVATE,
+                                             Game.players.any(get_current_user_id())))
+            else:
+                query = query.filter(Game.visibility != GameVisibilitySetting.PRIVATE)
+
+        return query
+
     def get_player_games_paginated(self, session, id_, page: int = 0, limit: int = None, filter_private=True):
         query = self.get_player_games(session, id_, filter_private=filter_private)
+        return self.get_paginated_match_history(query, page=page, limit=limit)
+
+    def get_games_paginated(self, session, id_, page: int = 0, limit: int = None, filter_private=True):
+        query = self.get_games(session, id_, filter_private=filter_private)
         return self.get_paginated_match_history(query, page=page, limit=limit)
 
     def get_paginated_match_history(self, existing_query, page: int, limit: int) -> List[PlayerGame]:
@@ -89,7 +107,7 @@ class PlayerWrapper:
         :param filter_private:
         :return: Integer
         """
-        return self.get_player_games(session, id_, replay_ids=replay_ids, filter_private=filter_private).count()
+        return self.get_games(session, id_, replay_ids=replay_ids, filter_private=filter_private).count()
 
     @staticmethod
     @with_session

@@ -13,7 +13,6 @@ rank_mapping = {
     # Ranked
     Playlist.RANKED_DUELS: None,
     Playlist.RANKED_DOUBLES: None,
-    Playlist.RANKED_SOLO_STANDARD: None,
     Playlist.RANKED_STANDARD: None,
 
     # Ranked Other modes

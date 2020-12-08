@@ -12,10 +12,12 @@ import {
 import * as React from "react"
 import {Link, LinkProps} from "react-router-dom"
 import {PLAYER_PAGE_LINK} from "../../../Globals"
+import {GroupIndicator} from "../../Player/Overview/SideBar/GroupIndicator"
 import {CameraSettingsDisplay} from "./CameraSettingsDisplay"
 import {LoadoutDisplay} from "./LoadoutDisplay"
 
 interface Props {
+    groupMap: any
     player: ReplayPlayer
 }
 
@@ -37,8 +39,8 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
     }
 
     public render() {
-        const {player} = this.props
-
+        const {player, groupMap} = this.props
+        const {mmr, rank} = player
         const carButton = (
             <Tooltip title="Loadout">
                 <IconButton onClick={this.handleShowLoadout}>
@@ -46,7 +48,20 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
                 </IconButton>
             </Tooltip>
         )
-
+        const cleanedRank = rank !== undefined && rank !== null ? rank : 0
+        const replayRank = (
+            <Tooltip title={"MMR: " + (mmr > 0 ? mmr.toString() : "Unranked")}>
+                <img
+                    alt={`rank ${cleanedRank}`}
+                    style={{
+                        width: 30,
+                        height: 30,
+                        transform: "translateY(12px)"
+                    }}
+                    src={`${window.location.origin}/ranks/${cleanedRank}.png`}
+                />
+            </Tooltip>
+        )
         const cameraButton = (
             <Tooltip title="Camera settings">
                 <IconButton onClick={this.handleShowCamera}>
@@ -64,6 +79,8 @@ export class TeamCardPlayer extends React.PureComponent<Props, State> {
                         style={{padding: "0 64px 0 0"}}
                     />
                     <ListItemSecondaryAction>
+                        {groupMap && <GroupIndicator groups={groupMap[player.id]} />}
+                        {replayRank}
                         {carButton}
                         {cameraButton}
                     </ListItemSecondaryAction>

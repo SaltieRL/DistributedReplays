@@ -9,11 +9,10 @@ import {PlayerPlaylistRank, PlaylistRank} from "./PlayerPlaylistRank"
 export interface PlayerRanks {
     duel: PlaylistRank
     doubles: PlaylistRank
-    solo: PlaylistRank
     standard: PlaylistRank
 }
 
-const playlists = ["duel", "doubles", "solo", "standard"]
+const playlists = ["duel", "doubles", "standard", "tournament"]
 const expandedPlaylists = ["hoops", "rumble", "dropshot", "snowday"]
 
 interface OwnProps {
@@ -40,7 +39,6 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
             playerRanks: {
                 duel: loadingRating,
                 doubles: loadingRating,
-                solo: loadingRating,
                 standard: loadingRating
             },
             reloadSignal: false,

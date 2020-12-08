@@ -1,11 +1,11 @@
-from typing import List, cast
+from typing import List, cast, Dict
 
 from backend.blueprints.spa_api.errors.errors import ReplayNotFound, Redirect
 from backend.blueprints.spa_api.service_layers.replay.json_tag import JsonTag
 from backend.blueprints.spa_api.service_layers.replay.replay_player import ReplayPlayer
 from backend.blueprints.spa_api.service_layers.utils import sort_player_games_by_team_then_id, with_session
 from backend.data.constants.playlist import get_playlist
-from backend.database.objects import Game, PlayerGame, GameVisibilitySetting
+from backend.database.objects import Game, PlayerGame, GameVisibilitySetting, Player
 from backend.utils.safe_flask_globals import get_current_user_id
 
 
@@ -23,7 +23,7 @@ class Replay:
     def __init__(self, id_: str, name: str, date: str, map: str,
                  game_mode: str, game_score: GameScore,
                  players: List[ReplayPlayer], tags: List[JsonTag], visibility: GameVisibilitySetting,
-                 ranks: List[int], mmrs: List[int]):
+                 ranks: List[int], mmrs: List[int], group_map: Dict[str, List[int]]):
         self.id = id_
         self.name = name
         self.date = date
@@ -35,6 +35,7 @@ class Replay:
         self.visibility = visibility.value
         self.ranks = ranks
         self.mmrs = mmrs
+        self.groupMap = group_map
 
     @staticmethod
     @with_session
@@ -45,11 +46,15 @@ class Replay:
             if game is None:
                 raise ReplayNotFound()
             raise Redirect("/replays/" + game.hash)
-        replay = Replay.create_from_game(game)
+        replay = Replay.create_from_game(game, session=session, groups=True)
         return replay
 
     @staticmethod
-    def create_from_game(game: Game, full=True) -> 'Replay':
+    def create_from_game(game: Game, full=True, groups=False, session=None) -> 'Replay':
+        group_map = None
+        if groups and session is not None:
+            players = session.query(Player).filter(Player.platformid.in_(game.players)).all()
+            group_map = {player.platformid: player.groups for player in players}
         return Replay(
             id_=game.hash,
             name=game.name,
@@ -68,8 +73,8 @@ class Replay:
             ],
             visibility=game.visibility,
             ranks=game.ranks,
-            mmrs=game.mmrs
-
+            mmrs=game.mmrs,
+            group_map=group_map
         )
 
 

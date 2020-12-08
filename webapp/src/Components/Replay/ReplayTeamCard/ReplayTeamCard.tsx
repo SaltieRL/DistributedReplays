@@ -46,7 +46,7 @@ class ReplayTeamCardComponent extends React.PureComponent<Props> {
                         {replay.players
                             .filter((player) => player.isOrange === isOrange)
                             .map((player) => (
-                                <TeamCardPlayer player={player} key={player.id} />
+                                <TeamCardPlayer player={player} key={player.id} groupMap={replay.groupMap} />
                             ))}
                     </List>
                 </CardContent>

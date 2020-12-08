@@ -1,5 +1,5 @@
 import {faGithub, faPatreon} from "@fortawesome/free-brands-svg-icons"
-import {faChartBar, faGlobeAmericas, faLightbulb} from "@fortawesome/free-solid-svg-icons"
+import {faBlog, faChartBar, faGlobeAmericas, faLightbulb} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, ListSubheader} from "@material-ui/core"
 import CloudUpload from "@material-ui/icons/CloudUpload"
@@ -11,17 +11,16 @@ import Info from "@material-ui/icons/Info"
 import Search from "@material-ui/icons/Search"
 import ShowChart from "@material-ui/icons/ShowChart"
 import SportsSoccer from "@material-ui/icons/SportsSoccer"
-import TableChart from "@material-ui/icons/TableChart"
 import * as React from "react"
 import {connect} from "react-redux"
 import {Link, LinkProps} from "react-router-dom"
 import {ThemeContext} from "../../Contexts/ThemeContext"
 import {
     ABOUT_LINK,
+    BLOG_LINK,
     EXPLANATIONS_LINK,
     GITHUB_LINK,
     GLOBAL_STATS_LINK,
-    LEADERBOARDS_LINK,
     PATREON_LINK,
     PLAYER_COMPARE_PAGE_LINK,
     REPLAYS_GROUP_PAGE_LINK,
@@ -76,12 +75,12 @@ class SideBarComponent extends React.PureComponent<Props> {
                         <Divider component="li" />
 
                         <ListSubheader>Player</ListSubheader>
-                        <ListItem button component={this.createLink} to={LEADERBOARDS_LINK}>
+                        {/*                        <ListItem button component={this.createLink} to={LEADERBOARDS_LINK}>
                             <ListItemIcon>
                                 <TableChart />
                             </ListItemIcon>
                             <ListItemText>Leaderboards</ListItemText>
-                        </ListItem>
+                        </ListItem>*/}
                         <ListItem button component={this.createLink} to={PLAYER_COMPARE_PAGE_LINK}>
                             <ListItemIcon>
                                 <CompareArrows />
@@ -142,6 +141,19 @@ class SideBarComponent extends React.PureComponent<Props> {
 
                         <Divider component="li" />
 
+                        <ListItem
+                            button
+                            component="a"
+                            href={BLOG_LINK}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            style={{textDecoration: "none"}}
+                        >
+                            <ListItemIcon style={{width: 24}}>
+                                <FontAwesomeIcon icon={faBlog} size="lg" style={{width: 24}} />
+                            </ListItemIcon>
+                            <ListItemText>Blog</ListItemText>
+                        </ListItem>
                         <ListItem
                             button
                             component="a"

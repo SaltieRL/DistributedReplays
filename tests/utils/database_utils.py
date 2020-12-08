@@ -1,15 +1,15 @@
 import contextlib
 from typing import List, Tuple
-
-from alchemy_mock.mocking import UnifiedAlchemyMagicMock
 from unittest import mock
 
+from alchemy_mock.mocking import UnifiedAlchemyMagicMock
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.dialects.postgresql.base import PGInspector
 
 from backend.database import startup
 from backend.database.objects import Player
 from backend.database.utils.utils import add_objects
-from tests.utils.replay_utils import parse_file, parse_replays
+from tests.utils.replay_utils import parse_replays
 
 
 def create_initial_mock_database(existing_data: List[Tuple] = None) -> Tuple[UnifiedAlchemyMagicMock, List[Tuple]]:
@@ -55,11 +55,10 @@ def initialize_db_with_parsed_replays(parsed_replays, session=None):
     return session
 
 
-
 def print_entire_db(inspector: PGInspector, session):
     for table in inspector.get_table_names():
         pass
-    #https://stackoverflow.com/questions/21310549/list-database-tables-with-sqlalchemy/21346185
+    # https://stackoverflow.com/questions/21310549/list-database-tables-with-sqlalchemy/21346185
 
 
 def default_player_id():
@@ -104,3 +103,7 @@ def empty_database(engine, session=None):
             except Exception as e:
                 print(e)
             trans.commit()
+
+
+def get_query(query):
+    return query.statement.compile(dialect=postgresql.dialect())

@@ -429,7 +429,9 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 3,
                 transitionSpeed: 1
             },
-            loadout
+            loadout,
+            mmr: 2000,
+            rank: 22
         },
         {
             id: "149019024",
@@ -449,7 +451,9 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 5,
                 transitionSpeed: 1
             },
-            loadout
+            loadout,
+            mmr: 2000,
+            rank: 22
         },
         {
             id: "1248921984",
@@ -469,7 +473,9 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 9,
                 transitionSpeed: 1
             },
-            loadout
+            loadout,
+            mmr: 2000,
+            rank: 22
         },
         {
             id: "248129841",
@@ -489,7 +495,9 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 6,
                 transitionSpeed: 2
             },
-            loadout
+            loadout,
+            mmr: 2000,
+            rank: 22
         },
         {
             id: "8132482941",
@@ -509,7 +517,9 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 5,
                 transitionSpeed: 1
             },
-            loadout
+            loadout,
+            mmr: 2000,
+            rank: 22
         },
         {
             id: "189489124",
@@ -529,13 +539,16 @@ export const MOCK_REPLAY_1: Replay = {
                 swivelSpeed: 4,
                 transitionSpeed: 1
             },
-            loadout
+            loadout,
+            mmr: 2000,
+            rank: 22
         }
     ],
     tags: [],
     visibility: GameVisibility.PUBLIC,
     ranks: [14, 15, 14, 14],
-    mmrs: [1000, 1100, 1050, 1025]
+    mmrs: [1000, 1100, 1050, 1025],
+    groupMap: {}
 }
 
 export const MOCK_REPLAY_2 = {
@@ -709,5 +722,6 @@ export const MOCK_REPLAY_2 = {
             }
         }
     ],
-    tags: []
+    tags: [],
+    groupMap: {}
 }

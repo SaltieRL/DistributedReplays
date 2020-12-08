@@ -93,16 +93,8 @@ class ReplayTabsComponent extends React.PureComponent<Props, State> {
                     <Tab key="basicStats" label="Player Stats" value="playerStats" />
                     <Tab key="predictions" label="Predictions" value="predictions" />
                     <Tab key="heatmaps" label="Heatmaps" value="heatmaps" />
-                    {this.props.loggedInUser && this.props.loggedInUser.beta ? (
-                        <Tab key="kickoffs" label="Kickoffs" value="kickoffs" />
-                    ) : (
-                        <TabDisabled label="Kickoffs" />
-                    )}
-                    {this.props.loggedInUser && this.props.loggedInUser.beta ? (
-                        <Tab key="visualizations" label="Visualizations" value="visualizations" />
-                    ) : (
-                        <TabDisabled label="Visualizations" />
-                    )}
+                    <Tab key="kickoffs" label="Kickoffs" value="kickoffs" />
+                    <Tab key="visualizations" label="Visualizations" value="visualizations" />
                     {this.props.loggedInUser && this.props.loggedInUser.beta ? (
                         <Tab key="teamStats" label="Team Stats" value="teamStats" />
                     ) : (

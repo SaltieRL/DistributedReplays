@@ -1,17 +1,16 @@
 # Celery workers
-import json
-import time
 import base64
+import json
 import os
-import requests
+import time
 from enum import Enum, auto
 from typing import Dict
 
-from requests import ReadTimeout
-
+import requests
 from celery import Celery
 from celery.result import AsyncResult
 from celery.task import periodic_task
+from requests import ReadTimeout
 
 from backend.blueprints.spa_api.service_layers.leaderboards import Leaderboards
 from backend.database.startup import lazy_get_redis, lazy_startup
@@ -22,9 +21,9 @@ from backend.tasks import celeryconfig
 from backend.tasks.add_replay import parse_replay
 from backend.tasks.middleware import DBTask
 from backend.tasks.periodic_stats import calculate_global_stats_by_playlist
-from backend.utils.rlgarage_handler import RLGarageAPI
 from backend.tasks.utils import get_queue_length
 from backend.utils.cloud_handler import GCPManager
+from backend.utils.rlgarage_handler import RLGarageAPI
 
 try:
     from backend.tasks.training_packs.task import TrainingPackCreation
@@ -51,11 +50,12 @@ player_stat_wrapper = PlayerStatWrapper(player_wrapper)
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 60 * 24 * 3, calculate_global_stats_by_rank.s(), name='calculate global stats every 3 days')
-    sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
-    sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
-    sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
-    sender.add_periodic_task(60 * 60 * 12, cache_item_stats.s(), name='cache item stats every 12 hours')
+    # sender.add_periodic_task(60 * 60 * 24 * 3, calculate_global_stats_by_rank.s(), name='calculate global stats every 3 days')
+    # sender.add_periodic_task(60 * 60 * 24, calc_global_dists.s(), name='calculate global dists every day')
+    # sender.add_periodic_task(60 * 60 * 24, calc_leaderboards.s(), name='calculate leaderboards every day')
+    # sender.add_periodic_task(60 * 60 * 24 * 3, calc_leaderboards.s(), name='calculate item stats every 3 days')
+    # sender.add_periodic_task(60 * 60 * 12, cache_item_stats.s(), name='cache item stats every 12 hours')
+    sender.add_periodic_task(60 * 60 * 6, cache_items.s(), name='cache items every 6 hours')
 
 
 def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, any] = None):
@@ -71,7 +71,7 @@ def create_replay_task(file, filename, uuid, task_ids, query_params: Dict[str, a
     if GCPManager.should_go_to_gcp(get_queue_length):
         encoded_file = base64.b64encode(file.read())
         try:
-            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=0.5,
+            r = requests.post(GCPManager.get_gcp_url(), data=encoded_file, timeout=10,
                               params={**{'uuid': uuid}, **query_params})
         except ReadTimeout as e:
             pass  # we don't care, it's given
@@ -127,9 +127,12 @@ def calc_leaderboards(self):
 
 
 @periodic_task(run_every=60 * 10, base=DBTask, bind=True, priority=0)
-def calc_global_dists(self):
-    sess = self.session()
-    calculate_global_stats_by_playlist()
+def calc_global_dists(self, session=None):
+    if session is None:
+        sess = self.session()
+    else:
+        sess = session
+    calculate_global_stats_by_playlist(session)
     sess.close()
 
 
@@ -140,6 +143,7 @@ def calc_item_stats(self, session=None):
     else:
         sess = session
     results = ItemStatsWrapper.create_stats(sess)
+    sess.close()
     if lazy_get_redis() is not None:
         lazy_get_redis().set('item_stats', json.dumps(results))
 
@@ -161,6 +165,7 @@ def auto_create_training_pack(self, requester_id, pack_player_id, name=None, n=1
     METRICS_TRAINING_PACK_CREATION_TIME.observe(
         start - end
     )
+    sess.close()
     return url
 
 
@@ -179,7 +184,14 @@ def create_manual_training_pack(self, requester_id, players, replays, frames, na
     METRICS_TRAINING_PACK_CREATION_TIME.observe(
         start - end
     )
+    sess.close()
     return url
+
+
+@celery.task(base=DBTask, bind=True, priority=9)
+def cache_items(self):
+    api = RLGarageAPI()
+    api.cache_items()
 
 
 @celery.task(base=DBTask, bind=True, priority=9)
@@ -187,6 +199,7 @@ def cache_item_stats(self, session=None):
     if session is None:
         session = self.session()
     api = RLGarageAPI()
+    api.cache_items()
     items = api.get_item_list(0, 10000, override=True)['items']
     category_map = {
         'car': 1,
@@ -213,8 +226,9 @@ def cache_item_stats(self, session=None):
         print("Item", item)
         try:
             ItemStatsWrapper.get_item_usage_over_time(id_, session=session, override=True)
-        except:
-            print("Error")
+        except Exception as e:
+            print("Error", e)
+    session.close()
 
 
 class ResultState(Enum):

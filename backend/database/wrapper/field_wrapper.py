@@ -258,6 +258,14 @@ def get_explanations(dynamic_field_list) -> (Dict[str, FieldExplanation], List[F
                          'Total amount of time spent in the match in seconds. Typically, 300 seconds but can differ if the match went '
                          'into overtime, or the player joined late/left early in unranked matches.'),
 
+        FieldExplanation('num_demos_inflicted',
+                         'Total number of demos inflicted on other players.'),
+        FieldExplanation('num_demos_taken',
+                         'Total number of times the player was demoed.'),
+        FieldExplanation('time_ballcam',
+                         'Total time player spent in ballcam.'),
+        FieldExplanation('time_handbrake',
+                         'Total time player held handbrake/powerslide.'),
 
     ]
     explanation_map = dict()

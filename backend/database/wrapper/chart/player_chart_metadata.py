@@ -66,6 +66,11 @@ player_stats_metadata = [
     Metadata('time_at_boost_speed', ChartType.radar, SubCat.Playstyles),
     Metadata('time_at_slow_speed', ChartType.radar, SubCat.Playstyles),
     Metadata('time_at_super_sonic', ChartType.radar, SubCat.Playstyles),
+    Metadata('num_demos_inflicted', ChartType.bar, SubCat.Playstyles),
+    Metadata('num_demos_taken', ChartType.bar, SubCat.Playstyles),
+    Metadata('time_ballcam', ChartType.bar, SubCat.Playstyles),
+    Metadata('ballcam_percent', ChartType.bar, SubCat.Playstyles),
+    Metadata('time_handbrake', ChartType.bar, SubCat.Playstyles),
 
     # Possession
     Metadata('possession_time', ChartType.pie, SubCat.Possession),

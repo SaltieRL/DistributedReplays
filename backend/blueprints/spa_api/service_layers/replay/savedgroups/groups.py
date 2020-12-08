@@ -2,7 +2,8 @@ import logging
 
 from sqlalchemy import func
 
-from backend.blueprints.spa_api.errors.errors import AuthorizationException, ReplayNotFound, NotLoggedIn
+from backend.blueprints.spa_api.errors.errors import AuthorizationException, ReplayNotFound, NotLoggedIn, \
+    CalculatedError
 from backend.blueprints.spa_api.service_layers.player.player import Player
 from backend.blueprints.spa_api.service_layers.replay.replay import Replay
 from backend.blueprints.spa_api.service_layers.utils import with_session
@@ -100,6 +101,18 @@ class SavedGroup:
 
     @staticmethod
     @with_session
+    def rename_entry(uuid, name, session=None):
+        current_user = UserManager.get_current_user().platformid
+        entry: GroupEntry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
+        if entry.owner != current_user:
+            raise AuthorizationException()
+        entry.name = name
+        session.add(entry)
+        session.commit()
+        return entry.uuid
+
+    @staticmethod
+    @with_session
     def add_subgroup(parent_uuid, name=None, session=None):
         current_user = UserManager.get_current_user().platformid
         parent = session.query(GroupEntry).filter(GroupEntry.uuid == parent_uuid).first()
@@ -127,7 +140,8 @@ class SavedGroup:
                 raise NotLoggedIn()
 
         entry = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first()
-        children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).order_by(GroupEntry.id).filter(
+        children = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(entry.path)).order_by(
+            GroupEntry.id).filter(
             func.nlevel(GroupEntry.path) == len(entry.path) + 1).all()
         children_counts = SavedGroup._children_counts(children, session)
         ancestors = session.query(GroupEntry).filter(GroupEntry.path.ancestor_of(entry.path)).filter(
@@ -143,6 +157,8 @@ class SavedGroup:
         path = session.query(GroupEntry).filter(GroupEntry.uuid == uuid).first().path
         games = session.query(GroupEntry).filter(GroupEntry.path.descendant_of(path)).filter(
             GroupEntry.type == GroupEntryType.game).all()
+        if len(games) > 150:
+            return CalculatedError(400, 'Too many replays in group!')
         games = [game.game for game in games]
         if team:
             stats = wrapper.get_group_team_stats(games)

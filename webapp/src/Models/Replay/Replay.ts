@@ -25,6 +25,7 @@ export interface Replay {
     visibility: GameVisibility
     ranks: number[]
     mmrs: number[]
+    groupMap: any
 }
 
 export interface CompactReplay {

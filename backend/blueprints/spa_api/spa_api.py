@@ -32,7 +32,8 @@ from backend.blueprints.spa_api.utils.query_param_definitions import upload_file
 from backend.database.startup import lazy_get_redis
 from backend.database.wrapper.stats.item_stats_wrapper import ItemStatsWrapper
 from backend.tasks.add_replay import parsed_replay_processing
-from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack
+from backend.tasks.celery_tasks import auto_create_training_pack, create_manual_training_pack, cache_item_stats, \
+    calc_item_stats, cache_items
 from backend.tasks.update import update_self
 from backend.utils.cloud_handler import get_replay_url
 from backend.utils.file_manager import FileManager
@@ -130,7 +131,12 @@ def encode_bot_name(w):
 @bp.route('/global/replay_count')
 @with_session
 def api_get_replay_count(session=None):
+    r = lazy_get_redis()
+    if r is not None and r.get('replay_count') is not None:
+        return jsonify(int(r.get('replay_count')))
     count = session.query(Game.hash).count()
+    if r is not None:
+        r.set('replay_count', str(count), ex=60 * 60)
     return jsonify(count)
 
 
@@ -220,14 +226,13 @@ def api_get_player_play_style(id_):
         playlist = request.args['playlist']
     else:
         playlist = 13  # standard
+    win = None
     if 'result' in request.args:
         result = request.args['result']
         if result == 'win':
             win = True
         elif result == 'loss':
             win = False
-    else:
-        win = None
     play_style_response = PlayStyleResponse.create_from_id(id_, raw='raw' in request.args, rank=rank, playlist=playlist,
                                                            win=win)
     return better_jsonify(play_style_response)
@@ -683,6 +688,11 @@ def api_get_items_list(query_params=None):
     api = RLGarageAPI()
     return better_jsonify(api.get_item_list(query_params['page'], query_params['limit']))
 
+@bp.route('/items/cache')
+def api_cache_items_list(query_params=None):
+    cache_items.delay()
+    return jsonify("Success")
+
 
 @bp.route('/items/info')
 @with_query_params(accepted_query_params=[
@@ -710,6 +720,14 @@ def api_get_item_order(query_params):
     if query_params['category'] is not None:
         stats = stats[str(query_params['category'])]
     return better_jsonify(stats)
+
+
+@bp.route('/items/queue')
+@require_user
+def api_queue_item():
+    cache_item_stats.delay()
+    calc_item_stats.delay()
+    return better_jsonify({'status': 'Success'})
 
 
 # ADMIN
@@ -785,6 +803,19 @@ def delete_group():
         entry = SavedGroup.delete_entry(payload['id'])
     elif 'ids' in payload:
         entry = [SavedGroup.delete_entry(id_) for id_ in payload['ids']]
+    else:
+        raise CalculatedError(403, "Malformed request")
+    return jsonify({"uuid": entry})
+
+
+@bp.route('/groups/rename', methods=['POST'])
+@require_user
+def rename_group():
+    payload = request.get_json(force=True)
+    if payload is None:
+        raise CalculatedError(403, "Malformed request")
+    if 'id' in payload:
+        entry = SavedGroup.rename_entry(payload['id'], payload['name'])
     else:
         raise CalculatedError(403, "Malformed request")
     return jsonify({"uuid": entry})

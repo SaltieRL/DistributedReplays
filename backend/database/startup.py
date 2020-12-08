@@ -10,12 +10,22 @@ from sqlalchemy.orm import sessionmaker
 
 from backend.database.objects import DBObjectBase
 
+try:
+    import config
+    DB_IP = config.DB_IP
+    DB_USER = config.DB_USER
+    DB_PASSWORD = config.DB_PASSWORD
+except:
+    DB_IP = None
+    DB_USER = None
+    DB_PASSWORD = None
+
 logger = logging.getLogger(__name__)
 
 
 def login(connection_string, recreate_database=False) -> Tuple[create_engine, sessionmaker]:
     print(connection_string)
-    engine = create_engine(connection_string, echo=False)
+    engine = create_engine(connection_string, echo=False, pool_recycle=1800)
     if recreate_database:
         conn = engine.connect()
         conn.execute("commit")
@@ -30,20 +40,6 @@ def login(connection_string, recreate_database=False) -> Tuple[create_engine, se
     DBObjectBase.metadata.create_all(engine)
     session = sessionmaker(bind=engine)
     return engine, session
-
-
-def startup() -> sessionmaker:
-    try:
-        # Sql Stuff
-        connection_string = 'postgresql:///saltie'
-        engine, session = login(connection_string)
-    except OperationalError as e:
-        print('trying backup info', e)
-        try:
-            engine, session = login('postgresql://postgres:postgres@localhost/saltie')
-        except Exception as e:
-            engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
-    return session
 
 
 def get_current_session():
@@ -81,6 +77,10 @@ def get_strict_redis():
 class EngineStartup:
     @staticmethod
     def login_db() -> Tuple[any, sessionmaker]:
+        if DB_IP is not None:
+            connection_string = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_IP}/saltie'
+            engine, session = login(connection_string)
+            return engine, session
         try:
             # Sql Stuff
             connection_string = 'postgresql:///saltie'
@@ -90,6 +90,7 @@ class EngineStartup:
             try:
                 engine, session = login('postgresql://postgres:postgres@localhost/saltie')
             except Exception as e:
+                print(e)
                 engine, session = login('postgresql://postgres:postgres@localhost', recreate_database=True)
         return engine, session
 
@@ -118,6 +119,7 @@ class EngineStartup:
     def get_current_session():
         try:
             return current_app.config['db']()
-        except:
+        except Exception as e:
+            print("Error getting session", e)
             _session = lazy_startup()
             return _session()

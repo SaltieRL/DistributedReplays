@@ -57,11 +57,14 @@ describe("should route", () => {
         await wait(() => expect(mockGetRanks).toHaveBeenCalledWith(TEST_PLAYER_ID))
 
         expect(doGet).toHaveBeenCalledWith(`/player/${TEST_PLAYER_ID}/match_history?page=0&limit=10`)
-        expect(doGet).toHaveBeenCalledWith(`/player/${TEST_PLAYER_ID}/play_style?playlist=13`)
+        // see https://github.com/SaltieRL/DistributedReplays/issues/458
+        // expect(doGet).toHaveBeenCalledWith(`/player/${TEST_PLAYER_ID}/play_style?playlist=13`)
 
-        expect(() => app.getByText("Stats")).not.toThrow()
+        // see https://github.com/SaltieRL/DistributedReplays/issues/458
+        // expect(() => app.getByText("Stats")).not.toThrow()
         expect(() => app.getByText("Ranks")).not.toThrow()
-        expect(() => app.getByText("Playstyle")).not.toThrow()
+        // see https://github.com/SaltieRL/DistributedReplays/issues/458
+        // expect(() => app.getByText("Playstyle")).not.toThrow()
         expect(() => app.getByText("Match History")).not.toThrow()
     })
 

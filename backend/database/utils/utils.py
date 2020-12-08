@@ -46,7 +46,8 @@ def convert_pickle_to_db(game: game_pb2, offline_redis=None) -> (Game, list, lis
             len(game.teams[0].player_ids)
 
     player_objs = game.players
-    ranks = get_rank_batch([p.id.id for p in player_objs], offline_redis=offline_redis)
+    ranks = get_rank_batch([p.id.id for p in player_objs], name_map={p.id.id: p.name for p in player_objs},
+                           offline_redis=offline_redis)
     rank_list = []
     mmr_list = []
     for player, rank in ranks.items():
