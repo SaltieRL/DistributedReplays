@@ -10,6 +10,7 @@ export interface PlayerRanks {
     duel: PlaylistRank
     doubles: PlaylistRank
     standard: PlaylistRank
+    tournament: PlaylistRank
 }
 
 const playlists = ["duel", "doubles", "standard", "tournament"]
@@ -33,13 +34,15 @@ export class PlayerRanksCard extends React.PureComponent<Props, State> {
         const loadingRating = {
             name: "Loading...",
             rating: 0,
-            rank: 0
+            rank: 0,
+            streak: 0
         }
         this.state = {
             playerRanks: {
                 duel: loadingRating,
                 doubles: loadingRating,
-                standard: loadingRating
+                standard: loadingRating,
+                tournament: loadingRating
             },
             reloadSignal: false,
             expanded: false
