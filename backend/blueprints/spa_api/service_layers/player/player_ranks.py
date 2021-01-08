@@ -4,10 +4,11 @@ from backend.utils.psyonix_api_handler import get_rank
 
 
 class PlaylistRank:
-    def __init__(self, name: str, rank: int, rating: int):
+    def __init__(self, name: str, rank: int, rating: int, streak: int = 0):
         self.name = name
         self.rank = rank
         self.rating = rating
+        self.streak = streak
 
 
 class PlayerRanks:
@@ -53,7 +54,9 @@ class PlayerRanks:
             player_rank_params = {
                 rank_data['mode']: PlaylistRank(
                     rank_data['string'],
-                    rank_data['tier'], rank_data['rank_points']
+                    rank_data['tier'],
+                    rank_data['rank_points'],
+                    rank_data['streak'] if 'streak' in rank_data else 0
                 )
                 for playlist, rank_data in rank_datas.items()
             }
