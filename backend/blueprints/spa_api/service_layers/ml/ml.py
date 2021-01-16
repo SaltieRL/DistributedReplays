@@ -67,7 +67,8 @@ class RankPredictor:
         #                  'time_at_boost_speed', 'time_at_slow_speed', 'average_speed',
         #                  'boost_usage', 'average_hit_distance', 'ball_hit_forward', 'won_turnovers',
         #                  'num_stolen_boosts']  #
-        ignore = ['total_saves', 'is_bot', 'time_in_game', 'car', 'num_demos_taken', 'num_demos_inflicted']
+        ignore = ['total_saves', 'is_bot', 'time_in_game', 'car', 'num_demos_taken', 'num_demos_inflicted',
+                  'time_ballcam', 'time_handbrake']
         input_columns = list(input_.axes[0][-num_columns - len(ignore):])
         nonzero = input_  # [input_['time_in_game'] > 0]
         input = nonzero[input_columns].div(nonzero['time_in_game'], axis=0)

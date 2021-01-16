@@ -75,7 +75,6 @@ test("should render", async () => {
     // Type into search bar and click search button
     await userEvent.type(searchBar, testPlayerName)
     userEvent.click(searchButton)
-    console.log("Clicked search button")
 
     // Wait for redirect to player page
     await waitForElement(() => app.getByText(testGetPlayerName))
@@ -86,9 +85,9 @@ test("should render", async () => {
     // Check that all player queries have been performed
     expect(mockGetPlayer.mock.calls.length).toBe(1)
     expect(mockGetMatchHistory.mock.calls.length).toBe(1)
-    expect(mockGetStats.mock.calls.length).toBe(1)
+    expect(mockGetStats.mock.calls.length).toBe(0) // see https://github.com/SaltieRL/DistributedReplays/issues/458
     expect(mockGetRanks.mock.calls.length).toBe(0) // PlayerRanksCard component mocked above, request is not made.
-    expect(mockGetPlayStyle.mock.calls.length).toBe(1)
+    expect(mockGetPlayStyle.mock.calls.length).toBe(0) // see https://github.com/SaltieRL/DistributedReplays/issues/458
 
     // Check that replay name and button is displayed
     const getReplayNameHeader = () => app.getByText(testReplayName)
@@ -109,7 +108,6 @@ test("should render", async () => {
 
     // Click replay button
     userEvent.click(replayButton)
-    console.log("Clicked replay button")
 
     // await wait(() => expect(window.location.assign).toHaveBeenCalledWith(`/replays/${testReplayId}`))
     // await wait(() => expect(window.location.assign).toHaveBeenCalled())
@@ -128,5 +126,5 @@ test("should render", async () => {
 
     expect(StatChart).toHaveBeenCalled()
     // @ts-ignore
-    console.log(`StatChart called ${StatChart.mock.calls.length} times`)
+    expect(StatChart.mock.calls.length).toEqual(6)
 })

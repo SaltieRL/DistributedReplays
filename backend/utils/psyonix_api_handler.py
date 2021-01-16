@@ -50,16 +50,18 @@ def get_rank_batch(ids, name_map=None, offline_redis=None, use_redis=True):
     rank_datas_for_players = {}
     if fake_data or RL_API_KEY is None:
         return make_fake_data(ids)
-    try:
-        _redis = get_redis()
-    except KeyError:
-        _redis = None
-    except RuntimeError:  # we're not in application context, use our own redis
-        if offline_redis is None and use_redis:
-            offline_redis = redis.Redis(
-                host='localhost',
-                port=6379)
-        _redis = offline_redis
+    _redis = None
+    if use_redis:
+        try:
+            _redis = get_redis()
+        except KeyError:
+            _redis = None
+        except RuntimeError:  # we're not in application context, use our own redis
+            if offline_redis is None and use_redis:
+                offline_redis = redis.Redis(
+                    host='localhost',
+                    port=6379)
+            _redis = offline_redis
     if _redis is not None:
         ids_to_find = []
         for steam_id in ids:
@@ -125,7 +127,8 @@ def get_rank_batch(ids, name_map=None, offline_redis=None, use_redis=True):
                         rank_data = {'mode': mode, 'rank_points': playlist['skill'],
                                      'tier': playlist['tier'],
                                      'division': playlist['division'],
-                                     'string': tier_div_to_string(playlist['tier'], playlist['division'])}
+                                     'string': tier_div_to_string(playlist['tier'], playlist['division']),
+                                     'streak': playlist['win_streak'] if 'win_streak' in playlist else 0}
                         rank_datas[str(playlist['playlist'])] = rank_data
 
                 for idx, mode in names.items():

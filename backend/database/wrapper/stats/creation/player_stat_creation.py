@@ -62,5 +62,7 @@ class PlayerStatCreation(SharedStatCreation):
                               DynamicFieldResult('boost_ratio'), is_percent=True),
             QueryFieldWrapper(stat_math.get_aerial_efficiency(),
                               DynamicFieldResult('aerial_efficiency'), is_percent=True),
+            QueryFieldWrapper(stat_math.get_ballcam_percent(),
+                              DynamicFieldResult('ballcam_percent'), is_percent=True),
 
         ]
