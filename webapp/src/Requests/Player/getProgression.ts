@@ -17,11 +17,11 @@ const progressionQueryParamMetadatas: QueryParamMetadata[] = [
     {name: "endDate", isDate: true, optional: true},
     {name: "playlist", optional: true}
 ]
-export const getProgression = (
+export const getProgression = async (
     id: string,
     queryParams: ProgressionQueryParams
 ): Promise<PlayStyleProgressionPoint[]> => {
-    return doGet(
+    return doGet<any[]>(
         `/player/${id}/play_style/progression` + stringifyQueryParams(queryParams, progressionQueryParamMetadatas)
-    ).then((data: any[]) => data.map(parsePlayStyleProgression))
+    ).then((data) => data.map(parsePlayStyleProgression))
 }

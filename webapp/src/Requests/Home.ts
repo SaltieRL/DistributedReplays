@@ -6,13 +6,12 @@ export const getTwitchStreams = (): Promise<StreamResponse> => doGet("/home/twit
 
 export const getPatreonProgress = (): Promise<PatreonResponse> => doGet("/home/patreon")
 
-export const getRecentReplays = (): Promise<RecentReplaysResponse> => {
-    return doGet("/home/recent").then((data) => {
-        if (data) {
-            return {
-                recent: data.recent.map(parseReplay)
-            }
+export const getRecentReplays = async (): Promise<RecentReplaysResponse> => {
+    const data = await doGet<RecentReplaysResponse | undefined>("/home/recent")
+    if (data) {
+        return {
+            recent: data.recent.map(parseReplay)
         }
-        return {recent: []}
-    })
+    }
+    return {recent: []}
 }

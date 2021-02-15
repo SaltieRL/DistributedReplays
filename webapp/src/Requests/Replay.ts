@@ -48,8 +48,8 @@ export const getReplayGroupStats = (ids: string[]): Promise<BasicStat[]> => {
     return doGet(`/replay/group` + qs.stringify({ids}, {arrayFormat: "repeat", addQueryPrefix: true}))
 }
 
-export const searchReplays = (queryParams: ReplaysSearchQueryParams): Promise<MatchHistoryResponse> => {
-    return doGet(`/replay` + stringifyReplaySearchQueryParam(queryParams)).then((data) => ({
+export const searchReplays = async (queryParams: ReplaysSearchQueryParams): Promise<MatchHistoryResponse> => {
+    return doGet<MatchHistoryResponse>(`/replay` + stringifyReplaySearchQueryParam(queryParams)).then((data) => ({
         ...data,
         replays: data.replays.map(parseReplay)
     }))
@@ -79,8 +79,8 @@ export const getKickoffs = (id: string): Promise<KickoffData> => {
     return doGet(`/replay/${id}/kickoffs`)
 }
 
-export const getGroupInfo = (id: string): Promise<GroupResponse> => {
-    return doGet(`/groups?id=${id}`).then((result) => {
+export const getGroupInfo = async (id: string): Promise<GroupResponse> => {
+    return doGet<GroupResponse>(`/groups?id=${id}`).then((result) => {
         result.children = result.children.map((child: Entry) => {
             if (child.gameObject) {
                 child.gameObject = parseReplay(child.gameObject)
