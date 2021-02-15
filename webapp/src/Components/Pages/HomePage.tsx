@@ -109,7 +109,7 @@ class HomePageComponent extends React.PureComponent<Props, State> {
                             <Grid item xs={12} {...alignCenterProps} style={{padding: 15}} direction="column">
                                 <Typography>
                                     <i>
-                                        {this.state.replayCount
+                                        {this.state.replayCount !== undefined
                                             ? `${this.state.replayCount} replays and counting...`
                                             : "Loading replay count..."}
                                     </i>

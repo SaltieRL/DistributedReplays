@@ -70,7 +70,7 @@ export class OverviewMatchHistory extends React.PureComponent<Props, State> {
         )
     }
 
-    private readonly getPlayerMatchHistory = (): Promise<void> => {
+    private readonly getPlayerMatchHistory = async (): Promise<void> => {
         return getMatchHistory(this.props.player.id, this.state.page, this.state.limit).then((matchHistory) =>
             this.setState({matchHistory})
         )

@@ -21,6 +21,7 @@ import {getAllTags} from "../../../Requests/Tag"
 import {AddTagPrivateKeyDialog} from "./AddTagPrivateKeyDialog."
 
 const mapStateToProps = (state: StoreState) => ({
+    loggedInUser: state.loggedInUser,
     tags: state.tags
 })
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -46,7 +47,9 @@ class UploadTagsComponent extends React.PureComponent<Props, State> {
     }
 
     public componentDidMount() {
-        getAllTags().then((tags) => this.props.setTags(tags))
+        if (this.props.loggedInUser) {
+            getAllTags().then((tags) => this.props.setTags(tags))
+        }
     }
 
     public render() {
