@@ -23,7 +23,7 @@ kiwisolver==1.0.1
 kombu==4.4
 MarkupSafe==1.1
 matplotlib==2.2.3
-numpy==1.17.0
+numpy==1.22.0
 pandas==0.24.2
 proj==0.1.0
 protobuf==3.15.0
