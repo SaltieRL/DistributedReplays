@@ -1,5 +1,5 @@
 amqp==2.4.0
-arrow==0.12.1
+arrow==0.15.1
 Babel==2.6.0
 beautifulsoup4==4.7.1
 billiard==3.6
