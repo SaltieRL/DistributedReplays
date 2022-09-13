@@ -14,7 +14,7 @@ Flask-Celery-Helper==1.1.0
 Flask-Compress==1.4.0
 Flask-Cors==3.0.6
 Flask-Login==0.4.1
-flower==0.9.2
+flower==1.2.0
 gunicorn==19.9.0
 idna==2.7
 itsdangerous==0.24
