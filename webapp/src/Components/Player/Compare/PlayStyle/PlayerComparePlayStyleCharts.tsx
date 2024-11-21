@@ -129,9 +129,9 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
                         </Grid>
                     )
                 })}
-                <Grid container xs={12} justify="center" alignItems="center">
+                <Grid container justify="center" alignItems="center">
                     <Grid item xs={12} style={{textAlign: "center"}}>
-                        {checkbox}
+                        {playerPlayStylesRaw.length > 1 && checkbox}
                     </Grid>
                     <Grid item xs="auto">
                         <PlayerCompareTable
@@ -147,28 +147,31 @@ export class PlayerComparePlayStyleCharts extends React.PureComponent<Props, Sta
 
     private readonly handleAddPlayers = (players: Player[], reload: boolean = false) => {
         const rank = this.state.rank === -1 ? undefined : this.state.rank
-        Promise.all(players.map((player) => getPlayStyle(player.id, rank, this.props.playlist))).then(
-            (playerPlayStyles) => {
-                if (reload) {
-                    this.setState({playerPlayStyles})
-                } else {
-                    this.setState({
-                        playerPlayStyles: [...this.state.playerPlayStyles, ...playerPlayStyles]
-                    })
-                }
+        Promise.all(
+            players.map((player) =>
+                Promise.all([
+                    getPlayStyle(player.id, rank, this.props.playlist),
+                    getPlayStyleRaw(player.id, this.props.playlist)
+                ])
+            )
+        ).then((result) => {
+            const [playerPlayStyles, playerPlayStylesRaw] = result.reduce(
+                ([a, b]: [PlayStyleResponse[], PlayStyleRawResponse[]], stats, index) => {
+                    a[index] = stats[0]
+                    b[index] = stats[1]
+                    return [a, b]
+                },
+                [[], []]
+            )
+            if (reload) {
+                this.setState({playerPlayStyles, playerPlayStylesRaw})
+            } else {
+                this.setState({
+                    playerPlayStyles: [...this.state.playerPlayStyles, ...playerPlayStyles],
+                    playerPlayStylesRaw: [...this.state.playerPlayStylesRaw, ...playerPlayStylesRaw]
+                })
             }
-        )
-        Promise.all(players.map((player) => getPlayStyleRaw(player.id, this.props.playlist))).then(
-            (playerPlayStylesRaw) => {
-                if (reload) {
-                    this.setState({playerPlayStylesRaw})
-                } else {
-                    this.setState({
-                        playerPlayStylesRaw: [...this.state.playerPlayStylesRaw, ...playerPlayStylesRaw]
-                    })
-                }
-            }
-        )
+        })
     }
 
     private readonly handleRemovePlayers = (indicesToRemove: number[]) => {
